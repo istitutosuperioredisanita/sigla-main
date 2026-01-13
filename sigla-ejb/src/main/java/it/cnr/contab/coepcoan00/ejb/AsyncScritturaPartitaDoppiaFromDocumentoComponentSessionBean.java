@@ -17,8 +17,7 @@
 
 package it.cnr.contab.coepcoan00.ejb;
 
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
+import it.cnr.contab.coepcoan00.core.bulk.V_documenti_da_contabilizzareBulk;
 import it.cnr.contab.logs.bulk.Batch_log_rigaBulk;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.logs.ejb.BatchControlComponentSession;
@@ -46,8 +45,6 @@ import java.util.Optional;
 public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncScritturaPartitaDoppiaFromDocumentoComponentSession {
 	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean.class);
 
-    
-
 	@Asynchronous
 	public void asyncLoadScritturePatrimoniali(UserContext param0, Integer pEsercizio, String pCdCds) throws ComponentException {
 		String subjectError = "Errore caricamento scritture patrimoniali";
@@ -74,8 +71,7 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 			List<Batch_log_rigaBulk> listLogRighe = new ArrayList<>();
 
 			try {
-				List<String> listCdCds = new ArrayList<>();
-				List<IDocumentoCogeBulk> allDocuments;
+				List<V_documenti_da_contabilizzareBulk> allDocuments;
 				try {
 					allDocuments = session.getAllDocumentiCogeDaContabilizzare(param0, pEsercizio, pCdCds.equals("*")?null:pCdCds);
 				} catch (ComponentException | RemoteException | PersistencyException ex) {
@@ -87,20 +83,17 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 				List<String> listError = new ArrayList<>();
 
 				allDocuments.stream()
-						.filter(el-> Optional.ofNullable(el.getDtGenerazioneScrittura()).isPresent())
-						.filter(el-> MandatoBulk.STATO_COGE_N.equals(el.getStato_coge()) || MandatoBulk.STATO_COGE_R.equals(el.getStato_coge())
-						|| MandatoBulk.STATO_COGE_N.equals(el.getStato_coan()) || MandatoBulk.STATO_COGE_R.equals(el.getStato_coan()))
-						.sorted(Comparator.comparing(IDocumentoCogeBulk::getDtGenerazioneScrittura)
+						.filter(el-> Optional.ofNullable(el.getDt_registrazione()).isPresent())
+						.sorted(Comparator.comparing(V_documenti_da_contabilizzareBulk::getDt_registrazione)
 								.thenComparing(el->el.getTipoDocumentoEnum().getOrdineCostruzione())
-								.thenComparing(IDocumentoCogeBulk::getPg_doc))
+								.thenComparing(V_documenti_da_contabilizzareBulk::getPg_doc))
 						.forEach(documentoCoge -> {
 					try {
-						System.out.println("Data: "+documentoCoge.getDtGenerazioneScrittura()+" - Tipo: "+
+						System.out.println("Data: "+documentoCoge.getDt_registrazione()+" - Tipo: "+
 								documentoCoge.getTipoDocumentoEnum().getValue() +" - Numero: "+
 								documentoCoge.getPg_doc());
-                        logger.info("Documento in elaborazione: {}/{}/{}/{}", documentoCoge.getEsercizio(), documentoCoge.getCd_uo(), documentoCoge.getCd_tipo_doc(), documentoCoge.getPg_doc());
-						boolean loadAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(param0, documentoCoge.getEsercizio());
-						session.createScritturaRequiresNew(param0, documentoCoge, loadAnalitica);
+                        logger.info("Documento in elaborazione: {}/{}/{}/{}", documentoCoge.getEsercizio(), documentoCoge.getCd_unita_organizzativa(), documentoCoge.getTipodoc(), documentoCoge.getPg_doc());
+						session.createScritturaRequiresNew(param0, documentoCoge);
 						listInsert.add("X");
 					} catch (Throwable e) {
 						listError.add("X");
@@ -108,7 +101,7 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 						log_riga.setPg_esecuzione(logDB.getPg_esecuzione());
 						log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
 						log_riga.setTi_messaggio("E");
-						log_riga.setMessaggio("Esercizio:" + documentoCoge.getEsercizio() + "-CdUo:" + documentoCoge.getCd_uo() + "-CdTipoDoc:" + documentoCoge.getCd_tipo_doc() + "-PgDoc:" + documentoCoge.getPg_doc());
+						log_riga.setMessaggio("Esercizio:" + documentoCoge.getEsercizio() + "-CdUo:" + documentoCoge.getCd_unita_organizzativa() + "-CdTipoDoc:" + documentoCoge.getTipodoc() + "-PgDoc:" + documentoCoge.getPg_doc());
 						log_riga.setTrace(log_riga.getMessaggio());
 						log_riga.setNote(e.getMessage().substring(0, Math.min(e.getMessage().length(), 3999)));
 						log_riga.setToBeCreated();

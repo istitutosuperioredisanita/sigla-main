@@ -21,8 +21,41 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <!-- Schema iniziale-->
-    <include file="iss-db-changelog-master.xml"/>
+    <!-- Schema iniziale ISS-->
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <property name="now" value="now()" dbms="postgresql,h2"/>
+
+    <property name="esercizio_corrente" value="${liquibase.bootstrap.esercizio}" dbms="oracle,postgresql,h2"/>
+
+    <property name="date.type" value="DATE" dbms="oracle"/>
+    <property name="date.type" value="DATETIME" dbms="postgresql,h2"/>
+
+    <property name="firstday" value="to_Date('0101${liquibase.bootstrap.esercizio}','ddmmyyyy')" dbms="oracle"/>
+    <property name="firstday" value="timestamp '${liquibase.bootstrap.esercizio}-01-01'" dbms="postgresql,h2"/>
+
+    <property name="lastday" value="to_Date('3112${liquibase.bootstrap.esercizio}','ddmmyyyy')" dbms="oracle"/>
+    <property name="lastday" value="timestamp '${liquibase.bootstrap.esercizio}-12-31'" dbms="postgresql,h2"/>
+
+    <!-- Inizio schema iniziale-->
+    <include file="bootstrap/tables.xml"/>
+    <include file="bootstrap/data.xml"/>
+    <include file="bootstrap/constraints.xml"/>
+    <!-- Fine schema iniziale-->
+    <include file="bootstrap/db.changelog-5.0.0.xml"/>
+
+    <include file="iss/db.changelog-5.0.0.xml"/>
+
+    <!-- Attenzione inserire i changeset prima della compilazione degli invalidi-->
+
+    <include file="liquibase/function-h2.xml"/>
+    <include file="bootstrap/tables-h2.xml"/>
+    <include file="liquibase/views.xml"/>
+    <include file="liquibase/oracle-sql4.xml"/>
+    <include file="liquibase/function-postgres.xml"/>
+    <include file="liquibase/oracle_compile_objects.xml"/>
+    <include file="iss/views.xml"/>
+    <include file="iss/oracle-sql4.xml"/>
+
     <!-- Dati di Test -->
     <changeSet author="test" id="create-user-test">
         <addDefaultValue tableName="utente" columnName="dacr" defaultValueDate="${now}"/>
@@ -664,52 +697,52 @@
     <changeSet author="test" id="sql-attivazione-economica">
         <sql>
             update configurazione_cnr
-            set esercizio = 2025, val01='CONTO'
+            set val01='CONTO'
             where cd_chiave_primaria='ECONOMICO_PATRIMONIALE'
             and cd_chiave_secondaria='ASSOCIAZIONE_CONTI';
         </sql>
         <sql>
             update configurazione_cnr
-            set esercizio = 2025, val01='PARALLELA',val02='Y'
+            set val01='PARALLELA',val02='Y'
             where cd_chiave_primaria='ECONOMICO_PATRIMONIALE'
             and cd_chiave_secondaria='TIPO_ECONOMICO_PATRIMONIALE';
         </sql>
         <sql>
             update configurazione_cnr
-            set esercizio = 2025, val01='A00053'
+            set val01='A00053'
             where cd_chiave_primaria='VOCEEP_SPECIALE'
             and cd_chiave_secondaria='BANCA';
         </sql>
         <sql>
             update configurazione_cnr
-            set esercizio = 2025, val01='P00047'
+            set val01='P00047'
             where cd_chiave_primaria='VOCEEP_SPECIALE'
             and cd_chiave_secondaria='FATTURE_DA_RICEVERE';
         </sql>
         <sql>
             update configurazione_cnr
-            set esercizio = 2025, val02='PTEST003'
+            set val02='PTEST003'
             where cd_chiave_primaria='VOCEEP_SPECIALE'
             and cd_chiave_secondaria='COSTO_DOC_NON_LIQUIDABILE'
             and ESERCIZIO >= 2023;
         </sql>
         <sql>
             update configurazione_cnr
-            set esercizio = 2025, val03='Y'
+            set val03='Y'
             where cd_chiave_primaria='ECONOMICO_PATRIMONIALE'
             and cd_chiave_secondaria='TIPO_ECONOMICO_PATRIMONIALE'
             and ESERCIZIO >= 2023;
         </sql>
         <sql>
             update configurazione_cnr
-            set esercizio = 2025, val03='PTEST002'
+            set val03='PTEST002'
             where cd_chiave_primaria='VOCEEP_SPECIALE'
             and cd_chiave_secondaria='CREDITO_DEBITO_ANTICIPO'
             and ESERCIZIO >= 2023;
         </sql>
         <sql>
             update configurazione_cnr
-            set esercizio = 2025, val01='Y'
+            set val01='Y'
             where cd_chiave_primaria='ORDINI'
             and cd_chiave_secondaria='GESTIONE'
             and ESERCIZIO >= 2023;
@@ -813,8 +846,8 @@
             FROM VOCE_EP
             WHERE NATURA_VOCE='EER'
         </sql>
-        <dropDefaultValue tableName="configurazione_cnr" columnName="dacr"/>
-        <dropDefaultValue tableName="configurazione_cnr" columnName="duva"/>
+        <dropDefaultValue tableName="voce_analitica" columnName="dacr"/>
+        <dropDefaultValue tableName="voce_analitica" columnName="duva"/>
         <sql>
             UPDATE NUMERAZIONE_DOC_CONT
             SET CORRENTE = 7
@@ -843,6 +876,33 @@
             where cd_chiave_primaria='INVENTARIO'
             and cd_chiave_secondaria='GESTIONE_ETICHETTA_BENE'
         </sql>
+        <addDefaultValue tableName="batch_procedura" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="batch_procedura" columnName="duva" defaultValueDate="${now}"/>
+        <sql>
+            INSERT INTO BATCH_PROCEDURA
+            (CD_PROCEDURA, DS_PROCEDURA, OBJECT_NAME, PACKAGE_NAME, UTUV, UTCR, PG_VER_REC, CD_UTENTE)
+            VALUES('REGISTRACOGECOANJAVA', 'Registrazione Coge/Coan Java', 'PROCEDURE_JAVA', 'PROCEDURE_JAVA', 'SYSTEM', 'SYSTEM', 0, NULL);
+        </sql>
+        <dropDefaultValue tableName="batch_procedura" columnName="dacr"/>
+        <dropDefaultValue tableName="batch_procedura" columnName="duva"/>
+
+        <addDefaultValue tableName="batch_procedura_parametro" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="batch_procedura_parametro" columnName="duva" defaultValueDate="${now}"/>
+        <sql>
+            INSERT INTO BATCH_PROCEDURA_PARAMETRO
+            (CD_PROCEDURA, NOME_PARAMETRO, PG_VALORE_PARAMETRO, VALORE_VARCHAR, VALORE_DATE, VALORE_NUMBER, UTUV, UTCR, PG_VER_REC)
+            VALUES('REGISTRACOGECOANJAVA', 'AES', 1, NULL, NULL, 2025, 'SYSTEM', 'SYSTEM', 1);
+
+            INSERT INTO BATCH_PROCEDURA_PARAMETRO
+            (CD_PROCEDURA, NOME_PARAMETRO, PG_VALORE_PARAMETRO, VALORE_VARCHAR, VALORE_DATE, VALORE_NUMBER, UTUV, UTCR, PG_VER_REC)
+            VALUES('REGISTRACOGECOANJAVA', 'ACDCDS', 2, '000', NULL, NULL, 'SYSTEM', 'SYSTEM', 1);
+
+            INSERT INTO BATCH_PROCEDURA_PARAMETRO
+            (CD_PROCEDURA, NOME_PARAMETRO, PG_VALORE_PARAMETRO, VALORE_VARCHAR, VALORE_DATE, VALORE_NUMBER, UTUV, UTCR, PG_VER_REC)
+            VALUES('REGISTRACOGECOANJAVA', 'ADATA', 3, NULL, NULL, NULL, 'SYSTEM', 'SYSTEM', 1);
+        </sql>
+        <dropDefaultValue tableName="batch_procedura_parametro" columnName="dacr"/>
+        <dropDefaultValue tableName="batch_procedura_parametro" columnName="duva"/>
     </changeSet>
 
     <changeSet author="test" id="create-unita-operativa-ord">

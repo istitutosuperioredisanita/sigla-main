@@ -20,6 +20,7 @@ package it.cnr.contab.coepcoan00.ejb;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
+import it.cnr.contab.coepcoan00.core.bulk.V_documenti_da_contabilizzareBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -341,12 +342,11 @@ public class TransactionalScritturaPartitaDoppiaFromDocumentoComponentSession ex
     }
 
     @Override
-    public void createScritturaRequiresNew(UserContext param0, IDocumentoCogeBulk param1, boolean param2) throws ComponentException, RemoteException {
+    public void createScritturaRequiresNew(UserContext param0, V_documenti_da_contabilizzareBulk param1) throws ComponentException, RemoteException {
         try {
             invoke("createScritturaRequiresNew", new Object[]{
                     param0,
-                    param1,
-                    param2});
+                    param1});
         } catch (RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {
@@ -379,9 +379,9 @@ public class TransactionalScritturaPartitaDoppiaFromDocumentoComponentSession ex
         }
     }
     @Override
-    public List<IDocumentoCogeBulk> getAllDocumentiCogeDaContabilizzare(UserContext param0, Integer param1, String param2) throws ComponentException, RemoteException {
+    public List<V_documenti_da_contabilizzareBulk> getAllDocumentiCogeDaContabilizzare(UserContext param0, Integer param1, String param2) throws ComponentException, RemoteException {
         try {
-            return (List<IDocumentoCogeBulk>)invoke("getAllDocumentiCogeDaContabilizzare", new Object[]{
+            return (List<V_documenti_da_contabilizzareBulk>)invoke("getAllDocumentiCogeDaContabilizzare", new Object[]{
                     param0,
                     param1,
                     param2});

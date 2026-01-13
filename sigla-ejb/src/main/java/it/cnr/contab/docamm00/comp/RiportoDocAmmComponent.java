@@ -17,25 +17,16 @@
 
 package it.cnr.contab.docamm00.comp;
 
-import java.sql.CallableStatement;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
-import it.cnr.contab.config00.sto.bulk.CdsBulk;
-import it.cnr.contab.config00.sto.bulk.CdsHome;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
+import it.cnr.contab.compensi00.docs.bulk.CompensoHome;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.GenericComponent;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 
 /**
  * Insert the type's description here.
@@ -129,7 +120,9 @@ private java.lang.String callVerificaStatoRiporto(
 
     try {
         if (documentoAmministrativo instanceof Fattura_passivaBulk)
-            return ((Fattura_passivaHome) getHome(userContext, Fattura_passivaBulk.class)).callVerificaStatoRiporto(userContext, (Fattura_passivaBulk) documentoAmministrativo);
+            return ((Fattura_passivaHome) getHome(userContext, Fattura_passivaBulk.class)).callVerificaStatoRiporto(userContext, (Fattura_passivaBulk) documentoAmministrativo, Boolean.FALSE);
+		else if (documentoAmministrativo instanceof CompensoBulk)
+			return ((CompensoHome) getHome(userContext, CompensoBulk.class)).callVerificaStatoRiporto(userContext, (CompensoBulk) documentoAmministrativo, Boolean.FALSE);
     } catch (PersistencyException ex) {
         throw new ComponentException(ex);
     }
@@ -175,7 +168,9 @@ private java.lang.String callVerificaStatoRiportoInScrivania(
 
     try {
         if (documentoAmministrativo instanceof Fattura_passivaBulk)
-            return ((Fattura_passivaHome) getHome(userContext, Fattura_passivaBulk.class)).callVerificaStatoRiportoInScrivania(userContext, (Fattura_passivaBulk) documentoAmministrativo);
+            return ((Fattura_passivaHome) getHome(userContext, Fattura_passivaBulk.class)).callVerificaStatoRiporto(userContext, (Fattura_passivaBulk) documentoAmministrativo, Boolean.TRUE);
+		else if (documentoAmministrativo instanceof CompensoBulk)
+			return ((CompensoHome) getHome(userContext, CompensoBulk.class)).callVerificaStatoRiporto(userContext, (CompensoBulk) documentoAmministrativo, Boolean.TRUE);
     } catch (PersistencyException ex) {
         throw new ComponentException(ex);
     }

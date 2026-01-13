@@ -751,7 +751,10 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
     @Override
     public Timestamp getDt_contabilizzazione() {
         //Metto la data di ultima variazione che dovrebbe corrispondere alla data di evasione
-        return this.getDuva();
+        return Optional.ofNullable(this.getEvasioneOrdineRigaBulk())
+				.map(EvasioneOrdineRigaBulk::getEvasioneOrdine)
+				.map(EvasioneOrdineBulk::getDataConsegna)
+				.orElse(this.getDuva());
     }
 
     @Override

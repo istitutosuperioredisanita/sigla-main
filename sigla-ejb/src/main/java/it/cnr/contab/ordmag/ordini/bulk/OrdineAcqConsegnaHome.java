@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scad_voceBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioHome;
@@ -116,6 +117,8 @@ public class OrdineAcqConsegnaHome extends BulkHome {
 			List<OrdineAcqConsegnaEcoBulk> result = new ArrayList<>();
 			if (Optional.ofNullable(aContoEconomico).isPresent() && !consegna.isStatoConsegnaEvasaForzatamente()) {
                 Fattura_passivaHome fattura_passivaHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+				consegna.setOrdineAcqRiga((OrdineAcqRigaBulk) fattura_passivaHome.loadIfNeededObject(consegna.getOrdineAcqRiga()));
+				consegna.getOrdineAcqRiga().setVoceIva((Voce_ivaBulk) fattura_passivaHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getVoceIva()));
                 aContoEconomico = (ContoBulk) fattura_passivaHome.loadIfNeededObject(aContoEconomico);
                 Voce_analiticaBulk voceAnaliticaDef = null;
 				if (aContoEconomico.isAnaliticaEnabled()) {

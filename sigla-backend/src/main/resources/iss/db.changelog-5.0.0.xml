@@ -135,4 +135,6 @@
     <!-- Autore : CIRO SALVIO - Abilitazione partite di giro per le variazioni di bilancio-->
     <include file="iss/update_conf_partite_giro_variazione_iss.xml"/>
 
+    <!-- Autore : RAFFAELE PAGANO - Abilitazione gestione economica ordini dal 2025-->
+    <include file="iss/update_conf_gestione_economica_ordini.xml"/>
 </databaseChangeLog>

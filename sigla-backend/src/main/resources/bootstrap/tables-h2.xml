@@ -1,0 +1,42 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="raffaele.pagano" dbms="h2" id="create_user_jobs_h2">
+        <createTable tableName="user_jobs">
+            <column name="JOB" type="BIGINT"/>
+            <column name="LAST_DATE" type="${date.type}"/>
+            <column name="NEXT_DATE" type="${date.type}"/>
+            <column name="BROKEN" type="VARCHAR(1)"/>
+            <column name="FAILURES" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" dbms="h2" id="create_user_arguments_h2">
+        <createTable tableName="user_arguments">
+            <column name="OBJECT_NAME" type="VARCHAR(30)"/>
+            <column name="PACKAGE_NAME" type="VARCHAR(30)"/>
+            <column name="OBJECT_ID" type="BIGINT"/>
+            <column name="OVERLOAD" type="VARCHAR(30)"/>
+            <column name="SUBPROGRAM_ID" type="BIGINT"/>
+            <column name="ARGUMENT_NAME" type="VARCHAR(30)"/>
+            <column name="DATA_TYPE" type="VARCHAR(30)"/>
+            <column name="POSITION" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

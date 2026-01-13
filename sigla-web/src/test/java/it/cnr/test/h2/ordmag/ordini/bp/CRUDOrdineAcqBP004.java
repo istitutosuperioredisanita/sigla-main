@@ -608,7 +608,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         //Verifico che fattura da Ordini=Si
         Assertions.assertTrue(getGrapheneElement("main.flDaOrdini").isSelected());
 
-        getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST ORDINE EVASO ANNO PRECEDENTE");
+        getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST ORDINE EVASO ANNO CORRENTE");
 
         //Passo alla tab ‘ordini’
         doClickButton("doTab('tab','tabFatturaPassivaOrdini')");

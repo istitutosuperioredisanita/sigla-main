@@ -24,7 +24,6 @@ import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.comp.ApplicationException;
@@ -35,7 +34,6 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -331,6 +329,17 @@ public class Configurazione_cnrHome extends BulkHome {
                         "PURA".equalsIgnoreCase(el.getVal01()))
                 .map(Configurazione_cnrBulk::getVal03)
                 .map("Y"::equalsIgnoreCase)
+                .orElse(Boolean.FALSE);
+    }
+
+    public boolean isAttivaEconomicaSuOrdini(int esercizio) throws PersistencyException {
+        return Optional.ofNullable(
+                        this.getConfigurazione(esercizio, null,
+                                Configurazione_cnrBulk.PK_ORDINI,
+                                Configurazione_cnrBulk.SK_GESTIONE_ORDINI)
+                )
+                .map(Configurazione_cnrBulk::getVal03)
+                .map(s -> !s.equalsIgnoreCase("N"))
                 .orElse(Boolean.FALSE);
     }
 

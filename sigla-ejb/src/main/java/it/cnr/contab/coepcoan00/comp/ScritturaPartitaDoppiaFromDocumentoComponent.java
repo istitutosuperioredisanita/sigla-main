@@ -20,13 +20,12 @@ package it.cnr.contab.coepcoan00.comp;
 import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
-import it.cnr.contab.doccont00.core.bulk.MandatoBulk;
 import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
 import it.cnr.contab.doccont00.core.bulk.ReversaleIBulk;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.missioni00.docs.bulk.RimborsoBulk;
-import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
@@ -76,7 +75,6 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
 
     private Optional<Scrittura_partita_doppiaBulk> getScritturaAnnullo(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws ComponentException {
         try {
-            Optional<Scrittura_partita_doppiaBulk> scritturaOpt = Optional.empty();
             Scrittura_partita_doppiaHome partitaDoppiaHome = Optional.ofNullable(getHome(userContext, Scrittura_partita_doppiaBulk.class))
                     .filter(Scrittura_partita_doppiaHome.class::isInstance)
                     .map(Scrittura_partita_doppiaHome.class::cast)
@@ -139,8 +137,87 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         return createScrittura(usercontext, evasioneOrdine.getOrdineAcqConsegna(), evasioneOrdine.getEsercizio());
     }
 
+    public ResultScrittureContabili createScrittura(UserContext usercontext, V_documenti_da_contabilizzareBulk vDocDaContabilizzare) throws ComponentException {
+        try {
+            IDocumentoCogeBulk documentoCoge = null;
+            //Carico l'oggetto
+            if (vDocDaContabilizzare.getTipoDocumentoEnum().isConsegnaOrdineAcquisto())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, OrdineAcqConsegnaBulk.class)
+                        .findByPrimaryKey(new OrdineAcqConsegnaBulk(vDocDaContabilizzare.getCd_cds(), vDocDaContabilizzare.getCd_unita_operativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getCd_numeratore(), vDocDaContabilizzare.getPg_doc(),
+                                vDocDaContabilizzare.getRiga(), vDocDaContabilizzare.getConsegna()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isAnticipo())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, AnticipoBulk.class)
+                        .findByPrimaryKey(new AnticipoBulk(vDocDaContabilizzare.getCd_cds(), vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isMissione())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, MissioneBulk.class)
+                        .findByPrimaryKey(new MissioneBulk(vDocDaContabilizzare.getCd_cds(), vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isCompenso())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, CompensoBulk.class)
+                        .findByPrimaryKey(new CompensoBulk(vDocDaContabilizzare.getCd_cds(), vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isRimborso())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, RimborsoBulk.class)
+                        .findByPrimaryKey(new RimborsoBulk(vDocDaContabilizzare.getCd_cds(), vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isDocumentoGenericoAttivo() || vDocDaContabilizzare.getTipoDocumentoEnum().isDocumentoGenericoPassivo())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, Documento_genericoBulk.class)
+                        .findByPrimaryKey(new Documento_genericoBulk(vDocDaContabilizzare.getCd_cds(), vDocDaContabilizzare.getTipodoc(),
+                                vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isNotaCreditoAttiva())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, Nota_di_credito_attivaBulk.class)
+                        .findByPrimaryKey(new Nota_di_credito_attivaBulk(vDocDaContabilizzare.getCd_cds(),vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isNotaDebitoAttiva())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, Nota_di_debito_attivaBulk.class)
+                        .findByPrimaryKey(new Nota_di_debito_attivaBulk(vDocDaContabilizzare.getCd_cds(),vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isFatturaAttiva())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, Fattura_attiva_IBulk.class)
+                        .findByPrimaryKey(new Fattura_attiva_IBulk(vDocDaContabilizzare.getCd_cds(),vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isNotaCreditoPassiva())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, Nota_di_creditoBulk.class)
+                        .findByPrimaryKey(new Nota_di_creditoBulk(vDocDaContabilizzare.getCd_cds(),vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isNotaDebitoPassiva())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, Nota_di_debitoBulk.class)
+                        .findByPrimaryKey(new Nota_di_debitoBulk(vDocDaContabilizzare.getCd_cds(),vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isFatturaPassiva())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, Fattura_passiva_IBulk.class)
+                        .findByPrimaryKey(new Fattura_passiva_IBulk(vDocDaContabilizzare.getCd_cds(),vDocDaContabilizzare.getCd_unita_organizzativa(),
+                                vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isMandato())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, MandatoIBulk.class)
+                        .findByPrimaryKey(new MandatoIBulk(vDocDaContabilizzare.getCd_cds(),vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            else if (vDocDaContabilizzare.getTipoDocumentoEnum().isReversale())
+                documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, ReversaleIBulk.class)
+                        .findByPrimaryKey(new ReversaleIBulk(vDocDaContabilizzare.getCd_cds(),vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
+            getHomeCache(usercontext).fetchAll(usercontext);
+            return createScrittura(usercontext, documentoCoge);
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+
     public ResultScrittureContabili createScrittura(UserContext usercontext, IDocumentoCogeBulk documentoCoge) throws ComponentException {
-        return createScrittura(usercontext, documentoCoge, Optional.ofNullable(documentoCoge).map(IDocumentoCogeBulk::getEsercizio).orElse(CNRUserContext.getEsercizio(usercontext)));
+        try {
+            if (documentoCoge instanceof OrdineAcqConsegnaBulk) {
+                EvasioneOrdineRigaHome evasioneRigaHome = (EvasioneOrdineRigaHome) getHome(usercontext, EvasioneOrdineRigaBulk.class);
+                EvasioneOrdineRigaBulk evasioneRiga = ((OrdineAcqConsegnaBulk) documentoCoge).getEvasioneOrdineRigaBulk();
+                if (evasioneRiga==null)
+                    evasioneRiga = evasioneRigaHome.findByConsegna(((OrdineAcqConsegnaBulk) documentoCoge));
+                if (evasioneRiga!=null)
+                    return createScrittura(usercontext, documentoCoge, evasioneRiga.getEsercizio());
+            }
+            return createScrittura(usercontext, documentoCoge, Optional.ofNullable(documentoCoge).map(IDocumentoCogeBulk::getEsercizio).orElse(CNRUserContext.getEsercizio(usercontext)));
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
     }
 
     private ResultScrittureContabili createScrittura(UserContext usercontext, IDocumentoCogeBulk documentoCoge, Integer esercizioScritture) throws ComponentException {
@@ -266,152 +343,12 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         }
     }
 
-    public List<IDocumentoCogeBulk> getAllDocumentiCogeDaContabilizzare(UserContext userContext, Integer esercizio, String cdCds) throws PersistencyException, ComponentException {
-        List<IDocumentoCogeBulk> allDocuments = new ArrayList<>();
-        {
-            PersistentHome anticipoHome = getHome(userContext, AnticipoBulk.class);
-            SQLBuilder sql = anticipoHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(anticipoHome.fetchAll(sql));
-        }
-        {
-            PersistentHome missioneHome = getHome(userContext, MissioneBulk.class);
-            SQLBuilder sql = missioneHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(missioneHome.fetchAll(sql));
-        }
-        {
-            PersistentHome compensoHome = getHome(userContext, CompensoBulk.class);
-            SQLBuilder sql = compensoHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(compensoHome.fetchAll(sql));
-        }
-        {
-            PersistentHome rimborsoHome = getHome(userContext, RimborsoBulk.class);
-            SQLBuilder sql = rimborsoHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(rimborsoHome.fetchAll(sql));
-        }
-        {
-            PersistentHome docgenHome = getHome(userContext, Documento_genericoBulk.class);
-            SQLBuilder sql = docgenHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(docgenHome.fetchAll(sql));
-        }
-        {
-            PersistentHome fatattHome = getHome(userContext, Fattura_attiva_IBulk.class);
-            SQLBuilder sql = fatattHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(fatattHome.fetchAll(fatattHome.createBroker(sql)));
-        }
-        {
-            PersistentHome fatattHome = getHome(userContext, Nota_di_credito_attivaBulk.class);
-            SQLBuilder sql = fatattHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(fatattHome.fetchAll(fatattHome.createBroker(sql)));
-        }
-        {
-            PersistentHome fatattHome = getHome(userContext, Nota_di_debito_attivaBulk.class);
-            SQLBuilder sql = fatattHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(fatattHome.fetchAll(fatattHome.createBroker(sql)));
-        }
-        {
-            PersistentHome fatpasHome = getHome(userContext, Fattura_passiva_IBulk.class);
-            SQLBuilder sql = fatpasHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(fatpasHome.fetchAll(fatpasHome.createBroker(sql)));
-        }
-        {
-            PersistentHome fatpasHome = getHome(userContext, Nota_di_creditoBulk.class);
-            SQLBuilder sql = fatpasHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(fatpasHome.fetchAll(fatpasHome.createBroker(sql)));
-        }
-        {
-            PersistentHome fatpasHome = getHome(userContext, Nota_di_debitoBulk.class);
-            SQLBuilder sql = fatpasHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(fatpasHome.fetchAll(fatpasHome.createBroker(sql)));
-        }
-        {
-            PersistentHome mandatoHome = getHome(userContext, MandatoIBulk.class);
-            SQLBuilder sql = mandatoHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(mandatoHome.fetchAll(sql));
-        }
-        {
-            PersistentHome reversaleHome = getHome(userContext, ReversaleIBulk.class);
-            SQLBuilder sql = reversaleHome.createSQLBuilder();
-            sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
-            Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-            sql.openParenthesis(FindClause.AND);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_N);
-            sql.addClause(FindClause.OR, "stato_coge", SQLBuilder.EQUALS, MandatoBulk.STATO_COGE_R);
-            sql.closeParenthesis();
-            allDocuments.addAll(reversaleHome.fetchAll(sql));
-        }
-        return allDocuments;
+    public List<V_documenti_da_contabilizzareBulk> getAllDocumentiCogeDaContabilizzare(UserContext userContext, Integer esercizio, String cdCds) throws PersistencyException, ComponentException {
+        PersistentHome home = getHome(userContext, V_documenti_da_contabilizzareBulk.class);
+        SQLBuilder sql = home.createSQLBuilder();
+        sql.addClause(FindClause.AND, "esercizio_cont", SQLBuilder.EQUALS, esercizio);
+        Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
+        return home.fetchAll(sql);
     }
 
     private ResultScrittureContabili loadScritturaPatrimoniale(UserContext userContext, IDocumentoCogeBulk documentoCoge, Integer esercizioScritture) throws ComponentException {
