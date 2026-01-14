@@ -278,6 +278,7 @@ try{
 		if (!buonoC.isByFattura() && !buonoC.isByDocumento() && !buonoC.isByOrdini()){
 			buonoC = (Buono_carico_scaricoBulk)super.inizializzaBulkPerModifica(aUC, bulk);
 		}
+		buonoC.setByOrdini(((Buono_carico_scaricoBulk)bulk).getTipoMovimento().getFl_da_ordini());
 		inizializzaTipo(aUC,buonoC);	 
 		// Carica l'Inventario associato alla UO
 		try{
@@ -297,7 +298,7 @@ try{
 					 dettaglio.setFl_bene_accessorio(inv.isBeneAccessorio());
 					 dettaglio.CalcolaTotaleBene();
 				 }	    
-				 getHomeCache(aUC).fetchAll(aUC,dettHome);
+  				 getHomeCache(aUC).fetchAll(aUC,dettHome);
 			 }
 		}
 		catch(it.cnr.jada.persistency.PersistencyException pe){
