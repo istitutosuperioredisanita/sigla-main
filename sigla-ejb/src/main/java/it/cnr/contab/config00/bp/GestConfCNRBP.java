@@ -42,16 +42,6 @@ public GestConfCNRBP() {
 		super.init(config,context);
 		this.setStatus(this.SEARCH);
 
-        setFreeSearchSet("SEARCH_FORM");
-        setSearchResultColumnSet("CONS_CONF_TOTALE");
-
-        Configurazione_cnrBulk bulk = (Configurazione_cnrBulk)this.getModel();
-        if(bulk!=null){
-            bulk.setEsercizio(new Integer(0));
-        }
-
-        //setFreeSearchSet("CONS_CONF_TOTALE");
-		//setColumns(getBulkInfo().getColumnFieldPropertyDictionary("CONS_CONF_TOTALE"));
 	}catch(Throwable e) { 
 		throw new BusinessProcessException(e);
 	}
