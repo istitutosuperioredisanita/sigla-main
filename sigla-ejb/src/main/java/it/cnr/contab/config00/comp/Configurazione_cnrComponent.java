@@ -21,6 +21,9 @@ import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Configurazione_cnrKey;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoHome;
+import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.contab.utente00.ejb.RuoloComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
@@ -31,6 +34,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyError;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.FindClause;
@@ -1621,5 +1625,11 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
             throw handleException(e);
         }
     }
+    @Override
+    public void initializeKeysAndOptionsInto(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException{
 
+        ((Configurazione_cnrBulk)oggettobulk).caricaEsercizioList(usercontext);
+
+        super.initializeKeysAndOptionsInto(usercontext,oggettobulk);
+    }
 }
