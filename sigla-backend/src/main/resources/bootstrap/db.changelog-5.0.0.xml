@@ -6270,6 +6270,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accesso_flussi_di_cassa.xml"/>
     <!-- Autore : VALENTINA TOMADA - Nuova voce di menu per rendiconto flussi di cassa-->
     <include file="bootstrap/add_accesso_flussi_di_cassa_rend.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Nuova voce di menu per consultazione correlazione Partite di Giro e Entrate/Spese-->
+    <include file="bootstrap/add_accesso_ass_partita_giro.xml"/>
 
     <!-- Autore : Massimiliano Di Gregorio - Nuova voce di menu per consultazione configurazione CNR-->
     <include file="bootstrap/add_accesso_cons_configurazione_cnr.xml"/>
