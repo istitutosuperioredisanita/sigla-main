@@ -28,16 +28,7 @@
 			enabledOnSearch="true"
 			enabledOnFreeSearch="true"
             label="esercizio" />
-	<fieldProperty
-			name="esercizioSelect"
-			property="esercizio"
-			layout="HORIZONTAL"
-			inputType="SELECT"
-			keysProperty="esercizioList"
-			label = "Esercizio"
-			enabledOnSearch="true"
-			enabledOnFreeSearch="true"
-			nullable="false"/>
+
       <fieldProperty
             name="cd_chiave_primaria"
             property="cd_chiave_primaria"
@@ -199,11 +190,14 @@
 
     <form name="SEARCH_FORM">
         <formFieldProperty
-                name="esercizioSelect"
-				property="esercizio"
-				enabledOnEdit="false"
+				name="esercizio"
+				layout="HORIZONTAL"
+				inputType="SELECT"
+				keysProperty="esercizioList"
+				label = "Esercizio"
 				enabledOnSearch="true"
 				enabledOnFreeSearch="true"
+				enabledOnEdit="false"
 				nullable="false"/>
 		<formFieldProperty
 				name="cd_chiave_primaria"
