@@ -214,4 +214,32 @@
 		<columnFieldProperty
 				name="importo" />
 	</columnSet>
+
+
+	<freeSearchSet name="CERCA_IMP_PLUR">
+		<findFieldProperty
+				name="esercizio" label ="Esercizio"/>
+	</freeSearchSet>
+	<columnSet name="RIS_IMP_PLUR">
+		<columnFieldProperty
+				name="cdCds" />
+		<columnFieldProperty
+				name="esercizio" />
+		<columnFieldProperty
+				name="esercizioOriginale" />
+		<columnFieldProperty
+				name="pgObbligazione" />
+<!--		<columnFieldProperty-->
+<!--				name="dsObbligazione" />-->
+		<columnFieldProperty
+				name="cdVoce" />
+		<columnFieldProperty
+				name="cdCentroResponsabilita" />
+		<columnFieldProperty
+				name="cdLineaAttivita" />
+		<columnFieldProperty
+				name="anno" />
+		<columnFieldProperty
+				name="importo" />
+	</columnSet>
 </bulkInfo>
