@@ -6252,7 +6252,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accessi_cons_dett_mod_res_acc.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunti accessi per le consultazioni dei dettagli sugli Accertamenti-->
     <include file="bootstrap/mod_accessi_cons_dett_mod_res_acc_imp.xml"/>
-
     <!-- Autore : CIRO SALVIO - Modificata lunghezza Unità Operativa tabella CNR_ANADIP-->
     <include file="bootstrap/modify_length_unita_oper_cnr_anadip.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunti alla tabella Anagrafico l'unità oragnizzativa di appartenza del dipendente-->
@@ -6294,4 +6293,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_conf_gestione_invio_docTR.xml"/>
     <!-- Autore : DAVIDE MIRRA - Flag che indica se il bene e' presente o meno all'interno dell' Istituto -->
     <include file="bootstrap/add_column_fl_bene_in_ist.xml"/>
+    <!-- Autore : MASSIMILIANO DI GREGORIO - Nuova voce di menu per impegni pluriennali-->
+    <!-- <include file="bootstrap/add_accesso_stampa_obbligazioni_pluriennali_voci.xml"/> -->
 </databaseChangeLog>
