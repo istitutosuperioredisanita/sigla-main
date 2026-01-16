@@ -2047,4 +2047,16 @@
         <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
         <init-param name="defaultAction" value="ConsPianoContiEconomicoAction" />
     </businessProcess>
+
+
+	<businessProcess name="ConsPartitaGiroAssBP"
+					 className="it.cnr.contab.consultazioni.bp.ConsPartitaGiroAssBP">
+		<forward name="default" path="/consultazioni/form_lista.jsp" />
+		<init-param name="bulkClassName"
+					value="it.cnr.contab.doccont00.core.bulk.Ass_partita_giroBulk" />
+		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+		<init-param name="freeSearchSet" value="ASS_ENTRATE_USCITE" />
+		<init-param name="searchResultColumnSet" value="ASS_ENTRATE_USCITE" />
+		<init-param name="defaultAction" value="ConsultazioniAction" />
+	</businessProcess>
 </action-mappings>
