@@ -20,14 +20,13 @@
  * Date 27/09/2006
  */
 package it.cnr.contab.doccont00.core.bulk;
+
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.varstanz00.bulk.Var_stanz_resBulk;
-import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
-import it.cnr.jada.util.action.CRUDBP;
 public class Accertamento_modificaBulk extends Accertamento_modificaBase {
 
 	private AccertamentoBulk accertamento = new AccertamentoBulk();	
@@ -99,11 +98,11 @@ public class Accertamento_modificaBulk extends Accertamento_modificaBase {
 		this.getCds().setCd_unita_organizzativa(cd_cds);
 	}
 
-	public BulkList getAccertamento_mod_voceColl() {
+	public BulkList<Accertamento_mod_voceBulk> getAccertamento_mod_voceColl() {
 		return accertamento_mod_voceColl;
 	}
 
-	public void setAccertamento_mod_voceColl(BulkList accertamento_mod_voceColl) {
+	public void setAccertamento_mod_voceColl(BulkList<Accertamento_modificaBulk> accertamento_mod_voceColl) {
 		this.accertamento_mod_voceColl = accertamento_mod_voceColl;
 	}
 

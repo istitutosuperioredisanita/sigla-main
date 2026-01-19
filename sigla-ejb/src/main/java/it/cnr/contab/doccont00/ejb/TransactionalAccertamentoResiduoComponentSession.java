@@ -17,11 +17,13 @@
 
 package it.cnr.contab.doccont00.ejb;
 
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.comp.ComponentException;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
@@ -712,6 +714,8 @@ public class TransactionalAccertamentoResiduoComponentSession extends it.cnr.jad
         }
     }
 
+
+
     public PrimaryKeyHashtable getOldRipartizioneCdrVoceLinea(it.cnr.jada.UserContext param0, it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {
             return (PrimaryKeyHashtable) invoke("getOldRipartizioneCdrVoceLinea", new Object[]{
@@ -766,4 +770,26 @@ public class TransactionalAccertamentoResiduoComponentSession extends it.cnr.jad
 			}
 		}
 	}
+    @Override
+    public void aggiornaImportoAccertamento(UserContext param0, AccertamentoBulk param1, BigDecimal param2, WorkpackageBulk param3, String param4) throws ComponentException, RemoteException {
+        try {
+            invoke("aggiornaImportoAccertamento", new Object[]{
+                    param0,
+                    param1,
+                    param2,
+                    param3,
+                    param4});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+
+    }
 }
