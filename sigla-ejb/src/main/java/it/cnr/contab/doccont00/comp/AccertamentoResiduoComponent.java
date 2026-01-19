@@ -23,19 +23,9 @@
  */
 package it.cnr.contab.doccont00.comp;
 
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.V_voce_f_partita_giroBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoHome;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoResiduoBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_mod_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_modificaBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_scad_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioHome;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_mod_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.varstanz00.bulk.Ass_var_stanz_res_cdrBulk;
 import it.cnr.contab.varstanz00.bulk.Var_stanz_resBulk;
@@ -47,10 +37,13 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * @author rpagano
@@ -404,5 +397,75 @@ public class AccertamentoResiduoComponent extends AccertamentoComponent {
 			deleteBulk(userContext,var);
 		}
 		catch (Exception e) {}
+	}
+	public void aggiornaImportoAccertamento(UserContext userContext, AccertamentoBulk accertamentoBulk, BigDecimal importo, WorkpackageBulk gae, String descrizione) throws ComponentException {
+		accertamentoBulk = (AccertamentoBulk) inizializzaBulkPerModifica(userContext, accertamentoBulk);
+		Optional<Accertamento_scadenzarioBulk> optAccertamento_scadenzarioBulk = accertamentoBulk
+				.getAccertamento_scadenzarioColl()
+				.stream()
+				.filter(osb -> {
+					boolean nonAssociatoDocAmm = osb.getIm_associato_doc_amm().equals(BigDecimal.ZERO);
+					return Optional.ofNullable(gae).map(workpackageBulk -> osb.getAccertamento_scad_voceColl()
+							.stream()
+							.anyMatch(osvb -> osvb.getLinea_attivita().equalsByPrimaryKey(workpackageBulk)) &&
+							nonAssociatoDocAmm).orElseGet(() -> nonAssociatoDocAmm);
+				}).max(Comparator
+						.comparing(Accertamento_scadenzarioBulk::getDt_scadenza_incasso)
+						.thenComparing(Comparator.comparing(Accertamento_scadenzarioBulk::getIm_scadenza).reversed())
+				);
+		if (optAccertamento_scadenzarioBulk.isPresent()) {
+			accertamentoBulk.setToBeUpdated();
+			accertamentoBulk.setIm_accertamento(accertamentoBulk.getIm_accertamento().subtract(importo));
+			optAccertamento_scadenzarioBulk.get().setToBeUpdated();
+			optAccertamento_scadenzarioBulk.get().setIm_scadenza(optAccertamento_scadenzarioBulk.get().getIm_scadenza().subtract(importo));
+			optAccertamento_scadenzarioBulk.get()
+					.getAccertamento_scad_voceColl().stream()
+					.findFirst()
+					.ifPresent(accretamentoScadVoceBulk -> {
+						accretamentoScadVoceBulk.setToBeUpdated();
+						accretamentoScadVoceBulk.setIm_voce(accretamentoScadVoceBulk.getIm_voce().subtract(importo));
+					});
+			//accertamentoBulk.setFromModifica(true);
+			accertamentoBulk.setCheckDisponibilitaContrattoEseguito(true);
+			//accertamentoBulk.setCheckDisponibilitaCdrGAEEseguito(true);
+			//accertamentoBulk.setCheckDisponibilitaCassaEseguito(true);
+			//accertamentoBulk.setCheckDisponibilitaIncaricoRepertorioEseguito(true);
+			modificaConBulk(userContext, accertamentoBulk);
+		} else {
+			/**
+			 * Nel caso in cui l'importo è negativo e non trovo la scadenza la creo
+			 */
+			if(importo.compareTo(BigDecimal.ZERO) < 0) {
+				accertamentoBulk.setIm_accertamento(accertamentoBulk.getIm_accertamento().subtract(importo));
+
+				Accertamento_scadenzarioBulk scadenzaNuova = new Accertamento_scadenzarioBulk();
+				accertamentoBulk.addToAccertamento_scadenzarioColl(scadenzaNuova);
+				scadenzaNuova.setDt_scadenza_incasso(EJBCommonServices.getServerDate());
+				scadenzaNuova.setDs_scadenza(descrizione);
+				scadenzaNuova.setIm_scadenza(importo.abs());
+				generaDettagliScadenzaAccertamento(userContext, accertamentoBulk, scadenzaNuova, false);
+				scadenzaNuova.getAccertamento_scad_voceColl()
+						.stream()
+						.findAny()
+						.ifPresent(accertamentoScadVoceBulk -> {
+							accertamentoScadVoceBulk.setAccertamento_scadenzario(scadenzaNuova);
+							accertamentoScadVoceBulk.setIm_voce(importo.abs());
+						});
+				scadenzaNuova.setToBeCreated();
+
+				//accertamentoBulk.setFromModifica(true);
+				accertamentoBulk.setCheckDisponibilitaContrattoEseguito(true);
+				//accertamentoBulk.setCheckDisponibilitaCdrGAEEseguito(true);
+				//accertamentoBulk.setCheckDisponibilitaCassaEseguito(true);
+				//accertamentoBulk.setCheckDisponibilitaIncaricoRepertorioEseguito(true);
+				modificaConBulk(userContext, accertamentoBulk);
+			} else {
+				throw new ApplicationException(
+						Optional.ofNullable(gae)
+								.map(workpackageBulk -> String.format("Non esistono scadenze utili da poter utilizzare con la GAE %s", workpackageBulk.getCd_linea_attivita()))
+								.orElseGet(() -> "Non esistono scadenze utili da poter utilizzare!")
+				);
+			}
+		}
 	}
 }

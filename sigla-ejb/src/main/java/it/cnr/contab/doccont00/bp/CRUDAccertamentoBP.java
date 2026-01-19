@@ -20,6 +20,7 @@ package it.cnr.contab.doccont00.bp;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
+import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.pdcfin.bulk.Ass_ev_evBulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.docamm00.bp.*;
@@ -33,6 +34,7 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.action.Config;
 import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -40,6 +42,7 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
 
 import java.math.BigDecimal;
@@ -75,6 +78,8 @@ public class CRUDAccertamentoBP extends CRUDVirtualAccertamentoBP {
 	private boolean siope_attiva = false;
 	private boolean enableVoceNext = false;
 	private java.util.List vociSelezionate;
+	private boolean esercizioChiuso;
+
 
 	public CRUDAccertamentoBP() {
 		super();
@@ -89,6 +94,21 @@ public class CRUDAccertamentoBP extends CRUDVirtualAccertamentoBP {
 		setTab("tab", "tabAccertamento");				// Mette il fuoco sul primo TabAccertamento di Tab
 		setTab("tabScadenzario","tabScadenza");
 		setTab("tabVincoli","tabVincoliRisorseCopertura");
+	}
+	@Override
+	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
+		try {
+			esercizioChiuso = (((EsercizioComponentSession) EJBCommonServices
+					.createEJB("CNRCONFIG00_EJB_EsercizioComponentSession",
+							EsercizioComponentSession.class))
+					.isEsercizioChiuso(actioncontext.getUserContext()));
+		} catch (Throwable e) {
+			throw new BusinessProcessException(e);
+		}
+		super.init(config, actioncontext);
+	}
+	public boolean isEsercizioChiuso() {
+		return esercizioChiuso;
 	}
 	/**
 	 * <!-- @TODO: da completare -->
