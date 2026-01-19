@@ -121,17 +121,46 @@
 		inputSize="50"
 		label="Denominazione"/>
 	<fieldProperty
-			name="ds_elemento_voce"
-			property="ds_elemento_voce"
-			label="Descrizione Voce"
-			inputType="TEXT"
-			maxLength="300"
-			inputSize="60"
-			enabledOnSearch="true"
-	/>
-	
-		
-		
+		name="ds_elemento_voce"
+		property="ds_elemento_voce"
+		label="Descrizione Voce"
+		inputType="TEXT"
+		maxLength="300"
+		inputSize="60"
+		enabledOnSearch="true"/>
+	<fieldProperty
+		name="imp_ordine"
+		property="imp_ordine"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		maxLength="16"
+		inputSize="16"
+		label="Importo Ordinato" />
+	<fieldProperty
+		name="imp_evaso"
+		property="imp_evaso"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		maxLength="16"
+		inputSize="16"
+		label="Importo Evaso" />
+	<fieldProperty
+		name="imp_ass_fattura"
+		property="imp_ass_fattura"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		maxLength="16"
+		inputSize="16"
+		label="Importo Associato a Fattura da Ordine" />
+	<fieldProperty
+		name="imp_ass_doc_amm"
+		property="imp_ass_doc_amm"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		maxLength="16"
+		inputSize="16"
+		label="Importo Associato a Doc. Amm." />
+
 	<formFieldProperty
 		name="cds" />
 	<formFieldProperty
@@ -186,7 +215,13 @@
 	<findFieldProperty
 		name="im_scad" />
 	<findFieldProperty
-		name="im_ass_doc_amm" />
+		name="imp_ordine" />
+	<findFieldProperty
+		name="imp_evaso" />
+	<findFieldProperty
+		name="imp_ass_fattura" />
+	<findFieldProperty
+		name="imp_ass_doc_amm" />
 	<findFieldProperty
 		name="imp_ass_doc_cont" />
 	<findFieldProperty
@@ -208,7 +243,7 @@
 	<columnFieldProperty
 		name="voce_bilancio" />
 	<columnFieldProperty
-			name="ds_elemento_voce"/>
+		name="ds_elemento_voce"/>
 	<columnFieldProperty
 		name="data_scad" />
 	<columnFieldProperty
@@ -218,7 +253,13 @@
 	<columnFieldProperty
 		name="im_scad" />
 	<columnFieldProperty
-		name="im_ass_doc_amm" />
+		name="imp_ordine" />
+	<columnFieldProperty
+		name="imp_evaso" />
+	<columnFieldProperty
+		name="imp_ass_fattura" />
+	<columnFieldProperty
+		name="imp_ass_doc_amm" />
 	<columnFieldProperty
 		name="imp_ass_doc_cont" />
 	<columnFieldProperty
