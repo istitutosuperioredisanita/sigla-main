@@ -134,7 +134,7 @@
 	    <init-param name="reportName" value="/cnrdoccont/doccont/situazionedicassa.jasper" />
 	</businessProcess>
 
-	<businessProcess name="ObblPluVociBP" className="it.cnr.jada.util.action.ConsultazioniBP">
+	<businessProcess name="ObblPluVociBP" className="it.cnr.contab.doccont00.bp.ObblPluVociBP">
 		<forward name="default" path="/consultazioni/form_lista.jsp" />
 		<init-param name="bulkClassName" value="it.cnr.contab.doccont00.core.bulk.Obbligazione_pluriennale_voceBulk" />
 		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />

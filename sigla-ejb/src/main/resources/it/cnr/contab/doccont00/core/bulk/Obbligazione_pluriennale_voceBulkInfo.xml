@@ -2,14 +2,14 @@
 <bulkInfo>
 	<fieldProperty
 		name="cdCds"
-		property="obbligazionePluriennale.cd_unita_organizzativa"
+		property="obbligazionePluriennale.obbligazione.cds.cd_unita_organizzativa"
 		inputType="TEXT"
 		inputSize="30"
 		maxLength="30"
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Cds dell'obbligazione" />
+		label="Cds dell'obbligazione"/>
 	<fieldProperty
 		name="esercizio"
 		property="obbligazionePluriennale.esercizio"
@@ -30,17 +30,27 @@
 		enabledOnSearch="false"
 		nullable="false"
 		label="Esercizio Originale dell'obbligazione" />
+<!--	<fieldProperty-->
+<!--		name="pgObbligazione"-->
+<!--		property="obbligazionePluriennale.pgObbligazione"-->
+<!--		inputType="TEXTAREA"-->
+<!--		cols="60"-->
+<!--		rows="5"-->
+<!--		maxLength="38"-->
+<!--		enabledOnEdit="false"-->
+<!--		enabledOnSearch="false"-->
+<!--		nullable="false"-->
+<!--		label="Numero dell'obbligazione" />-->
 	<fieldProperty
-		name="pgObbligazione"
-		property="obbligazionePluriennale.pgObbligazione"
-		inputType="TEXTAREA"
-		cols="60"
-		rows="5"
-		maxLength="38"
-		enabledOnEdit="false"
-		enabledOnSearch="false"
-		nullable="false"
-		label="Numero dell'obbligazione" />
+			name="pgObbligazione"
+			property="obbligazionePluriennale.obbligazione.pg_obbligazione"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			nullable="false"
+			label="Numero dell'obbligazione" />
 	<fieldProperty
 		name="anno"
 		property="obbligazionePluriennale.anno"
@@ -121,6 +131,16 @@
 		enabledOnEdit="false"
 		nullable="false"
 		label="Importo del dettaglio per la linea attivita" />
+	<fieldProperty
+			name="ds_obbligazione"
+			property="obbligazionePluriennale.obbligazione.ds_obbligazione"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			nullable="false"
+			label="Descrizione Obbligazione" />
 	<form
 		name="searchtool">
 		<formFieldProperty
@@ -218,8 +238,13 @@
 
 	<freeSearchSet name="CERCA_IMP_PLUR">
 		<findFieldProperty
-				name="esercizio" label ="Esercizio"/>
+				name="cdCds" label ="Cds dell'obbligazione"/>
+		<findFieldProperty
+				name="pgObbligazione" label ="Numero dell'obbligazione"/>
+		<findFieldProperty
+				name="anno"/>
 	</freeSearchSet>
+
 	<columnSet name="RIS_IMP_PLUR">
 		<columnFieldProperty
 				name="cdCds" />
@@ -229,8 +254,8 @@
 				name="esercizioOriginale" />
 		<columnFieldProperty
 				name="pgObbligazione" />
-<!--		<columnFieldProperty-->
-<!--				name="dsObbligazione" />-->
+		<columnFieldProperty
+				name="ds_obbligazione" />
 		<columnFieldProperty
 				name="cdVoce" />
 		<columnFieldProperty
