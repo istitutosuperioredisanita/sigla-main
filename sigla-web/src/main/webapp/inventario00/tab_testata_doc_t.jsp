@@ -35,7 +35,7 @@ function doStampaDocTraspRient() {
       <td><% bp.getController().writeFormInput(out, null, "esercizio", true, null, ""); %></td>
 
       <td><% bp.getController().writeFormLabel(out, "pgDocTrasportoRientro"); %></td>
-      <td><% bp.getController().writeFormInput(out, null, "pgDocTrasportoRientro", !bp.isInserting(), null, ""); %></td>
+      <td><% bp.getController().writeFormInput(out, null, "pgDocTrasportoRientroVisualizzato", !bp.isInserting(), null, ""); %></td>
     </tr>
 
     <tr>
@@ -89,14 +89,13 @@ function doStampaDocTraspRient() {
         <td colspan="4" style="border-top: 2px solid #003d7a; padding-top: 15px;"></td>
     </tr>
 
-    <!-- ==================== ASSEGNATARIO SMARTWORKING (VISIBILE SOLO SE SMARTWORKING) ==================== -->
+    <!-- ASSEGNATARIO SMARTWORKING -->
     <% if (bp.isTerzoSmartworkingVisible()) { %>
       <tr>
         <td><% bp.getController().writeFormLabel(out,"findAnagSmartworking"); %></td>
         <td colspan="3">
           <% bp.getController().writeFormInput(out, null, "findAnagSmartworking",
-              bp.isAnagraficiReadonly(), null,
-              bp.isAnagraficiReadonly() ? null : "onChange=\"submitForm('doOnTerzoSmartworkingChange')\""); %>
+              bp.isAnagraficiReadonly(), null, null); %>
         </td>
       </tr>
     <% } %>
@@ -131,15 +130,18 @@ function doStampaDocTraspRient() {
       </tr>
     <% } %>
 
+    <!-- DIPENDENTE INCARICATO -->
     <% if (bp.isAssegnatarioVisible()) { %>
       <tr>
         <td><% bp.getController().writeFormLabel(out,"findAnagIncRitiro"); %></td>
         <td colspan="3">
           <% bp.getController().writeFormInput(out, null, "findAnagIncRitiro",
-              false, null, "onChange=\"submitForm('doOnDipendenteChange')\""); %>
+              bp.isAnagraficiReadonly(), null, null); %>
         </td>
       </tr>
     <% } %>
+
+
 
     <% if (bp.isNominativoVettoreVisible()) { %>
       <tr>

@@ -17,14 +17,30 @@ function doStampaDocTraspRient() {
 }
 </script>
 
-<table>
+<div class="Group card" style="width:100%">
+<table class="Panel">
 
-    <!-- ==================== DATI IDENTIFICATIVI ==================== -->
+    <!-- ==================== IDENTIFICATIVI ==================== -->
     <tr>
-        <td width="15%"><% bp.getController().writeFormLabel(out,"esercizio"); %></td>
-        <td width="35%"><% bp.getController().writeFormInput(out,"esercizio"); %></td>
-        <td width="15%"><% bp.getController().writeFormLabel(out,"pgDocTrasportoRientro"); %></td>
-        <td width="35%"><% bp.getController().writeFormInput(out,"pgDocTrasportoRientro"); %></td>
+      <td><% bp.getController().writeFormLabel(out, "pgInventario"); %></td>
+      <td colspan="3">
+        <% bp.getController().writeFormInput(out, null, "pgInventario", true, null, ""); %>
+        <% bp.getController().writeFormInput(out, null, "descrizioneInventario", true, null, ""); %>
+      </td>
+    </tr>
+
+    <tr>
+      <td><% bp.getController().writeFormLabel(out, "esercizio"); %></td>
+      <td><% bp.getController().writeFormInput(out, null, "esercizio", true, null, ""); %></td>
+
+      <td><% bp.getController().writeFormLabel(out, "pgDocTrasportoRientro"); %></td>
+      <td><% bp.getController().writeFormInput(out, null, "pgDocTrasportoRientroVisualizzato", !bp.isInserting(), null, ""); %></td>
+    </tr>
+
+    <tr>
+        <td><% bp.getController().writeFormLabel(out,"dataRegistrazione"); %></td>
+        <td><% bp.getController().writeFormInput(out,null,"dataRegistrazione",!bp.isInserting() || !bp.isEditing(),null,null); %></td>
+        <td colspan="2"></td>
     </tr>
 
     <!-- ==================== DATI INVENTARIO ==================== -->
@@ -52,14 +68,6 @@ function doStampaDocTraspRient() {
         </td>
     </tr>
 
-    <!-- ==================== INVENTARIO E DATA ==================== -->
-    <tr>
-        <td><% bp.getController().writeFormLabel(out,"pgInventario"); %></td>
-        <td><% bp.getController().writeFormInput(out,"pgInventario"); %></td>
-        <td><% bp.getController().writeFormLabel(out,"dataRegistrazione"); %></td>
-        <td><% bp.getController().writeFormInput(out,null,"dataRegistrazione",!bp.isInserting() || !bp.isEditing(),null,null); %></td>
-    </tr>
-
     <!-- ==================== TIPO MOVIMENTO ==================== -->
     <tr>
       <td><% bp.getController().writeFormLabel(out,"tipoMovimento"); %></td>
@@ -81,12 +89,14 @@ function doStampaDocTraspRient() {
     </tr>
 
     <!-- ==================== TIPO RITIRO ==================== -->
-    <tr>
+    <% if (bp.isTipoRitiroVisible()) { %>
+      <tr>
         <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
         <td colspan="3">
-            <% bp.getController().writeFormInput(out, null, "tipoRitiro", false, null, null); %>
+          <% bp.getController().writeFormInput(out, null, "tipoRitiro", false, null, null); %>
         </td>
-    </tr>
+      </tr>
+    <% } %>
 
     <!-- ==================== CAMPI CONDIZIONALI ==================== -->
     <% if (bp.isDestinazioneVisible()) { %>
@@ -131,4 +141,5 @@ function doStampaDocTraspRient() {
         </tr>
     <% } %>
 
-</table>
+  </table>
+</div>

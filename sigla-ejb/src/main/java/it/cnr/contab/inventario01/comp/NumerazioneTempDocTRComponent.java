@@ -17,6 +17,7 @@
 
 package it.cnr.contab.inventario01.comp;
 
+import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_buono_c_sBulk;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rHome;
@@ -29,25 +30,11 @@ public NumerazioneTempDocTRComponent() {
 	super();
 }
 
-//^^@@
-	/**
-	 *  tutti i controlli superati.
-	 *    PreCondition:
-	 *      Il progressivo è stato generato senza errori.
-	 *    PostCondition:
-	 *      Viene consentita la registrazione del progressivo.
-	 *  validazione generazione consuntivo.
-	 *    PreCondition:
-	 *      Rilevata una condizione di errore.
-	 *    PostCondition:
-	 *      Negato il consenso alla registrazione del progressivo.
-	 */
-//^^@@
 	public Long getNextTempPG (UserContext userContext, Doc_trasporto_rientroBulk doc)
 			throws ComponentException {
 
 		if (doc == null) return null;
-		Numeratore_doc_t_rHome numHome = (Numeratore_doc_t_rHome) getHomeCache(userContext).getHome( Numeratore_buono_c_sBulk.class );
+		Numeratore_doc_t_rHome numHome = (Numeratore_doc_t_rHome) getHomeCache(userContext).getHome( Numeratore_doc_t_rBulk.class );
 		try {
 			return numHome.getNextTempPg(userContext,
 					doc.getEsercizio(),

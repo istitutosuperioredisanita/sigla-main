@@ -4,9 +4,6 @@
 		xmlns="https://contab.cnr.it/schema/SIGLA"
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
 
-	<!-- ============================================ -->
-	<!-- CHIAVI PRIMARIE - TESTATA (Foreign Key) -->
-	<!-- ============================================ -->
 
 	<fieldProperty
 			name="pg_inventario"
@@ -89,9 +86,6 @@
 			maxLength="10"
 			label="Numero Inventario Rif" />
 
-	<!-- ============================================ -->
-	<!-- CHIAVI PRIMARIE - BENE -->
-	<!-- ============================================ -->
 	<columnSet name="righeTrasporto">
 		<columnFieldProperty
 				name="nr_inventario"

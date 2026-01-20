@@ -17,9 +17,11 @@
 
 package it.cnr.contab.inventario01.ejb;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ComponentException;
@@ -28,18 +30,22 @@ import it.cnr.jada.util.RemoteIterator;
 
 import java.rmi.RemoteException;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * Proxy transazionale per il Component dei Documenti di Trasporto/Rientro
+ * Session proxy transazionale che delega tutte le operazioni
+ * al DocTrasportoRientroComponent tramite invocazione riflessiva.
+ *
+ * La classe non contiene logica applicativa: si occupa esclusivamente
+ * della gestione transazionale e della propagazione delle eccezioni
+ * verso il client remoto.
  */
+
 public class TransactionalDocTrasportoRientroComponentSession
         extends it.cnr.jada.ejb.TransactionalCRUDComponentSession
         implements DocTrasportoRientroComponentSession {
 
-    // ========================================
-    // METODI CRUD STANDARD (ereditati)
-    // ========================================
 
     @Override
     public RemoteIterator cerca(
@@ -67,6 +73,7 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
+
     @Override
     public OggettoBulk creaConBulk(
             UserContext userContext,
@@ -91,6 +98,7 @@ public class TransactionalDocTrasportoRientroComponentSession
             }
         }
     }
+
 
     @Override
     public void eliminaConBulk(
@@ -117,6 +125,7 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
+
     @Override
     public void eliminaConBulk(
             UserContext userContext,
@@ -140,6 +149,7 @@ public class TransactionalDocTrasportoRientroComponentSession
             }
         }
     }
+
 
     @Override
     public OggettoBulk inizializzaBulkPerInserimento(
@@ -166,6 +176,7 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
+
     @Override
     public OggettoBulk inizializzaBulkPerModifica(
             UserContext userContext,
@@ -190,6 +201,7 @@ public class TransactionalDocTrasportoRientroComponentSession
             }
         }
     }
+
 
     @Override
     public OggettoBulk modificaConBulk(
@@ -216,15 +228,6 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
-
-    // ========================================
-    // GESTIONE ELIMINAZIONE BENI
-    // ========================================
-
-
-    // ========================================
-    // RICERCA BENI DISPONIBILI
-    // ========================================
 
     @Override
     public RemoteIterator cercaBeniTrasportabili(
@@ -254,9 +257,6 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
-    // ========================================
-    // GESTIONE WORKFLOW - TRANSIZIONI STATO
-    // ========================================
 
     @Override
     public Doc_trasporto_rientroBulk changeStatoInInviato(
@@ -281,10 +281,6 @@ public class TransactionalDocTrasportoRientroComponentSession
             }
         }
     }
-
-    // ========================================
-    // GESTIONE BENI - AGGIUNTA/RIMOZIONE/MODIFICA
-    // ========================================
 
     public it.cnr.jada.util.RemoteIterator selectEditDettagliTrasporto(it.cnr.jada.UserContext param0, it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk param1, java.lang.Class param2, it.cnr.jada.persistency.sql.CompoundFindClause param3) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {
@@ -365,7 +361,6 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
 
-
     @Override
     public List cercaBeniAccessoriAssociati(
             UserContext userContext,
@@ -391,12 +386,6 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
 
-
-    /**
-     * [AGGIUNGI] Modifica i beni trasportati con opzione di includere gli accessori
-     *
-     * @return
-     */
     @Override
     public Doc_trasporto_rientroBulk modificaBeniTrasportatiConAccessori(
             UserContext userContext,
@@ -427,10 +416,8 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
         return docT;
     }
-    /**
-     * Annulla logicamente il documento cambiando solo lo stato.
-     * NON tocca i dettagli associati.
-     */
+
+
     @Override
     public Doc_trasporto_rientroBulk annullaDocumento(
             UserContext userContext,
@@ -457,10 +444,6 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
 
-
-    /**
-     * Ottiene la lista dei beni disponibili per il rientro
-     */
     @Override
     public RemoteIterator getListaBeniDaFarRientrare(
             UserContext userContext,
@@ -490,17 +473,13 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
 
-
-    /**
-     * Modifica i beni rientrati gestendo gli accessori
-     */
     @Override
-    public void modificaBeniRientratiConAccessori(
+    public Doc_trasporto_rientroBulk modificaBeniRientratiConAccessori(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             OggettoBulk[] bulks,
-            java.util.BitSet oldSelection,
-            java.util.BitSet newSelection)
+            BitSet oldSelection,
+            BitSet newSelection)
             throws ComponentException, RemoteException {
 
         try {
@@ -522,6 +501,7 @@ public class TransactionalDocTrasportoRientroComponentSession
                 throw new RemoteException("Uncaught exception", ex);
             }
         }
+        return doc;
     }
 
     public boolean isEsercizioCOEPChiuso(UserContext userContext) throws ComponentException, RemoteException {
@@ -618,9 +598,7 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
-    /**
-     * Cerca gli accessori presenti nel trasporto originale
-     */
+
     @Override
     public List cercaBeniAccessoriPresentinelTrasportoOriginale(
             UserContext userContext,
@@ -669,10 +647,6 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
-
-    // ========================================
-// NUOVI METODI - ELIMINAZIONE DA DETTAGLI SALVATI
-// ========================================
 
     @Override
     public void eliminaTuttiDettagliSalvati(
@@ -779,13 +753,13 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
     @Override
-    public List getDetailsFor(
+    public BulkList getDetailsFor(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException {
 
         try {
-            return (List) invoke("getDetailsFor", new Object[]{
+            return (BulkList) invoke("getDetailsFor", new Object[]{
                     userContext,
                     doc
             });
@@ -801,4 +775,70 @@ public class TransactionalDocTrasportoRientroComponentSession
             }
         }
     }
+
+
+    @Override
+    public List<Inventario_beniBulk> caricaBeniPerInserimento(UserContext userContext, Doc_trasporto_rientroBulk doc, CompoundFindClause clauses, boolean isTrasporto) throws ComponentException, RemoteException {
+        try {
+            List<Inventario_beniBulk> caricaBeniPerInserimento = (List<Inventario_beniBulk>) invoke("caricaBeniPerInserimento", new Object[]{
+                    userContext,
+                    doc,
+                    clauses,
+                    isTrasporto
+            });
+            return
+                    caricaBeniPerInserimento;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+
+    @Override
+    public void validaBeniNonInAltriDocumenti(UserContext userContext,
+                                              Doc_trasporto_rientroBulk doc,
+                                              List<Inventario_beniBulk> beniDaValidare) throws ComponentException, RemoteException {
+        try {
+            invoke("validaBeniNonInAltriDocumenti", new Object[]{
+                    userContext,
+                    doc,
+                    beniDaValidare
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public TerzoBulk caricaTerzoDaAnagrafico(UserContext userContext, Integer cdAnag) throws RemoteException, ComponentException {
+        try {
+            return (TerzoBulk) invoke("caricaTerzoDaAnagrafico", new Object[]{
+                    userContext,
+                    cdAnag
+            });
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
 }

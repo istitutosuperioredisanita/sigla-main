@@ -27,43 +27,20 @@ import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.StrServ;
 
-/**
- * Dettaglio (riga) di un documento di Trasporto/Rientro.
- * Le chiavi primarie composite (PK) sono delegate alle entità correlate (Testata e Bene).
- */
+
 public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBase {
 
-    // ========================================
-    // ATTRIBUTI E RELAZIONI
-    // ========================================
 
-    /**
-     * Bene inventariale associato a questa riga di dettaglio.
-     * Delega le PK: nr_inventario, progressivo.
-     */
     private Inventario_beniBulk bene;
-
-    /**
-     * Testata del documento (FK obbligatoria).
-     * Delega le PK: pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro.
-     */
-
-    // Altri attributi
     private int gruppi;
-    private Boolean fl_accessorio_contestuale = Boolean.FALSE; // Flag se è un accessorio aggiunto in contesto
-    protected Boolean fl_bene_accessorio;                     // Flag se è un bene accessorio pre-esistente
+    private Boolean fl_accessorio_contestuale = Boolean.FALSE;
+    protected Boolean fl_bene_accessorio;
     private Categoria_gruppo_voceBulk cat_voce;
+    private TerzoBulk terzoAssegnatario;
 
-    private TerzoBulk terzoAssegnatario;  // FK mappata su CD_TERZO_ASSEGNATARIO
-
-
-    // ========================================
-    // COSTRUTTORI
-    // ========================================
 
     public Doc_trasporto_rientro_dettBulk() {
         super();
-        // NON inizializzare campi delegati qui (logica JADA)
     }
 
     public Doc_trasporto_rientro_dettBulk(Long pg_inventario, String ti_documento,
@@ -72,15 +49,11 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         super(pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro,
                 nr_inventario, progressivo);
 
-        // Inizializza gli oggetti bulk relazionati (PK delegate)
 
         setBene(new Inventario_beniBulk(nr_inventario, pg_inventario,
                 Long.valueOf(progressivo)));
     }
 
-    // ========================================
-    // GETTER E SETTER - Oggetti Relazionati
-    // ========================================
 
     public Inventario_beniBulk getBene() {
         return bene;
@@ -90,13 +63,13 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         bene = bulk;
     }
 
-    public abstract Doc_trasporto_rientroBulk getDoc_trasporto_rientro() ;
+    public abstract Doc_trasporto_rientroBulk getDoc_trasporto_rientro();
 
-    public abstract void setDoc_trasporto_rientro(Doc_trasporto_rientroBulk bulk) ;
+    public abstract void setDoc_trasporto_rientro(Doc_trasporto_rientroBulk bulk);
 
-    public abstract Doc_trasporto_rientro_dettBulk getDoc_trasporto_rientroDettRif() ;
+    public abstract Doc_trasporto_rientro_dettBulk getDoc_trasporto_rientroDettRif();
 
-    public abstract void setDoc_trasporto_rientroDettRif(Doc_trasporto_rientro_dettBulk bulk) ;
+    public abstract void setDoc_trasporto_rientroDettRif(Doc_trasporto_rientro_dettBulk bulk);
 
     public Categoria_gruppo_voceBulk getCat_voce() {
         return cat_voce;
@@ -107,11 +80,6 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
     }
 
 
-    // ========================================
-    // GETTER E SETTER - Campi PK Delegati
-    // ========================================
-
-    // Delega: PG_INVENTARIO
     public void setPg_inventario(Long pg_inventario) {
         if (this.getDoc_trasporto_rientro() != null) {
             this.getDoc_trasporto_rientro().setPgInventario(pg_inventario);
@@ -122,7 +90,6 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getPgInventario();
     }
 
-    // Delega: NR_INVENTARIO
     public Long getNr_inventario() {
         return this.getBene() == null ? null : this.getBene().getNr_inventario();
     }
@@ -133,7 +100,6 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         }
     }
 
-    // Delega: PROGRESSIVO (mappato come Long in Inventario_beniBulk)
     public Integer getProgressivo() {
         if (this.getBene() == null || this.getBene().getProgressivo() == null) return null;
         return new Integer(this.getBene().getProgressivo().intValue());
@@ -141,11 +107,10 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
 
     public void setProgressivo(Integer progressivo) {
         if (this.getBene() != null) {
-            this.getBene().setProgressivo(new Long(progressivo.longValue()));
+            this.getBene().setProgressivo(progressivo.longValue());
         }
     }
 
-    // Delega: TI_DOCUMENTO
     public void setTi_documento(String ti_documento) {
         if (this.getDoc_trasporto_rientro() != null) {
             this.getDoc_trasporto_rientro().setTiDocumento(ti_documento);
@@ -156,7 +121,6 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getTiDocumento();
     }
 
-    // Delega: ESERCIZIO
     public void setEsercizio(Integer esercizio) {
         if (this.getDoc_trasporto_rientro() != null) {
             this.getDoc_trasporto_rientro().setEsercizio(esercizio);
@@ -167,7 +131,6 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getEsercizio();
     }
 
-    // Delega: PG_DOC_TRASPORTO_RIENTRO
     public void setPg_doc_trasporto_rientro(Long pg_doc_trasporto_rientro) {
         if (this.getDoc_trasporto_rientro() != null) {
             this.getDoc_trasporto_rientro().setPgDocTrasportoRientro(pg_doc_trasporto_rientro);
@@ -178,79 +141,45 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getPgDocTrasportoRientro();
     }
 
-    // ========================================
-    // METODI UTILITY - Codifiche
-    // ========================================
 
-    /**
-     * Restituisce il codice del bene nel formato "NR_INVENTARIO-PROGRESSIVO" (progressivo a 3 cifre).
-     */
     public String getCod_bene() {
         if (getNr_inventario() == null || getProgressivo() == null) {
             return "";
         }
         return bene.getNumeroBeneCompleto();
-        //java.text.DecimalFormat formato = new java.text.DecimalFormat("000");
-       // return getNr_inventario().toString() + "-" + formato.format(getProgressivo());
     }
 
-    /**
-     * Restituisce una chiave hash univoca per il dettaglio, usata per gli accessori contestuali.
-     * Formato: "NR_INVENTARIO.PROGRESSIVO.ETICHETTA".
-     */
+
     public String getChiaveHash() {
         if (getNr_inventario() == null || getProgressivo() == null) {
             return null;
         }
-        // Utilizza l'etichetta del dettaglio (che può essere quella del bene principale)
         return getNr_inventario().toString() + "." + getProgressivo().toString() + "." + getEtichetta();
     }
 
-    // ========================================
-    // METODI UTILITY - Validazioni e Stati
-    // ========================================
 
-    //TODO creare un metodo isValidoPerRientro()
-
-    /**
-     * Verifica se il bene associato è totalmente scaricato.
-     */
     public boolean isTotalmenteScaricato() {
         return bene != null && Boolean.TRUE.equals(bene.getFl_totalmente_scaricato());
     }
 
-    /**
-     * Verifica se il bene è attualmente in transito (gestione specifica).
-     */
     public boolean isBeneInTransito() {
         return bene != null && bene.getId_transito_beni_ordini() != null;
     }
 
-    // ========================================
-    // METODI DI INIZIALIZZAZIONE
-    // ========================================
 
     @Override
     public OggettoBulk initialize(it.cnr.jada.util.action.CRUDBP bp, it.cnr.jada.action.ActionContext context) {
-        // Inizializzazione standard
         bene = new Inventario_beniBulk();
         bene.setTi_commerciale_istituzionale(TipoIVA.ISTITUZIONALE.value());
         return this;
     }
 
 
-
-    // ========================================
-    // GESTIONE ACCESSORI E ETICHETTE
-    // ========================================
-
     public boolean isAccessorioContestuale() {
         return Boolean.TRUE.equals(fl_accessorio_contestuale);
     }
 
-    /**
-     * Verifica se la riga corrente è associata ad accessori contestuali nella Testata.
-     */
+
     public boolean isAssociatoConAccessorioContestuale() {
         Doc_trasporto_rientroBulk doc = getDoc_trasporto_rientro();
         if (getChiaveHash() == null || doc == null || doc.getAccessoriContestualiHash() == null) {
@@ -259,7 +188,6 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         return doc.getAccessoriContestualiHash().containsKey(getChiaveHash());
     }
 
-    // Metodi per controllare la readonly (RO) dei campi in base al tipo di bene/dettaglio
 
     public boolean isROsearchTool() {
         return isBeneAccessorio();
@@ -281,10 +209,7 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         return isBeneAccessorio();
     }
 
-    /**
-     * Restituisce l'etichetta del bene.
-     * Se il bene è accessorio, restituisce l'etichetta del bene principale.
-     */
+
     public String getEtichetta() {
         if (isBeneAccessorio() || isAccessorioContestuale()) {
             if (getBene() != null &&
@@ -297,13 +222,6 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         return getBene() != null && getBene().getEtichetta() != null ? getBene().getEtichetta() : "";
     }
 
-    public Boolean getFl_accessorio_contestuale() {
-        return fl_accessorio_contestuale;
-    }
-
-    public void setFl_accessorio_contestuale(Boolean value) {
-        fl_accessorio_contestuale = value;
-    }
 
     public boolean isBeneAccessorio() {
         return Boolean.TRUE.equals(fl_bene_accessorio);
@@ -317,9 +235,6 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         fl_bene_accessorio = value;
     }
 
-    // ========================================
-    // METODI DELEGATI AL BENE (Accesso diretto ai campi dell'Inventario_beniBulk)
-    // ========================================
 
     public it.cnr.contab.anagraf00.core.bulk.TerzoBulk getAssegnatario() {
         return bene == null ? null : bene.getAssegnatario();
@@ -345,10 +260,6 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         return bene == null ? null : bene.getCondizioneBene();
     }
 
-    // ========================================
-    // ALTRI GETTER/SETTER
-    // ========================================
-
     public int getGruppi() {
         return gruppi;
     }
@@ -357,31 +268,12 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         this.gruppi = gruppi;
     }
 
-    // Costruisce il nome file CMIS
     public String constructCMISNomeFile() {
         StringBuffer nomeFile = new StringBuffer();
         nomeFile = nomeFile.append(StrServ.lpad(this.getPg_doc_trasporto_rientro().toString(), 9, "0"));
         return nomeFile.toString();
     }
 
-    /**
-     * Getter per Terzo Assegnatario.
-     * Questo campo viene popolato automaticamente dal Component:
-     * - Modalità normale: dal CD_ASSEGNATARIO del bene
-     * - Modalità smartworking: dal terzo selezionato in testata
-     */
-    public TerzoBulk getTerzoAssegnatario() {
-        return terzoAssegnatario;
-    }
-
-    public void setTerzoAssegnatario(TerzoBulk terzoAssegnatario) {
-        this.terzoAssegnatario = terzoAssegnatario;
-        if (terzoAssegnatario != null) {
-            setCdTerzoAssegnatario(terzoAssegnatario.getCd_terzo());
-        } else {
-            setCdTerzoAssegnatario(null);
-        }
-    }
 
     @Override
     public Integer getCdTerzoAssegnatario() {

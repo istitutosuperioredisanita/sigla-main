@@ -7,20 +7,15 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
-import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.StrServ;
-import it.cnr.si.spring.storage.StorageDriver;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Dictionary;
-import java.util.stream.Collectors;
 
 /**
  * Testata del documento di Trasporto o Rientro beni inventariali.
@@ -28,17 +23,9 @@ import java.util.stream.Collectors;
  */
 public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBase implements AllegatoParentBulk, AllegatoStorePath {
 
-    // ========================================
-    // COSTANTI TIPO DOCUMENTO
-    // ========================================
 
     public static final String TRASPORTO = "T";
     public static final String RIENTRO = "R";
-
-    // ========================================
-    // COSTANTI STATO DOCUMENTO
-    // ========================================
-
     public static final String STATO_INSERITO = "INS";
     public static final String STATO_INVIATO = "INV";
     public static final String STATO_DEFINITIVO = "DEF";
@@ -54,10 +41,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         STATO.put(STATO_ANNULLATO, "Annullato");
     }
 
-    // ========================================
-    // COSTANTI TIPO RITIRO
-    // ========================================
-
     public static final String TIPO_RITIRO_INCARICATO = "I";
     public static final String TIPO_RITIRO_VETTORE = "V";
 
@@ -68,30 +51,24 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         tipoRitiroKeys.put(TIPO_RITIRO_INCARICATO, "Ritiro Incaricato");
         tipoRitiroKeys.put(TIPO_RITIRO_VETTORE, "Ritiro Vettore");
     }
-//quando il tipo di movimento è "Smartworking" devi nascondere i radio button tipo movimento
-    // ========================================
-    // ATTRIBUTI (FK mappate e locali)
-    // ========================================
 
     private String local_transactionID;
 
-    // FK MAPPATE nel BulkPersistentInfo
     protected Id_inventarioBulk inventario;
     protected Tipo_trasporto_rientroBulk tipoMovimento;
-    private TerzoBulk terzoIncRitiro;          // FK CD_TERZO_ASSEGNATARIO
-    private TerzoBulk terzoRespDip;       // FK CD_TERZO_RESPONSABILE
+    private TerzoBulk terzoIncRitiro;
+    private TerzoBulk terzoRespDip;
     private TerzoBulk terzoSmartworking;
     /**
-     * Dipendente incaricato al ritiro (usa VIEW dipendenti attivi)
+     * Dipendente incaricato al ritiro
      */
     private AnagraficoBulk anagIncRitiro = new AnagraficoBulk();
 
     /**
-     * Dipendente assegnatario smartworking (usa VIEW dipendenti attivi)
+     * Dipendente assegnatario smartworking
      */
     private AnagraficoBulk anagSmartworking = new AnagraficoBulk();
 
-    // Attributi NON mappati (transient - solo per uso applicativo)
     private TerzoBulk consegnatario;
     private TerzoBulk delegato;
     private Unita_organizzativaBulk uo_consegnataria;
@@ -101,23 +78,16 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     private PrimaryKeyHashtable accessoriContestualiHash;
     private SimpleBulkList doc_trasporto_rientro_dettColl;
 
-    // Gestione Allegati
     private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<AllegatoGenericoBulk>();
 
 
-    // Firmatari
     private V_persona_fisicaBulk personaFisicaResponsabile;
 
 
-    private java.util.Collection condizioni;   // Lista condizioni beni (non in DB)
-    private String cds_scrivania;              // CDS di contesto (non in DB)
-    private String uo_scrivania;               // UO di contesto (non in DB)
-    private Inventario_beniBulk bene;          // Bene temporaneo (non in DB)
-
-
-    // ========================================
-    // COSTRUTTORI
-    // ========================================
+    private java.util.Collection condizioni;
+    private String cds_scrivania;
+    private String uo_scrivania;
+    private Inventario_beniBulk bene;
 
     public Doc_trasporto_rientroBulk() {
         super();
@@ -129,12 +99,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         setInventario(new Id_inventarioBulk(pg_inventario));
     }
 
-    // ========================================
-    // GETTER E SETTER - Altri attributi
-    // GETTER/SETTER - FK MAPPATE (con auto-inizializzazione)
-    // ========================================
-
-    // =========== FK: INVENTARIO ===========
     public Id_inventarioBulk getInventario() {
         return inventario;
     }
@@ -154,7 +118,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         return inventario.getPg_inventario();
     }
 
-    // =========== FK: TIPO_MOVIMENTO ===========
     public Tipo_trasporto_rientroBulk getTipoMovimento() {
         return tipoMovimento;
     }
@@ -178,10 +141,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     }
 
 
-    // ========================================
-    // GETTER/SETTER - ANAGRAFICO INCARICATO
-    // ========================================
-
     public AnagraficoBulk getAnagIncRitiro() {
         return anagIncRitiro;
     }
@@ -193,6 +152,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     public void setTerzoIncRitiro(TerzoBulk terzoIncRitiro) {
         this.terzoIncRitiro = terzoIncRitiro;
     }
+
     @Override
     public Integer getCdTerzoIncaricato() {
         if (terzoIncRitiro != null) {
@@ -208,10 +168,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
             terzoIncRitiro.setCd_terzo(cdTerzoIncaricato);
         }
     }
-
-    // ========================================
-// GETTER/SETTER - TERZO RESPONSABILE (Firmatario)
-// ========================================
 
     public TerzoBulk getTerzoRespDip() {
         return terzoRespDip;
@@ -302,10 +258,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     }
 
 
-    // ========================================
-    // GETTER/SETTER - TERZO SMARTWORKING
-    // ========================================
-
     public TerzoBulk getTerzoSmartworking() {
         return terzoSmartworking;
     }
@@ -314,13 +266,11 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         this.terzoSmartworking = terzoSmartworking;
     }
 
-    // Metodo per verificare se il campo è visibile
     public boolean isTerzoSmartworkingVisible() {
         return isSmartworking();
     }
 
 
-    // Metodo per accesso diretto alla FK (usato dal framework di persistenza)
     @Override
     public void setCdTerzoResponsabile(Integer cdTerzoResponsabile) {
         super.setCdTerzoResponsabile(cdTerzoResponsabile);
@@ -328,10 +278,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
             terzoRespDip.setCd_terzo(cdTerzoResponsabile);
         }
     }
-
-    // ========================================
-    // GETTER/SETTER - ATTRIBUTI TRANSIENT (non mappati)
-    // ========================================
 
     public TerzoBulk getConsegnatario() {
         return consegnatario;
@@ -357,7 +303,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         uo_consegnataria = bulk;
     }
 
-    // Associa anche la FK del Terzo Responsabile quando si imposta la Persona Fisica
     public V_persona_fisicaBulk getPersonaFisicaResponsabile() {
         return personaFisicaResponsabile;
     }
@@ -402,9 +347,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         this.bene = bene;
     }
 
-    // ========================================
-    // GETTER/SETTER - COLLEZIONI
-    // ========================================
 
     public java.util.Collection getTipoMovimenti() {
         return tipoMovimenti;
@@ -460,10 +402,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         this.local_transactionID = local_transactionID;
     }
 
-    // ========================================
-    // GESTIONE COLLEZIONI DETTAGLI
-    // ========================================
-
     public BulkCollection[] getBulkLists() {
         return new BulkCollection[]{this.getDoc_trasporto_rientro_dettColl()};
     }
@@ -484,64 +422,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         return getDoc_trasporto_rientro_dettColl().size() - 1;
     }
 
-    // ========================================
-    // GESTIONE ACCESSORI CONTESTUALI
-    // ========================================
-
-    public Long addToAccessoriContestualiHash(
-            Doc_trasporto_rientro_dettBulk bene_padre,
-            Doc_trasporto_rientro_dettBulk bene_figlio,
-            Long progressivo) {
-
-        if (accessoriContestualiHash == null)
-            accessoriContestualiHash = new PrimaryKeyHashtable();
-
-        BulkList beni_associati = null;
-        if (bene_padre.getChiaveHash() != null) {
-            beni_associati = (BulkList) accessoriContestualiHash.get(bene_padre.getChiaveHash());
-        }
-
-        if (beni_associati == null) {
-            beni_associati = new BulkList();
-            bene_padre.setNr_inventario(progressivo);
-            bene_padre.setProgressivo(new Integer("0"));
-            bene_padre.setPg_inventario(getPgInventario());
-            progressivo = new Long(progressivo.longValue() + 1);
-        }
-
-        bene_figlio.setNr_inventario(bene_padre.getNr_inventario());
-        bene_figlio.setProgressivo(new Integer(Integer.toString(beni_associati.size() + 1)));
-        bene_figlio.setPg_inventario(getPgInventario());
-
-        beni_associati.add(bene_figlio);
-        accessoriContestualiHash.put(bene_padre.getChiaveHash(), beni_associati);
-
-        return progressivo;
-    }
-
-    public int removeFromAccessoriContestualiHash(Doc_trasporto_rientro_dettBulk bene_figlio) {
-        if (accessoriContestualiHash != null) {
-            for (java.util.Enumeration e = accessoriContestualiHash.keys(); e.hasMoreElements(); ) {
-                String chiave_bene_padre = (String) e.nextElement();
-                BulkList beni_accessori = (BulkList) accessoriContestualiHash.get(chiave_bene_padre);
-                if (beni_accessori.containsByPrimaryKey(bene_figlio)) {
-                    beni_accessori.removeByPrimaryKey(bene_figlio);
-                    if (beni_accessori.isEmpty()) {
-                        accessoriContestualiHash.remove(chiave_bene_padre);
-                        if (accessoriContestualiHash.isEmpty()) {
-                            setAccessoriContestualiHash(null);
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        return (accessoriContestualiHash != null ? accessoriContestualiHash.size() : 0);
-    }
-
-    // ========================================
-    // GESTIONE STATO DOCUMENTO
-    // ========================================
 
     public Dictionary getStatoKeys() {
         return STATO;
@@ -605,21 +485,10 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         return isInserito();
     }
 
-    public boolean isPossibileModificareDettagli() {
-        return isInserito();
-    }
-
-    public boolean isConfermabile() {
-        return isInserito() && hasDettagli();
-    }
-
     public boolean isAnnullabile() {
         return !isAnnullato();
     }
 
-    // ========================================
-    // GESTIONE TIPO RITIRO
-    // ========================================
 
     public java.util.Dictionary getTipoRitiroKeys() {
         return tipoRitiroKeys;
@@ -648,6 +517,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     public boolean hasTipoRitiroSelezionato() {
         return getTipoRitiro() != null;
     }
+
     public boolean isRitiroIncaricato() {
         return TIPO_RITIRO_INCARICATO.equals(getTipoRitiro());
     }
@@ -659,13 +529,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     public boolean isNominativoVettoreVisible() {
         return isRitiroVettore();
     }
-    public boolean isNominativoVettoreRequired() {
-        return isRitiroVettore();
-    }
 
-    // ========================================
-    // METODI UTILITY
-    // ========================================
 
     public boolean isTrasporto() {
         return TRASPORTO.equals(getTiDocumento());
@@ -681,7 +545,8 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public boolean isTemporaneo() {
         return getPgDocTrasportoRientro() == null ||
-                getPgDocTrasportoRientro().compareTo(new Long("0")) <= 0;
+                getPgDocTrasportoRientro().compareTo(new Long("0")) <= 0 ||
+                getPgDocTrasportoRientro().compareTo(new Long("0")) == 0;
     }
 
     public boolean isNoteRitiroEnabled() {
@@ -709,10 +574,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
                 primoDettaglio.getTiDocumentoRif() + "/" +
                 primoDettaglio.getPgDocTrasportoRientroRif();
     }
-
-    // ========================================
-    // METODI FIRMA DIGITALE
-    // ========================================
 
     public boolean isFirmabile() {
         return isInviatoInFirma() && !isDefinitivoCompletamente();
@@ -775,21 +636,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         return "INV".equals(getStatoFlusso()) && getIdFlussoHappysign() != null;
     }
 
-    public static String getStorePathDDT(String suffix, Integer esercizio, Long inventario,
-                                         String tiDocumento, Long pgDocTrasportoRientro) {
-        return Arrays.asList(
-                SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
-                suffix,
-                String.valueOf(esercizio),
-                String.valueOf(inventario),
-                tiDocumento,
-                String.valueOf(pgDocTrasportoRientro)
-        ).stream().collect(Collectors.joining(StorageDriver.SUFFIX));
-    }
-
-    // ========================================
-    // VALIDAZIONE
-    // ========================================
 
     /**
      * Validazione base del documento.
@@ -797,7 +643,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
      */
     @Override
     public void validate() throws ValidationException {
-        // Solo validazioni di campi obbligatori base
         validaCampoObbligatorio(getDsDocTrasportoRientro(), "la Descrizione del documento");
         validaCampoObbligatorio(getDataRegistrazione(),
                 "la Data " + (TRASPORTO.equals(getTiDocumento()) ? "Trasporto" : "Rientro"));
@@ -815,17 +660,12 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         }
     }
 
-    // ========================================
-// METODI PER GESTIONE SMARTWORKING
-// ========================================
-
     /**
      * Verifica se il documento è in modalità smartworking.
      * - Tipo movimento = "SMARTWORKING"
      */
     public boolean isSmartworking() {
 
-        // Verifica tipo movimento
         return getTipoMovimento() != null
                 && getTipoMovimento().getDsTipoTrasportoRientro() != null
                 && getTipoMovimento().getDsTipoTrasportoRientro().equalsIgnoreCase("SMARTWORKING");
@@ -872,14 +712,19 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         return clauses;
     }
 
-    // ========================================
-// HELPER PER ANAGRAFICO
-// ========================================
-
     /**
-     * Recupera il CD_ANAG dall'anagrafico incaricato
+     * Restituisce pgDocTrasportoRientro solo se > 0, altrimenti null.
+     * Usato per la visualizzazione: nasconde i valori negativi (documenti temporanei).
      */
-    private Integer getCdAnag(AnagraficoBulk anag) {
-        return anag != null ? anag.getCd_anag() : null;
+    public Long getPgDocTrasportoRientroVisualizzato() {
+        Long pg = getPgDocTrasportoRientro();
+        if (pg != null && pg.longValue() < 0) {
+            return null;
+        }
+        return pg;
     }
+
+    public void setPgDocTrasportoRientroVisualizzato(Long value) {
+    }
+
 }

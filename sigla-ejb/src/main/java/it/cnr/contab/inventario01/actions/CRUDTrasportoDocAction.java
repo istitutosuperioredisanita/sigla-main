@@ -1,3 +1,4 @@
+
 package it.cnr.contab.inventario01.actions;
 
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
@@ -9,24 +10,20 @@ import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
-/**
- * Action per la gestione del flusso di TRASPORTO Beni.
- * <p>
- * Contiene SOLO le specifiche del Trasporto:
- * - Cast al BP corretto
- * - Chiamata specifica per beni trasportabili (qualsiasi bene inventariato)
- * - Nomi metodi callback specifici
- * - Messaggi specifici
+/*
+ * Action dedicata alla gestione del flusso di Trasporto Beni.
+ *
+ * Specifiche incluse:
+ * - Cast al Business Process corretto (CRUDTrasportoBeniInvBP)
+ * - Recupero beni trasportabili (qualsiasi bene inventariato)
+ * - Callback specifici per la selezione/aggiunta beni
+ * - Messaggi e label specifici del processo Trasporto
  */
 public class CRUDTrasportoDocAction extends CRUDTraspRientDocAction {
 
     public CRUDTrasportoDocAction() {
         super();
     }
-
-    // =======================================================
-    // IMPLEMENTAZIONE METODI ASTRATTI
-    // =======================================================
 
     @Override
     protected CRUDTraspRientInventarioBP getBP(ActionContext context) {
@@ -41,7 +38,6 @@ public class CRUDTrasportoDocAction extends CRUDTraspRientDocAction {
             SimpleBulkList selezionati,
             CompoundFindClause clauses) throws Exception {
 
-        // SPECIFICO TRASPORTO: cerca qualsiasi bene inventariato
         return getComponentSession(bp).cercaBeniTrasportabili(
                 context.getUserContext(),
                 doc,
@@ -74,10 +70,6 @@ public class CRUDTrasportoDocAction extends CRUDTraspRientDocAction {
         return "tabTrasportoTestata";
     }
 
-    // =======================================================
-    // CALLBACK SPECIFICI (richiamano metodi generici)
-    // =======================================================
-
     public Forward doBringBackAddBeniTrasporto(ActionContext context) {
         return doBringBackGeneric(context);
     }
@@ -86,4 +78,3 @@ public class CRUDTrasportoDocAction extends CRUDTraspRientDocAction {
         return doSelezionaBeniGeneric(context);
     }
 }
-

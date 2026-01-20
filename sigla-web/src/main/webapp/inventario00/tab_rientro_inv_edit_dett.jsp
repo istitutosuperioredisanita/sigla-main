@@ -22,7 +22,7 @@
          <% if (bp.isEditable()) { %>
           <% bp.getDettBeniController().writeHTMLTable(
                 pageContext,
-                "righeTrasporto",
+                "righeRientro",
                 true,
                 false,
                 true,
@@ -32,7 +32,7 @@
          <% } else { %>
            <% bp.getEditDettController().writeHTMLTable(
                pageContext,
-               "righeTrasporto",
+               "righeRientro",
                false,
                false,
                false,

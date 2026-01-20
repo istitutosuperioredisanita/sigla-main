@@ -3,26 +3,4 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xmlns="https://contab.cnr.it/schema/SIGLA"
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
-
-<!--	&lt;!&ndash; ============================================ &ndash;&gt;-->
-<!--	&lt;!&ndash; COLUMN SET PER TRASPORTO BENI &ndash;&gt;-->
-<!--	&lt;!&ndash; ============================================ &ndash;&gt;-->
-
-<!--	<columnSet name="righeRientro">-->
-<!--		<columnFieldProperty-->
-<!--				name="nr_inventario"-->
-<!--				style="width:80px"/>-->
-<!--		<columnFieldProperty-->
-<!--				name="etichetta"-->
-<!--				style="width:80px"/>-->
-<!--		<columnFieldProperty-->
-<!--				name="progressivo"/>-->
-<!--		<columnFieldProperty-->
-<!--				name="ds_bene"-->
-<!--				style="width:300px"/>-->
-<!--		<columnFieldProperty-->
-<!--				name="valore_bene"-->
-<!--				style="width:80px"/>-->
-<!--	</columnSet>-->
-
 </bulkInfo>

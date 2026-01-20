@@ -45,6 +45,7 @@
             enabledOnEdit="false"
             label="Numero Documento" />
 
+
     <!-- ============================================ -->
     <!-- CAMPI BASE -->
     <!-- ============================================ -->
@@ -70,8 +71,9 @@
             inputSize="10"
             nullable="false"
             formatName="date_short"
-            label="Data Documento"
-            command="doOnData_registrazioneChange"/>
+            label="Data Documento"/>
+<!--            command="doOnData_registrazioneChange"-->
+
 
     <fieldProperty
             name="stato"
@@ -140,6 +142,10 @@
     <!-- INCARICATO RITIRO - tramite VIEW DIPENDENTI -->
     <!-- ============================================ -->
 
+    <!-- ============================================ -->
+    <!-- INCARICATO RITIRO - tramite VIEW DIPENDENTI -->
+    <!-- ============================================ -->
+
     <fieldProperty
             name="findAnagIncRitiro"
             property="anagIncRitiro"
@@ -164,6 +170,8 @@
             inputType="ROTEXT"
             inputSize="50"
             label="Nominativo Incaricato" />
+
+
 
     <!-- ============================================ -->
     <!-- ASSEGNATARIO SMARTWORKING - tramite VIEW DIPENDENTI -->
@@ -262,6 +270,16 @@
             inputSize="50"
             label="Nome Delegato" />
 
+    <fieldProperty
+            name="pgDocTrasportoRientroVisualizzato"
+            property="pgDocTrasportoRientroVisualizzato"
+            inputType="ROTEXT"
+            inputSize="10"
+            maxLength="10"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
+            label="Numero Documento" />
+
     <!-- ============================================ -->
     <!-- FORM FIELD PROPERTIES -->
     <!-- ============================================ -->
@@ -294,6 +312,8 @@
     <formFieldProperty name="cognomeConsegnatario" />
     <formFieldProperty name="cdDelegato" />
     <formFieldProperty name="cognomeDelegato" />
+    <formFieldProperty name="pgDocTrasportoRientroVisualizzato" />
+
 
     <!-- ============================================ -->
     <!-- COLONNE DEFAULT -->

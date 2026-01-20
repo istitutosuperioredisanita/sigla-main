@@ -5,7 +5,6 @@
 
 	<defaultColumnMap tableName="DOC_TRASPORTO_RIENTRO_DETT">
 
-
 		<columnMapping columnName="PG_INVENTARIO" propertyName="documentoTrasporto.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
 		<columnMapping columnName="TI_DOCUMENTO" propertyName="documentoTrasporto.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
 		<columnMapping columnName="ESERCIZIO" propertyName="documentoTrasporto.esercizio" sqlTypeName="DECIMAL" columnSize="4"/>
@@ -22,9 +21,6 @@
 		<columnMapping columnName="PG_INVENTARIO" propertyName="bene.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10" />
 		<columnMapping columnName="NR_INVENTARIO" propertyName="bene.nr_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
 		<columnMapping columnName="PROGRESSIVO" propertyName="bene.progressivo" sqlTypeName="DECIMAL" columnSize="10"/>
-
-
-
 
 
 	</defaultColumnMap>
