@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+        persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBase"
+        keyClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettKey"
+        homeClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettHome">
+
+    <defaultColumnMap tableName="DOC_TRASPORTO_RIENTRO_DETT">
+
+        <!-- Campi PK -->
+        <columnMapping columnName="PG_INVENTARIO" propertyName="pgInventario" sqlTypeName="DECIMAL" columnSize="38" nullable="false"/>
+        <columnMapping columnName="TI_DOCUMENTO" propertyName="tiDocumento" sqlTypeName="CHAR" columnSize="1" nullable="false"/>
+        <columnMapping columnName="ESERCIZIO" propertyName="esercizio" sqlTypeName="DECIMAL" columnSize="5" nullable="false"/>
+        <columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO" propertyName="pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="38" nullable="false"/>
+        <!-- Altri campi -->
+        <columnMapping columnName="NR_INVENTARIO" propertyName="nrInventario" sqlTypeName="DECIMAL" columnSize="38" nullable="false"/>
+        <columnMapping columnName="PROGRESSIVO" propertyName="progressivo" sqlTypeName="DECIMAL" columnSize="5" nullable="false"/>
+        <columnMapping columnName="CD_TERZO_ASSEGNATARIO" propertyName="cdTerzoAssegnatario" sqlTypeName="DECIMAL" columnSize="38" nullable="true" />
+
+        <columnMapping columnName="PG_INVENTARIO_RIF" propertyName="pgInventarioRif" sqlTypeName="DECIMAL" columnSize="38" nullable="true"/>
+        <columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="tiDocumentoRif" sqlTypeName="CHAR" columnSize="1" nullable="true"/>
+        <columnMapping columnName="ESERCIZIO_RIF" propertyName="esercizioRif" sqlTypeName="DECIMAL" columnSize="5" nullable="true"/>
+        <columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="pgDocTrasportoRientroRif" sqlTypeName="DECIMAL" columnSize="38" nullable="true"/>
+        <columnMapping columnName="NR_INVENTARIO_RIF" propertyName="nrInventarioRif" sqlTypeName="DECIMAL" columnSize="38" nullable="true"/>
+        <columnMapping columnName="PROGRESSIVO_RIF" propertyName="progressivoRif" sqlTypeName="DECIMAL" columnSize="5" nullable="true"/>
+        <columnMapping columnName="DACR" propertyName="dacr" sqlTypeName="TIMESTAMP" columnSize="7" nullable="false"/>
+        <columnMapping columnName="UTCR" propertyName="utcr" sqlTypeName="VARCHAR" columnSize="20" nullable="false"/>
+        <columnMapping columnName="DUVA" propertyName="duva" sqlTypeName="TIMESTAMP" columnSize="7" nullable="false"/>
+        <columnMapping columnName="UTUV" propertyName="utuv" sqlTypeName="VARCHAR" columnSize="20" nullable="false"/>
+        <columnMapping columnName="PG_VER_REC" propertyName="pg_ver_rec" sqlTypeName="DECIMAL" columnSize="38" nullable="false"/>
+    </defaultColumnMap>
+
+    <persistentProperty name="pgInventario"/>
+    <persistentProperty name="tiDocumento"/>
+    <persistentProperty name="esercizio"/>
+    <persistentProperty name="pgDocTrasportoRientro"/>
+
+
+    <persistentProperty name="nrInventario"/>
+    <persistentProperty name="progressivo"/>
+    <persistentProperty name="cdTerzoAssegnatario"/>
+    <persistentProperty name="dacr"/>
+    <persistentProperty name="utcr"/>
+    <persistentProperty name="duva"/>
+    <persistentProperty name="utuv"/>
+    <persistentProperty name="pg_ver_rec"/>
+    <persistentProperty name="pgInventarioRif"/>
+    <persistentProperty name="tiDocumentoRif"/>
+    <persistentProperty name="esercizioRif"/>
+    <persistentProperty name="pgDocTrasportoRientroRif"/>
+    <persistentProperty name="nrInventarioRif"/>
+    <persistentProperty name="progressivoRif"/>
+
+
+</SQLPersistentInfo>

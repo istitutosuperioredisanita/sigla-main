@@ -1,0 +1,297 @@
+/*
+ * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package it.cnr.contab.inventario01.bulk;
+
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
+import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
+import it.cnr.contab.util.enumeration.TipoIVA;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.util.StrServ;
+
+
+public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBase {
+
+
+    private Inventario_beniBulk bene;
+    private int gruppi;
+    private Boolean fl_accessorio_contestuale = Boolean.FALSE;
+    protected Boolean fl_bene_accessorio;
+    private Categoria_gruppo_voceBulk cat_voce;
+    private TerzoBulk terzoAssegnatario;
+
+
+    public Doc_trasporto_rientro_dettBulk() {
+        super();
+    }
+
+    public Doc_trasporto_rientro_dettBulk(Long pg_inventario, String ti_documento,
+                                          Integer esercizio, Long pg_doc_trasporto_rientro,
+                                          Long nr_inventario, Integer progressivo) {
+        super(pg_inventario, ti_documento, esercizio, pg_doc_trasporto_rientro,
+                nr_inventario, progressivo);
+
+
+        setBene(new Inventario_beniBulk(nr_inventario, pg_inventario,
+                Long.valueOf(progressivo)));
+    }
+
+
+    public Inventario_beniBulk getBene() {
+        return bene;
+    }
+
+    public void setBene(Inventario_beniBulk bulk) {
+        bene = bulk;
+    }
+
+    public abstract Doc_trasporto_rientroBulk getDoc_trasporto_rientro();
+
+    public abstract void setDoc_trasporto_rientro(Doc_trasporto_rientroBulk bulk);
+
+    public abstract Doc_trasporto_rientro_dettBulk getDoc_trasporto_rientroDettRif();
+
+    public abstract void setDoc_trasporto_rientroDettRif(Doc_trasporto_rientro_dettBulk bulk);
+
+    public Categoria_gruppo_voceBulk getCat_voce() {
+        return cat_voce;
+    }
+
+    public void setCat_voce(Categoria_gruppo_voceBulk cat_voce) {
+        this.cat_voce = cat_voce;
+    }
+
+
+    public void setPg_inventario(Long pg_inventario) {
+        if (this.getDoc_trasporto_rientro() != null) {
+            this.getDoc_trasporto_rientro().setPgInventario(pg_inventario);
+        }
+    }
+
+    public Long getPg_inventario() {
+        return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getPgInventario();
+    }
+
+    public Long getNr_inventario() {
+        return this.getBene() == null ? null : this.getBene().getNr_inventario();
+    }
+
+    public void setNr_inventario(Long nr_inventario) {
+        if (this.getBene() != null) {
+            this.getBene().setNr_inventario(nr_inventario);
+        }
+    }
+
+    public Integer getProgressivo() {
+        if (this.getBene() == null || this.getBene().getProgressivo() == null) return null;
+        return new Integer(this.getBene().getProgressivo().intValue());
+    }
+
+    public void setProgressivo(Integer progressivo) {
+        if (this.getBene() != null) {
+            this.getBene().setProgressivo(progressivo.longValue());
+        }
+    }
+
+    public void setTi_documento(String ti_documento) {
+        if (this.getDoc_trasporto_rientro() != null) {
+            this.getDoc_trasporto_rientro().setTiDocumento(ti_documento);
+        }
+    }
+
+    public String getTi_documento() {
+        return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getTiDocumento();
+    }
+
+    public void setEsercizio(Integer esercizio) {
+        if (this.getDoc_trasporto_rientro() != null) {
+            this.getDoc_trasporto_rientro().setEsercizio(esercizio);
+        }
+    }
+
+    public Integer getEsercizio() {
+        return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getEsercizio();
+    }
+
+    public void setPg_doc_trasporto_rientro(Long pg_doc_trasporto_rientro) {
+        if (this.getDoc_trasporto_rientro() != null) {
+            this.getDoc_trasporto_rientro().setPgDocTrasportoRientro(pg_doc_trasporto_rientro);
+        }
+    }
+
+    public Long getPg_doc_trasporto_rientro() {
+        return this.getDoc_trasporto_rientro() == null ? null : this.getDoc_trasporto_rientro().getPgDocTrasportoRientro();
+    }
+
+
+    public String getCod_bene() {
+        if (getNr_inventario() == null || getProgressivo() == null) {
+            return "";
+        }
+        return bene.getNumeroBeneCompleto();
+    }
+
+
+    public String getChiaveHash() {
+        if (getNr_inventario() == null || getProgressivo() == null) {
+            return null;
+        }
+        return getNr_inventario().toString() + "." + getProgressivo().toString() + "." + getEtichetta();
+    }
+
+
+    public boolean isTotalmenteScaricato() {
+        return bene != null && Boolean.TRUE.equals(bene.getFl_totalmente_scaricato());
+    }
+
+    public boolean isBeneInTransito() {
+        return bene != null && bene.getId_transito_beni_ordini() != null;
+    }
+
+
+    @Override
+    public OggettoBulk initialize(it.cnr.jada.util.action.CRUDBP bp, it.cnr.jada.action.ActionContext context) {
+        bene = new Inventario_beniBulk();
+        bene.setTi_commerciale_istituzionale(TipoIVA.ISTITUZIONALE.value());
+        return this;
+    }
+
+
+    public boolean isAccessorioContestuale() {
+        return Boolean.TRUE.equals(fl_accessorio_contestuale);
+    }
+
+
+    public boolean isAssociatoConAccessorioContestuale() {
+        Doc_trasporto_rientroBulk doc = getDoc_trasporto_rientro();
+        if (getChiaveHash() == null || doc == null || doc.getAccessoriContestualiHash() == null) {
+            return false;
+        }
+        return doc.getAccessoriContestualiHash().containsKey(getChiaveHash());
+    }
+
+
+    public boolean isROsearchTool() {
+        return isBeneAccessorio();
+    }
+
+    public boolean isROcategoriaBene() {
+        return isAccessorioContestuale();
+    }
+
+    public boolean isROcollocazione() {
+        return bene != null && bene.getCategoria_Bene() != null;
+    }
+
+    public boolean isROfl_accessorio() {
+        return isAccessorioContestuale();
+    }
+
+    public boolean isROEtichetta() {
+        return isBeneAccessorio();
+    }
+
+
+    public String getEtichetta() {
+        if (isBeneAccessorio() || isAccessorioContestuale()) {
+            if (getBene() != null &&
+                    getBene().getBene_principale() != null &&
+                    getBene().getBene_principale().getEtichetta() != null) {
+                return getBene().getBene_principale().getEtichetta();
+            }
+            return "";
+        }
+        return getBene() != null && getBene().getEtichetta() != null ? getBene().getEtichetta() : "";
+    }
+
+
+    public boolean isBeneAccessorio() {
+        return Boolean.TRUE.equals(fl_bene_accessorio);
+    }
+
+    public Boolean getFl_bene_accessorio() {
+        return fl_bene_accessorio;
+    }
+
+    public void setFl_bene_accessorio(Boolean value) {
+        fl_bene_accessorio = value;
+    }
+
+
+    public it.cnr.contab.anagraf00.core.bulk.TerzoBulk getAssegnatario() {
+        return bene == null ? null : bene.getAssegnatario();
+    }
+
+    public String getCollocazione() {
+        return bene == null ? null : bene.getCollocazione();
+    }
+
+    public Categoria_gruppo_inventBulk getCategoria_Bene() {
+        return bene == null ? null : bene.getCategoria_Bene();
+    }
+
+    public String getDs_bene() {
+        return bene == null ? null : bene.getDs_bene();
+    }
+
+    public Ubicazione_beneBulk getUbicazione() {
+        return bene == null ? null : bene.getUbicazione();
+    }
+
+    public Condizione_beneBulk getCondizioneBene() {
+        return bene == null ? null : bene.getCondizioneBene();
+    }
+
+    public int getGruppi() {
+        return gruppi;
+    }
+
+    public void setGruppi(int gruppi) {
+        this.gruppi = gruppi;
+    }
+
+    public String constructCMISNomeFile() {
+        StringBuffer nomeFile = new StringBuffer();
+        nomeFile = nomeFile.append(StrServ.lpad(this.getPg_doc_trasporto_rientro().toString(), 9, "0"));
+        return nomeFile.toString();
+    }
+
+
+    @Override
+    public Integer getCdTerzoAssegnatario() {
+        if (terzoAssegnatario != null) {
+            return terzoAssegnatario.getCd_terzo();
+        }
+        return super.getCdTerzoAssegnatario();
+    }
+
+    @Override
+    public void setCdTerzoAssegnatario(Integer cdTerzoAssegnatario) {
+        super.setCdTerzoAssegnatario(cdTerzoAssegnatario);
+        if (terzoAssegnatario == null && cdTerzoAssegnatario != null) {
+            terzoAssegnatario = new TerzoBulk();
+        }
+        if (terzoAssegnatario != null && cdTerzoAssegnatario != null) {
+            terzoAssegnatario.setCd_terzo(cdTerzoAssegnatario);
+        }
+    }
+
+}
