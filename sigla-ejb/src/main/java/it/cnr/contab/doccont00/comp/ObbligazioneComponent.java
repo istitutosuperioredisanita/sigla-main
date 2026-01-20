@@ -6452,6 +6452,34 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		return true;
 	}
 
+	private boolean isAnnoPluriennaleValidoPerGae(UserContext uc,HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageKey,ProgettoObbliPluriennaleDto> progettoObbliPluriennaleMap) throws ComponentException {
+
+		Iterator<Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageKey, ProgettoObbliPluriennaleDto> > iterator = progettoObbliPluriennaleMap.entrySet().iterator();
+
+		while (iterator.hasNext()) {
+
+			Map.Entry<it.cnr.contab.config00.latt.bulk.WorkpackageKey, ProgettoObbliPluriennaleDto> entry = iterator.next();
+			WorkpackageKey linea = entry.getKey();
+
+			WorkpackageBulk lineaCompletaPrg = ((WorkpackageHome)getHome(uc, WorkpackageBulk.class)).searchGAECompleta(uc,CNRUserContext.getEsercizio(uc), linea.getCd_centro_responsabilita(), linea.getCd_linea_attivita());
+
+			ProgettoObbliPluriennaleDto progettoObblPlur = progettoObbliPluriennaleMap.get(linea);
+
+			if(progettoObblPlur.getFlAutoRimodulazione()) {
+
+				for (VocePianoObbliPluriennaleDto vocePianoObblPlur : progettoObblPlur.getVociPianoRimodulaMap().values()) {
+					// controllo solo le obbligazioni in insert o update
+					for (ObbligazionePluriennaleDto obbPlur : vocePianoObblPlur.getObbligazionePlurAdd()) {
+						if (lineaCompletaPrg.getEsercizio_fine().compareTo(obbPlur.getAnno()) < 0) {
+							return false;
+						}
+					}
+				}
+			}
+
+		}
+		return true;
+	}
 	private boolean isAnnoPluriennaleValidoPerProgetto(UserContext uc,HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageKey,ProgettoObbliPluriennaleDto> progettoObbliPluriennaleMap) throws ComponentException, PersistencyException {
 
 		Progetto_other_fieldHome otherFieldHome = (Progetto_other_fieldHome)getHome(uc, Progetto_other_fieldBulk.class);
@@ -6656,12 +6684,17 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		}
 
 		if(rimodulazioneObblPlurDto != null) {
-			if (!isDisponibilitaProgettoValida(uc, rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap())) {
-				throw new ApplicationException("Attenzione! Disponibilità sul progetto non disponibile");
+
+			if(!isAnnoPluriennaleValidoPerGae(uc, rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap())){
+				throw new ApplicationException("Attenzione! Si sta inserendo un pluriennale per un anno successivo alla scadenza della GAE");
 			}
 			if (!isAnnoPluriennaleValidoPerProgetto(uc, rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap())) {
 				throw new ApplicationException("Attenzione! Si sta inserendo un pluriennale per un anno successivo alla scadenza del progetto");
 			}
+			if (!isDisponibilitaProgettoValida(uc, rimodulazioneObblPlurDto.getProgettoObbliPluriennaleMap())) {
+				throw new ApplicationException("Attenzione! Disponibilità sul progetto non disponibile");
+			}
+
 		}
 	}
 
