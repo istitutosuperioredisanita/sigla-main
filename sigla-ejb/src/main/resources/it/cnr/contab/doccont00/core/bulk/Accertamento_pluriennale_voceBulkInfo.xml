@@ -22,7 +22,7 @@
 		label="Esercizio dell'accertamento" />
 	<fieldProperty
 		name="esercizioOriginale"
-		property="accertamentoPluriennale.accertamento.esercizioOriginale"
+		property="accertamentoPluriennale.accertamento.esercizio_originale"
 		inputType="TEXT"
 		inputSize="5"
 		maxLength="5"
@@ -30,17 +30,27 @@
 		enabledOnSearch="false"
 		nullable="false"
 		label="Esercizio Originale dell'accertamento" />
-	<fieldProperty
-		name="pgAccertamento"
-		property="accertamentoPluriennale.accertamento.pgAccertamento"
-		inputType="TEXTAREA"
-		cols="60"
-		rows="5"
-		maxLength="38"
-		enabledOnEdit="false"
-		enabledOnSearch="false"
-		nullable="false"
-		label="Numero dell'accertamento" />
+<!--	<fieldProperty-->
+<!--		name="pgAccertamento"-->
+<!--		property="accertamentoPluriennale.accertamento.pgAccertamento"-->
+<!--		inputType="TEXTAREA"-->
+<!--		cols="60"-->
+<!--		rows="5"-->
+<!--		maxLength="38"-->
+<!--		enabledOnEdit="false"-->
+<!--		enabledOnSearch="false"-->
+<!--		nullable="false"-->
+<!--		label="Numero dell'accertamento" />-->
+
+    <fieldProperty
+            name="pgAccertamento"
+            property="accertamentoPluriennale.accertamento.pg_accertamento"
+            inputType="TEXT"
+            maxLength="38"
+            enabledOnEdit="false"
+            enabledOnSearch="false"
+            nullable="false"
+            label="Numero dell'accertamento" />
 	<fieldProperty
 		name="anno"
 		property="accertamentoPluriennale.anno"
@@ -79,6 +89,16 @@
 		enabledOnEdit="false"
 		nullable="false"
 		label="Importo del dettaglio per la linea attivita" />
+    <fieldProperty
+            name="ds_accertamento"
+            property="accertamentoPluriennale.accertamento.ds_accertamento"
+            inputType="TEXT"
+            inputSize="30"
+            maxLength="30"
+            enabledOnEdit="false"
+            enabledOnSearch="false"
+            nullable="false"
+            label="Descrizione Accertamento" />
 	<form
 		name="searchtool">
 		<formFieldProperty
@@ -134,4 +154,35 @@
 		name="cdLineaAttivita" />
 	<columnFieldProperty
 		name="importo" />
+
+
+    <freeSearchSet name="CERCA_ACCERT_PLUR">
+        <findFieldProperty
+                name="cdCds" label ="Cds dell'accertamento"/>
+        <findFieldProperty
+                name="pgAccertamento" label ="Numero dell'accertamento"/>
+        <findFieldProperty
+                name="anno"/>
+    </freeSearchSet>
+
+    <columnSet name="RIS_ACCERT_PLUR">
+        <columnFieldProperty
+                name="cdCds" />
+        <columnFieldProperty
+                name="esercizio" />
+        <columnFieldProperty
+                name="esercizioOriginale" />
+        <columnFieldProperty
+                name="pgAccertamento" />
+        <columnFieldProperty
+                name="ds_accertamento" />
+        <columnFieldProperty
+                name="cdCentroResponsabilita" />
+        <columnFieldProperty
+                name="cdLineaAttivita" />
+        <columnFieldProperty
+                name="anno" />
+        <columnFieldProperty
+                name="importo" />
+    </columnSet>
 </bulkInfo>
