@@ -6297,4 +6297,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_column_fl_bene_in_ist.xml"/>
     <!-- Autore : MASSIMILIANO DI GREGORIO - Nuova voce di menu per impegni pluriennali-->
     <include file="bootstrap/add_accesso_stampa_obbligazioni_pluriennali_voci.xml"/>
+
+    <!-- Autore : STEFANO LUCATTINI - Nuova voce di menu per accertamenti pluriennali-->
+    <include file="bootstrap/add_accesso_stampa_accertamenti_pluriennali_voci.xml"/>
 </databaseChangeLog>
