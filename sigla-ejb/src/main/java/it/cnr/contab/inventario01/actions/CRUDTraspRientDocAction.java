@@ -17,13 +17,12 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
-import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.SimpleBulkList;
-import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.action.CondizioneSempliceBulk;
 import it.cnr.jada.util.action.OptionBP;
 import it.cnr.jada.util.action.RicercaLiberaBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
@@ -147,7 +146,27 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
             rlbp.setCanPerformSearchWithoutClauses(false);
-            rlbp.setPrototype(new Inventario_beniBulk());
+
+            // Crea il prototype
+            Inventario_beniBulk prototype = new Inventario_beniBulk();
+
+            // Configura il freeSearchSet specifico per trasporto/rientro
+            rlbp.setPrototype(prototype, null, null, "searchTrasportoRientro");
+
+            //fl_dismesso = false
+            CondizioneSempliceBulk condizioneFlDismesso = new CondizioneSempliceBulk(prototype, "searchTrasportoRientro");
+            FieldProperty flDismessoField = prototype.getBulkInfo().getFieldProperty("fl_dismesso");
+            condizioneFlDismesso.setFindFieldProperty(flDismessoField);
+            condizioneFlDismesso.setOperator(SQLBuilder.EQUALS);
+            condizioneFlDismesso.setLogicalOperator("AND");
+            condizioneFlDismesso.setValue(Boolean.FALSE);
+
+            // Aggiungi alla radice (sarà sempre applicata nella ricerca)
+            rlbp.getCondizioneRadice().aggiungiCondizione(condizioneFlDismesso);
+
+            String columnSetName = doc.getTiDocumento().equals("T") ? "righeTrasporto" : "righeRientro";
+            rlbp.setColumnSet(columnSetName);
+
             context.addHookForward("searchResult", this, getBringBackMethod());
             context.addHookForward("filter", this, getBringBackMethod());
             return context.addBusinessProcess(rlbp);

@@ -294,4 +294,12 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
         }
     }
 
+    public Boolean getFl_accessorio_contestuale() {
+        return fl_accessorio_contestuale;
+    }
+
+    public void setFl_accessorio_contestuale(Boolean value) {
+        this.fl_accessorio_contestuale = value;
+    }
+
 }

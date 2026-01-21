@@ -76,7 +76,7 @@
 			inputType="TEXT"
 			inputSize="10"
 			maxLength="10"
-			label="pregressivo Rif" />
+			label="Progressivo Rif" />
 
 	<fieldProperty
 			name="nr_inventario_rif"
