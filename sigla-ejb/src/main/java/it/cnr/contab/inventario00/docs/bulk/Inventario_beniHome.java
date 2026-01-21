@@ -420,12 +420,16 @@ public class Inventario_beniHome extends BulkHome {
         sql.setFromClause(from);
 
         // ==================== FILTRI BASE COMUNI ====================
-        // Verifica se è smartworking PRIMA di applicare i filtri
         boolean isSmartworking = doc.isSmartworking() &&
                 doc.getAnagSmartworking() != null &&
                 doc.getAnagSmartworking().getCd_anag() != null;
 
         applicaFiltriBaseComuni(sql, doc, userContext, isSmartworking);
+
+        // ==================== AGGIUNGI CLAUSOLE UTENTE ====================
+        if (clausesUtente != null) {
+            sql.addClause(clausesUtente);
+        }
 
         return sql;
     }

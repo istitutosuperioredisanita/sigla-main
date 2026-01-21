@@ -860,6 +860,14 @@
 		<findFieldProperty
 				name="dt_acquisizione" />
 	</freeSearchSet>
+
+	<freeSearchSet name="searchTrasportoRientro">
+		<findFieldProperty name="nr_inventario" />
+		<findFieldProperty name="etichetta" />
+		<findFieldProperty name="progressivo" />
+		<findFieldProperty name="ds_bene" />
+	</freeSearchSet>
+
     <form name="searchtool">		
 	    <formFieldProperty
 			name="nr_inventario"

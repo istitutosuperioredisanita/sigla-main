@@ -72,7 +72,6 @@
             nullable="false"
             formatName="date_short"
             label="Data Documento"/>
-<!--            command="doOnData_registrazioneChange"-->
 
 
     <fieldProperty
