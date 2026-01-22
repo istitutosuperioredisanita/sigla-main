@@ -576,7 +576,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
     /**
-     * Nasconde pulsante ELIMINA se annullato/inviato/definitivo con rientro
+     * Nasconde pulsante ELIMINA se annullato/inviato/definitivo con rientro NON annullato
      */
     @Override
     public boolean isDeleteButtonHidden() {
@@ -590,14 +590,12 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             return true;
         }
 
-        if (doc.isDefinitivo()) {
-            if (doc instanceof DocumentoRientroBulk) {
-                return true;
-            }
+        if (doc instanceof DocumentoRientroBulk && doc.isDefinitivo()) {
+            return true;
+        }
 
-            if (doc instanceof DocumentoTrasportoBulk) {
-                return haRientroAssociato();
-            }
+        if (doc instanceof DocumentoTrasportoBulk) {
+            return haRientroNonAnnullato();
         }
 
         return false;
@@ -609,9 +607,13 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
     /**
-     * Verifica se trasporto ha almeno un rientro associato (relazione 1:1)
+     * Verifica se trasporto ha almeno un rientro associato NON annullato.
+     * LOGICA:
+     * - Se NON ha rientri → return false (pulsante visibile)
+     * - Se ha rientri ANNULLATI → return false (pulsante visibile)
+     * - Se ha rientri ATTIVI (non annullati) → return true (pulsante nascosto)
      */
-    private boolean haRientroAssociato() {
+    private boolean haRientroNonAnnullato() {
         if (!(getDoc() instanceof DocumentoTrasportoBulk)) {
             return false;
         }
@@ -629,7 +631,15 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 DocumentoTrasportoDettBulk dettaglio = (DocumentoTrasportoDettBulk) obj;
 
                 if (dettaglio.getDocRientroDettRif() != null) {
-                    return true;
+                    Doc_trasporto_rientro_dettBulk rientroDettaglio = dettaglio.getDocRientroDettRif();
+
+                    if (rientroDettaglio.getDoc_trasporto_rientro() != null) {
+                        Doc_trasporto_rientroBulk docRientro = rientroDettaglio.getDoc_trasporto_rientro();
+
+                        if (!docRientro.isAnnullato()) {
+                            return true;
+                        }
+                    }
                 }
             }
         }
