@@ -25,7 +25,6 @@ public class ObblPluVociBP extends ConsultazioniBP{
             CompoundFindClause clauses = new CompoundFindClause();
             int annoSelezionato = CNRUserContext.getEsercizio(context.getUserContext()).intValue();
             clauses.addClause("AND","esercizio", SQLBuilder.EQUALS, annoSelezionato);
-            clauses.addClause("AND","esercizioOriginale", SQLBuilder.EQUALS, annoSelezionato);
             setBaseclause(clauses);
 
             super.init(config,context);
