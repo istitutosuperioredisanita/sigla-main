@@ -135,4 +135,6 @@
     <!-- Autore : CIRO SALVIO - Abilitazione partite di giro per le variazioni di bilancio-->
     <include file="iss/update_conf_partite_giro_variazione_iss.xml"/>
 
+    <!-- Autore : DAVIDE MIRRA-Configurazione per l'invio in firma di un DDT -->
+    <include file="iss/update_conf_gestione_invio_docTR.xml"/>
 </databaseChangeLog>

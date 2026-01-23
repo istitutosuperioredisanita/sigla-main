@@ -232,6 +232,12 @@
 				propertyName="causale_dismissione"
 				sqlTypeName="VARCHAR"
 				columnSize="100" />
+		<columnMapping
+				columnName="FL_BENE_IN_IST"
+				propertyName="fl_bene_in_ist"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="pg_ver_rec" />
@@ -305,4 +311,6 @@
 			name="dt_dismesso" />
 	<persistentProperty
 			name="causale_dismissione" />
+	<persistentProperty
+			name="fl_bene_in_ist" />
 </SQLPersistentInfo>

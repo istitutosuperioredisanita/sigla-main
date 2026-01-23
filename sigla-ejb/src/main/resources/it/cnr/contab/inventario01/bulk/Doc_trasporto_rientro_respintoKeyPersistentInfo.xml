@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_respintoKey">
+	<defaultColumnMap
+		tableName="DOC_TRASPORTO_RIENTRO_RESPINTO">
+		<columnMapping
+			columnName="ID"
+			propertyName="id"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="id"
+		partOfOid="true" />
+</SQLPersistentInfo>

@@ -18,16 +18,14 @@
 package it.cnr.contab.inventario00.docs.bulk;
 
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
-import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
-import it.cnr.contab.inventario01.bulk.Inventario_beni_apgBulk;
-import it.cnr.contab.inventario01.bulk.Inventario_beni_apgHome;
+import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.*;
 
@@ -37,322 +35,439 @@ import java.util.List;
 public class Inventario_beniHome extends BulkHome {
 
 
-public Inventario_beniHome(java.sql.Connection conn) {
-	super(Inventario_beniBulk.class,conn);
-}
-public Inventario_beniHome(java.sql.Connection conn,PersistentCache persistentCache) {
-	super(Inventario_beniBulk.class,conn,persistentCache);
-}
+    public Inventario_beniHome(java.sql.Connection conn) {
+        super(Inventario_beniBulk.class, conn);
+    }
+
+    public Inventario_beniHome(java.sql.Connection conn, PersistentCache persistentCache) {
+        super(Inventario_beniBulk.class, conn, persistentCache);
+    }
+
+
+    public java.util.Collection findCondizioni(Buono_carico_scaricoBulk buonoCarico,
+                                               it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettHome h,
+                                               Buono_carico_scarico_dettBulk clause) throws PersistencyException, IntrospectionException {
+        PersistentHome evHome = getHomeCache().getHome(Buono_carico_scaricoBulk.class);
+        SQLBuilder sql = evHome.createSQLBuilder();
+        sql.addClause("AND", "ti_documento", sql.EQUALS, "C");
+        return evHome.fetchAll(sql);
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (10/01/2002 16.20.47)
+     *
+     * @param bene it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk
+     * @return java.util.List
+     */
+    public Inventario_beniBulk getBenePrincipaleFor(it.cnr.jada.UserContext userContext, Inventario_beniBulk accessorio) throws IntrospectionException, PersistencyException {
+        if (accessorio.getProgressivo().intValue() == 0)
+            return null;
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, accessorio.getPg_inventario());
+        sql.addSQLClause("AND", "NR_INVENTARIO", sql.EQUALS, accessorio.getNr_inventario());
+        sql.addSQLClause("AND", "PROGRESSIVO", sql.EQUALS, new Integer(0));
+        Inventario_beniBulk principale = null;
+        SQLBroker broker = createBroker(sql);
+        if (broker.next()) {
+            principale = (Inventario_beniBulk) fetch(broker);
+        }
+        getHomeCache().fetchAll(userContext);
+        broker.close();
+        return principale;
+    }
+
+    public Inventario_beniBulk getBeneInventario(Long pgInventario, Long nrInventario, Long progressivo) throws PersistencyException {
+
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, pgInventario);
+        sql.addSQLClause("AND", "NR_INVENTARIO", sql.EQUALS, nrInventario);
+        sql.addSQLClause("AND", "PROGRESSIVO", sql.EQUALS, progressivo);
+        return (Inventario_beniBulk) fetchAll(sql).get(0);
+
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (10/01/2002 16.20.47)
+     *
+     * @param bene it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk
+     * @return java.util.List
+     */
+    public java.util.List getBeniAccessoriFor(Inventario_beniBulk principale) throws IntrospectionException, PersistencyException {
+        if (principale.getProgressivo().intValue() == 0) {
+            SQLBuilder sql = createSQLBuilder();
+            sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, principale.getPg_inventario());
+            sql.addSQLClause("AND", "NR_INVENTARIO", sql.EQUALS, principale.getNr_inventario());
+            sql.addSQLClause("AND", "PROGRESSIVO", sql.NOT_EQUALS, new Integer(0));
+            return fetchAll(sql);
+        }
+        return principale.getAccessori();
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (04/01/2002 12.50.29)
+     *
+     * @param userContext it.cnr.jada.UserContext
+     * @return java.util.List
+     */
+    public SQLBuilder getListaBeni(it.cnr.jada.UserContext userContext, Buono_carico_scaricoBulk buono, boolean no_accessori, SimpleBulkList beni_da_escludere) throws IntrospectionException, PersistencyException {
+        String nr_da_escludere = "";
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, buono.getPg_inventario());
+        sql.addSQLClause("AND", "FL_TOTALMENTE_SCARICATO", sql.EQUALS, Boolean.FALSE, java.sql.Types.VARCHAR, 0, new CHARToBooleanConverter(), true, false);
+        if (no_accessori) {
+            sql.addSQLClause("AND", "PROGRESSIVO", sql.EQUALS, "0");
+        }
+        if (beni_da_escludere != null && beni_da_escludere.size() > 0) {
+            for (java.util.Iterator i = beni_da_escludere.iterator(); i.hasNext(); ) {
+                Buono_carico_scarico_dettBulk bene = (Buono_carico_scarico_dettBulk) i.next();
+                if (!nr_da_escludere.equals("")) {
+                    nr_da_escludere = nr_da_escludere + ",";
+                }
+                nr_da_escludere = nr_da_escludere + "('" + bene.getBene().getNr_inventario() + "','" + bene.getBene().getProgressivo() + "')";
+            }
+            sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_da_escludere + ")");
+        }
+        // Aggiunta clausola che visualizzi solo i beni che abbiano
+        //	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
+        sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
+        sql.addSQLClause("AND", "DT_VALIDITA_VARIAZIONE", sql.LESS_EQUALS, new java.sql.Timestamp(buono.getData_registrazione().getTime()));
+        return sql;
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (04/01/2002 12.50.29)
+     *
+     * @param userContext it.cnr.jada.UserContext
+     * @return java.util.List
+     */
+    public SQLBuilder getListaBeni(it.cnr.jada.UserContext userContext, it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk inventario, boolean no_accessori, SimpleBulkList beni_da_escludere) throws IntrospectionException, PersistencyException {
+        String nr_prog_da_escludere = "";
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, inventario.getPg_inventario());
+        sql.addSQLClause("AND", "FL_TOTALMENTE_SCARICATO", sql.EQUALS, Boolean.FALSE, java.sql.Types.VARCHAR, 0, new CHARToBooleanConverter(), true, false);
+        if (no_accessori) {
+            sql.addSQLClause("AND", "PROGRESSIVO", sql.EQUALS, "0");
+        }
+        if (beni_da_escludere != null && beni_da_escludere.size() > 0) {
+            for (java.util.Iterator i = beni_da_escludere.iterator(); i.hasNext(); ) {
+                Inventario_beniBulk bene = (Inventario_beniBulk) i.next();
+                if (!nr_prog_da_escludere.equals("")) {
+                    nr_prog_da_escludere = nr_prog_da_escludere + ",";
+                }
+                nr_prog_da_escludere = nr_prog_da_escludere + "('" + bene.getNr_inventario() + "','" + bene.getProgressivo() + "')";
+            }
+            sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_prog_da_escludere + ")");
+        }
+        // Aggiunta clausola che visualizzi solo i beni che abbiano
+        //	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
+        sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
+        return sql;
+    }
+
+    public SQLBuilder getListaBeniDaScaricare(UserContext userContext, it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk inventario, boolean no_accessori, SimpleBulkList beni_da_escludere) throws IntrospectionException, PersistencyException {
+        SQLBuilder sql = createSQLBuilder();
+        String nr_da_escludere = "";
+        sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, inventario.getPg_inventario());
+        if (no_accessori) {
+            sql.addSQLClause("AND", "PROGRESSIVO", sql.EQUALS, "0");
+        }
+        if (beni_da_escludere != null && beni_da_escludere.size() > 0) {
+            for (java.util.Iterator i = beni_da_escludere.iterator(); i.hasNext(); ) {
+                Inventario_beniBulk bene = (Inventario_beniBulk) i.next();
+                if (!nr_da_escludere.equals("")) {
+                    nr_da_escludere = nr_da_escludere + ",";
+                }
+                nr_da_escludere = nr_da_escludere + "('" + bene.getNr_inventario() + "','" + bene.getProgressivo() + "')";
+            }
+            sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_da_escludere + ")");
+        }
+        // Aggiunta clausola che visualizzi solo i beni che abbiano
+        //	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
+        sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
+        return sql;
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (04/01/2002 12.50.29)
+     *
+     * @param userContext it.cnr.jada.UserContext
+     * @return java.util.List
+     */
+    public SQLBuilder getListaBeniDaScaricare(UserContext userContext, Buono_carico_scaricoBulk buonoS, boolean no_accessori, SimpleBulkList beni_da_escludere) throws IntrospectionException, PersistencyException {
+
+        String nr_da_escludere = "";
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, buonoS.getPg_inventario());
+        sql.addSQLClause("AND", "FL_TOTALMENTE_SCARICATO", sql.EQUALS, Boolean.FALSE, java.sql.Types.VARCHAR, 0, new CHARToBooleanConverter(), true, false);
+        sql.addSQLClause("AND", "DT_VALIDITA_VARIAZIONE", sql.LESS_EQUALS, buonoS.getData_registrazione());
+        if (no_accessori) {
+            sql.addSQLClause("AND", "PROGRESSIVO", sql.EQUALS, "0");
+        }
+        if (beni_da_escludere != null && beni_da_escludere.size() > 0) {
+            for (java.util.Iterator i = beni_da_escludere.iterator(); i.hasNext(); ) {
+                Inventario_beniBulk bene = (Inventario_beniBulk) i.next();
+                if (!nr_da_escludere.equals("")) {
+                    nr_da_escludere = nr_da_escludere + ",";
+                }
+                nr_da_escludere = nr_da_escludere + "('" + bene.getNr_inventario() + "','" + bene.getProgressivo() + "')";
+            }
+            sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_da_escludere + ")");
+        }
+        if (buonoS instanceof Trasferimento_inventarioBulk && ((Trasferimento_inventarioBulk) buonoS).isTrasferimentoIntraInv()) {
+            nr_da_escludere = "";
+            Inventario_beni_apgHome home = (Inventario_beni_apgHome) getHomeCache().getHome(Inventario_beni_apgBulk.class);
+            SQLBuilder notExistsQuery = home.createSQLBuilder();
+            notExistsQuery.addSQLClause("AND", "INVENTARIO_BENI_APG.NR_INVENTARIO_PRINCIPALE IS NOT NULL");
+            notExistsQuery.addSQLClause("AND", "INVENTARIO_BENI_APG.PROGRESSIVO_PRINCIPALE IS NOT NULL");
+            notExistsQuery.addSQLClause("AND", "INVENTARIO_BENI_APG.PG_INVENTARIO_PRINCIPALE IS NOT NULL");
+            notExistsQuery.addSQLClause("AND", "INVENTARIO_BENI_APG.LOCAL_TRANSACTION_ID", sql.EQUALS, buonoS.getLocal_transactionID());
+            List beni = home.fetchAll(notExistsQuery);
+            if (beni != null && beni.size() > 0) {
+                for (java.util.Iterator iteratore = beni.iterator(); iteratore.hasNext(); ) {
+                    Inventario_beni_apgBulk bene = (Inventario_beni_apgBulk) iteratore.next();
+                    if (!nr_da_escludere.equals("")) {
+                        nr_da_escludere = nr_da_escludere + ",";
+                    }
+                    nr_da_escludere = nr_da_escludere + "('" + bene.getNr_inventario_principale() + "','" + bene.getProgressivo_principale() + "')";
+                }
+                sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_da_escludere + ")");
+            }
+        }
+        // Aggiunta clausola che visualizzi solo i beni che abbiano
+        //	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
+        sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
+        return sql;
+    }
+
+
+    public SQLBuilder getListaBeniDaTrasportare(UserContext userContext, Doc_trasporto_rientroBulk docT, SimpleBulkList beni_da_escludere) throws IntrospectionException, PersistencyException {
+
+        String nr_da_escludere = "";
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, docT.getPgInventario());
+        sql.addSQLClause("AND", "FL_TOTALMENTE_SCARICATO", sql.EQUALS, Boolean.FALSE, java.sql.Types.VARCHAR, 0, new CHARToBooleanConverter(), true, false);
+        sql.addSQLClause("AND", "DT_VALIDITA_VARIAZIONE", sql.LESS_EQUALS, docT.getDataRegistrazione());
+
+        if (beni_da_escludere != null && beni_da_escludere.size() > 0) {
+            for (java.util.Iterator i = beni_da_escludere.iterator(); i.hasNext(); ) {
+                Inventario_beniBulk bene = (Inventario_beniBulk) i.next();
+                if (!nr_da_escludere.equals("")) {
+                    nr_da_escludere = nr_da_escludere + ",";
+                }
+                nr_da_escludere = nr_da_escludere + "('" + bene.getNr_inventario() + "','" + bene.getProgressivo() + "')";
+            }
+            sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_da_escludere + ")");
+        }
+        // Aggiunta clausola che visualizzi solo i beni che abbiano
+        //	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
+        sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
+        return sql;
+    }
+
+
+    public Long getMaxNr_Inventario(Long pg_inventario)
+            throws PersistencyException {
+        Long max = null;
+        Inventario_beniBulk bulk = new Inventario_beniBulk();
+        bulk.setInventario(new Id_inventarioBulk(pg_inventario));
+        bulk.setFl_migrato(false);
+        max = (Long) findMax(bulk, "nr_inventario", new Long(0));
+
+        return max;
+    }
+
+    public Long getMaxProgressivo_Accessorio(Inventario_beniBulk bene_principale)
+            throws PersistencyException {
+        Long max = null;
+        Inventario_beniBulk bulk = new Inventario_beniBulk();
+        bulk.setInventario(bene_principale.getInventario());
+        bulk.setNr_inventario(bene_principale.getNr_inventario());
+        max = (Long) findMax(bulk, "progressivo", new Long(0));
+        return max;
+    }
+
+    public java.util.Collection findUtilizzatori(it.cnr.jada.UserContext userContext, Inventario_beniBulk bene) throws IntrospectionException, PersistencyException {
+        PersistentHome home = getHomeCache().getHome(Inventario_utilizzatori_laBulk.class);
+
+        SQLBuilder sql = home.createSQLBuilder();
+        sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, bene.getPg_inventario());
+        sql.addSQLClause("AND", "NR_INVENTARIO", sql.EQUALS, bene.getNr_inventario());
+        sql.addSQLClause("AND", "PROGRESSIVO", sql.EQUALS, bene.getProgressivo());
+        sql.addOrderBy("NR_INVENTARIO");
+        java.util.Collection result = home.fetchAll(sql);
+        getHomeCache().fetchAll(userContext);
+        return result;
+    }
+
+    public java.sql.Timestamp getMaxDataFor(UserContext userContext, Id_inventarioBulk inventario) throws PersistencyException {
+
+        Timestamp Max_data_val = null;
+        Inventario_beniBulk bulk = new Inventario_beniBulk();
+        bulk.setEsercizio_carico_bene(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
+        bulk.setInventario(inventario);
+        bulk.setFl_totalmente_scaricato(false);
+
+        Max_data_val = (Timestamp) findMax(bulk, "dt_validita_variazione");
+        return Max_data_val;
+    }
+
+    public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono) throws IntrospectionException, PersistencyException {
+
+        SQLBuilder sql = createSQLBuilder();
+        sql.addTableToHeader("BUONO_CARICO_SCARICO_DETT");
+        sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO", "INVENTARIO_BENI.PG_INVENTARIO");
+        sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.NR_INVENTARIO", "INVENTARIO_BENI.NR_INVENTARIO");
+        sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.PROGRESSIVO", "INVENTARIO_BENI.PROGRESSIVO");
+        sql.addSQLClause("AND", "BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO", sql.EQUALS, buono.getPg_inventario());
+        sql.addSQLClause("AND", "BUONO_CARICO_SCARICO_DETT.ESERCIZIO", sql.EQUALS, buono.getEsercizio());
+        sql.addSQLClause("AND", "BUONO_CARICO_SCARICO_DETT.PG_BUONO_C_S", sql.EQUALS, buono.getPg_buono_c_s());
+        sql.addSQLClause("AND", "BUONO_CARICO_SCARICO_DETT.TI_DOCUMENTO", sql.EQUALS, buono.getTi_documento());
+        java.util.Collection result = fetchAll(sql);
+        return result;
+    }
+
+    public List findByTransito(Transito_beni_ordiniBulk transito_beni_ordiniBulk) throws PersistencyException {
+        SQLBuilder sqlBuilder = createSQLBuilder();
+        sqlBuilder.addSQLClause(FindClause.AND, "ID_TRANSITO_BENI_ORDINI", SQLBuilder.EQUALS, transito_beni_ordiniBulk.getId());
+        return fetchAll(sqlBuilder);
+    }
+
+    public boolean IsEtichettaBeneAlreadyExist(Buono_carico_scarico_dettBulk dett) throws java.sql.SQLException {
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "INVENTARIO_BENI.ETICHETTA", sql.EQUALS, dett.getBene().getEtichetta());
+        return sql.executeExistsQuery(getConnection());
+    }
+
+    public String aggiornamentoSqlInventarioBeneConAmmortamento(UserContext uc, Integer esercizio, String azione) {
+        String user = it.cnr.contab.utenze00.bp.CNRUserContext.getUser(uc);
+
+        if (azione.equals(Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO)) {
+            return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI i " +
+                    " SET VALORE_AMMORTIZZATO = ROUND(VALORE_AMMORTIZZATO + (" +
+                    "			SELECT SUM(NVL(IM_MOVIMENTO_AMMORT,0)) IM_MOVIMENTO_AMMORT_POS  " +
+                    " 			FROM  AMMORTAMENTO_BENE_INV a " +
+                    " 			WHERE ESERCIZIO=" + esercizio +
+                    "			AND FL_STORNO='N' " +
+                    "			AND a.NR_INVENTARIO = i.NR_INVENTARIO " +
+                    "			AND a.pg_inventario=i.PG_INVENTARIO " +
+                    "			AND a.progressivo=i.PROGRESSIVO" +
+                    "           GROUP BY nr_inventario,pg_inventario, progressivo),2) , " +
+                    "           DUVA = SYSDATE, " +
+                    "           UTUV = '" + user + "', " +
+                    " 			PG_VER_REC = PG_VER_REC+1 " +
+                    " WHERE  EXISTS ( " +
+                    "                 SELECT 1  FROM AMMORTAMENTO_BENE_INV a " +
+                    "                 WHERE a.NR_INVENTARIO = i.NR_INVENTARIO " +
+                    "                 AND a.pg_inventario=i.PG_INVENTARIO " +
+                    "			      AND a.progressivo=i.PROGRESSIVO " +
+                    "				  AND a.ESERCIZIO=" + esercizio +
+                    "				  AND a.FL_STORNO='N'" +
+                    ")";
+        } else {
+            return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI i " +
+                    " SET VALORE_AMMORTIZZATO = ROUND(VALORE_AMMORTIZZATO + " +
+                    "			(SELECT SUM(decode(sign(NVL(a.IM_MOVIMENTO_AMMORT,0)),-1,abs(NVL(a.IM_MOVIMENTO_AMMORT,0)),1,-abs(NVL(a.IM_MOVIMENTO_AMMORT,0)),0)) IM_MOVIMENTO_AMMORT_NEG " +
+                    " 			FROM  AMMORTAMENTO_BENE_INV a " +
+                    " 			WHERE ESERCIZIO=" + esercizio +
+                    "			AND FL_STORNO='N' " +
+                    "			AND a.NR_INVENTARIO = i.NR_INVENTARIO " +
+                    "			AND a.pg_inventario=i.PG_INVENTARIO " +
+                    "			AND a.progressivo=i.PROGRESSIVO" +
+                    "           GROUP BY nr_inventario,pg_inventario, progressivo),2) , " +
+                    "			DUVA = SYSDATE, " +
+                    "           UTUV = '" + user + "', " +
+                    " 			PG_VER_REC = PG_VER_REC+1 " +
+                    " WHERE  EXISTS ( " +
+                    "                 SELECT 1  FROM AMMORTAMENTO_BENE_INV a " +
+                    "                 WHERE a.NR_INVENTARIO = i.NR_INVENTARIO " +
+                    "                 AND a.pg_inventario=i.PG_INVENTARIO " +
+                    "			     AND a.progressivo=i.PROGRESSIVO " +
+                    "				 AND a.ESERCIZIO=" + esercizio +
+                    "				 AND a.FL_STORNO='N'" +
+                    ")";
+        }
+    }
 
 
 
+    public SQLBuilder findBeniUnificato(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            CompoundFindClause clausesUtente) throws IntrospectionException {
 
-public java.util.Collection findCondizioni(Buono_carico_scaricoBulk buonoCarico, 
-		it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettHome h,
-	Buono_carico_scarico_dettBulk clause) throws PersistencyException, IntrospectionException {
-	PersistentHome evHome = getHomeCache().getHome(Buono_carico_scaricoBulk.class);
-	SQLBuilder sql = evHome.createSQLBuilder();
-	sql.addClause("AND","ti_documento",sql.EQUALS, "C");
-	return evHome.fetchAll(sql);
-}
-/**
- * Insert the method's description here.
- * Creation date: (10/01/2002 16.20.47)
- * @return java.util.List
- * @param bene it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk
- */
-public Inventario_beniBulk getBenePrincipaleFor(it.cnr.jada.UserContext userContext,Inventario_beniBulk accessorio) throws IntrospectionException, PersistencyException {
-	if (accessorio.getProgressivo().intValue()==0)
-		return null;
-	SQLBuilder sql = createSQLBuilder();
-	sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,accessorio.getPg_inventario());
-	sql.addSQLClause("AND","NR_INVENTARIO",sql.EQUALS,accessorio.getNr_inventario());
-	sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS,new Integer(0));
-	Inventario_beniBulk principale = null;
-	SQLBroker broker = createBroker(sql);
-	if (broker.next()){
-		principale = (Inventario_beniBulk)fetch(broker);
-	}
-	getHomeCache().fetchAll(userContext);
-	broker.close();
-	return principale;
-}
-	public Inventario_beniBulk getBeneInventario(Long pgInventario,Long nrInventario, Long progressivo) throws PersistencyException {
+        SQLBuilder sql = createSQLBuilder();
 
-		SQLBuilder sql = createSQLBuilder();
-		sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,pgInventario);
-		sql.addSQLClause("AND","NR_INVENTARIO",sql.EQUALS,nrInventario);
-		sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS,progressivo);
-		return (Inventario_beniBulk)fetchAll(sql).get(0);
+        // ==================== FROM SENZA ALIAS ==================
+        StringBuffer from = new StringBuffer();
+        from.append("INVENTARIO_BENI ")
+                .append("INNER JOIN TERZO TZ ON INVENTARIO_BENI.CD_ASSEGNATARIO = TZ.CD_TERZO ")
+                .append("INNER JOIN ANAGRAFICO AG ON TZ.CD_ANAG = AG.CD_ANAG ")
+                .append("LEFT OUTER JOIN DOC_TRASPORTO_RIENTRO_DETT dett ON ( ")
+                .append("  dett.PG_INVENTARIO = INVENTARIO_BENI.PG_INVENTARIO AND ")
+                .append("  dett.NR_INVENTARIO = INVENTARIO_BENI.NR_INVENTARIO AND ")
+                .append("  dett.PROGRESSIVO = INVENTARIO_BENI.PROGRESSIVO ) ")
+                .append("LEFT OUTER JOIN DOC_TRASPORTO_RIENTRO t ON ( ")
+                .append("  t.PG_INVENTARIO = dett.PG_INVENTARIO AND ")
+                .append("  t.TI_DOCUMENTO = dett.TI_DOCUMENTO AND ")
+                .append("  t.ESERCIZIO = dett.ESERCIZIO AND ")
+                .append("  t.PG_DOC_TRASPORTO_RIENTRO = dett.PG_DOC_TRASPORTO_RIENTRO ) ");
 
-	}
+        sql.setFromClause(from);
 
-/**
- * Insert the method's description here.
- * Creation date: (10/01/2002 16.20.47)
- * @return java.util.List
- * @param bene it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk
- */
-public java.util.List getBeniAccessoriFor(Inventario_beniBulk principale) throws IntrospectionException, PersistencyException {
-	if (principale.getProgressivo().intValue()==0){
-		SQLBuilder sql = createSQLBuilder();
-		sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,principale.getPg_inventario());
-		sql.addSQLClause("AND","NR_INVENTARIO",sql.EQUALS,principale.getNr_inventario());
-		sql.addSQLClause("AND","PROGRESSIVO",sql.NOT_EQUALS,new Integer(0));
-		return fetchAll(sql);
-	}
-	return principale.getAccessori();
-}
-/**
- * Insert the method's description here.
- * Creation date: (04/01/2002 12.50.29)
- * @return java.util.List
- * @param userContext it.cnr.jada.UserContext
- */
-public SQLBuilder getListaBeni(it.cnr.jada.UserContext userContext, Buono_carico_scaricoBulk buono, boolean no_accessori, SimpleBulkList beni_da_escludere) throws IntrospectionException, PersistencyException{
-	String nr_da_escludere = "";
-	SQLBuilder sql = createSQLBuilder();
-	sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,buono.getPg_inventario());
-	sql.addSQLClause("AND","FL_TOTALMENTE_SCARICATO",sql.EQUALS,Boolean.FALSE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true,false);
-	if (no_accessori){
-		sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS, "0");
-	}
-	if (beni_da_escludere != null && beni_da_escludere.size()>0){
-		for (java.util.Iterator i = beni_da_escludere.iterator(); i.hasNext();){
-			Buono_carico_scarico_dettBulk bene = (Buono_carico_scarico_dettBulk)i.next();
-			if (!nr_da_escludere.equals("")){
-				nr_da_escludere = nr_da_escludere + ",";
-			}			
-			nr_da_escludere = nr_da_escludere + "('" + bene.getBene().getNr_inventario() + "','" + bene.getBene().getProgressivo() + "')";
-		}
-		sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_da_escludere + ")");
-	}	
-	// Aggiunta clausola che visualizzi solo i beni che abbiano 
-	//	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
-	sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-    sql.addSQLClause("AND","DT_VALIDITA_VARIAZIONE",sql.LESS_EQUALS,new java.sql.Timestamp(buono.getData_registrazione().getTime()));	
-	return sql;
-}
-/**
- * Insert the method's description here.
- * Creation date: (04/01/2002 12.50.29)
- * @return java.util.List
- * @param userContext it.cnr.jada.UserContext
- */
-public SQLBuilder getListaBeni(it.cnr.jada.UserContext userContext, it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk inventario, boolean no_accessori, SimpleBulkList beni_da_escludere) throws IntrospectionException, PersistencyException{
-	String nr_prog_da_escludere = "";
-	SQLBuilder sql = createSQLBuilder();
-	sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,inventario.getPg_inventario());
-	sql.addSQLClause("AND","FL_TOTALMENTE_SCARICATO",sql.EQUALS,Boolean.FALSE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true, false);
-	if (no_accessori){
-		sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS, "0");
-	}
-	if (beni_da_escludere != null && beni_da_escludere.size()>0){
-		for (java.util.Iterator i = beni_da_escludere.iterator(); i.hasNext();){
-			Inventario_beniBulk bene = (Inventario_beniBulk)i.next();
-			if (!nr_prog_da_escludere.equals("")){
-				nr_prog_da_escludere = nr_prog_da_escludere + ",";
-			}			
-			nr_prog_da_escludere = nr_prog_da_escludere + "('" + bene.getNr_inventario() + "','" + bene.getProgressivo() + "')";
-		}
-		sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_prog_da_escludere + ")");
-	}
-	// Aggiunta clausola che visualizzi solo i beni che abbiano 
-	//	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
-	sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
-	return sql;
-}
-public SQLBuilder getListaBeniDaScaricare(UserContext userContext,  it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk inventario, boolean no_accessori, SimpleBulkList beni_da_escludere) throws IntrospectionException, PersistencyException{
-	SQLBuilder sql = createSQLBuilder();
-	String nr_da_escludere = "";
-	sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,inventario.getPg_inventario());
-	if (no_accessori){
-		sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS, "0");
-	}
-	if (beni_da_escludere != null && beni_da_escludere.size()>0){
-			for (java.util.Iterator i = beni_da_escludere.iterator(); i.hasNext();){
-				Inventario_beniBulk bene = (Inventario_beniBulk)i.next();
-				if (!nr_da_escludere.equals("")){
-					nr_da_escludere = nr_da_escludere + ",";
-				}			
-				nr_da_escludere = nr_da_escludere + "('" + bene.getNr_inventario() + "','" + bene.getProgressivo() + "')";
-			}
-			sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_da_escludere + ")");
-		}
-	// Aggiunta clausola che visualizzi solo i beni che abbiano 
-	//	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
-	sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
-	return sql;
-}
-/**
- * Insert the method's description here.
- * Creation date: (04/01/2002 12.50.29)
- * @return java.util.List
- * @param userContext it.cnr.jada.UserContext
- */
-public SQLBuilder getListaBeniDaScaricare(UserContext userContext, Buono_carico_scaricoBulk buonoS, boolean no_accessori, SimpleBulkList beni_da_escludere) throws IntrospectionException, PersistencyException{
+        // ==================== FILTRI BASE COMUNI ====================
+        boolean isSmartworking = doc.isSmartworking() &&
+                doc.getAnagSmartworking() != null &&
+                doc.getAnagSmartworking().getCd_anag() != null;
 
-	String nr_da_escludere = "";
-	SQLBuilder sql = createSQLBuilder();	
-	sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,buonoS.getPg_inventario());
-    sql.addSQLClause("AND","FL_TOTALMENTE_SCARICATO",sql.EQUALS,Boolean.FALSE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true, false);
-    sql.addSQLClause("AND","DT_VALIDITA_VARIAZIONE",sql.LESS_EQUALS,buonoS.getData_registrazione());
-	if (no_accessori){
-		sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS, "0");
-	}
-	if (beni_da_escludere != null && beni_da_escludere.size()>0){
-		for (java.util.Iterator i = beni_da_escludere.iterator(); i.hasNext();){
-			Inventario_beniBulk bene = (Inventario_beniBulk)i.next();
-			if (!nr_da_escludere.equals("")){
-				nr_da_escludere = nr_da_escludere + ",";
-			}			
-			nr_da_escludere = nr_da_escludere + "('" + bene.getNr_inventario() + "','" + bene.getProgressivo() + "')";
-		}
-		sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_da_escludere + ")");
-	}
-	if (buonoS instanceof Trasferimento_inventarioBulk && ((Trasferimento_inventarioBulk)buonoS).isTrasferimentoIntraInv()){
-		nr_da_escludere = "";
-		Inventario_beni_apgHome home=(Inventario_beni_apgHome)getHomeCache().getHome(Inventario_beni_apgBulk.class);
-		SQLBuilder notExistsQuery=home.createSQLBuilder();
-		notExistsQuery.addSQLClause("AND","INVENTARIO_BENI_APG.NR_INVENTARIO_PRINCIPALE IS NOT NULL");
-		notExistsQuery.addSQLClause("AND","INVENTARIO_BENI_APG.PROGRESSIVO_PRINCIPALE IS NOT NULL");
-		notExistsQuery.addSQLClause("AND","INVENTARIO_BENI_APG.PG_INVENTARIO_PRINCIPALE IS NOT NULL");
-		notExistsQuery.addSQLClause("AND","INVENTARIO_BENI_APG.LOCAL_TRANSACTION_ID",sql.EQUALS,buonoS.getLocal_transactionID());
-		List beni = home.fetchAll(notExistsQuery);
-		if (beni != null && beni.size()>0){
-			for (java.util.Iterator iteratore = beni.iterator(); iteratore.hasNext();){
-				Inventario_beni_apgBulk bene = (Inventario_beni_apgBulk)iteratore.next();
-				if (!nr_da_escludere.equals("")){
-					nr_da_escludere = nr_da_escludere + ",";
-				}			
-				nr_da_escludere = nr_da_escludere + "('" + bene.getNr_inventario_principale() + "','" + bene.getProgressivo_principale() + "')";
-			}
-			sql.addSQLClause("AND", "(NR_INVENTARIO, PROGRESSIVO) NOT IN (" + nr_da_escludere + ")");
-		}
-	}
-	// Aggiunta clausola che visualizzi solo i beni che abbiano 
-	//	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
-	sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
-	return sql;
-}	
-public Long getMaxNr_Inventario(Long pg_inventario)
-	throws PersistencyException {
-	Long max = null;
-	Inventario_beniBulk bulk =new Inventario_beniBulk();
-	bulk.setInventario(new Id_inventarioBulk(pg_inventario));
-	bulk.setFl_migrato(false);
-	max=(Long)findMax(bulk,"nr_inventario",new Long(0));
-	
-	return max;
-}
+        applicaFiltriBaseComuni(sql, doc, userContext, isSmartworking);
 
-public Long getMaxProgressivo_Accessorio(Inventario_beniBulk bene_principale)
-	throws PersistencyException{
-	Long max = null;
-	Inventario_beniBulk bulk =new Inventario_beniBulk();
-	bulk.setInventario(bene_principale.getInventario());
-	bulk.setNr_inventario(bene_principale.getNr_inventario());
-	max=(Long)findMax(bulk,"progressivo",new Long(0));
-	return max;
-}
-public java.util.Collection findUtilizzatori(it.cnr.jada.UserContext userContext,Inventario_beniBulk bene)throws IntrospectionException,PersistencyException
-{				
-		PersistentHome home = getHomeCache().getHome(Inventario_utilizzatori_laBulk.class );
-		
-		SQLBuilder sql = home.createSQLBuilder();
-		sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS, bene.getPg_inventario());
-		sql.addSQLClause("AND","NR_INVENTARIO",sql.EQUALS, bene.getNr_inventario());
-		sql.addSQLClause("AND","PROGRESSIVO",sql.EQUALS, bene.getProgressivo());
-		sql.addOrderBy("NR_INVENTARIO");
-		java.util.Collection result = home.fetchAll( sql);
-		getHomeCache().fetchAll(userContext);
-		return result;
-}
-public java.sql.Timestamp getMaxDataFor(UserContext userContext, Id_inventarioBulk inventario)throws PersistencyException{
-	  
-		Timestamp Max_data_val=null;
-		Inventario_beniBulk bulk =new Inventario_beniBulk();
-		bulk.setEsercizio_carico_bene(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-		bulk.setInventario(inventario);
-		bulk.setFl_totalmente_scaricato(false);
-	  
-		Max_data_val = (Timestamp) findMax(bulk,"dt_validita_variazione");
-		return Max_data_val;
-	}
-public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)throws IntrospectionException,PersistencyException
-{				
-	
-		SQLBuilder sql = createSQLBuilder();
-		sql.addTableToHeader("BUONO_CARICO_SCARICO_DETT");
-		sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO","INVENTARIO_BENI.PG_INVENTARIO");
-		sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.NR_INVENTARIO","INVENTARIO_BENI.NR_INVENTARIO");
-		sql.addSQLJoin("BUONO_CARICO_SCARICO_DETT.PROGRESSIVO","INVENTARIO_BENI.PROGRESSIVO");
-		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.PG_INVENTARIO",sql.EQUALS, buono.getPg_inventario());
-		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.ESERCIZIO",sql.EQUALS, buono.getEsercizio());
-		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.PG_BUONO_C_S",sql.EQUALS, buono.getPg_buono_c_s());
-		sql.addSQLClause("AND","BUONO_CARICO_SCARICO_DETT.TI_DOCUMENTO",sql.EQUALS, buono.getTi_documento());
-		java.util.Collection result = fetchAll( sql);
-		return result;
-}
-	public List findByTransito(Transito_beni_ordiniBulk transito_beni_ordiniBulk) throws PersistencyException {
-		SQLBuilder sqlBuilder = createSQLBuilder();
-		sqlBuilder.addSQLClause(FindClause.AND, "ID_TRANSITO_BENI_ORDINI", SQLBuilder.EQUALS, transito_beni_ordiniBulk.getId());
-		return fetchAll(sqlBuilder);
-	}
+        // ==================== AGGIUNGI CLAUSOLE UTENTE ====================
+        if (clausesUtente != null) {
+            sql.addClause(clausesUtente);
+        }
 
-	public boolean IsEtichettaBeneAlreadyExist(Buono_carico_scarico_dettBulk dett) throws java.sql.SQLException {
-		SQLBuilder sql = createSQLBuilder();
-		sql.addSQLClause("AND", "INVENTARIO_BENI.ETICHETTA", sql.EQUALS, dett.getBene().getEtichetta());
-		return sql.executeExistsQuery(getConnection());
-	}
+        return sql;
+    }
 
-	public String aggiornamentoSqlInventarioBeneConAmmortamento(UserContext uc, Integer esercizio,String azione){
-		String user = it.cnr.contab.utenze00.bp.CNRUserContext.getUser(uc);
+    private void applicaFiltriBaseComuni(
+            SQLBuilder sql,
+            Doc_trasporto_rientroBulk doc,
+            UserContext userContext,
+            boolean isSmartworking) {
 
-		if(azione.equals(Ammortamento_bene_invBulk.INCREMENTA_VALORE_AMMORTIZZATO)) {
-			return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI i " +
-					" SET VALORE_AMMORTIZZATO = ROUND(VALORE_AMMORTIZZATO + (" +
-					"			SELECT SUM(NVL(IM_MOVIMENTO_AMMORT,0)) IM_MOVIMENTO_AMMORT_POS  " +
-					" 			FROM  AMMORTAMENTO_BENE_INV a " +
-					" 			WHERE ESERCIZIO=" + esercizio +
-					"			AND FL_STORNO='N' " +
-					"			AND a.NR_INVENTARIO = i.NR_INVENTARIO " +
-					"			AND a.pg_inventario=i.PG_INVENTARIO " +
-					"			AND a.progressivo=i.PROGRESSIVO" +
-					"           GROUP BY nr_inventario,pg_inventario, progressivo),2) , " +
-					"           DUVA = SYSDATE, " +
-					"           UTUV = '"+user+ "', "+
-					" 			PG_VER_REC = PG_VER_REC+1 " +
-					" WHERE  EXISTS ( " +
-					"                 SELECT 1  FROM AMMORTAMENTO_BENE_INV a " +
-					"                 WHERE a.NR_INVENTARIO = i.NR_INVENTARIO " +
-					"                 AND a.pg_inventario=i.PG_INVENTARIO " +
-					"			      AND a.progressivo=i.PROGRESSIVO " +
-					"				  AND a.ESERCIZIO=" + esercizio +
-					"				  AND a.FL_STORNO='N'" +
-					")" ;
-		}else{
-			return " UPDATE " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() + "INVENTARIO_BENI i " +
-					" SET VALORE_AMMORTIZZATO = ROUND(VALORE_AMMORTIZZATO + " +
-					"			(SELECT SUM(decode(sign(NVL(a.IM_MOVIMENTO_AMMORT,0)),-1,abs(NVL(a.IM_MOVIMENTO_AMMORT,0)),1,-abs(NVL(a.IM_MOVIMENTO_AMMORT,0)),0)) IM_MOVIMENTO_AMMORT_NEG " +
-					" 			FROM  AMMORTAMENTO_BENE_INV a " +
-					" 			WHERE ESERCIZIO=" + esercizio +
-					"			AND FL_STORNO='N' " +
-					"			AND a.NR_INVENTARIO = i.NR_INVENTARIO " +
-					"			AND a.pg_inventario=i.PG_INVENTARIO " +
-					"			AND a.progressivo=i.PROGRESSIVO" +
-					"           GROUP BY nr_inventario,pg_inventario, progressivo),2) , " +
-					"			DUVA = SYSDATE, " +
-					"           UTUV = '"+user+ "', "+
-					" 			PG_VER_REC = PG_VER_REC+1 " +
-					" WHERE  EXISTS ( " +
-					"                 SELECT 1  FROM AMMORTAMENTO_BENE_INV a " +
-					"                 WHERE a.NR_INVENTARIO = i.NR_INVENTARIO " +
-					"                 AND a.pg_inventario=i.PG_INVENTARIO " +
-					"			     AND a.progressivo=i.PROGRESSIVO " +
-					"				 AND a.ESERCIZIO=" + esercizio +
-					"				 AND a.FL_STORNO='N'" +
-					")";
-		}
-	}
+//        // Filtro dismissione
+//        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.FL_DISMESSO", SQLBuilder.EQUALS, "N");
+
+        // Filtro inventario
+        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.PG_INVENTARIO", SQLBuilder.EQUALS,
+                doc.getInventario().getPg_inventario());
+
+        // Filtro scarico
+        sql.openParenthesis(FindClause.AND);
+        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO", SQLBuilder.ISNULL, null);
+        sql.addSQLClause(FindClause.OR, "INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO", SQLBuilder.EQUALS, "N");
+        sql.closeParenthesis();
+
+        // Filtro data validità variazione
+        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.DT_VALIDITA_VARIAZIONE",
+                SQLBuilder.LESS_EQUALS, doc.getDataRegistrazione());
+
+        // Filtro esercizio carico
+        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.ESERCIZIO_CARICO_BENE",
+                SQLBuilder.LESS_EQUALS,
+                CNRUserContext.getEsercizio(userContext));
+
+        // ========== FILTRO UO: NON APPLICARE IN SMARTWORKING ==========
+        if (!isSmartworking) {
+            sql.addSQLClause(FindClause.AND, "AG.CD_UNITA_ORGANIZZATIVA",
+                    SQLBuilder.EQUALS,
+                    CNRUserContext.getCd_unita_organizzativa(userContext));
+        }
+    }
+
 }

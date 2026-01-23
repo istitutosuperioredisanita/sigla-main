@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroKey">
+	<defaultColumnMap
+		tableName="TIPO_TRASPORTO_RIENTRO">
+		<columnMapping
+			columnName="CD_TIPO_TRASPORTO_RIENTRO"
+			propertyName="cdTipoTrasportoRientro"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdTipoTrasportoRientro"
+		partOfOid="true" />
+</SQLPersistentInfo>

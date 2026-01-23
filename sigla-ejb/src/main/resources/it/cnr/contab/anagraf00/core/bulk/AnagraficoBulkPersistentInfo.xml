@@ -47,6 +47,9 @@
 		<columnMapping
 			columnName="PG_TIPOLOGIA"
 			propertyName="tipologia_istat.pg_tipologia" />
+		<columnMapping
+				columnName="CD_UNITA_ORGANIZZATIVA"
+				propertyName="unitaOrganizzativa.cd_unita_organizzativa"/>
 	</defaultColumnMap>
 
 	<persistentProperty
@@ -65,5 +68,7 @@
 		name="altraAssPrevidInps" />
 	<persistentProperty
 		name="tipologia_istat" />
+	<persistentProperty
+		name="unitaOrganizzativa" />
 	
 </SQLPersistentInfo>

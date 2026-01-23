@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+		persistentClassName="it.cnr.contab.inventario01.bulk.DocumentoRientroDettBulk"
+		homeClassName="it.cnr.contab.inventario01.bulk.DocumentoRientroDettHome">
+
+	<defaultColumnMap tableName="DOC_TRASPORTO_RIENTRO_DETT">
+
+		<columnMapping columnName="PG_INVENTARIO" propertyName="documentoRientro.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="TI_DOCUMENTO" propertyName="documentoRientro.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
+		<columnMapping columnName="ESERCIZIO" propertyName="documentoRientro.esercizio" sqlTypeName="DECIMAL" columnSize="4"/>
+		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO" propertyName="documentoRientro.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
+
+
+		<columnMapping columnName="ESERCIZIO_RIF" propertyName="docTrasportoDettRif.documentoTrasporto.esercizio" sqlTypeName="DECIMAL" columnSize="5"/>
+		<columnMapping columnName="TI_DOCUMENTO_RIF" propertyName="docTrasportoDettRif.documentoTrasporto.tiDocumento" sqlTypeName="CHAR" columnSize="1"/>
+		<columnMapping columnName="PG_DOC_TRASPORTO_RIENTRO_RIF" propertyName="docTrasportoDettRif.documentoTrasporto.pgDocTrasportoRientro" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="PROGRESSIVO_RIF" propertyName="docTrasportoDettRif.bene.progressivo" />
+		<columnMapping columnName="PG_INVENTARIO_RIF" propertyName="docTrasportoDettRif.documentoTrasporto.inventario.pg_inventario" />
+		<columnMapping columnName="NR_INVENTARIO_RIF" propertyName="docTrasportoDettRif.bene.nr_inventario" />
+
+		<columnMapping columnName="PG_INVENTARIO" propertyName="docTrasportoDettRif.bene.inventario.pg_inventario" />
+		<columnMapping columnName="PG_INVENTARIO" propertyName="bene.inventario.pg_inventario" sqlTypeName="DECIMAL" columnSize="10" />
+		<columnMapping columnName="NR_INVENTARIO" propertyName="bene.nr_inventario" sqlTypeName="DECIMAL" columnSize="10"/>
+		<columnMapping columnName="PROGRESSIVO" propertyName="bene.progressivo" sqlTypeName="DECIMAL" columnSize="10"/>
+
+
+	</defaultColumnMap>
+
+	<persistentProperty name="documentoRientro" partOfOid="true"/>
+	<persistentProperty name="docTrasportoDettRif" />
+	<persistentProperty name="bene" partOfOid="true"/>
+
+
+</SQLPersistentInfo>

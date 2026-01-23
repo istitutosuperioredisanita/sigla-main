@@ -22,6 +22,7 @@ public class Numerazione_coge_coanBulk extends Numerazione_coge_coanBase {
     public final static String TI_DOCUMENTO_COGE = "COGE";
     public final static String TI_DOCUMENTO_COAN = "COAN";
 
+    public final static  Long MAX_NUMERATORE = 9999999999L;
 
     public Numerazione_coge_coanBulk() {
         super();
