@@ -46,7 +46,7 @@ public class DocTraspRientSchedulerConfig {
             log.info("--- INIZIO Verifica firme HappySign documenti trasporto/rientro ---");
 
             // Delega l'esecuzione al service
-            docTRCronService.verificaFirmeDocumentiTrasportoRientro();
+          //  docTRCronService.verificaFirmeDocumentiTrasportoRientro();
 
             log.info("--- FINE Verifica firme HappySign documenti trasporto/rientro ---");
 

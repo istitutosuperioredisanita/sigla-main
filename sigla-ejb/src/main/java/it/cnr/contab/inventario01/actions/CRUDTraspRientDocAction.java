@@ -378,7 +378,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             salvaStampaSuCMIS(context, doc, pdfFile, false);
 
             DocTraspRientHappySignService happySignService = SpringUtil.getBean("docTraspRientHappySignService", DocTraspRientHappySignService.class);
-            String uuidHappysign = happySignService.inviaDocumentoAdHappySign(doc, pdfBytes);
+            String uuidHappysign = null;//happySignService.inviaDocumentoAdHappySign(doc, pdfBytes);
 
             doc.setIdFlussoHappysign(uuidHappysign);
             doc.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));

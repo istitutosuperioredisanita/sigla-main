@@ -2,12 +2,7 @@ package it.cnr.contab.inventario01.service;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.iss.si.dto.happysign.base.EnumEsitoFlowDocumentStatus;
-import it.iss.si.dto.happysign.request.GetDocumentDetailsRequest;
-import it.iss.si.dto.happysign.request.GetDocumentRequest;
-import it.iss.si.dto.happysign.request.GetStatusRequest;
-import it.iss.si.dto.happysign.response.GetDocumentDetailResponse;
-import it.iss.si.dto.happysign.response.GetDocumentResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +20,11 @@ import java.util.Optional;
  * Service per la verifica schedulata delle firme digitali
  * dei documenti di trasporto/rientro su HappySign
  */
+
+
 @Service
 public class DocTraspRientCronService {
-
+/*
     private static final Logger log = LoggerFactory.getLogger(DocTraspRientCronService.class);
 
     @Autowired(required = false)
@@ -42,10 +39,8 @@ public class DocTraspRientCronService {
     @Context
     SecurityContext securityContext;
 
-    /**
-     * Metodo principale chiamato dallo scheduler
-     */
-    @Transactional(propagation = Propagation.REQUIRED)
+    //Metodo principale chiamato dallo scheduler
+         @Transactional(propagation = Propagation.REQUIRED)
     public void verificaFirmeDocumentiTrasportoRientro() {
         try {
             log.info("Inizio verifica documenti trasporto/rientro su HappySign");
@@ -111,9 +106,8 @@ public class DocTraspRientCronService {
         }
     }
 
-    /**
-     * Processa un singolo documento verificandone lo stato su HappySign
-     */
+   //Processa un singolo documento verificandone lo stato su HappySign
+
     private EnumEsitoFlowDocumentStatus processaDocumentoHappySign(Doc_trasporto_rientroBulk documento) throws Exception {
 
         if (documento.getIdFlussoHappysign() == null || documento.getIdFlussoHappysign().isEmpty()) {
@@ -168,9 +162,8 @@ public class DocTraspRientCronService {
         return esito;
     }
 
-    /**
-     * Gestisce un documento firmato su HappySign
-     */
+    //Gestisce un documento firmato su HappySign
+
     private void gestioneDocumentoFirmato(Doc_trasporto_rientroBulk documento) throws Exception {
 
         log.info("Documento FIRMATO - {}/{}/{}/{}",
@@ -190,19 +183,19 @@ public class DocTraspRientCronService {
             }
 
             CNRUserContext systemUserContext = getUserContext();
-            /*
-            StorageObject so = docTrasportoRientroCMISService.salvaStampaDocumentoFirmatoSuCMIS(
-                    getDocumentResponse.getDocument(),
-                    documento,
-                    systemUserContext);
 
-            log.info("PDF firmato salvato su CMIS - Key: {}", so.getKey());
+            //StorageObject so = docTrasportoRientroCMISService.salvaStampaDocumentoFirmatoSuCMIS(
+            //        getDocumentResponse.getDocument(),
+             //       documento,
+               //     systemUserContext);
 
-            docTraspRientFlowService.aggiornaDocumentoFirmato(documento);
+            //log.info("PDF firmato salvato su CMIS - Key: {}", so.getKey());
 
-            log.info("Documento {} aggiornato a stato FIRMATO", documento.getPgDocTrasportoRientro());
+            //docTraspRientFlowService.aggiornaDocumentoFirmato(documento);
 
-             */
+            //log.info("Documento {} aggiornato a stato FIRMATO", documento.getPgDocTrasportoRientro());
+
+
 
         } catch (Exception e) {
             log.error("Errore salvataggio documento firmato", e);
@@ -210,9 +203,8 @@ public class DocTraspRientCronService {
         }
     }
 
-    /**
-     * Gestisce un documento rifiutato su HappySign
-     */
+    //Gestisce un documento rifiutato su HappySign
+
     private void gestioneDocumentoRifiutato(Doc_trasporto_rientroBulk documento) throws Exception {
 
         log.info("Documento RIFIUTATO - {}/{}/{}/{}",
@@ -241,10 +233,8 @@ public class DocTraspRientCronService {
         }
     }
 
-    /**
-     * Estrae il motivo del rifiuto dai dettagli del documento HappySign
-     */
-    private String estraiMotivoRifiuto(GetDocumentDetailResponse documentDetails) {
+    //Estrae il motivo del rifiuto dai dettagli del documento HappySign
+        private String estraiMotivoRifiuto(GetDocumentDetailResponse documentDetails) {
         if (documentDetails == null) {
             return "Documento rifiutato durante la firma digitale";
         }
@@ -281,9 +271,8 @@ public class DocTraspRientCronService {
         return motivo.toString();
     }
 
-    /**
-     * Ottiene il CNRUserContext dal SecurityContext
-     */
+    //Ottiene il CNRUserContext dal SecurityContext
+
     private CNRUserContext getUserContext() {
         if (securityContext != null && securityContext.getUserPrincipal() instanceof CNRUserContext) {
             return (CNRUserContext) securityContext.getUserPrincipal();
@@ -292,4 +281,5 @@ public class DocTraspRientCronService {
         log.warn("SecurityContext non disponibile, uso CNRUserContext vuoto");
         return new CNRUserContext();
     }
+    */
 }

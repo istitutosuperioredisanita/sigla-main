@@ -20,8 +20,7 @@ package it.cnr.contab.inventario01.service;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.jada.comp.ComponentException;
-import it.iss.si.dto.happysign.base.Signer;
-import it.iss.si.service.HappySignService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DocTraspRientHappySignService {
-
+/*
     private static final Logger log = LoggerFactory.getLogger(DocTraspRientHappySignService.class);
 
     @Value("${flows.templateFirme.1firma:#{null}}")
@@ -104,9 +103,8 @@ public class DocTraspRientHappySignService {
             throw new ComponentException("Errore invio a HappySign: " + e.getMessage(), e);
         }
     }
-    /**
-     * Valida che ci siano tutti i firmatari necessari
-     */
+   //Valida che ci siano tutti i firmatari necessari
+
     private void validaFirmatari(Doc_trasporto_rientroBulk documento) throws ComponentException {
 
         // ==================== VERIFICA CONSEGNATARIO ====================
@@ -160,9 +158,8 @@ public class DocTraspRientHappySignService {
         }
     }
 
-    /**
-     * Valida i dati anagrafici necessari per la firma
-     */
+    // Valida i dati anagrafici necessari per la firma
+
     private void validaDatiAnagrafica(AnagraficoBulk anagrafica, String ruolo) throws ComponentException {
         if (anagrafica.getNome() == null || anagrafica.getNome().trim().isEmpty()) {
             throw new ComponentException("Nome non disponibile per " + ruolo);
@@ -177,10 +174,8 @@ public class DocTraspRientHappySignService {
         }
     }
 
-    /**
-     * Crea la lista dei firmatari per HappySign
-     */
-    private List<Signer> creaListaFirmatari(Doc_trasporto_rientroBulk documento) throws ComponentException {
+    //Crea la lista dei firmatari per HappySign
+         private List<Signer> creaListaFirmatari(Doc_trasporto_rientroBulk documento) throws ComponentException {
         List<Signer> signers = new ArrayList<>();
         int ordine = 1;
 
@@ -258,14 +253,14 @@ public class DocTraspRientHappySignService {
         return signers;
     }
 
-    /**
-     * Costruisce l'email nel formato nome.cognome@iss.it
-     * Tutto in minuscolo, rimuove spazi e caratteri speciali
-     *
-     * @param nome Nome della persona
-     * @param cognome Cognome della persona
-     * @return Email nel formato nome.cognome@iss.it
-     */
+    //
+    // Costruisce l'email nel formato nome.cognome@iss.it
+    //* Tutto in minuscolo, rimuove spazi e caratteri speciali
+    // *
+    // * @param nome Nome della persona
+    // * @param cognome Cognome della persona
+    // * @return Email nel formato nome.cognome@iss.it
+    //
     private String costruisciEmail(String nome, String cognome) throws ComponentException {
         if (nome == null || nome.trim().isEmpty()) {
             throw new ComponentException("Nome non disponibile per costruire l'email");
@@ -286,9 +281,9 @@ public class DocTraspRientHappySignService {
         return email;
     }
 
-    /**
-     * Pulisce una stringa per l'uso nell'email usando normalizzazione Unicode
-     */
+    //
+    // Pulisce una stringa per l'uso nell'email usando normalizzazione Unicode
+    //
     private String pulisciStringa(String stringa) {
         if (stringa == null || stringa.trim().isEmpty()) {
             return "";
@@ -310,9 +305,8 @@ public class DocTraspRientHappySignService {
         return risultato;
     }
 
-    /**
-     * Crea un oggetto Signer per HappySign
-     */
+    // Crea un oggetto Signer per HappySign
+
     private Signer creaSigner(String nome, String cognome, String email,
                               String codiceFiscale, int ordine) {
         Signer signer = new Signer();
@@ -324,9 +318,8 @@ public class DocTraspRientHappySignService {
         return signer;
     }
 
-    /**
-     * Costruisce il nome del documento per HappySign
-     */
+    // Costruisce il nome del documento per HappySign
+
     private String costruisciNomeDocumento(Doc_trasporto_rientroBulk documento) {
         StringBuilder nome = new StringBuilder();
 
@@ -348,5 +341,6 @@ public class DocTraspRientHappySignService {
 
         return nome.toString();
     }
+    */
 }
 
