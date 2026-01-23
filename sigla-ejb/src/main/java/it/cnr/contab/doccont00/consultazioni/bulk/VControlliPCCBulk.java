@@ -10,6 +10,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Persistent;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Dictionary;
 
@@ -113,6 +114,12 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 	private java.lang.Integer cdTerzo;
 	//  DS_TERZO VARCHAR(200)
 	private java.lang.String dsTerzo;
+
+	private String riepilogo_cds_codice;
+	private String riepilogo_cds_descrizione;
+	private String riepilogo_uo_codice;
+	private String riepilogo_uo_descrizione;
+	private BigDecimal riepilogo_totale;
 
 	public static final java.util.Dictionary<String, String> tiStatoDocumentoKeys = DocumentoEleTestataBulk.tiStatoDocumentoKeys;
 	public static final java.util.Dictionary<String, String> tiTipoDocumentoKeys = DocumentoEleTestataBulk.tiTipoDocumentoKeys;
@@ -498,5 +505,45 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 
 	public void setDsTerzo(String dsTerzo) {
 		this.dsTerzo = dsTerzo;
+	}
+
+	public String getRiepilogo_cds_codice() {
+		return riepilogo_cds_codice;
+	}
+
+	public void setRiepilogo_cds_codice(String riepilogo_cds_codice) {
+		this.riepilogo_cds_codice = riepilogo_cds_codice;
+	}
+
+	public String getRiepilogo_cds_descrizione() {
+		return riepilogo_cds_descrizione;
+	}
+
+	public void setRiepilogo_cds_descrizione(String riepilogo_cds_descrizione) {
+		this.riepilogo_cds_descrizione = riepilogo_cds_descrizione;
+	}
+
+	public String getRiepilogo_uo_codice() {
+		return riepilogo_uo_codice;
+	}
+
+	public void setRiepilogo_uo_codice(String riepilogo_uo_codice) {
+		this.riepilogo_uo_codice = riepilogo_uo_codice;
+	}
+
+	public String getRiepilogo_uo_descrizione() {
+		return riepilogo_uo_descrizione;
+	}
+
+	public void setRiepilogo_uo_descrizione(String riepilogo_uo_descrizione) {
+		this.riepilogo_uo_descrizione = riepilogo_uo_descrizione;
+	}
+
+	public BigDecimal getRiepilogo_totale() {
+		return riepilogo_totale;
+	}
+
+	public void setRiepilogo_totale(BigDecimal riepilogo_totale) {
+		this.riepilogo_totale = riepilogo_totale;
 	}
 }

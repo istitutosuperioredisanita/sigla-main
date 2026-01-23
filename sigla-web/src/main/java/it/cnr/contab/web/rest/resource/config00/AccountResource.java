@@ -17,12 +17,10 @@
 
 package it.cnr.contab.web.rest.resource.config00;
 
-import it.cnr.contab.security.auth.SIGLALDAPPrincipal;
-import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.spring.service.UtilService;
 import it.cnr.contab.utente00.nav.ejb.GestioneLoginComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
+import it.cnr.contab.utenze00.bulk.Utente_unita_ruoloBulk;
 import it.cnr.contab.web.rest.exception.InvalidPasswordException;
 import it.cnr.contab.web.rest.exception.UnprocessableEntityException;
 import it.cnr.contab.web.rest.local.config00.AccountLocal;
@@ -32,20 +30,20 @@ import it.cnr.contab.web.rest.resource.util.AbstractResource;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import jakarta.ejb.EJB;
-import jakarta.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.ejb.Stateless;
-import jakarta.servlet.http.HttpServletRequest;
 import org.wildfly.security.auth.server.SecurityDomain;
 import org.wildfly.security.auth.server.SecurityIdentity;
 import org.wildfly.security.authz.Attributes;
 
-import java.util.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -151,6 +149,22 @@ public class AccountResource implements AccountLocal {
             accountDTO.setAbilitatoLdap(Boolean.FALSE);
             accountDTO.setUtenteMultiplo(Boolean.FALSE);
         }
+        /**
+         * Cerco il ruoli assegnati all'utenza
+         */
+        accountDTO.setApplicationRole(crudComponentSession.find(
+                        userContext,
+                        Utente_unita_ruoloBulk.class,
+                        "findRuoliByCdUtente",
+                        userContext,
+                        accountDTO.getUsername(),
+                        null)
+                .stream()
+                .map(Utente_unita_ruoloBulk.class::cast)
+                .map(Utente_unita_ruoloBulk::getCd_ruolo)
+                .map(s -> String.format("APPLICATION_ROLE_%s", s))
+                .distinct()
+                .toList());
         accountDTO.setEsercizio(userContext.getEsercizio());
         accountDTO.setCds(userContext.getCd_cds());
         accountDTO.setUo(userContext.getCd_unita_organizzativa());
@@ -197,12 +211,12 @@ public class AccountResource implements AccountLocal {
         byte[] buser = utente.getCd_utente().getBytes();
         byte[] bpassword = newPassword.toUpperCase().getBytes();
         byte h = 0;
-        for (int i = 0;i < bpassword.length;i++) {
-            h = (byte)(bpassword[i] ^ h);
-            for (int j = 0;j < buser.length;j++)
+        for (int i = 0; i < bpassword.length; i++) {
+            h = (byte) (bpassword[i] ^ h);
+            for (int j = 0; j < buser.length; j++)
                 bpassword[i] ^= buser[j] ^ h;
         }
-        utente.setPassword( Base64.getEncoder().encodeToString(bpassword));
+        utente.setPassword(Base64.getEncoder().encodeToString(bpassword));
         utente.setDt_ultima_var_password(EJBCommonServices.getServerTimestamp());
         utente.setToBeUpdated();
         crudComponentSession.modificaConBulk(userContext, utente);

@@ -18,7 +18,8 @@
 package it.cnr.contab.web.rest.config;
 
 public final class SIGLARoles {
-	public static final String MISSIONI = "MISSIONI",
+	public static final String
+			MISSIONI = "MISSIONI",
 			PORTALE = "REST_PORTALE",
 			PARCO_AUTO = "PAUTO_REST",
 			CONTRATTO = "CONTRATTO",
@@ -26,5 +27,7 @@ public final class SIGLARoles {
 			TERZO = "TERZO_REST",
 			ANAGRAFICO = "ANAGRAFICO_REST",
 			LINEA_ATTIVITA = "LINEATTIVA_REST",
-			OBBLIGAZIONE = "OBBLIGAZONE_REST";
+			OBBLIGAZIONE = "OBBLIGAZONE_REST",
+			INDICEPAGAMENTI ="INDICEPAGAMENTI",
+			SUPERVISORE = "SUPER";
 }

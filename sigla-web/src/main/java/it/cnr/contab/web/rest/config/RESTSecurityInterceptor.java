@@ -26,6 +26,7 @@ import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.exception.UnauthorizedException;
 import it.cnr.contab.web.rest.resource.util.AbstractResource;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.comp.ComponentException;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.container.*;
@@ -142,9 +143,15 @@ public class RESTSecurityInterceptor implements ContainerRequestFilter, Containe
                         LOGGER.warn("Errore parsing JWT", e);
                     }
                 }
-
 				if(utenteBulk == null) {
-					utenteBulk = BasicAuthentication.authenticate(httpServletRequest, authorization);
+					if (authorization == null) {
+						UserContext userContext = HttpActionContext.getUserContext(httpServletRequest.getSession(false));
+						if (userContext != null) {
+							utenteBulk = BasicAuthentication.findUtenteBulk(userContext.getUser());
+						}
+					} else {
+						utenteBulk = BasicAuthentication.authenticate(httpServletRequest, authorization);
+					}
 				}
 				if (utenteBulk == null && !requestContext.getUriInfo().getPath().startsWith(ACCOUNT)){
 					if (username != null)

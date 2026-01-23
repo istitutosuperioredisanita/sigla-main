@@ -21,44 +21,50 @@
 		xmlns="https://contab.cnr.it/schema/SIGLA"
 		shortDescription="Stampa Indice Tempestività Pagamenti"
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
-		
-	<fieldProperty
-		name="esercizio"
-		property="esercizio"
-		inputType="ROTEXT"
-		label="Esercizio"/>
 
 	<fieldProperty
-		name="trimestre"
-		property="trimestre"
-		keysProperty="trimesteValues"
-		inputType="RADIOGROUP"
-		layout = "VERTICAL"
-		label="Trimestre" />
+			name="esercizio"
+			property="esercizio"
+			inputType="ROTEXT"
+			label="Esercizio"/>
+
 	<fieldProperty
-		name="dettagli"
-		property="dettagli"
-		inputType="CHECKBOX"
-		nullable="true"
-		label="Stampa dettagli" />
+			name="trimestre"
+			property="trimestre"
+			keysProperty="trimesteValues"
+			inputType="RADIOGROUP"
+			layout = "VERTICAL"
+			label="Trimestre" />
+	<fieldProperty
+			name="dettagli"
+			property="dettagli"
+			inputType="CHECKBOX"
+			command="doDefault"
+			nullable="true"
+			label="Stampa dettagli" />
 
 	<formFieldProperty name="esercizio" />
 	<formFieldProperty name="trimestre" />
 	<formFieldProperty name="dettagli" />
 
 	<printForm
-		name="/doccont/doccont/indice_tempestivita_pagamenti.jasper">
-		<printFieldProperty 
-			name="esercizio"
-			paramNameJR="esercizio"
-			paramTypeJR="java.lang.Integer" />
-		<printFieldProperty 
-			name="trimestre"
-			paramNameJR="trimestre"
-			paramTypeJR="java.lang.String" />
-		<printFieldProperty 
-			name="dettagli"
-			paramNameJR="dettagli"
-			paramTypeJR="java.lang.Boolean"/>
+			name="/doccont/doccont/indice_tempestivita_pagamenti.jasper">
+		<printFieldProperty
+				name="esercizio"
+				paramNameJR="esercizio"
+				paramTypeJR="java.lang.Integer" />
+		<printFieldProperty
+				name="trimestre"
+				paramNameJR="trimestre"
+				paramTypeJR="java.lang.String" />
+		<printFieldProperty
+				name="dettagli"
+				paramNameJR="dettagli"
+				paramTypeJR="java.lang.Boolean"/>
+		<printFieldProperty
+				name="uo_documento"
+				property="uo_documento"
+				paramNameJR="uo_documento"
+				paramTypeJR="java.lang.String" />
 	</printForm>
 </bulkInfo>
