@@ -302,11 +302,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>it.iss.si</groupId>
-            <artifactId>happysign-client</artifactId>
-            <version>${happysign.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -714,15 +710,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>iss</id>
-            <dependencies>
-                <dependency>
-                    <groupId>it.iss.si</groupId>
-                    <artifactId>happysign-client</artifactId>
-                    <version>${happysign.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
+
     </profiles>
 </project>
