@@ -113,34 +113,6 @@
 			propertyName="ds_elemento_voce"
 			sqlTypeName="VARCHAR"
 			columnSize="300" />
-		<columnMapping
-			columnName="IMP_ORDINE"
-			propertyName="imp_ordine"
-			sqlTypeName="DECIMAL"
-			columnSize="15"
-			columnScale="2"
-			nullable="true" />
-		<columnMapping
-			columnName="IMP_EVASO"
-			propertyName="imp_evaso"
-			sqlTypeName="DECIMAL"
-			columnSize="15"
-			columnScale="2"
-			nullable="true" />
-		<columnMapping
-			columnName="IMP_ASS_FATTURA"
-			propertyName="imp_ass_fattura"
-			sqlTypeName="DECIMAL"
-			columnSize="15"
-			columnScale="2"
-			nullable="true" />
-		<columnMapping
-			columnName="IMP_ASS_DOC_AMM"
-			propertyName="imp_ass_doc_amm"
-			sqlTypeName="DECIMAL"
-			columnSize="15"
-			columnScale="2"
-			nullable="true" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="cds" />
@@ -172,6 +144,39 @@
 		name="creditore" />
 	<persistentProperty
 		name="ds_elemento_voce" />
+
+	<columnMap name="ANNO_CORRENTE"
+			   tableName="V_CONS_SCAD_OBBL_ANNO_CORRENTE"
+			   extends="default">
+		<columnMapping
+				columnName="IMP_ORDINE"
+				propertyName="imp_ordine"
+				sqlTypeName="DECIMAL"
+				columnSize="15"
+				columnScale="2"
+				nullable="true" />
+		<columnMapping
+				columnName="IMP_EVASO"
+				propertyName="imp_evaso"
+				sqlTypeName="DECIMAL"
+				columnSize="15"
+				columnScale="2"
+				nullable="true" />
+		<columnMapping
+				columnName="IMP_ASS_FATTURA"
+				propertyName="imp_ass_fattura"
+				sqlTypeName="DECIMAL"
+				columnSize="15"
+				columnScale="2"
+				nullable="true" />
+		<columnMapping
+				columnName="IMP_ASS_DOC_AMM"
+				propertyName="imp_ass_doc_amm"
+				sqlTypeName="DECIMAL"
+				columnSize="15"
+				columnScale="2"
+				nullable="true" />
+	</columnMap>
 	<persistentProperty
 		name="imp_ordine" />
 	<persistentProperty
