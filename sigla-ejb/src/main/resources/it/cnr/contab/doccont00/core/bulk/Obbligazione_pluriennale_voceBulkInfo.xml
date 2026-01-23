@@ -9,38 +9,27 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Cds dell'obbligazione"/>
+		label="Cds"/>
 	<fieldProperty
 		name="esercizio"
-		property="obbligazionePluriennale.esercizio"
+		property="obbligazionePluriennale.obbligazione.esercizio"
 		inputType="TEXT"
 		inputSize="5"
 		maxLength="5"
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Esercizio dell'obbligazione" />
+		label="Esercizio" />
 	<fieldProperty
 		name="esercizioOriginale"
-		property="obbligazionePluriennale.esercizioOriginale"
+		property="obbligazionePluriennale.obbligazione.esercizio_originale"
 		inputType="TEXT"
 		inputSize="5"
 		maxLength="5"
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Esercizio Originale dell'obbligazione" />
-<!--	<fieldProperty-->
-<!--		name="pgObbligazione"-->
-<!--		property="obbligazionePluriennale.pgObbligazione"-->
-<!--		inputType="TEXTAREA"-->
-<!--		cols="60"-->
-<!--		rows="5"-->
-<!--		maxLength="38"-->
-<!--		enabledOnEdit="false"-->
-<!--		enabledOnSearch="false"-->
-<!--		nullable="false"-->
-<!--		label="Numero dell'obbligazione" />-->
+		label="Esercizio Originale" />
 	<fieldProperty
 			name="pgObbligazione"
 			property="obbligazionePluriennale.obbligazione.pg_obbligazione"
@@ -61,7 +50,7 @@
 		enabledOnSearch="false"
 		nullable="false"
 		command="doOnAnnoObbligazionePluriennaleChange"
-		label="Anno Obbligazione Pluriennale" />
+		label="Anno Pluriennale" />
 	<fieldProperty
 		name="cdCentroResponsabilita"
 		property="linea_attivita.centro_responsabilita.cd_centro_responsabilita"
@@ -71,7 +60,7 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Codice identificativo del centro di responsabilità" />
+		label="Codice voce" />
 	<fieldProperty
 		name="cdLineaAttivita"
 		property="linea_attivita.cd_linea_attivita"
@@ -81,7 +70,7 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Codice della linea di attivita" />
+		label="Linea di attivita" />
 	<fieldProperty
 		name="esercizioVoce"
 		property="elementoVoce.esercizio"
@@ -115,14 +104,12 @@
 	<fieldProperty
 		name="cdVoce"
 		property="elementoVoce.cd_elemento_voce"
-		inputType="TEXTAREA"
-		cols="60"
-		rows="5"
+		inputType="TEXT"
 		maxLength="50"
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Codice del capitolo finanziario (mastrino VOCE_F) di riferimento dell'obbligazione" />
+		label="Codice del capitolo finanziario (mastrino VOCE_F)" />
 	<fieldProperty
 		name="importo"
 		property="importo"
@@ -238,11 +225,19 @@
 
 	<freeSearchSet name="CERCA_IMP_PLUR">
 		<findFieldProperty
-				name="cdCds" label ="Cds dell'obbligazione"/>
+				name="cdCds" />
 		<findFieldProperty
-				name="pgObbligazione" label ="Numero dell'obbligazione"/>
+				name="esercizioOriginale" />
 		<findFieldProperty
-				name="anno"/>
+				name="pgObbligazione" />
+		<findFieldProperty
+				name="cdVoce" />
+		<findFieldProperty
+				name="cdCentroResponsabilita" />
+		<findFieldProperty
+				name="cdLineaAttivita" />
+		<findFieldProperty
+				name="anno" />
 	</freeSearchSet>
 
 	<columnSet name="RIS_IMP_PLUR">
