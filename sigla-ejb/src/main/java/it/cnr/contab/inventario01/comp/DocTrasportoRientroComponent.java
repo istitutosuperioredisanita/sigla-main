@@ -2606,31 +2606,42 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
                 List beniInTrasportoDefinitivo = dettHome.fetchAll(sql2);
 
-                // Verifica che TUTTI i beni siano presenti in trasporto definitivo
-                if (beniInTrasportoDefinitivo == null ||
-                        beniInTrasportoDefinitivo.size() != beniDaValidare.size()) {
+                List<Inventario_beniBulk> beniTrovati = new ArrayList<>();
 
-                    // Identifica i beni mancanti
-                    Set<String> beniTrovati = new HashSet<>();
-                    if (beniInTrasportoDefinitivo != null) {
-                        for (Object obj : beniInTrasportoDefinitivo) {
-                            Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) obj;
-                            beniTrovati.add(dett.getNr_inventario() + "." + dett.getProgressivo());
+                if (beniInTrasportoDefinitivo != null) {
+                    for (Object obj : beniInTrasportoDefinitivo) {
+                        Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) obj;
+                        beniTrovati.add(dett.getBene());
+                    }
+                }
+
+                List<Inventario_beniBulk> beniMancanti = new ArrayList<>();
+                for (Inventario_beniBulk bene : beniDaValidare) {
+                    boolean trovato = false;
+
+                    for (Inventario_beniBulk beneTrovato : beniTrovati) {
+                        if (beneTrovato.equalsByPrimaryKey(bene)) {
+                            trovato = true;
+                            break;
                         }
                     }
 
-                    StringBuilder beniMancanti = new StringBuilder();
-                    for (Inventario_beniBulk bene : beniDaValidare) {
-                        String chiave = bene.getNr_inventario() + "." + bene.getProgressivo();
-                        if (!beniTrovati.contains(chiave)) {
-                            if (beniMancanti.length() > 0) beniMancanti.append(", ");
-                            beniMancanti.append(chiave);
-                        }
+                    if (!trovato) {
+                        beniMancanti.add(bene);
+                    }
+                }
+
+                if (!beniMancanti.isEmpty()) {
+                    StringBuilder msg = new StringBuilder();
+                    for (int i = 0; i < beniMancanti.size(); i++) {
+                        if (i > 0) msg.append(", ");
+                        Inventario_beniBulk bene = beniMancanti.get(i);
+                        msg.append(bene.getNr_inventario()).append(".").append(bene.getProgressivo());
                     }
 
                     throw new ApplicationException(
                             "Impossibile procedere: i seguenti beni non sono presenti in un documento di TRASPORTO DEFINITIVO: "
-                                    + beniMancanti.toString());
+                                    + msg.toString());
                 }
             }
 
