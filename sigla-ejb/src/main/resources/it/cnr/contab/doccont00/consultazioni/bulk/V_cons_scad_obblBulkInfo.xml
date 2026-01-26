@@ -135,7 +135,7 @@
 		formatName = "it.cnr.contab.util.EuroFormat"
 		maxLength="16"
 		inputSize="16"
-		label="Importo Ordinato" />
+		label="Ordini associati" />
 	<fieldProperty
 		name="imp_evaso"
 		property="imp_evaso"
@@ -143,7 +143,7 @@
 		formatName = "it.cnr.contab.util.EuroFormat"
 		maxLength="16"
 		inputSize="16"
-		label="Importo Evaso" />
+		label="Di cui evaso" />
 	<fieldProperty
 		name="imp_ass_fattura"
 		property="imp_ass_fattura"
@@ -151,7 +151,7 @@
 		formatName = "it.cnr.contab.util.EuroFormat"
 		maxLength="16"
 		inputSize="16"
-		label="Importo Associato a Fattura da Ordine" />
+		label="Di cui fatturato" />
 	<fieldProperty
 		name="imp_ass_doc_amm"
 		property="imp_ass_doc_amm"
@@ -159,7 +159,7 @@
 		formatName = "it.cnr.contab.util.EuroFormat"
 		maxLength="16"
 		inputSize="16"
-		label="Importo Associato a Doc. Amm." />
+		label="Altri documenti amministrativi associati" />
 
 	<formFieldProperty
 		name="cds" />
@@ -215,13 +215,7 @@
 	<findFieldProperty
 		name="im_scad" />
 	<findFieldProperty
-		name="imp_ordine" />
-	<findFieldProperty
-		name="imp_evaso" />
-	<findFieldProperty
-		name="imp_ass_fattura" />
-	<findFieldProperty
-		name="imp_ass_doc_amm" />
+		name="im_ass_doc_amm" />
 	<findFieldProperty
 		name="imp_ass_doc_cont" />
 	<findFieldProperty
@@ -253,16 +247,91 @@
 	<columnFieldProperty
 		name="im_scad" />
 	<columnFieldProperty
-		name="imp_ordine" />
-	<columnFieldProperty
-		name="imp_evaso" />
-	<columnFieldProperty
-		name="imp_ass_fattura" />
-	<columnFieldProperty
-		name="imp_ass_doc_amm" />
+		name="im_ass_doc_amm" />
 	<columnFieldProperty
 		name="imp_ass_doc_cont" />
 	<columnFieldProperty
 		name="creditore" />
 
+	<columnSet name="anno_corrente">
+		<columnFieldProperty
+				name="cds" />
+		<columnFieldProperty
+				name="uo" />
+		<columnFieldProperty
+				name="esercizio" />
+		<columnFieldProperty
+				name="esercizio_originale" />
+		<columnFieldProperty
+				name="pg_obbl" />
+		<columnFieldProperty
+				name="pg_obbl_scad" />
+		<columnFieldProperty
+				name="voce_bilancio" />
+		<columnFieldProperty
+				name="ds_elemento_voce"/>
+		<columnFieldProperty
+				name="data_scad" />
+		<columnFieldProperty
+				name="ds_obbl" />
+		<columnFieldProperty
+				name="ds_scad" />
+		<columnFieldProperty
+				name="im_scad" />
+		<columnFieldProperty
+				name="imp_ordine" />
+		<columnFieldProperty
+				name="imp_evaso" />
+		<columnFieldProperty
+				name="imp_ass_fattura" />
+		<columnFieldProperty
+				name="imp_ass_doc_amm" />
+		<columnFieldProperty
+				name="im_ass_doc_amm"
+				label="Totale documenti amministrativi associati"/>
+		<columnFieldProperty
+				name="imp_ass_doc_cont" />
+		<columnFieldProperty
+				name="creditore" />
+	</columnSet>
+
+	<freeSearchSet name="anno_corrente">
+		<findFieldProperty
+				name="cds" />
+		<findFieldProperty
+				name="uo" />
+		<findFieldProperty
+				name="esercizio" />
+		<findFieldProperty
+				name="esercizio_originale" />
+		<findFieldProperty
+				name="pg_obbl" />
+		<findFieldProperty
+				name="pg_obbl_scad" />
+		<findFieldProperty
+				name="voce_bilancio" />
+		<findFieldProperty
+				name="data_scad" />
+		<findFieldProperty
+				name="ds_obbl" />
+		<findFieldProperty
+				name="ds_scad" />
+		<findFieldProperty
+				name="im_scad" />
+		<findFieldProperty
+				name="imp_ordine" />
+		<findFieldProperty
+				name="imp_evaso" />
+		<findFieldProperty
+				name="imp_ass_fattura" />
+		<findFieldProperty
+				name="imp_ass_doc_amm" />
+		<findFieldProperty
+				name="im_ass_doc_amm"
+				label="Totale documenti amministrativi associati"/>
+		<findFieldProperty
+				name="imp_ass_doc_cont" />
+		<findFieldProperty
+				name="creditore" />
+	</freeSearchSet>
 </bulkInfo>

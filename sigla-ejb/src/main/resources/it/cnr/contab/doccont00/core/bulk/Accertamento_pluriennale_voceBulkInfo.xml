@@ -9,7 +9,7 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Cds dell'accertamento" />
+		label="Cds" />
 	<fieldProperty
 		name="esercizio"
 		property="accertamentoPluriennale.accertamento.esercizio"
@@ -19,7 +19,7 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Esercizio dell'accertamento" />
+		label="Esercizio" />
 	<fieldProperty
 		name="esercizioOriginale"
 		property="accertamentoPluriennale.accertamento.esercizio_originale"
@@ -29,19 +29,7 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Esercizio Originale dell'accertamento" />
-<!--	<fieldProperty-->
-<!--		name="pgAccertamento"-->
-<!--		property="accertamentoPluriennale.accertamento.pgAccertamento"-->
-<!--		inputType="TEXTAREA"-->
-<!--		cols="60"-->
-<!--		rows="5"-->
-<!--		maxLength="38"-->
-<!--		enabledOnEdit="false"-->
-<!--		enabledOnSearch="false"-->
-<!--		nullable="false"-->
-<!--		label="Numero dell'accertamento" />-->
-
+		label="Esercizio Originale" />
     <fieldProperty
             name="pgAccertamento"
             property="accertamentoPluriennale.accertamento.pg_accertamento"
@@ -60,7 +48,7 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Anno Accertamento Pluriennale" />
+		label="Anno Pluriennale" />
 	<fieldProperty
 		name="cdCentroResponsabilita"
 		property="linea_attivita.centro_responsabilita.cd_centro_responsabilita"
@@ -70,7 +58,7 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Codice identificativo del centro di responsabilità" />
+		label="Codice voce" />
 	<fieldProperty
 		name="cdLineaAttivita"
 		property="linea_attivita.cd_linea_attivita"
@@ -80,7 +68,7 @@
 		enabledOnEdit="false"
 		enabledOnSearch="false"
 		nullable="false"
-		label="Codice della linea di attivita" />
+		label="Linea di attivita" />
 	<fieldProperty
 		name="importo"
 		property="importo"
@@ -88,7 +76,7 @@
 		formatName="it.cnr.contab.util.EuroFormat"
 		enabledOnEdit="false"
 		nullable="false"
-		label="Importo del dettaglio per la linea attivita" />
+		label="Importo" />
     <fieldProperty
             name="ds_accertamento"
             property="accertamentoPluriennale.accertamento.ds_accertamento"
@@ -98,7 +86,7 @@
             enabledOnEdit="false"
             enabledOnSearch="false"
             nullable="false"
-            label="Descrizione Accertamento" />
+            label="Descrizione" />
 	<form
 		name="searchtool">
 		<formFieldProperty
@@ -157,12 +145,18 @@
 
 
     <freeSearchSet name="CERCA_ACCERT_PLUR">
-        <findFieldProperty
-                name="cdCds" label ="Cds dell'accertamento"/>
-        <findFieldProperty
-                name="pgAccertamento" label ="Numero dell'accertamento"/>
-        <findFieldProperty
-                name="anno"/>
+		<findFieldProperty
+				name="cdCds" />
+		<findFieldProperty
+				name="esercizioOriginale" />
+		<findFieldProperty
+				name="pgAccertamento" />
+		<findFieldProperty
+				name="cdCentroResponsabilita" />
+		<findFieldProperty
+				name="cdLineaAttivita" />
+		<findFieldProperty
+				name="anno" />
     </freeSearchSet>
 
     <columnSet name="RIS_ACCERT_PLUR">
