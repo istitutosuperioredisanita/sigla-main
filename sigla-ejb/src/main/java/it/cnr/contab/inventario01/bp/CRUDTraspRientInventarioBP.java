@@ -415,8 +415,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
             // ========== CONTROLLO SPECIFICO PER ALLEGATI ==========
             if (isTabAllegati) {
-                // Verifica che il documento sia in editing (già salvato)
-                if (!isEditing()) {
+                // Verifica che il documento sia in editing (già salvato) o se modificabile
+                if (!isEditing() && !isDocumentoNonModificabile()) {
                     setErrorMessage("Impossibile accedere agli allegati: il documento deve essere prima salvato.");
                     return;
                 }
@@ -439,11 +439,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 if (!hasBeniSalvati) {
                     setErrorMessage("Impossibile accedere agli allegati: salvare il documento con almeno un bene.");
                     return;
-                }
-
-                if (isDocumentoNonModificabile()) {
-                    setMessage("Attenzione: il documento è " + doc.getStato() +
-                            ". Non sarà possibile modificare gli allegati.");
                 }
             }
         }
