@@ -1199,24 +1199,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 );
             }
 
-
-//            // Rimuove gli accessori selezionati singolarmente già inclusi nel bene principale
-//            List<Inventario_beniBulk> accessoriDaRimuovere = new ArrayList<>();
-//            for (Inventario_beniBulk acc : ps.accessori) {
-//                for (Map.Entry<Inventario_beniBulk, List<Inventario_beniBulk>> entry : ps.principaliConAccessori.entrySet()) {
-//                    List<Inventario_beniBulk> accessoriDelPrincipale = entry.getValue();
-//                    if (accessoriDelPrincipale != null) {
-//                        boolean trovatoInPrincipale = accessoriDelPrincipale.stream()
-//                                .anyMatch(accBene -> accBene.equalsByPrimaryKey(acc));
-//                        if (trovatoInPrincipale) {
-//                            accessoriDaRimuovere.add(acc);
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//            ps.accessori.removeAll(accessoriDaRimuovere);
-
             if (ps.principaliConAccessori.isEmpty()) {
                 if (!ps.isEmpty()) {
                     modificaBeniConAccessoriComponente(context, bulks, oldSelection, newSelection);
@@ -1398,8 +1380,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
             for (Inventario_beniBulk accessorio : accessoriDaAggiungere) {
                 if (beneAccNelDettaglio(accessorio)) {
-                    System.out.println("SKIP: Accessorio " + accessorio.getNumeroBeneCompleto() +
-                            " già presente nel documento");
                     continue;
                 }
 
@@ -1707,12 +1687,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                             allegato.getCrudStatus() == OggettoBulk.NORMAL) {
                         allegatiValidi.add(allegato);
                     }
-                }
-
-                if (doc.getArchivioAllegati().size() != allegatiValidi.size()) {
-                    System.out.println("RIMOSSI " +
-                            (doc.getArchivioAllegati().size() - allegatiValidi.size()) +
-                            " allegati fantasma");
                 }
 
                 doc.getArchivioAllegati().clear();
