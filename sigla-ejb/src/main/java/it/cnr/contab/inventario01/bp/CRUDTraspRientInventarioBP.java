@@ -394,14 +394,17 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     public void setTab(String tabName, String tabValue) {
         if ("tab".equals(tabName) && tabValue != null) {
             Doc_trasporto_rientroBulk doc = getDoc();
-            boolean isTabDettagli = tabValue.endsWith("Dettaglio") || tabValue.endsWith("Allegati");
+            boolean isTabDettagli = tabValue.endsWith("Dettaglio");
+            boolean isTabAllegati = tabValue.endsWith("Allegati");
 
+            // ========== CONTROLLO FASE RICERCA ==========
+            if ((isTabDettagli || isTabAllegati) && doc != null && doc.getCrudStatus() == OggettoBulk.UNDEFINED) {
+                setErrorMessage("Non è possibile cambiare tab: in questa fase è consentita solo la ricerca.");
+                return;
+            }
+
+            // ========== VALIDAZIONE CAMPI OBBLIGATORI PER DETTAGLI ==========
             if (isTabDettagli) {
-                if (doc != null && doc.getCrudStatus() == OggettoBulk.UNDEFINED) {
-                    setErrorMessage("Non è possibile cambiare tab: in questa fase è consentita solo la ricerca.");
-                    return;
-                }
-
                 try {
                     validaDatiPerDettagli();
                 } catch (ApplicationException e) {
@@ -409,10 +412,45 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                     return;
                 }
             }
+
+            // ========== CONTROLLO SPECIFICO PER ALLEGATI ==========
+            if (isTabAllegati) {
+                // Verifica che il documento sia in editing (già salvato)
+                if (!isEditing()) {
+                    setErrorMessage("Impossibile accedere agli allegati: il documento deve essere prima salvato.");
+                    return;
+                }
+
+                boolean hasBeniSalvati = false;
+                if (doc != null && doc.getDoc_trasporto_rientro_dettColl() != null
+                        && !doc.getDoc_trasporto_rientro_dettColl().isEmpty()) {
+
+                    for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
+                        if (obj instanceof Doc_trasporto_rientro_dettBulk) {
+                            Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) obj;
+                            if (dett.getCrudStatus() == OggettoBulk.NORMAL) {
+                                hasBeniSalvati = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!hasBeniSalvati) {
+                    setErrorMessage("Impossibile accedere agli allegati: salvare il documento con almeno un bene.");
+                    return;
+                }
+
+                if (isDocumentoNonModificabile()) {
+                    setMessage("Attenzione: il documento è " + doc.getStato() +
+                            ". Non sarà possibile modificare gli allegati.");
+                }
+            }
         }
 
         super.setTab(tabName, tabValue);
     }
+
 
     public String getTipo() {
         return tipo;
