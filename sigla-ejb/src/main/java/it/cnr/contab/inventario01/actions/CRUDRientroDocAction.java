@@ -61,7 +61,7 @@ public class CRUDRientroDocAction extends CRUDTraspRientDocAction {
 
     @Override
     protected String getMessageNoResults() {
-        return "Nessun Bene recuperato da documenti di trasporto firmati.";
+        return "Nessun Bene recuperato da documenti di trasporto in stato DEFINITIVO.";
     }
 
     @Override
