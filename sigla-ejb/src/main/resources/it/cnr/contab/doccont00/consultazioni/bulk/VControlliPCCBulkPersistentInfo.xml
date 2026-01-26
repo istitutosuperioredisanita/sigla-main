@@ -269,4 +269,43 @@
 	<persistentProperty
 			name="dsTerzo"/>
 
+	<columnMap name="RIEPILOGO_STRUTTURA"
+			   tableName="V_CONTROLLI_PCC">
+		<columnMapping
+				columnName="CDS.CD_UNITA_ORGANIZZATIVA CDS_CODICE"
+				propertyName="riepilogo_cds_codice"
+				sqlTypeName="VARCHAR"
+				columnSize="30"/>
+		<columnMapping
+				columnName="CDS.DS_UNITA_ORGANIZZATIVA CDS_DESCRIZIONE"
+				propertyName="riepilogo_cds_descrizione"
+				sqlTypeName="VARCHAR"
+				columnSize="250"/>
+		<columnMapping
+				columnName="UNITA_ORGANIZZATIVA.CD_UNITA_ORGANIZZATIVA UO_CODICE"
+				propertyName="riepilogo_uo_codice"
+				sqlTypeName="VARCHAR"
+				columnSize="30"/>
+		<columnMapping
+				columnName="UNITA_ORGANIZZATIVA.DS_UNITA_ORGANIZZATIVA UO_DESCRIZIONE"
+				propertyName="riepilogo_uo_descrizione"
+				sqlTypeName="VARCHAR"
+				columnSize="250"/>
+		<columnMapping
+				columnName="COUNT(1) NUMERO_TOTALE"
+				propertyName="riepilogo_totale"
+				count="true"
+				sqlTypeName="DECIMAL"/>
+	</columnMap>
+	<persistentProperty
+			name="riepilogo_cds_codice"/>
+	<persistentProperty
+			name="riepilogo_cds_descrizione"/>
+	<persistentProperty
+			name="riepilogo_uo_codice"/>
+	<persistentProperty
+			name="riepilogo_uo_descrizione"/>
+	<persistentProperty
+			name="riepilogo_totale"/>
+
 </SQLPersistentInfo>

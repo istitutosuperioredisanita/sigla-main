@@ -22,6 +22,9 @@
 package it.cnr.contab.doccont00.consultazioni.bulk;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Persistent;
+
+import java.math.BigDecimal;
+
 public class V_cons_scad_obblBulk extends OggettoBulk implements Persistent {
 //    CDS VARCHAR(30)
 	private java.lang.String cds;
@@ -58,8 +61,18 @@ public class V_cons_scad_obblBulk extends OggettoBulk implements Persistent {
  
 //    IMP_ASS_DOC_CONT DECIMAL(15,2)
 	private java.math.BigDecimal imp_ass_doc_cont;
- 
-//    CREDITORE VARCHAR(200) NOT NULL
+
+//    IMP_ORDINE" DECIMAL(15,2)
+	private java.math.BigDecimal imp_ordine;
+//    IMP_EVASO DECIMAL(15,2)
+	private java.math.BigDecimal imp_evaso;
+//    IMP_ASS_FATTURA DECIMAL(15,2)
+	private java.math.BigDecimal imp_ass_fattura;
+//    IMP_ASS_DOC_AMM DECIMAL(15,2)
+	private java.math.BigDecimal imp_ass_doc_amm;
+
+
+	//    CREDITORE VARCHAR(200) NOT NULL
 	private java.lang.String creditore;
 	
 	private java.lang.String ds_obbl;
@@ -163,5 +176,37 @@ public class V_cons_scad_obblBulk extends OggettoBulk implements Persistent {
 
 	public void setDs_elemento_voce(String ds_elemento_voce) {
 		this.ds_elemento_voce = ds_elemento_voce;
+	}
+
+	public BigDecimal getImp_ordine() {
+		return imp_ordine;
+	}
+
+	public void setImp_ordine(BigDecimal imp_ordine) {
+		this.imp_ordine = imp_ordine;
+	}
+
+	public BigDecimal getImp_evaso() {
+		return imp_evaso;
+	}
+
+	public void setImp_evaso(BigDecimal imp_evaso) {
+		this.imp_evaso = imp_evaso;
+	}
+
+	public BigDecimal getImp_ass_fattura() {
+		return imp_ass_fattura;
+	}
+
+	public void setImp_ass_fattura(BigDecimal imp_ass_fattura) {
+		this.imp_ass_fattura = imp_ass_fattura;
+	}
+
+	public BigDecimal getImp_ass_doc_amm() {
+		return imp_ass_doc_amm;
+	}
+
+	public void setImp_ass_doc_amm(BigDecimal imp_ass_doc_amm) {
+		this.imp_ass_doc_amm = imp_ass_doc_amm;
 	}
 }

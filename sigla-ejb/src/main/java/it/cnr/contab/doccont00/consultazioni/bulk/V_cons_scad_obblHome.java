@@ -67,5 +67,10 @@ public class V_cons_scad_obblHome extends BulkHome {
 		
 		
 		return sql;
-	}	
+	}
+
+	public SQLBuilder cercaAnnoCorrente(UserContext usercontext, V_cons_scad_obblBulk vConsScadObblBulk, CompoundFindClause compoundfindclause) throws PersistencyException {
+		setColumnMap("ANNO_CORRENTE");
+		return selectByClause(usercontext, compoundfindclause);
+	}
 }

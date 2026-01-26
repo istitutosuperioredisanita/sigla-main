@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AccountDTO {
     private static final long serialVersionUID = 1L;
@@ -54,6 +55,8 @@ public class AccountDTO {
     private List<AccountDTO> users;
     private Boolean utenteMultiplo;
     private Boolean abilitatoLdap;
+    private Collection<String> applicationRole;
+
     public AccountDTO(UtenteBulk currentUser) {
         super();
         this.roles = new HashMap<String, List<String>>();
@@ -82,9 +85,10 @@ public class AccountDTO {
 
     @JsonProperty("authorities")
     public Collection<String> getAuthoritiesHipster() {
-        return getAuthorities()
-                .stream()
-                .collect(Collectors.toList());
+        return Stream.concat(
+                Optional.ofNullable(getAuthorities()).orElse(Collections.emptyList()).stream(),
+                Optional.ofNullable(getApplicationRole()).orElse(Collections.emptyList()).stream()
+        ).collect(Collectors.toList());
     }
 
     @JsonIgnore
@@ -286,5 +290,13 @@ public class AccountDTO {
 
     public void setAbilitatoLdap(Boolean abilitatoLdap) {
         this.abilitatoLdap = abilitatoLdap;
+    }
+
+    public Collection<String> getApplicationRole() {
+        return applicationRole;
+    }
+
+    public void setApplicationRole(Collection<String> applicationRole) {
+        this.applicationRole = applicationRole;
     }
 }
