@@ -6,6 +6,7 @@ import it.cnr.contab.inventario01.bulk.DocumentoRientroBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoRientroDettBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ComponentException;
@@ -121,19 +122,19 @@ public class CRUDRientroBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoDoc
      * Gestisce la modifica dei beni e degli accessori associati, aggiornando il modello in memoria.
      */
     @Override
-    public void modificaBeniConAccessoriComponente(ActionContext context, OggettoBulk[] bulks, BitSet oldSelection, BitSet newSelection) throws ComponentException, RemoteException, BusinessProcessException {
-        try {
-            Doc_trasporto_rientroBulk docAggiornato = getComp().modificaBeniRientratiConAccessori(
-                    context.getUserContext(),
-                    getDoc(),
-                    bulks,
-                    oldSelection,
-                    newSelection);
+    public void modificaBeniConAccessoriComponente(ActionContext context, OggettoBulk[] bulks,
+                                                   BitSet oldSelection, BitSet newSelection)
+            throws ComponentException, RemoteException, BusinessProcessException {
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
 
-            setModel(context, docAggiornato);
-        } catch (ComponentException | RemoteException e) {
-            throw handleException(e);
-        }
+        getComp().modificaBeniRientratiConAccessori(
+                context.getUserContext(), doc, bulks, oldSelection, newSelection);
+
+        BulkList dettagliAggiornati = getComp().getDetailsFor(
+                context.getUserContext(), doc);
+        doc.setDoc_trasporto_rientro_dettColl(dettagliAggiornati);
+
+        setModel(context, doc);
     }
 
     /**

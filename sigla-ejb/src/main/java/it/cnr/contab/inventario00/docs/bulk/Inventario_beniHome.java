@@ -440,9 +440,6 @@ public class Inventario_beniHome extends BulkHome {
             UserContext userContext,
             boolean isSmartworking) {
 
-//        // Filtro dismissione
-//        sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.FL_DISMESSO", SQLBuilder.EQUALS, "N");
-
         // Filtro inventario
         sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.PG_INVENTARIO", SQLBuilder.EQUALS,
                 doc.getInventario().getPg_inventario());

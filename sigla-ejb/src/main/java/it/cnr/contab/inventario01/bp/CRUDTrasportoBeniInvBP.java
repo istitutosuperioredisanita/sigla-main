@@ -6,6 +6,7 @@ import it.cnr.contab.inventario01.bulk.DocumentoTrasportoBulk;
 import it.cnr.contab.inventario01.bulk.DocumentoTrasportoDettBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ComponentException;
@@ -121,20 +122,21 @@ public class CRUDTrasportoBeniInvBP extends CRUDTraspRientInventarioBP<AllegatoD
      * Aggiorna il modello del documento a seguito della modifica dei beni e dei relativi accessori.
      */
     @Override
-    public void modificaBeniConAccessoriComponente(ActionContext context, OggettoBulk[] bulks, BitSet oldSelection, BitSet newSelection) throws ComponentException, RemoteException, BusinessProcessException {
-        try {
-            Doc_trasporto_rientroBulk docAggiornato = getComp().modificaBeniTrasportatiConAccessori(
-                    context.getUserContext(),
-                    getDoc(),
-                    bulks,
-                    oldSelection,
-                    newSelection
-            );
-            setModel(context, docAggiornato);
-        } catch (ComponentException | RemoteException e) {
-            throw handleException(e);
-        }
+    public void modificaBeniConAccessoriComponente(ActionContext context, OggettoBulk[] bulks,
+                                                   BitSet oldSelection, BitSet newSelection)
+            throws ComponentException, RemoteException, BusinessProcessException {
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
+
+        getComp().modificaBeniTrasportatiConAccessori(
+                context.getUserContext(), doc, bulks, oldSelection, newSelection);
+
+        BulkList dettagliAggiornati = getComp().getDetailsFor(
+                context.getUserContext(), doc);
+        doc.setDoc_trasporto_rientro_dettColl(dettagliAggiornati);
+
+        setModel(context, doc);
     }
+
 
     /**
      * Restituisce la classe Bulk specifica per il dettaglio del trasporto.

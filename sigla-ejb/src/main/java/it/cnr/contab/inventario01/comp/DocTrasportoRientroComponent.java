@@ -1158,8 +1158,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             dett.setTi_documento(docT.getTiDocumento());
                             dett.setEsercizio(docT.getEsercizio());
                             dett.setPg_doc_trasporto_rientro(docT.getPgDocTrasportoRientro());
-//                            dett.setNr_inventario(bene.getNr_inventario());
-//                            dett.setProgressivo(bene.getProgressivo().intValue());
 
                             if (docT.isSmartworking() && docT.getTerzoSmartworking() != null) {
                                 dett.setCdTerzoAssegnatario(docT.getTerzoSmartworking().getCd_terzo());
@@ -1191,8 +1189,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             dett.setTi_documento(docT.getTiDocumento());
                             dett.setEsercizio(docT.getEsercizio());
                             dett.setPg_doc_trasporto_rientro(docT.getPgDocTrasportoRientro());
-//                            dett.setNr_inventario(bene.getNr_inventario());
-//                            dett.setProgressivo(bene.getProgressivo().intValue());
 
                             if (docT.isSmartworking() && docT.getTerzoSmartworking() != null) {
                                 dett.setCdTerzoAssegnatario(docT.getTerzoSmartworking().getCd_terzo());

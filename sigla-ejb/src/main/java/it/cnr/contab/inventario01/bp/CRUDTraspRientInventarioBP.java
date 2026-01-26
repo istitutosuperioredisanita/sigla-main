@@ -1199,6 +1199,24 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 );
             }
 
+
+//            // Rimuove gli accessori selezionati singolarmente già inclusi nel bene principale
+//            List<Inventario_beniBulk> accessoriDaRimuovere = new ArrayList<>();
+//            for (Inventario_beniBulk acc : ps.accessori) {
+//                for (Map.Entry<Inventario_beniBulk, List<Inventario_beniBulk>> entry : ps.principaliConAccessori.entrySet()) {
+//                    List<Inventario_beniBulk> accessoriDelPrincipale = entry.getValue();
+//                    if (accessoriDelPrincipale != null) {
+//                        boolean trovatoInPrincipale = accessoriDelPrincipale.stream()
+//                                .anyMatch(accBene -> accBene.equalsByPrimaryKey(acc));
+//                        if (trovatoInPrincipale) {
+//                            accessoriDaRimuovere.add(acc);
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//            ps.accessori.removeAll(accessoriDaRimuovere);
+
             if (ps.principaliConAccessori.isEmpty()) {
                 if (!ps.isEmpty()) {
                     modificaBeniConAccessoriComponente(context, bulks, oldSelection, newSelection);
@@ -1322,16 +1340,17 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
     }
 
+
+
     /**
-     * Aggiunge bene principale corrente con/senza accessori
+     * Aggiunge il bene principale e gli eventuali accessori
+     * secondo la scelta dell’utente, evitando duplicazioni.
      */
     private void aggiungiBenesCorrente(ActionContext context, boolean includiAccessori)
             throws BusinessProcessException {
 
         Inventario_beniBulk benePrincipale = getBenePrincipaleCorrente(false);
-        if (benePrincipale == null) {
-            return;
-        }
+        if (benePrincipale == null) return;
 
         try {
             OggettoBulk[] soloBenePrincipale = new OggettoBulk[]{benePrincipale};
@@ -1341,25 +1360,84 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
             modificaBeniConAccessoriComponente(context, soloBenePrincipale, vuoto, selezionato);
 
+            PendingSelection pending = getPendingAdd();
+            List<Inventario_beniBulk> accessoriDaAggiungere = new ArrayList<>();
+
             if (includiAccessori) {
-                List<Inventario_beniBulk> accessori = getAccessoriCorrente(false);
+                if (pending != null && pending.principaliConAccessori != null) {
+                    List<Inventario_beniBulk> accessoriStrutturali =
+                            pending.principaliConAccessori.get(benePrincipale);
 
-                if (accessori != null && !accessori.isEmpty()) {
-                    for (Inventario_beniBulk accessorio : accessori) {
-                        OggettoBulk[] soloAccessorio = new OggettoBulk[]{accessorio};
-                        BitSet vuotoAcc = new BitSet(1);
-                        BitSet selezionatoAcc = new BitSet(1);
-                        selezionatoAcc.set(0);
-
-                        modificaBeniConAccessoriComponente(context, soloAccessorio, vuotoAcc, selezionatoAcc);
+                    if (accessoriStrutturali != null) {
+                        for (Inventario_beniBulk accStrutturale : accessoriStrutturali) {
+                            if (!beneAccNelDettaglio(accStrutturale) &&
+                                    !contieneAccessorio(accessoriDaAggiungere, accStrutturale)) {
+                                accessoriDaAggiungere.add(accStrutturale);
+                            }
+                        }
                     }
                 }
+            } else {
+                if (pending != null && pending.accessori != null) {
+
+                    List<Inventario_beniBulk> accessoriStrutturali = null;
+                    if (pending.principaliConAccessori != null) {
+                        accessoriStrutturali = pending.principaliConAccessori.get(benePrincipale);
+                    }
+
+                    for (Inventario_beniBulk accManuale : pending.accessori) {
+                        if (isAccessorioDelPrincipale(accManuale, benePrincipale) &&
+                                !beneAccNelDettaglio(accManuale) &&
+                                !contieneAccessorio(accessoriDaAggiungere, accManuale)) {
+
+                            accessoriDaAggiungere.add(accManuale);
+                        }
+                    }
+                }
+            }
+
+            for (Inventario_beniBulk accessorio : accessoriDaAggiungere) {
+                if (beneAccNelDettaglio(accessorio)) {
+                    System.out.println("SKIP: Accessorio " + accessorio.getNumeroBeneCompleto() +
+                            " già presente nel documento");
+                    continue;
+                }
+
+                OggettoBulk[] soloAccessorio = new OggettoBulk[]{accessorio};
+                BitSet vuotoAcc = new BitSet(1);
+                BitSet selezionatoAcc = new BitSet(1);
+                selezionatoAcc.set(0);
+
+                modificaBeniConAccessoriComponente(context, soloAccessorio, vuotoAcc, selezionatoAcc);
             }
 
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
     }
+
+
+    private boolean contieneAccessorio(List<Inventario_beniBulk> lista, Inventario_beniBulk candidato) {
+        for (Inventario_beniBulk presente : lista) {
+            if (presente.equalsByPrimaryKey(candidato)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
+    private boolean isAccessorioDelPrincipale(Inventario_beniBulk accessorio,
+                                              Inventario_beniBulk principale) {
+
+        return accessorio.getNr_inventario().equals(principale.getNr_inventario())
+                && accessorio.getProgressivo().equals(principale.getProgressivo());
+    }
+
+
+
 
     /**
      * Aggiunge accessori non presenti in bulks[] (pagine successive)
@@ -2084,4 +2162,19 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             throw handleException(e);
         }
     }
+
+    private boolean beneAccNelDettaglio(Inventario_beniBulk bene) {
+        if (getDoc().getDoc_trasporto_rientro_dettColl() == null) return false;
+
+        for (Object o : getDoc().getDoc_trasporto_rientro_dettColl()) {
+            Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) o;
+
+            if (dett.getNr_inventario().equals(bene.getNr_inventario()) &&
+                    dett.getProgressivo().equals(bene.getProgressivo().intValue())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

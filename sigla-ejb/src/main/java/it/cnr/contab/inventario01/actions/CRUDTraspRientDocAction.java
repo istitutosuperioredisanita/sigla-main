@@ -129,6 +129,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         return super.doNuovo(context);
     }
 
+
     /**
      * Inizializza la ricerca libera per l'aggiunta di nuovi beni al documento.
      */
@@ -145,27 +146,9 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             bp.getDettBeniController().validate(context);
 
             RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
-            rlbp.setCanPerformSearchWithoutClauses(false);
-
-            // Crea il prototype
+            rlbp.setCanPerformSearchWithoutClauses(true);
             Inventario_beniBulk prototype = new Inventario_beniBulk();
-
-            // Configura il freeSearchSet specifico per trasporto/rientro
             rlbp.setPrototype(prototype, null, null, "searchTrasportoRientro");
-
-            //fl_dismesso = false
-            CondizioneSempliceBulk condizioneFlDismesso = new CondizioneSempliceBulk(prototype, "searchTrasportoRientro");
-            FieldProperty flDismessoField = prototype.getBulkInfo().getFieldProperty("fl_dismesso");
-            condizioneFlDismesso.setFindFieldProperty(flDismessoField);
-            condizioneFlDismesso.setOperator(SQLBuilder.EQUALS);
-            condizioneFlDismesso.setLogicalOperator("AND");
-            condizioneFlDismesso.setValue(Boolean.FALSE);
-
-            // Aggiungi alla radice (sarà sempre applicata nella ricerca)
-            rlbp.getCondizioneRadice().aggiungiCondizione(condizioneFlDismesso);
-
-            String columnSetName = doc.getTiDocumento().equals("T") ? "righeTrasporto" : "righeRientro";
-            rlbp.setColumnSet(columnSetName);
 
             context.addHookForward("searchResult", this, getBringBackMethod());
             context.addHookForward("filter", this, getBringBackMethod());
