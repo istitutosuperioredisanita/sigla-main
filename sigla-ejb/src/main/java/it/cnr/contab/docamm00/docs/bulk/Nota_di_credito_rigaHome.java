@@ -140,7 +140,12 @@ public class Nota_di_credito_rigaHome extends Fattura_passiva_rigaHome {
             Fattura_passiva_rigaIHome fatpasRigaHome = (Fattura_passiva_rigaIHome)getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
             Fattura_passiva_rigaBulk rigaCollegata = (Fattura_passiva_rigaBulk)fatpasHome.loadIfNeededObject(docRiga.getRiga_fattura_origine());
 
-            Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoFattura = fatpasRigaHome.getDatiEconomici(rigaCollegata);
+            Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoFattura;
+            if (rigaCollegata.getVoce_ep()==null)
+                datiEcoFattura = fatpasRigaHome.getDatiEconomiciDefault(userContext,rigaCollegata);
+            else
+                datiEcoFattura = fatpasRigaHome.getDatiEconomici(rigaCollegata);
+
             if (datiEcoFattura.getFirst().getCd_voce_ep()==null)
                 datiEcoFattura = fatpasRigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
             BigDecimal totaleImportiAnalitici = datiEcoFattura.getSecond().stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);

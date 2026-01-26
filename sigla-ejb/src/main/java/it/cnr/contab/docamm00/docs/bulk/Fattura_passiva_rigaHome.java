@@ -322,14 +322,18 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                         return contoEconomico;
                 }
 
-                //verifico se sulla riga del docamm ci sia un bene inventariabile
-                Bene_servizioBulk myBeneServizio = (Bene_servizioBulk)fatpasHome.loadIfNeededObject(docRiga.getBene_servizio());
+                //Fino al 2024 il conto di costo veniva prelevato dalla voce di bilancio
+                //Per questo la ricerca con il bene associato la faccio solo a partire dal 2025
+                if (docRiga.getEsercizio().compareTo(2025)>=0) {
+                    //verifico se sulla riga del docamm ci sia un bene inventariabile
+                    Bene_servizioBulk myBeneServizio = (Bene_servizioBulk) fatpasHome.loadIfNeededObject(docRiga.getBene_servizio());
 
-                if (Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
-                    AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHomeCache().getHome(AssCatgrpInventVoceEpBulk.class);
-                    AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(docRiga.getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
-                    if (result!=null && result.getConto()!=null && result.getConto().getCd_voce_ep()!=null)
-                        return result.getConto();
+                    if (Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
+                        AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHomeCache().getHome(AssCatgrpInventVoceEpBulk.class);
+                        AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(docRiga.getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
+                        if (result != null && result.getConto() != null && result.getConto().getCd_voce_ep() != null)
+                            return result.getConto();
+                    }
                 }
 
                 //se arrivo qui devo guardare alla voce dell'obbligazione
@@ -400,12 +404,12 @@ public class Fattura_passiva_rigaHome extends BulkHome {
 
                 //Se fattura non liquidabile o documento senza obbligazione metto analitica di DocumentoNonLiquidabile
                 if ((docRiga.getFather() instanceof Fattura_passiva_IBulk && ((Fattura_passiva_IBulk)docRiga.getFather()).isNonLiquidabile()) ||
-                    !Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).isPresent()) {
+                        Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).isEmpty()) {
                     Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
-                    WorkpackageBulk gaeDocumentoNonLiquidabile = configHome.getGaeDocumentoNonLiquidabile(userContext, docRiga);
+                    WorkpackageBulk gaeDocumentoNonLiquidabile = configHome.getGaeDocumentoNonLiquidabile(userContext, docRiga.getFather());
 
                     Fattura_passiva_riga_ecoBulk myRigaEco = (Fattura_passiva_riga_ecoBulk)rigaEcoClass.newInstance();
-                    myRigaEco.setProgressivo_riga_eco((long) (docRiga.getChildrenAna().size() + 1));
+                    myRigaEco.setProgressivo_riga_eco(1L);
                     myRigaEco.setVoce_analitica(voceAnaliticaDef);
                     myRigaEco.setLinea_attivita(gaeDocumentoNonLiquidabile);
                     myRigaEco.setFattura_passiva_riga(docRiga);
@@ -415,11 +419,11 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                 } else if (Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
                     //carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
                     Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
-                    List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk) docRiga.getScadenzaDocumentoContabile());
+                    List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk) docRiga.getScadenzaDocumentoContabile(), Boolean.FALSE);
                     BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
                     for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
                         Fattura_passiva_riga_ecoBulk myRigaEco = (Fattura_passiva_riga_ecoBulk)rigaEcoClass.newInstance();
-                        myRigaEco.setProgressivo_riga_eco((long) (docRiga.getChildrenAna().size() + 1));
+                        myRigaEco.setProgressivo_riga_eco((long) (result.size() + 1));
                         myRigaEco.setVoce_analitica(voceAnaliticaDef);
                         myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
                         myRigaEco.setFattura_passiva_riga(docRiga);

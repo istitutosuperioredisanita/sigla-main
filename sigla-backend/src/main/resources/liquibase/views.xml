@@ -3213,4 +3213,7 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-VP_PDG_VARIAZIONE_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/VP_PDG_VARIAZIONE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_VOCE_F_PARTITA_GIRO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_VOCE_F_PARTITA_GIRO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>

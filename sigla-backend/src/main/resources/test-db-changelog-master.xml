@@ -559,6 +559,24 @@
         <dropDefaultValue tableName="voce_iva" columnName="dacr"/>
         <dropDefaultValue tableName="voce_iva" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-sospeso">
+        <addDefaultValue tableName="sospeso" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="sospeso" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="test/csv/sospeso.csv" tableName="sospeso"/>
+
+        <dropDefaultValue tableName="sospeso" columnName="dacr"/>
+        <dropDefaultValue tableName="sospeso" columnName="duva"/>
+    </changeSet>
+    <changeSet author="test" id="create-lettera_pagam_estero">
+        <addDefaultValue tableName="lettera_pagam_estero" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="lettera_pagam_estero" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="test/csv/lettera_pagam_estero.csv" tableName="lettera_pagam_estero"/>
+
+        <dropDefaultValue tableName="lettera_pagam_estero" columnName="dacr"/>
+        <dropDefaultValue tableName="lettera_pagam_estero" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-fattura-passiva">
         <addDefaultValue tableName="fattura_passiva" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="fattura_passiva" columnName="duva" defaultValueDate="${now}"/>
@@ -814,7 +832,7 @@
         </sql>
         <sql>
             UPDATE NUMERAZIONE_DOC_AMM
-            SET CORRENTE = 17
+            SET CORRENTE = 18
             WHERE ESERCIZIO=2025
             AND CD_UNITA_ORGANIZZATIVA = '000.000'
             AND CD_TIPO_DOCUMENTO_AMM = 'FATTURA_P';

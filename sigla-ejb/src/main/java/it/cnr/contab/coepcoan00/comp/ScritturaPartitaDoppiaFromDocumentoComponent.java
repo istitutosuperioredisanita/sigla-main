@@ -348,6 +348,14 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         SQLBuilder sql = home.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio_cont", SQLBuilder.EQUALS, esercizio);
         Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
+//        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, 2022);
+//        sql.addClause(FindClause.AND, "tipodoc", SQLBuilder.EQUALS, "ORDINE_CNS");
+        //       sql.addClause(FindClause.AND, "pg_doc", SQLBuilder.EQUALS, 117);
+        // sql.addClause(FindClause.AND, "cd_unita_operativa", SQLBuilder.EQUALS, "DMI");
+        // sql.addClause(FindClause.AND, "riga", SQLBuilder.EQUALS, 2);
+        // sql.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, 15);
+
+//        sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, "999.000");
         return home.fetchAll(sql);
     }
 
@@ -459,8 +467,10 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         try {
             setSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");
             return Utility.createProposeScritturaComponentSession().proposeScrittureContabili(userContext, documentoCoge);
-        } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException | ApplicationException e) {
+        } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
             rollbackToSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");
+            throw e;
+        } catch (ApplicationException e) {
             throw e;
         } catch (ApplicationRuntimeException e) {
             rollbackToSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");

@@ -158,7 +158,7 @@ public class OrdineAcqCMISService extends StoreService {
 			);
 			String pathFolderOrdine = path.concat(path.equals("/") ? "" : "/").concat(sanitizeFolderName(allegatoParentBulk.constructCMISNomeFile()));
 			StorageObject folder =this.getStorageObjectByPath( pathFolderOrdine,true,false);
-			List<StorageObject> children= Optional.ofNullable(folder).map(m->this.getChildren(m.getPath())).orElse(null);
+			List<StorageObject> children= Optional.ofNullable(folder).map(m->this.getChildren(m.getPath())).orElse(Collections.EMPTY_LIST);
 			//List<StorageObject> children=this.getChildren(folder.getPath());
 			if ( !children.isEmpty()) {
 				//check se esiste il file di stampa e verifica il nome

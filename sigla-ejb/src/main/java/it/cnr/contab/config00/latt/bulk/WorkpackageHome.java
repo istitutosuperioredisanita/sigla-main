@@ -250,8 +250,12 @@ public class WorkpackageHome extends BulkHome implements ConsultazioniRestHome {
 			throw new ComponentException(e);
 		}
 	}
-	
-	public WorkpackageBulk searchGAECompleta(UserContext userContext, Integer pEsercizio, String pCdr, String pCdLineaAttivita ) throws ComponentException {
+
+	public WorkpackageBulk searchGAECompleta(UserContext userContext, Integer pEsercizio, String pCdr, String pCdLineaAttivita) throws ComponentException {
+		return searchGAECompleta(userContext, pEsercizio, pCdr, pCdLineaAttivita, Boolean.TRUE);
+	}
+
+	public WorkpackageBulk searchGAECompleta(UserContext userContext, Integer pEsercizio, String pCdr, String pCdLineaAttivita, boolean fetchAll ) throws ComponentException {
 		try {
 			WorkpackageHome lattHome = (WorkpackageHome)getHomeCache().getHome(WorkpackageBulk.class, "V_LINEA_ATTIVITA_VALIDA");
 			SQLBuilder sql = lattHome.createSQLBuilder();
@@ -270,7 +274,8 @@ public class WorkpackageHome extends BulkHome implements ConsultazioniRestHome {
 				if (linea.getProgetto().getEsercizio() == null)
 					linea.getProgetto().setEsercizio(pEsercizio);
 				home.findByPrimaryKey(userContext, linea.getProgetto());
-				getHomeCache().fetchAll(userContext);
+				if (fetchAll)
+					getHomeCache().fetchAll(userContext);
 				return linea;
 			}
 			return null;

@@ -51,7 +51,7 @@ public class Voce_analiticaHome extends BulkHome {
         return sql;
     }
 
-    public java.util.List<Voce_analiticaBulk> findVoceAnaliticaList(ContoBulk contoBulk) throws PersistencyException {
+    public java.util.List<Voce_analiticaBulk> findVoceAnaliticaList(Voce_epBulk contoBulk) throws PersistencyException {
         SQLBuilder sql = super.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio_voce_ep", SQLBuilder.EQUALS, contoBulk.getEsercizio());
         sql.addClause(FindClause.AND, "cd_voce_ep", SQLBuilder.EQUALS, contoBulk.getCd_voce_ep());

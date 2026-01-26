@@ -591,9 +591,6 @@ public class CompensoHome extends BulkHome implements
     }
 
     public String callVerificaStatoRiporto(UserContext userContext, CompensoBulk compenso, boolean isInScrivania) throws PersistencyException {
-        Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class).findAll().get(0);
-        String aCdCdsEnte = ente.getUnita_padre().getCd_unita_organizzativa();
-
         Optional<Integer> aEsObblig = Optional.ofNullable(compenso.getEsercizio_obbligazione());
 
         if (aEsObblig.isEmpty())

@@ -41,6 +41,10 @@
 			propertyName="banca.terzo.cd_terzo"
 			fetchOnly="true"/>
 		<columnMapping
+			columnName="CD_TERZO_UO_CDS"
+			propertyName="banca_uo_cds.terzo.cd_terzo"
+			fetchOnly="true"/>
+		<columnMapping
 			columnName="CD_TERZO_CESSIONARIO"
 			propertyName="cessionario.cd_terzo" />
 		<columnMapping
@@ -244,4 +248,10 @@
 		name="fattura_passiva_riga_storno"/>
 	<persistentProperty
 		name="voce_ep" />
+	<persistentProperty
+		name="banca_uo_cds" />
+	<persistentProperty
+		name="modalita_pagamento_uo_cds" />
+	<persistentProperty
+		name="termini_pagamento_uo_cds" />
 </SQLPersistentInfo>

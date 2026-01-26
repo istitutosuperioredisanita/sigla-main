@@ -129,7 +129,7 @@ public class OrdineAcqConsegnaHome extends BulkHome {
                             .filter(Voce_analiticaBulk::getFl_default).findAny()
                             .orElse(voceAnaliticaList.stream().findAny().orElse(null));
                 }
-				if (!Optional.ofNullable(consegna.getScadenzaDocumentoContabile()).isPresent()) {
+				if (Optional.ofNullable(consegna.getScadenzaDocumentoContabile()).isEmpty()) {
 					OrdineAcqRigaHome ordineAcqRigaHome = (OrdineAcqRigaHome) getHomeCache().getHome(OrdineAcqRigaBulk.class);
 					List<IDocumentoDetailAnaCogeBulk> datiAnaliticiRiga = ordineAcqRigaHome.getDatiEconomici(consegna.getOrdineAcqRiga()).getSecond();
 					if (datiAnaliticiRiga.isEmpty())
@@ -141,7 +141,7 @@ public class OrdineAcqConsegnaHome extends BulkHome {
 					BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
 					for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
 						OrdineAcqConsegnaEcoBulk myRigaEco = new OrdineAcqConsegnaEcoBulk();
-						myRigaEco.setProgressivo_riga_eco((long) (consegna.getChildrenAna().size() + 1));
+						myRigaEco.setProgressivo_riga_eco((long) result.size() + 1);
 						myRigaEco.setVoce_analitica(voceAnaliticaDef);
 						myRigaEco.setLinea_attivita(scadVoce.getLinea_attivita());
 						myRigaEco.setOrdineAcqConsegna(consegna);

@@ -355,6 +355,15 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
 			return null;
 		return banca.getPg_banca();
 	}
+
+	@Override
+	public Long getPg_banca_uo_cds() {
+		it.cnr.contab.anagraf00.core.bulk.BancaBulk bancaUoCds = this.getBanca_uo_cds();
+		if (bancaUoCds == null)
+			return null;
+		return bancaUoCds.getPg_banca();
+	}
+
 	/*
 	 * Getter dell'attributo pg_documento_generico
 	 */
