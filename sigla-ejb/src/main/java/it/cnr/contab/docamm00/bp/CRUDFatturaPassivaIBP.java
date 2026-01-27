@@ -113,7 +113,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 	}
 	protected it.cnr.jada.util.jsp.Button[] createFPToolbar() {
 
-		it.cnr.jada.util.jsp.Button[] toolbar = new it.cnr.jada.util.jsp.Button[6];
+		it.cnr.jada.util.jsp.Button[] toolbar = new it.cnr.jada.util.jsp.Button[7];
 		int i = 0;
 		toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.generaNdC");
 		toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.apriNdC");
@@ -121,6 +121,7 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 		toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.apriNdD");
 		toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.generaCompenso");
 		toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.apriCompenso");
+		toolbar[i++] = new it.cnr.jada.util.jsp.Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.apriAutoFattura");
 		return toolbar;
 	}
 	protected it.cnr.jada.util.jsp.Button[] createToolbar() {
@@ -392,6 +393,16 @@ public class CRUDFatturaPassivaIBP extends CRUDFatturaPassivaBP implements IDocu
 	public boolean isApriCompensoButtonHidden() {
 
 		return isSearching() || isDeleting();
+	}
+	public boolean isApriAutoFatturaButtonHidden() {
+
+		Fattura_passiva_IBulk fp = (Fattura_passiva_IBulk)getModel();
+		return fp==null || !fp.getFl_autofattura() || (!isEditing() && !isViewing());
+	}
+	public boolean isApriAutoFatturaButtonEnabled() {
+
+		Fattura_passiva_IBulk fp = (Fattura_passiva_IBulk)getModel();
+		return  fp!=null && fp.getFl_autofattura() && (isEditing() || isViewing()) && !this.isProvenienteDaAutoFattura();
 	}
 	public void validaFatturaPerCompenso(ActionContext context) throws BusinessProcessException {
 

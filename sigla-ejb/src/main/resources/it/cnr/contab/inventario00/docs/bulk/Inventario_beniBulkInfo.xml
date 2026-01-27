@@ -48,11 +48,16 @@
 	<fieldProperty
 		name="dt_acquisizione"
 		property="dt_acquisizione"
-		inputType="ROTEXT"
+		inputType="TEXT"
 		maxLength="10"
 		inputSize="10"
 		label="Data Acquiszione"
-		formatName="date_short"/>	
+		enabledOnInsert = "false"
+		enabledOnEdit = "false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		formatName="date_short"
+	/>
 	<fieldProperty
 		name="ds_bene"
 		property="ds_bene"
@@ -200,7 +205,7 @@
 		property="assegnatario"
 		inputType="SEARCHTOOL" 	
 		formName="searchtool" 	
-		label="Assegnatario"		
+		label="Assegnatario"
 		enabledOnSearch="true"		
 		enabledOnEdit="true"  />
 	<fieldProperty
@@ -209,7 +214,7 @@
 		maxLength="10"
 		inputSize="10"
 		inputType="TEXT"
-		label="Assegnatario"	
+		label="Cod.Assegnatario"
 		readonlyProperty="ROassegnatarioBene"
 		caseSensitiveSearch="false"
 		enabledOnInsert = "true"
@@ -828,6 +833,8 @@
 			name="dt_dismesso" />
 	<findFieldProperty
 			name="causale_dismissione" />
+	<findFieldProperty
+			name="dt_acquisizione" />
 
 	<freeSearchSet name="freeSearchWithoutProgressivoSet">
 		<findFieldProperty
@@ -850,7 +857,17 @@
 			name="collocazione" />
 		<findFieldProperty
 			name="condizioni" />
+		<findFieldProperty
+				name="dt_acquisizione" />
 	</freeSearchSet>
+
+	<freeSearchSet name="searchTrasportoRientro">
+		<findFieldProperty name="nr_inventario" />
+		<findFieldProperty name="etichetta" />
+		<findFieldProperty name="progressivo" />
+		<findFieldProperty name="ds_bene" />
+	</freeSearchSet>
+
     <form name="searchtool">		
 	    <formFieldProperty
 			name="nr_inventario"
@@ -880,4 +897,44 @@
 		<columnFieldProperty
 			name="valore_alienazione" />
 	</columnSet>
+
+	<columnSet name="righeTrasporto">
+		<columnFieldProperty
+				name="nr_inventario"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="etichetta"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="progressivo"
+				style="width:40px"/>
+		<columnFieldProperty
+				name="ds_bene"
+				style="width:300px"/>
+		<columnFieldProperty
+				name="valore_bene"
+				style="width:100px"/>
+	</columnSet>
+
+
+	<!-- ColumnSet per Rientro Beni -->
+	<columnSet name="righeRientro">
+		<columnFieldProperty
+				name="nr_inventario"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="etichetta"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="progressivo"
+				style="width:40px"/>
+		<columnFieldProperty
+				name="ds_bene"
+				style="width:300px"/>
+		<columnFieldProperty
+				name="valore_bene"
+				style="width:100px"/>
+	</columnSet>
+
+
 </bulkInfo>

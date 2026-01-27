@@ -18,11 +18,16 @@
 package it.cnr.contab.inventario01.actions;
 
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+
+import it.cnr.contab.docamm00.bp.CRUDFatturaAttivaBP;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
 import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_rigaBulk;
+import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.contab.inventario01.bp.CRUDScaricoInventarioBP;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.Trasferimento_inventarioBulk;
@@ -33,6 +38,7 @@ import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.*;
 public class CRUDScaricoBuonoAction extends it.cnr.jada.util.action.CRUDAction {
 	private List deletedList;
@@ -231,6 +237,7 @@ public Forward doBringBackAddBeni(ActionContext context) {
 	}
 }
 
+
 public Forward doSelezionaBeniScaricati(ActionContext context) {
 	try {
 		
@@ -247,7 +254,33 @@ public Forward doSelezionaBeniScaricati(ActionContext context) {
 	}
 }
 
-/**
+	public Forward doSelectDettController(ActionContext context) {
+
+		CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP) context.getBusinessProcess();
+		try {
+			bp.getDettController().setSelection(context);
+
+			if(Optional.ofNullable(bp.getModel()).isPresent()){
+				Buono_carico_scaricoBulk buonoCS= (Buono_carico_scaricoBulk)bp.getModel();
+				if(Optional.ofNullable(buonoCS.getTipoMovimento()).isPresent() && buonoCS.getTipoMovimento().getFl_dismissione()) {
+
+					Inventario_beniBulk bene = (Inventario_beniBulk)bp.getDettController().getModel();
+					if(!bene.isTotalmenteScaricato()) {
+						bene.setFl_totalmente_scaricato(true);
+
+						return impostaScaricoTotale(context, bp, bene);
+					}
+				}
+			}
+		} catch (Throwable e) {
+			return handleException(context, e);
+		}
+
+		return context.findDefaultForward();
+	}
+
+
+	/**
  * E' stata generata la richiesta di scaricare totalmente un bene.
  *  L'utente ha selezionato il check-box "Scarico Totale", nel form del Buono di Scarico.
  *	Il metodo controlla se il bene selzionato ha dei beni accessori ed, eventualmente, li carica,
@@ -261,15 +294,11 @@ public Forward doSelezionaBeniScaricati(ActionContext context) {
  *
  * @return Forward
 **/
-public Forward doClickFlagScaricoTotale(ActionContext context) throws it.cnr.jada.comp.ApplicationException{
 
-	
-	CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);	
-	Inventario_beniBulk bene = (Inventario_beniBulk)bp.getDettController().getModel();
-	Buono_carico_scaricoBulk test_buono = (Buono_carico_scaricoBulk)bp.getModel();
-	java.util.List selected_righe_fatt = null;
-	try {		
-		fillModel(context);
+public Forward impostaScaricoTotale(ActionContext context, CRUDScaricoInventarioBP bp,Inventario_beniBulk bene) throws it.cnr.jada.comp.ApplicationException{
+	try {
+		java.util.List selected_righe_fatt = null;
+
 		if (bene.getFl_totalmente_scaricato().booleanValue()){
 
 			if (bp.isBy_fattura()){
@@ -281,17 +310,17 @@ public Forward doClickFlagScaricoTotale(ActionContext context) throws it.cnr.jad
 			// Carica gli eventuali accessori del bene selezionato.
 			java.util.List accessori = bp.getBeniAccessoriFor(context.getUserContext(), bene);
 			bene.setAccessori(new it.cnr.jada.bulk.SimpleBulkList(accessori));
-			
+
 			if (!bene.getAccessori().isEmpty()){
-				/* Controlla che non siano presenti nella lista dei beni scaricati, 
+				/* Controlla che non siano presenti nella lista dei beni scaricati,
 				 *	beni accessori del bene selezionato
-				*/			
+				 */
 				bp.checkBeniAccessoriAlreadyExistFor(context, (Buono_carico_scaricoBulk)bp.getModel(), bene);
 				boolean da_scaricare=false;
 				for(Iterator i=bene.getAccessori().iterator();i.hasNext();){
-				 Inventario_beniBulk accessorio=(Inventario_beniBulk)i.next();
-				 if (accessorio.getFl_totalmente_scaricato()!=null && !accessorio.getFl_totalmente_scaricato().booleanValue())
-					 da_scaricare=true;
+					Inventario_beniBulk accessorio=(Inventario_beniBulk)i.next();
+					if (accessorio.getFl_totalmente_scaricato()!=null && !accessorio.getFl_totalmente_scaricato().booleanValue())
+						da_scaricare=true;
 				}
 				if (da_scaricare){
 					OptionBP optionBP = openConfirm(context,"Attenzione: il bene selezionato ha degli accessori che devono essere scaricati totalmente. Vuoi continuare?",OptionBP.CONFIRM_YES_NO,"doConfirmScaricoBene");
@@ -309,27 +338,54 @@ public Forward doClickFlagScaricoTotale(ActionContext context) throws it.cnr.jad
 		}else{
 			if (!bene.isBeneAccessorio()){
 				bp.rimuoviBeniAccessoriFor(context.getUserContext(),bene,selected_righe_fatt);
-			}	
+			}
 			bene.setValore_unitario(new java.math.BigDecimal(0));
 			bp.modificaBeneScaricato(context.getUserContext(),bene, null);
 			bp.getDettController().reset(context);
 		}
-		return context.findDefaultForward();
+	return context.findDefaultForward();
 	} catch(Throwable e) {
 		bene.setFl_totalmente_scaricato(Boolean.FALSE);
+		return handleException(context,e);
+	}
+}
+public Forward doClickFlagScaricoTotale(ActionContext context) throws it.cnr.jada.comp.ApplicationException{
+
+	CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);	
+	Inventario_beniBulk bene = (Inventario_beniBulk)bp.getDettController().getModel();
+
+	try {		
+		fillModel(context);
+		return impostaScaricoTotale(context,bp,bene);
+	} catch(Throwable e) {
 		return handleException(context,e);
 	}
 }
 public Forward doScaricaTutti(ActionContext context) {
 	try{
 		CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);
-		bp.scaricaTuttiDef(context);
-		bp.getDettController().reset(context);
-		return context.findDefaultForward();
+
+		boolean accessoriPresenti = bp.isAccessoriPresenti(context);
+
+		if(accessoriPresenti){
+			return openConfirm(context,"Attenzione: sono presenti degli accessori che verrano scaricati totalmente. Vuoi continuare?",OptionBP.CONFIRM_YES_NO,"doConfirmScaricoTotale");
+		}
+		return doConfirmScaricoTotale(context,OptionBP.YES_BUTTON);
+
 	} catch(Throwable e) {
 			return handleException(context,e);
 	}
 }
+	public Forward doConfirmScaricoTotale(ActionContext context, int i) throws ComponentException, BusinessProcessException, RemoteException {
+
+		CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);
+		if (i == OptionBP.YES_BUTTON) {
+			bp.scaricaTuttiDef(context);
+			bp.getDettController().reset(context);
+		}
+		return context.findDefaultForward();
+	}
+
 public Forward doConfirmScaricoBene(ActionContext context, OptionBP optionBP) throws it.cnr.jada.comp.ApplicationException,BusinessProcessException{
 
 	CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);

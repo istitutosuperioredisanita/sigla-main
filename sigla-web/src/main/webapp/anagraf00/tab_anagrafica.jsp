@@ -32,11 +32,14 @@
 						</span>
 					<%	} %>	
 			  	</td>
+
 		</tr>
 	<%if (anagrafico.isPersonaFisica() || anagrafico.isPersonaGiuridica() || anagrafico.isDiversi()) {%>
 		<tr>
 			<td><%bp.getController().writeFormInput(out,null,"ti_italiano_estero_anag",!bp.isInserting() && !bp.isItalianoEsteroModificabile(uc,anagrafico),null,"onclick=\"submitForm('doCambiaTi_italiano_estero')\"");%></td>
+
 		</tr>
+
 	<%} %>
 	<%if (anagrafico.isPersonaFisica() || anagrafico.isDiversi()) {%>
 		<tr>
@@ -143,6 +146,12 @@
 				<td><% bp.writeFormInput(out,"default","dataAvvioFattElettr",true,null,null);%></td>
 			</tr>
 		<%} %>
+		<% if (anagrafico.isDipendente()) { %>
+                    <tr>
+                        <td><%bp.getController().writeFormLabel(out,"findUnitaOrganizzativa");%></td>
+                        <td><%bp.getController().writeFormInput(out,null,"findUnitaOrganizzativa",false,null,"");%></td>
+                    </tr>
+                <%}%>
 	</table>
 </fieldset>
 

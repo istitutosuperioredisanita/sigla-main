@@ -72,21 +72,21 @@ public class OrdineAcqCMISService extends StoreService {
 
 
 	public List<StorageObject> getFilesOrdine(OrdineAcqBulk ordine) throws BusinessProcessException{
-    	if ( Optional.ofNullable(recuperoFolderOrdineSigla(ordine)).isPresent())
+		if ( Optional.ofNullable(recuperoFolderOrdineSigla(ordine)).isPresent())
 			return getChildren(recuperoFolderOrdineSigla(ordine).getKey());
-    	return Collections.EMPTY_LIST;
-    }
+		return Collections.EMPTY_LIST;
+	}
 
-    private List<StorageObject> getDocuments(String storageObjectKey, String tipoAllegato) throws ApplicationException {
-        return getChildren(storageObjectKey).stream()
-                .filter(storageObject -> tipoAllegato == null || storageObject.<String>getPropertyValue(StoragePropertyNames.OBJECT_TYPE_ID.value()).equals(tipoAllegato))
-                .collect(Collectors.toList());
-    }
+	private List<StorageObject> getDocuments(String storageObjectKey, String tipoAllegato) throws ApplicationException {
+		return getChildren(storageObjectKey).stream()
+				.filter(storageObject -> tipoAllegato == null || storageObject.<String>getPropertyValue(StoragePropertyNames.OBJECT_TYPE_ID.value()).equals(tipoAllegato))
+				.collect(Collectors.toList());
+	}
 
 	public StorageObject recuperoFolderOrdineSigla(OrdineAcqBulk ordine) throws BusinessProcessException{
-        return getStorageObjectByPath(getStorePath(ordine));
+		return getStorageObjectByPath(getStorePath(ordine));
 	}
-	
+
 	public String createFolderOrdineIfNotPresent(String path, OrdineAcqBulk ordine) throws ApplicationException{
 		Map<String, Object> metadataProperties = new HashMap<String, Object>();
 		String folderName = sanitizeFolderName(ordine.constructCMISNomeFile());
@@ -100,8 +100,8 @@ public class OrdineAcqCMISService extends StoreService {
 		List<String> aspectsToAdd = new ArrayList<String>();
 		aspectsToAdd.add("P:cm:titled");
 		aspectsToAdd.add("P:sigla_commons_aspect:utente_applicativo_sigla");
-        metadataProperties.put(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(), aspectsToAdd);
-        return createFolderIfNotPresent(path, folderName, metadataProperties);
+		metadataProperties.put(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(), aspectsToAdd);
+		return createFolderIfNotPresent(path, folderName, metadataProperties);
 	}
 
 	public String createFolderOrdineIfNotPresent(String path, OrdineAcqRigaBulk ordineAcqRigaBulk) throws ApplicationException{
@@ -194,13 +194,15 @@ public class OrdineAcqCMISService extends StoreService {
 
 	public String getStorePathDettaglio(OrdineAcqRigaBulk ordineAcqRigaBulk) throws BusinessProcessException{
 		try {
+			/*
 			String path = Arrays.asList(
 					getStorePath(ordineAcqRigaBulk.getOrdineAcq()),
-					ordineAcqRigaBulk.getOrdineAcq().constructCMISNomeFile()
+					ordineAcqRigaBulk.constructCMISNomeFile()
 			).stream().collect(
 					Collectors.joining(StorageDriver.SUFFIX)
 			);
-			return createFolderOrdineIfNotPresent(path, ordineAcqRigaBulk);
+*/
+			return createFolderOrdineIfNotPresent(getStorePath(ordineAcqRigaBulk.getOrdineAcq()), ordineAcqRigaBulk);
 		} catch (ComponentException e) {
 			throw new BusinessProcessException(e);
 		}
@@ -218,16 +220,16 @@ public class OrdineAcqCMISService extends StoreService {
 		if (Optional.ofNullable(getStorageObjectStampaOrdine(ordine))
 				.flatMap(storageObject -> Optional.ofNullable(storageObject.<String>getPropertyValue("ordine_acq:stato")))
 				.filter(stato->stato.equalsIgnoreCase(OrdineAcqBulk.STATO.get(OrdineAcqBulk.STATO_ALLA_FIRMA).toString())
-							  ||stato.equalsIgnoreCase(OrdineAcqBulk.STATO.get(OrdineAcqBulk.STATO_DEFINITIVO).toString())).isPresent())
-					return true;
+						||stato.equalsIgnoreCase(OrdineAcqBulk.STATO.get(OrdineAcqBulk.STATO_DEFINITIVO).toString())).isPresent())
+			return true;
 		return false;
 
 	}
-    public InputStream getStreamOrdine(OrdineAcqBulk ordine) throws Exception{
-    	return Optional.ofNullable(getStorageObjectStampaOrdine( ordine)).map(
+	public InputStream getStreamOrdine(OrdineAcqBulk ordine) throws Exception{
+		return Optional.ofNullable(getStorageObjectStampaOrdine( ordine)).map(
 				storageObject -> getResource(storageObject.getKey())
 		).orElse(null);
-    }
+	}
 	public String signOrdine(SignP7M signP7M, String path) throws ApplicationException {
 		StorageObject storageObject = storageDriver.getObject(signP7M.getNodeRefSource());
 		StorageObject docFirmato =null;

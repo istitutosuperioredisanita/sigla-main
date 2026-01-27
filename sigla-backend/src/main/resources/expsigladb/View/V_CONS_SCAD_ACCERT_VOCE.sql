@@ -1,8 +1,7 @@
 --------------------------------------------------------
 --  DDL for View V_CONS_SCAD_ACCERT_VOCE
 --------------------------------------------------------
-
-CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_CONS_SCAD_ACCERT_VOCE" ("CDS", "UO", "ESERCIZIO", "ESERCIZIO_ORIGINALE", "PG_ACC", "PG_ACC_SCAD", "VOCE_BILANCIO", "DATA_SCAD", "ACC_DESC", "DS_SCAD", "IM_SCAD", "IM_ASS_DOC_AMM", "IMP_ASS_DOC_CONT", "DEBITORE", "CD_CDS_ACCERTAMENTO", "DS_ELEMENTO_VOCE", "IM_VOCE", "PG_PROGETTO", "CD_PROGETTO", "DS_PROGETTO", "DT_INIZIO", "DT_FINE", "DT_PROROGA", "CD_TIPO_PROGETTO", "DS_TIPO_PROGETTO") AS
+CREATE OR REPLACE FORCE VIEW "V_CONS_SCAD_ACCERT_VOCE" ("CDS", "UO", "ESERCIZIO", "ESERCIZIO_ORIGINALE", "PG_ACC", "PG_ACC_SCAD", "VOCE_BILANCIO", "DATA_SCAD", "ACC_DESC", "DS_SCAD", "IM_SCAD", "IM_ASS_DOC_AMM", "IMP_ASS_DOC_CONT", "DEBITORE", "CD_CDS_ACCERTAMENTO", "DS_ELEMENTO_VOCE", "IM_VOCE", "PG_PROGETTO", "CD_PROGETTO", "DS_PROGETTO", "DT_INIZIO", "DT_FINE", "DT_PROROGA", "CD_TIPO_PROGETTO", "DS_TIPO_PROGETTO", "NOTE_PROGETTO") AS
   SELECT
   --
   -- Date: 12/08/2024
@@ -37,7 +36,9 @@ CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_CONS_SCAD_ACCERT_VOCE" ("CDS", "UO",
      po.dt_fine,
      po.dt_proroga,
      tp.cd_tipo_progetto,
-     tp.ds_tipo_progetto from V_CONS_SCAD_ACCERT v
+     tp.ds_tipo_progetto,
+     po.NOTE_DATI_CONTABILI AS NOTE_PROGETTO
+     from V_CONS_SCAD_ACCERT v
           left outer join accertamento_scad_voce av
             on v.cd_cds_accertamento= av.cd_cds
               AND v.esercizio = av.esercizio

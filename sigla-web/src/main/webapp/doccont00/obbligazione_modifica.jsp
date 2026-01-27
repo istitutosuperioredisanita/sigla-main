@@ -30,7 +30,7 @@
 		it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk obbligazione_modifica = (it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk)bp.getModel();
 %>
 
-<div class="Group card p-3 m-1 w-100">		
+<div class="Group card p-3 w-100">
 <table>
 		<tr>
 			<td><% bp.getController().writeFormLabel( out, "pg_modifica"); %></td>
@@ -59,7 +59,7 @@
 </table>
 </div>
 
-<div class="Group card p-3 m-1">
+<div class="Group card p-3">
 	<table class="w-100">
 		<tr>
 			<td colspan=2 class="w-100">

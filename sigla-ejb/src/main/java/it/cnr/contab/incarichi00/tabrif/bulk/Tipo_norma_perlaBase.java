@@ -43,6 +43,8 @@ public class Tipo_norma_perlaBase extends Tipo_norma_perlaKey implements Keyed {
 //    TIPO_ASSOCIAZIONE VARCHAR(3) NOT NULL
 	private java.lang.String tipo_associazione;
 
+	private java.lang.Boolean fl_cancellato=Boolean.FALSE;
+
 	public Tipo_norma_perlaBase() {
 		super();
 	}
@@ -90,5 +92,13 @@ public class Tipo_norma_perlaBase extends Tipo_norma_perlaKey implements Keyed {
 	}
 	public void setTipo_associazione(java.lang.String tipo_associazione) {
 		this.tipo_associazione = tipo_associazione;
+	}
+
+	public Boolean getFl_cancellato() {
+		return fl_cancellato;
+	}
+
+	public void setFl_cancellato(Boolean fl_cancellato) {
+		this.fl_cancellato = fl_cancellato;
 	}
 }

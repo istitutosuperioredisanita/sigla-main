@@ -61,6 +61,8 @@ public class Voce_epBase extends Voce_epKey implements Keyed {
 
 	private java.lang.Integer id_classificazione;
 
+	private java.lang.Integer id_classificazione_acc;
+
 	private java.lang.String cd_voce_ep_contr;
 
 	public Voce_epBase() {
@@ -218,6 +220,14 @@ public class Voce_epBase extends Voce_epKey implements Keyed {
 	}
 	public void setId_classificazione(java.lang.Integer id_classificazione) {
 		this.id_classificazione = id_classificazione;
+	}
+
+	public Integer getId_classificazione_acc() {
+		return id_classificazione_acc;
+	}
+
+	public void setId_classificazione_acc(Integer id_classificazione_acc) {
+		this.id_classificazione_acc = id_classificazione_acc;
 	}
 
 	public java.lang.String getCd_voce_ep_contr() {

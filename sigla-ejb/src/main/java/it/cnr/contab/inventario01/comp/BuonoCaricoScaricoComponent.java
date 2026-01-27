@@ -278,6 +278,7 @@ try{
 		if (!buonoC.isByFattura() && !buonoC.isByDocumento() && !buonoC.isByOrdini()){
 			buonoC = (Buono_carico_scaricoBulk)super.inizializzaBulkPerModifica(aUC, bulk);
 		}
+		buonoC.setByOrdini(((Buono_carico_scaricoBulk)bulk).getTipoMovimento().getFl_da_ordini());
 		inizializzaTipo(aUC,buonoC);	 
 		// Carica l'Inventario associato alla UO
 		try{
@@ -294,9 +295,10 @@ try{
 					 Buono_carico_scarico_dettBulk dettaglio = (Buono_carico_scarico_dettBulk)dett.next();
 					 Inventario_beniBulk inv =(Inventario_beniBulk)getHome(aUC,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(dettaglio.getNr_inventario(),dettaglio.getPg_inventario(),new Long(dettaglio.getProgressivo().longValue())));
 					 dettaglio.setBene(inv);
+					 dettaglio.setFl_bene_accessorio(inv.isBeneAccessorio());
 					 dettaglio.CalcolaTotaleBene();
 				 }	    
-				 getHomeCache(aUC).fetchAll(aUC,dettHome);
+  				 getHomeCache(aUC).fetchAll(aUC,dettHome);
 			 }
 		}
 		catch(it.cnr.jada.persistency.PersistencyException pe){
@@ -2129,7 +2131,7 @@ if (!associa_Bulk.isPerAumentoValore()){
 			
 			sql.addClause(clauses);
 			sql.addSQLClause("AND","INVENTARIO_BENI.PG_INVENTARIO",SQLBuilder.EQUALS, buonoS.getInventario().getPg_inventario());
-			sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",SQLBuilder.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
+			//sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",SQLBuilder.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
 			//sql.addSQLClause("AND","INVENTARIO_BENI.CD_UNITA_ORGANIZZATIVA",SQLBuilder.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext));
 			sql.addSQLClause("AND","INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO",SQLBuilder.EQUALS,Inventario_beniBulk.ISNOTTOTALMENTESCARICATO);
 			sql.addSQLClause("AND","INVENTARIO_BENI.DT_VALIDITA_VARIAZIONE",SQLBuilder.LESS_EQUALS,buonoS.getData_registrazione());
@@ -3047,7 +3049,7 @@ public Buono_carico_scaricoBulk scaricaBeniAccessoriFor(UserContext userContext,
 			Inventario_beniHome home = (Inventario_beniHome)getHome(userContext,Inventario_beniBulk.class);
 			SQLBuilder sql= home.createSQLBuilder();
 			sql.addSQLClause("AND","INVENTARIO_BENI.PG_INVENTARIO",sql.EQUALS, buonoS.getInventario().getPg_inventario());
-			sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",sql.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
+			sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",sql.EQUALS,bene.getCd_cds());
 			//sql.addSQLClause("AND","INVENTARIO_BENI.CD_UNITA_ORGANIZZATIVA",sql.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext));
 			sql.addSQLClause("AND","INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO",sql.EQUALS,Inventario_beniBulk.ISNOTTOTALMENTESCARICATO);
 			sql.addSQLClause("AND","INVENTARIO_BENI.NR_INVENTARIO",sql.EQUALS, bene.getNr_inventario());
@@ -3092,7 +3094,7 @@ public Buono_carico_scaricoBulk scaricaBeniAccessoriFor(UserContext userContext,
 				SQLBuilder sql= home.createSQLBuilder();
 				
 				sql.addSQLClause("AND","INVENTARIO_BENI.PG_INVENTARIO",sql.EQUALS, buonoS.getInventario().getPg_inventario());
-				sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",sql.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
+				sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",sql.EQUALS,bene.getCd_cds());
 				//sql.addSQLClause("AND","INVENTARIO_BENI.CD_UNITA_ORGANIZZATIVA",sql.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext));
 				sql.addSQLClause("AND","INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO",sql.EQUALS,Inventario_beniBulk.ISNOTTOTALMENTESCARICATO);
 				sql.addSQLClause("AND","INVENTARIO_BENI.NR_INVENTARIO",sql.EQUALS, bene.getNr_inventario());
@@ -5216,7 +5218,7 @@ private void scaricaTuttiBeniPerTrasferimento(UserContext userContext,Buono_cari
 	try{
 		sql.addClause(clauses);
 		sql.addSQLClause("AND","INVENTARIO_BENI.PG_INVENTARIO",sql.EQUALS, buonoS.getInventario().getPg_inventario());
-		sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",sql.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
+		//sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",sql.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
 		//sql.addSQLClause("AND","INVENTARIO_BENI.CD_UNITA_ORGANIZZATIVA",sql.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext));
 		sql.addSQLClause("AND","INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO",sql.EQUALS,Inventario_beniBulk.ISNOTTOTALMENTESCARICATO);
 		sql.addSQLClause("AND","INVENTARIO_BENI.DT_VALIDITA_VARIAZIONE",sql.LESS_EQUALS,buonoS.getData_registrazione());
@@ -7614,11 +7616,11 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 	 public void scaricaTuttiBeniDef(UserContext userContext,Buono_carico_scaricoBulk buonoS ) throws ComponentException {
 		try {
 				Boolean accesorio_presente;
-			    Inventario_beni_apgHome homebeni =(Inventario_beni_apgHome)getHome(userContext,Inventario_beni_apgBulk.class); 
+			    Inventario_beni_apgHome homebeni =(Inventario_beni_apgHome)getHome(userContext,Inventario_beni_apgBulk.class);
 				SQLBuilder sql = homebeni.createSQLBuilder();
 				sql.addTableToHeader("INVENTARIO_BENI");
 				sql.addSQLClause("AND","INVENTARIO_BENI.PG_INVENTARIO",SQLBuilder.EQUALS, buonoS.getInventario().getPg_inventario());
-				sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",SQLBuilder.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
+				//sql.addSQLClause("AND","INVENTARIO_BENI.CD_CDS",SQLBuilder.EQUALS,it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
 				sql.addSQLClause("AND","INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO",SQLBuilder.EQUALS,Inventario_beniBulk.ISNOTTOTALMENTESCARICATO);
 				sql.addSQLClause("AND","INVENTARIO_BENI.DT_VALIDITA_VARIAZIONE",SQLBuilder.LESS_EQUALS,buonoS.getData_registrazione());
 				sql.addSQLJoin("INVENTARIO_BENI.PG_INVENTARIO","INVENTARIO_BENI_APG.PG_INVENTARIO");
@@ -7740,6 +7742,22 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 		} catch (SQLException ex) {
 			throw handleException(ex);
 		}
+	}
+	public boolean isPresentiAccessoriPerBeni(UserContext userContext,Buono_carico_scaricoBulk buonoCs) throws ComponentException, PersistencyException {
+
+		Inventario_beniHome homebeni =(Inventario_beniHome)getHome(userContext,Inventario_beniBulk.class);
+		SQLBuilder sql = homebeni.createSQLBuilder();
+		sql.addTableToHeader("INVENTARIO_BENI_APG");
+		sql.addSQLJoin("INVENTARIO_BENI.PG_INVENTARIO","INVENTARIO_BENI_APG.PG_INVENTARIO");
+		sql.addSQLJoin("INVENTARIO_BENI.NR_INVENTARIO","INVENTARIO_BENI_APG.NR_INVENTARIO");
+
+		sql.addSQLClause("AND","INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO",SQLBuilder.EQUALS,Inventario_beniBulk.ISNOTTOTALMENTESCARICATO);
+		sql.addSQLClause("AND","INVENTARIO_BENI.PROGRESSIVO",SQLBuilder.GREATER,0);
+		sql.addSQLClause("AND","INVENTARIO_BENI_APG.LOCAL_TRANSACTION_ID",SQLBuilder.EQUALS,buonoCs.getLocal_transactionID());
+
+		List beni = homebeni.fetchAll(sql);
+
+		return (beni!=null && !beni.isEmpty());
 	}
 
 

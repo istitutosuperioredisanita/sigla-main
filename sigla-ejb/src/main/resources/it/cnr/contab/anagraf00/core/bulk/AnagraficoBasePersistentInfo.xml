@@ -375,8 +375,12 @@
 				nullable="false"
 				columnSize="1"
 				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+				columnName="CD_UNITA_ORGANIZZATIVA"
+				propertyName="cd_unita_organizzativa"
+				sqlTypeName="VARCHAR"
+				columnSize="30" />
 
-				
 	</defaultColumnMap>
 	<persistentProperty
 		name="pg_nazione_nazionalita" />
@@ -508,4 +512,6 @@
 		name="flPivaVerificata" />
 	<persistentProperty
 		name="flFirmatarioContratto"/>
+	<persistentProperty
+			name="cd_unita_organizzativa"/>
 </SQLPersistentInfo>

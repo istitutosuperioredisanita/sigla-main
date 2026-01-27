@@ -58,6 +58,8 @@ public class Progetto_other_fieldBase extends Progetto_other_fieldKey implements
 
 	private Boolean flAutoRimodulazioneEnable = Boolean.TRUE;
 
+	private java.lang.String noteDatiContabili;
+
 	public Progetto_other_fieldBase() {
 		super();
 	}
@@ -216,5 +218,13 @@ public class Progetto_other_fieldBase extends Progetto_other_fieldKey implements
 
 	public void setFlAutoRimodulazioneEnable(Boolean flAutoRimodulazioneEnable) {
 		this.flAutoRimodulazioneEnable = flAutoRimodulazioneEnable;
+	}
+
+	public String getNoteDatiContabili() {
+		return noteDatiContabili;
+	}
+
+	public void setNoteDatiContabili(String noteDatiContabili) {
+		this.noteDatiContabili = noteDatiContabili;
 	}
 }

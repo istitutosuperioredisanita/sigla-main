@@ -1755,6 +1755,15 @@ public class ObbligazioneHome extends BulkHome {
         }
     }
 
+    public void aggiornaImportoObbligazione(UserContext userContext, ObbligazioneBulk obbligazioneBulk, BigDecimal newImporto, Optional<String> gae) {
+        /**
+         * Nel caso in cui l'importo è negativo e quindi devo aumentare l'impegno recupero
+         * l'ultima scadenza sulla eventuale GAE passata in input la duplico assegnando il nuovo importo
+         */
+        obbligazioneBulk.setIm_obbligazione(obbligazioneBulk.getIm_obbligazione().subtract(newImporto));
+
+    }
+
     public IScadenzaDocumentoContabileBulk aumentaImportoScadenzaInAutomatico(UserContext userContext, Obbligazione_scadenzarioBulk scadenza, BigDecimal newImporto) throws ComponentException {
         try {
             Obbligazione_scadenzarioHome osHome = (Obbligazione_scadenzarioHome)getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
@@ -1888,4 +1897,6 @@ public class ObbligazioneHome extends BulkHome {
             throw new ComponentException( e );
         }
     }
+
+
 }

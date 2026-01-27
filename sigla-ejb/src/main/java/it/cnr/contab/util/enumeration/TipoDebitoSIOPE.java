@@ -17,24 +17,43 @@
 
 package it.cnr.contab.util.enumeration;
 
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.stream.Collectors;
+
 public enum TipoDebitoSIOPE {
     COMMERCIALE("COMMERCIALE", "C"),
     NON_COMMERCIALE("NON COMMERCIALE", "N"),
     IVA("IVA", "I");
 
+    public static final Dictionary<String, String> AllTipoDebitoSIOPE_CN_Keys = Arrays.stream(TipoDebitoSIOPE.values())
+            .collect(Collectors.toMap(
+                    TipoDebitoSIOPE::value, TipoDebitoSIOPE::label,
+                    (u, v) -> {
+                        throw new IllegalStateException(
+                                String.format("Cannot have 2 values (%s, %s) for the same key", u, v)
+                        );
+                    }, Hashtable::new
+            ));
+
+    public static final Dictionary<String, String> TipoDebitoSIOPE_CN_Keys = Arrays.stream(TipoDebitoSIOPE.values())
+            .filter(tipoDebitoSIOPE -> !tipoDebitoSIOPE.equals(TipoDebitoSIOPE.IVA))
+            .collect(Collectors.toMap(
+                    TipoDebitoSIOPE::value, TipoDebitoSIOPE::label,
+                    (u, v) -> {
+                        throw new IllegalStateException(
+                                String.format("Cannot have 2 values (%s, %s) for the same key", u, v)
+                        );
+                    }, Hashtable::new
+            ));
+
     private final String label, value;
 
-    private TipoDebitoSIOPE(String label, String value) {
+
+    TipoDebitoSIOPE(String label, String value) {
         this.value = value;
         this.label = label;
-    }
-
-    public String value() {
-        return value;
-    }
-
-    public String label() {
-        return label;
     }
 
     public static TipoDebitoSIOPE getValueFrom(String value) {
@@ -43,5 +62,13 @@ public enum TipoDebitoSIOPE {
                 return esito;
         }
         throw new IllegalArgumentException("TipoDebitoSIOPE no found for value: " + value);
+    }
+
+    public String value() {
+        return value;
+    }
+
+    public String label() {
+        return label;
     }
 }

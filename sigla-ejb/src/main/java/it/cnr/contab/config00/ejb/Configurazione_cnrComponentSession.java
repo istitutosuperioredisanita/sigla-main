@@ -125,6 +125,8 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean isGestioneEtichettaInventarioBeneAttivo(UserContext param0) throws ComponentException, RemoteException;
 
+    Boolean isGestioneInvioInFirmaDocTRAttivo(UserContext param0) throws ComponentException, RemoteException;
+
     String getTipoStanziamentoLiquidazioneIva(UserContext param0) throws ComponentException, RemoteException;
     Boolean isGestioneBeneDismessoInventarioAttivo(UserContext param0) throws ComponentException, RemoteException;
 
@@ -156,4 +158,11 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean isAttivoLiqFattOrdineCheckInv(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
+    Boolean isGestioneImportoInventarioReadOnly(UserContext param0) throws ComponentException, RemoteException;
+
+     Boolean is1210BonificoEsteroEuro(UserContext userContext) throws ComponentException, RemoteException;
+
+    Boolean isEnabledPartGiroInVarizione(UserContext userContext) throws ComponentException, RemoteException;
+
+    void ribaltaProgetti(UserContext userContext, int esercizio) throws ComponentException, RemoteException;
 }

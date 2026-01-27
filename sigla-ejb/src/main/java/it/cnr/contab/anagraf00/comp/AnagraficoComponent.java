@@ -37,8 +37,6 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaHome;
-import it.cnr.contab.doccont00.service.DocumentiContabiliService;
-import it.cnr.contab.incarichi00.bp.CRUDIncarichiProceduraBP;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
 import it.cnr.contab.incarichi00.bulk.VIncarichiAssRicBorseStBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
@@ -47,7 +45,6 @@ import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utente00.nav.ejb.GestioneLoginComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
-import it.cnr.contab.utenze00.bulk.Utente_indirizzi_mailBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
@@ -73,15 +70,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import javax.ejb.EJBException;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import java.io.Reader;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -617,8 +610,11 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
                 anagrafico.setTi_entita_persona_struttura(anagrafico.ENTITA_PERSONA);
             //??????????????
             //anagrafico.setCervello(anagrafico.getFl_cervelloni());
-
-
+            if ( Optional.ofNullable(anagrafico.getCd_unita_organizzativa()).isPresent()) {
+                anagrafico.setUnitaOrganizzativa(
+                        (Unita_organizzativaBulk) getHome(userContext, Unita_organizzativaBulk.class).
+                        findByPrimaryKey(new Unita_organizzativaBulk(anagrafico.getCd_unita_organizzativa())));
+            }
             //java.util.Collection details = anagraficoHome.findContatti(anagrafico);
             //for (java.util.Iterator i = details.iterator();i.hasNext();) {
             //ContattoBulk contatto = (ContattoBulk)i.next();

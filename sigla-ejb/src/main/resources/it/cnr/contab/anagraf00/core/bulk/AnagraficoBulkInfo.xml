@@ -695,6 +695,24 @@
 			property="flFirmatarioContratto"
 			label="Firmatario"
 			inputType="CHECKBOX" />
+	<fieldProperty
+			name="findUnitaOrganizzativa"
+			property="unitaOrganizzativa"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			label="Unit&#224; organizzativa Appartenenza"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			enabledOnFreeSearch="false"/>
+	<fieldProperty
+			name="cd_unita_organizzativa"
+			property="cd_unita_organizzativa"
+			maxLength="30"
+			inputSize="30"
+			inputType="TEXT"
+			label="cd_unita_organizzativa"
+			caseSensitiveSearch="false" />
 
 	<columnSet name="gesVisAnagrafica">
 		<columnFieldProperty
@@ -1120,6 +1138,9 @@
 		command="doCambiaDateDiariaMissEst"/>
 
 	<formFieldProperty
+			name="findUnitaOrganizzativa" />
+
+	<formFieldProperty
 		name="find_conto_credito" />
 	<formFieldProperty
 		name="find_conto_debito" />
@@ -1182,4 +1203,5 @@
 		name="dataAvvioFattElettr"	/>
 	<findFieldProperty
 		name="fl_abilita_diaria_miss_est" />
+
 </bulkInfo>

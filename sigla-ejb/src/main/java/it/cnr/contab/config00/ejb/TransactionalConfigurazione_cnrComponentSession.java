@@ -802,6 +802,41 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
     }
 
     @Override
+    public Boolean isGestioneInvioInFirmaDocTRAttivo(UserContext param0) throws ComponentException, RemoteException {
+        try {
+            return (Boolean) invoke("isGestioneInvioInFirmaDocTRAttivo", new Object[]{
+                    param0});
+        } catch (RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+    @Override
+    public Boolean isGestioneImportoInventarioReadOnly(UserContext param0) throws ComponentException, RemoteException {
+        try {
+            return (Boolean) invoke("isGestioneImportoInventarioReadOnly", new Object[]{
+                    param0});
+        } catch (RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
     public Boolean isGestioneBeneDismessoInventarioAttivo(UserContext param0) throws ComponentException, RemoteException {
         try {
             return (Boolean) invoke("isGestioneBeneDismessoInventarioAttivo", new Object[]{
@@ -1702,4 +1737,57 @@ public class TransactionalConfigurazione_cnrComponentSession extends it.cnr.jada
         }
     }
 
-}
+    @Override
+    public Boolean is1210BonificoEsteroEuro(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("is1210BonificoEsteroEuroSepa", new Object[]{
+                    userContext});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Boolean isEnabledPartGiroInVarizione(UserContext userContext) throws ComponentException, RemoteException {
+        try {
+            return (java.lang.Boolean) invoke("isEnabledPartGiroInVarizione", new Object[]{
+                    userContext});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public void ribaltaProgetti(UserContext userContext, int esercizio) throws ComponentException, RemoteException {
+        try {
+            invoke("ribaltaProgetti", new Object[]{
+                    userContext,
+                    esercizio});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }}

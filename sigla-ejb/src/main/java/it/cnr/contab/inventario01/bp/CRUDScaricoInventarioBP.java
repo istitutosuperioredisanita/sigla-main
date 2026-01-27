@@ -25,6 +25,7 @@ package it.cnr.contab.inventario01.bp;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.BitSet;
 
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
@@ -37,6 +38,7 @@ import it.cnr.contab.inventario00.docs.bulk.Trasferimento_inventarioBulk;
 import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -44,6 +46,7 @@ import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.EmptyRemoteIterator;
 import it.cnr.jada.util.action.AbstractDetailCRUDController;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
@@ -538,6 +541,10 @@ public boolean isDeleteButtonHidden() {
 }
 
 public boolean isFlagScaricoTotaleRO() {
+	Buono_carico_scaricoBulk buonoS = (Buono_carico_scaricoBulk)this.getModel();
+	if(buonoS != null && buonoS.getTipoMovimento() != null && buonoS.getTipoMovimento().getFl_dismissione()){
+		return true;
+	}
 	if (isInserting()) 
 		return false;
 	else
@@ -565,14 +572,23 @@ public boolean isNonIniziatoAmmortamento() {
  *
  * @return <code>boolean</code> lo stato del campo.
 **/
-public boolean isValoreScaricatoRO() {
 
+public boolean isValoreScaricatoRO() {
+	Buono_carico_scaricoBulk buonoS = (Buono_carico_scaricoBulk)this.getModel();
 	// Disabilito il campo se ho scelto Scarico Totale
-			Inventario_beniBulk dettScarico = (Inventario_beniBulk)getDettController().getModel();
-		if ((dettScarico != null)&&(dettScarico.getFl_totalmente_scaricato()!=null)&&(dettScarico.getFl_totalmente_scaricato().booleanValue()))
+	Inventario_beniBulk dettScarico = (Inventario_beniBulk)getDettController().getModel();
+	if(dettScarico!=null) {
+		if (buonoS.getTipoMovimento().getFl_dismissione()) {
+
+			dettScarico.setValore_unitario(dettScarico.getValoreBene());
+			dettScarico.setFl_totalmente_scaricato(true);
+			return true;
+		}
+		if(dettScarico.getFl_totalmente_scaricato()!=null && dettScarico.getFl_totalmente_scaricato().booleanValue()){
 			return true; // disabilito
-		else
-			return false;	// abilito
+		}
+	}
+	return false;	// abilito
 }
 
 
@@ -883,6 +899,10 @@ public java.util.List getBeniAccessoriFor(it.cnr.jada.UserContext userContext, I
 	
 	return ((BuonoCaricoScaricoComponentSession)createComponentSession()).getBeniAccessoriFor(userContext, benePrincipale);
 	
+}
+
+public boolean isAccessoriPresenti(ActionContext context) throws BusinessProcessException, ComponentException, PersistencyException, RemoteException {
+	return ((it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession)createComponentSession()).isPresentiAccessoriPerBeni(context.getUserContext(), (Buono_carico_scaricoBulk)getModel());
 }
 
 /**

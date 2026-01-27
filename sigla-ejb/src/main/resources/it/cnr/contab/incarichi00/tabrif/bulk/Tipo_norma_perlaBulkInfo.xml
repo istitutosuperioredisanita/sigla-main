@@ -104,6 +104,14 @@
 		enabledOnEdit = "true"
 		enabledOnSearch = "false"
 		label="Comma" />
+	<fieldProperty
+			name="fl_cancellato"
+			property="fl_cancellato"
+			inputType="CHECKBOX"
+			enabledOnSearch="false"
+			enabledOnEdit="false"
+			enabledOnInsert="false"
+			label="Cancellato" />
 
 
 	<formFieldProperty
@@ -122,6 +130,8 @@
 		name="dt_tipo_norma" />
 	<formFieldProperty
 		name="tipo_associazione" />
+	<formFieldProperty
+			name="fl_cancellato" />
 
 	<columnFieldProperty
 		name="cd_tipo_norma" />
@@ -132,6 +142,10 @@
 		name="cd_tipo_norma" />
 	<findFieldProperty
 		name="ds_tipo_norma" />
+	<findFieldProperty
+			name="fl_cancellato" />
+	<columnFieldProperty
+			name="fl_cancellato" />
 
 	<form
 		name="searchtool" >

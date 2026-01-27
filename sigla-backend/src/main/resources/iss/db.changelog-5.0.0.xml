@@ -124,5 +124,17 @@
     <!--update per abilitare il controllo che tutte le righe dell'ordine di una fattura siano inventariate per poter
     settare la fattura come liquidabile-->
     <include file="iss/update_configurazioneCnr_liq_daordine_inv.xml"/>
+    <!-- gestione importo inventariazione-->
+    <include file="iss/update_conf_gestione_importo_ro_inventario_ordini.xml"/>
+    <!-- Autore : CIRO SALVIO - Menu Replace CNR to ISS-->
+    <include file="iss/update_albero_main_CNRtoISS.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiornamento Lettera 1210 bonifici esteri euro-->
+    <include file="iss/update_conf_bonifici_esteri_euro_iss.xml"/>
+    <!-- Autore : CIRO SALVIO - Aggiunta configurazione prefix contro Bonifici Esteri Euro( 1210)-->
+    <include file="iss/update_conf_bonifici_esteriprefix_conto.xml"/>
+    <!-- Autore : CIRO SALVIO - Abilitazione partite di giro per le variazioni di bilancio-->
+    <include file="iss/update_conf_partite_giro_variazione_iss.xml"/>
 
+    <!-- Autore : DAVIDE MIRRA-Configurazione per l'invio in firma di un DDT -->
+    <include file="iss/update_conf_gestione_invio_docTR.xml"/>
 </databaseChangeLog>

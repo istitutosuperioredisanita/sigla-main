@@ -34,7 +34,6 @@ public class ContrattoDtoBulk extends ContrattoBase  implements Serializable {
     private List<AttachmentContratto> attachments;
     private EnumTipoDettaglioContratto tipoDettaglioContratto;
     private EnumNaturaContabileContratto naturaContabileContratto;
-
     private List<String> codFisPivaAggiudicatari;
 
     private String cdCigPadre;

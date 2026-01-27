@@ -46,6 +46,7 @@
 		<ws.client.version>0.0.6</ws.client.version>
 		<spring.version>5.2.5.RELEASE</spring.version>
 		<jada.version>7.1.9</jada.version>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.directory>target</project.build.directory>
 		<sigla.build.number>${maven.build.timestamp}</sigla.build.number>

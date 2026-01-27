@@ -42,6 +42,9 @@ public class V_cons_scad_accert_voceBulk extends V_cons_scad_accertBulk {
 
     private java.lang.String ds_tipo_progetto;
 
+    private java.lang.String note_progetto;
+
+
     public BigDecimal getIm_voce() {
         return im_voce;
     }
@@ -114,6 +117,11 @@ public class V_cons_scad_accert_voceBulk extends V_cons_scad_accertBulk {
         this.ds_tipo_progetto = ds_tipo_progetto;
     }
 
+    public String getNote_progetto() {
+        return note_progetto;
+    }
 
-
+    public void setNote_progetto(String note_progetto) {
+        this.note_progetto = note_progetto;
+    }
 }

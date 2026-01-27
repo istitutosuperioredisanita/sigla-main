@@ -22,11 +22,6 @@
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package it.cnr.contab.inventario01.bp;
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Vector;
 
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
@@ -37,23 +32,22 @@ import it.cnr.contab.inventario00.docs.bulk.Utilizzatore_CdrVBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
-import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
-import it.cnr.jada.bulk.BulkCollections;
-import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.PrimaryKeyHashtable;
-import it.cnr.jada.bulk.SimpleBulkList;
-import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.AbstractDetailCRUDController;
 import it.cnr.jada.util.action.SearchProvider;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
-import it.cnr.contab.util.Utility;
+
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * @author rpucciarelli
@@ -73,9 +67,14 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 
 
 	private boolean attivaEtichettaInventarioBene = false;
+	private boolean importoUnitarioRO =false;
 
 	public boolean isAttivaEtichettaInventarioBene() {
 		return attivaEtichettaInventarioBene;
+	}
+
+	public boolean isImportoUnitarioRO() {
+		return importoUnitarioRO;
 	}
 
 	public CRUDCaricoInventarioBP() {
@@ -94,6 +93,7 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 		utilizzatori.setReadonly(false);
 		try {
 			attivaEtichettaInventarioBene = Utility.createConfigurazioneCnrComponentSession().isGestioneEtichettaInventarioBeneAttivo(context.getUserContext());
+			importoUnitarioRO = Utility.createConfigurazioneCnrComponentSession().isGestioneImportoInventarioReadOnly(context.getUserContext());
 		} catch (ComponentException e) {
 			throw new BusinessProcessException(e);
 		} catch (RemoteException e) {
@@ -394,7 +394,7 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 			} catch (BusinessProcessException e1) {
 				handleException(e1);
 			}
-		}			
+		}
 		
 		validate_Percentuali_CdR(context, model);
 	
@@ -580,9 +580,13 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 		for (Iterator i = beni.iterator(); i.hasNext();){	
 			dettCarico = new Buono_carico_scarico_dettBulk();
 			bene = (Inventario_beniBulk)i.next();
-			if(bene.getCategoria_Bene()!=null && buonoC.getData_registrazione()!=null && bene.getCategoria_Bene().getData_cancellazione()!=null &&
-					bene.getCategoria_Bene().getData_cancellazione().before(buonoC.getData_registrazione()))
-				throw new ApplicationException("Il Bene "+bene.getNr_inventario()+" ha un categoria non più valida");
+			if(! ( buonoC.isPerAumentoValore()
+					|| buonoC.isPerVendita()
+				|| buonoC.isTrasferimento())) {
+				if (bene.getCategoria_Bene() != null && buonoC.getData_registrazione() != null && bene.getCategoria_Bene().getData_cancellazione() != null &&
+						bene.getCategoria_Bene().getData_cancellazione().before(buonoC.getData_registrazione()))
+					throw new ApplicationException("Il Bene " + bene.getNr_inventario() + " ha una categoria non più valida");
+			}
 			dettCarico.setBuono_cs(buonoC);
 			dettCarico.setBene(bene);
 			dettCarico.setQuantita(new Long(1));
@@ -803,6 +807,25 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 				}
 			}
 		}
+	}
+
+	public boolean isValore_unitarioRO(UserContext uc) throws ComponentException, RemoteException, BusinessProcessException {
+		if(this.getDettaglio() != null){
+			Buono_carico_scarico_dettBulk riga = (Buono_carico_scarico_dettBulk)this.getDettaglio().getModel();
+
+			return (	(riga != null && riga.isTotalmenteScaricato()) ||
+						this.isBy_fattura() ||
+						this.isBy_documento() ||
+						(riga != null && this.isImportoUnitarioRO() && riga.isProvenienzaOrdine()) ||
+						(	!this.isModValore_unitario() ||
+							this.isAssociata(uc, riga) ||
+							(riga != null && riga.getBuono_cs().getTipoMovimento().getFl_buono_per_trasferimento().booleanValue()) ||
+							this.isNonUltimo(uc, riga))
+						&& !this.isInserting()
+			);
+		}
+
+		return false;
 	}
 }
 

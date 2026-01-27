@@ -24,7 +24,12 @@ import it.cnr.jada.persistency.Keyed;
 public class Codici_siopeBase extends Codici_siopeKey implements Keyed {
 //    DESCRIZIONE VARCHAR(200) NOT NULL
 	private java.lang.String descrizione;
- 
+
+	private java.lang.Integer id_classificazione_siope;
+
+	private java.lang.Integer id_classificazione_siope_rend;
+    //    TI_TIPO_DEBITO CHAR(1) NULL
+    private java.lang.String ti_tipo_debito;
 
 	public Codici_siopeBase() {
 		super();
@@ -38,6 +43,28 @@ public class Codici_siopeBase extends Codici_siopeKey implements Keyed {
 	public void setDescrizione(java.lang.String descrizione)  {
 		this.descrizione=descrizione;
 	}
-	
-	
+
+	public Integer getId_classificazione_siope() {
+		return id_classificazione_siope;
+	}
+
+	public void setId_classificazione_siope(Integer id_classificazione_siope) {
+		this.id_classificazione_siope = id_classificazione_siope;
+	}
+
+	public Integer getId_classificazione_siope_rend() {
+		return id_classificazione_siope_rend;
+	}
+
+	public void setId_classificazione_siope_rend(Integer id_classificazione_siope_rend) {
+		this.id_classificazione_siope_rend = id_classificazione_siope_rend;
+	}
+
+    public String getTi_tipo_debito() {
+        return ti_tipo_debito;
+    }
+
+    public void setTi_tipo_debito(String ti_tipo_debito) {
+        this.ti_tipo_debito = ti_tipo_debito;
+    }
 }

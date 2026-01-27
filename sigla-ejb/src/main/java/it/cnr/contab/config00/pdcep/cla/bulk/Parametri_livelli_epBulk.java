@@ -21,91 +21,82 @@
 */
 package it.cnr.contab.config00.pdcep.cla.bulk;
 
+import it.cnr.contab.config00.pdcep.bulk.Voce_epBulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_epHome;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.action.CRUDBP;
 public class Parametri_livelli_epBulk extends Parametri_livelli_epBase {
+	public final static it.cnr.jada.util.OrderedHashtable nrLivelliList;
+	public final static it.cnr.jada.util.OrderedHashtable lunghezzaLivelloList;
+
+	static {
+		nrLivelliList = new it.cnr.jada.util.OrderedHashtable();
+		for (int i = 0; i <= 8; i++)
+			nrLivelliList.put(i,i);
+
+		lunghezzaLivelloList = new it.cnr.jada.util.OrderedHashtable();
+		for (int i = 1; i <= 5; i++)
+			lunghezzaLivelloList.put(i,i);
+	};
+
+	public final static java.util.Dictionary tipoKeys;
+
+	static {
+		tipoKeys = new it.cnr.jada.util.OrderedHashtable();
+		tipoKeys.put(Voce_epHome.ECONOMICA,"Economica");
+		tipoKeys.put(Voce_epHome.PATRIMONIALE,"Patrimoniale");
+		tipoKeys.put(Voce_epHome.ECONOMICA_ACCRUAL,"Economica Accrual");
+		tipoKeys.put(Voce_epHome.PATRIMONIALE_ACCRUAL,"Patrimoniale Accrual");
+		tipoKeys.put(Voce_epHome.SIOPE,"Siope");
+		tipoKeys.put(Voce_epHome.SIOPE_RENDICONTO,"Siope Rendiconto");
+	};
 
 	public Parametri_livelli_epBulk() {
 		super();
 	}
-	public Parametri_livelli_epBulk(java.lang.Integer esercizio) {
-		super(esercizio);
+	public Parametri_livelli_epBulk(java.lang.Integer esercizio, String tipo) {
+		super(esercizio,tipo);
 	}
-	public String getDs_livello_eco(int livello) {
+	public String getDs_livello(int livello) {
 		if (livello==1)  
-			return(getDs_livello1e());
+			return(getDs_livello1());
 		else if (livello==2)  
-			return(getDs_livello2e());
+			return(getDs_livello2());
 		else if (livello==3)  
-			return(getDs_livello3e());
+			return(getDs_livello3());
 		else if (livello==4)  
-			return(getDs_livello4e());
+			return(getDs_livello4());
 		else if (livello==5)  
-			return(getDs_livello5e());
+			return(getDs_livello5());
 		else if (livello==6)  
-			return(getDs_livello6e());
+			return(getDs_livello6());
 		else if (livello==7)  
-			return(getDs_livello7e());
+			return(getDs_livello7());
 		else  
-			return(getDs_livello8e());
+			return(getDs_livello8());
 	}
-	public String getDs_livello_pat(int livello) {
+	public Integer getLung_livello(int livello) {
 		if (livello==1)  
-			return(getDs_livello1p());
+			return(getLung_livello1());
 		else if (livello==2)  
-			return(getDs_livello2p());
+			return(getLung_livello2());
 		else if (livello==3)  
-			return(getDs_livello3p());
+			return(getLung_livello3());
 		else if (livello==4)  
-			return(getDs_livello4p());
+			return(getLung_livello4());
 		else if (livello==5)  
-			return(getDs_livello5p());
+			return(getLung_livello5());
 		else if (livello==6)  
-			return(getDs_livello6p());
+			return(getLung_livello6());
 		else if (livello==7)  
-			return(getDs_livello7p());
+			return(getLung_livello7());
 		else  
-			return(getDs_livello8p());
-	}
-	public Integer getLung_livello_eco(int livello) {
-		if (livello==1)  
-			return(getLung_livello1e());
-		else if (livello==2)  
-			return(getLung_livello2e());
-		else if (livello==3)  
-			return(getLung_livello3e());
-		else if (livello==4)  
-			return(getLung_livello4e());
-		else if (livello==5)  
-			return(getLung_livello5e());
-		else if (livello==6)  
-			return(getLung_livello6e());
-		else if (livello==7)  
-			return(getLung_livello7e());
-		else  
-			return(getLung_livello8e());
-	}
-	public Integer getLung_livello_pat(int livello) {
-		if (livello==1)  
-			return(getLung_livello1p());
-		else if (livello==2)  
-			return(getLung_livello2p());
-		else if (livello==3)  
-			return(getLung_livello3p());
-		else if (livello==4)  
-			return(getLung_livello4p());
-		else if (livello==5)  
-			return(getLung_livello5p());
-		else if (livello==6)  
-			return(getLung_livello6p());
-		else if (livello==7)  
-			return(getLung_livello7p());
-		else  
-			return(getLung_livello8p());
+			return(getLung_livello8());
 	}
 
 	/*
@@ -113,15 +104,9 @@ public class Parametri_livelli_epBulk extends Parametri_livelli_epBase {
 	 */
 	public void validaLivelliValorizzati() throws ValidationException {
 		for (int i=1;i<=8;i++) {
-			/*Controllo Livelli patrimoniale valorizzati*/
-			if ((this.getDs_livello_pat(i)!=null || this.getLung_livello_pat(i)!=null) &&
-				(this.getLivelli_pat() == null || this.getLivelli_pat().intValue()<i))
-				throw new ValidationException("Attenzione! I campi relativi al livello " + i + " di patrimoniale non devono essere valorizzati.");
-	
-			/*Controllo Livelli economica valorizzati*/
-			if ((this.getDs_livello_eco(i)!=null || this.getLung_livello_eco(i)!=null) &&
-				(this.getLivelli_eco() == null || this.getLivelli_eco().intValue()<i))
-				throw new ValidationException("Attenzione! I campi relativi al livello " + i + " di economica non devono essere valorizzati.");
+			if ((this.getDs_livello(i)!=null || this.getLung_livello(i)!=null) &&
+				(this.getLivelli() == null || this.getLivelli()<i))
+				throw new ValidationException("Attenzione! I campi relativi al livello " + i + " non devono essere valorizzati.");
 		}
 	}
 
@@ -130,15 +115,9 @@ public class Parametri_livelli_epBulk extends Parametri_livelli_epBase {
 	 */
 	public void validaLivelliNonValorizzati() throws ValidationException {
 		for (int i=1;i<=8;i++) {
-			/*Controllo Livelli patrimoniale non valorizzati*/
-			if ((this.getDs_livello_pat(i)==null || this.getLung_livello_pat(i)==null) &&
-				(this.getLivelli_pat() != null && this.getLivelli_pat().intValue()>=i))
-				throw new ValidationException("Attenzione! I campi relativi al livello " + i + " di patrimoniale devono essere valorizzati.");
-	
-			/*Controllo Livelli economica non valorizzati*/
-			if ((this.getDs_livello_eco(i)==null || this.getLung_livello_eco(i)==null) &&
-				(this.getLivelli_eco() != null && this.getLivelli_eco().intValue()>=i))
-				throw new ValidationException("Attenzione! I campi relativi al livello " + i + " di economica devono essere valorizzati.");
+			if ((this.getDs_livello(i)==null || this.getLung_livello(i)==null) &&
+				(this.getLivelli() != null && this.getLivelli()>=i))
+				throw new ValidationException("Attenzione! I campi relativi al livello " + i + " devono essere valorizzati.");
 		}
 	}
 
@@ -151,11 +130,7 @@ public class Parametri_livelli_epBulk extends Parametri_livelli_epBase {
 	public void validate() throws ValidationException {
 		super.validate();
 
-		/*Controllo Livelli Patrimoniale*/
-		if (this.getLivelli_pat() != null && this.getLivelli_pat().intValue()>8)
-			throw new ValidationException("Attenzione! Il livello massimo consentito è 8.");
-
-		if (this.getLivelli_eco() != null && this.getLivelli_eco().intValue()>8)
+		if (this.getLivelli() != null && this.getLivelli()>8)
 			throw new ValidationException("Attenzione! Il livello massimo consentito è 8.");
 
 		validaLivelliValorizzati();

@@ -272,6 +272,7 @@ public class ContrattoComponent extends it.cnr.jada.comp.CRUDDetailComponent imp
 		  clause = tipo_norma_perla.buildFindClauses(null);
 		SQLBuilder sql = getHome(userContext, tipo_norma_perla).createSQLBuilder();
 		sql.addSQLClause("AND", "TIPO_ASSOCIAZIONE", SQLBuilder.EQUALS, Tipo_norma_perlaBulk.ASS_CONTRATTI);
+		sql.addClause("AND", "fl_cancellato", SQLBuilder.EQUALS, Boolean.FALSE);
 		if (clause != null) 
 		  sql.addClause(clause);
 		return sql;
@@ -2471,17 +2472,13 @@ public SQLBuilder selectFigura_giuridica_esternaByClause(UserContext userContext
 					//controlla i campi obbligatori
 					try {
 						checkToSalvaDefinitivo(userContext, contratto);
-					}catch (Exception e) {
-						return contratto;
-					}
-					try {
 						return salvaDefinitivo(userContext, contratto);
 					}catch (Exception e){
 						logger.error("Error Contratto da Rest Service->",e);
 						if ( isAttachRestContrStoredFromSigla)
 						//rimuovi Contratto con gli allegati
 							deleteDirectoryAllegatiDaFlusso(userContext,contratto,isAttachRestContrStoredFromSigla);
-						throw new ComponentException(e);
+						throw e;
 					}
 				}
 

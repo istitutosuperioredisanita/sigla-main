@@ -38,20 +38,19 @@
 		maxLength="4"
 		enabledOnFreeSearch="false"
 		enabledOnEdit="false"
-		enabledOnInsert="false"				
+		enabledOnInsert="false"
 		enabledOnSearch="true"
 		label="Esercizio" />
 	<fieldProperty
 		name="tipo"
 		property="tipo"
-		inputType="TEXT"
+		inputType="SELECT"
+		keysProperty="tipoKeys"
 		inputSize="3"
 		maxLength="3"
 		enabledOnEdit="false"
-		enabledOnInsert="false"				
 		enabledOnSearch="true"
-		enabledOnFreeSearch="false"
-		label="Gestione ECO/PAT" />
+		label="Tipo Classificazione" />
 	<fieldProperty
 		name="cd_livello1"
 		property="cd_livello1"
@@ -219,12 +218,14 @@
 		enabledOnInsert="false"				
 		enabledOnSearch="true"
 		nullable="false" />
+
 	<formFieldProperty
 		name="id_classificazione" />
 	<formFieldProperty
 		name="esercizio" />
 	<formFieldProperty
-		name="tipo" />
+		name="tipo"
+		command="doCambiaTipoClassificazione" />
 	<formFieldProperty
 		name="cd_livello1" />
 	<formFieldProperty
@@ -263,10 +264,13 @@
 		name="ds_class_padre_pre7" />
 	<formFieldProperty
 		name="fl_mastrino" />
+
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty
 		name="ti_gestione" />
+	<findFieldProperty
+		name="tipo" />
 	<findFieldProperty
 		name="cd_livello1" />
 	<findFieldProperty

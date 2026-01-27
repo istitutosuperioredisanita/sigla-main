@@ -180,6 +180,9 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
     private boolean attivaLiqFattOrdineCheckInv=false;
     private Boolean isAttivoGestFlIrregistrabile;
 
+    private Boolean isEnabledToInsertLettera = Boolean.FALSE;
+    private boolean provenienteDaAutoFattura=false;
+
     public Boolean isAttivoChekcImpIntrastat(){
         return attivoCheckImpIntrastat;
     }
@@ -336,6 +339,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
                 .map(Fattura_passivaBulk.class::cast)
                 .ifPresent(fattura_passivaBulk -> fattura_passivaBulk.setFlDaOrdini(isPropostaFatturaDaOrdini()));
         ((Fattura_passivaBulk)emptyModel).setFromAmministra(this instanceof CRUDFatturaPassivaAmministraBP);
+        ((Fattura_passivaBulk)emptyModel).setEnabledToInsertLettera(isEnabledToInsertLettera);
         return emptyModel;
     }
 
@@ -594,6 +598,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             attivoCheckImpIntrastat=Utility.createConfigurazioneCnrComponentSession().isCheckImpIntrastatFattPassiva(context.getUserContext());
             isAttivoGestFlIrregistrabile=Utility.createConfigurazioneCnrComponentSession().isAttivoGestFlIrregistrabile(context.getUserContext());
             attivaLiqFattOrdineCheckInv=configurazioneCnrComponentSession.isAttivoLiqFattOrdineCheckInv(context.getUserContext());
+            isEnabledToInsertLettera = configurazioneCnrComponentSession.is1210BonificoEsteroEuro(context.getUserContext());
             isModificaPCC = Optional.ofNullable(
                     configurazioneCnrComponentSession.getConfigurazione(
                     context.getUserContext(),
@@ -614,6 +619,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             setEsercizioInScrivania(CNRUserContext.getEsercizio(context.getUserContext()).intValue());
             setAnnoSolareInScrivania(solaris == this.getEsercizioInScrivania());
             setRibaltato(initRibaltato(context));
+            setProvenienteDaAutoFattura(false);
             if (!isAnnoSolareInScrivania()) {
                 String cds = it.cnr.contab.utenze00.bp.CNRUserContext
                         .getCd_cds(context.getUserContext());
@@ -668,6 +674,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
             Boolean liqIvaAnticipataFattPassiva = Utility.createConfigurazioneCnrComponentSession().
                     isLiqIvaAnticipataFattPassiva(context.getUserContext(), ((Fattura_passivaBulk)bulk).getDt_registrazione());
             ((Fattura_passivaBulk)bulk).setFl_bloccoAttivoDtReg(liqIvaAnticipataFattPassiva);
+            ((Fattura_passivaBulk)bulk).setEnabledToInsertLettera(isEnabledToInsertLettera);
             return bulk;
         } catch (Throwable e) {
             throw new it.cnr.jada.action.BusinessProcessException(e);
@@ -2137,4 +2144,11 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         return super.isPossibileModifica(allegato);
     }
 
+    public boolean isProvenienteDaAutoFattura() {
+        return provenienteDaAutoFattura;
+    }
+
+    public void setProvenienteDaAutoFattura(boolean provenienteDaAutoFattura) {
+        this.provenienteDaAutoFattura = provenienteDaAutoFattura;
+    }
 }

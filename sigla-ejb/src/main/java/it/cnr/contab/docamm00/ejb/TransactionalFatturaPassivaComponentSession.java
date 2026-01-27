@@ -19,10 +19,7 @@ package it.cnr.contab.docamm00.ejb;
 
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
 import it.cnr.contab.anagraf00.core.bulk.Modalita_pagamentoBulk;
-import it.cnr.contab.docamm00.docs.bulk.ElaboraNumUnicoFatturaPBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
-import it.cnr.contab.docamm00.docs.bulk.TrovatoBulk;
+import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataBulk;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
@@ -1480,6 +1477,28 @@ public class TransactionalFatturaPassivaComponentSession extends it.cnr.jada.ejb
         try {
             return (BigDecimal) invoke("getPrezzoUnitarioFattura", new Object[]{
                      param1});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (it.cnr.jada.persistency.PersistencyException ex) {
+                throw ex;
+            } catch (it.cnr.jada.persistency.IntrospectionException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public AutofatturaBulk cercaAutoFattura(UserContext param0, Fattura_passivaBulk param1) throws RemoteException, ComponentException, PersistencyException, IntrospectionException {
+        try {
+            return (AutofatturaBulk) invoke("cercaAutoFattura", new Object[]{param0,
+                    param1});
         } catch (java.rmi.RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {

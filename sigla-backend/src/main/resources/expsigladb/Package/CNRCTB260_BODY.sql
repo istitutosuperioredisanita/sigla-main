@@ -828,6 +828,148 @@ BEGIN
 END componiStatementSql;
 
 -- =================================================================================================
+-- Inserimento dati delle fatture nel report generico per intra ue e extra ue per servizi non redsidenti
+-- =================================================================================================
+PROCEDURE insRiepilogoIvaPerRegistriServNonResidenti
+   (
+    repID INTEGER,
+    aSequenza IN OUT INTEGER,
+    gruppoStm CHAR,
+    sottoGruppoStm CHAR,
+    descrizioneGruppoStm VARCHAR2,
+    aCdTipoSezionale VARCHAR2,
+    cv_gruppo_iva VARCHAR2
+   ) IS
+    cv_intra_extra_ue VARCHAR2(50);
+    is_stampa_det_intra_extra_ue CHAR(1);
+    gen_cv_ue GenericCurTyp;
+    cv_imponibile_ue NUMBER(15,2);
+   cv_iva_ue NUMBER(15,2);
+   cv_iva_indetraibile_ue NUMBER(15,2);
+   cv_totale_ue NUMBER(15,2);
+   cv_iva_esigibile_ue NUMBER(15,2);
+   cv_totale_a NUMBER(15,2);
+      
+   BEGIN
+      
+  
+    if ( aCdTipoSezionale is not null) then
+        BEGIN   
+             select DECODE(count(*),0,'N','Y') into is_stampa_det_intra_extra_ue from tipo_sezionale
+                           where fl_intra_ue='Y'
+                           and fl_extra_ue='Y'
+                           and fl_servizi_non_residenti='Y'
+                           and cd_tipo_sezionale=aCdTipoSezionale;
+            if ( is_stampa_det_intra_extra_ue='Y') THEN
+                BEGIN
+                    OPEN gen_cv_ue FOR
+                        SELECT codice_iva,
+                                            descrizione_iva,
+                                            gruppo_iva,
+                                            provvisorio_definitivo,
+                                            acquisto_vendita,
+                                            DECODE(intra_ue,'I','DI CUI INTRA UE','E','DI CUI EXTRA UE',null),
+                                            SUM(imponibile),
+                                            SUM(iva),
+                                            SUM(iva_indetraibile),
+                                            SUM(totale),
+                                            Sum(iva_esigibile)
+                                     FROM   VP_STM_REGISTRO_IVA
+                                     WHERE  id_report = repID AND
+                                            gruppo = 'B' AND
+                                            tipologia_riga = 'D' AND
+                                            cd_tipo_sezionale = aCdTipoSezionale AND
+                                            gruppo_iva =cv_gruppo_iva
+                                     GROUP BY codice_iva,
+                                              descrizione_iva,
+                                              gruppo_iva,
+                                              provvisorio_definitivo,
+                                              acquisto_vendita,
+                                              intra_ue
+                                     ORDER BY codice_iva;
+                        LOOP
+            
+                            aSequenza:=aSequenza + 20;
+                
+                            FETCH gen_cv_ue INTO
+                                  cv_codice_iva_a,
+                                  cv_descrizione_iva_a,
+                                  cv_gruppo_iva_a,
+                                  cv_provvisorio_definitivo_a,
+                                  cv_acquisto_vendita_a,
+                                  cv_intra_extra_ue,
+                                  cv_imponibile_ue,
+                                  cv_iva_ue,
+                                  cv_iva_indetraibile_ue,
+                                  cv_totale_ue,
+                                  cv_iva_esigibile_ue;
+                
+                            EXIT WHEN gen_cv_ue%NOTFOUND;
+                                BEGIN
+                                    if ( cv_intra_extra_ue is not null AND
+                                        ( cv_imponibile_ue>0 OR
+                                            cv_iva_ue>0 OR
+                                            cv_iva_indetraibile_ue>0 OR
+                                            cv_totale_ue>0 OR
+                                            cv_iva_esigibile_ue>0) ) THEN
+                                        BEGIN    
+                                        
+                                              aSequenza:=aSequenza + 20;
+                            
+                                           INSERT INTO VP_STM_REGISTRO_IVA
+                                                  (id_report,
+                                                   gruppo,
+                                                   tipologia_riga,
+                                                   sequenza,
+                                                   sottogruppo,
+                                                   cd_cds_origine,
+                                                   cd_uo_origine,
+                                                   cd_tipo_sezionale,
+                                                   imponibile,
+                                                   iva,
+                                                   iva_indetraibile,
+                                                   totale,
+                                                   provvisorio_definitivo,
+                                                   acquisto_vendita,
+                                                   descrizione_gruppo,
+                                                   iva_esigibile)
+                                           VALUES (repID,
+                                                   gruppoStm,
+                                                   'P',
+                                                   aSequenza,
+                                                   sottoGruppoStm,
+                                                   cv_codice_iva_a,
+                                                   cv_intra_extra_ue,
+                                                   aCdTipoSezionale,
+                                                   cv_imponibile_ue,
+                                                   cv_iva_ue,
+                                                   cv_iva_indetraibile_ue,
+                                                   cv_totale_ue,
+                                                   cv_provvisorio_definitivo_a,
+                                                   cv_acquisto_vendita_a,
+                                                   descrizioneGruppoStm||cv_intra_extra_ue,
+                                                   cv_iva_esigibile_ue);
+                            
+                                        EXCEPTION
+                            
+                                           WHEN DUP_VAL_ON_INDEX THEN
+                                                IBMERR001.RAISE_ERR_GENERICO
+                                                   ('Chiave duplicata in inserimento riepilogo per aliquota in stampa registro su tabella REPORT_GENERICO');
+                            
+                                        END;
+                                    END IF;    
+                              END;      
+                            /*genera dettaglio intra_ue extra_ue per il sezionale dei serivi*/
+                
+                         END LOOP;
+                   CLOSE gen_cv_ue;     
+              END;  
+              END IF;
+           END;   
+        END IF;
+ END insRiepilogoIvaPerRegistriServNonResidenti;
+
+-- =================================================================================================
 -- Inserimento dati delle fatture nel report generico
 -- =================================================================================================
 PROCEDURE insRiepilogoIvaPerRegistri
@@ -1049,6 +1191,8 @@ BEGIN
                        ('Chiave duplicata in inserimento riepilogo per aliquota in stampa registro su tabella REPORT_GENERICO');
 
             END;
+            /*genera dettaglio intra_ue extra_ue per il sezionale dei serivi*/             
+            insRiepilogoIvaPerRegistriServNonResidenti( repID,aSequenza, gruppoStm,sottoGruppoStm,descrizioneGruppoStm,aCdTipoSezionale,cv_gruppo_iva);
 
          END LOOP;
 
@@ -1088,7 +1232,7 @@ BEGIN
                     'T',
                     aSequenza,
                     sottoGruppoStm,
-                    'TOTALE GRUPPO ' || cv_gruppo_iva || ' ' || cv_descrizione_gruppo_iva,
+                    'TOTALE GRUPPO '|| cv_descrizione_gruppo_iva,
                     aCdTipoSezionale,
                     cv_imponibile_dettaglio,
                     cv_iva_dettaglio,
@@ -1631,7 +1775,7 @@ BEGIN
                        aSequenza,
                        sottoGruppoStm,
                        cv_gruppo_iva_a,
-                       SUBSTR('TOTALE GRUPPO' || cv_gruppo_iva_a || ' ' || cv_descrizione_gruppo_iva_a,1,200),
+                       SUBSTR('TOTALE GRUPPO ' || cv_descrizione_gruppo_iva_a,1,200),
                        cv_imponibile_a,
                        cv_iva_a,
                        cv_iva_indetraibile_a,

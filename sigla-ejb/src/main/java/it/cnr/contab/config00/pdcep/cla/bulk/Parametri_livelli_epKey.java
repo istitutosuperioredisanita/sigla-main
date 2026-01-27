@@ -22,25 +22,31 @@
 package it.cnr.contab.config00.pdcep.cla.bulk;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.KeyedPersistent;
+
 public class Parametri_livelli_epKey extends OggettoBulk implements KeyedPersistent {
 	private java.lang.Integer esercizio;
+	private java.lang.String tipo;
+
 	public Parametri_livelli_epKey() {
 		super();
 	}
-	public Parametri_livelli_epKey(java.lang.Integer esercizio) {
+	public Parametri_livelli_epKey(java.lang.Integer esercizio,java.lang.String tipo) {
 		super();
 		this.esercizio=esercizio;
+		this.tipo=tipo;
 	}
 	public boolean equalsByPrimaryKey(Object o) {
 		if (this== o) return true;
 		if (!(o instanceof Parametri_livelli_epKey)) return false;
 		Parametri_livelli_epKey k = (Parametri_livelli_epKey) o;
 		if (!compareKey(getEsercizio(), k.getEsercizio())) return false;
+		if (!compareKey(getTipo(), k.getTipo())) return false;
 		return true;
 	}
 	public int primaryKeyHashCode() {
 		int i = 0;
 		i = i + calculateKeyHashCode(getEsercizio());
+		i = i + calculateKeyHashCode(getTipo());
 		return i;
 	}
 	public void setEsercizio(java.lang.Integer esercizio)  {
@@ -48,5 +54,12 @@ public class Parametri_livelli_epKey extends OggettoBulk implements KeyedPersist
 	}
 	public java.lang.Integer getEsercizio () {
 		return esercizio;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	public String getTipo() {
+		return tipo;
 	}
 }

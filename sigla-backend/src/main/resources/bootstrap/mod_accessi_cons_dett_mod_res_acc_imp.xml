@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <!-- Dettaglio Residui Entrata -->
+    <changeSet author="ciro.salvio" id="mod_albero_main_accessi_dett_mod_res_acc">
+        <update tableName="albero_main">
+            <column name="pg_ordinamento" type="BIGINT" value="3"/>
+            <where>CD_NODO='0.DOC.ACCERT.CONS.DETTRESENT'</where>
+        </update>
+        <update tableName="albero_main">
+            <column name="pg_ordinamento" type="BIGINT" value="4"/>
+            <where>CD_NODO='0.DOC.ACCERT.CONS.DETTMOD'</where>
+        </update>
+
+    </changeSet>
+
+    <!-- Dettaglio Modifiche Accertamenti -->
+    <changeSet author="ciro.salvio" id="mod_albero_main_accessi_dett_mod_res_spe">
+
+        <update tableName="albero_main">
+            <column name="pg_ordinamento" type="BIGINT" value="3"/>
+            <where>CD_NODO='0.DOC.OBBLIG.CONS.DETTRESPE'</where>
+        </update>
+        <update tableName="albero_main">
+            <column name="pg_ordinamento" type="BIGINT" value="4"/>
+            <where>CD_NODO='0.DOC.OBBLIG.CONS.DETTMOD'</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

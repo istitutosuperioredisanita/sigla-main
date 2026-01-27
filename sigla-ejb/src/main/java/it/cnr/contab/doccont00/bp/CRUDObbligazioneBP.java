@@ -23,6 +23,7 @@ import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.ejb.CDRComponentSession;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
+import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.pdcfin.bulk.Voce_fBulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.docamm00.bp.*;
@@ -39,6 +40,7 @@ import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.prevent00.bulk.V_assestatoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -114,6 +116,7 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
     private boolean enableVoceNext = false;
     private boolean variazioneAutomaticaEnabled = false;
     private boolean attivoOrdini = false;
+    private boolean esercizioChiuso;
 
     private byte[] bringBackClone = null;
 
@@ -141,6 +144,10 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         try {
             attivoOrdini = Utility.createConfigurazioneCnrComponentSession().isAttivoOrdini(actioncontext.getUserContext());
             attivaImpegnoPluriennale = Utility.createConfigurazioneCnrComponentSession().isImpegnoPluriennaleAttivo(actioncontext.getUserContext());
+            esercizioChiuso = (((EsercizioComponentSession) EJBCommonServices
+                    .createEJB("CNRCONFIG00_EJB_EsercizioComponentSession",
+                            EsercizioComponentSession.class))
+                    .isEsercizioChiuso(actioncontext.getUserContext()));
         } catch (Throwable e) {
             throw new BusinessProcessException(e);
         }
@@ -1310,6 +1317,9 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         return attivoOrdini;
     }
 
+    public boolean isEsercizioChiuso() {
+        return esercizioChiuso;
+    }
 
     // non posso aggiungere obbligazioni pluriennali se l'importo dell'obbligazione è zero e se non ci sono già pluriennali
     public boolean isADDPluriennali(){

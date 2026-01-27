@@ -23,34 +23,15 @@
  */
 package it.cnr.contab.doccont00.comp;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrHome;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.pdcfin.bulk.IVoceBilancioBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Voce_fBulk;
-import it.cnr.contab.config00.sto.bulk.CdrBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaHome;
-import it.cnr.contab.doccont00.core.bulk.Linea_attivitaBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_mod_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaHome;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scad_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneResComponentSession;
-import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
-import it.cnr.contab.doccont00.intcass.bulk.V_distinta_cass_im_man_revBulk;
-import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
-import it.cnr.contab.pdg00.bulk.Pdg_variazioneHome;
-import it.cnr.contab.pdg00.ejb.CostiDipendenteComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
@@ -59,12 +40,16 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.IntrospectionException;
-import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.Query;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+
+import java.math.BigDecimal;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.Optional;
 
 public class ObbligazioneModificaComponent extends it.cnr.jada.comp.CRUDComponent  {
 	public OggettoBulk inizializzaBulkPerModifica(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException {
@@ -261,5 +246,38 @@ public class ObbligazioneModificaComponent extends it.cnr.jada.comp.CRUDComponen
 		{
 			throw handleException( e )	;
 		}	
+	}
+
+	@Override
+	public void eliminaConBulk(UserContext userContext, OggettoBulk oggettobulk) throws ComponentException {
+		/**
+		 * Prima di eliminare la modifica devo aggiornare l'obbligazione di riferimento
+		 */
+		try {
+			ObbligazioneResComponentSession obbligazioneSession =
+					(ObbligazioneResComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+							"CNRDOCCONT00_EJB_ObbligazioneResComponentSession", ObbligazioneResComponentSession.class);
+			Optional<Obbligazione_modificaBulk> obbMod = Optional.ofNullable(oggettobulk)
+					.filter(Obbligazione_modificaBulk.class::isInstance)
+					.map(Obbligazione_modificaBulk.class::cast);
+			if (obbMod.isPresent()) {
+				for (Obbligazione_mod_voceBulk omvb: obbMod.get().getObbligazione_mod_voceColl()) {
+					obbligazioneSession.aggiornaImportoObbligazione(
+							userContext,
+							omvb.getObbligazione_modifica().getObbligazione(),
+							omvb.getIm_modifica(),
+							omvb.getLinea_attivita(),
+							omvb.getObbligazione_modifica().getDs_modifica()
+					);
+					omvb.setToBeDeleted();
+				}
+			}
+
+			super.eliminaConBulk(userContext, oggettobulk);
+		}
+		catch ( Exception e )
+		{
+			throw handleException( e )	;
+		}
 	}
 }

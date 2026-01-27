@@ -455,15 +455,10 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
     private void aggiornaCarichiInventario(UserContext userContext, Fattura_passivaBulk fattura_passiva) throws ComponentException {
         Inventario_beniComponentSession inventario_beniComponent = EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Inventario_beniComponentSession", Inventario_beniComponentSession.class);
         if (fattura_passiva.isDaOrdini()) {
-            BulkList<FatturaOrdineBulk> bulkList = Optional.ofNullable(fattura_passiva.getFattura_passiva_ordini())
-                    .orElse(new BulkList());
-            bulkList.stream().forEach(fatturaOrdineBulk -> {
-                try {
-                    aggiornaDatiInventario(userContext, fatturaOrdineBulk);
-                } catch (ComponentException e) {
-                    handleException(e);
-                }
-            });
+            try {
+                aggiornaDatiInventario(userContext,fattura_passiva);
+            } catch (Exception e) {
+                throw new RuntimeException(e);}
         } else {
             if (fattura_passiva != null && fattura_passiva instanceof Nota_di_creditoBulk) {
                 CarichiInventarioTable carichiInventarioHash = fattura_passiva.getCarichiInventarioHash();
@@ -1142,6 +1137,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             fattura = setChangeDataToEur(uc, fattura);
             throw handleException(fattura, new it.cnr.jada.comp.ApplicationException("Non esiste una valuta per il periodo specificato!"));
         }
+        if ( !fattura.isEnabledToInsertLettera() && fattura.isDefaultValuta() &&
+                Optional.ofNullable(fattura.getLettera_pagamento_estero()).isPresent())
+            throw handleException(fattura, new it.cnr.jada.comp.ApplicationException("Per Fatture Estere in Euro non è necessario il Documento 1210, bisogna Eliminarlo."));
 
         fattura.setInizio_validita_valuta(cambioValido.getDt_inizio_validita());
         fattura.setFine_validita_valuta(cambioValido.getDt_fine_validita());
@@ -3494,102 +3492,112 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         }
     }
 
-    private void aggiornaDatiInventario(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException {
+    private void aggiornaDatiInventario(UserContext userContext, Fattura_passivaBulk fattura_passivaBulk) throws ComponentException, PersistencyException {
         Inventario_beniComponentSession inventario_beniComponent = EJBCommonServices.createEJB("CNRINVENTARIO00_EJB_Inventario_beniComponentSession", Inventario_beniComponentSession.class);
-        BigDecimal importoUnitario = calcoloImportoUnitario(userContext, fatturaOrdineBulk);
-        OrdineAcqConsegnaBulk consegna = fatturaOrdineBulk.getOrdineAcqConsegna();
+        Transito_beni_ordiniHome transito_beni_ordiniHome = Optional.ofNullable(getHome(userContext, Transito_beni_ordiniBulk.class))
+                .filter(Transito_beni_ordiniHome.class::isInstance)
+                .map(Transito_beni_ordiniHome.class::cast)
+                .orElseThrow(() -> new ComponentException("Cannot find Transito_beni_ordiniHome"));
 
-        EvasioneOrdineRigaHome home = Optional.ofNullable(getHome(userContext, EvasioneOrdineRigaBulk.class))
-                .filter(EvasioneOrdineRigaHome.class::isInstance)
-                .map(EvasioneOrdineRigaHome.class::cast)
-                .orElseThrow(() -> new ComponentException("Cannot find EvasioneOrdineRigaHome"));
-        EvasioneOrdineRigaBulk evasioneOrdineRigaBulk = null;
-        try {
-            evasioneOrdineRigaBulk = Optional.ofNullable(home.findByConsegna(consegna)).filter(el->!el.isEmpty()).map(el->el.get(0)).orElse(null);
-            if (evasioneOrdineRigaBulk != null) {
-                Transito_beni_ordiniHome transito_beni_ordiniHome = Optional.ofNullable(getHome(userContext, Transito_beni_ordiniBulk.class))
-                        .filter(Transito_beni_ordiniHome.class::isInstance)
-                        .map(Transito_beni_ordiniHome.class::cast)
-                        .orElseThrow(() -> new ComponentException("Cannot find Transito_beni_ordiniHome"));
-                List listaBeniInTransito = transito_beni_ordiniHome.findTransitiBeniOrdini(evasioneOrdineRigaBulk.getMovimentiMag());
-                final List<Transito_beni_ordiniBulk> listaTransito = Optional.ofNullable(listaBeniInTransito)
-                        .orElse(new ArrayList());
-                listaTransito.stream().forEach(transito_beni_ordiniBulk -> {
-                    if (transito_beni_ordiniBulk.isStatoTrasferito()) {
+        final Inventario_beniHome inventario_beniHome = Optional.ofNullable(getHome(userContext, Inventario_beniBulk.class))
+                .filter(Inventario_beniHome.class::isInstance)
+                .map(Inventario_beniHome.class::cast)
+                .orElseThrow(() -> new ComponentException("Cannot find Transito_beni_ordiniHome"));
+
+        Ass_inv_bene_fatturaHome ass_inv_bene_fatturaHome = Optional.ofNullable(getHome(userContext, Ass_inv_bene_fatturaBulk.class))
+                .filter(Ass_inv_bene_fatturaHome.class::isInstance)
+                .map(Ass_inv_bene_fatturaHome.class::cast)
+                .orElseThrow(() -> new ComponentException("Cannot find Ass_inv_bene_fatturaHome"));
+
+        V_fatt_ordine_detHome vFattOrdineDetHome =   Optional.ofNullable(getHome(userContext, V_fatt_ordine_detBulk.class))
+                .filter(V_fatt_ordine_detHome.class::isInstance)
+                .map(V_fatt_ordine_detHome.class::cast)
+                .orElseThrow(() -> new ComponentException("Cannot find V_fatt_ordine_detHome"));
+
+        List<V_fatt_ordine_detBulk> l =Optional.ofNullable(vFattOrdineDetHome.getFattOrdineDetInv(fattura_passivaBulk)).orElse(Collections.EMPTY_LIST);
+        final Map<FatturaOrdineKey, List<V_fatt_ordine_detBulk>> mapFatOrdine = l.stream().collect(Collectors.groupingBy(o->o.getFatturaOrdineKey()));
+        for (FatturaOrdineKey fattOrdineDetKey : mapFatOrdine.keySet()) {
+              FatturaOrdineBulk fatturaOrdine= Optional.ofNullable(fattura_passivaBulk.getFattura_passiva_ordini().
+                            indexOf(fattOrdineDetKey)).filter(i->i!=-1).map(i-> fattura_passivaBulk.getFattura_passiva_ordini().get(i)).orElseGet(() -> {
+                return null;
+            });
+            Optional.ofNullable(fatturaOrdine).ifPresent(fatturaOrdineBulk->{
+                BigDecimal importoUnitario = calcoloImportoUnitario(userContext, fatturaOrdineBulk).setScale(2, RoundingMode.HALF_UP);
+                mapFatOrdine.get(fattOrdineDetKey).stream().forEach(v_fatt_ordine_detBulk -> {
+                    if (Optional.ofNullable(v_fatt_ordine_detBulk.getNrInventario()).isPresent()) {
+                        Inventario_beniBulk inventario = null;
                         try {
-                            final Inventario_beniHome inventario_beniHome = Optional.ofNullable(getHome(userContext, Inventario_beniBulk.class))
-                                    .filter(Inventario_beniHome.class::isInstance)
-                                    .map(Inventario_beniHome.class::cast)
-                                    .orElseThrow(() -> new ComponentException("Cannot find Transito_beni_ordiniHome"));
-                            List listaBeni = null;
+                            inventario = (Inventario_beniBulk) inventario_beniHome.findByPrimaryKey(new Inventario_beniBulk(v_fatt_ordine_detBulk.getNrInventario(),
+                                    v_fatt_ordine_detBulk.getPgInventario(),
+                                    v_fatt_ordine_detBulk.getProgressivo()));
+                        } catch (PersistencyException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        if (inventario.getValore_iniziale().compareTo(importoUnitario) != 0) {
                             try {
-                                listaBeni = inventario_beniHome.findByTransito(transito_beni_ordiniBulk);
+
+                                OggettoBulk bulk=inventario_beniComponent.inizializzaBulkPerModifica(userContext, inventario);
+
+                                if (bulk instanceof ROWrapper){
+                                    inventario = (Inventario_beniBulk)((ROWrapper)bulk).getBulk();
+                                } else {
+                                    inventario = (Inventario_beniBulk)bulk;
+                                }
+                                inventario.setValore_unitario(importoUnitario);
+                                //da verificare con la gestione dei beni annullati nel transito
+                                //inventario.setImponibile_ammortamento(importoUnitario);
+                                inventario.setToBeUpdated();
+                                inventario = (Inventario_beniBulk) inventario_beniComponent.modificaConBulk(userContext, inventario);
+                            } catch (ComponentException | RemoteException e) {
+                                handleException(e);
+                            }
+
+                        }
+
+                        if (!Optional.ofNullable(v_fatt_ordine_detBulk.getPgRigaAss()).isPresent()) {
+                            try {
+                                Ass_inv_bene_fatturaBulk ass = new Ass_inv_bene_fatturaBulk();
+                                ass.setRiga_fatt_pass((Fattura_passiva_rigaIBulk) fatturaOrdineBulk.getFatturaPassivaRiga());
+                                ass.setInventario(inventario.getInventario());
+                                ass.setTest_buono(new Buono_carico_scaricoBulk(
+                                        v_fatt_ordine_detBulk.getPgInventario(),
+                                        v_fatt_ordine_detBulk.getTi_documento(),
+                                        v_fatt_ordine_detBulk.getEser_buono_car_sca(),
+                                        v_fatt_ordine_detBulk.getPg_buono_c_s()));
+                                ass.setNr_inventario(inventario.getNr_inventario());
+                                ass.setPerAumentoValore(Boolean.FALSE);
+                                ass.setProgressivo(inventario.getProgressivo());
+                                BuonoCaricoScaricoComponentSession h = EJBCommonServices.createEJB(
+                                        "CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",
+                                        BuonoCaricoScaricoComponentSession.class);
+                                ass.setPg_riga(h.findMaxAssociazione(userContext, ass));
+                                ass.setToBeCreated();
+                                super.creaConBulk(userContext, ass);
+
+                            } catch (ComponentException | RemoteException e) {
+                                handleException(e);
+                            }
+                        }
+                    } else {
+                        Transito_beni_ordiniBulk transito_beni_ordiniBulk = null;
+                        if (Optional.ofNullable(v_fatt_ordine_detBulk.getIdTransito()).isPresent()) {
+                            try {
+                                transito_beni_ordiniBulk = (Transito_beni_ordiniBulk) transito_beni_ordiniHome.findByPrimaryKey(new Transito_beni_ordiniBulk(v_fatt_ordine_detBulk.getIdTransito()));
+                                transito_beni_ordiniBulk.setValore_iniziale(importoUnitario);
+                                transito_beni_ordiniBulk.setToBeUpdated();
+                                transito_beni_ordiniHome.update(transito_beni_ordiniBulk, userContext);
                             } catch (PersistencyException e) {
                                 handleException(e);
                             }
-                            final List<Inventario_beniBulk> listaInventario = Optional.ofNullable(listaBeni)
-                                    .orElse(new ArrayList());
-                            Ass_inv_bene_fatturaHome ass_inv_bene_fatturaHome = Optional.ofNullable(getHome(userContext, Ass_inv_bene_fatturaBulk.class))
-                                    .filter(Ass_inv_bene_fatturaHome.class::isInstance)
-                                    .map(Ass_inv_bene_fatturaHome.class::cast)
-                                    .orElseThrow(() -> new ComponentException("Cannot find Ass_inv_bene_fatturaHome"));
-                            listaInventario.stream().forEach(inventario -> {
-                                if (inventario.getValore_iniziale().compareTo(importoUnitario) != 0) {
-                                    inventario.setValore_iniziale(importoUnitario);
-                                    inventario.setToBeUpdated();
-                                    try {
-                                        inventario = (Inventario_beniBulk) inventario_beniComponent.modificaConBulk(userContext, inventario);
-                                    } catch (ComponentException | RemoteException e) {
-                                        handleException(e);
-                                    }
-                                }
-                                try {
-                                    Ass_inv_bene_fatturaBulk assBDb = ass_inv_bene_fatturaHome.findAssFatturaBeneByRigaFattura(
-                                            fatturaOrdineBulk.getFatturaPassivaRiga(),
-                                            inventario);
-                                    if (!Optional.ofNullable(assBDb).isPresent()){
-                                        Ass_inv_bene_fatturaBulk ass = new Ass_inv_bene_fatturaBulk();
-                                        ass.setRiga_fatt_pass((Fattura_passiva_rigaIBulk) fatturaOrdineBulk.getFatturaPassivaRiga());
-                                        ass.setInventario(inventario.getInventario());
-
-                                        Buono_carico_scarico_dettHome buono_carico_scarico_dettHome = Optional.ofNullable(getHome(userContext, Buono_carico_scarico_dettBulk.class))
-                                                .filter(Buono_carico_scarico_dettHome.class::isInstance)
-                                                .map(Buono_carico_scarico_dettHome.class::cast)
-                                                .orElseThrow(() -> new ComponentException("Cannot find Buono_carico_scarico_dettHome"));
-                                        Buono_carico_scarico_dettBulk buono_carico_scarico_dettBulk = buono_carico_scarico_dettHome.findCaricoDaOrdine(inventario);
-                                        ass.setTest_buono(buono_carico_scarico_dettBulk.getBuono_cs());
-                                        ass.setNr_inventario(inventario.getNr_inventario());
-                                        ass.setPerAumentoValore(Boolean.FALSE);
-                                        ass.setProgressivo(inventario.getProgressivo());
-                                        BuonoCaricoScaricoComponentSession h = EJBCommonServices.createEJB(
-                                                "CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",
-                                                BuonoCaricoScaricoComponentSession.class);
-                                        ass.setPg_riga(h.findMaxAssociazione(userContext, ass));
-                                        ass.setToBeCreated();
-                                        super.creaConBulk(userContext, ass);
-                                    }
-                                } catch (ComponentException | PersistencyException | RemoteException e) {
-                                    handleException(e);
-                                }
-                            });
-                        } catch (ComponentException e) {
-                            handleException(e);
-                        }
-                    } else {
-                        transito_beni_ordiniBulk.setValore_iniziale(importoUnitario);
-                        transito_beni_ordiniBulk.setToBeUpdated();
-                        try {
-                            transito_beni_ordiniHome.update(transito_beni_ordiniBulk, userContext);
-                        } catch (PersistencyException e) {
-                            handleException(e);
                         }
                     }
                 });
-            }
-        } catch (PersistencyException e) {
-            handleException(e);
+             });
         }
+
     }
+
 
 
     private BigDecimal calcoloImportoUnitario(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) {
@@ -6854,6 +6862,9 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
 
     public void validaFattura(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException {
         ObbligazioniTable obbligazioniHash = fatturaPassiva.getFattura_passiva_obbligazioniHash();
+        if ( fatturaPassiva.isDaOrdini() &&
+            Optional.ofNullable(fatturaPassiva.getFattura_passiva_ordini()).get().isEmpty())
+              throw new it.cnr.jada.comp.ApplicationException("Attenzione: per salvare una fattura con flag da Ordine, selezionato in Testata, è necessario inserire almeno una riga nel tab Ordini.");
 
         if (obbligazioniHash != null && !obbligazioniHash.isEmpty()) {
             Enumeration en = obbligazioniHash.keys();
@@ -7241,10 +7252,22 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                 throw new ApplicationMessageFormatException("Sulla riga {0}, con modalità di pagamento PAGOPA, bisogna valorizzare il Numero dell''avviso!", riga.getDs_riga_fattura());
             }
         }
-
-
     }
 
+    private void validaLettera1210(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException,ValidationException{
+        // per gestire lo storico quando era necessario la lettera 1210 per bonifici esteri in euro
+        if ( !fatturaPassiva.isPagata()) {
+            boolean is1210LetteraBonEsteroEuto = Boolean.TRUE;
+            try {
+                is1210LetteraBonEsteroEuto = Utility.createConfigurazioneCnrComponentSession().is1210BonificoEsteroEuro(aUC);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+            if (fatturaPassiva.isDefaultValuta() && (!is1210LetteraBonEsteroEuto) && Optional.ofNullable(fatturaPassiva.getLettera_pagamento_estero()).isPresent())
+                throw new it.cnr.jada.bulk.ValidationException("Per Fatture Estere in Euro non è necessario il Documento 1210, bisogna Eliminarlo.");
+        }
+
+    }
     private void validateFornitore(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws it.cnr.jada.bulk.ValidationException {
 
         if (fatturaPassiva.getDt_fattura_fornitore() == null)
@@ -7357,6 +7380,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             //controllaCompetenzaCOGEDettagli(aUC, fatturaPassiva);
 
             validateFornitore(aUC, fatturaPassiva);
+            validaLettera1210(aUC, fatturaPassiva);
         } catch (it.cnr.jada.bulk.ValidationException e) {
             throw new it.cnr.jada.comp.ApplicationException(e.getMessage());
         }
@@ -7397,10 +7421,11 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                     //!original.getCd_tipo_sezionale().equalsIgnoreCase(fatturaPassiva.getCd_tipo_sezionale()))
                     throw new it.cnr.jada.comp.ApplicationException("Attenzione: non si possono modificare campi relativi alla " + fatturaPassiva.getDescrizioneEntita() + " del fornitore quando la fattura o la relativa autofattura (se esiste).");
 
-                if (!original.getCd_divisa().equals(fatturaPassiva.getCd_divisa()) ||
-                        original.getCambio().compareTo(fatturaPassiva.getCambio()) != 0)
-                    throw new it.cnr.jada.comp.ApplicationException("Attenzione: non si possono modificare i campi della valuta o del cambio della " + fatturaPassiva.getDescrizioneEntita());
-
+                if (fatturaPassiva.isStampataSuRegistroIVA() || fatturaPassiva.getPg_lettera()!=null) {
+                    if (!original.getCd_divisa().equals(fatturaPassiva.getCd_divisa()) ||
+                            original.getCambio().compareTo(fatturaPassiva.getCambio()) != 0)
+                        throw new it.cnr.jada.comp.ApplicationException("Attenzione: non si possono modificare i campi della valuta o del cambio della " + fatturaPassiva.getDescrizioneEntita());
+                }
                 if (!original.getCd_terzo().equals(fatturaPassiva.getCd_terzo()))
                     throw new it.cnr.jada.comp.ApplicationException("Attenzione: non si possono modificare campi relativi al fornitore della " + fatturaPassiva.getDescrizioneEntita());
             }
@@ -9433,5 +9458,15 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             handleException(e);
 
         }
+    }
+    public AutofatturaBulk cercaAutoFattura(UserContext uc, Fattura_passivaBulk fp) throws ComponentException {
+        AutofatturaHome autofatturaHome = (AutofatturaHome) getHomeCache(uc).getHome(AutofatturaBulk.class);
+        try {
+             return autofatturaHome.findFor(fp);
+
+        } catch (PersistencyException e) {
+            throw new ApplicationMessageFormatException("Errore nell'estrazione dell'autofattura");
+        }
+
     }
 }

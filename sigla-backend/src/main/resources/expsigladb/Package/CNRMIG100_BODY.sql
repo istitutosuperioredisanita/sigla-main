@@ -635,6 +635,7 @@ begin
   						   TI_GESTIONE,
   						   CD_SIOPE,
   						   DESCRIZIONE,
+                           TI_TIPO_DEBITO,
   						   UTCR,
   						   DACR,
   						   UTUV,
@@ -644,6 +645,7 @@ begin
   				aCodSiope.TI_GESTIONE,
   				aCodSiope.CD_SIOPE,
   				aCodSiope.DESCRIZIONE,
+  				aCodSiope.TI_TIPO_DEBITO,
 				cgUtente,
 				sysdate,
 				cgUtente,
@@ -2792,44 +2794,26 @@ begin
         Begin
 	   aMessage := 'Ribaltamento Parametri Livelli EP sull''esercizio '||aEsDest||'. Lock tabella PARAMETRI_LIVELLI_EP';
 	   ibmutl200.LOGINF(aPgEsec,aMessage,'','');
-	   insert into PARAMETRI_LIVELLI_EP (ESERCIZIO,LIVELLI_ECO,
-	   				  LUNG_LIVELLO1E,DS_LIVELLO1E,
-	   				  LUNG_LIVELLO2E,DS_LIVELLO2E,
-	   				  LUNG_LIVELLO3E,DS_LIVELLO3E,
-	   				  LUNG_LIVELLO4E,DS_LIVELLO4E,
-	   				  LUNG_LIVELLO5E,DS_LIVELLO5E,
-	   				  LUNG_LIVELLO6E,DS_LIVELLO6E,
-	   				  LUNG_LIVELLO7E,DS_LIVELLO7E,
-	   				  LUNG_LIVELLO8E,DS_LIVELLO8E,
-	   				  LIVELLI_PAT,
-	   				  LUNG_LIVELLO1P,DS_LIVELLO1P,
-	   				  LUNG_LIVELLO2P,DS_LIVELLO2P,
-	   				  LUNG_LIVELLO3P,DS_LIVELLO3P,
-	   				  LUNG_LIVELLO4P,DS_LIVELLO4P,
-	   				  LUNG_LIVELLO5P,DS_LIVELLO5P,
-	   				  LUNG_LIVELLO6P,DS_LIVELLO6P,
-	   				  LUNG_LIVELLO7P,DS_LIVELLO7P,
-	   				  LUNG_LIVELLO8P,DS_LIVELLO8P,
-				      DACR,UTCR,DUVA,UTUV,PG_VER_REC)
-		select aEsDest, LIVELLI_ECO,
-	   	  LUNG_LIVELLO1E,DS_LIVELLO1E,
-	   	  LUNG_LIVELLO2E,DS_LIVELLO2E,
-	   	  LUNG_LIVELLO3E,DS_LIVELLO3E,
-	   	  LUNG_LIVELLO4E,DS_LIVELLO4E,
-	   	  LUNG_LIVELLO5E,DS_LIVELLO5E,
-	   	  LUNG_LIVELLO6E,DS_LIVELLO6E,
-	   	  LUNG_LIVELLO7E,DS_LIVELLO7E,
-	   	  LUNG_LIVELLO8E,DS_LIVELLO8E,
-	   	  LIVELLI_PAT,
-	   	  LUNG_LIVELLO1P,DS_LIVELLO1P,
-	   	  LUNG_LIVELLO2P,DS_LIVELLO2P,
-	   	  LUNG_LIVELLO3P,DS_LIVELLO3P,
-	   	  LUNG_LIVELLO4P,DS_LIVELLO4P,
-	   	  LUNG_LIVELLO5P,DS_LIVELLO5P,
-	   	  LUNG_LIVELLO6P,DS_LIVELLO6P,
-	   	  LUNG_LIVELLO7P,DS_LIVELLO7P,
-	   	  LUNG_LIVELLO8P,DS_LIVELLO8P,
-	   	  Sysdate,cgUtente,sysdate,cgUtente,1
+	   insert into PARAMETRI_LIVELLI_EP (ESERCIZIO,LIVELLI,
+	   				  LUNG_LIVELLO1,DS_LIVELLO1,
+	   				  LUNG_LIVELLO2,DS_LIVELLO2,
+	   				  LUNG_LIVELLO3,DS_LIVELLO3,
+	   				  LUNG_LIVELLO4,DS_LIVELLO4,
+	   				  LUNG_LIVELLO5,DS_LIVELLO5,
+	   				  LUNG_LIVELLO6,DS_LIVELLO6,
+	   				  LUNG_LIVELLO7,DS_LIVELLO7,
+	   				  LUNG_LIVELLO8,DS_LIVELLO8,
+				      DACR,UTCR,DUVA,UTUV,PG_VER_REC,TIPO)
+		select aEsDest, LIVELLI,
+	   	  LUNG_LIVELLO1,DS_LIVELLO1,
+	   	  LUNG_LIVELLO2,DS_LIVELLO2,
+	   	  LUNG_LIVELLO3,DS_LIVELLO3,
+	   	  LUNG_LIVELLO4,DS_LIVELLO4,
+	   	  LUNG_LIVELLO5,DS_LIVELLO5,
+	   	  LUNG_LIVELLO6,DS_LIVELLO6,
+	   	  LUNG_LIVELLO7,DS_LIVELLO7,
+	   	  LUNG_LIVELLO8,DS_LIVELLO8,
+		  Sysdate,cgUtente,sysdate,cgUtente,1,TIPO
 		from PARAMETRI_LIVELLI_EP
 		where ESERCIZIO = aEsOrig;
 	Exception when DUP_VAL_ON_INDEX then
@@ -3899,11 +3883,11 @@ BEGIN
         AND LIVELLO = 3
         AND (PG_PROGETTO, TIPO_FASE) NOT IN
         (SELECT PG_PROGETTO, TIPO_FASE FROM PROGETTO_SIP WHERE ESERCIZIO = aEs);
-    aMessage := 'Aggiornamento  progetti. Inseriti ';
+    aMessage := 'Aggiornamento  progetti. Inseriti ' || sql%rowcount || ' record.';
     ibmutl200.LOGINF(pg_exec,aMessage,'','');
 end;
 
-procedure AGGIORMENTO_PROGETTI(aEs number, pg_exec number) as
+procedure AGGIORNAMENTO_PROGETTI(aEs number, pg_exec number) as
    aTSNow date;
    aUser varchar2(20);
    aMessage varchar2(500);
@@ -4008,6 +3992,53 @@ begin
    aMessage := 'Aggiornamento voci su rimodulazione piano economico progetti. Inseriti '||sql%rowcount||' record.';
    ibmutl200.LOGINF(pg_exec,aMessage,'','');
 end;
+
+procedure RIBALTA_PROGETTI(aEs number, aUser String) as
+	pg_exec NUMBER;
+    pApertura CONFIGURAZIONE_CNR.val02%TYPE;
+    pChiusura CONFIGURAZIONE_CNR.val02%TYPE;
+BEGIN
+    pg_exec := ibmutl200.LOGSTART('Procedura di ribaltamento progetti - esercizio: ' ||aEs , aUser, null, null);
+
+	BEGIN
+		SELECT nvl(val02, 'N')
+		INTO pApertura
+		FROM CONFIGURAZIONE_CNR
+		WHERE ESERCIZIO = aEs
+		AND cd_unita_funzionale= '*'
+		AND cd_chiave_primaria = 'STEP_FINE_ANNO'
+		AND cd_chiave_Secondaria = '010_APERTURA_PREVISIONE';
+	EXCEPTION
+	    WHEN OTHERS THEN
+	    	pApertura := 'N';
+	END;
+
+	IF pApertura != 'Y' THEN
+	   ibmutl200.LOGINF(pg_exec,'Esercizio '||aEs||' non aperto. Aggiornamento Progetti non possibile.','','');
+	ELSE
+	   BEGIN
+	      SELECT nvl(val02, 'N')
+		  INTO pChiusura
+		  FROM CONFIGURAZIONE_CNR
+		  WHERE ESERCIZIO = aEs
+		  AND cd_unita_funzionale= '*'
+		  AND cd_chiave_primaria = 'STEP_FINE_ANNO'
+		  AND cd_chiave_Secondaria = '090_CHIUSURA_PROVVISORIA';
+	   EXCEPTION
+		  WHEN OTHERS THEN
+		     pChiusura := 'N';
+       END;
+
+	   IF pChiusura = 'Y' THEN
+		  ibmutl200.LOGINF(pg_exec,'Esercizio '||aEs||' chiuso. Aggiornamento Progetti non possibile.','','');
+	   ELSE
+	 	  ibmutl200.logInf(pg_exec,'Procedura di ribaltamento progetti - esercizio: ' ||aEs, 'Start:'||to_char(sysdate,'YYYY/MM/DD HH-MI-SS'), '');
+       	  INSERIMENTO_PROGETTI(aEs,pg_exec);
+	   	  AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
+          ibmutl200.logInf(pg_exec,'Procedura di ribaltamento progetti - esercizio: ' ||aEs, 'End:'||to_char(sysdate,'YYYY/MM/DD HH-MI-SS'), '');
+	   END IF;
+	END IF;
+END;
 
 procedure INIT_RIBALTAMENTO_DECIS_GEST(aEs number, aCdCentroResponsabilita VARCHAR2,aCdLineaAttivita VARCHAR2,aPgEsec number, aMessage in out varchar2) as
 stato_fine      char(1) := 'I';
@@ -4207,7 +4238,7 @@ begin
 	    AND TABELLA IN ('VAR_STANZ_RES' , 'VAR_STANZ_RES$'));
 
 	   INIT_RIBALTAMENTO_pdgp(aEs,pg_exec,aMessage);
-	   AGGIORMENTO_PROGETTI(aEs,pg_exec);
+	   AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
        INSERIMENTO_PROGETTI(aEs,pg_exec);
 
        ibmutl200.logInf(pg_exec,aMessage, '', '');

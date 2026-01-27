@@ -762,6 +762,17 @@
 		enabledOnSearch="true"
 		label="Importo Cofinanziato" />
 	<fieldProperty
+			name="noteDatiContabili"
+			property="otherField.noteDatiContabili"
+			maxLength="2000"
+			inputSize="2000"
+			inputType="TEXTAREA"
+			cols="80"
+			rows="3"
+			label="Note"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false" />
+	<fieldProperty
 		name="statoOfToSearch"
 		property="otherField.stato"
 		inputType="SELECT"
@@ -932,6 +943,8 @@
 		name="tipo" />
 	<formFieldProperty
 		name="note" />
+	<formFieldProperty
+		name="noteDatiContabili" />
 	<formFieldProperty
 		name="stato" />
 	<formFieldProperty
@@ -1461,6 +1474,8 @@
 	<findFieldProperty
 		name="note" />
 	<findFieldProperty
+			name="noteDatiContabili" />
+	<findFieldProperty
 		name="stato" />
 	<findFieldProperty
 		name="durata_progetto" />
@@ -1501,6 +1516,8 @@
 			name="durata_progetto" />
 		<findFieldProperty
 			name="note" />
+		<findFieldProperty
+				name="noteDatiContabili" />
 	</freeSearchSet>
 
 	<freeSearchSet
@@ -1538,6 +1555,8 @@
 			name="durata_progetto" />
 		<findFieldProperty
 			name="note" />
+		<findFieldProperty
+				name="noteDatiContabili" />
 	</freeSearchSet>
 
 	<freeSearchSet
@@ -1575,6 +1594,8 @@
 			name="durata_progetto" />
 		<findFieldProperty
 			name="note" />
+		<findFieldProperty
+				name="noteDatiContabili" />
 	</freeSearchSet>
 
 	<freeSearchSet
@@ -1601,6 +1622,8 @@
 			name="durata_progetto" />
 		<findFieldProperty
 			name="note" />
+		<findFieldProperty
+				name="noteDatiContabili" />
 	</freeSearchSet>
 
 	<freeSearchSet
@@ -1703,5 +1726,7 @@
 			name="ds_programma" />
 		<findFieldProperty
 			name="note" />
+		<findFieldProperty
+				name="noteDatiContabili" />
 	</freeSearchSet>
 </bulkInfo>

@@ -180,6 +180,7 @@ public abstract class Fattura_passivaBulk
         CAUSALE.put(CONT_CONF, "Importo sospeso per data esito regolare verifica di conformità");
         CAUSALE.put(ATTNC, "In attesa di nota credito");
         CAUSALE.put(ATTIN, "In attesa di Inventario");
+        CAUSALE.put(OMAGG, "Omaggio");
     }
     protected Tipo_sezionaleBulk tipo_sezionale;
     protected DivisaBulk valuta;
@@ -207,23 +208,25 @@ public abstract class Fattura_passivaBulk
     private java.sql.Timestamp fine_validita_valuta;
     //Variabile utilizzata per sapere se la richiesta di creazione proviene da una mappa di tipo Amministra
     private boolean fromAmministra = Boolean.FALSE;
+
+    private boolean isEnabledToInsertLettera= Boolean.TRUE;
     /*
      * Le variabili isDetailDoubled e isDocumentoModificabile servono per gestire il caso in cui l'utente
-	 * non potendo modificare il documento procede solo a sdoppiare la riga di dettaglio. In tal caso la
-	 * procedura provvede a non rieffettuare la ricontabilizzazione in COAN e COGE.
-	 *
-	 */
+     * non potendo modificare il documento procede solo a sdoppiare la riga di dettaglio. In tal caso la
+     * procedura provvede a non rieffettuare la ricontabilizzazione in COAN e COGE.
+     *
+     */
     private boolean isDetailDoubled = false; //serve per sapere se ? stata sdoppiata una riga di dettaglio
     private boolean isDocumentoModificabile = true; //serve per sapere se il documento ? modificabile o meno
 
     private boolean isFatturaDaRicevereAnnoPrec = Boolean.FALSE;
     private java.math.BigDecimal im_totale_fattura_calcolato = new java.math.BigDecimal(0);
     /* Le seguenti due collection servono per caricare i Tipi di Sezionale in modo selettivo:
-	 * in sezionaliIstituzionali andr? il Sezionale, (o i Sezionali), che sar? visualizzato
-	 * in caso di fattura di tipo Istituzionale;
-	 * in sezionaliCommerciali andranno tutti i Sezionali che saranno presentati in
-	 * caso di fattura di tipo Istituzionale.
-	*/
+     * in sezionaliIstituzionali andr? il Sezionale, (o i Sezionali), che sar? visualizzato
+     * in caso di fattura di tipo Istituzionale;
+     * in sezionaliCommerciali andranno tutti i Sezionali che saranno presentati in
+     * caso di fattura di tipo Istituzionale.
+     */
     private java.util.Collection sezionali;
     private java.util.Collection valute;
     private java.util.Collection banche;
@@ -434,6 +437,13 @@ public abstract class Fattura_passivaBulk
         nuovoRigo.setTermini_pagamento(this.getTermini_pagamento());
         nuovoRigo.setModalita(this.getModalita());
         nuovoRigo.setModalita_pagamento(this.getModalita_pagamento());
+        if ( Optional.ofNullable(nuovoRigo.getModalita_pagamento()).orElse(new Rif_modalita_pagamentoBulk()).isPAGOPA()){
+            nuovoRigo.setCodice_identificativo_ente_pagopa(
+                    Optional.ofNullable(nuovoRigo.getFornitore())
+                            .map(t->t.getCodice_fiscale_anagrafico()!=null?t.getCodice_fiscale_anagrafico():t.getPartita_iva_anagrafico())
+                            .orElse(null)
+            );
+        }
         nuovoRigo.setBanche(this.getBanche());
         nuovoRigo.setBanca(this.getBanca());
         nuovoRigo.setCessionario(this.getCessionario());
@@ -448,8 +458,8 @@ public abstract class Fattura_passivaBulk
         for (Iterator i = fattura_passiva_dettColl.iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaBulk riga = ((Fattura_passiva_rigaBulk) i.next());
             if (riga.getBene_servizio()!=null
-             && riga.getBene_servizio().getFl_obb_intrastat_acq()!=null
-                && riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
+                    && riga.getBene_servizio().getFl_obb_intrastat_acq()!=null
+                    && riga.getBene_servizio().getFl_obb_intrastat_acq().booleanValue()
                     && (( !Optional.ofNullable(riga.getVoce_iva()).isPresent())|| riga.getVoce_iva().getFl_intrastat().booleanValue())
             )
                 totale=totale.add(riga.getIm_imponibile());
@@ -546,8 +556,8 @@ public abstract class Fattura_passivaBulk
         if (!Optional.ofNullable(rigaFattura).isPresent()) {
             throw new ApplicationException("La riga di fattura non è stata selezionata, oppure è già stata contabilizzata!");
         }
-    	obbligazione.setCig(rigaFattura.getCig());
-    	obbligazione.setMotivo_assenza_cig(rigaFattura.getMotivo_assenza_cig());
+        obbligazione.setCig(rigaFattura.getCig());
+        obbligazione.setMotivo_assenza_cig(rigaFattura.getMotivo_assenza_cig());
         if (fattura_passiva_obbligazioniHash == null)
             fattura_passiva_obbligazioniHash = new ObbligazioniTable();
         Vector righeAssociate = (Vector) fattura_passiva_obbligazioniHash.get(obbligazione);
@@ -571,7 +581,7 @@ public abstract class Fattura_passivaBulk
             removeFromDocumentiContabiliCancellati(obbligazione);
     }
 
-      public int addToRiferimenti_bancari(Fattura_passiva_rigaBulk os) {
+    public int addToRiferimenti_bancari(Fattura_passiva_rigaBulk os) {
         riferimenti_bancari.add(os);
         os.setFattura_passiva(this);
 
@@ -1528,8 +1538,8 @@ public abstract class Fattura_passivaBulk
     }
 
     /*
- * Getter dell'attributo riportata
- */
+     * Getter dell'attributo riportata
+     */
     public Dictionary getRiportataKeys() {
         return STATI_RIPORTO;
     }
@@ -1934,15 +1944,15 @@ public abstract class Fattura_passivaBulk
     }
 
     /*
- * Getter dell'attributo ti_associato_manrev
- */
+     * Getter dell'attributo ti_associato_manrev
+     */
     public Dictionary getTi_associato_manrevKeys() {
         return STATO_MANDATO;
     }
 
     /*
- * Getter dell'attributo ti_associato_manrev
- */
+     * Getter dell'attributo ti_associato_manrev
+     */
     public Dictionary getTi_associato_manrevKeysForSearch() {
         return getTi_associato_manrevKeys();
     }
@@ -2204,9 +2214,8 @@ public abstract class Fattura_passivaBulk
                 getLettera_pagamento_estero() != null ||
                 isPagata() ||
                 isPagataParzialmente() ||
-                (getObbligazioniHash() == null || getObbligazioniHash().isEmpty());
-        //Come da richiesta 108 gestione errori CNR elimino il controllo sulla valuta (09/09/2002 RP)-Rimesso controllo 17/03/2025
-        //|| isDefaultValuta();
+                (getObbligazioniHash() == null || getObbligazioniHash().isEmpty())
+                || ( !isEnabledToInsertLettera && isDefaultValuta()) ;
     }
 
     /**
@@ -2511,8 +2520,8 @@ public abstract class Fattura_passivaBulk
     public boolean isRODateCompetenzaCOGE() {
 
         if (!this.isFromAmministra() &&
-            ((isElettronica() && getPg_fattura_passiva() != null) ||
-             (!isElettronica() && getFattura_passiva_dettColl() != null && !getFattura_passiva_dettColl().isEmpty())))
+                ((isElettronica() && getPg_fattura_passiva() != null) ||
+                        (!isElettronica() && getFattura_passiva_dettColl() != null && !getFattura_passiva_dettColl().isEmpty())))
             return true;
 
         return false;
@@ -2888,21 +2897,21 @@ public abstract class Fattura_passivaBulk
     public FatturaOrdineBulk removeFromFattura_passiva_ordini(int indiceDiLinea) {
         final FatturaOrdineBulk fatturaOrdineBulk = (FatturaOrdineBulk) fattura_passiva_ordini.remove(indiceDiLinea);
         Optional.ofNullable(fattura_passiva_dettColl.indexOf(fatturaOrdineBulk.getFatturaPassivaRiga()))
-            .filter(i -> i != -1)
-            .ifPresent(i -> {
-                final Fattura_passiva_rigaBulk fatturaPassivaRigaBulk = removeFromFattura_passiva_dettColl(i);
-                fatturaPassivaRigaBulk.setToBeDeleted();
-            });
+                .filter(i -> i != -1)
+                .ifPresent(i -> {
+                    final Fattura_passiva_rigaBulk fatturaPassivaRigaBulk = removeFromFattura_passiva_dettColl(i);
+                    fatturaPassivaRigaBulk.setToBeDeleted();
+                });
         Optional.ofNullable(fatturaOrdineBulk.getObbligazioneScadenzarioNc())
-               .ifPresent(obbligazioneScadenzarioBulk -> {
-                   for (int i = 0; i < fattura_passiva_dettColl.size(); i++){
+                .ifPresent(obbligazioneScadenzarioBulk -> {
+                    for (int i = 0; i < fattura_passiva_dettColl.size(); i++){
                         if (((Fattura_passiva_rigaBulk)fattura_passiva_dettColl.get(i))
                                 .getObbligazione_scadenziario().equalsByPrimaryKey(obbligazioneScadenzarioBulk)) {
                             final Fattura_passiva_rigaBulk fatturaPassivaRigaBulk = removeFromFattura_passiva_dettColl(i);
                             fatturaPassivaRigaBulk.setToBeDeleted();
                         }
-                   }
-               });
+                    }
+                });
         Optional.ofNullable(fatturaOrdineBulk.getOrdineAcqConsegna())
                 .ifPresent(ordineAcqConsegnaBulk -> {
                     ordineAcqConsegnaBulk.setStatoFatt(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA);
@@ -2976,8 +2985,8 @@ public abstract class Fattura_passivaBulk
     }
 
     /*
- * Setter dell'attributo fl_intra_ue
- */
+     * Setter dell'attributo fl_intra_ue
+     */
     public void setFl_intra_ue(java.lang.Boolean fl_intra_ue) {
         super.setFl_intra_ue(fl_intra_ue);
         //if (fl_intra_ue != null)
@@ -2985,8 +2994,8 @@ public abstract class Fattura_passivaBulk
     }
 
     /*
- * Setter dell'attributo fl_san_marino_senza_iva
- */
+     * Setter dell'attributo fl_san_marino_senza_iva
+     */
     public void setFl_san_marino_senza_iva(java.lang.Boolean fl_san_marino_senza_iva) {
         super.setFl_san_marino_senza_iva(fl_san_marino_senza_iva);
         if (fl_san_marino_senza_iva != null)
@@ -3085,7 +3094,7 @@ public abstract class Fattura_passivaBulk
         // Aggiungere controlli sulla data competenza anno precedente
         if (this.isFatturaDaRicevereAnnoPrec &&
                 ( ( this.getAssociazioniInventarioHash() ==null || this.getAssociazioniInventarioHash().isEmpty())
-            && ( this.getFattura_passiva_ordini()==null || this.getFattura_passiva_ordini().isEmpty()))){
+                        && ( this.getFattura_passiva_ordini()==null || this.getFattura_passiva_ordini().isEmpty()))){
             throw new ValidationException("Per la registrazione di fatture con competenza nell'anno precedente chiuso bisogna:\n " +
                     "o associare una riga di un ordine evaso nell'anno di competenza \n o " +
                     "un bene inserito nell'inventario nell'anno di competenza");
@@ -3124,10 +3133,10 @@ public abstract class Fattura_passivaBulk
                 .flatMap(documentoEleTestataBulk -> Optional.ofNullable(documentoEleTestataBulk.getIdentificativoSdi()))
                 .isPresent()) {
             Optional.ofNullable(getData_protocollo())
-                .map(timestamp -> Utility.addDays(timestamp, SpringUtil.getBean(UtilService.class).getNumGiorniScadenza()))
-                .ifPresent(timestamp -> {
-                    setDt_scadenza(timestamp);
-                });
+                    .map(timestamp -> Utility.addDays(timestamp, SpringUtil.getBean(UtilService.class).getNumGiorniScadenza()))
+                    .ifPresent(timestamp -> {
+                        setDt_scadenza(timestamp);
+                    });
         } else {
             Optional.ofNullable(getDt_registrazione())
                     .map(timestamp -> Utility.addDays(timestamp, SpringUtil.getBean(UtilService.class).getNumGiorniScadenza()))
@@ -3406,7 +3415,7 @@ public abstract class Fattura_passivaBulk
             CAUSALE.put(NVARI,"Nota di Variazione");
         }
         if ( ( this.isNotNew() && SPED_BOLDOG.equalsIgnoreCase(getCausale()))
-        ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  Boolean.TRUE.equals(getFl_bolla_doganale() ))){
+                ||(( this.isNonLiquidabile() ||this.isLiquidazioneSospesa()) &&  Boolean.TRUE.equals(getFl_bolla_doganale() ))){
             CAUSALE.put(SPED_BOLDOG, "Bolla Doganale");
         }
 
@@ -3830,7 +3839,7 @@ public abstract class Fattura_passivaBulk
     public Boolean isOptionDisabled(FieldProperty fieldProperty, Object key) {
         if (fieldProperty.getName().equalsIgnoreCase("causale")) {
             if (isLiquidazioneSospesa() &&
-                    (key.equals(ATTNC)||key.equals(ATTIN)))
+                    (key.equals(ATTNC)||key.equals(ATTIN)||key.equals(OMAGG)))
                 return true;
             if (isNonLiquidabile() && (key.equals(CONT) ||key.equals(CONT_CONF) || key.equals(CONT_NORM)))
                 return true;
@@ -3863,4 +3872,11 @@ public abstract class Fattura_passivaBulk
                 .orElse(Boolean.FALSE);
     }
 
+    public boolean isEnabledToInsertLettera() {
+        return isEnabledToInsertLettera;
+    }
+
+    public void setEnabledToInsertLettera(boolean enabledToInsertLettera) {
+        isEnabledToInsertLettera = enabledToInsertLettera;
+    }
 }

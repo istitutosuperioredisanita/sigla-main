@@ -164,7 +164,7 @@
     <!-- <forward name="default" path="/ordmag/numerazioneord.jsp"/> -->
      <forward name="default" path="/util/form.jsp"/>
     <init-param name="bulkClassName" value="it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk"/>
-    <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+    <init-param name="componentSessionName" value="CNRORDMAG00_EJB_NumerazioneOrdComponentSession"/>
   </businessProcess>
   <businessProcess name="CRUDTipoGestioneBeneServBP" className="it.cnr.jada.util.action.SimpleCRUDBP">
 <!--    <forward name="default" path="/ordmag/beneservtipogestione.jsp"/>-->

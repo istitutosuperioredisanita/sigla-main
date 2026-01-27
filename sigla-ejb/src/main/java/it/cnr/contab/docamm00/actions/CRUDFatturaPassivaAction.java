@@ -5698,9 +5698,11 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                     .map(CRUDFatturaPassivaBP.class::cast)
                     .orElseThrow(() -> new DetailedRuntimeException("Business Process non valido"));
             Fattura_passivaBulk fattura_passivaBulk = (Fattura_passivaBulk) bp.getModel();
-            if (!fattura_passivaBulk.isDaOrdini() && Optional.ofNullable(fattura_passivaBulk.getDocumentoEleTestata()).isPresent()  && fattura_passivaBulk.getFattura_passiva_dettColl().isEmpty()) {
+            if (!fattura_passivaBulk.isDaOrdini() &&
+                    Optional.ofNullable(fattura_passivaBulk.getDocumentoEleTestata()).isPresent()
+                    && fattura_passivaBulk.getFattura_passiva_dettColl().isEmpty()) {
                 bp.caricaRigheFatturaDaFatturazioneElettronica(context, fattura_passivaBulk, this, fattura_passivaBulk.getDocumentoEleTestata());
-            } else {
+            } else if( fattura_passivaBulk.isDaOrdini())  {
                 bp.getDettaglio().removeAll(context);
             }
             return context.findDefaultForward();
@@ -6013,6 +6015,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
     }
 
     public Forward doVisualizzaMandato(ActionContext actioncontext) throws BusinessProcessException{
+
         CRUDFatturaPassivaBP crudFatturaPassivaBP = Optional.ofNullable(getBusinessProcess(actioncontext))
                 .filter(CRUDFatturaPassivaBP.class::isInstance)
                 .map(CRUDFatturaPassivaBP.class::cast)
@@ -6023,12 +6026,22 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                         .map(Fattura_passiva_rigaBulk.class::cast);
         final CRUDComponentSession componentSession = (CRUDComponentSession) EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession");
         try {
-            final List<Mandato_rigaIBulk> mandato_rigaIBulks = Optional.ofNullable(componentSession.find(
-                            actioncontext.getUserContext(), Mandato_rigaBulk.class,
-                            "findRighe", actioncontext.getUserContext(), (IDocumentoAmministrativoSpesaBulk)fattura_passiva_rigaBulk.get().getFattura_passiva()))
+            final List<Mandato_rigaIBulk> mandato_rigaIBulks = (List<Mandato_rigaIBulk>) Optional.ofNullable(
+                            componentSession.find(
+                                    actioncontext.getUserContext(),
+                                    Mandato_rigaBulk.class,
+                                    "findRighe",
+                                    actioncontext.getUserContext(),
+                                    (IDocumentoAmministrativoSpesaBulk) fattura_passiva_rigaBulk.get().getFattura_passiva()
+                            )
+                    )
                     .filter(List.class::isInstance)
                     .map(List.class::cast)
-                    .orElse(Collections.emptyList());
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .sorted(Comparator.comparing(Mandato_rigaIBulk::getDacr).reversed())
+                    .collect(Collectors.toList());
+
             final Optional<MandatoBulk> mandatoBulk = mandato_rigaIBulks
                     .stream()
                     .filter(mandatoRigaIBulk -> {
@@ -6055,4 +6068,22 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             return handleException(actioncontext, e);
         }
     }
+
+    public Forward doVisualizzaAutoFattura(ActionContext context) throws BusinessProcessException {
+        CRUDFatturaPassivaBP fatturaBP = (CRUDFatturaPassivaBP)context.getBusinessProcess();
+
+        Fattura_passivaBulk fp = (Fattura_passivaBulk) fatturaBP.getModel();
+
+        try {
+            CRUDAutofatturaBP autofatturaBP = (CRUDAutofatturaBP) context.createBusinessProcess("CRUDAutofatturaBP",new Object[]{"V"+"Tn"});
+            autofatturaBP = (CRUDAutofatturaBP) context.addBusinessProcess(autofatturaBP);
+            autofatturaBP.edit(context, ((FatturaPassivaComponentSession) fatturaBP.createComponentSession()).
+                    cercaAutoFattura(context.getUserContext(), fp));
+            autofatturaBP.setPrevenienteDaFattura(true);
+            return autofatturaBP;
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
 }

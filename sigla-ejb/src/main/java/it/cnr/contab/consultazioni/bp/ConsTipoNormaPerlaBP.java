@@ -25,6 +25,7 @@ public class ConsTipoNormaPerlaBP extends ConsultazioniBP {
         if(Optional.ofNullable(this.tipoSelezione).orElse("").equals(Tipo_norma_perlaBulk.ASS_CONTRATTI)){
                 CompoundFindClause clauses = new CompoundFindClause();
                 clauses.addClause("AND","tipo_associazione", SQLBuilder.EQUALS, Tipo_norma_perlaBulk.ASS_CONTRATTI);
+                clauses.addClause("AND", "fl_cancellato", SQLBuilder.EQUALS, Boolean.FALSE);
                 setBaseclause(clauses);
 
             }

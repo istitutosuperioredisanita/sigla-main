@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.pdcep.consultazioni.bulk.VConsPianoContiEconomicoBulk"
+	homeClassName="it.cnr.contab.config00.pdcep.consultazioni.bulk.VConsPianoContiEconomicoHome">
+	<defaultColumnMap
+		tableName="V_CONS_PIANO_CONTI_ECONOMICO">
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="esercizio"
+			sqlTypeName="DECIMAL"
+			columnSize="4"
+			nullable="false" />
+        <columnMapping
+            columnName="TIPO"
+            propertyName="tipo"
+            sqlTypeName="VARCHAR"
+            columnSize="3"
+            nullable="false" />
+        <columnMapping
+            columnName="TIPOREC"
+            propertyName="tiporec"
+            sqlTypeName="VARCHAR"
+            columnSize="3"
+            nullable="false" />
+        <columnMapping
+            columnName="NR_LIVELLO"
+            propertyName="nr_livello"
+            sqlTypeName="DECIMAL"
+            columnSize="1"
+            nullable="false" />
+        <columnMapping
+            columnName="CD_CLASSIFICAZIONE"
+            propertyName="cd_classificazione"
+            sqlTypeName="VARCHAR"
+            columnSize="35"
+            nullable="false" />
+        <columnMapping
+            columnName="DS_CLASSIFICAZIONE"
+            propertyName="ds_classificazione"
+            sqlTypeName="VARCHAR"
+            columnSize="250"
+            nullable="false" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="esercizio" />
+	<persistentProperty
+		name="tipo" />
+	<persistentProperty
+		name="tiporec" />
+	<persistentProperty
+		name="nr_livello" />
+	<persistentProperty
+		name="cd_classificazione" />
+	<persistentProperty
+		name="ds_classificazione" />
+</SQLPersistentInfo>

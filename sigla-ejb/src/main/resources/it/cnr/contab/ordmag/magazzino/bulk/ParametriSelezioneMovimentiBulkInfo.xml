@@ -25,14 +25,14 @@
 	<fieldProperty
 		name="findUnitaOperativaOrd"
 		property="unitaOperativaAbilitata"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="Unità Operativa" />
 	<fieldProperty
 		name="findMagazzino"
 		property="magazzinoAbilitato"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnEdit="true"
 		enabledOnSearch="true"
@@ -40,7 +40,7 @@
 	<fieldProperty
 		name="findTipoMovimentoMag"
 		property="tipoMovimentoMag"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnEdit="true"
 		enabledOnSearch="true"
@@ -48,7 +48,7 @@
 	<fieldProperty
 		name="findTerzo"
 		property="terzo"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="Terzo" />
@@ -141,28 +141,28 @@
 	<fieldProperty
 		name="findUnitaOperativaOrdine"
 		property="unitaOperativaOrdine"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="UOp Ordine" />
 	<fieldProperty
 		name="findNumerazioneOrd"
 		property="numerazioneOrd"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool_ridotto"
 		enabledOnSearch="true"
 		label="Numerat. Ordine" />
 	<fieldProperty
 		name="findDaUnitaOperativaOrd"
 		property="daUnitaOperativaRicevente"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="Da UOp Ricevente" />
 	<fieldProperty
 		name="findAUnitaOperativaOrd"
 		property="aUnitaOperativaRicevente"
-		inputType="searchtool"
+		inputType="SEARCHTOOL"
 		formName="searchtool"
 		enabledOnSearch="true"
 		label="A UOp Ricevente" />

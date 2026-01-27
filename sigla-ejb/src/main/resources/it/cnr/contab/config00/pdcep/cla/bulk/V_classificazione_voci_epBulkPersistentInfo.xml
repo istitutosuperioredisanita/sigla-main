@@ -40,8 +40,15 @@
 			sqlTypeName="DECIMAL"
 			columnSize="1"
 			nullable="false" />
+		<columnMapping
+				columnName="CD_CLASSIFICAZIONE_5_LIV"
+				propertyName="cd_classificane_5_liv"
+				sqlTypeName="VARCHAR"
+				columnSize="35"
+				nullable="false" />
 	</defaultColumnMap>
 	<persistentProperty name="cd_livello_last"/>
 	<persistentProperty name="cd_classificazione"/>
 	<persistentProperty name="nr_livello"/>
+	<persistentProperty name="cd_classificane_5_liv"/>
 </SQLPersistentInfo>

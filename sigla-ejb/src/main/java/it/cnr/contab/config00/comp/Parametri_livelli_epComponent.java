@@ -39,6 +39,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.CRUDComponent;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 /**
@@ -49,39 +50,23 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
  */
 public class Parametri_livelli_epComponent extends CRUDComponent {
 	
-	public boolean isParametriLivelliEcoEnabled(UserContext userContext, Parametri_livelli_epBulk parLiv) throws ComponentException{
+	public boolean isParametriLivelliEnabled(UserContext userContext, Parametri_livelli_epBulk parLiv) throws ComponentException{
 		try{
 			Classificazione_voci_epHome home = (Classificazione_voci_epHome)getHome(userContext, Classificazione_voci_epBulk.class);
 			SQLBuilder sql = home.createSQLBuilder();
-			sql.addSQLClause("AND", "ESERCIZIO", sql.EQUALS, parLiv.getEsercizio());
-			sql.addSQLClause("AND", "TIPO", sql.EQUALS, Voce_epHome.ECONOMICA);
+			sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, parLiv.getEsercizio());
+			sql.addSQLClause(FindClause.AND, "TIPO", SQLBuilder.EQUALS, parLiv.getTipo());
 			List result = home.fetchAll( sql );
-			if (result.size() > 0)
-				return false;
-			return true;			
-		}catch(it.cnr.jada.persistency.PersistencyException ex){
+            return result.isEmpty();
+        }catch(it.cnr.jada.persistency.PersistencyException ex){
 			throw handleException(ex);
 		}
 	}
 	
-	public boolean isParametriLivelliPatEnabled(UserContext userContext, Parametri_livelli_epBulk parLiv) throws ComponentException{
-		try{
-			Classificazione_voci_epHome home = (Classificazione_voci_epHome)getHome(userContext, Classificazione_voci_epBulk.class);
-			SQLBuilder sql = home.createSQLBuilder();
-			sql.addSQLClause("AND", "ESERCIZIO", sql.EQUALS, parLiv.getEsercizio());
-			sql.addSQLClause("AND", "TIPO", sql.EQUALS, Voce_epHome.PATRIMONIALE);
-			List result = home.fetchAll( sql );
-			if (result.size() > 0)
-				return false;
-			return true;			
-		}catch(it.cnr.jada.persistency.PersistencyException ex){
-			throw handleException(ex);
-		}
-	}
-	public Parametri_livelli_epBulk getParametriLivelli(UserContext userContext, Integer esercizio) throws ComponentException{
+	public Parametri_livelli_epBulk getParametriLivelli(UserContext userContext, Integer esercizio, String tipo) throws ComponentException{
 		try{
 			Parametri_livelli_epHome home = (Parametri_livelli_epHome)getHome(userContext, Parametri_livelli_epBulk.class);
-			Parametri_livelli_epBulk bulk = (Parametri_livelli_epBulk)home.findByPrimaryKey(new Parametri_livelli_epBulk(esercizio));
+			Parametri_livelli_epBulk bulk = (Parametri_livelli_epBulk)home.findByPrimaryKey(new Parametri_livelli_epBulk(esercizio,tipo));
 			getHomeCache(userContext).fetchAll(userContext,home);
 			return bulk;
 		}catch(it.cnr.jada.persistency.PersistencyException ex){
@@ -101,18 +86,13 @@ public class Parametri_livelli_epComponent extends CRUDComponent {
 			if (bulkCNR == null)
 			  throw new ApplicationException("Parametri CNR non presenti per l'anno "+esercizio);
 			Parametri_livelli_epHome home = (Parametri_livelli_epHome)getHome(userContext, Parametri_livelli_epBulk.class);
-			Parametri_livelli_epBulk bulkLivelli = (Parametri_livelli_epBulk)home.findByPrimaryKey(new Parametri_livelli_epBulk(esercizio));
+			Parametri_livelli_epBulk bulkLivelli = (Parametri_livelli_epBulk)home.findByPrimaryKey(new Parametri_livelli_epBulk(esercizio,tipo));
 			if (bulkLivelli == null)
 			  throw new ApplicationException("Parametri Livelli non presenti per l'anno "+esercizio);						
 			getHomeCache(userContext).fetchAll(userContext,home);
-			if (tipo.equals(Voce_epHome.PATRIMONIALE))
-			  return bulkLivelli.getDs_livello_pat(bulkCNR.getLivello_pat().intValue());
-			else if (tipo.equals(Voce_epHome.ECONOMICA))
-			  return bulkLivelli.getDs_livello_eco(bulkCNR.getLivello_eco().intValue());
-			return "";  
+			return bulkLivelli.getDs_livello(bulkCNR.getLivello_eco());
 		}catch(it.cnr.jada.persistency.PersistencyException ex){
 			throw handleException(ex);
 		}
 	}	
-	
 }

@@ -20,12 +20,20 @@
  * Date 23/04/2007
  */
 package it.cnr.contab.config00.bulk;
+import it.cnr.contab.config00.pdcep.bulk.Voce_epHome;
+import it.cnr.contab.config00.pdcep.cla.bulk.V_classificazione_voci_epBulk;
+import it.cnr.contab.config00.pdcep.cla.bulk.V_classificazione_voci_epHome;
+import it.cnr.contab.config00.pdcfin.cla.bulk.V_classificazione_vociHome;
+import it.cnr.contab.ordmag.anag00.AssUnitaOperativaOrdBulk;
+import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
+import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.sql.Connection;
@@ -42,4 +50,30 @@ public class Codici_siopeHome extends BulkHome {
 	    sql.addClause("AND","esercizio",SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
 		return sql;
 	}
+
+    public SQLBuilder selectV_classificazione_voci_ep_siopeByClause(CNRUserContext usercontext, Codici_siopeBulk codiciSiopeBulk, V_classificazione_voci_epHome classHome,
+                                                                    V_classificazione_voci_epBulk classBulk, CompoundFindClause compoundfindclause) throws PersistencyException{
+        SQLBuilder sql = classHome.createSQLBuilder();
+        sql.addClause(FindClause.OR, "tipo", SQLBuilder.EQUALS, Voce_epHome.SIOPE);
+        sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(usercontext));
+
+        sql.addClause(FindClause.AND, "fl_mastrino", SQLBuilder.EQUALS, Boolean.TRUE);
+
+        if (compoundfindclause != null)
+            sql.addClause(compoundfindclause);
+        return sql;
+    }
+
+    public SQLBuilder selectV_classificazione_voci_ep_siope_rendByClause(CNRUserContext usercontext, Codici_siopeBulk codiciSiopeBulk, V_classificazione_voci_epHome classHome,
+                                                                    V_classificazione_voci_epBulk classBulk, CompoundFindClause compoundfindclause) throws PersistencyException{
+        SQLBuilder sql = classHome.createSQLBuilder();
+        sql.addClause(FindClause.OR, "tipo", SQLBuilder.EQUALS, Voce_epHome.SIOPE_RENDICONTO);
+        sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(usercontext));
+
+        sql.addClause(FindClause.AND, "fl_mastrino", SQLBuilder.EQUALS, Boolean.TRUE);
+
+        if (compoundfindclause != null)
+            sql.addClause(compoundfindclause);
+        return sql;
+    }
 }

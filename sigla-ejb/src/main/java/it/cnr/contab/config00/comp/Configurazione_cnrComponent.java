@@ -20,6 +20,7 @@ package it.cnr.contab.config00.comp;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Configurazione_cnrKey;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.utente00.ejb.RuoloComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
@@ -27,10 +28,13 @@ import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyError;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import org.slf4j.Logger;
@@ -1045,6 +1049,35 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
         return impegnoPluriennaleAttivo;
     }
 
+    public Boolean isGestioneImportoInventarioReadOnly(UserContext userContext) throws ComponentException {
+        final Configurazione_cnrBulk configurazione =
+                Optional.ofNullable(
+                        getConfigurazione(
+                                userContext,
+                                CNRUserContext.getEsercizio(userContext),
+                                ASTERISCO,
+                                Configurazione_cnrBulk.PK_INVENTARIO,
+                                Configurazione_cnrBulk.SK_GESTIONE_IMPORTO_RO_INVENTARIO)
+                ).orElseGet(() -> {
+                            try {
+                                return getConfigurazione(
+                                        userContext,
+                                        0,
+                                        ASTERISCO,
+                                        Configurazione_cnrBulk.PK_INVENTARIO,
+                                        Configurazione_cnrBulk.SK_GESTIONE_IMPORTO_RO_INVENTARIO);
+                            } catch (ComponentException e) {
+                                throw new DetailedRuntimeException(e);
+                            }
+                        }
+                );
+        return Optional.ofNullable(configurazione)
+                .flatMap(configurazione_cnrBulk -> Optional.ofNullable(configurazione_cnrBulk.getVal01()))
+                .filter(val -> val.equals("Y"))
+                .isPresent();
+    }
+
+
     public Boolean isGestioneEtichettaInventarioBeneAttivo(UserContext userContext) throws ComponentException {
         final Configurazione_cnrBulk configurazione =
                 Optional.ofNullable(
@@ -1082,6 +1115,45 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
         }
         return gestioneEtichettaInventarioAttiva;
     }
+
+    public Boolean isGestioneInvioInFirmaDocTRAttivo(UserContext userContext) throws ComponentException {
+        final Configurazione_cnrBulk configurazione =
+                Optional.ofNullable(
+                        getConfigurazione(
+                                userContext,
+                                CNRUserContext.getEsercizio(userContext),
+                                ASTERISCO,
+                                Configurazione_cnrBulk.PK_INVENTARIO,
+                                Configurazione_cnrBulk.SK_INVIO_DOC_TR)
+                ).orElseGet(() -> {
+                            try {
+                                return getConfigurazione(
+                                        userContext,
+                                        0,
+                                        ASTERISCO,
+                                        Configurazione_cnrBulk.PK_INVENTARIO,
+                                        Configurazione_cnrBulk.SK_INVIO_DOC_TR);
+                            } catch (ComponentException e) {
+                                throw new DetailedRuntimeException(e);
+                            }
+                        }
+                );
+        final boolean gestioneInvioInFirmaDocTRAttivo = Optional.ofNullable(configurazione)
+                .flatMap(configurazione_cnrBulk -> Optional.ofNullable(configurazione_cnrBulk.getVal01()))
+                .filter(val -> val.equals("Y"))
+                .isPresent();
+        final Optional<String> ruolo = Optional.ofNullable(configurazione.getVal02());
+        if (gestioneInvioInFirmaDocTRAttivo && ruolo.isPresent()){
+            try {
+                return ((RuoloComponentSession) EJBCommonServices.createEJB("CNRUTENZE00_EJB_RuoloComponentSession"))
+                        .controlloAbilitazione(userContext, ruolo.get());
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return gestioneInvioInFirmaDocTRAttivo;
+    }
+
 
     public String getTipoStanziamentoLiquidazioneIva(UserContext userContext) throws ComponentException {
         try {
@@ -1487,6 +1559,104 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
                         }
                     });
         } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+    public Boolean is1210BonificoEsteroEuro(UserContext userContext) throws ComponentException {
+        try {
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_FLUSSO_ORDINATIVI,
+                    Configurazione_cnrBulk.SK_BONIFICO_ESTERO_EURO_1210,
+                    ASTERISCO,
+                    CNRUserContext.getEsercizio(userContext));
+            return val01YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException|ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+    public Boolean isEnabledPartGiroInVarizione(UserContext userContext) throws ComponentException {
+        try {
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_PDG_VARIAZIONE,
+                    Configurazione_cnrBulk.SK_VARIAZIONE_FL_PGIRO,
+                    ASTERISCO,
+                    CNRUserContext.getEsercizio(userContext));
+            return val01YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException|ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+
+    public void ribaltaProgetti(UserContext userContext, int esercizio) throws ComponentException {
+        try {
+            Optional<Configurazione_cnrBulk> confApertura =
+                    Optional.ofNullable(
+                            getConfigurazione(
+                                    userContext,
+                                    esercizio,
+                                    ASTERISCO,
+                                    Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                                    Configurazione_cnrBulk.StepFineAnno.APERTURA_PREVISIONE.value())
+                    );
+
+            confApertura.flatMap(el->Optional.ofNullable(el.getVal02()))
+                    .filter(el->el.equals("Y"))
+                    .orElseThrow(() -> new ApplicationException("Esercizio "+esercizio+" non aperto. Aggiornamento Progetti non possibile."));
+
+            Optional<Configurazione_cnrBulk> confChiusura =
+                    Optional.ofNullable(
+                            getConfigurazione(
+                                    userContext,
+                                    esercizio,
+                                    ASTERISCO,
+                                    Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                                    Configurazione_cnrBulk.StepFineAnno.CHIUSURA_DEFINITIVA.value())
+                    );
+
+            confChiusura.filter(el->Optional.ofNullable(el.getVal02()).map(el2->!el2.equals("Y")).orElse(Boolean.TRUE))
+                    .orElseThrow(() -> new ApplicationException("Esercizio "+esercizio+" chiuso. Aggiornamento Progetti non possibile."));
+
+            confChiusura =
+                    Optional.ofNullable(
+                            getConfigurazione(
+                                    userContext,
+                                    esercizio,
+                                    ASTERISCO,
+                                    Configurazione_cnrBulk.PK_STEP_FINE_ANNO,
+                                    Configurazione_cnrBulk.StepFineAnno.CHIUSURA_PROVVISORIA.value())
+                    );
+
+            confChiusura.filter(el->Optional.ofNullable(el.getVal02()).map(el2->!el2.equals("Y")).orElse(Boolean.TRUE))
+                    .orElseThrow(() -> new ApplicationException("Esercizio "+esercizio+" chiuso in modalità provvisoria. Aggiornamento Progetti non possibile."));
+
+            LoggableStatement cs = new LoggableStatement(getConnection(userContext),
+                    "{  call " +
+                            it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
+                            "CNRMIG100.RIBALTA_PROGETTI(?, ?)}",false,this.getClass());
+            try {
+                cs.setInt( 1, esercizio );
+                cs.setString( 2, CNRUserContext.getUser(userContext) );
+                cs.execute();
+            } finally {
+                cs.close();
+            }
+        } catch (java.sql.SQLException e) {
             throw handleException(e);
         }
     }

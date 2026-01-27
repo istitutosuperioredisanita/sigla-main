@@ -57,7 +57,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	public Buono_carico_scarico_dettBulk(java.lang.Long pg_inventario, java.lang.String ti_documento, java.lang.Integer esercizio, java.lang.Long pg_buono_c_s, java.lang.Long nr_inventario, java.lang.Integer progressivo) {
 		super(pg_inventario, ti_documento, esercizio, pg_buono_c_s, nr_inventario, progressivo);
 		setBuono_cs(new it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk(pg_inventario,  ti_documento, esercizio, pg_buono_c_s));
-		setBene(new Inventario_beniBulk(nr_inventario,pg_inventario,new Long (progressivo.longValue())));
+		setBene(new Inventario_beniBulk(nr_inventario,pg_inventario,Long.valueOf(progressivo)));
 	}
 	
 	public Inventario_beniBulk getBene() {
@@ -366,6 +366,16 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	}
 	public void setCat_voce(Categoria_gruppo_voceBulk cat_voce) {
 		this.cat_voce = cat_voce;
+	}
+
+	public boolean isProvenienzaOrdine(){
+		if(this.getIdTransito() != null)
+			return true;
+		if(this.getBuono_cs() != null && this.getBuono_cs().isByOrdini())
+			return true;
+		if(this.getBene() != null && this.getBene().getId_transito_beni_ordini() != null)
+			return true;
+		return false;
 	}
 
 }

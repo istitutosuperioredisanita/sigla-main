@@ -739,6 +739,8 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		if (movimentoDaAnnullare.getBollaScaricoMag() != null && movimentoDaAnnullare.getBollaScaricoMag().getPgBollaSca() != null ){
 			annullaRigaBollaDiScarico(userContext, movimentoDaAnnullare);
 		}
+
+		verificaBeneDaAnnullare(userContext, movimentoDaAnnullare);
 		/**
 		 * Cerco la riga di evasione legata al movimento per effettuare l'annullamento
 		 */
@@ -799,8 +801,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 	private void annullaRigaBollaDiScarico(UserContext userContext, MovimentiMagBulk movimentoDaAnnullare)
 			throws ComponentException, PersistencyException, ApplicationException {
 
-    	verificaBeneDaAnnullare(userContext, movimentoDaAnnullare);
-		MovimentiMagHome movimentiHome = (MovimentiMagHome)getHome(userContext, MovimentiMagBulk.class);
+    	MovimentiMagHome movimentiHome = (MovimentiMagHome)getHome(userContext, MovimentiMagBulk.class);
 		try {
 			List listaRigaBolle = movimentiHome.findRigheBollaDiScarico(movimentoDaAnnullare);
 			if (listaRigaBolle != null){
@@ -1384,18 +1385,17 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 	}
 
 
-	public List<MovimentiMagBulk> caricoDaOrdineRigheEvase(UserContext userContext,  List<EvasioneOrdineRigaBulk> evasioneOrdineRiga) throws ComponentException, PersistencyException, ApplicationException {
-		List<MovimentiMagBulk> listaMovimentiScarico =new ArrayList<MovimentiMagBulk>();
+	public List<EvasioneOrdineRigaBulk> caricoDaOrdineRigheEvase(UserContext userContext,   List<EvasioneOrdineRigaBulk> evasioneOrdineRiga) throws ComponentException, PersistencyException, ApplicationException {
+
 		if (Optional.ofNullable(evasioneOrdineRiga).isPresent() ){
 			for (EvasioneOrdineRigaBulk eva:evasioneOrdineRiga) {
-				MovimentiMagBulk movimentoCarico =caricoDaOrdine(userContext, eva.getOrdineAcqConsegna(), (EvasioneOrdineRigaBulk) eva);
-				if (movimentoCarico.getMovimentoRif() != null) {
-					listaMovimentiScarico.add(movimentoCarico);
-				}
-				eva.setMovimentiMag(movimentoCarico);
+				Optional.ofNullable(caricoDaOrdine(userContext, eva.getOrdineAcqConsegna(), (EvasioneOrdineRigaBulk) eva))
+						.ifPresent(movimentoCarico -> {
+							eva.setMovimentiMag(movimentoCarico);
+						});
 			}
 		}
-		return listaMovimentiScarico;
+		return evasioneOrdineRiga;
 	}
 
 }
