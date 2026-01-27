@@ -17,15 +17,12 @@
 
 package it.cnr.contab.config00.bp;
 
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.util.Config;
 import it.cnr.jada.util.action.FormField;
 import it.cnr.jada.util.jsp.Button;
-
-import java.util.Optional;
-import java.util.stream.Stream;
 
 public class GestConfCNRBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 
@@ -71,13 +68,5 @@ public GestConfCNRBP() {
         return "SEARCH_FORM";
     }
 
-//    @Override
-//    public boolean isDeleteButtonHidden() {
-//        return true;
-//    }
 
-//    @Override
-//    public boolean isNewButtonHidden() {
-//        return true;
-//    }
 }
