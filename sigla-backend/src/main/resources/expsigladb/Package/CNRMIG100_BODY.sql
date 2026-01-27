@@ -1363,6 +1363,14 @@ dbms_output.put_line('0004');
                         Else
                            new_val01 := aConfCNR.VAL01;
                         End If;
+                         If aConfCNR.cd_chiave_primaria = 'STEP_FINE_ANNO' and
+                                                     aConfCNR.cd_chiave_secondaria in ('140_STORNO_FATT_PAS','150_STORNO_FATT_ATT') then
+                                                     aConfCNR.DT01:=to_date(to_char( NVL( aConfCNR.DT01,sysdate),'dd/mm')||aEs,'dd/mm/yyyy');
+                        end if;
+                         If aConfCNR.cd_chiave_primaria = 'STEP_FINE_ANNO' and
+                             aConfCNR.cd_chiave_secondaria ='130_REG_FATT_PAS' then
+                             aConfCNR.DT01:=to_date( '01/01/'||aEs,'dd/mm/yyyy');
+                        end if;
 
 			begin
 				insert into CONFIGURAZIONE_CNR (ESERCIZIO,
