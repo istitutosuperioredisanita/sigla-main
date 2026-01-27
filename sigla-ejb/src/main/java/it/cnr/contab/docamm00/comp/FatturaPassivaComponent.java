@@ -3608,7 +3608,14 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
 
                         if (inventario.getValore_iniziale().compareTo(importoUnitario) != 0) {
                             try {
-                                inventario = (Inventario_beniBulk) inventario_beniComponent.inizializzaBulkPerModifica(userContext, inventario);
+
+                                OggettoBulk bulk=inventario_beniComponent.inizializzaBulkPerModifica(userContext, inventario);
+
+                                if (bulk instanceof ROWrapper){
+                                    inventario = (Inventario_beniBulk)((ROWrapper)bulk).getBulk();
+                                } else {
+                                    inventario = (Inventario_beniBulk)bulk;
+                                }
                                 inventario.setValore_unitario(importoUnitario);
                                 //da verificare con la gestione dei beni annullati nel transito
                                 //inventario.setImponibile_ammortamento(importoUnitario);

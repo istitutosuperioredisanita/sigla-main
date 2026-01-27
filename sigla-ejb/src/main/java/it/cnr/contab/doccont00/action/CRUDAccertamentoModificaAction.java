@@ -18,15 +18,43 @@
 package it.cnr.contab.doccont00.action;
 
 import it.cnr.contab.doccont00.bp.CRUDAccertamentoModificaBP;
+import it.cnr.contab.doccont00.bp.CRUDAccertamentoResiduoBP;
+import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_modificaBulk;
-import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.varstanz00.bp.CRUDVar_stanz_resBP;
 import it.cnr.contab.varstanz00.bulk.Var_stanz_resBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
 
+import java.rmi.RemoteException;
+import java.util.Optional;
+
 public class CRUDAccertamentoModificaAction extends it.cnr.jada.util.action.CRUDAction {
+
+	public Forward doElimina(ActionContext actioncontext)
+			throws RemoteException {
+		try {
+			fillModel(actioncontext);
+			CRUDAccertamentoModificaBP crudAccertamentoModificaBP = (CRUDAccertamentoModificaBP)getBusinessProcess(actioncontext);
+			Optional<AccertamentoBulk> accertamentoBulk = Optional.ofNullable(crudAccertamentoModificaBP.getModel())
+					.map(Accertamento_modificaBulk.class::cast)
+					.map(Accertamento_modificaBulk::getAccertamento);
+			crudAccertamentoModificaBP.delete(actioncontext);
+			crudAccertamentoModificaBP.setMessage("Cancellazione effettuata");
+			BusinessProcess businessProcess = actioncontext.closeBusinessProcess();
+			if (getBusinessProcess(actioncontext) instanceof CRUDAccertamentoResiduoBP) {
+				CRUDAccertamentoResiduoBP crudAccertamentoResiduoBP = (CRUDAccertamentoResiduoBP) getBusinessProcess(actioncontext);
+				crudAccertamentoResiduoBP.commitUserTransaction();
+				crudAccertamentoResiduoBP.basicEdit(actioncontext, accertamentoBulk.orElse(null), true);
+			}
+			return businessProcess;
+		} catch (Throwable throwable) {
+			return handleException(actioncontext, throwable);
+		}
+	}
+
 
 	public Forward doRiporta(ActionContext context) 
 	{

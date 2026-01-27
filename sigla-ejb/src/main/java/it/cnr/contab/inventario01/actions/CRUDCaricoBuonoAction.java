@@ -109,7 +109,7 @@ public Forward doElimina(ActionContext context) throws java.rmi.RemoteException 
 				if(bp.isAssociataTestata(context.getUserContext(), buonoC))
 				{
 						buonoC.setTipoMovimento(tipoMovimento);
-						throw new ApplicationException("Cambio tipologia buono non possibile.");
+						throw new ApplicationException("Cambio tipologia buono non possibile.Il buono è associato a fattura");
 				}
 		  }
 		}	

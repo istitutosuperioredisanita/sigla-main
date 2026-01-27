@@ -17,11 +17,18 @@
 
 package it.cnr.contab.doccont00.ejb;
 
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+import it.cnr.contab.doccont00.comp.AccertamentoResiduoComponent;
+import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
+
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Remove;
 import jakarta.ejb.Stateless;
 
-import it.cnr.contab.doccont00.comp.AccertamentoResiduoComponent;
 @Stateless(name="CNRDOCCONT00_EJB_AccertamentoResiduoComponentSession")
 public class AccertamentoResiduoComponentSessionBean extends it.cnr.contab.doccont00.ejb.AccertamentoComponentSessionBean implements AccertamentoResiduoComponentSession{
 @PostConstruct
@@ -33,7 +40,7 @@ public class AccertamentoResiduoComponentSessionBean extends it.cnr.contab.docco
 		componentObj.release();
 	}
 
-	
+
 	public String controllaDettagliScadenzaAccertamento(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.AccertamentoBulk param1,it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 		pre_component_invocation(param0,componentObj);
 		try {
@@ -56,6 +63,25 @@ public class AccertamentoResiduoComponentSessionBean extends it.cnr.contab.docco
 		pre_component_invocation(param0,componentObj);
 		try {
 			((AccertamentoResiduoComponent)componentObj).cancellaAccertamentoModTemporanea(param0,param1);
+			component_invocation_succes(param0,componentObj);
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public void aggiornaImportoAccertamento(UserContext param0, AccertamentoBulk param1, BigDecimal param2, WorkpackageBulk param3, String param4) throws ComponentException, RemoteException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((AccertamentoResiduoComponent)componentObj).aggiornaImportoAccertamento(param0,param1,param2,param3,param4);
 			component_invocation_succes(param0,componentObj);
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
 			component_invocation_succes(param0,componentObj);

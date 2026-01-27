@@ -28,39 +28,34 @@ import java.rmi.RemoteException;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.RemoveException;
 
-import it.cnr.contab.compensi00.bp.CRUDCompensoBP;
-import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
-import it.cnr.contab.compensi00.ejb.CompensoComponentSession;
+import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoPGiroBulk;
 import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoResiduoBulk;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_mod_voceBulk;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_modificaBulk;
 import it.cnr.contab.doccont00.ejb.AccertamentoModificaComponentSession;
-import it.cnr.contab.doccont00.ejb.AccertamentoResiduoComponentSession;
-import it.cnr.contab.prevent00.bulk.Voce_f_saldi_cmpBulk;
 import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.varstanz00.bp.CRUDVar_stanz_resBP;
 import it.cnr.contab.varstanz00.bulk.Var_stanz_resBulk;
-import it.cnr.contab.varstanz00.ejb.VariazioniStanziamentoResiduoComponentSession;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
-public class CRUDAccertamentoModificaBP extends it.cnr.jada.util.action.SimpleCRUDBP { 
+import java.util.Optional;
+
+public class CRUDAccertamentoModificaBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 	public static final String TIPO_ACCESSO_VISUALIZZAZIONE = "V";
 	public static final String TIPO_ACCESSO_MODIFICA = "M";
 	private final SimpleDetailCRUDController dettagliModifica = new SimpleDetailCRUDController("DettagliModifica",Accertamento_mod_voceBulk.class,"accertamento_mod_voceColl",this);
 	private AccertamentoBulk accertamento;
 	private String tipoAccesso;
+	private Boolean supervisore;
+	private Boolean esercizioChiuso;
 	private Unita_organizzativaBulk uoSrivania;
 
 	/**
@@ -120,6 +115,11 @@ public class CRUDAccertamentoModificaBP extends it.cnr.jada.util.action.SimpleCR
 				setModel(context, obbMod);
 				cerca(context);
 			}
+			supervisore =  ((CNRUserInfo) context.getUserInfo()).getUtente().isSupervisore();
+			esercizioChiuso = (((EsercizioComponentSession) EJBCommonServices
+					.createEJB("CNRCONFIG00_EJB_EsercizioComponentSession",
+							EsercizioComponentSession.class))
+					.isEsercizioChiuso(context.getUserContext()));
 		} catch(Exception e) {
 			throw handleException(e);
 		}
@@ -225,5 +225,20 @@ public class CRUDAccertamentoModificaBP extends it.cnr.jada.util.action.SimpleCR
 	}
 	public void setUoSrivania(Unita_organizzativaBulk bulk) {
 		uoSrivania = bulk;
+	}
+	/**
+	 * La cancellazione è abilitata solo per i supervisori se l'esercizio in scrivani non è chiuso e
+	 * se la modifica si riferisce ad un impegno residuo
+	 * @return
+	 */
+	@Override
+	public boolean isDeleteButtonEnabled() {
+		if (supervisore && !esercizioChiuso && Optional.ofNullable(getModel())
+				.map(Accertamento_modificaBulk.class::cast)
+				.filter(omb -> Optional.ofNullable(omb.getEsercizio()).isPresent() &&
+						Optional.ofNullable(omb.getEsercizio_originale()).isPresent() &&
+						!omb.getAccertamento().isDocRiportato())
+				.map(omb -> !omb.getEsercizio().equals(omb.getEsercizio_originale())).orElse(Boolean.FALSE)) return true;
+		return super.isDeleteButtonEnabled();
 	}
 }

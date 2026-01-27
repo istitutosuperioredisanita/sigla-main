@@ -23,38 +23,16 @@
  */
 package it.cnr.contab.doccont00.comp;
 
-import java.math.BigDecimal;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrHome;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.pdcfin.bulk.IVoceBilancioBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Voce_fBulk;
-import it.cnr.contab.config00.sto.bulk.CdrBulk;
-import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
-import it.cnr.contab.doccont00.core.bulk.Linea_attivitaBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_mod_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_modificaHome;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_modificaBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_scad_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.AccertamentoComponentSession;
 import it.cnr.contab.doccont00.ejb.AccertamentoResiduoComponentSession;
-import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
-import it.cnr.contab.doccont00.intcass.bulk.V_distinta_cass_im_man_revBulk;
-import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
-import it.cnr.contab.pdg00.bulk.Pdg_variazioneHome;
-import it.cnr.contab.pdg00.ejb.CostiDipendenteComponentSession;
-import it.cnr.contab.prevent01.bulk.Pdg_moduloBulk;
-import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_sipBulk;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_sipHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.varstanz00.bulk.Ass_var_stanz_res_cdrBulk;
@@ -63,7 +41,6 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.PrimaryKeyHashtable;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -71,6 +48,12 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.Query;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+
+import java.math.BigDecimal;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.Optional;
 
 public class AccertamentoModificaComponent extends it.cnr.jada.comp.CRUDComponent  {
 	public OggettoBulk inizializzaBulkPerModifica(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException {
@@ -282,6 +265,43 @@ public class AccertamentoModificaComponent extends it.cnr.jada.comp.CRUDComponen
 				return false;
 		} catch(Throwable e) {
 			throw handleException(e);
+		}
+	}
+
+
+	@Override
+	public void eliminaConBulk(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException {
+		/**
+		 * Prima di eliminare la modifica devo aggiornare l'accertamento di riferimento
+		 */
+		try {
+			AccertamentoResiduoComponentSession accertamentoSession =
+					(AccertamentoResiduoComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+							"CNRDOCCONT00_EJB_AccertamentoResiduoComponentSession", AccertamentoResiduoComponentSession.class);
+			Optional<Accertamento_modificaBulk> accMod = Optional.ofNullable(oggettobulk)
+					.filter(Accertamento_modificaBulk.class::isInstance)
+					.map(Accertamento_modificaBulk.class::cast);
+
+			if (accMod.isPresent()) {
+				for (Accertamento_mod_voceBulk amvb: accMod.get().getAccertamento_mod_voceColl()) {
+					accertamentoSession.aggiornaImportoAccertamento(
+							usercontext,
+							amvb.getAccertamento_modifica().getAccertamento(),
+							amvb.getIm_modifica(),
+							amvb.getLinea_attivita(),
+							amvb.getAccertamento_modifica().getDs_modifica()
+					);
+					amvb.setToBeDeleted();
+				}
+			}
+
+
+			super.eliminaConBulk(usercontext, oggettobulk);
+
+		}
+		catch ( Exception e )
+		{
+			throw handleException( e )	;
 		}
 	}
 

@@ -262,7 +262,7 @@ public class AsyncPluriennaliComponentSessionBean extends it.cnr.jada.ejb.CRUDCo
 								+ "-Cds:" + accertamento.getCdCds()
 								+ "-Esercizio:" + accertamento.getEsercizio()
 								+ "-Esercizio Orig.:" + accertamento.getEsercizioOriginale()
-								+ "-Numero Obbl.:" + accertamento.getPgAccertamento());
+								+ "-Numero Acc.:" + accertamento.getPgAccertamento());
 						log_riga.setTrace(log_riga.getMessaggio());
 						log_riga.setNote(e.getMessage().substring(0, Math.min(e.getMessage().length(), 3999)));
 						log_riga.setToBeCreated();

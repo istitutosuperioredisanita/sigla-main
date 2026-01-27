@@ -5,7 +5,6 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.util.OrderedHashtable;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Dictionary;
@@ -36,10 +35,13 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
     private String trimestre;
     private String livello;
 
+    private boolean estrazioneRendiconto=false;
+
     static {
         tipo_EstrazioneKeys = new OrderedHashtable();
-        tipo_EstrazioneKeys.put(MANDATI, "Mandati");
-        tipo_EstrazioneKeys.put(REVERSALI, "Reversali");
+        tipo_EstrazioneKeys.put(REVERSALI, "Entrate");
+        tipo_EstrazioneKeys.put(MANDATI, "Uscite");
+
     }
 
     static {
@@ -66,6 +68,8 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
     private BigDecimal impSecondoTrimestre;
     private BigDecimal impTerzoTrimestre;
     private BigDecimal impQuartoTrimestre;
+
+    private BigDecimal importoTotale;
 
 
 
@@ -199,6 +203,27 @@ public class FlussiDiCassaDtoBulk extends OggettoBulk implements Persistent {
         return livelloKeys;
     }
 
+    public boolean isEstrazioneRendiconto() {
+        return estrazioneRendiconto;
+    }
 
+    public void setEstrazioneRendiconto(boolean estrazioneRendiconto) {
+        this.estrazioneRendiconto = estrazioneRendiconto;
+    }
 
+    public boolean isRoFindCds() {
+        return roFindCds;
+    }
+
+    public void setRoFindCds(boolean roFindCds) {
+        this.roFindCds = roFindCds;
+    }
+
+    public BigDecimal getImportoTotale() {
+        return importoTotale;
+    }
+
+    public void setImportoTotale(BigDecimal importoTotale) {
+        this.importoTotale = importoTotale;
+    }
 }

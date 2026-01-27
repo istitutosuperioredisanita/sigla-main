@@ -17,8 +17,9 @@
 
 package it.cnr.contab.doccont00.ejb;
 
-import jakarta.ejb.Remote;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
+
+import jakarta.ejb.Remote;
 
 @Remote
 public interface ObbligazioneResComponentSession extends ObbligazioneComponentSession {
