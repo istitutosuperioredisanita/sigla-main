@@ -448,7 +448,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Crea un nuovo documento di trasporto/rientro e salva solo la testata.
+     * Crea un nuovo documento di trasporto/rientro salvando solo la testata.
+     * Esegue validazioni preliminari, imposta i soggetti coinvolti
+     * e inizializza la collezione dei dettagli senza inserirli.
      */
     @Override
     public OggettoBulk creaConBulk(UserContext userContext, OggettoBulk bulk)
@@ -467,7 +469,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             }
 
             verificaDocumentoNonEsistente(userContext, docT);
-            validaDoc(userContext, docT);
+
+            // Validazione solo testata (senza beni)
+            validaDoc(userContext, docT, false);
 
             TerzoBulk terzoResponsabile = recuperaTerzoResponsabileUO(userContext);
 
@@ -532,7 +536,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             docT = (Doc_trasporto_rientroBulk) super.creaConBulk(userContext, docT);
 
             docT.setToBeUpdated();
-
             return docT;
 
         } catch (PersistencyException e) {
@@ -632,7 +635,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Modifica un documento confermando progressivo temporaneo o aggiornando dettagli esistenti.
+     * Modifica un documento di trasporto/rientro: carica i dettagli, valida (inclusi i beni)
+     * e gestisce sia il caso di progressivo temporaneo (assegnazione definitivo) sia quello già definitivo,
+     * aggiornando dettagli e allegati.
      */
     @Override
     public OggettoBulk modificaConBulk(UserContext aUC, OggettoBulk bulk)
@@ -641,16 +646,15 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         Doc_trasporto_rientroBulk docT = (Doc_trasporto_rientroBulk) bulk;
 
         try {
-            Doc_trasporto_rientro_dettHome dettHome = (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(aUC, docT);
+            Doc_trasporto_rientro_dettHome dettHome = (Doc_trasporto_rientro_dettHome)
+                    getHomeDocumentoTrasportoRientroDett(aUC, docT);
             docT.setDoc_trasporto_rientro_dettColl(new BulkList(dettHome.getDetailsFor(docT)));
 
-            // ==================== 1. Carica dettagli dal DB ====================
             caricaDettagliDocumento(aUC, docT);
 
-            // ==================== 2. Validazione ====================
-            validaDoc(aUC, docT);
+            validaDoc(aUC, docT, true);
 
-            // ==================== 3. CASO: PROGRESSIVO TEMPORANEO ====================
+            // 3) Caso progressivo temporaneo: assegna progressivo definitivo e riallinea
             if (docT.getPgDocTrasportoRientro() != null && docT.getPgDocTrasportoRientro() < 0) {
 
                 Numeratore_doc_t_rHome numHome = (Numeratore_doc_t_rHome) getHome(aUC, Numeratore_doc_t_rBulk.class);
@@ -674,7 +678,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 preparaEAggiornaRiferimentiInversi(aUC, docT);
 
             } else {
-                // ==================== 7. CASO: PROGRESSIVO POSITIVO ====================
+                // Caso progressivo positivo: aggiorna dettagli e allegati
                 if (docT.getDoc_trasporto_rientro_dettColl() != null) {
                     for (Iterator i = docT.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext(); ) {
                         Doc_trasporto_rientro_dettBulk dettaglio = (Doc_trasporto_rientro_dettBulk) i.next();
@@ -767,14 +771,15 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
 
+
     /**
-     * Valida il documento controllando data, tipo movimento e descrizione.
+     * Valida il documento verificando campi obbligatori, coerenza della data
+     * e, se richiesto, la presenza e la correttezza dei beni associati.
      */
-    private void validaDoc(UserContext aUC, Doc_trasporto_rientroBulk docT)
+    private void validaDoc(UserContext aUC, Doc_trasporto_rientroBulk docT, boolean validaBeni)
             throws ComponentException {
 
         try {
-
             String tipoDoc = "Documento di";
             if (RIENTRO.equals(docT.getTiDocumento())) {
                 tipoDoc = "Rientro";
@@ -782,26 +787,44 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 tipoDoc = "Trasporto";
             }
 
-            if (!docT.getDoc_trasporto_rientro_dettColl().isEmpty()) {
-                Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) docT.getDoc_trasporto_rientro_dettColl().get(0);
-                if (dett.getCrudStatus() == OggettoBulk.NORMAL) {
+            // Controllo presenza beni (solo se richiesto)
+            if (validaBeni) {
+                if (docT.getDoc_trasporto_rientro_dettColl() == null ||
+                        docT.getDoc_trasporto_rientro_dettColl().isEmpty()) {
+                    throw new ApplicationException(
+                            "Attenzione: è necessario specificare almeno un bene!"
+                    );
+                }
+
+                // Controllo validità data (solo se esistono beni già salvati)
+                boolean hasBeniSalvati = false;
+                for (Object obj : docT.getDoc_trasporto_rientro_dettColl()) {
+                    Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) obj;
+                    if (dett.getCrudStatus() == OggettoBulk.NORMAL) {
+                        hasBeniSalvati = true;
+                        break;
+                    }
+                }
+
+                if (hasBeniSalvati) {
                     if (docT.getDataRegistrazione().before(getMaxDataFor(aUC, docT))) {
-                        throw new it.cnr.jada.comp.ApplicationException(
+                        throw new ApplicationException(
                                 "Attenzione: data del " + tipoDoc + " non valida.\n" +
-                                        "La Data del " + tipoDoc + " non può essere precedente ad una modifica di uno dei beni movimentati."
+                                        "La Data del " + tipoDoc + " non può essere precedente ad una modifica " +
+                                        "di uno dei beni movimentati."
                         );
                     }
                 }
-            } else {
-                if (docT.getCrudStatus() == OggettoBulk.TO_BE_UPDATED)
-                    throw new ApplicationException("Attenzione: è necessario specificare almeno un bene!");
             }
 
+            // Controlli sempre obbligatori
             if (docT.getTipoMovimento() == null)
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: specificare un Tipo di Movimento per il Documento");
+                throw new ApplicationException(
+                        "Attenzione: specificare un Tipo di Movimento per il Documento");
 
             if (docT.getDsDocTrasportoRientro() == null)
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare una Descrizione per il Documento");
+                throw new ApplicationException(
+                        "Attenzione: indicare una Descrizione per il Documento");
 
         } catch (Throwable t) {
             throw handleException(t);
@@ -1431,7 +1454,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Rende definitivo il documento verificando allegato firmato e aggiornando stato beni.
+     * Rende definitivo il documento: verifica la presenza dell’allegato firmato,
+     * persiste eventuali eliminazioni, ricarica i dettagli, valida (inclusi i beni),
+     * aggiorna lo stato dei beni e salva il documento come DEFINITIVO.
      */
     public Doc_trasporto_rientroBulk salvaDefinitivo(
             UserContext userContext,
@@ -1439,16 +1464,21 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException {
 
         try {
-            validaDoc(userContext, docTR);
-
+            // ========== 1. VALIDA ALLEGATO FIRMATO ==========
             if (!hasAllegatoFirmato(docTR)) {
                 throw new ApplicationException(
                         "È obbligatorio allegare il documento firmato prima di rendere definitivo il documento."
                 );
             }
 
+            // ========== 2. RICARICA DETTAGLI DAL DB (stato REALE) ==========
+            // Questo sovrascrive la collection in memoria con i dati del DB
             caricaDettagliDocumento(userContext, docTR);
 
+            // ========== 3. VALIDA PRESENZA BENI (sui dati REALI dal DB) ==========
+            validaDoc(userContext, docTR, true);  // ← true = CONTROLLA i beni
+
+            // ========== 4. AGGIORNA STATO BENI E SALVA ==========
             boolean beneInIstituto = docTR instanceof DocumentoRientroBulk;
             aggiornaStatoBeni(userContext, docTR, beneInIstituto);
 
@@ -1460,12 +1490,14 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         } catch (ApplicationException e) {
             throw new ComponentException(e.getMessage(), e);
         } catch (PersistencyException e) {
-            throw new RuntimeException(e);
+            throw new ComponentException("Errore durante il salvataggio definitivo", e);
         }
     }
 
+
     /**
-     * Annulla il documento rimuovendo riferimenti e aggiornando stato beni.
+     * Annulla il documento: ricarica i dettagli, valida, verifica le condizioni di annullamento,
+     * aggiorna lo stato dei beni e imposta lo stato del documento su ANNULLATO.
      */
     public Doc_trasporto_rientroBulk annullaDocumento(
             UserContext userContext,
@@ -1505,6 +1537,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     "Errore durante l'annullamento del documento: " + e.getMessage(), e);
         }
     }
+
 
     /**
      * Carica i dettagli del documento dal database.

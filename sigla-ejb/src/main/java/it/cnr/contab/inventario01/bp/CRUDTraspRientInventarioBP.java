@@ -1207,7 +1207,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                                     bene
                             );
                         }
-
                         if (found != null && !found.isEmpty()) {
                             ps.principaliConAccessori.put(bene, found);
                             beniDaAggiungere.addAll(found);
@@ -1985,16 +1984,42 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
     /**
-     * Salva documento in stato DEFINITIVO con validazione
+     * Salva il documento in stato DEFINITIVO, applicando validazioni,
+     * gestendo gli allegati ed effettuando un salvataggio intermedio
+     * se presenti modifiche nei dettagli.
      */
     public void salvaDefinitivo(ActionContext context) throws BusinessProcessException {
         try {
             fillModel(context);
             archiviaAllegati(context);
 
-            getModel().setToBeUpdated();
-            Doc_trasporto_rientroBulk doc = getComp().salvaDefinitivo(
-                    context.getUserContext(), getDoc());
+            Doc_trasporto_rientroBulk doc = getDoc();
+
+            if (doc.getDoc_trasporto_rientro_dettColl() != null) {
+                boolean hasChanges = false;
+
+                for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
+                    Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) obj;
+                    int status = dett.getCrudStatus();
+
+                    if (status == OggettoBulk.TO_BE_DELETED ||
+                            status == OggettoBulk.TO_BE_CREATED ||
+                            status == OggettoBulk.TO_BE_UPDATED) {
+                        hasChanges = true;
+                        break;
+                    }
+                }
+
+                if (hasChanges) {
+                    doc.setToBeUpdated();
+                    doc = (Doc_trasporto_rientroBulk) getComp().modificaConBulk(
+                            context.getUserContext(), doc);
+                    setModel(context, doc);
+                }
+            }
+
+            doc.setToBeUpdated();
+            doc = getComp().salvaDefinitivo(context.getUserContext(), doc);
 
             setModel(context, doc);
             commitUserTransaction();
@@ -2004,6 +2029,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
             setStatus(VIEW);
             setMessage("Documento salvato in stato DEFINITIVO");
+
         } catch (ComponentException | RemoteException ex) {
             rollbackUserTransaction();
             throw handleException(ex);
@@ -2087,40 +2113,102 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
     /**
-     * Elimina tutti i beni dai dettagli salvati
+     * Elimina tutti i beni dai dettagli salvati e svuota la collezione in memoria.
      */
     protected void eliminaTuttiBeniDaDettagli(ActionContext context)
             throws BusinessProcessException {
         try {
-            getComp().eliminaTuttiDettagliSalvati(context.getUserContext(), getDoc());
+            Doc_trasporto_rientroBulk doc = getDoc();
+
+            getComp().eliminaTuttiDettagliSalvati(context.getUserContext(), doc);
+
+            if (doc.getDoc_trasporto_rientro_dettColl() != null) {
+                doc.getDoc_trasporto_rientro_dettColl().clear();
+            }
+
+            setModel(context, doc);
+
         } catch (Throwable e) {
             throw handleException(e);
         }
     }
 
     /**
-     * Elimina beni specifici dai dettagli salvati
+     * Elimina i beni indicati dai dettagli salvati e sincronizza la collezione in memoria.
      */
     public void eliminaBeniDaDettagli(ActionContext context, OggettoBulk[] details)
             throws BusinessProcessException {
         try {
-            getComp().eliminaDettagliSalvati(context.getUserContext(), getDoc(), details);
+            Doc_trasporto_rientroBulk doc = getDoc();
+
+            getComp().eliminaDettagliSalvati(context.getUserContext(), doc, details);
+
+            if (doc.getDoc_trasporto_rientro_dettColl() != null && details != null) {
+                for (OggettoBulk beneObj : details) {
+                    Inventario_beniBulk beneDaRimuovere = (Inventario_beniBulk) beneObj;
+
+                    doc.getDoc_trasporto_rientro_dettColl().removeIf(obj -> {
+                        if (obj instanceof Doc_trasporto_rientro_dettBulk) {
+                            Doc_trasporto_rientro_dettBulk dett =
+                                    (Doc_trasporto_rientro_dettBulk) obj;
+
+                            return dett.getNr_inventario().equals(beneDaRimuovere.getNr_inventario()) &&
+                                    dett.getProgressivo().equals(beneDaRimuovere.getProgressivo().intValue());
+                        }
+                        return false;
+                    });
+                }
+            }
+
+            setModel(context, doc);
+
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
     }
 
+
     /**
-     * Elimina bene principale corrente con tutti gli accessori
+     * Elimina il bene principale corrente insieme ai suoi accessori.
      */
     private void eliminaBeneCorrente(ActionContext context) throws BusinessProcessException {
         Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
         List<Inventario_beniBulk> accessori = getAccessoriCorrente(true);
 
-        if (bene != null && accessori != null) {
+        if (bene != null) {
             try {
+                Doc_trasporto_rientroBulk doc = getDoc();
+
                 getComp().eliminaBeniPrincipaleConAccessoriDaDettagli(
-                        context.getUserContext(), getDoc(), bene, accessori);
+                        context.getUserContext(), doc, bene, accessori);
+
+                if (doc.getDoc_trasporto_rientro_dettColl() != null) {
+                    doc.getDoc_trasporto_rientro_dettColl().removeIf(obj -> {
+                        if (obj instanceof Doc_trasporto_rientro_dettBulk) {
+                            Doc_trasporto_rientro_dettBulk dett =
+                                    (Doc_trasporto_rientro_dettBulk) obj;
+                            return dett.getNr_inventario().equals(bene.getNr_inventario()) &&
+                                    dett.getProgressivo().equals(bene.getProgressivo().intValue());
+                        }
+                        return false;
+                    });
+
+                    if (accessori != null) {
+                        for (Inventario_beniBulk acc : accessori) {
+                            doc.getDoc_trasporto_rientro_dettColl().removeIf(obj -> {
+                                if (obj instanceof Doc_trasporto_rientro_dettBulk) {
+                                    Doc_trasporto_rientro_dettBulk dett =
+                                            (Doc_trasporto_rientro_dettBulk) obj;
+                                    return dett.getNr_inventario().equals(acc.getNr_inventario()) &&
+                                            dett.getProgressivo().equals(acc.getProgressivo().intValue());
+                                }
+                                return false;
+                            });
+                        }
+                    }
+                }
+
+                setModel(context, doc);
 
             } catch (ComponentException | RemoteException e) {
                 throw handleException(e);
@@ -2128,8 +2216,9 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
     }
 
+
     /**
-     * Elimina solo bene principale senza accessori
+     * Elimina solo il bene principale corrente senza rimuovere eventuali accessori.
      */
     private void eliminaBenePrincipaleSenzaAccessori(ActionContext context)
             throws BusinessProcessException {
@@ -2137,10 +2226,25 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
         if (bene != null) {
             try {
+                Doc_trasporto_rientroBulk doc = getDoc();
                 OggettoBulk[] soloIlPrincipale = new OggettoBulk[]{bene};
 
                 getComp().eliminaDettagliSalvati(
-                        context.getUserContext(), getDoc(), soloIlPrincipale);
+                        context.getUserContext(), doc, soloIlPrincipale);
+
+                if (doc.getDoc_trasporto_rientro_dettColl() != null) {
+                    doc.getDoc_trasporto_rientro_dettColl().removeIf(obj -> {
+                        if (obj instanceof Doc_trasporto_rientro_dettBulk) {
+                            Doc_trasporto_rientro_dettBulk dett =
+                                    (Doc_trasporto_rientro_dettBulk) obj;
+                            return dett.getNr_inventario().equals(bene.getNr_inventario()) &&
+                                    dett.getProgressivo().equals(bene.getProgressivo().intValue());
+                        }
+                        return false;
+                    });
+                }
+
+                setModel(context, doc);
 
             } catch (ComponentException | RemoteException e) {
                 throw handleException(e);
