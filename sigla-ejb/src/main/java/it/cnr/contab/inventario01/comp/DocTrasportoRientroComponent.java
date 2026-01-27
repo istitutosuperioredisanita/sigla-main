@@ -2557,6 +2557,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             sql1.addSQLClause("AND", "t.STATO",
                     SQLBuilder.NOT_EQUALS, Doc_trasporto_rientroBulk.STATO_ANNULLATO);
 
+            if (isTrasporto) {
+                sql1.addSQLClause("AND", "t.STATO",
+                        SQLBuilder.NOT_EQUALS, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+            }
+
             if (doc.getPgDocTrasportoRientro() != null && doc.getPgDocTrasportoRientro() > 0) {
                 sql1.openParenthesis(FindClause.AND);
                 sql1.addSQLClause(FindClause.AND, "t.PG_DOC_TRASPORTO_RIENTRO",
