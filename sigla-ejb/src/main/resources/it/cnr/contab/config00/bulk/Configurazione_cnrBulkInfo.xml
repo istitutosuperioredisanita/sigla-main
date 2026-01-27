@@ -197,8 +197,7 @@
 				label = "Esercizio"
 				enabledOnSearch="true"
 				enabledOnFreeSearch="true"
-				enabledOnEdit="false"
-				nullable="false"/>
+				enabledOnEdit="false"/>
 		<formFieldProperty
 				name="cd_chiave_primaria"
 				maxLength="50"
