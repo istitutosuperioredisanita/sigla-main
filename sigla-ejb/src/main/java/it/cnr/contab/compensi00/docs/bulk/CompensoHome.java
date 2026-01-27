@@ -549,7 +549,7 @@ public class CompensoHome extends BulkHome implements
                     if (Optional.ofNullable(obbligScad).isPresent()) {
                         //carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
                         Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
-                        List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad);
+                        List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad, Boolean.FALSE);
                         BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
                         for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
                             Compenso_riga_ecoBulk myRigaEco = new Compenso_riga_ecoBulk();

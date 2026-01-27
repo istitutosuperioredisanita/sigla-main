@@ -862,6 +862,7 @@ public abstract class Fattura_passiva_rigaBulk
     public BigDecimal getImCostoEco() {
         BigDecimal importoCostoEco = this.getIm_imponibile();
         Assert.isTrue(Optional.ofNullable(this.getVoce_iva()).flatMap(el->Optional.ofNullable(el.getPg_ver_rec())).isPresent(), "Calcolo Importo economico non possibile! Non risulta caricato l'oggetto Voce Iva.");
+        Assert.isTrue(Optional.ofNullable(this.getFattura_passiva().getTi_istituz_commerc()).isPresent(), "Calcolo Importo economico non possibile! Non è indicato se la fattura è istituzionale o meno.");
         if (((Fattura_passivaBulk) this.getFather()).isIstituzionale() || !this.getVoce_iva().isDetraibile())
             importoCostoEco = importoCostoEco.add(this.getIm_iva());
         return importoCostoEco;
@@ -869,8 +870,8 @@ public abstract class Fattura_passiva_rigaBulk
 
     @Override
     public BigDecimal getImCostoEcoRipartito() {
-        return Optional.ofNullable(this.getChildrenAna()).map(Collection::stream)
-                .orElse(Stream.empty())
+        return Optional.ofNullable(this.getChildrenAna()).stream()
+                .flatMap(Collection::stream)
                 .map(IDocumentoDetailAnaCogeBulk::getImporto)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -887,9 +888,7 @@ public abstract class Fattura_passiva_rigaBulk
     }
 
     public BulkCollection[] getBulkLists() {
-
         // Metti solo le liste di oggetti che devono essere resi persistenti
-
         return new it.cnr.jada.bulk.BulkCollection[]{
                 righeEconomica
         };

@@ -119,6 +119,7 @@ public class OrdineAcqConsegnaHome extends BulkHome {
                 Fattura_passivaHome fattura_passivaHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
 				consegna.setOrdineAcqRiga((OrdineAcqRigaBulk) fattura_passivaHome.loadIfNeededObject(consegna.getOrdineAcqRiga()));
 				consegna.getOrdineAcqRiga().setVoceIva((Voce_ivaBulk) fattura_passivaHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getVoceIva()));
+				consegna.getOrdineAcqRiga().setOrdineAcq((OrdineAcqBulk) fattura_passivaHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getOrdineAcq()));
                 aContoEconomico = (ContoBulk) fattura_passivaHome.loadIfNeededObject(aContoEconomico);
                 Voce_analiticaBulk voceAnaliticaDef = null;
 				if (aContoEconomico.isAnaliticaEnabled()) {
@@ -137,7 +138,7 @@ public class OrdineAcqConsegnaHome extends BulkHome {
 				} else if (Optional.ofNullable(consegna.getScadenzaDocumentoContabile()).filter(Obbligazione_scadenzarioBulk.class::isInstance).isPresent()) {
 					//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
 					Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
-					List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk) consegna.getScadenzaDocumentoContabile());
+					List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, (Obbligazione_scadenzarioBulk) consegna.getScadenzaDocumentoContabile(), Boolean.FALSE);
 					BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
 					for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
 						OrdineAcqConsegnaEcoBulk myRigaEco = new OrdineAcqConsegnaEcoBulk();

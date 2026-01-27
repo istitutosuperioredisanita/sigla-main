@@ -19,6 +19,7 @@ package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -137,6 +138,7 @@ public class Nota_di_credito_rigaHome extends Fattura_passiva_rigaHome {
     public Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> getDatiEconomiciDefault(UserContext userContext, Nota_di_credito_rigaBulk docRiga) throws ComponentException, PersistencyException {
         if (docRiga.getRiga_fattura_origine()!=null && docRiga.getRiga_fattura_origine().getPg_fattura_passiva()!=null) {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            docRiga.setVoce_iva((Voce_ivaBulk) fatpasHome.loadIfNeededObject(docRiga.getVoce_iva()));
             Fattura_passiva_rigaIHome fatpasRigaHome = (Fattura_passiva_rigaIHome)getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
             Fattura_passiva_rigaBulk rigaCollegata = (Fattura_passiva_rigaBulk)fatpasHome.loadIfNeededObject(docRiga.getRiga_fattura_origine());
 

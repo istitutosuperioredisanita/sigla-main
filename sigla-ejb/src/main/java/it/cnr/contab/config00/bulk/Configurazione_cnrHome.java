@@ -608,7 +608,7 @@ public class Configurazione_cnrHome extends BulkHome {
                 String aCdCentroCosto = Optional.ofNullable(config.get().getVal03()).orElse(docAmm.getCd_uo() + ".000");
 
                 WorkpackageHome wpHome = (WorkpackageHome) getHomeCache().getHome(WorkpackageBulk.class);
-                return wpHome.searchGAECompleta(userContext, docAmm.getEsercizio(), aCdCentroCosto, aCdLineaAttivita);
+                return wpHome.searchGAECompleta(userContext, docAmm.getEsercizio(), aCdCentroCosto, aCdLineaAttivita, Boolean.FALSE);
             }
             return null;
         } catch (it.cnr.jada.persistency.PersistencyException e) {

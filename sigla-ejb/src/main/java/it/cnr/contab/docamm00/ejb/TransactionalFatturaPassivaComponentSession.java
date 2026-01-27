@@ -415,6 +415,29 @@ public class TransactionalFatturaPassivaComponentSession extends it.cnr.jada.ejb
         }
     }
 
+    public java.util.List findDettagli(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk param1, boolean fetchAll) throws RemoteException, it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+        try {
+            return (java.util.List) invoke("findDettagli", new Object[]{
+                    param0,
+                    param1,
+                    fetchAll});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (it.cnr.jada.persistency.PersistencyException ex) {
+                throw ex;
+            } catch (it.cnr.jada.persistency.IntrospectionException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
     public java.util.Collection findListabanche(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk param1) throws RemoteException, it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException {
         try {
             return (java.util.Collection) invoke("findListabanche", new Object[]{

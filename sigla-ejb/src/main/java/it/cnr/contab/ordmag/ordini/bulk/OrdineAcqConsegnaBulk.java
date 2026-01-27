@@ -627,6 +627,7 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
 		if (!isStatoConsegnaEvasaForzatamente()) {
 			importoCostoEco = this.getImImponibile();
 			Assert.isTrue(Optional.ofNullable(this.getOrdineAcqRiga().getVoce_iva()).flatMap(el -> Optional.ofNullable(el.getPg_ver_rec())).isPresent(), "Calcolo Importo economico non possibile! Non risulta caricato l'oggetto Voce Iva.");
+			Assert.isTrue(Optional.ofNullable(this.getOrdineAcqRiga().getOrdineAcq()).flatMap(el -> Optional.ofNullable(el.getPg_ver_rec())).isPresent(), "Calcolo Importo economico non possibile! Non risulta caricato l'oggetto Ordine Acquisto.");
 			if (this.getOrdineAcqRiga().getOrdineAcq().isIstituzionale() || !this.getOrdineAcqRiga().getVoce_iva().isDetraibile())
 				importoCostoEco = importoCostoEco.add(this.getImIvaNd());
 		}

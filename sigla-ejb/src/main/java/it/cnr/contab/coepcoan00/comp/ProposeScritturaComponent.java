@@ -5621,7 +5621,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 					result.stream().map(Documento_generico_rigaBulk.class::cast).forEach(el->el.setDocumento_generico((Documento_genericoBulk) docamm));
 					((Documento_genericoBulk)docamm).setDocumento_generico_dettColl(new BulkList(result));
 				} else if (docamm instanceof Fattura_passivaBulk) {
-					result = Utility.createFatturaPassivaComponentSession().findDettagli(userContext, (Fattura_passivaBulk) docamm);
+					result = Utility.createFatturaPassivaComponentSession().findDettagli(userContext, (Fattura_passivaBulk) docamm, Boolean.FALSE);
 					result.stream().map(Fattura_passiva_rigaBulk.class::cast).forEach(el->el.setFattura_passiva((Fattura_passivaBulk) docamm));
 					((Fattura_passivaBulk)docamm).setFattura_passiva_dettColl(new BulkList(result));
 				} else if (docamm instanceof Fattura_attivaBulk) {
@@ -6474,8 +6474,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
             else {
                 //cerco evasione ordine perchè la scrittura deve essere fatta nell'esercizio dell'evasione
                 EvasioneOrdineRigaBulk evasioneRiga = ((EvasioneOrdineRigaHome) getHome(userContext, EvasioneOrdineRigaBulk.class)).findByConsegna((OrdineAcqConsegnaBulk) doccoge);
-                consegna.setEvasioneOrdineRigaBulk(evasioneRiga);
-                return consegna.getEvasioneOrdineRigaBulk().getEsercizio();
+                if (evasioneRiga!=null) {
+					consegna.setEvasioneOrdineRigaBulk(evasioneRiga);
+					return consegna.getEvasioneOrdineRigaBulk().getEsercizio();
+				}
             }
         }
         return doccoge.getEsercizio();

@@ -23,6 +23,7 @@ import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 
 import jakarta.ejb.Remote;

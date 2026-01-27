@@ -27,10 +27,12 @@ import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpHome;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
+import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaHome;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
@@ -363,6 +365,7 @@ public class Fattura_passiva_rigaHome extends BulkHome {
         try {
             List<Fattura_passiva_riga_ecoBulk> result = new ArrayList<>();
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
+            docRiga.setVoce_iva((Voce_ivaBulk) fatpasHome.loadIfNeededObject(docRiga.getVoce_iva()));
 
             if (Optional.ofNullable(aContoEconomico).isPresent()) {
                 //verifico se sulla riga del docamm ci sia un ordine collegato
@@ -373,6 +376,8 @@ public class Fattura_passiva_rigaHome extends BulkHome {
 
                     FatturaOrdineBulk fatturaOrdine = fatturaOrdineBulks.get(0);
                     OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk)fatpasHome.loadIfNeededObject(fatturaOrdine.getOrdineAcqConsegna());
+                    consegna.setOrdineAcqRiga((OrdineAcqRigaBulk) fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga()));
+                    consegna.getOrdineAcqRiga().setVoceIva((Voce_ivaBulk) fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getVoce_iva()));
                     OrdineAcqConsegnaHome consegnaHome = (OrdineAcqConsegnaHome)getHomeCache().getHome(OrdineAcqConsegnaBulk.class);
                     List<IDocumentoDetailAnaCogeBulk> contiAnaliticiConsegna = consegnaHome.getDatiAnaliticiDefault(userContext,consegna,aContoEconomico);
                     if (contiAnaliticiConsegna.isEmpty())

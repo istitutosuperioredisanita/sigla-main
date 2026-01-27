@@ -323,7 +323,7 @@ public class Documento_generico_rigaHome extends BulkHome {
                         if (Optional.ofNullable(obbligScad).isPresent()) {
                             //carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
                             Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
-                            List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad);
+                            List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad, Boolean.FALSE);
                             BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
                             for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
                                 Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
