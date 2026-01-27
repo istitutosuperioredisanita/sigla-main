@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA"
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+			name="pg_inventario"
+			property="documentoRientro.inventario.pg_inventario"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Codice Inventario" />
+
+	<fieldProperty
+			name="ti_documento"
+			property="documentoRientro.tiDocumento"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			label="Tipo Documento" />
+
+	<fieldProperty
+			name="esercizio"
+			property="documentoRientro.esercizio"
+			inputType="TEXT"
+			inputSize="4"
+			maxLength="4"
+			label="Esercizio" />
+
+	<fieldProperty
+			name="pg_doc_trasporto_rientro"
+			property="documentoRientro.pgDocTrasportoRientro"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Numero Documento" />
+
+	<fieldProperty
+			name="esercizio_rif"
+			property="docTrasportoDettRif.documentoTrasporto.esercizio"
+			inputType="TEXT"
+			inputSize="4"
+			maxLength="4"
+			label="Esercizio Rif" />
+
+	<fieldProperty
+			name="pg_inventario_rif"
+			property="docTrasportoDettRif.documentoTrasporto.inventario.pg_inventario"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Codice Inventario Rif" />
+
+	<fieldProperty
+			name="ti_documento_rif"
+			property="docTrasportoDettRif.documentoTrasporto.tiDocumento"
+			inputType="TEXT"
+			inputSize="1"
+			maxLength="1"
+			label="Tipo Documento Rif" />
+
+	<fieldProperty
+			name="pg_doc_trasporto_rientro_rif"
+			property="docTrasportoDettRif.documentoTrasporto.pgDocTrasportoRientro"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Doc. Trasporto Rif." />
+
+	<fieldProperty
+			name="data_registrazione"
+			property="docTrasportoDettRif.documentoTrasporto.dataRegistrazione"
+			inputType="TEXT"
+			formatName="date_short"
+			inputSize="10"
+			maxLength="10"
+			label="Data Registrazione" />
+
+	<fieldProperty
+			name="progressivo_rif"
+			property="docTrasportoDettRif.bene.progressivo"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Progressivo Rif" />
+
+	<fieldProperty
+			name="nr_inventario_rif"
+			property="docTrasportoDettRif.bene nr_inventario"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Numero Inventario Rif" />
+
+	<columnSet name="righeRientro">
+		<columnFieldProperty
+				name="nr_inventario"/>
+		<columnFieldProperty
+				name="etichetta"/>
+		<columnFieldProperty
+				name="progressivo"/>
+		<columnFieldProperty
+				name="ds_bene"/>
+		<columnFieldProperty
+				name="valore_bene"/>
+		<columnFieldProperty
+				name="pg_doc_trasporto_rientro_rif"/>
+		<columnFieldProperty
+				name="data_registrazione"/>
+	</columnSet>
+
+
+
+
+</bulkInfo>

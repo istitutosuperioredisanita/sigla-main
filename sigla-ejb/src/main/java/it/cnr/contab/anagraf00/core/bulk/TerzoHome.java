@@ -270,6 +270,14 @@ public class TerzoHome extends BulkHome {
         return fetchAll(sql);
     }
 
+    public TerzoBulk findTerzoByAnag(Integer cd_anag) throws IntrospectionException, PersistencyException {
+        SQLBuilder sql = createSQLBuilder();
+        sql.addClause(FindClause.AND, "cd_anag", SQLBuilder.EQUALS, cd_anag);
+        Collection<TerzoBulk> result = this.fetchAll(sql);
+
+        return result.isEmpty() ? null : result.iterator().next();
+    }
+
 
     public String findCodiceUnivocoUfficioIPA(String cdUnitaOrganizzativa) throws IntrospectionException, PersistencyException {
         SQLBuilder sql = createSQLBuilder();

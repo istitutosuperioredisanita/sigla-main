@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="davide.mirra" id="create_table_numeratore_doc_t_r">
+        <createTable remarks="Tabella del numeratore per documenti di trasporto/rientro"
+                     tableName="numeratore_doc_t_r">
+
+            <!-- PRIMARY KEY - 3 CAMPI -->
+            <column name="pg_inventario"
+                    remarks="Codice dell'inventario"
+                    type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ti_trasporto_rientro"
+                    remarks="Flag per stabilire se il documento risulta essere un trasporto o un rientro"
+                    type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="esercizio"
+                    remarks="Esercizio di riferimento"
+                    type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- CAMPI BUSINESS -->
+            <column name="iniziale"
+                    remarks="Numero iniziale della numerazione"
+                    type="BIGINT"
+                    defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="corrente"
+                    remarks="Numero corrente della numerazione"
+                    type="BIGINT"
+                    defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- CAMPI STANDARD SIGLA -->
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record" type="BIGINT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <!-- PRIMARY KEY CONSTRAINT -->
+        <addPrimaryKey tableName="numeratore_doc_t_r"
+                       constraintName="numeratore_doc_t_r_pkey"
+                       columnNames="pg_inventario,ti_trasporto_rientro,esercizio"/>
+
+        <!-- INDICI per query veloci -->
+        <createIndex indexName="idx_numeratore_doc_t_r_01" tableName="numeratore_doc_t_r">
+            <column name="esercizio"/>
+        </createIndex>
+
+        <createIndex indexName="idx_numeratore_doc_t_r_02" tableName="numeratore_doc_t_r">
+            <column name="ti_trasporto_rientro"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>

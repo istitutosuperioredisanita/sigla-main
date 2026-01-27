@@ -18,6 +18,7 @@
 package it.cnr.contab.missioni00.docs.bulk;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -637,47 +638,67 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			setIm_netto_pecepiente(getIm_totale_missione());
 		}
 	}
+
 	/**
-	 * Il metodo calcola tutti gli importi necessari per il consuntivo spese della missione
+	 * Calcola i totali delle spese della missione, distinguendo tra anticipate/non anticipate
+	 * e tracciate/non tracciate.
 	 */
+	public void calcolaConsuntiviSpese() {
+		// Inizializza tutti i totali a zero
+		setIm_spese(BigDecimal.ZERO);
+		setIm_spese_anticipate(BigDecimal.ZERO);
+		setIm_spese_tracc(BigDecimal.ZERO);
+		setIm_spese_no_tracc(BigDecimal.ZERO);
 
-	public void calcolaConsuntiviSpese() 
-	{
-		setIm_spese(new BigDecimal(0));				// Spese non anticipate
-		setIm_spese_anticipate(new BigDecimal(0));
-
-		if(getSpeseMissioneColl() == null)
+		if (getSpeseMissioneColl() == null) {
 			return;
+		}
 
-		for ( Iterator i = getSpeseMissioneColl().iterator(); i.hasNext(); )
-		{
-			Missione_dettaglioBulk spesa = (Missione_dettaglioBulk)i.next();
+		for (Iterator<?> i = getSpeseMissioneColl().iterator(); i.hasNext();) {
+			Missione_dettaglioBulk spesa = (Missione_dettaglioBulk) i.next();
 
-			if(spesa.getIm_totale_spesa() != null)
-			{
-				if(spesa.isSpesaAnticipata())
-				{
-					//	L'importo della spesa anticipata e' uguale al campo im_spesa_euro questo perche'
-					//	nel caso di spesa anticipata di trasporto non deve includere la maggiorazione
-					setIm_spese_anticipate(getIm_spese_anticipate().add(spesa.getIm_spesa_euro()));
-					setIm_spese_anticipate(getIm_spese_anticipate().setScale(2, BigDecimal.ROUND_HALF_UP));
+			if (spesa.getIm_totale_spesa() == null) {
+				continue;
+			}
 
-					if(spesa.isTrasporto())
-					{
-						// 	La maggiorazione di una spesa anticipata deve essere
-						//	sommata all'im_spesa (cioe' all'importo non anticipato)
-						setIm_spese(getIm_spese().add(spesa.getIm_maggiorazione_euro()));
-						setIm_spese(getIm_spese().setScale(2, BigDecimal.ROUND_HALF_UP));						
-					}	
-				}	
-				else
-				{
-					setIm_spese(getIm_spese().add(spesa.getIm_totale_spesa()));
-					setIm_spese(getIm_spese().setScale(2, BigDecimal.ROUND_HALF_UP));
-				}	
-			}	
-		}	
+			BigDecimal spesaEuro = spesa.getIm_spesa_euro() != null ? spesa.getIm_spesa_euro() : BigDecimal.ZERO;
+			BigDecimal maggEuro = spesa.getIm_maggiorazione_euro() != null ? spesa.getIm_maggiorazione_euro() : BigDecimal.ZERO;
+			BigDecimal totaleSpesa = spesa.getIm_totale_spesa();
+
+			if (spesa.isSpesaAnticipata()) {
+				// Somma alle spese anticipate
+				setIm_spese_anticipate(getIm_spese_anticipate().add(spesaEuro).setScale(2, RoundingMode.HALF_UP));
+
+				// Gestione trasporto per anticipate
+				if (spesa.isTrasporto()) {
+					if (spesa.isSpesaTracciata()) {
+						setIm_spese_tracc(getIm_spese_tracc().add(maggEuro).setScale(2, RoundingMode.HALF_UP));
+					} else {
+						setIm_spese_no_tracc(getIm_spese_no_tracc().add(maggEuro).setScale(2, RoundingMode.HALF_UP));
+					}
+				}
+
+				// Tracciate / non tracciate anticipate
+				if (spesa.isSpesaTracciata()) {
+					setIm_spese_tracc(getIm_spese_tracc().add(spesaEuro).setScale(2, RoundingMode.HALF_UP));
+				} else {
+					setIm_spese_no_tracc(getIm_spese_no_tracc().add(spesaEuro).setScale(2, RoundingMode.HALF_UP));
+				}
+
+			} else {
+				// Spese NON anticipate
+				if (spesa.isSpesaTracciata()) {
+					// Solo in questo caso aggiorniamo anche im_spese
+					setIm_spese(getIm_spese().add(totaleSpesa).setScale(2, RoundingMode.HALF_UP));
+					setIm_spese_tracc(getIm_spese_tracc().add(totaleSpesa).setScale(2, RoundingMode.HALF_UP));
+				} else {
+					setIm_spese_no_tracc(getIm_spese_no_tracc().add(totaleSpesa).setScale(2, RoundingMode.HALF_UP));
+				}
+			}
+		}
 	}
+
+
 	/**
 	 * Il  metodo calcola tutti gli importi necessari per il consuntivo spese della missione
 	 * di un determinato giorno

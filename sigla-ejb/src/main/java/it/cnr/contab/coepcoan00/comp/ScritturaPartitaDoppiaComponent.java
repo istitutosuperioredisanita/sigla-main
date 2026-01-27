@@ -915,6 +915,8 @@ public class ScritturaPartitaDoppiaComponent extends CRUDComponent implements IS
 				progressivo.setCd_cds(cds);
 				progressivo.setCd_unita_organizzativa(cdUnitaOrg);
 				progressivo.setUser(userContext.getUser());
+				progressivo.setPrimo(0L);
+				progressivo.setUltimo(Numerazione_coge_coanBulk.MAX_NUMERATORE);
 				pgCorrente = 1L;
 				progressivo.setCorrente(pgCorrente);
 				home.insert(progressivo, userContext);

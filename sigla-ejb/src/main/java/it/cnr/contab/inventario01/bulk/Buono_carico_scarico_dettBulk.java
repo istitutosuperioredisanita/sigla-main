@@ -57,7 +57,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	public Buono_carico_scarico_dettBulk(java.lang.Long pg_inventario, java.lang.String ti_documento, java.lang.Integer esercizio, java.lang.Long pg_buono_c_s, java.lang.Long nr_inventario, java.lang.Integer progressivo) {
 		super(pg_inventario, ti_documento, esercizio, pg_buono_c_s, nr_inventario, progressivo);
 		setBuono_cs(new it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk(pg_inventario,  ti_documento, esercizio, pg_buono_c_s));
-		setBene(new Inventario_beniBulk(nr_inventario,pg_inventario,new Long (progressivo.longValue())));
+		setBene(new Inventario_beniBulk(nr_inventario,pg_inventario,Long.valueOf(progressivo)));
 	}
 	
 	public Inventario_beniBulk getBene() {

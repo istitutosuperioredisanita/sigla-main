@@ -2,8 +2,23 @@
 --  DDL for View V_CONS_SCAD_OBBL
 --------------------------------------------------------
 
-  CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_CONS_SCAD_OBBL" ("CDS", "UO", "ESERCIZIO", "ESERCIZIO_ORIGINALE", "PG_OBBL", "PG_OBBL_SCAD", "VOCE_BILANCIO", "DATA_SCAD", "DS_OBBL", "DS_SCAD", "IM_SCAD", "IM_ASS_DOC_AMM", "IMP_ASS_DOC_CONT", "CREDITORE","DS_ELEMENTO_VOCE") AS
-  SELECT DISTINCT
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "V_CONS_SCAD_OBBL" (
+         "CDS",
+         "UO",
+         "ESERCIZIO",
+         "ESERCIZIO_ORIGINALE",
+         "PG_OBBL",
+         "PG_OBBL_SCAD",
+         "VOCE_BILANCIO",
+         "DATA_SCAD",
+         "DS_OBBL",
+         "DS_SCAD",
+         "IM_SCAD",
+         "IM_ASS_DOC_AMM",
+         "IMP_ASS_DOC_CONT",
+         "CREDITORE",
+         "DS_ELEMENTO_VOCE"
+) AS SELECT DISTINCT
 --
 -- Date: 07/03/2007
 -- Version: 1.0

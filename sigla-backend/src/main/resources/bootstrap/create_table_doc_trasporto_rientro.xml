@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="davide.mirra" id="create_table_doc_trasporto_rientro">
+        <createTable remarks="Lista delle testate dei documenti di trasporto e rientro insistenti sugli inventari" tableName="doc_trasporto_rientro">
+
+            <!-- ========================================
+                 CHIAVE PRIMARIA (da Doc_trasporto_rientroKey)
+                 ======================================== -->
+            <column name="pg_inventario" remarks="Codice dell'inventario" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ti_documento" remarks="Flag per stabilire se il documento risulta essere un trasporto o un rientro (T=Trasporto, R=Rientro)" type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esercizio" remarks="Esercizio di riferimento" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_doc_trasporto_rientro" remarks="Numero che identifica il documento di trasporto/rientro una volta noto inventario e esercizio" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- ========================================
+                 CAMPI DATI (da Doc_trasporto_rientroBase)
+                 ======================================== -->
+            <column name="ds_doc_trasporto_rientro" remarks="Descrizione del documento di trasporto o rientro" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_registrazione" remarks="Data registrazione del documento" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_tipo_trasporto_rientro" remarks="Codice del tipo di movimento di trasporto/rientro di inventario" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stato" remarks="Stato del documento. Dominio: INS = Inserito, INV = Inviato, DEF = Definitivo, ANN = Annullato" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="destinazione" remarks="Descrizione della destinazione del trasporto" type="VARCHAR(100)"/>
+            <column name="indirizzo" remarks="Indirizzo completo della destinazione" type="VARCHAR(200)"/>
+
+            <!-- ========================================
+                 GESTIONE RITIRO
+                 ======================================== -->
+            <column name="fl_incaricato" remarks="Flag che indica se il ritiro è effettuato da un incaricato. Dominio: Y = Si, N = No. Esclusivo con FL_VETTORE." type="CHAR(1)" defaultValue="N">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fl_vettore" remarks="Flag che indica se il ritiro è effettuato da un vettore. Dominio: Y = Si, N = No. Esclusivo con FL_INCARICATO." type="CHAR(1)" defaultValue="N">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_terzo_incaricato" remarks="Codice del terzo incaricato del trasporto" type="INT"/>
+            <column name="nominativo_vettore" remarks="Nominativo del vettore esterno. Campo abilitato quando FL_VETTORE = Y" type="VARCHAR(100)"/>
+            <column name="note_ritiro" remarks="Note relative al ritiro del documento. Campo abilitato quando FL_INCARICATO o FL_VETTORE sono valorizzati a Y" type="VARCHAR(4000)"/>
+            <column name="note" remarks="Note relative al documento di trasporto/rientro. Campo abilitato in base al flag FL_ABILITA_NOTE della tipologia" type="VARCHAR(4000)"/>
+
+            <!-- ========================================
+                 FIRMA DIGITALE HAPPYSIGN
+                 ======================================== -->
+            <column name="id_flusso_happysign" remarks="ID del flusso HappySign per la firma digitale del documento" type="VARCHAR(100)"/>
+            <column name="stato_flusso" remarks="Stato del flusso di firma. Dominio: INV = Inviato, FIR = Firmato, RIF = Rifiutato" type="VARCHAR(3)"/>
+            <column name="data_invio_firma" remarks="Data e ora di invio del documento al flusso di firma HappySign" type="${date.type}"/>
+            <column name="data_firma" remarks="Data e ora di completamento della firma del documento" type="${date.type}"/>
+            <column name="note_rifiuto" remarks="Note inserite in caso di rifiuto della firma del documento" type="VARCHAR(4000)"/>
+            <column name="cd_terzo_responsabile" remarks="Codice del terzo responsabile della struttura (firmatario obbligatorio del documento)" type="INT"/>
+
+            <!-- ========================================
+                 CAMPI STANDARD AUDIT
+                 ======================================== -->
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- ========================================
+             PRIMARY KEY
+             ======================================== -->
+        <addPrimaryKey tableName="doc_trasporto_rientro"
+                       constraintName="doc_trasporto_rientro_pkey"
+                       columnNames="pg_inventario,ti_documento,esercizio,pg_doc_trasporto_rientro"/>
+
+        <!-- ========================================
+             FOREIGN KEYS
+             ======================================== -->
+
+        <!-- FK verso TIPO_TRASPORTO_RIENTRO -->
+        <addForeignKeyConstraint baseTableName="doc_trasporto_rientro"
+                                 baseColumnNames="cd_tipo_trasporto_rientro"
+                                 constraintName="fk_doc_trasporto_rientro01"
+                                 referencedTableName="tipo_trasporto_rientro"
+                                 referencedColumnNames="cd_tipo_trasporto_rientro"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION"/>
+
+        <!-- FK verso NUMERATORE_DOC_T_R -->
+        <addForeignKeyConstraint baseTableName="doc_trasporto_rientro"
+                                 baseColumnNames="pg_inventario,ti_documento,esercizio"
+                                 constraintName="fk_doc_trasporto_rientro02"
+                                 referencedTableName="numeratore_doc_t_r"
+                                 referencedColumnNames="pg_inventario,ti_trasporto_rientro,esercizio"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION"/>
+
+        <!-- FK verso TERZO (assegnatario/incaricato) -->
+        <addForeignKeyConstraint baseTableName="doc_trasporto_rientro"
+                                 baseColumnNames="cd_terzo_incaricato"
+                                 constraintName="fk_doc_trasporto_rientro03"
+                                 referencedTableName="terzo"
+                                 referencedColumnNames="cd_terzo"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION"/>
+
+        <!-- FK verso TERZO (responsabile/firmatario) -->
+        <addForeignKeyConstraint baseTableName="doc_trasporto_rientro"
+                                 baseColumnNames="cd_terzo_responsabile"
+                                 constraintName="fk_doc_trasporto_rientro04"
+                                 referencedTableName="terzo"
+                                 referencedColumnNames="cd_terzo"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION"/>
+
+        <!-- ========================================
+             INDICI
+             ======================================== -->
+        <!-- Indice su terzo assegnatario -->
+        <createIndex indexName="fx_doc_trasporto_rientro03" tableName="doc_trasporto_rientro">
+            <column name="cd_terzo_incaricato"/>
+        </createIndex>
+
+        <!-- Indice su terzo responsabile -->
+        <createIndex indexName="fx_doc_trasporto_rientro04" tableName="doc_trasporto_rientro">
+            <column name="cd_terzo_responsabile"/>
+        </createIndex>
+
+        <!-- Indice su ID flusso HappySign -->
+        <createIndex indexName="fx_doc_t_r_flusso" tableName="doc_trasporto_rientro">
+            <column name="id_flusso_happysign"/>
+        </createIndex>
+
+        <!-- Indice composito per ricerca documenti da firmare -->
+        <createIndex indexName="fx_doc_t_r_firma" tableName="doc_trasporto_rientro">
+            <column name="stato"/>
+            <column name="stato_flusso"/>
+            <column name="data_invio_firma"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
