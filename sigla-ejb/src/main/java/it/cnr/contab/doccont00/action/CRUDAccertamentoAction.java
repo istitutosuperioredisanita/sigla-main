@@ -1076,7 +1076,10 @@ public Forward doSelectLineeDiAttivita(ActionContext context)
             AccertamentoBulk accertamento = (AccertamentoBulk) bp.getModel();
 
             CRUDAccertamentoModificaBP newbp = null;
-            newbp = (CRUDAccertamentoModificaBP) context.getUserInfo().createBusinessProcess(context, "CRUDAccertamentoModificaBP", new Object[]{"V", accertamento, CRUDAccertamentoModificaBP.TIPO_ACCESSO_VISUALIZZAZIONE});
+            String function = bp.isSupervisore() && !bp.isEsercizioChiuso() ? "Tr" : "V";
+            newbp = (CRUDAccertamentoModificaBP) context.getUserInfo().createBusinessProcess(context, "CRUDAccertamentoModificaBP", new Object[]{function, accertamento, CRUDAccertamentoModificaBP.TIPO_ACCESSO_VISUALIZZAZIONE});
+
+            //newbp = (CRUDAccertamentoModificaBP) context.getUserInfo().createBusinessProcess(context, "CRUDAccertamentoModificaBP", new Object[]{"V", accertamento, CRUDAccertamentoModificaBP.TIPO_ACCESSO_VISUALIZZAZIONE});
             context.addBusinessProcess(newbp);
             return doCerca(context);
 

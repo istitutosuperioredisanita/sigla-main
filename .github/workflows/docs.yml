@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - 'docs/**'     # Tutti i file dentro docs e sottocartelle
+      - docs/**
   workflow_dispatch:  # parte anche su richiesta manuale
 
 env:

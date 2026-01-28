@@ -19,11 +19,9 @@ package it.cnr.contab.docamm00.docs.bulk;
 
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.config00.bulk.CausaleContabileHome;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.V_doc_passivo_obbligazione_wizardBulk;
 import it.cnr.contab.fondecon00.core.bulk.Fondo_spesaBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
@@ -265,5 +263,38 @@ public class Documento_genericoHome extends BulkHome implements
 		sql.addClause(FindClause.OR, "dtFineValidita", SQLBuilder.ISNULL, null);
 		sql.closeParenthesis();
 		return sql;
+	}
+
+	public String callVerificaStatoRiporto(UserContext userContext, Documento_genericoBulk documentoGenerico, boolean isInScrivania) throws PersistencyException {
+		List<Documento_generico_rigaBulk> righeDocumento = this.findDocumentoGenericoRigheList(documentoGenerico);
+
+		List<Integer> eserciziDoccont = null;
+		if (TipoDocumentoEnum.fromValue(documentoGenerico.getCd_tipo_doc()).isDocumentoGenericoAttivo())
+			eserciziDoccont = righeDocumento.stream()
+					.filter(el->Optional.ofNullable(el.getAccertamento_scadenziario()).isPresent())
+					.map(el->el.getAccertamento_scadenziario().getEsercizio())
+					.distinct()
+					.collect(Collectors.toList());
+		else
+			eserciziDoccont = righeDocumento.stream()
+					.filter(el->Optional.ofNullable(el.getObbligazione_scadenziario()).isPresent())
+					.map(el->el.getObbligazione_scadenziario().getEsercizio())
+					.filter(Objects::nonNull)
+					.distinct()
+					.collect(Collectors.toList());
+
+		if (eserciziDoccont.isEmpty())
+			return IDocumentoAmministrativoBulk.NON_RIPORTATO;
+
+		int aEsScr = CNRUserContext.getEsercizio(userContext);
+		int aEsDocCont = eserciziDoccont.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
+		int aEs = documentoGenerico.getEsercizio();
+		String ripParzRip = eserciziDoccont.size()>1?IDocumentoAmministrativoBulk.PARZIALMENTE_RIPORTATO
+				:IDocumentoAmministrativoBulk.COMPLETAMENTE_RIPORTATO;
+
+		if (isInScrivania)
+			return IDocumentoAmministrativoBulk.getStatoRiportoInScrivania(aEs,aEsScr,aEsDocCont,ripParzRip);
+		return IDocumentoAmministrativoBulk.getStatoRiporto(aEs,aEsScr,aEsDocCont,ripParzRip);
+
 	}
 }

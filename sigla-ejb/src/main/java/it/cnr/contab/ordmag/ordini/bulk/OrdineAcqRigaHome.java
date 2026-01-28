@@ -53,10 +53,7 @@ import org.springframework.data.util.Pair;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OrdineAcqRigaHome extends BulkHome {
@@ -150,7 +147,9 @@ public class OrdineAcqRigaHome extends BulkHome {
 
 				//se arrivo qui devo guardare alla voce delle obbligazioni agganciate alla consegna
 				Obbligazione_scadenzarioBulk obbligScad = this.findOrdineRigheConsegnaList(ordineRiga).stream()
-						.map(OrdineAcqConsegnaBulk::getObbligazioneScadenzario).findFirst().orElse(null);
+						.map(OrdineAcqConsegnaBulk::getObbligazioneScadenzario)
+						.filter(Objects::nonNull)
+						.findFirst().orElse(null);
 
 				if (Optional.ofNullable(obbligScad).isPresent()) {
 					ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());

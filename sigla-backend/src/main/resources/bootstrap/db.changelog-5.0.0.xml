@@ -6268,12 +6268,21 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_conf_bonifici_esteri_prefix_conto.xml"/>
     <!-- Autore : CIRO SALVIO - Aggiunto configurazione per permettere o meno variazione sulle partite di giro-->
     <include file="bootstrap/add_conf_partite_giro_variazione.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Nuova voce di menu per consultazione flussi di cassa-->
+    <include file="bootstrap/add_accesso_flussi_di_cassa.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Nuova voce di menu per rendiconto flussi di cassa-->
+    <include file="bootstrap/add_accesso_flussi_di_cassa_rend.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Nuova voce di menu per consultazione correlazione Partite di Giro e Entrate/Spese-->
+    <include file="bootstrap/add_accesso_ass_partita_giro.xml"/>
+    <!-- Autore : MARCO SPASIANO - Accessi consultazione scadenzario anno corrente -->
+    <include file="bootstrap/add_accessi_cons_scadenzario_anno_corrente.xml"/>
+
     <!-- Autore : RAFFAELE PAGANO - MODIFICHE TABELLE PER GESTIONE SCRITTURA SU CONSEGNA ORDINE -->
     <include file="bootstrap/add_column_ordine_acq_consegna_scrittura_partita_doppia.xml"/>
 
     <!-- Autore : RAFFAELE PAGANO - CREAZIONE VIEW v_documenti_da_contabilizzare -->
     <include file="bootstrap/add_view_v_documenti_da_contabilizzare.xml"/>
+    <include file="bootstrap/modify_configurazione_cnr_utile_perdite_cambi.xml"/>
     <!-- Autore : MARCO SPASIANO - Accessi consultazione scadenzario anno corrente -->
     <include file="bootstrap/add_accessi_cons_scadenzario_anno_corrente.xml"/>
-
 </databaseChangeLog>

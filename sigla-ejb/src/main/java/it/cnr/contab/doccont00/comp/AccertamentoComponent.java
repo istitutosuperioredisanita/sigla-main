@@ -2059,7 +2059,9 @@ public AccertamentoBulk generaDettagliScadenzaAccertamento (UserContext aUC,Acce
                 aggiornaStatoCOAN_COGEDocAmm(aUC, (AccertamentoBulk) bulk);
             }
             AccertamentoBulk accertamento = (AccertamentoBulk) bulk;
-            if (accertamento.isAccertamentoResiduo()) {
+            if (Optional.ofNullable(accertamento)
+                    .filter(AccertamentoBulk::isAccertamentoResiduo)
+                    .filter(AccertamentoResiduoBulk.class::isInstance).isPresent()) {
                 if (((AccertamentoResiduoBulk) accertamento).isSaldiDaAggiornare()) {
                     // aggiorniamo i saldi legati alle modifiche agli acc. residui
                     aggiornaSaldiAccertamentiResiduiPropri(aUC, accertamento);

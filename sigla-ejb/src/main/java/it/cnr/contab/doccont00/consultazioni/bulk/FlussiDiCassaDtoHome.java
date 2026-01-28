@@ -17,6 +17,7 @@
 
 package it.cnr.contab.doccont00.consultazioni.bulk;
 
+import it.cnr.contab.config00.pdcep.bulk.Voce_epHome;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistentCache;
@@ -44,12 +45,20 @@ public class FlussiDiCassaDtoHome extends BulkHome {
 		else
 			this.setColumnMap("FLUSSO_MANDATI");
 
+		String tipo= Voce_epHome.SIOPE;
+		String classificazioneTestata="CD_CLASSIFICAZIONE_5_LIV";
+
+		if(flussi.isEstrazioneRendiconto()){
+			tipo= Voce_epHome.SIOPE_RENDICONTO;
+			classificazioneTestata="CD_CLASSIFICAZIONE";
+		}
+
 
 		sqlInterna=this.createSQLBuilder();
 		sqlInterna.resetColumns();
 
 		sqlInterna.setHeader("SELECT " +
-					  "DETAIL.CD_CLASSIFICAZIONE_5_LIV CLASSIFICAZIONE , " +
+					  "DETAIL."+classificazioneTestata+" CLASSIFICAZIONE , " +
 				      "DETAIL.DS_CLASSIFICAZIONE , " +
 					  " sum(CASE "+
 						" WHEN TO_CHAR("+ sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE").concat(",'mm') <=3 THEN IMPORTO ")+
@@ -66,7 +75,8 @@ public class FlussiDiCassaDtoHome extends BulkHome {
 					  " sum(CASE "+
 				      " WHEN TO_CHAR("+ sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE").concat(",'mm') <=12 THEN IMPORTO ")+
 				      " ELSE 0 "+
-				      " END ) IMP_QUARTO_TRIMESTRE "
+				      " END ) IMP_QUARTO_TRIMESTRE ," +
+						"SUM(IMPORTO) IMPORTO_TOTALE "
 				);
 
 		sqlInterna.addTableToHeader("CODICI_SIOPE");
@@ -74,28 +84,38 @@ public class FlussiDiCassaDtoHome extends BulkHome {
 		sqlInterna.addSQLJoin("CODICI_SIOPE.CD_SIOPE", sqlInterna.getColumnMap().getTableName().concat(".CD_SIOPE"));
 
 		sqlInterna.addTableToHeader("V_CLASSIFICAZIONE_VOCI_EP");
-		sqlInterna.addSQLJoin("V_CLASSIFICAZIONE_VOCI_EP.ID_CLASSIFICAZIONE", "CODICI_SIOPE.ID_CLASSIFICAZIONE_SIOPE");
+		if(flussi.isEstrazioneRendiconto()) {
+			sqlInterna.addSQLJoin("V_CLASSIFICAZIONE_VOCI_EP.ID_CLASSIFICAZIONE", "CODICI_SIOPE.ID_CLASSIFICAZIONE_SIOPE_REND");
+		}else{
+			sqlInterna.addSQLJoin("V_CLASSIFICAZIONE_VOCI_EP.ID_CLASSIFICAZIONE", "CODICI_SIOPE.ID_CLASSIFICAZIONE_SIOPE");
+		}
 
 
 		sqlInterna.addTableToHeader("V_CLASSIFICAZIONE_VOCI_EP","DETAIL");
 		sqlInterna.addSQLJoin("V_CLASSIFICAZIONE_VOCI_EP.ESERCIZIO", "DETAIL.ESERCIZIO");
 		sqlInterna.addSQLJoin("V_CLASSIFICAZIONE_VOCI_EP.TIPO", "DETAIL.TIPO");
-		for(int i=1; i<=Integer.valueOf(flussi.getLivello());i++){
+		for(int i=1; i<=new Integer(flussi.getLivello());i++){
 			sqlInterna.addSQLJoin(FindClause.AND, "V_CLASSIFICAZIONE_VOCI_EP.CD_LIVELLO"+i, SQLBuilder.EQUALS,"DETAIL.CD_LIVELLO"+i);
 		}
 
-		sqlInterna.addSQLClause(FindClause.AND, "V_CLASSIFICAZIONE_VOCI_EP.TIPO", SQLBuilder.EQUALS, "SP1");
+		sqlInterna.addSQLClause(FindClause.AND, "V_CLASSIFICAZIONE_VOCI_EP.TIPO", SQLBuilder.EQUALS, tipo);
 		sqlInterna.addSQLClause(FindClause.AND, "DETAIL.NR_LIVELLO", SQLBuilder.EQUALS,flussi.getLivello());
 
 		sqlInterna.addSQLClause(FindClause.AND, sqlInterna.getColumnMap().getTableName().concat(".ESERCIZIO"), SQLBuilder.EQUALS, flussi.getEsercizio());
 		if(flussi.getCds()!=null) {
 			sqlInterna.addSQLClause(FindClause.AND, sqlInterna.getColumnMap().getTableName().concat(".CD_CDS"), SQLBuilder.EQUALS, flussi.getCdCds());
 		}
-		sqlInterna.addSQLClause(FindClause.AND,  sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE"), SQLBuilder.GREATER_EQUALS, flussi.getDtEmissioneDa());
-		sqlInterna.addSQLClause(FindClause.AND,  sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE"), SQLBuilder.LESS_EQUALS, flussi.getDtEmissioneA());
+		if(!flussi.isEstrazioneRendiconto()) {
+			sqlInterna.addSQLClause(FindClause.AND, sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE"), SQLBuilder.GREATER_EQUALS, flussi.getDtEmissioneDa());
+			sqlInterna.addSQLClause(FindClause.AND, sqlInterna.getColumnMap().getTableName().concat(".DT_EMISSIONE"), SQLBuilder.LESS_EQUALS, flussi.getDtEmissioneA());
+		}
 
-		sqlInterna.addSQLGroupBy("DETAIL.CD_CLASSIFICAZIONE_5_LIV, DETAIL.DS_CLASSIFICAZIONE ");
-		sqlInterna.addOrderBy("DETAIL.CD_CLASSIFICAZIONE_5_LIV DESC");
+		sqlInterna.addSQLGroupBy("DETAIL."+classificazioneTestata+", DETAIL.DS_CLASSIFICAZIONE ");
+		if(flussi.isEstrazioneRendiconto()) {
+			sqlInterna.addOrderBy("DETAIL." + classificazioneTestata );
+		}else{
+			sqlInterna.addOrderBy("DETAIL." + classificazioneTestata + " DESC");
+		}
 		return sqlInterna;
 	}
 

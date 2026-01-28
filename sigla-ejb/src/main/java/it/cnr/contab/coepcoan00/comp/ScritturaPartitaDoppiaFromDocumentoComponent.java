@@ -197,7 +197,6 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
             else if (vDocDaContabilizzare.getTipoDocumentoEnum().isReversale())
                 documentoCoge = (IDocumentoCogeBulk) getHome(usercontext, ReversaleIBulk.class)
                         .findByPrimaryKey(new ReversaleIBulk(vDocDaContabilizzare.getCd_cds(),vDocDaContabilizzare.getEsercizio(), vDocDaContabilizzare.getPg_doc().longValue()));
-            getHomeCache(usercontext).fetchAll(usercontext);
             return createScrittura(usercontext, documentoCoge);
         } catch (PersistencyException e) {
             throw handleException(e);
@@ -213,10 +212,17 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
                     evasioneRiga = evasioneRigaHome.findByConsegna(((OrdineAcqConsegnaBulk) documentoCoge));
                 if (evasioneRiga!=null)
                     return createScrittura(usercontext, documentoCoge, evasioneRiga.getEsercizio());
+                else {
+                    //Trattandosi di ordine non evaso procedo solo ad aggiornare la parte economica se necessaria
+                    documentoCoge = Utility.createProposeScritturaComponentSession().loadEconomicaFromFinanziaria(usercontext, documentoCoge);
+                    return new ResultScrittureContabili(documentoCoge, null);
+                }
             }
             return createScrittura(usercontext, documentoCoge, Optional.ofNullable(documentoCoge).map(IDocumentoCogeBulk::getEsercizio).orElse(CNRUserContext.getEsercizio(usercontext)));
         } catch (PersistencyException e) {
             throw handleException(e);
+        } catch (ScritturaPartitaDoppiaNotEnabledException | ScritturaPartitaDoppiaNotRequiredException | RemoteException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -348,6 +354,14 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         SQLBuilder sql = home.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio_cont", SQLBuilder.EQUALS, esercizio);
         Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
+//       sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, 2022);
+//        sql.addClause(FindClause.AND, "tipodoc", SQLBuilder.EQUALS, "ORDINE_CNS");
+        //       sql.addClause(FindClause.AND, "pg_doc", SQLBuilder.EQUALS, 117);
+        // sql.addClause(FindClause.AND, "cd_unita_operativa", SQLBuilder.EQUALS, "DMI");
+        // sql.addClause(FindClause.AND, "riga", SQLBuilder.EQUALS, 2);
+        // sql.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, 15);
+
+//        sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, "999.000");
         return home.fetchAll(sql);
     }
 
@@ -440,7 +454,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         //INTENTIONALLY BLANK
     }
 
-    private ResultScrittureContabili proposeScritturaPartitaDoppiaWithSavepoint(UserContext userContext, IDocumentoCogeBulk documentoCoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException, SQLException{
+    private ResultScrittureContabili proposeScritturaPartitaDoppiaWithSavepoint(UserContext userContext, IDocumentoCogeBulk documentoCoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException, SQLException {
         try {
             setSavepoint(userContext, "INIT_SCRITTURA_PRIMA_NOTA");
             return Utility.createProposeScritturaComponentSession().proposeScritturaPartitaDoppia(userContext, documentoCoge);
@@ -455,12 +469,14 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         }
     }
 
-    private ResultScrittureContabili proposeScrittureContabiliWithSavepoint(UserContext userContext, IDocumentoCogeBulk documentoCoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException, SQLException{
+    private ResultScrittureContabili proposeScrittureContabiliWithSavepoint(UserContext userContext, IDocumentoCogeBulk documentoCoge) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException, ScritturaPartitaDoppiaNotEnabledException, SQLException {
         try {
             setSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");
             return Utility.createProposeScritturaComponentSession().proposeScrittureContabili(userContext, documentoCoge);
-        } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException | ApplicationException e) {
+        } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
             rollbackToSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");
+            throw e;
+        } catch (ApplicationException e) {
             throw e;
         } catch (ApplicationRuntimeException e) {
             rollbackToSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");

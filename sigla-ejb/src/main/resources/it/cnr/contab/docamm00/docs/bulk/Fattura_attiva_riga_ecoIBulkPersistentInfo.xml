@@ -32,11 +32,11 @@
 			columnName="CD_UNITA_ORGANIZZATIVA"
 			propertyName="fattura_attiva_rigaI.fattura_attivaI.cd_unita_organizzativa" />
 		<columnMapping
-			columnName="PG_FATTURA_PASSIVA"
+			columnName="PG_FATTURA_ATTIVA"
 			propertyName="fattura_attiva_rigaI.fattura_attivaI.pg_fattura_attiva" />
 		<columnMapping
 			columnName="PROGRESSIVO_RIGA"
-			propertyName="fattura_attiva_rigaI.fattura_attivaI.progressivo_riga" />
+			propertyName="fattura_attiva_rigaI.progressivo_riga" />
 	</defaultColumnMap>
 
 	<persistentProperty

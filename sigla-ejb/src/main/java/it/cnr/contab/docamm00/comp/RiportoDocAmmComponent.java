@@ -123,6 +123,8 @@ private java.lang.String callVerificaStatoRiporto(
             return ((Fattura_passivaHome) getHome(userContext, Fattura_passivaBulk.class)).callVerificaStatoRiporto(userContext, (Fattura_passivaBulk) documentoAmministrativo, Boolean.FALSE);
 		else if (documentoAmministrativo instanceof CompensoBulk)
 			return ((CompensoHome) getHome(userContext, CompensoBulk.class)).callVerificaStatoRiporto(userContext, (CompensoBulk) documentoAmministrativo, Boolean.FALSE);
+		else if (documentoAmministrativo instanceof Documento_genericoBulk)
+			return ((Documento_genericoHome) getHome(userContext, Documento_genericoBulk.class)).callVerificaStatoRiporto(userContext, (Documento_genericoBulk) documentoAmministrativo, Boolean.FALSE);
     } catch (PersistencyException ex) {
         throw new ComponentException(ex);
     }
@@ -171,6 +173,8 @@ private java.lang.String callVerificaStatoRiportoInScrivania(
             return ((Fattura_passivaHome) getHome(userContext, Fattura_passivaBulk.class)).callVerificaStatoRiporto(userContext, (Fattura_passivaBulk) documentoAmministrativo, Boolean.TRUE);
 		else if (documentoAmministrativo instanceof CompensoBulk)
 			return ((CompensoHome) getHome(userContext, CompensoBulk.class)).callVerificaStatoRiporto(userContext, (CompensoBulk) documentoAmministrativo, Boolean.TRUE);
+		else if (documentoAmministrativo instanceof Documento_genericoBulk)
+			return ((Documento_genericoHome) getHome(userContext, Documento_genericoBulk.class)).callVerificaStatoRiporto(userContext, (Documento_genericoBulk) documentoAmministrativo, Boolean.TRUE);
     } catch (PersistencyException ex) {
         throw new ComponentException(ex);
     }

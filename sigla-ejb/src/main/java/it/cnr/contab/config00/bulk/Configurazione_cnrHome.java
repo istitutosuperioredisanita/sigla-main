@@ -17,6 +17,7 @@
 
 package it.cnr.contab.config00.bulk;
 
+import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageHome;
@@ -594,20 +595,20 @@ public class Configurazione_cnrHome extends BulkHome {
         }
     }
 
-    public WorkpackageBulk getGaeDocumentoNonLiquidabile(UserContext userContext, IDocumentoDetailEcoCogeBulk rigaDocAmm) throws ComponentException {
+    public WorkpackageBulk getGaeDocumentoNonLiquidabile(UserContext userContext, IDocumentoCogeBulk docAmm) throws ComponentException {
         try {
-            Optional<Configurazione_cnrBulk> config = this.getConfigurazioneCostoDocumentoNonLiquidabile(rigaDocAmm.getEsercizio());
+            Optional<Configurazione_cnrBulk> config = this.getConfigurazioneCostoDocumentoNonLiquidabile(docAmm.getEsercizio());
 
             if (config.isPresent()) {
                 String aCdLineaAttivita = config.get().getVal02();
                 if (aCdLineaAttivita==null)
-                    throw new ApplicationException("Attenzione! Non esiste il codice Linea Attività indicato nella tabella CONFIGURAZIONE_CNR per l'esercizio "+rigaDocAmm.getEsercizio()
+                    throw new ApplicationException("Attenzione! Non esiste il codice Linea Attività indicato nella tabella CONFIGURAZIONE_CNR per l'esercizio "+docAmm.getEsercizio()
                             +" ("+Configurazione_cnrBulk.PK_VOCEEP_SPECIALE+"-"+Configurazione_cnrBulk.SK_COSTO_DOC_NON_LIQUIDABILE+"-VAL02).");
 
-                String aCdCentroCosto = Optional.ofNullable(config.get().getVal03()).orElse(rigaDocAmm.getFather().getCd_uo() + ".000");
+                String aCdCentroCosto = Optional.ofNullable(config.get().getVal03()).orElse(docAmm.getCd_uo() + ".000");
 
                 WorkpackageHome wpHome = (WorkpackageHome) getHomeCache().getHome(WorkpackageBulk.class);
-                return wpHome.searchGAECompleta(userContext, rigaDocAmm.getEsercizio(), aCdCentroCosto, aCdLineaAttivita);
+                return wpHome.searchGAECompleta(userContext, docAmm.getEsercizio(), aCdCentroCosto, aCdLineaAttivita, Boolean.FALSE);
             }
             return null;
         } catch (it.cnr.jada.persistency.PersistencyException e) {

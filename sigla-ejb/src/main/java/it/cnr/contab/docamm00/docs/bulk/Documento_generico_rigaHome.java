@@ -195,7 +195,7 @@ public class Documento_generico_rigaHome extends BulkHome {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
             if (Optional.ofNullable(docRiga).isPresent()) {
                 Documento_genericoBulk docgen = (Documento_genericoBulk) fatpasHome.loadIfNeededObject(docRiga.getDocumento_generico());
-                if (Optional.ofNullable(docgen).map(Documento_genericoBulk::isGenericoAttivo).orElse(Boolean.FALSE)) {
+                if (Optional.ofNullable(docgen).map(Documento_genericoBulk::getTipoDocumentoEnum).map(TipoDocumentoEnum::isGenericoEntrata).orElse(Boolean.FALSE)) {
                     if (Optional.ofNullable(docgen.getCausaleContabile()).flatMap(el->Optional.ofNullable(el.getCdCausale()))
                             .isPresent()) {
                         CausaleContabileHome causaleHome = (CausaleContabileHome)getHomeCache().getHome(CausaleContabileBase.class);
@@ -209,17 +209,6 @@ public class Documento_generico_rigaHome extends BulkHome {
                             return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(voceEpBulk.getCd_voce_ep(), voceEpBulk.getEsercizio()));
                         }
                         throw new ApplicationPersistencyException("Non è stato possibile individuare il conto della sezione Avere dalla causale contabile associata al documento!");
-                    } else if (docgen.isDocumentoInContoAcconto() || docgen.isDocumentoInContoAnticipo()) {
-                        ContoBulk aContoDefault = null;
-                        if (docgen.isDocumentoInContoAcconto())
-                            aContoDefault = ((Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class))
-                                    .getContoAccontoDocumentoAttivo(docRiga.getEsercizio());
-                        else if (docgen.isDocumentoInContoAnticipo())
-                            aContoDefault = ((Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class))
-                                    .getContoAnticipoDocumentoAttivo(docRiga.getEsercizio());
-                        if (aContoDefault != null)
-                            return aContoDefault;
-                        throw new ApplicationPersistencyException("Non è stato possibile individuare il conto acconto/anticipo da associare al documento!");
                     } else if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isPresent()) {
                         Accertamento_scadenzarioBulk accertScad = (Accertamento_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getAccertamento_scadenziario());
 
@@ -283,7 +272,7 @@ public class Documento_generico_rigaHome extends BulkHome {
 
                 Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
                 Documento_genericoBulk docgen = (Documento_genericoBulk) fatpasHome.loadIfNeededObject(docRiga.getDocumento_generico());
-                if (Optional.ofNullable(docgen).map(Documento_genericoBulk::isGenericoAttivo).orElse(Boolean.FALSE)) {
+                if (Optional.ofNullable(docgen).map(Documento_genericoBulk::getTipoDocumentoEnum).map(TipoDocumentoEnum::isGenericoEntrata).orElse(Boolean.FALSE)) {
                     if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isPresent()) {
                         Accertamento_scadenzarioBulk accertScad = (Accertamento_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getAccertamento_scadenziario());
 
@@ -334,7 +323,7 @@ public class Documento_generico_rigaHome extends BulkHome {
                         if (Optional.ofNullable(obbligScad).isPresent()) {
                             //carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
                             Obbligazione_scadenzarioHome obbligazioneScadenzarioHome = (Obbligazione_scadenzarioHome) getHomeCache().getHome(Obbligazione_scadenzarioBulk.class);
-                            List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad);
+                            List<Obbligazione_scad_voceBulk> scadVoceBulks = obbligazioneScadenzarioHome.findObbligazione_scad_voceList(userContext, obbligScad, Boolean.FALSE);
                             BigDecimal totScad = scadVoceBulks.stream().map(Obbligazione_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
                             for (Obbligazione_scad_voceBulk scadVoce : scadVoceBulks) {
                                 Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
@@ -370,7 +359,7 @@ public class Documento_generico_rigaHome extends BulkHome {
                             }
                         } else {
                             Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
-                            WorkpackageBulk gaeDefault = configHome.getGaeDocumentoNonLiquidabile(userContext, docRiga);
+                            WorkpackageBulk gaeDefault = configHome.getGaeDocumentoNonLiquidabile(userContext, docRiga.getFather());
 
                             Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
                             myRigaEco.setProgressivo_riga_eco(1L);

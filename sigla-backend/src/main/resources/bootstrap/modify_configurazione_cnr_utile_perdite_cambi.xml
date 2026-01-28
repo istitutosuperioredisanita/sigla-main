@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="raffaele.pagano" id="modify_configurazione_cnr_utile_perdite_cambi001">
+        <sql>
+            DELETE FROM CONFIGURAZIONE_CNR
+            WHERE CD_CHIAVE_PRIMARIA = 'VOCEEP_SPECIALE'
+            AND CD_CHIAVE_SECONDARIA = 'UTILE_PERDITE_CAMBI'
+        </sql>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_configurazione_cnr_utile_perdite_cambi002">
+        <sql>
+            UPDATE CONFIGURAZIONE_CNR
+            SET VAL01 = 'R11004'
+            WHERE CD_CHIAVE_PRIMARIA = 'VOCEEP_SPECIALE'
+            AND CD_CHIAVE_SECONDARIA = 'UTILE_SU_CAMBIO'
+        </sql>
+    </changeSet>
+
+    <changeSet author="raffaele.pagano" id="modify_configurazione_cnr_utile_perdite_cambi003">
+        <sql>
+            UPDATE CONFIGURAZIONE_CNR
+            SET VAL01 = 'C16003'
+            WHERE CD_CHIAVE_PRIMARIA = 'VOCEEP_SPECIALE'
+            AND CD_CHIAVE_SECONDARIA = 'PERDITA_SU_CAMBIO'
+        </sql>
+    </changeSet>
+</databaseChangeLog>

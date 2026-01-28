@@ -28,6 +28,8 @@ import it.cnr.jada.persistency.PersistencyException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Optional;
+
+import java.util.Optional;
 @TipoObbligazione(TipoObbligazione.Tipo.RESIDUO)
 public class TransactionalObbligazioneResComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements ObbligazioneResComponentSession {
 public void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2) throws RemoteException,it.cnr.jada.comp.ComponentException {

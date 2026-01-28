@@ -3608,7 +3608,14 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
 
                         if (inventario.getValore_iniziale().compareTo(importoUnitario) != 0) {
                             try {
-                                inventario = (Inventario_beniBulk) inventario_beniComponent.inizializzaBulkPerModifica(userContext, inventario);
+
+                                OggettoBulk bulk=inventario_beniComponent.inizializzaBulkPerModifica(userContext, inventario);
+
+                                if (bulk instanceof ROWrapper){
+                                    inventario = (Inventario_beniBulk)((ROWrapper)bulk).getBulk();
+                                } else {
+                                    inventario = (Inventario_beniBulk)bulk;
+                                }
                                 inventario.setValore_unitario(importoUnitario);
                                 //da verificare con la gestione dei beni annullati nel transito
                                 //inventario.setImponibile_ammortamento(importoUnitario);
@@ -4178,6 +4185,10 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
     }
 //^^@@
 
+    public java.util.List findDettagli(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+        return this.findDettagli(aUC, fatturaPassiva, Boolean.TRUE);
+    }
+
     /**
      * Normale.
      * PreCondition:
@@ -4186,10 +4197,11 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
      * Restituisce la lista dei dettagli
      */
 //^^@@
-    public java.util.List findDettagli(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
+    public java.util.List findDettagli(UserContext aUC, Fattura_passivaBulk fatturaPassiva, boolean fetchAll) throws ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
         if (fatturaPassiva == null) return null;
         final List list = ((Fattura_passivaHome)getHome(aUC,Fattura_passivaBulk.class)).findFatturaPassivaRigheList(fatturaPassiva);
-        getHomeCache(aUC).fetchAll(aUC);
+        if (fetchAll)
+            getHomeCache(aUC).fetchAll(aUC);
         return list;
     }
 

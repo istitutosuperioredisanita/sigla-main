@@ -167,7 +167,7 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 		else if (docRiga instanceof Nota_di_debito_attiva_rigaBulk)
 			home = getHomeCache().getHome(Nota_di_debito_attiva_riga_ecoBulk.class);
 		else
-			home = getHomeCache().getHome(Fattura_attiva_rigaIBulk.class);
+			home = getHomeCache().getHome(Fattura_attiva_riga_ecoIBulk.class);
 
 		it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
 		sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, docRiga.getEsercizio());
@@ -204,7 +204,9 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 						List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), accert.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
 						return Optional.ofNullable(listAss).orElse(new ArrayList<>())
 								.stream().map(Ass_ev_voceepBulk::getVoce_ep)
-								.findAny().orElse(null);
+								.findAny().orElseThrow(()->
+									new ApplicationPersistencyException("Non risultano associati conti economici alla voce di bilancio "+accert.getTi_gestione()+"/"+accert.getCd_elemento_voce()+"!")
+								);
 					}
 				}
 			}

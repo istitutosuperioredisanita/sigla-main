@@ -76,9 +76,7 @@ public class CausaleContabileHome extends BulkHome {
 		SQLBuilder sqlBuilder = persistentHome.createSQLBuilder();
 		sqlBuilder.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
 		sqlBuilder.addClause(FindClause.AND, "cdCausale", SQLBuilder.EQUALS, cdCausale);
-		List<AssCausaleVoceEPBulk> list = persistentHome.fetchAll(sqlBuilder);
-		getHomeCache().fetchAll(userContext);
-		return list;
+		return persistentHome.fetchAll(sqlBuilder);
 	}
 
 	@Override

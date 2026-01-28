@@ -89,11 +89,17 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 								.thenComparing(V_documenti_da_contabilizzareBulk::getPg_doc))
 						.forEach(documentoCoge -> {
 					try {
-						System.out.println("Data: "+documentoCoge.getDt_registrazione()+" - Tipo: "+
-								documentoCoge.getTipoDocumentoEnum().getValue() +" - Numero: "+
-								documentoCoge.getPg_doc());
-                        logger.info("Documento in elaborazione: {}/{}/{}/{}", documentoCoge.getEsercizio(), documentoCoge.getCd_unita_organizzativa(), documentoCoge.getTipodoc(), documentoCoge.getPg_doc());
+						if (documentoCoge.getTipoDocumentoEnum().isConsegnaOrdineAcquisto())
+							System.out.println("Data: "+documentoCoge.getDt_registrazione()+" - Tipo: "+documentoCoge.getTipoDocumentoEnum().getValue() +
+									" - Id: "+documentoCoge.getEsercizio()+"/"+documentoCoge.getCd_unita_operativa()+"/"+documentoCoge.getCd_numeratore()+"/"+documentoCoge.getPg_doc()+"/"+documentoCoge.getRiga()+"/"+documentoCoge.getConsegna());
+						else
+							System.out.println("Data: "+documentoCoge.getDt_registrazione()+" - Tipo: "+documentoCoge.getTipoDocumentoEnum().getValue() +
+									" - Id: "+documentoCoge.getEsercizio()+"/"+documentoCoge.getCd_unita_organizzativa()+"/"+documentoCoge.getTipodoc()+"/"+documentoCoge.getPg_doc());
 						session.createScritturaRequiresNew(param0, documentoCoge);
+						if (documentoCoge.getTipoDocumentoEnum().isConsegnaOrdineAcquisto())
+							logger.info("Documento in elaborazione: {}/{}/{}/{}/{}/{}", documentoCoge.getEsercizio(), documentoCoge.getCd_unita_operativa(), documentoCoge.getCd_numeratore(), documentoCoge.getPg_doc(), documentoCoge.getRiga(), documentoCoge.getConsegna());
+						else
+							logger.info("Documento in elaborazione: {}/{}/{}/{}", documentoCoge.getEsercizio(), documentoCoge.getCd_unita_organizzativa(), documentoCoge.getTipodoc(), documentoCoge.getPg_doc());
 						listInsert.add("X");
 					} catch (Throwable e) {
 						listError.add("X");

@@ -220,36 +220,4 @@ public class Fattura_passivaHome extends BulkHome {
             return IDocumentoAmministrativoBulk.getStatoRiportoInScrivania(aEs,aEsScr,aEsDocCont,ripParzRip);
         return IDocumentoAmministrativoBulk.getStatoRiporto(aEs,aEsScr,aEsDocCont,ripParzRip);
     }
-
-    public String callVerificaStatoRiportoInScrivania(UserContext userContext, Fattura_passivaBulk fatturaPassiva) throws PersistencyException {
-        Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class).findAll().get(0);
-        String aCdCdsEnte = ente.getUnita_padre().getCd_unita_organizzativa();
-
-        List<Fattura_passiva_rigaBulk> righeFattura = this.findFatturaPassivaRigheList(fatturaPassiva);
-
-        List<Integer> eserciziDoccont = null;
-        if (fatturaPassiva instanceof Nota_di_creditoBulk && fatturaPassiva.getCd_cds().equals(aCdCdsEnte))
-            eserciziDoccont = righeFattura.stream()
-                    .map(Fattura_passiva_rigaBulk::getEsercizio_accertamento)
-                    .distinct()
-                    .collect(Collectors.toList());
-        else
-            eserciziDoccont = righeFattura.stream()
-                    .filter(el->Optional.ofNullable(el.getObbligazione_scadenziario()).isPresent())
-                    .map(el->el.getObbligazione_scadenziario().getEsercizio())
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-
-        if (eserciziDoccont.isEmpty())
-            return IDocumentoAmministrativoBulk.NON_RIPORTATO;
-
-        int aEsScr = CNRUserContext.getEsercizio(userContext);
-        int aEsDocCont = eserciziDoccont.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
-        int aEs = fatturaPassiva.getEsercizio();
-        String ripParzRip = eserciziDoccont.size()>1?IDocumentoAmministrativoBulk.PARZIALMENTE_RIPORTATO
-                :IDocumentoAmministrativoBulk.COMPLETAMENTE_RIPORTATO;
-
-        return IDocumentoAmministrativoBulk.getStatoRiportoInScrivania(aEs,aEsScr,aEsDocCont,ripParzRip);
-    }
 }

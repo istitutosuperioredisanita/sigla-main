@@ -38,23 +38,28 @@ public class ConsFlussiCassaAction extends BulkAction{
 				ConsFlussiCassaBP bp = (ConsFlussiCassaBP) context.getBusinessProcess();
 				FlussiDiCassaDtoBulk flussoCassa = (FlussiDiCassaDtoBulk)bp.getModel();
 				flussoCassa.setCdCds(flussoCassa.getCds().getCd_unita_organizzativa());
+				if(bp.isRendiconto()){
+					flussoCassa.setLivello(FlussiDiCassaDtoBulk.TERZO);
+				}
 				bp.fillModel(context);
-
 				bp.validaRichiestaFlussi(flussoCassa);
 
-				 ri = bp.createComponentSession().findFlussiCassa(context.getUserContext(),flussoCassa);
+				ri = bp.createComponentSession().findFlussiCassa(context.getUserContext(), flussoCassa);
 
 				ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context,ri);
 				if (ri.countElements() == 0) {
+					it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
 					throw new it.cnr.jada.comp.ApplicationException("Attenzione: Nessun dato disponibile");
 				}
-				it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context,ri);
 				SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) context.createBusinessProcess("Selezionatore");
 				selezionatorelistabp.setIterator(context, ri);
 				selezionatorelistabp.setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(FlussiDiCassaDtoBulk.class));
+				if(!bp.isRendiconto()) {
+					selezionatorelistabp.setColumns(selezionatorelistabp.getBulkInfo().getColumnFieldPropertyDictionary("FLUSSO_CASSA"));
+				}else{
+					selezionatorelistabp.setColumns(it.cnr.jada.bulk.BulkInfo.getBulkInfo(FlussiDiCassaDtoBulk.class).getColumnFieldPropertyDictionary("RENDICONTO"));
+				}
 				return context.addBusinessProcess(selezionatorelistabp);
-
-						
 			} catch (Exception e) {
 					return handleException(context,e); 
 			}finally {
