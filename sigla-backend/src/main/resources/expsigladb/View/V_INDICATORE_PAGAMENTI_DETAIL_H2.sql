@@ -45,21 +45,18 @@ CREATE OR REPLACE FORCE VIEW "V_INDICATORE_PAGAMENTI_DETAIL" (
               a.cd_anag, f.cd_terzo, os.esercizio esercizio_obbligazione, os.cd_cds cd_cds_obbligazione, os.pg_obbligazione, os.pg_obbligazione_scadenzario,
               os.esercizio_originale esercizio_ori_obbligazione,
               c.esercizio esercizio_contratto, c.pg_contratto, null esercizio_inc, null pg_incarico, f.identificativo_sdi
-             FROM contratto c,
-                  obbligazione o,
+             FROM obbligazione o,
                   obbligazione_scadenzario os,
                   fattura_passiva f,
                   fattura_passiva_riga fr,
                   mandato_riga mr,
                   mandato m,
                   anagrafico a,
-                  terzo t,
-                  documento_ele_trasmissione det
+                  terzo t
+            LEFT OUTER JOIN contratto c ON c.esercizio = o.esercizio_contratto AND c.stato = o.stato_contratto AND c.pg_contratto = o.pg_contratto
+            LEFT OUTER JOIN documento_ele_trasmissione det ON det.id_paese = f.id_paese AND det.id_codice = f.id_codice AND det.identificativo_sdi = f.identificativo_sdi
             WHERE a.cd_anag=t.cd_anag
               AND t.cd_terzo=f.cd_terzo
-              AND c.esercizio(+) = o.esercizio_contratto
-              AND c.stato(+) = o.stato_contratto
-              AND c.pg_contratto(+) = o.pg_contratto
               AND o.esercizio = os.esercizio
               AND o.esercizio_originale = os.esercizio_originale
               AND o.cd_cds = os.cd_cds
@@ -94,9 +91,6 @@ CREATE OR REPLACE FORCE VIEW "V_INDICATORE_PAGAMENTI_DETAIL" (
               and STATO_PAGAMENTO_FONDO_ECO ='N'
               --AND decode(f.ti_fattura,'F',NVL (f.stato_liquidazione, 'LIQ'),'LIQ') = 'LIQ'
               AND NVL (f.stato_liquidazione, 'LIQ') = 'LIQ'
-              AND f.id_paese = det.id_paese(+)
-              AND f.id_codice = det.id_codice(+)
-              AND f.identificativo_sdi = det.identificativo_sdi(+)
              union all
              -- fatture legati a compensi pagate nel periodo sia con contratto che con incarico
               select comp.esercizio,comp.CD_unita_organizzativa uo,comp.pg_compenso pg_doc,'COMPENSO'  tipo_doc,
@@ -106,21 +100,20 @@ CREATE OR REPLACE FORCE VIEW "V_INDICATORE_PAGAMENTI_DETAIL" (
                 ((TRUNC (m.dt_emissione) - nvl(f.dt_scadenza,nvl(f.data_protocollo,f.dt_registrazione)+30) - (m.dt_emissione - nvl(f.dt_inizio_sospensione, m.dt_emissione)))* mr.im_mandato_riga) tot_pesato,
                 a.cd_anag,f.cd_terzo,os.esercizio esercizio_obb,os.cd_cds,os.pg_obbligazione,os.pg_obbligazione_scadenzario,os.esercizio_originale,
                 c.esercizio esercizio_contratto,c.pg_contratto,i.esercizio esercizio_inc,i.pg_repertorio pg_incarico, f.identificativo_sdi
-                 FROM contratto c,
-                      obbligazione o,
+                 FROM obbligazione o,
                       obbligazione_scadenzario os,
-                      fattura_passiva f,fattura_passiva_riga fr,
+                      fattura_passiva f,
+                      fattura_passiva_riga fr,
                       mandato_riga mr,
-                      mandato m,anagrafico a, terzo t,
-                      INCARICHI_REPERTORIO I,
+                      mandato m,
+                      anagrafico a,
+                      terzo t,
                       compenso comp
-                WHERE a.cd_anag = t.cd_anag and t.cd_terzo= f.cd_terzo and
-                      c.esercizio(+) = o.esercizio_contratto
-                  AND c.stato(+) = o.stato_contratto
-                  AND c.pg_contratto(+) = o.pg_contratto
-                  AND (O.ESERCIZIO_REP = I.ESERCIZIO(+)
-                  AND O.PG_REPERTORIO  =I.PG_REPERTORIO(+)
-                  AND comp.CD_TIPO_RAPPORTO IN('OCCA','PROF'))
+            	LEFT OUTER JOIN contratto c ON c.esercizio = o.esercizio_contratto AND c.stato = o.stato_contratto AND c.pg_contratto = o.pg_contratto
+                LEFT OUTER JOIN incarichi_repertorio i ON i.esercizio = o.esercizio_rep AND i.pg_repertorio = o.pg_repertorio
+            	WHERE a.cd_anag = t.cd_anag
+                  AND t.cd_terzo= f.cd_terzo
+                  AND comp.CD_TIPO_RAPPORTO IN('OCCA','PROF')
                   AND o.esercizio = os.esercizio
                   AND o.esercizio_originale = os.esercizio_originale
                   AND o.cd_cds = os.cd_cds

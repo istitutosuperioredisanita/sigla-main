@@ -269,6 +269,63 @@
 	<persistentProperty
 			name="dsTerzo"/>
 
+	<columnMap name="RIEPILOGO_STATO"
+			   tableName="V_CONTROLLI_PCC">
+		<columnMapping
+				columnName="TO_NUMBER(NVL(TO_CHAR(DATA_RICEZIONE,'YYYY'),ESERCIZIO)) ESERCIZIO"
+				propertyName="riepilogo_stato_esercizio"
+				count="true"
+				sqlTypeName="DECIMAL"
+				columnSize="4"/>
+		<columnMapping
+				columnName="COUNT(1) NUM_RICEVUTE"
+				propertyName="riepilogo_stato_num_ricevute"
+				count="true"
+				sqlTypeName="DECIMAL"/>
+		<columnMapping
+				columnName="SUM(NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA))) IMPORTO_RICEVUTE"
+				propertyName="riepilogo_stato_importo_ricevute"
+				count="true"
+				columnSize="17"
+				columnScale="2"/>
+		<columnMapping
+				columnName="COUNT(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' THEN 1 END) NUM_REGISTRATE"
+				propertyName="riepilogo_stato_num_registrate"
+				count="true"
+				sqlTypeName="DECIMAL"/>
+		<columnMapping
+				columnName="SUM(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' THEN NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA)) ELSE 0 END) IMPORTO_REGISTRATE"
+				propertyName="riepilogo_stato_importo_registrate"
+				count="true"
+				columnSize="17"
+				columnScale="2"/>
+		<columnMapping
+				columnName="COUNT(CASE WHEN DT_EMISSIONE_MAN IS NOT NULL THEN 1 END) NUM_PAGATE"
+				propertyName="riepilogo_stato_num_pagate"
+				count="true"
+				sqlTypeName="DECIMAL"/>
+		<columnMapping
+				columnName="SUM(CASE WHEN DT_EMISSIONE_MAN IS NOT NULL THEN NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA)) ELSE 0 END) IMPORTO_PAGATE"
+				propertyName="riepilogo_stato_importo_pagate"
+				count="true"
+				columnSize="17"
+				columnScale="2"/>
+	</columnMap>
+	<persistentProperty
+			name="riepilogo_stato_esercizio"/>
+	<persistentProperty
+			name="riepilogo_stato_num_ricevute"/>
+	<persistentProperty
+			name="riepilogo_stato_importo_ricevute"/>
+	<persistentProperty
+			name="riepilogo_stato_num_registrate"/>
+	<persistentProperty
+			name="riepilogo_stato_importo_registrate"/>
+	<persistentProperty
+			name="riepilogo_stato_num_pagate"/>
+	<persistentProperty
+			name="riepilogo_stato_importo_pagate"/>
+
 	<columnMap name="RIEPILOGO_STRUTTURA"
 			   tableName="V_CONTROLLI_PCC">
 		<columnMapping

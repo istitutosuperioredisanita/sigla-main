@@ -18,12 +18,12 @@
 package it.cnr.contab.web.rest.resource.docamm;
 
 import it.cnr.contab.doccont00.consultazioni.bulk.VControlliPCCBulk;
-import it.cnr.contab.doccont00.core.bulk.ConsIndicatorePagamentiBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.docamm.AcquistiLocal;
 import it.cnr.contab.web.rest.model.TreeNode;
 import it.cnr.jada.ejb.CRUDComponentSession;
+import it.cnr.si.service.dto.anagrafica.letture.PersonaEntitaOrganizzativaWebDto;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,8 +64,23 @@ public class AcquistiResource implements AcquistiLocal {
         }
     }
 
+    @Override
+    public Response stato(@Context HttpServletRequest request, String codice) throws Exception {
+        LOGGER.debug("REST request per acquisti per stato.");
+        CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+        final VControlliPCCBulk vControlliPCCBulk = new VControlliPCCBulk();
+        try {
+            List<VControlliPCCBulk> dati =
+                    crudComponentSession.find(userContext, VControlliPCCBulk.class, "findRiepilogoPerStato", userContext, vControlliPCCBulk, codice);
+            LOGGER.debug("Fine REST per acquisti per stato.");
+            return Response.ok(dati.stream().sorted(Comparator.comparing(VControlliPCCBulk::getRiepilogo_stato_esercizio)).collect(Collectors.toList())).build();
+        } catch (Exception _ex) {
+            LOGGER.error("REST request per acquisti per stato. ERROR: ", _ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Collections.singletonMap("ERROR", _ex)).build();
+        }
+    }
     public TreeNode transformToTree(List<VControlliPCCBulk> riepilogoList) {
-        TreeNode root = new TreeNode("Ente");
+        TreeNode root = new TreeNode("Ente", "Ente", "Ente");
 
         if (riepilogoList == null || riepilogoList.isEmpty()) {
             return root;
@@ -84,7 +98,7 @@ public class AcquistiResource implements AcquistiLocal {
 
             // Prendi la descrizione dal primo elemento
             String cdsDescription = cdsItems.getFirst().getRiepilogo_cds_descrizione();
-            TreeNode cdsNode = new TreeNode(cdsCode + " - " + cdsDescription);
+            TreeNode cdsNode = new TreeNode(cdsCode + " - " + cdsDescription, cdsCode, cdsDescription);
 
             // Raggruppa le UO all'interno del CDS
             Map<String, List<VControlliPCCBulk>> groupedByUo = cdsItems.stream()
@@ -103,7 +117,7 @@ public class AcquistiResource implements AcquistiLocal {
                         .map(VControlliPCCBulk::getRiepilogo_totale)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                TreeNode uoNode = new TreeNode(uoCode + " - " + uoDescription, uoTotal);
+                TreeNode uoNode = new TreeNode(uoCode + " - " + uoDescription, uoCode, uoDescription, uoTotal);
                 uoNodes.add(uoNode);
             }
 

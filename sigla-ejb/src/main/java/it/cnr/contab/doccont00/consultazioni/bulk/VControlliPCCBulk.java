@@ -3,6 +3,7 @@
  * Date 24/05/2024
  */
 package it.cnr.contab.doccont00.consultazioni.bulk;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
 import it.cnr.contab.docamm00.fatturapa.bulk.DocumentoEleTestataBulk;
 import it.cnr.contab.util.enumeration.TipoIVA;
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Dictionary;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -120,6 +121,15 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 	private String riepilogo_uo_codice;
 	private String riepilogo_uo_descrizione;
 	private BigDecimal riepilogo_totale;
+
+	private Integer riepilogo_stato_esercizio;
+	private Integer riepilogo_stato_num_ricevute;
+	private BigDecimal riepilogo_stato_importo_ricevute;
+	private Integer riepilogo_stato_num_registrate;
+	private BigDecimal riepilogo_stato_importo_registrate;
+	private Integer riepilogo_stato_num_pagate;
+	private BigDecimal riepilogo_stato_importo_pagate;
+
 
 	public static final java.util.Dictionary<String, String> tiStatoDocumentoKeys = DocumentoEleTestataBulk.tiStatoDocumentoKeys;
 	public static final java.util.Dictionary<String, String> tiTipoDocumentoKeys = DocumentoEleTestataBulk.tiTipoDocumentoKeys;
@@ -545,5 +555,61 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 
 	public void setRiepilogo_totale(BigDecimal riepilogo_totale) {
 		this.riepilogo_totale = riepilogo_totale;
+	}
+
+	public Integer getRiepilogo_stato_esercizio() {
+		return riepilogo_stato_esercizio;
+	}
+
+	public void setRiepilogo_stato_esercizio(Integer riepilogo_stato_esercizio) {
+		this.riepilogo_stato_esercizio = riepilogo_stato_esercizio;
+	}
+
+	public Integer getRiepilogo_stato_num_ricevute() {
+		return riepilogo_stato_num_ricevute;
+	}
+
+	public void setRiepilogo_stato_num_ricevute(Integer riepilogo_stato_num_ricevute) {
+		this.riepilogo_stato_num_ricevute = riepilogo_stato_num_ricevute;
+	}
+
+	public BigDecimal getRiepilogo_stato_importo_ricevute() {
+		return riepilogo_stato_importo_ricevute;
+	}
+
+	public void setRiepilogo_stato_importo_ricevute(BigDecimal riepilogo_stato_importo_ricevute) {
+		this.riepilogo_stato_importo_ricevute = riepilogo_stato_importo_ricevute;
+	}
+
+	public Integer getRiepilogo_stato_num_registrate() {
+		return riepilogo_stato_num_registrate;
+	}
+
+	public void setRiepilogo_stato_num_registrate(Integer riepilogo_stato_num_registrate) {
+		this.riepilogo_stato_num_registrate = riepilogo_stato_num_registrate;
+	}
+
+	public BigDecimal getRiepilogo_stato_importo_registrate() {
+		return riepilogo_stato_importo_registrate;
+	}
+
+	public void setRiepilogo_stato_importo_registrate(BigDecimal riepilogo_stato_importo_registrate) {
+		this.riepilogo_stato_importo_registrate = riepilogo_stato_importo_registrate;
+	}
+
+	public Integer getRiepilogo_stato_num_pagate() {
+		return riepilogo_stato_num_pagate;
+	}
+
+	public void setRiepilogo_stato_num_pagate(Integer riepilogo_stato_num_pagate) {
+		this.riepilogo_stato_num_pagate = riepilogo_stato_num_pagate;
+	}
+
+	public BigDecimal getRiepilogo_stato_importo_pagate() {
+		return riepilogo_stato_importo_pagate;
+	}
+
+	public void setRiepilogo_stato_importo_pagate(BigDecimal riepilogo_stato_importo_pagate) {
+		this.riepilogo_stato_importo_pagate = riepilogo_stato_importo_pagate;
 	}
 }

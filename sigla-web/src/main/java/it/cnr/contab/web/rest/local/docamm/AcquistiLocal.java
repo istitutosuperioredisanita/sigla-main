@@ -34,6 +34,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.util.List;
+
 @Local
 @Path("/acquisti")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -61,4 +63,22 @@ public interface AcquistiLocal {
             @PathParam("esercizio") Integer esercizio
     ) throws Exception;
 
+    @GET
+    @Path("/stato")
+    @Operation(summary = "Recupera i dati relativi agli acquisti ragruppati per stato",
+            description = "Accesso consentito solo alle utenze abilitate al ruolo SUPERVISORE"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = List.class)
+            )
+    )
+    Response stato(
+            @Context HttpServletRequest request,
+            @Parameter(description = "Unità organizzativa/CDS")
+            @QueryParam("codice") String codice
+    ) throws Exception;
 }
