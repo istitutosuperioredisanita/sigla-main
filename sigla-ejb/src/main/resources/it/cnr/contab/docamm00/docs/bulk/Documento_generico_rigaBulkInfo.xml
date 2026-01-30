@@ -467,7 +467,7 @@
 		name="ds_riga"
 		property="ds_riga"
 		maxLength="200"
-		inputSize="40"
+		inputSize="200"
 		inputType="TEXT"
 		label="Descrizione"
 		nullable="false"
