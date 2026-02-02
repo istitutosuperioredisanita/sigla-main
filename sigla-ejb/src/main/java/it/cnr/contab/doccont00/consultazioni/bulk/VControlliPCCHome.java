@@ -57,25 +57,28 @@ public class VControlliPCCHome extends BulkHome {
 				.stream()
 				.filter(columnMapping -> !columnMapping.isCount())
 				.map(ColumnMapping::getColumnName)
-				.map(s -> s.substring(0, s.indexOf(" ")))
+				.map(s -> s.substring(0, s.lastIndexOf(" ")))
 				.forEach(sqlBuilder::addSQLGroupBy);
 		return fetchAll(sqlBuilder);
 	}
 
-	public List<VControlliPCCBulk> findRiepilogoPerStato(UserContext userContext, VControlliPCCBulk vControlliPCCBulk, String codice) throws ComponentException, PersistencyException {
+	public List<VControlliPCCBulk> findRiepilogoPerStato(UserContext userContext, VControlliPCCBulk vControlliPCCBulk, String uo) throws ComponentException, PersistencyException {
 		setColumnMap("RIEPILOGO_STATO");
 		SQLBuilder sqlBuilder = createSQLBuilder();
-		String cds = Optional.ofNullable(codice).filter(s -> s.length() == 3).orElse(null);
-		String uo = Optional.ofNullable(codice).filter(s -> s.length() == 7).orElse(null);
-		if (cds != null) {
-			sqlBuilder.addTableToHeader("UNITA_ORGANIZZATIVA");
-			sqlBuilder.addSQLJoin("V_CONTROLLI_PCC.CD_UNITA_ORGANIZZATIVA", "UNITA_ORGANIZZATIVA.CD_UNITA_ORGANIZZATIVA");
-			sqlBuilder.addSQLClause(FindClause.AND, "UNITA_ORGANIZZATIVA.CD_UNITA_PADRE", SQLBuilder.EQUALS, cds);
-		}
-		if (uo != null) {
-			sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, uo);
-		}
-		sqlBuilder.addSQLGroupBy("TO_NUMBER(NVL(TO_CHAR(DATA_RICEZIONE,'YYYY'),ESERCIZIO))");
+		Optional.ofNullable(uo).ifPresent(codice -> {
+			sqlBuilder.openParenthesis(FindClause.AND);
+			sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, codice);
+			sqlBuilder.addSQLClause(FindClause.OR, "CD_UO_CUU", SQLBuilder.EQUALS, codice);
+			sqlBuilder.closeParenthesis();
+
+		});
+		Collection<ColumnMapping> columnMappings = getColumnMap().getColumnMappings();
+		columnMappings
+				.stream()
+				.filter(columnMapping -> !columnMapping.isCount())
+				.map(ColumnMapping::getColumnName)
+				.map(s -> s.substring(0, s.lastIndexOf(" ")))
+				.forEach(sqlBuilder::addSQLGroupBy);
 		return fetchAll(sqlBuilder);
 	}
 
