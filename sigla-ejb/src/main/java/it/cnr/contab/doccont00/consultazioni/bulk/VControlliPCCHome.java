@@ -72,13 +72,7 @@ public class VControlliPCCHome extends BulkHome {
 			sqlBuilder.closeParenthesis();
 
 		});
-		Collection<ColumnMapping> columnMappings = getColumnMap().getColumnMappings();
-		columnMappings
-				.stream()
-				.filter(columnMapping -> !columnMapping.isCount())
-				.map(ColumnMapping::getColumnName)
-				.map(s -> s.substring(0, s.lastIndexOf(" ")))
-				.forEach(sqlBuilder::addSQLGroupBy);
+		sqlBuilder.addSQLGroupBy("TO_NUMBER(NVL(TO_CHAR(DATA_RICEZIONE,'YYYY'),ESERCIZIO))");
 		return fetchAll(sqlBuilder);
 	}
 
