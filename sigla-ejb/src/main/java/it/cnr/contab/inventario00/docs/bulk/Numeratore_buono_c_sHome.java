@@ -98,7 +98,7 @@ public Long getNextTempPg(
 				progressivo_def.setEsercizio(esercizio);
 				progressivo_def.setPg_inventario(progressivoInventario);
 				progressivo_def.setTi_carico_scarico(tipoDocumento);
-				progressivo_def.setIniziale(new Long(1));
+				progressivo_def.setIniziale(new Long(0));
 				progressivo_def.setCorrente(progressivo_def.getIniziale().longValue());
 				progressivo_def.setUser(user);
 				insert(progressivo_def, userContext);
