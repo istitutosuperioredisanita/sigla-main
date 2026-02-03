@@ -141,6 +141,7 @@ public class Nota_di_credito_rigaHome extends Fattura_passiva_rigaHome {
             docRiga.setVoce_iva((Voce_ivaBulk) fatpasHome.loadIfNeededObject(docRiga.getVoce_iva()));
             Fattura_passiva_rigaIHome fatpasRigaHome = (Fattura_passiva_rigaIHome)getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
             Fattura_passiva_rigaBulk rigaCollegata = (Fattura_passiva_rigaBulk)fatpasHome.loadIfNeededObject(docRiga.getRiga_fattura_origine());
+            rigaCollegata.setFattura_passiva((Fattura_passivaBulk)fatpasHome.loadIfNeededObject(rigaCollegata.getFattura_passiva()));
 
             Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoFattura;
             if (rigaCollegata.getVoce_ep()==null)

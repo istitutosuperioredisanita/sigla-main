@@ -17,13 +17,13 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
-public class Nota_di_credito_attiva_riga_ecoHome extends Fattura_passiva_riga_ecoHome {
+public class Nota_di_credito_attiva_riga_ecoHome extends Fattura_attiva_riga_ecoHome {
 
     public Nota_di_credito_attiva_riga_ecoHome(java.sql.Connection conn) {
-        super(Nota_di_credito_riga_ecoBulk.class, conn);
+        super(Nota_di_credito_attiva_riga_ecoBulk.class, conn);
     }
 
     public Nota_di_credito_attiva_riga_ecoHome(java.sql.Connection conn, it.cnr.jada.persistency.PersistentCache persistentCache) {
-        super(Nota_di_credito_riga_ecoBulk.class, conn, persistentCache);
+        super(Nota_di_credito_attiva_riga_ecoBulk.class, conn, persistentCache);
     }
 }

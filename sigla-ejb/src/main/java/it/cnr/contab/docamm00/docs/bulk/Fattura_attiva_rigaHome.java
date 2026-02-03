@@ -182,19 +182,6 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 		try {
 			Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
 			if (Optional.ofNullable(docRiga).isPresent()) {
-				Fattura_attivaBulk fatturaAttivaBulk = (Fattura_attivaBulk)fatpasHome.loadIfNeededObject((OggettoBulk) docRiga.getFather());
-				if (fatturaAttivaBulk.isDocumentoInContoAcconto() || fatturaAttivaBulk.isDocumentoInContoAnticipo()) {
-					ContoBulk aContoDefault = null;
-					if (fatturaAttivaBulk.isDocumentoInContoAcconto())
-						aContoDefault = ((Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class))
-								.getContoAccontoDocumentoAttivo(docRiga.getEsercizio());
-					else if (fatturaAttivaBulk.isDocumentoInContoAnticipo())
-						aContoDefault = ((Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class))
-								.getContoAnticipoDocumentoAttivo(docRiga.getEsercizio());
-					if (aContoDefault != null)
-						return aContoDefault;
-					throw new ApplicationPersistencyException("Non è stato possibile individuare il conto acconto/anticipo da associare al documento!");
-				}
 				if (Optional.ofNullable(docRiga.getAccertamento_scadenzario()).isPresent()) {
 					Accertamento_scadenzarioBulk accertScad = (Accertamento_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getAccertamento_scadenzario());
 
@@ -211,7 +198,7 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 				}
 			}
 			return null;
-		} catch (PersistencyException | ComponentException e) {
+		} catch (PersistencyException e) {
 			throw new DetailedRuntimeException(e);
         }
     }
@@ -231,7 +218,7 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 				if (Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).filter(Accertamento_scadenzarioBulk.class::isInstance).isPresent()) {
 					//carico i dettagli analitici recuperandoli dall'obbligazione_scad_voce
 					Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHomeCache().getHome(Accertamento_scadenzarioBulk.class);
-					List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, (Accertamento_scadenzarioBulk) docRiga.getScadenzaDocumentoContabile());
+					List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, (Accertamento_scadenzarioBulk) docRiga.getScadenzaDocumentoContabile(), Boolean.FALSE);
 					BigDecimal totScad = scadVoceBulks.stream().map(Accertamento_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
 					for (Accertamento_scad_voceBulk scadVoce : scadVoceBulks) {
 						Fattura_attiva_riga_ecoBulk myRigaEco = (Fattura_attiva_riga_ecoBulk)rigaEcoClass.newInstance();

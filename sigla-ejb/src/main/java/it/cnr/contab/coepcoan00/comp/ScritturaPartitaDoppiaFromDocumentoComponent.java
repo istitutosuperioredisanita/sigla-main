@@ -354,14 +354,16 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         SQLBuilder sql = home.createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio_cont", SQLBuilder.EQUALS, esercizio);
         Optional.ofNullable(cdCds).ifPresent(el -> sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
-//       sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, 2022);
-//        sql.addClause(FindClause.AND, "tipodoc", SQLBuilder.EQUALS, "ORDINE_CNS");
-        //       sql.addClause(FindClause.AND, "pg_doc", SQLBuilder.EQUALS, 117);
-        // sql.addClause(FindClause.AND, "cd_unita_operativa", SQLBuilder.EQUALS, "DMI");
-        // sql.addClause(FindClause.AND, "riga", SQLBuilder.EQUALS, 2);
-        // sql.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, 15);
-
-//        sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, "999.000");
+        //sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, 2025);
+        //sql.addClause(FindClause.AND, "tipodoc", SQLBuilder.EQUALS, "GENERICO_E");
+        //sql.addClause(FindClause.AND, "tipodoc", SQLBuilder.EQUALS, "FATTURA_A");
+        //sql.addClause(FindClause.AND, "pg_doc", SQLBuilder.EQUALS, 1454);
+        //sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, "003.001");
+        //sql.addClause(FindClause.AND, "cd_unita_operativa", SQLBuilder.EQUALS, "COFAR");
+        //sql.addClause(FindClause.AND, "cd_numeratore", SQLBuilder.EQUALS, "CCF");
+        //sql.addClause(FindClause.AND, "riga", SQLBuilder.EQUALS, 1);
+        //sql.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, 1);
+        //sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, "999.000");
         return home.fetchAll(sql);
     }
 

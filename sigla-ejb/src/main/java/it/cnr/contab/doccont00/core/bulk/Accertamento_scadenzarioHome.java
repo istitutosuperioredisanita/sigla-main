@@ -201,18 +201,22 @@ public java.util.Hashtable loadTipoDocumentoKeys( Accertamento_scadenzarioBulk b
 	return ht;
 }
 
-public java.util.List findAccertamento_scad_voceList( it.cnr.jada.UserContext userContext, Accertamento_scadenzarioBulk os ) throws PersistencyException
-{
-//	PersistentHome osvHome = getHomeCache().getHome(Accertamento_scad_voceBulk.class, "default", "it.cnr.contab.doccont00.comp.AccertamentoComponent.edit" );
-	PersistentHome osvHome = getHomeCache().getHome(Accertamento_scad_voceBulk.class );
-	SQLBuilder sql = osvHome.createSQLBuilder();
-	sql.addSQLClause("AND","CD_CDS",sql.EQUALS, os.getAccertamento().getCds().getCd_unita_organizzativa());
-	sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS, os.getAccertamento().getEsercizio());
-	sql.addSQLClause("AND","ESERCIZIO_ORIGINALE",sql.EQUALS, os.getAccertamento().getEsercizio_originale());
-	sql.addSQLClause("AND","PG_ACCERTAMENTO",sql.EQUALS, os.getAccertamento().getPg_accertamento());
-	sql.addSQLClause("AND","PG_ACCERTAMENTO_SCADENZARIO",sql.EQUALS, os.getPg_accertamento_scadenzario());
-	List l =  osvHome.fetchAll(sql);
-	getHomeCache().fetchAll(userContext);
-	return l;
-}
+	public java.util.List findAccertamento_scad_voceList( it.cnr.jada.UserContext userContext, Accertamento_scadenzarioBulk os ) throws PersistencyException {
+		return this.findAccertamento_scad_voceList(userContext, os, Boolean.TRUE);
+	}
+
+	public java.util.List findAccertamento_scad_voceList( it.cnr.jada.UserContext userContext, Accertamento_scadenzarioBulk os, boolean fetchAll ) throws PersistencyException {
+	//	PersistentHome osvHome = getHomeCache().getHome(Accertamento_scad_voceBulk.class, "default", "it.cnr.contab.doccont00.comp.AccertamentoComponent.edit" );
+		PersistentHome osvHome = getHomeCache().getHome(Accertamento_scad_voceBulk.class );
+		SQLBuilder sql = osvHome.createSQLBuilder();
+		sql.addSQLClause("AND","CD_CDS",sql.EQUALS, os.getAccertamento().getCds().getCd_unita_organizzativa());
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS, os.getAccertamento().getEsercizio());
+		sql.addSQLClause("AND","ESERCIZIO_ORIGINALE",sql.EQUALS, os.getAccertamento().getEsercizio_originale());
+		sql.addSQLClause("AND","PG_ACCERTAMENTO",sql.EQUALS, os.getAccertamento().getPg_accertamento());
+		sql.addSQLClause("AND","PG_ACCERTAMENTO_SCADENZARIO",sql.EQUALS, os.getPg_accertamento_scadenzario());
+		List l =  osvHome.fetchAll(sql);
+		if (fetchAll)
+			getHomeCache().fetchAll(userContext);
+		return l;
+	}
 }

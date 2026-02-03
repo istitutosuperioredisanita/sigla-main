@@ -374,7 +374,7 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                     if (fatturaOrdineBulks.size()>1)
                         throw new ApplicationException("Errore nei dati: esiste più di una consegna associata alla riga della fattura!");
 
-                    FatturaOrdineBulk fatturaOrdine = fatturaOrdineBulks.get(0);
+                    FatturaOrdineBulk fatturaOrdine = fatturaOrdineBulks.getFirst();
                     OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk)fatpasHome.loadIfNeededObject(fatturaOrdine.getOrdineAcqConsegna());
                     consegna.setOrdineAcqRiga((OrdineAcqRigaBulk) fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga()));
                     consegna.getOrdineAcqRiga().setVoceIva((Voce_ivaBulk) fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getVoce_iva()));

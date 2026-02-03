@@ -1988,7 +1988,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 
 	public TipoDocumentoEnum getTipoDocumentoEnum() {
 		if (this.isDocumentoStorno()) {
-			if (this.isGenericoAttivo())
+			if (TipoDocumentoEnum.fromValue(this.getCd_tipo_documento_amm()).isDocumentoGenericoAttivo())
 				return TipoDocumentoEnum.fromValue(TipoDocumentoEnum.TIPO_DOCGEN_STORNO_ATTIVO);
 			return TipoDocumentoEnum.fromValue(TipoDocumentoEnum.TIPO_DOCGEN_STORNO_PASSIVO);
 		}

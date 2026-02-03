@@ -34,6 +34,7 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
+import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.*;
@@ -208,8 +209,8 @@ public class Documento_generico_rigaHome extends BulkHome {
                             ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
                             return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(voceEpBulk.getCd_voce_ep(), voceEpBulk.getEsercizio()));
                         }
-                        throw new ApplicationPersistencyException("Non è stato possibile individuare il conto della sezione Avere dalla causale contabile associata al documento!");
-                    } else if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isPresent()) {
+                    }
+                    if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isPresent()) {
                         Accertamento_scadenzarioBulk accertScad = (Accertamento_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getAccertamento_scadenziario());
 
                         if (Optional.ofNullable(accertScad).isPresent()) {
@@ -234,8 +235,8 @@ public class Documento_generico_rigaHome extends BulkHome {
                             ContoHome contoHome = (ContoHome) getHomeCache().getHome(ContoBulk.class);
                             return (ContoBulk) contoHome.findByPrimaryKey(new ContoBulk(voceEpBulk.getCd_voce_ep(), voceEpBulk.getEsercizio()));
                         }
-                        throw new ApplicationPersistencyException("Non è stato possibile individuare il conto della sezione Dare dalla causale contabile associata al documento!");
-                    } else if (Optional.ofNullable(docRiga.getObbligazione_scadenziario()).isPresent()) {
+                    }
+                    if (Optional.ofNullable(docRiga.getObbligazione_scadenziario()).isPresent()) {
                         Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getObbligazione_scadenziario());
 
                         if (Optional.ofNullable(obbligScad).isPresent()) {
@@ -244,7 +245,7 @@ public class Documento_generico_rigaHome extends BulkHome {
                             List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
                             return Optional.ofNullable(listAss).orElse(new ArrayList<>())
                                     .stream().map(Ass_ev_voceepBulk::getVoce_ep)
-                                    .findAny().orElse(null);
+                                    .findAny().orElseThrow(()->new ApplicationRuntimeException("Non risulta associata alcuna voce di economica alla voce di bilancio "+obblig.getCd_elemento_voce()));
                         }
                     } else {
                         Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
@@ -279,7 +280,7 @@ public class Documento_generico_rigaHome extends BulkHome {
                         if (Optional.ofNullable(accertScad).isPresent()) {
                             //carico i dettagli analitici recuperandoli dall'accertamento_scad_voce
                             Accertamento_scadenzarioHome accertamentoScadenzarioHome = (Accertamento_scadenzarioHome) getHomeCache().getHome(Accertamento_scadenzarioBulk.class);
-                            List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, accertScad);
+                            List<Accertamento_scad_voceBulk> scadVoceBulks = accertamentoScadenzarioHome.findAccertamento_scad_voceList(userContext, accertScad, Boolean.FALSE);
                             BigDecimal totScad = scadVoceBulks.stream().map(Accertamento_scad_voceBulk::getIm_voce).reduce(BigDecimal.ZERO, BigDecimal::add);
                             for (Accertamento_scad_voceBulk scadVoce : scadVoceBulks) {
                                 Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
@@ -387,21 +388,24 @@ public class Documento_generico_rigaHome extends BulkHome {
             Pair<ContoBulk,List<IDocumentoDetailAnaCogeBulk>> datiEcoDoc = null;
             if (docRiga.getDocumento_generico_riga_storno()!=null) {
                 Documento_generico_rigaBulk rigaCollegata = (Documento_generico_rigaBulk) fatpasHome.loadIfNeededObject(docRiga.getDocumento_generico_riga_storno());
-                datiEcoDoc = this.getDatiEconomici(rigaCollegata);
-                if (datiEcoDoc.getFirst().getCd_voce_ep()==null)
+                if (Optional.ofNullable(rigaCollegata.getVoce_ep()).flatMap(el->Optional.ofNullable(el.getCd_voce_ep())).isEmpty())
                     datiEcoDoc = this.getDatiEconomiciDefault(userContext, rigaCollegata);
+                else
+                    datiEcoDoc = this.getDatiEconomici(rigaCollegata);
             } else if (docRiga.getFattura_attiva_riga_storno()!=null) {
                 Fattura_attiva_rigaIHome fatattrigaHome = (Fattura_attiva_rigaIHome) getHomeCache().getHome(Fattura_attiva_rigaIBulk.class);
                 Fattura_attiva_rigaIBulk rigaCollegata = (Fattura_attiva_rigaIBulk) fatpasHome.loadIfNeededObject(docRiga.getFattura_attiva_riga_storno());
-                datiEcoDoc = fatattrigaHome.getDatiEconomici(rigaCollegata);
-                if (datiEcoDoc.getFirst().getCd_voce_ep()==null)
+                if (Optional.ofNullable(rigaCollegata.getVoce_ep()).flatMap(el->Optional.ofNullable(el.getCd_voce_ep())).isEmpty())
                     datiEcoDoc = fatattrigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
+                else
+                    datiEcoDoc = fatattrigaHome.getDatiEconomici(rigaCollegata);
             } else if (docRiga.getFattura_passiva_riga_storno()!=null) {
                 Fattura_passiva_rigaIHome fatpasrigaHome = (Fattura_passiva_rigaIHome) getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
                 Fattura_passiva_rigaIBulk rigaCollegata = (Fattura_passiva_rigaIBulk) fatpasHome.loadIfNeededObject(docRiga.getFattura_passiva_riga_storno());
-                datiEcoDoc = fatpasrigaHome.getDatiEconomici(rigaCollegata);
-                if (datiEcoDoc.getFirst().getCd_voce_ep()==null)
+                if (Optional.ofNullable(rigaCollegata.getVoce_ep()).flatMap(el->Optional.ofNullable(el.getCd_voce_ep())).isEmpty())
                     datiEcoDoc = fatpasrigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
+                else
+                    datiEcoDoc = fatpasrigaHome.getDatiEconomici(rigaCollegata);
             }
             if (datiEcoDoc!=null) {
                 BigDecimal totaleImportiAnalitici = datiEcoDoc.getSecond().stream().map(IDocumentoDetailAnaCogeBulk::getImporto).reduce(BigDecimal.ZERO, BigDecimal::add);

@@ -107,7 +107,10 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 						log_riga.setPg_esecuzione(logDB.getPg_esecuzione());
 						log_riga.setPg_riga(BigDecimal.valueOf(listLogRighe.size() + 1));
 						log_riga.setTi_messaggio("E");
-						log_riga.setMessaggio("Esercizio:" + documentoCoge.getEsercizio() + "-CdUo:" + documentoCoge.getCd_unita_organizzativa() + "-CdTipoDoc:" + documentoCoge.getTipodoc() + "-PgDoc:" + documentoCoge.getPg_doc());
+						if (documentoCoge.getTipoDocumentoEnum().isConsegnaOrdineAcquisto())
+							log_riga.setMessaggio("Esercizio:" + documentoCoge.getEsercizio() + "-CdUnitaOperativa:" + documentoCoge.getCd_unita_operativa() + "-CdNumeratore:" + documentoCoge.getCd_numeratore() + "-PgDoc:" + documentoCoge.getPg_doc()+"-Riga:" + documentoCoge.getRiga()+"-Consegna:" + documentoCoge.getConsegna() );
+						else
+							log_riga.setMessaggio("Esercizio:" + documentoCoge.getEsercizio() + "-CdUo:" + documentoCoge.getCd_unita_organizzativa() + "-CdTipoDoc:" + documentoCoge.getTipodoc() + "-PgDoc:" + documentoCoge.getPg_doc());
 						log_riga.setTrace(log_riga.getMessaggio());
 						log_riga.setNote(e.getMessage().substring(0, Math.min(e.getMessage().length(), 3999)));
 						log_riga.setToBeCreated();
