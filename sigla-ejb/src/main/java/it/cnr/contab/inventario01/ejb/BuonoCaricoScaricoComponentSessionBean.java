@@ -23,6 +23,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
@@ -35,6 +36,7 @@ import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettBulk;
 import it.cnr.contab.inventario01.comp.BuonoCaricoScaricoComponent;
+import it.cnr.contab.inventario01.comp.DocTrasportoRientroComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
@@ -1061,6 +1063,27 @@ public class BuonoCaricoScaricoComponentSessionBean extends it.cnr.jada.ejb.CRUD
 		} catch (PersistencyException e) {
 			component_invocation_failure(param0,componentObj);
 			throw e;
+		}
+	}
+
+	@Override
+	public TerzoBulk caricaTerzoDaAnagrafico(UserContext userContext, Integer cdAnag) throws ComponentException {
+		pre_component_invocation(userContext, componentObj);
+		try {
+			TerzoBulk result = ((BuonoCaricoScaricoComponent) componentObj)
+					.caricaTerzoDaAnagrafico(userContext, cdAnag);
+			component_invocation_succes(userContext, componentObj);
+			return result;
+		} catch (it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext, componentObj);
+			throw e;
+		} catch (it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext, componentObj);
+			throw e;
+		} catch (RuntimeException e) {
+			throw uncaughtRuntimeException(userContext, componentObj, e);
+		} catch (Error e) {
+			throw uncaughtError(userContext, componentObj, e);
 		}
 	}
 

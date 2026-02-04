@@ -23,6 +23,8 @@
  */
 package it.cnr.contab.inventario01.bp;
 
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaIBulk;
@@ -826,6 +828,29 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * Carica TerzoBulk completo da AnagraficoBulk tramite component
+	 */
+	public TerzoBulk caricaTerzoDaAnagrafico(ActionContext context, AnagraficoBulk anagrafico)
+			throws BusinessProcessException {
+
+		if (anagrafico == null || anagrafico.getCd_anag() == null) {
+			return null;
+		}
+
+		try {
+			return ((it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession)
+					createComponentSession())
+					.caricaTerzoDaAnagrafico(
+							context.getUserContext(),
+							anagrafico.getCd_anag()
+					);
+		} catch (ComponentException | RemoteException e) {
+			throw handleException(e);
+		}
 	}
 }
 

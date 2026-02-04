@@ -100,4 +100,5 @@ public interface BuonoCaricoScaricoComponentSession	extends CRUDDetailComponentS
 		Ass_inv_bene_fatturaBulk sdoppiaAssociazioneFor (UserContext userContext,Fattura_passiva_rigaBulk riga_fattura,Fattura_passiva_rigaBulk riga_fattura_new) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 		boolean checkEtichettaBeneAlreadyExist(UserContext userContext,Buono_carico_scarico_dettBulk dett) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 		boolean isPresentiAccessoriPerBeni(UserContext userContext,Buono_carico_scaricoBulk buonoCs) throws RemoteException, ComponentException, PersistencyException;
+		it.cnr.contab.anagraf00.core.bulk.TerzoBulk caricaTerzoDaAnagrafico(it.cnr.jada.UserContext userContext, Integer cdAnag) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 }
