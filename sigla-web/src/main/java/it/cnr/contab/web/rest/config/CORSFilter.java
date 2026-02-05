@@ -64,7 +64,7 @@ public class CORSFilter implements Filter {
                 .map(s -> Arrays.asList(s.split(";")))
                 .orElse(Collections.emptyList());
 
-        logger.debug("CORS Filter AllowOrigins: {} ", allowOrigins);
+        logger.info("CORS Filter AllowOrigins: {} ", allowOrigins);
 
         httpServletRequest
                 .map(httpServletRequest1 -> {
