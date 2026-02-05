@@ -36,6 +36,7 @@
         <configuration>
             <!-- Path al bootable JAR -->
             <property name="jarFile">target/sigla-bootable.jar</property>
+            <property name="startupTimeout">180</property>
             <!-- JVM arguments -->
             <property name="javaVmArguments">
                 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787
