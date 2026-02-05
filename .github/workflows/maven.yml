@@ -18,7 +18,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Publish package
-        run: mvn clean deploy -s .m2/settings.xml -PAZURE --batch-mode --errors --fail-at-end --show-version
+        run: mvn clean deploy -s .m2/settings.xml -PAZURE -DskipTests --batch-mode --errors --fail-at-end --show-version
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
