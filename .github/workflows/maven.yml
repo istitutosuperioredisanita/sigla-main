@@ -2,8 +2,8 @@ name: Publish package
 on:
   push:
     branches: [master, sviluppo, analitica-wildfly-bootable-jar]
-    paths:
-      - '!docs/**'   # Tutti i file tranne docs e sottocartelle
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
   publish:
