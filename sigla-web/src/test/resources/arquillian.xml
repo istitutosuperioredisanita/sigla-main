@@ -40,6 +40,7 @@
             <property name="javaVmArguments">
                 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787
                 -Xmx2g
+                -Djboss.as.management.blocking.timeout=180
                 -Djava.net.preferIPv4Stack=true
                 -Dsigla.db.driver=h2
                 -Dsigla.db.url=jdbc:h2:mem:sigladb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
