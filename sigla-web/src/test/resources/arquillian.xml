@@ -37,10 +37,12 @@
             <!-- Path al bootable JAR -->
             <property name="jarFile">target/sigla-bootable.jar</property>
             <property name="startupTimeout">180</property>
+            <property name="timeout">180</property>
+            <property name="managementTimeout">180</property>
             <!-- JVM arguments -->
             <property name="javaVmArguments">
-                -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787
                 -Xmx2g
+                -Djava.security.egd=file:/dev/./urandom
                 -Djboss.as.management.blocking.timeout=180
                 -Djava.net.preferIPv4Stack=true
                 -Dsigla.db.driver=h2
