@@ -121,6 +121,7 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 	private String riepilogo_uo_codice;
 	private String riepilogo_uo_descrizione;
 	private BigDecimal riepilogo_totale;
+	private BigDecimal riepilogo_totale_importo;
 
 	private Integer riepilogo_stato_esercizio;
 	private Integer riepilogo_stato_num_ricevute;
@@ -555,6 +556,14 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 
 	public void setRiepilogo_totale(BigDecimal riepilogo_totale) {
 		this.riepilogo_totale = riepilogo_totale;
+	}
+
+	public BigDecimal getRiepilogo_totale_importo() {
+		return riepilogo_totale_importo;
+	}
+
+	public void setRiepilogo_totale_importo(BigDecimal riepilogo_totale_importo) {
+		this.riepilogo_totale_importo = riepilogo_totale_importo;
 	}
 
 	public Integer getRiepilogo_stato_esercizio() {
