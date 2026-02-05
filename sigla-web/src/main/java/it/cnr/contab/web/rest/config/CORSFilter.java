@@ -56,8 +56,10 @@ public class CORSFilter implements Filter {
         final Optional<HttpServletRequest> httpServletRequest = Optional.ofNullable(request)
                 .filter(HttpServletRequest.class::isInstance)
                 .map(HttpServletRequest.class::cast);
+        String corsAllowOrigin = Optional.ofNullable(System.getProperty(CORS_ALLOW_ORIGIN))
+                .orElseGet(() -> System.getenv("CORS_ALLOW_ORIGIN"));
 
-        final List<String> allowOrigins = Optional.ofNullable(System.getProperty(CORS_ALLOW_ORIGIN))
+        final List<String> allowOrigins = Optional.ofNullable(corsAllowOrigin)
                 .filter(s -> !s.isEmpty())
                 .map(s -> Arrays.asList(s.split(";")))
                 .orElse(Collections.emptyList());
