@@ -187,7 +187,8 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 					if (Optional.ofNullable(accertScad).isPresent()) {
 						AccertamentoBulk accert = (AccertamentoBulk) fatpasHome.loadIfNeededObject(accertScad.getAccertamento());
 						Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
-						List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), accert.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
+						//Metto docRiga.getEsercizio e non accert.getEsercizio perchè quest'ultimo cambia se anno ribaltato
+						List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), docRiga.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
 						return Optional.ofNullable(listAss).orElse(new ArrayList<>())
 								.stream().map(Ass_ev_voceepBulk::getVoce_ep)
 								.findAny().orElseThrow(()->

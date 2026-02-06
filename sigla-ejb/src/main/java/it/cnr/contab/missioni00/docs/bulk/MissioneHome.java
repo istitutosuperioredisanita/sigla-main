@@ -499,17 +499,18 @@ public class MissioneHome extends BulkHome implements
         return home.fetchAll(sql);
     }
 
-    public ContoBulk getContoCostoDefault(MissioneBulk docRiga) throws ComponentException {
+    public ContoBulk getContoCostoDefault(MissioneBulk missione) throws ComponentException {
         try {
             Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
-            if (Optional.ofNullable(docRiga).isPresent()) {
-                if (Optional.ofNullable(docRiga.getObbligazione_scadenzario()).isPresent()) {
-                    Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getObbligazione_scadenzario());
+            if (Optional.ofNullable(missione).isPresent()) {
+                if (Optional.ofNullable(missione.getObbligazione_scadenzario()).isPresent()) {
+                    Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(missione.getObbligazione_scadenzario());
 
                     if (Optional.ofNullable(obbligScad).isPresent()) {
                         ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
                         Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
-                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                        //Metto missione.getEsercizio() e non accert.getEsercizio() perchè quest'ultimo cambia se anno ribaltato
+                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), missione.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
                         return Optional.ofNullable(listAss).orElse(new ArrayList<>())
                                 .stream().map(Ass_ev_voceepBulk::getVoce_ep)
                                 .findAny().orElse(null);
@@ -517,9 +518,9 @@ public class MissioneHome extends BulkHome implements
                 }
                 //Se lo scadenzario non esiste in quanto compenso coperto da anticipo, allora il conto di costo lo recupero
                 //dall'anticipo stesso
-                if (Optional.ofNullable(docRiga.getAnticipo()).isPresent()) {
+                if (Optional.ofNullable(missione.getAnticipo()).isPresent()) {
                     AnticipoHome anticipoHome = (AnticipoHome)getHomeCache().getHome(AnticipoBulk.class);
-                    return anticipoHome.getContoEconomicoForMissione((AnticipoBulk)anticipoHome.findByPrimaryKey(docRiga.getAnticipo()));
+                    return anticipoHome.getContoEconomicoForMissione((AnticipoBulk)anticipoHome.findByPrimaryKey(missione.getAnticipo()));
                 }
             }
             return null;
@@ -538,7 +539,8 @@ public class MissioneHome extends BulkHome implements
                     if (Optional.ofNullable(obbligScad).isPresent()) {
                         ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
                         Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
-                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                        //Metto missione.getEsercizio() e non accert.getEsercizio() perchè quest'ultimo cambia se anno ribaltato
+                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), missione.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
                         return Optional.ofNullable(listAss).orElse(new ArrayList<>())
                                 .stream().map(Ass_ev_voceepBulk::getVoce_ep)
                                 .findAny().orElse(null);

@@ -234,7 +234,8 @@ public void updateFondoEconomale(it.cnr.contab.fondecon00.core.bulk.Fondo_spesaB
 					if (Optional.ofNullable(obbligScad).isPresent()) {
 						ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
 						Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
-						List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+						//Metto anticipo.getEsercizio() e non obblig.getEsercizio() perchè quest'ultimo cambia se anno ribaltato
+						List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), anticipo.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
 						return Optional.ofNullable(listAss).orElse(new ArrayList<>())
 								.stream().map(Ass_ev_voceepBulk::getVoce_ep)
 								.findAny().orElse(null);

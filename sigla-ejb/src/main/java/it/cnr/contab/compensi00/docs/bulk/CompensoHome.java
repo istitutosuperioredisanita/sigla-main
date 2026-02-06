@@ -27,7 +27,6 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
@@ -508,7 +507,8 @@ public class CompensoHome extends BulkHome implements
                    if (Optional.ofNullable(obbligScad).isPresent()) {
                       ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
                       Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
-                      List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                      //Metto compenso.getEsercizio() e non accert.getEsercizio() perchè quest'ultimo cambia se anno ribaltato
+                      List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), compenso.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
                       return Optional.ofNullable(listAss).orElse(new ArrayList<>())
                                     .stream().map(Ass_ev_voceepBulk::getVoce_ep)
                                     .findAny().orElse(null);
