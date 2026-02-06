@@ -9,6 +9,7 @@ public class TreeNode {
     private String key;
     private String description;
     private BigDecimal value;
+    private BigDecimal secondaryValue;
     private List<TreeNode> children;
 
     public TreeNode(String name, String key, String description) {
@@ -20,11 +21,13 @@ public class TreeNode {
     }
 
     public TreeNode(String name, String key, String description, BigDecimal value) {
-        this.name = name;
-        this.key = key;
-        this.description = description;
+        this(name, key, description);
         this.value = value;
-        this.children = new ArrayList<>();
+    }
+
+    public TreeNode(String name, String key, String description, BigDecimal value, BigDecimal secondaryValue) {
+        this(name, key, description, value);
+        this.secondaryValue = secondaryValue;
     }
 
     // Calcola ricorsivamente il valore totale sommando i figli
@@ -38,6 +41,20 @@ public class TreeNode {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         this.value = total;
+        return total;
+    }
+
+    // Calcola ricorsivamente il valore totale sommando i figli
+    public BigDecimal calculateTotalSecondaryValue() {
+        if (children == null || children.isEmpty()) {
+            return secondaryValue != null ? secondaryValue : BigDecimal.ZERO;
+        }
+
+        BigDecimal total = children.stream()
+                .map(TreeNode::calculateTotalSecondaryValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        this.secondaryValue = total;
         return total;
     }
 
@@ -56,4 +73,7 @@ public class TreeNode {
 
     public List<TreeNode> getChildren() { return children; }
     public void setChildren(List<TreeNode> children) { this.children = children; }
+
+    public BigDecimal getSecondaryValue() { return secondaryValue; }
+    public void setSecondaryValue(BigDecimal secondaryValue) { this.secondaryValue = secondaryValue; }
 }

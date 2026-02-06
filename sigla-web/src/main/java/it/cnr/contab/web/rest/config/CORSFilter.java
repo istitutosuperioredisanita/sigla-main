@@ -43,9 +43,19 @@ public class CORSFilter implements Filter {
     public static final String GET_POST_OPTIONS_PUT_PATCH_DELETE = "GET, POST, OPTIONS, PUT, PATCH, DELETE";
     public static final String ORIGIN_CONTENT_TYPE_ACCEPT_AUTHORIZATION = "origin, content-type, accept, authorization";
 
+    List<String> allowOrigins;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         logger.info("Init Filter: {}", filterConfig.getFilterName());
+        String corsAllowOrigin = Optional.ofNullable(System.getProperty(CORS_ALLOW_ORIGIN))
+                .orElseGet(() -> System.getenv("CORS_ALLOW_ORIGIN"));
+        allowOrigins = Optional.ofNullable(corsAllowOrigin)
+                .filter(s -> !s.isEmpty())
+                .map(s -> Arrays.asList(s.split(";")))
+                .orElse(Collections.emptyList());
+
+        logger.info("CORS Filter AllowOrigins: {} ", allowOrigins);
     }
 
     @Override
@@ -56,13 +66,6 @@ public class CORSFilter implements Filter {
         final Optional<HttpServletRequest> httpServletRequest = Optional.ofNullable(request)
                 .filter(HttpServletRequest.class::isInstance)
                 .map(HttpServletRequest.class::cast);
-
-        final List<String> allowOrigins = Optional.ofNullable(System.getProperty(CORS_ALLOW_ORIGIN))
-                .filter(s -> !s.isEmpty())
-                .map(s -> Arrays.asList(s.split(";")))
-                .orElse(Collections.emptyList());
-
-        logger.debug("CORS Filter AllowOrigins: {} ", allowOrigins);
 
         httpServletRequest
                 .map(httpServletRequest1 -> {

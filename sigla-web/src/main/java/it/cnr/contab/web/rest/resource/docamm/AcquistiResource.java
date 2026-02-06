@@ -116,8 +116,12 @@ public class AcquistiResource implements AcquistiLocal {
                 BigDecimal uoTotal = uoItems.stream()
                         .map(VControlliPCCBulk::getRiepilogo_totale)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
+                // Somma i totali per la UO (foglie)
+                BigDecimal uoTotalImporto = uoItems.stream()
+                        .map(VControlliPCCBulk::getRiepilogo_totale_importo)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                TreeNode uoNode = new TreeNode(uoCode + " - " + uoDescription, uoCode, uoDescription, uoTotal);
+                TreeNode uoNode = new TreeNode(uoCode + " - " + uoDescription, uoCode, uoDescription, uoTotalImporto, uoTotal);
                 uoNodes.add(uoNode);
             }
 
@@ -129,6 +133,7 @@ public class AcquistiResource implements AcquistiLocal {
 
         // Calcola ricorsivamente tutti i totali dei nodi padre
         root.calculateTotalValue();
+        root.calculateTotalSecondaryValue();
 
         return root;
     }

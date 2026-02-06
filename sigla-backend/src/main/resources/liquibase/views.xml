@@ -3216,4 +3216,13 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_VOCE_F_PARTITA_GIRO_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_VOCE_F_PARTITA_GIRO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_INDICATORE_PAGAMENTI_DETAIL_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_INDICATORE_PAGAMENTI_DETAIL_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_INDICATORE_PAGAMENTI">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_INDICATORE_PAGAMENTI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_INDICATORE_PAGAMENTI_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_CONS_INDICATORE_PAGAMENTI_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>
