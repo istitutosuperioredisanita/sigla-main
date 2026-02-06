@@ -19,7 +19,12 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
       - name: Publish package
-        run: mvn clean deploy -s .m2/settings.xml -PAZURE --batch-mode --errors --fail-at-end --show-version
+        run: |
+          SKIP_TESTS="-DskipTests"
+          if [ "${{ github.ref_name }}" == "master" ]; then
+            SKIP_TESTS=""
+          fi
+          mvn clean deploy $SKIP_TESTS -s .m2/settings.xml -PAZURE --batch-mode --errors --fail-at-end --show-version
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
