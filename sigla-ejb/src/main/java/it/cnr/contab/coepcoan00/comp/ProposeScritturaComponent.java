@@ -2244,10 +2244,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																	((Obbligazione_scadenzarioBulk)el.getScadenzaDocumentoContabile()).getCd_cds().equals(rigaMandato.getCd_cds()) &&
 																	((Obbligazione_scadenzarioBulk)el.getScadenzaDocumentoContabile()).getPg_obbligazione().equals(rigaMandato.getPg_obbligazione()) &&
 																	((Obbligazione_scadenzarioBulk)el.getScadenzaDocumentoContabile()).getPg_obbligazione_scadenzario().equals(rigaMandato.getPg_obbligazione_scadenzario())
-													)
-													.filter(el->
-															el.getModalita_pagamento().equalsByPrimaryKey(rigaMandato.getModalita_pagamento().getRif_modalita_pagamento()) &&
-															el.getBanca().equalsByPrimaryKey(rigaMandato.getBanca())
 													).collect(Collectors.toList());
 
 											if (docammRighe.isEmpty())
