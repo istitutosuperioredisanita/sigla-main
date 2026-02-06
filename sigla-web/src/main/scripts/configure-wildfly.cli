@@ -112,12 +112,12 @@ echo "Creazione Custom Realm..."
         ldap.bindDN=${sigla.ldap.binddn:cn=mastercnrapp1,ou=account,o=cnr,c=it}, \
         ldap.bindCredential=${sigla.ldap.credentials:changeit!}, \
         ldap.baseCtxDN=${sigla.ldap.basectx:o=cnr,c=it}, \
-        ldap.baseFilter="uid={0}", \
+        ldap.baseFilter="${sigla.ldap.basefilter:uid={0}}", \
         ldap.rolesCtxDN=${sigla.ldap.rolectx:ou=groups,o=cnr,c=it}, \
         ldap.roleFilter="member={1}", \
         ldap.roleAttributeID="cn", \
         ldap.defaultRole="default-roles-cnr", \
-        ldap.userAttributes="mail;cnrnome;cnrcognome;codicefiscale;emailcertificatoperpuk", \
+        ldap.userAttributes=${sigla.ldap.userattributes:mail;cnrnome;cnrcognome;codicefiscale;emailcertificatoperpuk}, \
         db.dsJndiName="java:/jdbc/CIR", \
         db.principalsQuery="SELECT PASSWORD FROM UTENTE WHERE UPPER(cd_utente)=UPPER(?) AND FL_AUTENTICAZIONE_LDAP='N'", \
         db.rolesQuery="SELECT DISTINCT CD_RUOLO, 'Roles' FROM UTENTE_UNITA_RUOLO WHERE UPPER(cd_utente)=UPPER(?)", \
