@@ -23,14 +23,13 @@ package it.cnr.contab.docamm00.docs.bulk;
  */
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
+import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.*;
@@ -192,7 +191,7 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 						return Optional.ofNullable(listAss).orElse(new ArrayList<>())
 								.stream().map(Ass_ev_voceepBulk::getVoce_ep)
 								.findAny().orElseThrow(()->
-									new ApplicationPersistencyException("Non risultano associati conti economici alla voce di bilancio "+accert.getTi_gestione()+"/"+accert.getCd_elemento_voce()+"!")
+									new ApplicationRuntimeException("Non risultano associati conti economici alla voce di bilancio "+accert.getTi_gestione()+"/"+accert.getCd_elemento_voce()+"!")
 								);
 					}
 				}
