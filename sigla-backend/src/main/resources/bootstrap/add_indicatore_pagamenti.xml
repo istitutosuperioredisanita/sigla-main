@@ -25,14 +25,8 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_INDICATORE_PAGAMENTI_DETAIL">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_INDICATORE_PAGAMENTI_DETAIL.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
-    <changeSet author="sigla" runOnChange="true" id="create-view-V_INDICATORE_PAGAMENTI_DETAIL_H2">
-        <sqlFile dbms="h2" path="../expsigladb/View/V_INDICATORE_PAGAMENTI_DETAIL_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
-    </changeSet>
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_INDICATORE_PAGAMENTI">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_INDICATORE_PAGAMENTI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
-    </changeSet>
-    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_INDICATORE_PAGAMENTI_H2">
-        <sqlFile dbms="h2" path="../expsigladb/View/V_CONS_INDICATORE_PAGAMENTI_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
     <changeSet author="marco.spasiano" id="accessi_indicatore_pagamenti">
         <insert tableName="accesso">

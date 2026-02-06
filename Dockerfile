@@ -1,5 +1,5 @@
 # DOCKER-VERSION 17.10.0-ce
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine
 LABEL maintainer="Marco Spasiano <marco.spasiano@cnr.it>"
 
 COPY sigla-web/target/sigla-bootable.jar /opt/sigla-bootable.jar

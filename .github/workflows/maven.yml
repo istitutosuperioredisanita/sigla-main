@@ -1,9 +1,9 @@
 name: Publish package
 on:
   push:
-    branches: [master, sviluppo]
-    paths:
-      - '!docs/**'   # Tutti i file tranne docs e sottocartelle
+    branches: [master, sviluppo, analitica-wildfly-bootable-jar]
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
   publish:
@@ -15,8 +15,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: '8'
+          java-version: '21'
           distribution: 'temurin'
+          cache: 'maven'
       - name: Publish package
         run: mvn clean deploy -s .m2/settings.xml -PAZURE --batch-mode --errors --fail-at-end --show-version
         env:
@@ -27,8 +28,24 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:latest .
-
+          # Definiamo il nome base dell'immagine per comodità
+          IMAGE_ID=ghcr.io/${{ github.repository }}
+          
+          # Tagghiamo sempre con il nome del branch (es. master o sviluppo)
+          docker build -t $IMAGE_ID:${{ github.ref_name }} .
+          
+          # Se il branch è master, aggiungiamo anche il tag 'latest'
+          if [ "${{ github.ref_name }}" == "master" ]; then
+            docker tag $IMAGE_ID:${{ github.ref_name }} $IMAGE_ID:latest
+          fi
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}:latest
+          IMAGE_ID=ghcr.io/${{ github.repository }}
+
+          # Push del tag specifico del branch
+          docker push $IMAGE_ID:${{ github.ref_name }}
+  
+          # Se il branch è master, facciamo il push anche di 'latest'
+          if [ "${{ github.ref_name }}" == "master" ]; then
+            docker push $IMAGE_ID:latest
+          fi

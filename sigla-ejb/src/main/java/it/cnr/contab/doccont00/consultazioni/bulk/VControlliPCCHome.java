@@ -70,7 +70,6 @@ public class VControlliPCCHome extends BulkHome {
 			sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, codice);
 			sqlBuilder.addSQLClause(FindClause.OR, "CD_UO_CUU", SQLBuilder.EQUALS, codice);
 			sqlBuilder.closeParenthesis();
-
 		});
 		sqlBuilder.addSQLGroupBy("TO_NUMBER(NVL(TO_CHAR(DATA_RICEZIONE,'YYYY'),ESERCIZIO))");
 		return fetchAll(sqlBuilder);

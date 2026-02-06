@@ -353,6 +353,12 @@
 				propertyName="riepilogo_totale"
 				count="true"
 				sqlTypeName="DECIMAL"/>
+		<columnMapping
+				columnName="SUM(NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA))) IMPORTO_TOTALE"
+				propertyName="riepilogo_totale_importo"
+				count="true"
+				columnSize="17"
+				columnScale="2"/>
 	</columnMap>
 	<persistentProperty
 			name="riepilogo_cds_codice"/>
@@ -364,5 +370,7 @@
 			name="riepilogo_uo_descrizione"/>
 	<persistentProperty
 			name="riepilogo_totale"/>
+	<persistentProperty
+			name="riepilogo_totale_importo"/>
 
 </SQLPersistentInfo>
