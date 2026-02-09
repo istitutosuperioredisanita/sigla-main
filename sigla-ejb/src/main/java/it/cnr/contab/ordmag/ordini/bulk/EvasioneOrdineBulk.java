@@ -1,37 +1,27 @@
-/*
- * Copyright (C) 2020  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-/*
- * Created by BulkGenerator 2.0 [07/12/2009]
- * Date 21/09/2017
- */
 package it.cnr.contab.ordmag.ordini.bulk;
 import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
 import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
+import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
+import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.spring.service.StorePath;
+import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
 import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.si.spring.storage.StorageDriver;
 
-public class EvasioneOrdineBulk extends EvasioneOrdineBase {
+public class EvasioneOrdineBulk extends EvasioneOrdineBase implements AllegatoParentBulk, AllegatoStorePath {
 	/**
 	 * [NUMERAZIONE_MAG Definisce i contatori per la numerazione dei magazzini.]
 	 **/
@@ -58,8 +48,21 @@ public class EvasioneOrdineBulk extends EvasioneOrdineBase {
 	protected BulkList<OrdineAcqConsegnaBulk> righeConsegnaSelezionate= new BulkList<OrdineAcqConsegnaBulk>();
 	protected BulkList<OrdineAcqConsegnaBulk> righeConsegnaDaEvadereColl= new BulkList<OrdineAcqConsegnaBulk>();
 
-	//variabile non db utilizzata per filtrare i numeratori
-	private MagazzinoBulk magazzinoAbilitato =  new MagazzinoBulk();
+	private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<AllegatoGenericoBulk>();
+
+	private MagazzinoBulk magazzinoAbilitato = new MagazzinoBulk();
+
+	private List<BollaScaricoMagBulk> listaBolleScarico;
+
+	public List<BollaScaricoMagBulk> getListaBolleScarico() {
+		return listaBolleScarico;
+	}
+
+	public void setListaBolleScarico(List<BollaScaricoMagBulk> listaBolleScarico) {
+		this.listaBolleScarico = listaBolleScarico;
+	}
+
+	private final String EVASIONE_ORDINE_FILEFOLDER = "Evasione Ordini";
 
 	public EvasioneOrdineBulk() {
 		super();
@@ -287,5 +290,76 @@ public class EvasioneOrdineBulk extends EvasioneOrdineBase {
 		return Optional.ofNullable(this.getUnitaOperativaAbilitata())
 				.map(e->!Optional.ofNullable(e.getCdUnitaOperativa()).isPresent())
 				.orElse(Boolean.FALSE);
+	}
+
+	/**
+	 * Restituisce la collezione degli allegati
+	 */
+	@Override
+	public BulkList<AllegatoGenericoBulk> getArchivioAllegati() {
+		return archivioAllegati;
+	}
+
+	/**
+	 * Imposta la collezione degli allegati
+	 */
+	@Override
+	public void setArchivioAllegati(BulkList<AllegatoGenericoBulk> archivioAllegati) {
+		this.archivioAllegati = archivioAllegati;
+	}
+
+	/**
+	 * Aggiunge un allegato alla collezione
+	 * @param allegato l'allegato da aggiungere
+	 * @return l'indice dell'allegato aggiunto
+	 */
+	@Override
+	public int addToArchivioAllegati(AllegatoGenericoBulk allegato) {
+		if (allegato != null) {
+			archivioAllegati.add(allegato);
+		}
+		return archivioAllegati.size() - 1;
+	}
+
+	/**
+	 * Rimuove un allegato dalla collezione
+	 * @param index l'indice dell'allegato da rimuovere
+	 * @return l'allegato rimosso
+	 */
+	@Override
+	public AllegatoGenericoBulk removeFromArchivioAllegati(int index) {
+		return getArchivioAllegati().remove(index);
+	}
+
+	/**
+	 * Restituisce il percorso di storage CMIS per gli allegati dell'evasione ordine.
+	 * Formato: PathComunicazioniDal/Evasione Ordini/[Esercizio]/[CD_UO]/[CD_MAGAZZINO]/[NUMERO]/Evasione [Esercizio]_[Numero]
+	 *
+	 * @return lista contenente il percorso completo
+	 */
+	@Override
+	public List<String> getStorePath() {
+		String esercizio = Optional.ofNullable(this.getEsercizio())
+				.map(Object::toString)
+				.orElse("0");
+		String uo = Optional.ofNullable(this.getCdUnitaOperativa())
+				.orElse("NO_UO");
+		String cdMagazzino = Optional.ofNullable(this.getCdMagazzino())
+				.orElse("NO_MAG");
+		String numeroStr = Optional.ofNullable(this.getNumero())
+				.map(numero -> Utility.lpad(numero.toString(), 10, '0'))
+				.orElse("0000000000");
+
+		String path = Arrays.asList(
+				SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+				EVASIONE_ORDINE_FILEFOLDER,
+				esercizio,
+				uo,
+				cdMagazzino,
+				numeroStr,
+				"Evasione " + esercizio + "_" + numeroStr
+		).stream().collect(Collectors.joining(StorageDriver.SUFFIX));
+
+		return Collections.singletonList(path);
 	}
 }

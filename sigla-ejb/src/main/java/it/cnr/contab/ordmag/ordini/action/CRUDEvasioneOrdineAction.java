@@ -19,8 +19,7 @@ package it.cnr.contab.ordmag.ordini.action;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
@@ -30,15 +29,18 @@ import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.CaricoMagazzinoBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.ScaricoMagazzinoRigaBulk;
 import it.cnr.contab.ordmag.ordini.bp.CRUDEvasioneOrdineBP;
+import it.cnr.contab.ordmag.ordini.bulk.AllegatoEvasioneOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.bulk.BulkInfo;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.util.RemoteIterator;
@@ -122,24 +124,37 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 		catch(Exception e) {return handleException(context,e);}
 	}
 
+	/**
+	 * Salva un'evasione ordine bulk, valida gli allegati,
+	 * aggiorna il modello e gestisce eventuali bolle di scarico.
+	 */
 	@Override
 	public Forward doSalva(ActionContext actioncontext) throws RemoteException {
-		try
-		{
+		try {
 			fillModel(actioncontext);
-			List<BollaScaricoMagBulk> listaBolleScarico = gestioneSalvataggio(actioncontext);
 			CRUDEvasioneOrdineBP bp = (CRUDEvasioneOrdineBP)actioncontext.getBusinessProcess();
-			bp.setModel(actioncontext, bp.initializeModelForInsert(actioncontext, new EvasioneOrdineBulk()));
-			if (!listaBolleScarico.isEmpty()){
+			EvasioneOrdineBulk evasionePre = (EvasioneOrdineBulk) bp.getModel();
+
+			validaAllegati(evasionePre);
+
+			List listaBolleScarico = gestioneSalvataggio(actioncontext);
+
+			EvasioneOrdineBulk evasioneAggiornata = (EvasioneOrdineBulk) bp.getModel();
+			bp.initializeModelForEditAllegati(actioncontext, evasioneAggiornata);
+			bp.setSalvato(true);
+
+			EvasioneOrdineBulk bulk = bp.isSalvato() ? evasioneAggiornata : new EvasioneOrdineBulk();
+			bp.setModel(actioncontext, bp.initializeModelForInsert(actioncontext, bulk));
+			bp.createAllegati(actioncontext);
+
+			if (!listaBolleScarico.isEmpty()) {
 				SelezionatoreListaBP nbp = (SelezionatoreListaBP)actioncontext.createBusinessProcess("BolleScaricoGenerate");
 				nbp.setMultiSelection(false);
-	
-				RemoteIterator iterator = Utility.createMovimentiMagComponentSession().preparaQueryBolleScaricoDaVisualizzare(actioncontext.getUserContext(), listaBolleScarico);
-				
-				nbp.setIterator(actioncontext,iterator);
+				RemoteIterator iterator = Utility.createMovimentiMagComponentSession()
+						.preparaQueryBolleScaricoDaVisualizzare(actioncontext.getUserContext(), listaBolleScarico);
+				nbp.setIterator(actioncontext, iterator);
 				BulkInfo bulkInfo = BulkInfo.getBulkInfo(BollaScaricoMagBulk.class);
 				nbp.setBulkInfo(bulkInfo);
-	
 				String columnsetName = bp.getColumnSetForBollaScarico();
 				if (columnsetName != null)
 					nbp.setColumns(bulkInfo.getColumnFieldPropertyDictionary(columnsetName));
@@ -148,16 +163,76 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 				bp.setMessage("Operazione Effettuata");
 			}
 			return actioncontext.findDefaultForward();
-		}
-		catch(ValidationException validationexception)
-		{
+
+		} catch(ValidationException validationexception) {
 			getBusinessProcess(actioncontext).setErrorMessage(validationexception.getMessage());
-		}
-		catch(Exception throwable)
-		{
+		} catch(Exception throwable) {
 			return handleException(actioncontext, throwable);
 		}
 		return actioncontext.findDefaultForward();
+	}
+
+	/**
+	 * Valida presenza DDT obbligatorio e assenza duplicati
+	 */
+	private void validaAllegati(EvasioneOrdineBulk evasione) throws ApplicationException {
+
+		if (evasione == null || evasione.getArchivioAllegati() == null || evasione.getArchivioAllegati().isEmpty()) {
+			throw ddtObbligatorioException();
+		}
+
+		boolean hasDDT = false;
+		Set<String> nomiAllegati = new HashSet<>();
+
+		for (AllegatoGenericoBulk allegato : evasione.getArchivioAllegati()) {
+
+			if (allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
+				continue;
+			}
+
+			// Verifica presenza DDT
+			if (allegato instanceof AllegatoEvasioneOrdineBulk) {
+				AllegatoEvasioneOrdineBulk allegatoEvasione = (AllegatoEvasioneOrdineBulk) allegato;
+				if (AllegatoEvasioneOrdineBulk.P_SIGLA_EVASIONE_ATTACHMENT_DDT
+						.equals(allegatoEvasione.getAspectName())) {
+					hasDDT = true;
+				}
+			}
+
+			// Verifica duplicati
+			String nome = getNomeAllegato(allegato);
+			if (nome != null && !nome.isEmpty()) {
+				String nomeLower = nome.toLowerCase();
+				if (!nomiAllegati.add(nomeLower)) {
+					throw new ApplicationException(
+							"Impossibile caricare l'allegato '" + nome +
+									"': esiste già un file con lo stesso nome nella lista degli Allegati."
+					);
+				}
+			}
+		}
+
+		if (!hasDDT) {
+			throw ddtObbligatorioException();
+		}
+	}
+
+	private ApplicationException ddtObbligatorioException() {
+		return new ApplicationException(
+				"ATTENZIONE: È necessario caricare un DOCUMENTO DI TRASPORTO prima di salvare L'EVASIONE ORDINE."
+		);
+	}
+
+
+
+
+	private String getNomeAllegato(AllegatoGenericoBulk allegato) {
+		if (allegato == null || allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
+			return null;
+		}
+		return allegato.getFile() != null
+				? allegato.parseFilename(allegato.getFile().getName())
+				: allegato.getNome();
 	}
 	
 	private List<BollaScaricoMagBulk> gestioneSalvataggio(ActionContext actioncontext) throws ValidationException, ApplicationException,  BusinessProcessException {

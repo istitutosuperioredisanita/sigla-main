@@ -46,9 +46,9 @@ public class TransactionalEvasioneOrdineComponentSession extends it.cnr.jada.ejb
         }
     }
 
-    public List<BollaScaricoMagBulk> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws RemoteException, ComponentException, PersistencyException {
+    public EvasioneOrdineBulk evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws RemoteException, ComponentException, PersistencyException {
         try {
-            return (List<BollaScaricoMagBulk>) invoke("evadiOrdine", new Object[]{
+            return (EvasioneOrdineBulk) invoke("evadiOrdine", new Object[]{
                     userContext,
                     evasioneOrdine});
         } catch (java.rmi.RemoteException e) {

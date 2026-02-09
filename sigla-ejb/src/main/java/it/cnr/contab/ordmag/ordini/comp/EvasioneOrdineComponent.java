@@ -175,7 +175,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 		return null;
 	}
 
-	public List<BollaScaricoMagBulk> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException {
+	public EvasioneOrdineBulk evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException {
 		try {
 			OrdineAcqComponentSession ordineComponent = Utility.createOrdineAcqComponentSession();
 			MovimentiMagComponentSession movimentiMagComponent = Utility.createMovimentiMagComponentSession();
@@ -321,7 +321,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 				evasioneOrdine.setToBeCreated();
 				//rendo permanente l'evasione ordine
 				assegnaProgressivo(userContext, evasioneOrdine);
-				creaConBulk(userContext, evasioneOrdine);
+				evasioneOrdine = (EvasioneOrdineBulk) creaConBulk(userContext, evasioneOrdine);
 			}
 
 			if (!listaMovimentiScarico.isEmpty()) {
@@ -336,7 +336,9 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 			for (OrdineAcqConsegnaBulk consegnaDaForzare : listaConsegneDaForzare)
 				ordineComponent.chiusuraForzataOrdini(userContext, consegnaDaForzare);
 
-			return listaBolleScarico;
+
+			evasioneOrdine.setListaBolleScarico(listaBolleScarico);
+			return evasioneOrdine;
 		} catch (DetailedRuntimeException|RemoteException e) {
 			throw new ApplicationException(e.getMessage());
 		}

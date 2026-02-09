@@ -60,10 +60,10 @@ public class EvasioneOrdineComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         }
     }
 
-    public List<BollaScaricoMagBulk> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException, javax.ejb.EJBException {
+    public EvasioneOrdineBulk evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException, javax.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
-            List<BollaScaricoMagBulk> result = ((EvasioneOrdineComponent) componentObj).evadiOrdine(userContext, evasioneOrdine);
+            EvasioneOrdineBulk result = ((EvasioneOrdineComponent) componentObj).evadiOrdine(userContext, evasioneOrdine);
             component_invocation_succes(userContext, componentObj);
             return result;
         } catch (it.cnr.jada.comp.NoRollbackException e) {

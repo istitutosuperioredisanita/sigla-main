@@ -34,7 +34,7 @@ import it.cnr.jada.util.RemoteIterator;
 @Remote
 public interface EvasioneOrdineComponentSession extends it.cnr.jada.ejb.CRUDComponentSession{
 	EvasioneOrdineBulk cercaOrdini(it.cnr.jada.UserContext param0,EvasioneOrdineBulk evasioneOrdine) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-	List<BollaScaricoMagBulk> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException,java.rmi.RemoteException;
+	EvasioneOrdineBulk evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException, RemoteException;
 	public RemoteIterator ricercaEvasioni(UserContext userContext, OrdineAcqConsegnaBulk ordineAcqConsegnaBulk) throws ComponentException, RemoteException;
 
 }

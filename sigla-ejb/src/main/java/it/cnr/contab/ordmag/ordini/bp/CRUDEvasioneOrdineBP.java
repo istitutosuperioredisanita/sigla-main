@@ -19,9 +19,6 @@ package it.cnr.contab.ordmag.ordini.bp;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,29 +29,27 @@ import it.cnr.contab.ordmag.anag00.TipoOperazioneOrdBulk;
 import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
 import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
+import it.cnr.contab.ordmag.ordini.bulk.AllegatoEvasioneOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.ordmag.ordini.ejb.EvasioneOrdineComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util.ApplicationMessageFormatException;
-import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
-import it.cnr.jada.util.ejb.EJBCommonServices;
+import it.cnr.si.spring.storage.StorageObject;
 
 /**
  * Gestisce le catene di elementi correlate con il documento in uso.
  */
-public class CRUDEvasioneOrdineBP extends SimpleCRUDBP {
+public class CRUDEvasioneOrdineBP extends AllegatiCRUDBP<AllegatoEvasioneOrdineBulk, EvasioneOrdineBulk> {
 
 	private it.cnr.contab.doccont00.core.bulk.OptionRequestParameter userConfirm = null;
 	private boolean carryingThrough = false;
@@ -81,6 +76,16 @@ public class CRUDEvasioneOrdineBP extends SimpleCRUDBP {
 	public boolean isInputReadonly() 
 	{
 			return false;
+	}
+
+	private boolean salvato = false;
+
+	public boolean isSalvato() {
+		return salvato;
+	}
+
+	public void setSalvato(boolean salvato) {
+		this.salvato = salvato;
 	}
 
 	private final SimpleDetailCRUDController consegne = new SimpleDetailCRUDController("ConsegneDaEvadere",OrdineAcqConsegnaBulk.class,"righeConsegnaDaEvadereColl",this){
@@ -114,8 +119,21 @@ public class CRUDEvasioneOrdineBP extends SimpleCRUDBP {
 			throws BusinessProcessException {
 		super(function + "Tr");
 		setTab();
-
 	}
+
+	@Override
+	protected String getStorePath(EvasioneOrdineBulk evasioneOrdine, boolean create) throws BusinessProcessException {
+		if (evasioneOrdine == null) {
+			throw new BusinessProcessException("Evasione ordine non presente");
+		}
+		return evasioneOrdine.getStorePath().get(0);
+	}
+
+	@Override
+	protected Class<AllegatoEvasioneOrdineBulk> getAllegatoClass() {
+		return AllegatoEvasioneOrdineBulk.class;
+	}
+
 
 	protected it.cnr.jada.util.jsp.Button[] createToolbar() {
 		it.cnr.jada.util.jsp.Button[] toolbar = new it.cnr.jada.util.jsp.Button[1];
@@ -177,23 +195,26 @@ public class CRUDEvasioneOrdineBP extends SimpleCRUDBP {
 		return "bollaScaricoforPrint";
 	}
 
-	public List<BollaScaricoMagBulk> evadiConsegne(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException 
-	{
-		EvasioneOrdineBulk bulk = (EvasioneOrdineBulk) getModel();	
-		try 
-		{
-			EvasioneOrdineComponentSession comp = (EvasioneOrdineComponentSession)createComponentSession();
-			List<BollaScaricoMagBulk> listaBolleScarico = comp.evadiOrdine(context.getUserContext(), bulk);
+	/**
+	 * Esegue l'evasione delle consegne per l'ordine e restituisce le bolle di scarico generate.
+	 */
+	public List<BollaScaricoMagBulk> evadiConsegne(ActionContext context) throws BusinessProcessException {
+		EvasioneOrdineBulk bulk = (EvasioneOrdineBulk) getModel();
 
-		    commitUserTransaction();
-		    setModel(context, null);
-		    setDirty(false);
-		    return listaBolleScarico;
-		} catch(Exception e) 
-		{
+		try {
+			EvasioneOrdineComponentSession comp = (EvasioneOrdineComponentSession)createComponentSession();
+			EvasioneOrdineBulk evasioneAggiornata = comp.evadiOrdine(context.getUserContext(), bulk);
+
+			commitUserTransaction();
+
+			setModel(context, evasioneAggiornata);
+			setDirty(false);
+			return evasioneAggiornata.getListaBolleScarico();
+		} catch(Exception e) {
 			throw handleException(e);
 		}
 	}
+
 
 	@Override
 	public boolean isNewButtonHidden() {
@@ -207,27 +228,41 @@ public class CRUDEvasioneOrdineBP extends SimpleCRUDBP {
 			oggettobulk = super.initializeModelForInsert(actioncontext, oggettobulk);
 
 			Optional.ofNullable(oggettobulk)
-				.filter(EvasioneOrdineBulk.class::isInstance)
-                .map(EvasioneOrdineBulk.class::cast)
-				.ifPresent(obj->{
-					try {
-						List<UnitaOperativaOrdBulk> listUop = 
-								((EvasioneOrdineComponentSession)this.createComponentSession()).find(actioncontext.getUserContext(), UnitaOperativaOrdBulk.class, "findUnitaOperativeAbilitate", actioncontext.getUserContext(), TipoOperazioneOrdBulk.EVASIONE_ORDINE);
-						UnitaOperativaOrdBulk unitaOperativa = Optional.ofNullable(listUop)
-																.map(e->{
-																	if (e.stream().count()>1) {
-																		return null;
-																	};
-																	return e.stream().findFirst().orElse(null);
-																}).orElse(null);
-						
-						this.initializeUnitaOperativaOrd(actioncontext, obj, unitaOperativa);
-					} catch (ComponentException | RemoteException | BusinessProcessException e) {
-						throw new DetailedRuntimeException(e);
-					}
-				});
-		
+					.filter(EvasioneOrdineBulk.class::isInstance)
+					.map(EvasioneOrdineBulk.class::cast)
+					.ifPresent(obj -> {
+						try {
+							// ========== GESTIONE ALLEGATI ==========
+							if (this.isSalvato()) {
+								this.setSalvato(false);
+							} else {
+								obj.setArchivioAllegati(new BulkList<>());
+							}
+
+							List listUop = ((EvasioneOrdineComponentSession)this.createComponentSession())
+									.find(actioncontext.getUserContext(),
+											UnitaOperativaOrdBulk.class,
+											"findUnitaOperativeAbilitate",
+											actioncontext.getUserContext(),
+											TipoOperazioneOrdBulk.EVASIONE_ORDINE);
+
+							UnitaOperativaOrdBulk unitaOperativa = (UnitaOperativaOrdBulk) Optional.ofNullable(listUop)
+									.map(e -> {
+										if (e.stream().count() > 1) {
+											return null;
+										}
+										return e.stream().findFirst().orElse(null);
+									}).orElse(null);
+
+							this.initializeUnitaOperativaOrd(actioncontext, obj, unitaOperativa);
+
+						} catch (ComponentException | RemoteException | BusinessProcessException e) {
+							throw new DetailedRuntimeException(e);
+						}
+					});
+
 			return oggettobulk;
+
 		} catch (BusinessProcessException e) {
 			throw new BusinessProcessException(e);
 		}
@@ -293,5 +328,72 @@ public class CRUDEvasioneOrdineBP extends SimpleCRUDBP {
 	protected void init(Config config, ActionContext actioncontext) throws BusinessProcessException {
 		super.init(config, actioncontext);
 		Configurazione_cnrBulk.stepFineAnno(actioncontext.getUserContext(), Configurazione_cnrBulk.StepFineAnno.FINE_EVASIONE);
-    }
+	}
+
+	/**
+	 * Completa metadati allegato da CMIS (utente SIGLA e aspect DDT/altro)
+	 */
+	@Override
+	protected void completeAllegato(AllegatoEvasioneOrdineBulk allegato, StorageObject storageObject)
+			throws it.cnr.jada.comp.ApplicationException {
+
+		Optional.ofNullable(storageObject.<String>getPropertyValue(
+						"sigla_commons_aspect:utente_applicativo"))
+				.ifPresent(allegato::setUtenteSIGLA);
+
+		java.util.List<String> secondaryTypes = storageObject.getPropertyValue("cmis:secondaryObjectTypeIds");
+
+		if (secondaryTypes != null && !secondaryTypes.isEmpty()) {
+			for (String secondaryType : secondaryTypes) {
+				if (secondaryType.equals("P:cm:titled") ||
+						secondaryType.contains("sigla_commons_aspect")) {
+					continue;
+				}
+
+				if (secondaryType.equals(AllegatoEvasioneOrdineBulk.P_SIGLA_EVASIONE_ATTACHMENT_DDT)) {
+					allegato.setAspectName(AllegatoEvasioneOrdineBulk.P_SIGLA_EVASIONE_ATTACHMENT_DDT);
+					break;
+				} else if (secondaryType.equals(AllegatoEvasioneOrdineBulk.P_SIGLA_EVASIONE_ATTACHMENT_ALTRO)) {
+					allegato.setAspectName(AllegatoEvasioneOrdineBulk.P_SIGLA_EVASIONE_ATTACHMENT_ALTRO);
+					break;
+				}
+			}
+		}
+
+		super.completeAllegato(allegato, storageObject);
+	}
+
+	/**
+	 * Override per controllare se saltare il reload degli allegati durante il salvataggio.
+	 */
+	@Override
+	public OggettoBulk initializeModelForEditAllegati(ActionContext actioncontext, OggettoBulk oggettobulk)
+			throws BusinessProcessException {
+		return super.initializeModelForEditAllegati(actioncontext, oggettobulk);
+	}
+
+	/**
+	 * Archiviazioni degli allegati validi.
+	 */
+	public void createAllegati(ActionContext context) throws BusinessProcessException {
+		try {
+			fillModel(context);
+			EvasioneOrdineBulk evasione = (EvasioneOrdineBulk) getModel();
+			if (evasione.getArchivioAllegati() != null) {
+				evasione.getArchivioAllegati().removeIf(allegato ->
+						allegato.getFile() == null &&
+								allegato.getStorageKey() == null &&
+								allegato.getCrudStatus() != OggettoBulk.NORMAL
+				);
+			}
+			if (evasione.getArchivioAllegati() != null && !evasione.getArchivioAllegati().isEmpty()) {
+				archiviaAllegati(context);
+			}
+		} catch (ApplicationException e) {
+			throw new BusinessProcessException(e);
+		} catch (Exception e) {
+			throw handleException(e);
+		}
+	}
+
 }

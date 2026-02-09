@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA"
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+			name="aspectName"
+			property="aspectName"
+			inputType="SELECT"
+			keysProperty="aspectNamesKeys"
+			command="doDefault"
+			inputSize="40"
+			nullable="false"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			label="Tipologia"/>
+
+	<fieldProperty
+			name="descrizione"
+			property="descrizione"
+			inputType="TEXTAREA"
+			inputSize="2000"
+			nullable="false"
+			maxLength="2000"
+			cols="80"
+			rows="3"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			caseSensitiveSearch="false"
+			label="Descrizione"/>
+
+	<fieldProperty
+			name="utente"
+			inputType="TEXT"
+			property="utenteSIGLA"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			label="Utente"/>
+
+	<fieldProperty
+			name="data"
+			inputType="TEXT"
+			property="lastModificationDate"
+			formatName="timestamp"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			label="Data"/>
+
+	<form name="default">
+		<formFieldProperty name="aspectName"/>
+		<formFieldProperty name="nome"/>
+		<formFieldProperty name="descrizione"/>
+		<formFieldProperty name="file"/>
+		<formFieldProperty name="attivaFile"/>
+	</form>
+
+	<columnSet name="default">
+		<columnFieldProperty name="aspectName"/>
+		<columnFieldProperty name="nome"/>
+		<columnFieldProperty name="descrizione"/>
+		<columnFieldProperty name="utente"/>
+		<columnFieldProperty name="data"/>
+	</columnSet>
+
+</bulkInfo>
