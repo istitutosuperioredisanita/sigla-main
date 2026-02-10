@@ -189,10 +189,20 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 						Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
 						//Metto docRiga.getEsercizio e non accert.getEsercizio perchè quest'ultimo cambia se anno ribaltato
 						List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), docRiga.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
+						//Se lista è vuota cerco associazione nell'anno dell'accertamento
+						if (Optional.ofNullable(listAss).orElse(new ArrayList<>()).isEmpty() && docRiga.getEsercizio().compareTo(accert.getEsercizio())!=0) {
+							listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), accert.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
+							return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+									.stream().map(Ass_ev_voceepBulk::getVoce_ep)
+									.findAny().orElseThrow(() ->
+											new ApplicationRuntimeException("Non risultano associati conti economici alla voce di bilancio " + accert.getTi_gestione() + "/" + accert.getCd_elemento_voce() +
+													" sia nell'esercizio del documento (" + docRiga.getEsercizio() + ") che in quello dell'accertamento (" + accert.getEsercizio() + ")!")
+									);
+						}
 						return Optional.ofNullable(listAss).orElse(new ArrayList<>())
 								.stream().map(Ass_ev_voceepBulk::getVoce_ep)
-								.findAny().orElseThrow(()->
-									new ApplicationRuntimeException("Non risultano associati conti economici alla voce di bilancio "+accert.getTi_gestione()+"/"+accert.getCd_elemento_voce()+"!")
+								.findAny().orElseThrow(() ->
+										new ApplicationRuntimeException("Non risultano associati conti economici alla voce di bilancio " + accert.getEsercizio()+"/"+accert.getTi_gestione() + "/" + accert.getCd_elemento_voce()+"!")
 								);
 					}
 				}

@@ -218,6 +218,9 @@ public class Documento_generico_rigaHome extends BulkHome {
                             Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
                             //Metto docRiga.getEsercizio() e non accert.getEsercizio() perchè quest'ultimo cambia se anno ribaltato
                             List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), docRiga.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
+                            //Se lista è vuota cerco associazione nell'anno dell'accertamento
+                            if (Optional.ofNullable(listAss).orElse(new ArrayList<>()).isEmpty() && docRiga.getEsercizio().compareTo(accert.getEsercizio())!=0)
+                                listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), accert.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
                             return Optional.ofNullable(listAss).orElse(new ArrayList<>())
                                    .stream().map(Ass_ev_voceepBulk::getVoce_ep)
                                    .findAny().orElse(null);
@@ -245,9 +248,17 @@ public class Documento_generico_rigaHome extends BulkHome {
                             Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
                             //Metto docRiga.getEsercizio() e non obblig.getEsercizio() perchè quest'ultimo cambia se anno ribaltato
                             List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), docRiga.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                            //Se lista è vuota cerco associazione nell'anno dell'obbligazione
+                            if (Optional.ofNullable(listAss).orElse(new ArrayList<>()).isEmpty() && docRiga.getEsercizio().compareTo(obblig.getEsercizio())!=0) {
+                                listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                                return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+                                        .stream().map(Ass_ev_voceepBulk::getVoce_ep)
+                                        .findAny().orElseThrow(() -> new ApplicationRuntimeException("Non risultano associati conti economici alla voce di bilancio " + obblig.getTi_gestione() + "/" + obblig.getCd_elemento_voce() +
+                                                " sia nell'esercizio del documento (" + docRiga.getEsercizio() + ") che in quello dell'obbligazione (" + obblig.getEsercizio() + ")!"));
+                            }
                             return Optional.ofNullable(listAss).orElse(new ArrayList<>())
                                     .stream().map(Ass_ev_voceepBulk::getVoce_ep)
-                                    .findAny().orElseThrow(()->new ApplicationRuntimeException("Non risulta associata alcuna voce di economica alla voce di bilancio "+obblig.getCd_elemento_voce()));
+                                    .findAny().orElseThrow(() -> new ApplicationRuntimeException("Non risultano associati conti economici alla voce di bilancio " + obblig.getEsercizio()+"/"+obblig.getTi_gestione() + "/" + obblig.getCd_elemento_voce()+"!"));
                         }
                     } else {
                         Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
@@ -404,6 +415,7 @@ public class Documento_generico_rigaHome extends BulkHome {
             } else if (docRiga.getFattura_passiva_riga_storno()!=null) {
                 Fattura_passiva_rigaIHome fatpasrigaHome = (Fattura_passiva_rigaIHome) getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
                 Fattura_passiva_rigaIBulk rigaCollegata = (Fattura_passiva_rigaIBulk) fatpasHome.loadIfNeededObject(docRiga.getFattura_passiva_riga_storno());
+                rigaCollegata.setFattura_passivaI((Fattura_passiva_IBulk)fatpasHome.loadIfNeededObject(rigaCollegata.getFattura_passivaI()));
                 if (Optional.ofNullable(rigaCollegata.getVoce_ep()).flatMap(el->Optional.ofNullable(el.getCd_voce_ep())).isEmpty())
                     datiEcoDoc = fatpasrigaHome.getDatiEconomiciDefault(userContext, rigaCollegata);
                 else

@@ -24,6 +24,7 @@ import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcep.bulk.*;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.AssCatgrpInventVoceEpHome;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
@@ -324,9 +325,9 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                         return contoEconomico;
                 }
 
-                //Fino al 2024 il conto di costo veniva prelevato dalla voce di bilancio
+                //Fino al 2023 il conto di costo veniva prelevato dalla voce di bilancio
                 //Per questo la ricerca con il bene associato la faccio solo a partire dal 2025
-                if (docRiga.getEsercizio().compareTo(2025)>=0) {
+                if (docRiga.getEsercizio().compareTo(2024)>=0) {
                     //verifico se sulla riga del docamm ci sia un bene inventariabile
                     Bene_servizioBulk myBeneServizio = (Bene_servizioBulk) fatpasHome.loadIfNeededObject(docRiga.getBene_servizio());
 
@@ -345,7 +346,11 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                     if (Optional.ofNullable(obbligScad).isPresent()) {
                         ObbligazioneBulk obblig = (ObbligazioneBulk) fatpasHome.loadIfNeededObject(obbligScad.getObbligazione());
                         Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
-                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(obblig.getElemento_voce());
+                        //Metto docRiga.getEsercizio e non accert.getEsercizio perchè quest'ultimo cambia se anno ribaltato
+                        List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), docRiga.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
+                        //Se lista è vuota cerco associazione nell'anno dell'accertamento
+                        if (Optional.ofNullable(listAss).orElse(new ArrayList<>()).isEmpty() && docRiga.getEsercizio().compareTo(obblig.getEsercizio())!=0)
+                            listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(obblig.getCd_elemento_voce(), obblig.getEsercizio(), obblig.getTi_appartenenza(), obblig.getTi_gestione()));
                         return Optional.ofNullable(listAss).orElse(new ArrayList<>())
                                 .stream().map(Ass_ev_voceepBulk::getVoce_ep)
                                 .findAny().orElse(null);
