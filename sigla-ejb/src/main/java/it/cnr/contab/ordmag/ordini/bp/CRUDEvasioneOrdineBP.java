@@ -20,6 +20,7 @@ package it.cnr.contab.ordmag.ordini.bp;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
@@ -76,16 +77,6 @@ public class CRUDEvasioneOrdineBP extends AllegatiCRUDBP<AllegatoEvasioneOrdineB
 	public boolean isInputReadonly() 
 	{
 			return false;
-	}
-
-	private boolean salvato = false;
-
-	public boolean isSalvato() {
-		return salvato;
-	}
-
-	public void setSalvato(boolean salvato) {
-		this.salvato = salvato;
 	}
 
 	private final SimpleDetailCRUDController consegne = new SimpleDetailCRUDController("ConsegneDaEvadere",OrdineAcqConsegnaBulk.class,"righeConsegnaDaEvadereColl",this){
@@ -196,21 +187,25 @@ public class CRUDEvasioneOrdineBP extends AllegatiCRUDBP<AllegatoEvasioneOrdineB
 	}
 
 	/**
-	 * Esegue l'evasione delle consegne per l'ordine e restituisce le bolle di scarico generate.
+	 * Esegue l'evasione delle consegne per l'ordine e restituisce una mappa con l'evasione ordine e le bolle di scarico generate.
 	 */
-	public List<BollaScaricoMagBulk> evadiConsegne(ActionContext context) throws BusinessProcessException {
+	public Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> evadiConsegne(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException
+	{
 		EvasioneOrdineBulk bulk = (EvasioneOrdineBulk) getModel();
-
-		try {
+		try
+		{
 			EvasioneOrdineComponentSession comp = (EvasioneOrdineComponentSession)createComponentSession();
-			EvasioneOrdineBulk evasioneAggiornata = comp.evadiOrdine(context.getUserContext(), bulk);
-
-			commitUserTransaction();
-
+			Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> result = comp.evadiOrdine(context.getUserContext(), bulk);
+			// Recupera l'evasione ordine salvata
+			EvasioneOrdineBulk evasioneAggiornata = result.keySet().iterator().next();
+			// Aggiorna il model con l'oggetto salvato
 			setModel(context, evasioneAggiornata);
+			archiviaAllegati(context);
+			commitUserTransaction();
 			setDirty(false);
-			return evasioneAggiornata.getListaBolleScarico();
-		} catch(Exception e) {
+			return result;
+		} catch(Exception e)
+		{
 			throw handleException(e);
 		}
 	}
@@ -220,7 +215,7 @@ public class CRUDEvasioneOrdineBP extends AllegatiCRUDBP<AllegatoEvasioneOrdineB
 	public boolean isNewButtonHidden() {
 		return true;
 	}
-	
+
 	@Override
 	public OggettoBulk initializeModelForInsert(ActionContext actioncontext, OggettoBulk oggettobulk)
 			throws BusinessProcessException {
@@ -233,9 +228,7 @@ public class CRUDEvasioneOrdineBP extends AllegatiCRUDBP<AllegatoEvasioneOrdineB
 					.ifPresent(obj -> {
 						try {
 							// ========== GESTIONE ALLEGATI ==========
-							if (this.isSalvato()) {
-								this.setSalvato(false);
-							} else {
+							if (obj.getArchivioAllegati() == null || obj.getArchivioAllegati().isEmpty()) {
 								obj.setArchivioAllegati(new BulkList<>());
 							}
 
@@ -361,39 +354,6 @@ public class CRUDEvasioneOrdineBP extends AllegatiCRUDBP<AllegatoEvasioneOrdineB
 		}
 
 		super.completeAllegato(allegato, storageObject);
-	}
-
-	/**
-	 * Override per controllare se saltare il reload degli allegati durante il salvataggio.
-	 */
-	@Override
-	public OggettoBulk initializeModelForEditAllegati(ActionContext actioncontext, OggettoBulk oggettobulk)
-			throws BusinessProcessException {
-		return super.initializeModelForEditAllegati(actioncontext, oggettobulk);
-	}
-
-	/**
-	 * Archiviazioni degli allegati validi.
-	 */
-	public void createAllegati(ActionContext context) throws BusinessProcessException {
-		try {
-			fillModel(context);
-			EvasioneOrdineBulk evasione = (EvasioneOrdineBulk) getModel();
-			if (evasione.getArchivioAllegati() != null) {
-				evasione.getArchivioAllegati().removeIf(allegato ->
-						allegato.getFile() == null &&
-								allegato.getStorageKey() == null &&
-								allegato.getCrudStatus() != OggettoBulk.NORMAL
-				);
-			}
-			if (evasione.getArchivioAllegati() != null && !evasione.getArchivioAllegati().isEmpty()) {
-				archiviaAllegati(context);
-			}
-		} catch (ApplicationException e) {
-			throw new BusinessProcessException(e);
-		} catch (Exception e) {
-			throw handleException(e);
-		}
 	}
 
 }

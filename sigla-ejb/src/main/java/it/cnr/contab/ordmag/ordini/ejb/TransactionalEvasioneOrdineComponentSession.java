@@ -26,6 +26,7 @@ import it.cnr.jada.persistency.PersistencyException;
 
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 public class TransactionalEvasioneOrdineComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements EvasioneOrdineComponentSession {
     public EvasioneOrdineBulk cercaOrdini(it.cnr.jada.UserContext param0, EvasioneOrdineBulk param1) throws RemoteException, it.cnr.jada.comp.ComponentException {
@@ -46,9 +47,9 @@ public class TransactionalEvasioneOrdineComponentSession extends it.cnr.jada.ejb
         }
     }
 
-    public EvasioneOrdineBulk evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws RemoteException, ComponentException, PersistencyException {
+    public Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws RemoteException, ComponentException, PersistencyException {
         try {
-            return (EvasioneOrdineBulk) invoke("evadiOrdine", new Object[]{
+            return (Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>>) invoke("evadiOrdine", new Object[]{
                     userContext,
                     evasioneOrdine});
         } catch (java.rmi.RemoteException e) {

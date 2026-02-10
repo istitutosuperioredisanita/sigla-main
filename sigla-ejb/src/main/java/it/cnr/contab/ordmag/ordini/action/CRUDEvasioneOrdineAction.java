@@ -124,37 +124,41 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 		catch(Exception e) {return handleException(context,e);}
 	}
 
+
 	/**
 	 * Salva un'evasione ordine bulk, valida gli allegati,
 	 * aggiorna il modello e gestisce eventuali bolle di scarico.
 	 */
 	@Override
 	public Forward doSalva(ActionContext actioncontext) throws RemoteException {
-		try {
+		try
+		{
 			fillModel(actioncontext);
+			Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> resultMap = gestioneSalvataggio(actioncontext);
 			CRUDEvasioneOrdineBP bp = (CRUDEvasioneOrdineBP)actioncontext.getBusinessProcess();
-			EvasioneOrdineBulk evasionePre = (EvasioneOrdineBulk) bp.getModel();
 
-			validaAllegati(evasionePre);
+			EvasioneOrdineBulk evasioneOrdineSalvata = null;
+			List<BollaScaricoMagBulk> listaBolleScarico = new ArrayList<>();
 
-			List listaBolleScarico = gestioneSalvataggio(actioncontext);
+			for (Map.Entry<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> entry : resultMap.entrySet()) {
+				evasioneOrdineSalvata = entry.getKey();
+				listaBolleScarico = entry.getValue();
+				break;
+			}
 
-			EvasioneOrdineBulk evasioneAggiornata = (EvasioneOrdineBulk) bp.getModel();
-			bp.initializeModelForEditAllegati(actioncontext, evasioneAggiornata);
-			bp.setSalvato(true);
+			bp.setModel(actioncontext, bp.initializeModelForInsert(actioncontext,
+					evasioneOrdineSalvata != null ? evasioneOrdineSalvata : new EvasioneOrdineBulk()));
 
-			EvasioneOrdineBulk bulk = bp.isSalvato() ? evasioneAggiornata : new EvasioneOrdineBulk();
-			bp.setModel(actioncontext, bp.initializeModelForInsert(actioncontext, bulk));
-			bp.createAllegati(actioncontext);
-
-			if (!listaBolleScarico.isEmpty()) {
+			if (!listaBolleScarico.isEmpty()){
 				SelezionatoreListaBP nbp = (SelezionatoreListaBP)actioncontext.createBusinessProcess("BolleScaricoGenerate");
 				nbp.setMultiSelection(false);
-				RemoteIterator iterator = Utility.createMovimentiMagComponentSession()
-						.preparaQueryBolleScaricoDaVisualizzare(actioncontext.getUserContext(), listaBolleScarico);
-				nbp.setIterator(actioncontext, iterator);
+
+				RemoteIterator iterator = Utility.createMovimentiMagComponentSession().preparaQueryBolleScaricoDaVisualizzare(actioncontext.getUserContext(), listaBolleScarico);
+
+				nbp.setIterator(actioncontext,iterator);
 				BulkInfo bulkInfo = BulkInfo.getBulkInfo(BollaScaricoMagBulk.class);
 				nbp.setBulkInfo(bulkInfo);
+
 				String columnsetName = bp.getColumnSetForBollaScarico();
 				if (columnsetName != null)
 					nbp.setColumns(bulkInfo.getColumnFieldPropertyDictionary(columnsetName));
@@ -163,79 +167,19 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 				bp.setMessage("Operazione Effettuata");
 			}
 			return actioncontext.findDefaultForward();
-
-		} catch(ValidationException validationexception) {
+		}
+		catch(ValidationException validationexception)
+		{
 			getBusinessProcess(actioncontext).setErrorMessage(validationexception.getMessage());
-		} catch(Exception throwable) {
+		}
+		catch(Exception throwable)
+		{
 			return handleException(actioncontext, throwable);
 		}
 		return actioncontext.findDefaultForward();
 	}
 
-	/**
-	 * Valida presenza DDT obbligatorio e assenza duplicati
-	 */
-	private void validaAllegati(EvasioneOrdineBulk evasione) throws ApplicationException {
-
-		if (evasione == null || evasione.getArchivioAllegati() == null || evasione.getArchivioAllegati().isEmpty()) {
-			throw ddtObbligatorioException();
-		}
-
-		boolean hasDDT = false;
-		Set<String> nomiAllegati = new HashSet<>();
-
-		for (AllegatoGenericoBulk allegato : evasione.getArchivioAllegati()) {
-
-			if (allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
-				continue;
-			}
-
-			// Verifica presenza DDT
-			if (allegato instanceof AllegatoEvasioneOrdineBulk) {
-				AllegatoEvasioneOrdineBulk allegatoEvasione = (AllegatoEvasioneOrdineBulk) allegato;
-				if (AllegatoEvasioneOrdineBulk.P_SIGLA_EVASIONE_ATTACHMENT_DDT
-						.equals(allegatoEvasione.getAspectName())) {
-					hasDDT = true;
-				}
-			}
-
-			// Verifica duplicati
-			String nome = getNomeAllegato(allegato);
-			if (nome != null && !nome.isEmpty()) {
-				String nomeLower = nome.toLowerCase();
-				if (!nomiAllegati.add(nomeLower)) {
-					throw new ApplicationException(
-							"Impossibile caricare l'allegato '" + nome +
-									"': esiste già un file con lo stesso nome nella lista degli Allegati."
-					);
-				}
-			}
-		}
-
-		if (!hasDDT) {
-			throw ddtObbligatorioException();
-		}
-	}
-
-	private ApplicationException ddtObbligatorioException() {
-		return new ApplicationException(
-				"ATTENZIONE: È necessario caricare un DOCUMENTO DI TRASPORTO prima di salvare L'EVASIONE ORDINE."
-		);
-	}
-
-
-
-
-	private String getNomeAllegato(AllegatoGenericoBulk allegato) {
-		if (allegato == null || allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
-			return null;
-		}
-		return allegato.getFile() != null
-				? allegato.parseFilename(allegato.getFile().getName())
-				: allegato.getNome();
-	}
-	
-	private List<BollaScaricoMagBulk> gestioneSalvataggio(ActionContext actioncontext) throws ValidationException, ApplicationException,  BusinessProcessException {
+	private Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> gestioneSalvataggio(ActionContext actioncontext) throws ValidationException, ApplicationException,  BusinessProcessException {
 		CRUDEvasioneOrdineBP bp = (CRUDEvasioneOrdineBP)actioncontext.getBusinessProcess();
 		it.cnr.jada.util.action.Selection selection = bp.getConsegne().getSelection();
 		EvasioneOrdineBulk bulk = (EvasioneOrdineBulk) bp.getModel();
@@ -248,9 +192,9 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 		if (bulk.getRigheConsegnaSelezionate() == null || bulk.getRigheConsegnaSelezionate().isEmpty()){
 			throw new it.cnr.jada.comp.ApplicationException("Selezionare almeno una consegna da evadere!");
 		} else {
-			List<BollaScaricoMagBulk> listaBolleScarico = bp.evadiConsegne(actioncontext);
+			Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> result = bp.evadiConsegne(actioncontext);
 			bulk.setRigheConsegnaDaEvadereColl(new BulkList<>());
-			return listaBolleScarico;
+			return result;
 		}
 	}
 	

@@ -52,16 +52,6 @@ public class EvasioneOrdineBulk extends EvasioneOrdineBase implements AllegatoPa
 
 	private MagazzinoBulk magazzinoAbilitato = new MagazzinoBulk();
 
-	private List<BollaScaricoMagBulk> listaBolleScarico;
-
-	public List<BollaScaricoMagBulk> getListaBolleScarico() {
-		return listaBolleScarico;
-	}
-
-	public void setListaBolleScarico(List<BollaScaricoMagBulk> listaBolleScarico) {
-		this.listaBolleScarico = listaBolleScarico;
-	}
-
 	private final String EVASIONE_ORDINE_FILEFOLDER = "Evasione Ordini";
 
 	public EvasioneOrdineBulk() {
