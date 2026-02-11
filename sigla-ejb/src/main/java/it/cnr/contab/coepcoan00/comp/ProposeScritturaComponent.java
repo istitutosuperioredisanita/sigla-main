@@ -3991,6 +3991,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			}
 		}
 		String cdVocePatrimonialeSaldoPositivo=null;
+		BigDecimal totImportoNettoConto = BigDecimal.ZERO;
 		for (String cdVocePatrimoniale : contiPatrimonialiDaChiudere.keySet()) {
 			BigDecimal imponibileConto = contiPatrimonialiDaChiudere.get(cdVocePatrimoniale).getSecond().getFirst();
 			BigDecimal impostaConto = contiPatrimonialiDaChiudere.get(cdVocePatrimoniale).getSecond().getSecond();
@@ -3998,16 +3999,18 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			BigDecimal importoNettoConto = importoLordoConto.subtract(impostaConto);
 			testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_DARE, cdVocePatrimoniale, importoNettoConto, cdTerzoDocAmm, docamm);
 			testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.TESORERIA.value(), Movimento_cogeBulk.SEZIONE_AVERE, voceEpBanca, importoNettoConto);
-			if (importoNettoConto.compareTo(BigDecimal.ZERO)!=0)
+			if (importoNettoConto.compareTo(BigDecimal.ZERO)!=0) {
 				cdVocePatrimonialeSaldoPositivo = cdVocePatrimoniale;
+				totImportoNettoConto = totImportoNettoConto.add(importoNettoConto);
+			}
 		}
-		if (imNettoRigheMandato.compareTo(saldoPartita.add(saldoNota))>0 && Optional.ofNullable(cdVocePatrimonialeSaldoPositivo).isPresent()) {
+		if (imNettoRigheMandato.compareTo(totImportoNettoConto)>0 && Optional.ofNullable(cdVocePatrimonialeSaldoPositivo).isPresent()) {
 			testataPrimaNota.setAnomaliaContabilizzazione("L'importo netto (" + new EuroFormat().format(imNettoRigheMandato) +
 					") delle righe del mandato " + mandato.getEsercizio() + "/" + mandato.getCd_cds() + "/" + mandato.getPg_mandato() +
 					" è inferiore al saldo totale fornitore (" + new EuroFormat().format(saldoPartita) + ") del documento associato " +
 					docamm.getCd_tipo_doc() + "/" + docamm.getEsercizio() + "/" + docamm.getCd_uo() + "/" + docamm.getPg_doc() + ".");
-			testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_DARE, cdVocePatrimonialeSaldoPositivo, imNettoRigheMandato.subtract(saldoPartita), cdTerzoDocAmm, docamm);
-			testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.TESORERIA.value(), Movimento_cogeBulk.SEZIONE_AVERE, voceEpBanca, imNettoRigheMandato.subtract(saldoPartita));
+			testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.DEBITO.value(), Movimento_cogeBulk.SEZIONE_DARE, cdVocePatrimonialeSaldoPositivo, imNettoRigheMandato.subtract(totImportoNettoConto), cdTerzoDocAmm, docamm);
+			testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.TESORERIA.value(), Movimento_cogeBulk.SEZIONE_AVERE, voceEpBanca, imNettoRigheMandato.subtract(totImportoNettoConto));
 		}
 	}
 
