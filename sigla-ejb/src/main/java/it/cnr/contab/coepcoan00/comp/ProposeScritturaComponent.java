@@ -5629,6 +5629,8 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 			Voce_analiticaHome voceAnaliticaHome = (Voce_analiticaHome) getHome(userContext, Voce_analiticaBulk.class);
 			Voce_analiticaBulk voceAnaliticaBulk = (Voce_analiticaBulk)voceAnaliticaHome.findByPrimaryKey(new Voce_analiticaBulk(aCdContoAna, CNRUserContext.getEsercizio(userContext)));
+			if (voceAnaliticaBulk==null || voceAnaliticaBulk.getCd_voce_ana()==null)
+				throw new ApplicationException("Voce analitica "+aCdContoAna+" non presente nell'anno "+CNRUserContext.getEsercizio(userContext)+".");
 			movimentoCoan.setToBeCreated();
 			movimentoCoan.setUser(userContext.getUser());
 
@@ -5641,7 +5643,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			movimentoCoan.setLatt(lineaAttivita);
 
 			movimentoCoan.setSezione(aSezione);
-			movimentoCoan.setCd_voce_ana(aCdContoAna);
 
 			movimentoCoan.setPg_numero_documento(doccoge.getPg_doc());
 
