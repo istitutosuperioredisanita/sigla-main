@@ -325,9 +325,9 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                         return contoEconomico;
                 }
 
-                //Fino al 2023 il conto di costo veniva prelevato dalla voce di bilancio
+                //Fino al 2024 il conto di costo veniva prelevato dalla voce di bilancio
                 //Per questo la ricerca con il bene associato la faccio solo a partire dal 2025
-                if (docRiga.getEsercizio().compareTo(2024)>=0) {
+                if (docRiga.getEsercizio().compareTo(2025)>=0) {
                     //verifico se sulla riga del docamm ci sia un bene inventariabile
                     Bene_servizioBulk myBeneServizio = (Bene_servizioBulk) fatpasHome.loadIfNeededObject(docRiga.getBene_servizio());
 
