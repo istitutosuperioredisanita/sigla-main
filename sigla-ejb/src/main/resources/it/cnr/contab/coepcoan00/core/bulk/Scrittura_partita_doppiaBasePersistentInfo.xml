@@ -202,7 +202,13 @@
             sqlTypeName="DECIMAL"
             columnSize="6"
             nullable="true" />
-    </defaultColumnMap>
+		<columnMapping
+			columnName="ANOMALIA_CONTABILIZZAZIONE"
+			propertyName="anomaliaContabilizzazione"
+			sqlTypeName="VARCHAR"
+			columnSize="2000"
+			nullable="true" />
+	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
 	<persistentProperty
@@ -271,4 +277,6 @@
         name="rigaOrdine" />
     <persistentProperty
         name="consegna" />
+	<persistentProperty
+		name="anomaliaContabilizzazione" />
 </SQLPersistentInfo>

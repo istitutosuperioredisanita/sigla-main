@@ -101,6 +101,8 @@ public class Scrittura_partita_doppiaBase extends Scrittura_partita_doppiaKey im
 
     private java.lang.Integer consegna;
 
+	private java.lang.String anomaliaContabilizzazione;
+
 	// DT_INIZIO TIMESTAMP NOT NULL (PK)
 
 	public Scrittura_partita_doppiaBase() {
@@ -428,4 +430,12 @@ public class Scrittura_partita_doppiaBase extends Scrittura_partita_doppiaKey im
     public void setConsegna(Integer consegna) {
         this.consegna = consegna;
     }
+
+	public String getAnomaliaContabilizzazione() {
+		return anomaliaContabilizzazione;
+	}
+
+	public void setAnomaliaContabilizzazione(String anomaliaContabilizzazione) {
+		this.anomaliaContabilizzazione = anomaliaContabilizzazione;
+	}
 }
