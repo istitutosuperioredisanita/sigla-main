@@ -1768,15 +1768,23 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 
 		if (getTipo_documento()==null)
 			throw new ValidationException("Selezionare un tipo di documento");
-		if(getTipo_documento().getCd_tipo_documento_amm().compareTo(GENERICO_S)==0)
-			if (dataInizioObbligoRegistroUnico!=null && getData_registrazione().after(dataInizioObbligoRegistroUnico))
-			{
-				if(getStato_liquidazione()==null)
+		if(getTipo_documento().getCd_tipo_documento_amm().compareTo(GENERICO_S)==0) {
+			if (dataInizioObbligoRegistroUnico != null && getData_registrazione().after(dataInizioObbligoRegistroUnico)) {
+				if (getStato_liquidazione() == null) {
 					throw new ValidationException("Inserire lo stato della liquidazione!");
-				if(getStato_liquidazione()!=null && getStato_liquidazione().compareTo(this.LIQ)!=0 && getCausale()==null)
-					throw new ValidationException("Inserire la causale.");
+				}
+				if (getStato_liquidazione() != null) {
+					if(getStato_liquidazione().compareTo(this.LIQ) != 0 && getCausale() == null) {
+						throw new ValidationException("Inserire la causale.");
+					}
+					if(getStato_liquidazione().compareTo(this.LIQ) == 0 && hasDettagliNonContabilizzati()){
+						throw new ValidationException("Attenzione. Non è possibile impostare lo stato Liquidabile. Tutti i dettagli devono essere contabilizzati");
+					}
+				}
+
 			}
 
+		}
 		if (getLettera_pagamento_estero() != null)
 			getLettera_pagamento_estero().validate();
 
