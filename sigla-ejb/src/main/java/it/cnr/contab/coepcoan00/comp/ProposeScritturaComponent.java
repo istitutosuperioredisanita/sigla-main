@@ -4001,7 +4001,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			if (importoNettoConto.compareTo(BigDecimal.ZERO)!=0)
 				cdVocePatrimonialeSaldoPositivo = cdVocePatrimoniale;
 		}
-		if (imNettoRigheMandato.compareTo(saldoPartita)>0 && Optional.ofNullable(cdVocePatrimonialeSaldoPositivo).isPresent()) {
+		if (imNettoRigheMandato.compareTo(saldoPartita.add(saldoNota))>0 && Optional.ofNullable(cdVocePatrimonialeSaldoPositivo).isPresent()) {
 			testataPrimaNota.setAnomaliaContabilizzazione("L'importo netto (" + new EuroFormat().format(imNettoRigheMandato) +
 					") delle righe del mandato " + mandato.getEsercizio() + "/" + mandato.getCd_cds() + "/" + mandato.getPg_mandato() +
 					" è inferiore al saldo totale fornitore (" + new EuroFormat().format(saldoPartita) + ") del documento associato " +
