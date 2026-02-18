@@ -34,41 +34,51 @@ public class GestConfCNRAction extends CRUDAction {
         GestConfCNRBP bp = (GestConfCNRBP) actioncontext.getBusinessProcess();
         Forward forward = super.doRiportaSelezione(actioncontext, oggettobulk);
 
-        if(oggettobulk != null){
-            Configurazione_cnrBulk configurazione_cnrBulk = (Configurazione_cnrBulk)oggettobulk;
+        if (oggettobulk != null) {
+            Configurazione_cnrBulk configurazione_cnrBulk = (Configurazione_cnrBulk) oggettobulk;
+            if(bp.getStatusOriginale()==bp.INSERT) {
+                if (configurazione_cnrBulk.getEsercizio() != null) {
+                    boolean isEsercizioAperto = false;
+                    if (configurazione_cnrBulk.getEsercizio() == 0) {
+                        isEsercizioAperto = true;
+                        bp.setEsercizioAperto(true);
+                    } else {
+                        try {
+                            isEsercizioAperto = bp.controllaEsercizioAperto(actioncontext.getUserContext());
+                        } catch (BusinessProcessException e) {
+                            throw new RuntimeException(e);
+                        } catch (ComponentException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    if (!isEsercizioAperto) {
+                        bp.setStatus(bp.VIEW);
+                        bp.setEditable(false);
+                    } else {
 
-            if(configurazione_cnrBulk.getEsercizio() != null) {
-                boolean isEsercizioAperto = false;
-                if (configurazione_cnrBulk.getEsercizio() == 0) {
-                    isEsercizioAperto=true;
-                    bp.setEsercizioAperto(true);
-                } else {
-                    try {
-                        isEsercizioAperto = bp.controllaEsercizioAperto(actioncontext.getUserContext());
-                    } catch (BusinessProcessException e) {
-                        throw new RuntimeException(e);
-                    } catch (ComponentException e) {
-                        throw new RuntimeException(e);
+                        bp.setStatus(bp.EDIT);
+                        bp.setEditable(true);
                     }
                 }
-
-                if(!isEsercizioAperto){
-                    bp.setStatus(bp.VIEW);
-                    bp.setEditable(false);
-                }
-                else {
-                    bp.setStatus(bp.EDIT);
-                    bp.setEditable(true);
-                }
-                configurazione_cnrBulk.caricaEsercizioList(actioncontext);
-                try {
-                    bp.setModel(actioncontext, configurazione_cnrBulk);
-                } catch (BusinessProcessException e) {
-                    throw new RuntimeException(e);
-                }
+            }
+            configurazione_cnrBulk.caricaEsercizioList(actioncontext);
+            try {
+                bp.setModel(actioncontext, configurazione_cnrBulk);
+            } catch (BusinessProcessException e) {
+                throw new RuntimeException(e);
             }
         }
-
         return forward;
+    }
+
+    @Override
+    public Forward doSalva(ActionContext actioncontext) throws RemoteException {
+
+        Forward f = super.doSalva(actioncontext);
+        GestConfCNRBP bp = (GestConfCNRBP) actioncontext.getBusinessProcess();
+        Configurazione_cnrBulk configurazione_cnrBulk = (Configurazione_cnrBulk)bp.getModel();
+        configurazione_cnrBulk.caricaEsercizioList(actioncontext);
+
+        return f;
     }
 }

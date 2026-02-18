@@ -35,6 +35,11 @@ public GestConfCNRBP() {
 	super();
 }
 
+
+    private boolean esercizioAperto;
+    private Integer statusOriginale;
+
+
     public GestConfCNRBP(String s) {
         super(s);
     }
@@ -42,6 +47,7 @@ public GestConfCNRBP() {
     protected void init(it.cnr.jada.action.Config config, ActionContext context) throws BusinessProcessException {
 	try {
 		super.init(config,context);
+        setStatusOriginale(this.getStatus());
 		this.setStatus(this.SEARCH);
 
 	}catch(Throwable e) { 
@@ -49,7 +55,6 @@ public GestConfCNRBP() {
 	}
 }
 
-    private boolean esercizioAperto;
 
     @Override
     public FormField getFormField(String s) {
@@ -90,5 +95,13 @@ public GestConfCNRBP() {
         EsercizioComponentSession esercizio_component = (EsercizioComponentSession)this.createComponentSession("CNRCONFIG00_EJB_EsercizioComponentSession", EsercizioComponentSession.class);
         setEsercizioAperto(esercizio_component.isEsercizioAperto(userContext));
         return isEsercizioAperto();
+    }
+
+    public Integer getStatusOriginale() {
+        return statusOriginale;
+    }
+
+    public void setStatusOriginale(Integer statusOriginale) {
+        this.statusOriginale = statusOriginale;
     }
 }
