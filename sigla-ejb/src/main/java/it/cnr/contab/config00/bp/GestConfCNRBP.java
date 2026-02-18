@@ -18,11 +18,16 @@
 package it.cnr.contab.config00.bp;
 
 
+import it.cnr.contab.config00.ejb.EsercizioComponentSession;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.Config;
 import it.cnr.jada.util.action.FormField;
 import it.cnr.jada.util.jsp.Button;
+
+import java.rmi.RemoteException;
 
 public class GestConfCNRBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 
@@ -44,6 +49,8 @@ public GestConfCNRBP() {
 	}
 }
 
+    private boolean esercizioAperto;
+
     @Override
     public FormField getFormField(String s) {
         return super.getFormField(s);
@@ -62,11 +69,26 @@ public GestConfCNRBP() {
         return abutton;
     }
 
-
-
     public String getFormName() {
         return "SEARCH_FORM";
     }
 
+    public boolean isSaveButtonEnabled() {
+        return isEsercizioAperto();
+    }
 
+    public boolean isEsercizioAperto() {
+        return esercizioAperto;
+    }
+
+    public void setEsercizioAperto(boolean esercizioAperto) {
+        this.esercizioAperto = esercizioAperto;
+    }
+
+    public boolean controllaEsercizioAperto(UserContext userContext) throws BusinessProcessException, ComponentException, RemoteException {
+
+        EsercizioComponentSession esercizio_component = (EsercizioComponentSession)this.createComponentSession("CNRCONFIG00_EJB_EsercizioComponentSession", EsercizioComponentSession.class);
+        setEsercizioAperto(esercizio_component.isEsercizioAperto(userContext));
+        return isEsercizioAperto();
+    }
 }
