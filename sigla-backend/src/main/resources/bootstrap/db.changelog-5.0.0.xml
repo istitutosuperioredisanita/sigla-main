@@ -6287,4 +6287,5 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accessi_cons_scadenzario_anno_corrente.xml"/>
     <!-- Autore : RAFFAELE PAGANO - AGGIUNTO CAMPO ANOMALIA_CONTABILIZZAZIONE SU SCRITTURA PRIMA NOTA -->
     <include file="bootstrap/add_column_on_scrittura_partita_doppia.xml"/>
+    <include file="bootstrap/add_schedulazione_check_congr_dati2.xml"/>
 </databaseChangeLog>
