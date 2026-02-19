@@ -90,15 +90,8 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
         return (ContrattoBulk) contrattoComponentSession.creaContrattoDaFlussoAcquisti(userContext, contratto,true);
     }
 
-
     @Override
     public Response insertContrattoV2(HttpServletRequest request, ContrattoDtoBulk contrattoMaggioliBulk) throws Exception {
         return insertContratto(request,contrattoMaggioliBulk,ApiVersion.V2);
-    }
-
-    @Override
-    public Response recuperoDatiContratto(HttpServletRequest request, String uo, Integer cdTerzo) throws Exception {
-        _log.info("recuperoDatiContratto->Maggioli" );
-       return super.recuperoDatiContratto(request,uo,cdTerzo);
     }
 }
