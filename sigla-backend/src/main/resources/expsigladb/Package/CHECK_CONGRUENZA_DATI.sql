@@ -1,4 +1,4 @@
-create or replace PACKAGE "CHECK_CONGRUENZA_DATI" AS
+CREATE OR REPLACE PACKAGE CHECK_CONGRUENZA_DATI AS
 -- =================================================================================================
 --
 -- ACCONTO - Gestione Acconto per le addizionali
@@ -9,33 +9,14 @@ create or replace PACKAGE "CHECK_CONGRUENZA_DATI" AS
 -- Dependency:
 --
 -- History:
---
---
---
 -- Rilascio check congruenza dati.
---
--- =================================================================================================
---
--- Constants
---
-
---
--- Variabili globali
---
-
-
--- Dichiarazione di un cursore generico
-
---
--- Functions e Procedures
---
-
 ----------------------------------------------------------------------------------------------------
 -- ROUTINE COMUNI
 ----------------------------------------------------------------------------------------------------
-
-    TIPO_LOG_CONGR_DATI CONSTANT VARCHAR2(20):='CONGR_DATI';
+  TIPO_LOG_CONGR_DATI CONSTANT VARCHAR2(20):='CONGR_DATI';
+  TIPO_LOG_QUADR_COGEINV CONSTANT VARCHAR2(20):='QUADR_COGEINV';
 
   Procedure job_check_congruenza_dati(job number, pg_exec number, next_date date);
-
+  Procedure job_check_quadratura_coge_inv(job number, pg_exec number, next_date date, aEs number, aContoEp VARCHAR2);
+  Procedure job_check_quadratura_coge_inv2(aEs number, aContoEp VARCHAR2);
 END CHECK_CONGRUENZA_DATI;

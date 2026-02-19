@@ -357,7 +357,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         //sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, 2025);
         //sql.addClause(FindClause.AND, "tipodoc", SQLBuilder.EQUALS, "GENERICO_E");
         //sql.addClause(FindClause.AND, "tipodoc", SQLBuilder.EQUALS, "FATTURA_A");
-        //sql.addClause(FindClause.AND, "pg_doc", SQLBuilder.EQUALS, 1454);
+        //sql.addClause(FindClause.AND, "pg_doc", SQLBuilder.EQUALS, 166);
         //sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, "003.001");
         //sql.addClause(FindClause.AND, "cd_unita_operativa", SQLBuilder.EQUALS, "COFAR");
         //sql.addClause(FindClause.AND, "cd_numeratore", SQLBuilder.EQUALS, "CCF");
@@ -478,9 +478,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         } catch (ScritturaPartitaDoppiaNotRequiredException | ScritturaPartitaDoppiaNotEnabledException e) {
             rollbackToSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");
             throw e;
-        } catch (ApplicationException e) {
-            throw e;
-        } catch (ApplicationRuntimeException e) {
+        } catch (RuntimeException e) {
             rollbackToSavepoint(userContext, "INIT_SCRITTURE_CONTABILI_PRIMA_NOTA");
             throw new ComponentException(e);
         } catch (RemoteException e) {

@@ -23,14 +23,13 @@ package it.cnr.contab.docamm00.docs.bulk;
  */
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailAnaCogeBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
-import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
+import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.*;
@@ -188,11 +187,22 @@ public class Fattura_attiva_rigaHome extends BulkHome {
 					if (Optional.ofNullable(accertScad).isPresent()) {
 						AccertamentoBulk accert = (AccertamentoBulk) fatpasHome.loadIfNeededObject(accertScad.getAccertamento());
 						Ass_ev_voceepHome assEvVoceEpHome = (Ass_ev_voceepHome) getHomeCache().getHome(Ass_ev_voceepBulk.class);
-						List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), accert.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
+						//Metto docRiga.getEsercizio e non accert.getEsercizio perchè quest'ultimo cambia se anno ribaltato
+						List<Ass_ev_voceepBulk> listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), docRiga.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
+						//Se lista è vuota cerco associazione nell'anno dell'accertamento
+						if (Optional.ofNullable(listAss).orElse(new ArrayList<>()).isEmpty() && docRiga.getEsercizio().compareTo(accert.getEsercizio())!=0) {
+							listAss = assEvVoceEpHome.findVociEpAssociateVoce(new Elemento_voceBulk(accert.getCd_elemento_voce(), accert.getEsercizio(), accert.getTi_appartenenza(), accert.getTi_gestione()));
+							return Optional.ofNullable(listAss).orElse(new ArrayList<>())
+									.stream().map(Ass_ev_voceepBulk::getVoce_ep)
+									.findAny().orElseThrow(() ->
+											new ApplicationRuntimeException("Non risultano associati conti economici alla voce di bilancio " + accert.getTi_gestione() + "/" + accert.getCd_elemento_voce() +
+													" sia nell'esercizio del documento (" + docRiga.getEsercizio() + ") che in quello dell'accertamento (" + accert.getEsercizio() + ")!")
+									);
+						}
 						return Optional.ofNullable(listAss).orElse(new ArrayList<>())
 								.stream().map(Ass_ev_voceepBulk::getVoce_ep)
-								.findAny().orElseThrow(()->
-									new ApplicationPersistencyException("Non risultano associati conti economici alla voce di bilancio "+accert.getTi_gestione()+"/"+accert.getCd_elemento_voce()+"!")
+								.findAny().orElseThrow(() ->
+										new ApplicationRuntimeException("Non risultano associati conti economici alla voce di bilancio " + accert.getEsercizio()+"/"+accert.getTi_gestione() + "/" + accert.getCd_elemento_voce()+"!")
 								);
 					}
 				}

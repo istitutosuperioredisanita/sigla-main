@@ -36,10 +36,7 @@ import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Stateless(name = "CNRCOEPCOAN00_EJB_AsyncScritturaPartitaDoppiaFromDocumentoComponentSession")
 public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements AsyncScritturaPartitaDoppiaFromDocumentoComponentSession {
@@ -112,7 +109,8 @@ public class AsyncScritturaPartitaDoppiaFromDocumentoComponentSessionBean extend
 						else
 							log_riga.setMessaggio("Esercizio:" + documentoCoge.getEsercizio() + "-CdUo:" + documentoCoge.getCd_unita_organizzativa() + "-CdTipoDoc:" + documentoCoge.getTipodoc() + "-PgDoc:" + documentoCoge.getPg_doc());
 						log_riga.setTrace(log_riga.getMessaggio());
-						log_riga.setNote(e.getMessage().substring(0, Math.min(e.getMessage().length(), 3999)));
+						String message = Optional.ofNullable(e.getMessage()).orElse(Arrays.toString(e.getStackTrace()));
+						log_riga.setNote(message.substring(0, Math.min(message.length(), 3999)));
 						log_riga.setToBeCreated();
 						try {
 							listLogRighe.add((Batch_log_rigaBulk) batchControlComponentSession.creaConBulkRequiresNew(param0, log_riga));

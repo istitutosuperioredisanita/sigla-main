@@ -33,10 +33,7 @@ import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Scrittura_partita_doppiaHome extends BulkHome {
     public Scrittura_partita_doppiaHome(java.sql.Connection conn) {
@@ -88,10 +85,16 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
      * @throws PersistencyException PersistencyException
      */
     public Optional<Scrittura_partita_doppiaBulk> findByDocumentoAmministrativo(IDocumentoCogeBulk documentoCogeBulk) throws PersistencyException {
+        return findAllByDocumentoAmministrativo(documentoCogeBulk)
+                .stream()
+                .min(Comparator.comparing(Scrittura_partita_doppiaKey::getPg_scrittura));
+    }
+
+    public List<Scrittura_partita_doppiaBulk> findAllByDocumentoAmministrativo(IDocumentoCogeBulk documentoCogeBulk) throws PersistencyException {
         return findByDocumentoCoge(documentoCogeBulk)
                 .stream()
                 .filter(Scrittura_partita_doppiaBulk::isScritturaAttiva)
-                .min(Comparator.comparing(Scrittura_partita_doppiaKey::getPg_scrittura));
+                .toList();
     }
 
 	public List<Scrittura_partita_doppiaBulk> findByDocumentoCoge(IDocumentoCogeBulk documentoCogeBulk) throws PersistencyException {
@@ -134,6 +137,22 @@ public class Scrittura_partita_doppiaHome extends BulkHome {
             if (scrittura.getPg_scrittura()==null)
                 scrittura.setPg_scrittura(Utility.createScritturaPartitaDoppiaComponentSession().getNextProgressivo(userContext, scrittura));
         } catch (java.lang.Exception e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    public List<Scrittura_partita_doppiaBulk> getScritture(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, boolean fetchAll) throws ComponentException {
+        try {
+            List<Scrittura_partita_doppiaBulk> scritture = new ArrayList<>();
+            if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, documentoCogeBulk.getEsercizio())) {
+                scritture.addAll(this.findAllByDocumentoAmministrativo(documentoCogeBulk));
+                for (Scrittura_partita_doppiaBulk scrittura:scritture) {
+                    scrittura.setMovimentiDareColl(new BulkList<>(this.findMovimentiDareColl(userContext, scrittura, fetchAll)));
+                    scrittura.setMovimentiAvereColl(new BulkList<>(this.findMovimentiAvereColl(userContext, scrittura, fetchAll)));
+                }
+            }
+            return scritture;
+        } catch (PersistencyException | RemoteException e) {
             throw new ComponentException(e);
         }
     }
