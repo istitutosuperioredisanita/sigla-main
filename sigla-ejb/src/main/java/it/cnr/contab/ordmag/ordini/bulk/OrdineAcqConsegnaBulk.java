@@ -752,10 +752,9 @@ public class OrdineAcqConsegnaBulk extends OrdineAcqConsegnaBase implements IDoc
     @Override
     public Timestamp getDt_contabilizzazione() {
         //Metto la data di ultima variazione che dovrebbe corrispondere alla data di evasione
-        return Optional.ofNullable(this.getEvasioneOrdineRigaBulk())
-				.map(EvasioneOrdineRigaBulk::getEvasioneOrdine)
-				.map(EvasioneOrdineBulk::getDataConsegna)
-				.orElse(this.getDuva());
+		Assert.isTrue(Optional.ofNullable(this.getEvasioneOrdineRigaBulk()).flatMap(el -> Optional.ofNullable(el.getPg_ver_rec())).isPresent(), "Calcolo Data Contabilizzazione Consegna Ordine non possibile! Non risulta caricato l'oggetto EvasioneOrdineRiga.");
+		Assert.isTrue(Optional.ofNullable(this.getEvasioneOrdineRigaBulk().getEvasioneOrdine()).flatMap(el -> Optional.ofNullable(el.getPg_ver_rec())).isPresent(), "Calcolo Data Contabilizzazione Consegna Ordine non possibile! Non risulta caricato l'oggetto EvasioneOrdine.");
+		return this.getEvasioneOrdineRigaBulk().getEvasioneOrdine().getDataConsegna();
     }
 
     @Override

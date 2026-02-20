@@ -22,6 +22,8 @@ import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.jada.bulk.ValidationException;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.Month;
 
 public class Liquidazione_ivaBulk extends Liquidazione_ivaBase implements IDocumentoCogeBulk {
 	private Scrittura_partita_doppiaBulk scrittura_partita_doppia;
@@ -136,6 +138,21 @@ public class Liquidazione_ivaBulk extends Liquidazione_ivaBase implements IDocum
 
 	@Override
 	public Timestamp getDt_contabilizzazione() {
+		if (this.getDt_fine() != null) {
+			LocalDateTime ldt = this.getDt_fine().toLocalDateTime();
+
+			if (ldt.getMonth() == Month.DECEMBER) {
+				LocalDateTime firstJanuaryNextYear = LocalDateTime.of(
+						ldt.getYear() + 1,
+						Month.JANUARY,
+						1,
+						0,
+						0,
+						0
+				);
+				return Timestamp.valueOf(firstJanuaryNextYear);
+			}
+		}
 		return this.getDt_fine();
 	}
 
