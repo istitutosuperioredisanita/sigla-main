@@ -331,7 +331,7 @@
 		inputType="TEXT"
 		formatName="date_short"
 		readonlyProperty="RODateCompetenzaCOGE"
-		command="doOnDataCompetenzaDaCogeChange"
+		command="doOnDataCompetenzaACogeChange"
 		enabledOnInsert="true"
 		enabledOnEdit="true"
 		enabledOnSearch="true"

@@ -1664,11 +1664,4 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
             throw handleException(e);
         }
     }
-    @Override
-    public void initializeKeysAndOptionsInto(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException{
-
-        ((Configurazione_cnrBulk)oggettobulk).caricaEsercizioList(usercontext);
-
-        super.initializeKeysAndOptionsInto(usercontext,oggettobulk);
-    }
 }
