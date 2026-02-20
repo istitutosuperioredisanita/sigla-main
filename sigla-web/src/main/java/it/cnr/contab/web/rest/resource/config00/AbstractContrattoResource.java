@@ -172,11 +172,6 @@ public abstract class AbstractContrattoResource {
             throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, String.format(e.getMessage()));
         }
     }
-    public Response insertContratto( HttpServletRequest request,   ContrattoDtoBulk contrattoBulk) throws Exception {
-            return insertContratto( request, contrattoBulk, DefaultContrattoLocal.ApiVersion.V1);
-
-    }
-
 
     private List<AllegatoContrattoFlussoDocumentBulk> getAllegatiContrattoFlusso(ContrattoBulk contrattoBulk,List<AttachmentContratto> l){
         List<AllegatoContrattoFlussoDocumentBulk> attachments = new ArrayList<AllegatoContrattoFlussoDocumentBulk>();
