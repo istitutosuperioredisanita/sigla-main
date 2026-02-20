@@ -23,6 +23,7 @@ import it.cnr.contab.web.rest.local.config00.ContrattoLocal;
 import it.cnr.contab.web.rest.local.config00.DefaultContrattoLocal;
 import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
 import it.cnr.jada.comp.ComponentException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,11 @@ public class ContrattoResource extends AbstractContrattoResource implements Cont
                    throw new RestException(Response.Status.BAD_REQUEST,String.format("Per tale integrazione non sono previsti gli allegati"));
                 });
         super.validateContratto(contrattoBulk, userContext, apiVersion);
+    }
+
+    public Response insertContratto(HttpServletRequest request, ContrattoDtoBulk contrattoBulk) throws Exception {
+        return insertContratto( request, contrattoBulk, DefaultContrattoLocal.ApiVersion.V1);
+
     }
 
     /*

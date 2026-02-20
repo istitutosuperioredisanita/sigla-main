@@ -22,7 +22,9 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
 import jakarta.ejb.EJB;
-import jakarta.inject.Inject;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -30,9 +32,6 @@ import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJBException;
-import jakarta.ejb.Stateless;
-import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -173,11 +172,6 @@ public abstract class AbstractContrattoResource {
             throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, String.format(e.getMessage()));
         }
     }
-    public Response insertContratto(@Context HttpServletRequest request, ContrattoDtoBulk contrattoBulk) throws Exception {
-            return insertContratto( request, contrattoBulk, DefaultContrattoLocal.ApiVersion.V1);
-
-    }
-
 
     private List<AllegatoContrattoFlussoDocumentBulk> getAllegatiContrattoFlusso(ContrattoBulk contrattoBulk,List<AttachmentContratto> l){
         List<AllegatoContrattoFlussoDocumentBulk> attachments = new ArrayList<AllegatoContrattoFlussoDocumentBulk>();

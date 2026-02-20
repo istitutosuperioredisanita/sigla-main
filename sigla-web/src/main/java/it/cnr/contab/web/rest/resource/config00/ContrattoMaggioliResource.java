@@ -6,6 +6,7 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.config00.ContrattoMaggioliLocal;
+import it.cnr.contab.web.rest.local.config00.DefaultContrattoLocal;
 import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
 import it.cnr.contab.web.rest.model.EnumNaturaContabileContratto;
 import it.cnr.contab.web.rest.model.EnumTipoDettaglioContratto;
@@ -90,15 +91,13 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
         return (ContrattoBulk) contrattoComponentSession.creaContrattoDaFlussoAcquisti(userContext, contratto,true);
     }
 
-
     @Override
     public Response insertContrattoV2(HttpServletRequest request, ContrattoDtoBulk contrattoMaggioliBulk) throws Exception {
         return insertContratto(request,contrattoMaggioliBulk,ApiVersion.V2);
     }
+    public Response insertContratto( HttpServletRequest request,   ContrattoDtoBulk contrattoBulk) throws Exception {
+        return insertContratto( request, contrattoBulk, DefaultContrattoLocal.ApiVersion.V1);
 
-    @Override
-    public Response recuperoDatiContratto(HttpServletRequest request, String uo, Integer cdTerzo) throws Exception {
-        _log.info("recuperoDatiContratto->Maggioli" );
-       return super.recuperoDatiContratto(request,uo,cdTerzo);
     }
+
 }
