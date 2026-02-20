@@ -2,7 +2,7 @@
 --  DDL for Package Body CHECK_CONGRUENZA_DATI
 --------------------------------------------------------
 
-CREATE OR REPLACE PACKAGE BODY SIGLASVILUPPO."CHECK_CONGRUENZA_DATI" As
+CREATE OR REPLACE PACKAGE BODY "CHECK_CONGRUENZA_DATI" As
  -- ==================================================================================================
  -- Inserimento di un record in ACCONTO_CLASSIFIC_CORI_ALTRI
  -- ==================================================================================================
