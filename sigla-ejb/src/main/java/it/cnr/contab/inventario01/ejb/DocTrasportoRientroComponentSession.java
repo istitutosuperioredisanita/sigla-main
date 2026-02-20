@@ -20,6 +20,7 @@ package it.cnr.contab.inventario01.ejb;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -209,4 +210,18 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             UserContext userContext,
             Integer cdAnag)
             throws ComponentException, RemoteException;
+
+    /** Inserisce nel documento i dettagli provenienti dal DTO REST. */
+    Doc_trasporto_rientroBulk aggiungiBeniDaDTO(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk docCreato,
+            List<Doc_trasporto_rientro_dettBulk> dettagliDTO)
+            throws ComponentException, RemoteException;
+
+    /** Converte un documento con PG temporaneo assegnando il PG definitivo. */
+    Doc_trasporto_rientroBulk confermaDocumentoTemporaneo(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk docT)
+            throws ComponentException, RemoteException;
+
 }

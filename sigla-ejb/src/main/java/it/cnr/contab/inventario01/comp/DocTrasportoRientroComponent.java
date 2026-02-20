@@ -1453,47 +1453,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    /**
-     * Rende definitivo il documento: verifica la presenza dell’allegato firmato,
-     * persiste eventuali eliminazioni, ricarica i dettagli, valida (inclusi i beni),
-     * aggiorna lo stato dei beni e salva il documento come DEFINITIVO.
-     */
-    public Doc_trasporto_rientroBulk salvaDefinitivo(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk docTR)
-            throws ComponentException {
-
-        try {
-            // ========== 1. VALIDA ALLEGATO FIRMATO ==========
-            if (!hasAllegatoFirmato(docTR)) {
-                throw new ApplicationException(
-                        "È obbligatorio allegare il documento firmato prima di rendere definitivo il documento."
-                );
-            }
-
-            // ========== 2. RICARICA DETTAGLI DAL DB (stato REALE) ==========
-            // Questo sovrascrive la collection in memoria con i dati del DB
-            caricaDettagliDocumento(userContext, docTR);
-
-            // ========== 3. VALIDA PRESENZA BENI (sui dati REALI dal DB) ==========
-            validaDoc(userContext, docTR, true);  // ← true = CONTROLLA i beni
-
-            // ========== 4. AGGIORNA STATO BENI E SALVA ==========
-            boolean beneInIstituto = docTR instanceof DocumentoRientroBulk;
-            aggiornaStatoBeni(userContext, docTR, beneInIstituto);
-
-            docTR.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-            docTR.setToBeUpdated();
-
-            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, docTR);
-
-        } catch (ApplicationException e) {
-            throw new ComponentException(e.getMessage(), e);
-        } catch (PersistencyException e) {
-            throw new ComponentException("Errore durante il salvataggio definitivo", e);
-        }
-    }
-
 
     /**
      * Annulla il documento: ricarica i dettagli, valida, verifica le condizioni di annullamento,
@@ -2773,4 +2732,144 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
+
+    /**
+     * Salva il documento come DEFINITIVO dopo validazioni e aggiornamenti necessari.
+     */
+    public Doc_trasporto_rientroBulk salvaDefinitivo(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk docTR)
+            throws ComponentException {
+
+        try {
+            // Verifica che il PG definitivo sia valido
+            Long pgDocDefinitivo = docTR.getPgDocTrasportoRientro();
+            if (pgDocDefinitivo == null || pgDocDefinitivo < 0) {
+                throw new ApplicationException(
+                        "salvaDefinitivo chiamato con pgDoc non valido: " + pgDocDefinitivo);
+            }
+
+            // Verifica presenza dell’allegato firmato
+            if (!hasAllegatoFirmato(docTR)) {
+                throw new ApplicationException(
+                        "È obbligatorio allegare il documento firmato prima di rendere definitivo il documento.");
+            }
+
+            // Ricarica i dettagli prima della validazione finale
+            caricaDettagliDocumento(userContext, docTR);
+
+            // Valida documento e beni
+            validaDoc(userContext, docTR, true);
+
+            // Aggiorna lo stato dei beni a seconda del tipo documento
+            boolean beneInIstituto = docTR instanceof DocumentoRientroBulk;
+            aggiornaStatoBeni(userContext, docTR, beneInIstituto);
+
+            // Salvataggio definitivo tramite update diretto (evita problemi di homeCache)
+            docTR.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+            docTR.setUser(userContext.getUser());
+
+            Doc_trasporto_rientroHome home =
+                    (Doc_trasporto_rientroHome) getHome(userContext, docTR);
+            home.update(docTR, userContext);
+
+            // Allinea i valori nel bulk in memoria
+            docTR.setPgDocTrasportoRientro(pgDocDefinitivo);
+            docTR.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+
+            return docTR;
+
+        } catch (ApplicationException e) {
+            throw new ComponentException(e.getMessage(), e);
+        } catch (PersistencyException e) {
+            throw new ComponentException("Errore durante il salvataggio definitivo", e);
+        } catch (Throwable e) {
+            throw new ComponentException("Errore imprevisto nel salvataggio definitivo", e);
+        }
+    }
+
+
+    /**
+     * Inserisce i dettagli/beni nel documento già creato (PG temporaneo o definitivo).
+     * Imposta i campi chiave ereditati dalla testata e crea i record.
+     */
+    public Doc_trasporto_rientroBulk aggiungiBeniDaDTO(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk docCreato,
+            List<Doc_trasporto_rientro_dettBulk> dettagliDTO)
+            throws ComponentException {
+
+        try {
+            for (Doc_trasporto_rientro_dettBulk dett : dettagliDTO) {
+                dett.setDoc_trasporto_rientro(docCreato);
+                dett.setPg_inventario(docCreato.getPgInventario());
+                dett.setTi_documento(docCreato.getTiDocumento());
+                dett.setEsercizio(docCreato.getEsercizio());
+                dett.setPg_doc_trasporto_rientro(docCreato.getPgDocTrasportoRientro());
+                dett.setToBeCreated();
+                super.creaConBulk(userContext, dett);
+            }
+            return docCreato;
+        } catch (Throwable e) {
+            throw handleException(e);
+        }
+    }
+
+
+    /**
+     * Conferma un documento con PG temporaneo, assegnando quello definitivo.
+     */
+    public Doc_trasporto_rientroBulk confermaDocumentoTemporaneo(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk docT)
+            throws ComponentException {
+
+        if (docT.getPgDocTrasportoRientro() == null || docT.getPgDocTrasportoRientro() >= 0) {
+            throw new ApplicationException(
+                    "confermaDocumentoTemporaneo chiamato con pgDoc non temporaneo: "
+                            + docT.getPgDocTrasportoRientro());
+        }
+
+        try {
+            // Carica i dettagli inseriti durante la creazione (ancora con PG negativo)
+            Doc_trasporto_rientro_dettHome dettHome =
+                    (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(userContext, docT);
+            docT.setDoc_trasporto_rientro_dettColl(new BulkList(dettHome.getDetailsFor(docT)));
+
+            // Verifica che siano presenti beni
+            validaDoc(userContext, docT, true);
+
+            // Ottiene il nuovo PG definitivo dal numeratore
+            Numeratore_doc_t_rHome numHome =
+                    (Numeratore_doc_t_rHome) getHome(userContext, Numeratore_doc_t_rBulk.class);
+            Long nuovoPgDoc = numHome.getNextPg(
+                    userContext,
+                    docT.getEsercizio(),
+                    docT.getPgInventario(),
+                    docT.getTiDocumento(),
+                    userContext.getUser()
+            );
+
+            // Aggiorna DB sostituendo PG temporaneo con definitivo (testata + dettagli)
+            Doc_trasporto_rientroHome home =
+                    (Doc_trasporto_rientroHome) getHome(userContext, docT);
+            home.confirmDocTrasportoRientroTemporaneo(userContext, docT, nuovoPgDoc);
+
+            // Aggiorna il bulk e ricarica i dettagli con il nuovo PG
+            docT.setPgDocTrasportoRientro(nuovoPgDoc);
+            docT.setDoc_trasporto_rientro_dettColl(new BulkList(dettHome.getDetailsFor(docT)));
+
+            // Aggiorna eventuali riferimenti incrociati (solo per documento di rientro)
+            preparaEAggiornaRiferimentiInversi(userContext, docT);
+
+            return docT;
+
+        } catch (PersistencyException e) {
+            throw new ComponentException(e);
+        } catch (ApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ComponentException(e);
+        }
+    }
 }

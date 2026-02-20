@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Autore : DAVIDE MIRRA
+  ~ Creazione tipo ruolo DOC_T_R, privilegio DOC_T_R, ruolo DOCTR_REST,
+  ~ utente USER_DOCTR (basato su ENTE) con assegnazione del ruolo DOCTR_REST
+  ~ e degli accessi inventario trasporto/restituzione beni su tutte le
+  ~ unità organizzative (CD_UNITA_ORGANIZZATIVA = '*').
+  -->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <!-- 1. Inserimento TIPO_RUOLO -->
+    <changeSet id="insert_tipo_ruolo_doc_t_r" author="davide.mirra">
+        <insert tableName="tipo_ruolo">
+            <column name="tipo"       type="VARCHAR(6)"  value="DOC_T_R"/>
+            <column name="ds_tipo"    type="VARCHAR(50)" value="Trasporto/Restituzione Documenti"/>
+            <column name="dacr"       type="${date.type}" valueDate="${now}"/>
+            <column name="utcr"       type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="duva"       type="${date.type}" valueDate="${now}"/>
+            <column name="utuv"       type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT"      value="1"/>
+        </insert>
+    </changeSet>
+
+    <!-- 2. Inserimento PRIVILEGIO
+         TI_PRIVILEGIO = 'D' => privilegio pubblico -->
+    <changeSet id="insert_privilegio_doc_t_r" author="davide.mirra">
+        <insert tableName="privilegio">
+            <column name="cd_privilegio"  type="VARCHAR(6)"   value="DOC_T_R"/>
+            <column name="ds_privilegio"  type="VARCHAR(100)" value="Gestione Trasporto e Restituzione Documenti"/>
+            <column name="ti_privilegio"  type="CHAR(1)"      value="D"/>
+            <column name="dacr"           type="${date.type}" valueDate="${now}"/>
+            <column name="utcr"           type="VARCHAR(20)"  value="SYSTEM"/>
+            <column name="duva"           type="${date.type}" valueDate="${now}"/>
+            <column name="utuv"           type="VARCHAR(20)"  value="SYSTEM"/>
+            <column name="pg_ver_rec"     type="BIGINT"       value="1"/>
+        </insert>
+    </changeSet>
+
+    <!-- 3. Inserimento RUOLO
+         CD_CDS = NULL => ruolo pubblico visibile a tutti -->
+    <changeSet id="insert_ruolo_doctr_rest" author="davide.mirra">
+        <insert tableName="ruolo">
+            <column name="cd_ruolo"    type="VARCHAR(20)"  value="DOCTR_REST"/>
+            <column name="ds_ruolo"    type="VARCHAR(200)" value="Ruolo Trasporto e Restituzione Documenti"/>
+            <column name="tipo"        type="VARCHAR(6)"   value="DOC_T_R"/>
+            <column name="dacr"        type="${date.type}" valueDate="${now}"/>
+            <column name="utcr"        type="VARCHAR(20)"  value="SYSTEM"/>
+            <column name="duva"        type="${date.type}" valueDate="${now}"/>
+            <column name="utuv"        type="VARCHAR(20)"  value="SYSTEM"/>
+            <column name="pg_ver_rec"  type="BIGINT"       value="1"/>
+        </insert>
+    </changeSet>
+
+    <!-- 4. Inserimento ASS_TIPO_RUOLO_PRIVILEGIO
+         NOTA: verificare colonne esatte con la DDL della tabella -->
+    <changeSet id="insert_ass_tipo_ruolo_privilegio_doctr" author="davide.mirra">
+        <insert tableName="ass_tipo_ruolo_privilegio">
+            <column name="tipo"          type="VARCHAR(6)"  value="DOC_T_R"/>
+            <column name="cd_privilegio" type="VARCHAR(6)"  value="DOC_T_R"/>
+            <column name="dacr"          type="${date.type}" valueDate="${now}"/>
+            <column name="utcr"          type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="duva"          type="${date.type}" valueDate="${now}"/>
+            <column name="utuv"          type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec"    type="BIGINT"      value="1"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

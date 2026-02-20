@@ -20,6 +20,7 @@ package it.cnr.contab.inventario01.ejb;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -30,13 +31,12 @@ import it.cnr.jada.util.RemoteIterator;
 
 import java.rmi.RemoteException;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Session proxy transazionale che delega tutte le operazioni
  * al DocTrasportoRientroComponent tramite invocazione riflessiva.
- *
+ * <p>
  * La classe non contiene logica applicativa: si occupa esclusivamente
  * della gestione transazionale e della propagazione delle eccezioni
  * verso il client remoto.
@@ -507,17 +507,17 @@ public class TransactionalDocTrasportoRientroComponentSession
     public boolean isEsercizioCOEPChiuso(UserContext userContext) throws ComponentException, RemoteException {
         try {
 
-            return ((Boolean)invoke("isEsercizioCOEPChiuso",new Object[] {
+            return ((Boolean) invoke("isEsercizioCOEPChiuso", new Object[]{
                     userContext})).booleanValue();
-        } catch(java.rmi.RemoteException e) {
+        } catch (java.rmi.RemoteException e) {
             throw e;
-        } catch(java.lang.reflect.InvocationTargetException e) {
+        } catch (java.lang.reflect.InvocationTargetException e) {
             try {
                 throw e.getTargetException();
-            } catch(it.cnr.jada.comp.ComponentException ex) {
+            } catch (it.cnr.jada.comp.ComponentException ex) {
                 throw ex;
-            } catch(Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
             }
         }
     }
@@ -543,38 +543,38 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
-    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws RemoteException,it.cnr.jada.comp.ComponentException {
+    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {
-            return (it.cnr.jada.bulk.OggettoBulk)invoke("inizializzaBulkPerStampa",new Object[] {
+            return (it.cnr.jada.bulk.OggettoBulk) invoke("inizializzaBulkPerStampa", new Object[]{
                     param0,
-                    param1 });
-        } catch(java.rmi.RemoteException e) {
+                    param1});
+        } catch (java.rmi.RemoteException e) {
             throw e;
-        } catch(java.lang.reflect.InvocationTargetException e) {
+        } catch (java.lang.reflect.InvocationTargetException e) {
             try {
                 throw e.getTargetException();
-            } catch(it.cnr.jada.comp.ComponentException ex) {
+            } catch (it.cnr.jada.comp.ComponentException ex) {
                 throw ex;
-            } catch(Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
             }
         }
     }
 
-    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws RemoteException,it.cnr.jada.comp.ComponentException {
+    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {
-            return (it.cnr.jada.bulk.OggettoBulk)invoke("stampaConBulk",new Object[] {
+            return (it.cnr.jada.bulk.OggettoBulk) invoke("stampaConBulk", new Object[]{
                     param0,
-                    param1 });
-        } catch(java.rmi.RemoteException e) {
+                    param1});
+        } catch (java.rmi.RemoteException e) {
             throw e;
-        } catch(java.lang.reflect.InvocationTargetException e) {
+        } catch (java.lang.reflect.InvocationTargetException e) {
             try {
                 throw e.getTargetException();
-            } catch(it.cnr.jada.comp.ComponentException ex) {
+            } catch (it.cnr.jada.comp.ComponentException ex) {
                 throw ex;
-            } catch(Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
             }
         }
     }
@@ -841,4 +841,42 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
+    @Override
+    public Doc_trasporto_rientroBulk aggiungiBeniDaDTO(UserContext userContext, Doc_trasporto_rientroBulk docCreato, List<Doc_trasporto_rientro_dettBulk> dettagliDTO) throws ComponentException, RemoteException {
+        try {
+            return (Doc_trasporto_rientroBulk) invoke("aggiungiBeniDaDTO", new Object[]{
+                    userContext,
+                    docCreato,
+                    dettagliDTO});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+
+    }
+
+    @Override
+    public Doc_trasporto_rientroBulk confermaDocumentoTemporaneo(UserContext userContext, Doc_trasporto_rientroBulk docT) throws ComponentException, RemoteException {
+        try {
+            return (Doc_trasporto_rientroBulk) invoke("confermaDocumentoTemporaneo", new Object[]{
+                    userContext,
+                    docT});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }    }
 }

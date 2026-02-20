@@ -137,4 +137,7 @@
 
     <!-- Autore : DAVIDE MIRRA-Configurazione per l'invio in firma di un DDT -->
     <include file="iss/update_conf_gestione_invio_docTR.xml"/>
+
+<!--    &lt;!&ndash; Autore : DAVIDE MIRRA - Creazione ruolo DOCTR_REST, tipo ruolo DOC_T_R. privilegio DOC_T_R &ndash;&gt;-->
+<!--    <include file="iss/insert_doctr_ruolo_utente.xml"/>-->
 </databaseChangeLog>
