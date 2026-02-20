@@ -3403,7 +3403,7 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
      * @return Il Forward alla pagina di risposta
      */
     public Forward doOnDataCompetenzaACogeChange(ActionContext context) {
-        CRUDFatturaAttivaIBP bp = (CRUDFatturaAttivaIBP) context.getBusinessProcess();
+        CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) context.getBusinessProcess();
         Fattura_attivaBulk fattura = (Fattura_attivaBulk) bp.getModel();
         try {
             fillModel(context);
@@ -3426,7 +3426,8 @@ public class CRUDFatturaAttivaAction extends EconomicaAction {
      * @return Il Forward alla pagina di risposta
      */
     public Forward doOnDataCompetenzaDaCogeChange(ActionContext context) {
-        CRUDFatturaAttivaIBP bp = (CRUDFatturaAttivaIBP) context.getBusinessProcess();
+
+        CRUDFatturaAttivaBP bp = (CRUDFatturaAttivaBP) context.getBusinessProcess();
         Fattura_attivaBulk fattura = (Fattura_attivaBulk) bp.getModel();
         try {
             fillModel(context);
