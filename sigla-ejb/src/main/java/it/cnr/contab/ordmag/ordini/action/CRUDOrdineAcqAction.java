@@ -22,6 +22,8 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.coepcoan00.action.CRUDScritturaAnaliticaAction;
 import it.cnr.contab.coepcoan00.bp.CRUDScritturaAnaliticaBP;
 import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
+import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
 import it.cnr.contab.config00.bp.CRUDConfigAnagContrattoBP;
 import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.contratto.bulk.Dettaglio_contrattoBulk;
@@ -2319,7 +2321,6 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 nbp.setFreeSearchButtonHidden(Boolean.TRUE);
                 nbp.resetForSearch(actioncontext);
                 nbp.setSearchResultColumnSet("includeFieldAttiva");
-                OggettoBulk oggettobulk = nbp.getModel();
 
                 CompoundFindClause clauses = new CompoundFindClause();
                 clauses.addClause(FindClause.AND, "esercizio_documento_amm", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
@@ -2330,7 +2331,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 clauses.addClause(FindClause.AND, "rigaOrdine", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getRigaOrdine());
                 clauses.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getConsegna());
 
-                final RemoteIterator remoteiterator = nbp.find(actioncontext, clauses, oggettobulk);
+                final RemoteIterator remoteiterator = nbp.find(actioncontext, clauses, new Scrittura_partita_doppiaBulk());
                 if (remoteiterator == null || remoteiterator.countElements() == 0) {
                     EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
                     setMessage(actioncontext, FormBP.WARNING_MESSAGE, "Scrittura Economica non presente!");
@@ -2373,7 +2374,6 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
 
                 nbp.resetForSearch(actioncontext);
                 nbp.setSearchResultColumnSet("includeFieldAttiva");
-                OggettoBulk oggettobulk = nbp.getModel();
 
                 CompoundFindClause clauses = new CompoundFindClause();
                 clauses.addClause(FindClause.AND, "esercizio_documento_amm", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getEsercizio());
@@ -2384,7 +2384,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                 clauses.addClause(FindClause.AND, "rigaOrdine", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getRigaOrdine());
                 clauses.addClause(FindClause.AND, "consegna", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getConsegna());
 
-                final RemoteIterator remoteiterator = nbp.find(actioncontext, clauses, oggettobulk);
+                final RemoteIterator remoteiterator = nbp.find(actioncontext, clauses, new Scrittura_analiticaBulk());
                 if (remoteiterator == null || remoteiterator.countElements() == 0) {
                     EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
                     setMessage(actioncontext, FormBP.WARNING_MESSAGE, "Scrittura Analitica non presente!");
