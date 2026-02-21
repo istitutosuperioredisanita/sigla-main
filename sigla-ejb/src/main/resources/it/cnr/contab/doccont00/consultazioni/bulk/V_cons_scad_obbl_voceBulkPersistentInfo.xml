@@ -17,7 +17,7 @@
   -->
 
 <SQLPersistentInfo
-	persistentClassName="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_scad_obb_vocelBulk"
+	persistentClassName="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_scad_obbl_voceBulk"
 	homeClassName="it.cnr.contab.doccont00.consultazioni.bulk.V_cons_scad_obbl_voceHome">
 	<defaultColumnMap
 			tableName="V_CONS_SCAD_OBBL_VOCE">

@@ -3,13 +3,13 @@
  * Date 27/03/2024
  */
 package it.cnr.contab.inventario00.docs.bulk;
-import java.sql.Connection;
 
-import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
-import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.sql.Connection;
 
 public class Chiusura_anno_inventarioHome extends BulkHome {
 
@@ -24,7 +24,7 @@ public class Chiusura_anno_inventarioHome extends BulkHome {
 
 
 
-	public String insertChiusuraAnnoInventario() {
+	public String insertChiusuraAnnoInventario(UserContext userContext)  {
 		return "INSERT INTO CHIUSURA_ANNO_INVENTARIO( \"PG_CHIUSURA\",\"ANNO\",\"TIPO_CHIUSURA\",\"CD_CATEGORIA_GRUPPO\",\"CD_TIPO_AMMORTAMENTO\" ,\"TI_AMMORTAMENTO\",\"ESERCIZIO_COMPETENZA\" ,\"VALORE_ANNO_PREC\" ,\"VALORE_INCREMENTO\" ,\"VALORE_DECREMENTO\" ,\"QUOTA_AMMORTAMENTO\" ,\"TOTALE_AMMORTAMENTO_ALIENATI\" ,\"QUOTA_AMMORTAMENTO_ANNO_PREC\" ,   \"VALORE_NETTO_ANNO_PREC\",\"DACR\" ,\"UTCR\" ,\"DUVA\" ,\"UTUV\" ,\"PG_VER_REC\" )"+
 				"select b.pg_chiusura, "+
 					"b.anno, "+
@@ -41,9 +41,9 @@ public class Chiusura_anno_inventarioHome extends BulkHome {
 					"sum( b.QUOTA_AMMORTAMENTO_ANNO_PREC) QUOTA_AMMORTAMENTO_ANNO_PREC, "+
 					"sum( b.VALORE_NETTO_ANNO_PREC) VALORE_NETTO_ANNO_PREC, "+
 					"sysdate dacr, "+
-					"'SI' utcr, "+
+					"'"+ CNRUserContext.getUser(userContext)+	"' utcr, "+
 					"sysdate duva, "+
-					"'SI' utuv, "+
+					"'"+CNRUserContext.getUser(userContext)+	"' utuv, "+
 					"1 pg_ver_rec "+
 				"from ( "+
 					"select ? pg_chiusura, "+ // 1 PG_CHIUSURA
@@ -94,7 +94,7 @@ public class Chiusura_anno_inventarioHome extends BulkHome {
 					"from chiusura_anno_inventario det "+
 					"where anno=? "+ // 15 ANNO_AMMORTAMENTO - 1
 					"group by ?,'?','I',  det.cd_categoria_gruppo,det.cd_tipo_ammortamento,  det.ti_ammortamento) b "+// 16 PG_CHIUSURA, 17 ANNO_AMMORTAMENTO
-				"group by b.pg_chiusura,b.anno,b.TIPO_CHIUSURA,b.cd_categoria_gruppo,b.CD_TIPO_AMMORTAMENTO,b.ti_ammortamento,b.esercizio_competenza,sysdate,'SI',sysdate,'SI',1 "+
+					"group by b.pg_chiusura,b.anno,b.TIPO_CHIUSURA,b.cd_categoria_gruppo,b.CD_TIPO_AMMORTAMENTO,b.ti_ammortamento,b.esercizio_competenza,sysdate,'"+CNRUserContext.getUser(userContext)+"',sysdate,'"+CNRUserContext.getUser(userContext)+"',1 "+
 				"order by b.cd_categoria_gruppo";
 
 

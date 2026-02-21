@@ -205,7 +205,11 @@ public class Progetto_other_fieldBulk extends Progetto_other_fieldBase {
 		}
 		return anno.orElse(9999);
 	}
-	
+
+
+	public boolean isProgettoAnnuale(){
+		return getAnnoInizio().compareTo(getAnnoFine())==0;
+	}
 	/**
 	 * Ritorna la data di fine effettiva del progetto calcolata come confronto tra data fine e data proroga
 	 * @return

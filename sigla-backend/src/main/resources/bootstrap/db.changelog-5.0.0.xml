@@ -6276,7 +6276,17 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accesso_ass_partita_giro.xml"/>
     <!-- Autore : MARCO SPASIANO - Accessi consultazione scadenzario anno corrente -->
     <include file="bootstrap/add_accessi_cons_scadenzario_anno_corrente.xml"/>
+    <!-- Autore : MASSIMILIANO DI GREGORIO - Nuova voce di menu per impegni pluriennali-->
+    <include file="bootstrap/add_accesso_stampa_obbligazioni_pluriennali_voci.xml"/>
+    <!-- Autore : STEFANO LUCATTINI - Nuova voce di menu per accertamenti pluriennali-->
+    <include file="bootstrap/add_accesso_stampa_accertamenti_pluriennali_voci.xml"/>
+    <!-- Autore : Stefano Lucattini - Nuova voce di menu per la gestione della tabella configurazione CNR-->
+    <include file="bootstrap/add_accesso_gestione_configurazione_cnr.xml"/>
+    <!-- Autore : Valentina Tomada - Modifica colonna TI_FUNZIONE di ASS_BP_ACCESSO x la gestione della tabella configurazione CNR-->
+    <include file="bootstrap/update_bp_accesso_gest_conf_cnr.xml"/>
 
+    <!-- Autore : Massimiliano Di Gregorio - Spostamento nel menu delle voci "Stampa impegni\accertamenti pluriennali da Stampe a Consultazioni" -->
+    <include file="bootstrap/update_albero_main_consultazione_impegni_accertamenti.xml"/>
     <!-- Autore : RAFFAELE PAGANO - MODIFICHE TABELLE PER GESTIONE SCRITTURA SU CONSEGNA ORDINE -->
     <include file="bootstrap/add_column_ordine_acq_consegna_scrittura_partita_doppia.xml"/>
 

@@ -4000,11 +4000,112 @@ begin
    aMessage := 'Aggiornamento voci su rimodulazione piano economico progetti. Inseriti '||sql%rowcount||' record.';
    ibmutl200.LOGINF(pg_exec,aMessage,'','');
 end;
+procedure AGGIORNAMENTO_PRG_PIAECO(aEs number, pg_exec number) as
+    pCurrPgPrg progetto.pg_progetto%TYPE:=null;
+    pPgRimodulazione progetto_rimodulazione.pg_rimodulazione%type;
+    pPgGenRimodulazione progetto_rimodulazione.pg_gen_rimodulazione%type;
+    pStanziatoAnnoCorrente v_saldi_piano_econom_progetto.importo_fin%type;
+    aEsPrec         number;
+    aMessage varchar2(500);
+    aUser varchar2(20);
+
+begin
+    aEsPrec := aEs - 1;
+    aUser:=IBMUTL200.getUserFromLog(pg_exec);
+
+    aMessage := 'Aggiornamento Piani economici Progetti con la quota di avanzo dell''anno precendente.';
+    ibmutl200.LOGINF(pg_exec,aMessage,'','');
+	 For recPiaeco in ( select p.pg_progetto,p.cd_progetto,o.dt_inizio,o.dt_fine,o.dt_proroga,v.cd_unita_organizzativa,s.esercizio,cd_unita_piano,s.cd_voce_piano,v.ds_voce_piano,
+		s.importo_fin finanziato,impacc_fin stanziato,importo_fin-impacc_fin daRiportare from v_saldi_piano_econom_progetto s inner join progetto_other_field o
+		on s.pg_progetto=o.pg_progetto
+		and o.dt_inizio<to_date('01/01/'||aEs,'dd/mm/yyyy')
+		and (o.dt_fine>to_date('31/12/'||aEsPrec,'dd/mm/yyyy') or o.dt_proroga>to_date('31/12/'||aEsPrec,'dd/mm/yyyy'))
+		inner join progetto p on p.pg_progetto=o.pg_progetto and p.esercizio=aEsPrec and p.tipo_fase='G'
+		inner join voce_piano_economico_prg v on v.cd_unita_organizzativa=s.cd_unita_piano and v.cd_voce_piano=s.cd_voce_piano
+		where s.esercizio=aEsPrec
+		and importo_fin-impacc_fin>0
+		order by p.cd_progetto) Loop
+			begin
+                if ( pCurrPgPrg is null or pCurrPgPrg!=recPiaeco.pg_progetto) then
+                    select NVL(max(pg_rimodulazione),0) +1 into pPgRimodulazione
+                      from progetto_rimodulazione
+                      where pg_progetto = recPiaeco.pg_progetto;
+
+                    select max(pg_gen_rimodulazione) +1 into pPgGenRimodulazione
+                      from progetto_rimodulazione;
+
+                    pCurrPgPrg:=recPiaeco.pg_progetto;
+
+                    Insert into progetto_rimodulazione (PG_PROGETTO,PG_RIMODULAZIONE,PG_GEN_RIMODULAZIONE,STATO,NOTE,IM_VAR_FINANZIATO,IM_VAR_COFINANZIATO,DACR,UTCR,DUVA,UTUV,PG_VER_REC)
+                    values (recPiaeco.pg_progetto,pPgRimodulazione,pPgGenRimodulazione,'A',' rimodulazione per avanzo anno '|| aEsPrec,0,0,sysdate,aUser,sysdate,aUser,'1');
+                     aMessage := 'Rimodulazione progetto : '||recPiaeco.cd_progetto||'-'||recPiaeco.pg_progetto||' pg_rimodulazione:'|| pPgRimodulazione||'pg_gen_rimodulazione:'|| pPgGenRimodulazione;
+                     ibmutl200.LOGINF(pg_exec,aMessage,'','');
+                end if;
+                begin
+                    select importo_fin into pStanziatoAnnoCorrente from v_saldi_piano_econom_progetto
+                    where pg_progetto=recPiaeco.pg_progetto
+                    and esercizio=aEs
+                    and cd_voce_piano=recPiaeco.cd_voce_piano;
+                    pStanziatoAnnoCorrente:=pStanziatoAnnoCorrente+recPiaeco.daRiportare;
+                    EXCEPTION
+                        WHEN NO_DATA_FOUND THEN
+                            pStanziatoAnnoCorrente:=recPiaeco.daRiportare;
+
+                end;
+                begin
+                    Insert into progetto_rimodulazione_ppe (PG_PROGETTO,PG_RIMODULAZIONE,CD_UNITA_ORGANIZZATIVA,CD_VOCE_PIANO,ESERCIZIO_PIANO,IM_VAR_SPESA_FINANZIATO,IM_VAR_ENTRATA,IM_VAR_SPESA_COFINANZIATO,IM_STOASS_SPESA_FINANZIATO,IM_STOASS_SPESA_COFINANZIATO,DACR,UTCR,DUVA,UTUV,PG_VER_REC)
+                        values (recPiaeco.pg_progetto,pPgRimodulazione,recPiaeco.cd_unita_organizzativa,recPiaeco.cd_voce_piano,aEs,recPiaeco.daRiportare,0,0,0,0,sysdate,aUser,sysdate,aUser,'1');
+
+                     Insert into progetto_rimodulazione_ppe (PG_PROGETTO,PG_RIMODULAZIONE,CD_UNITA_ORGANIZZATIVA,CD_VOCE_PIANO,ESERCIZIO_PIANO,IM_VAR_SPESA_FINANZIATO,IM_VAR_ENTRATA,IM_VAR_SPESA_COFINANZIATO,IM_STOASS_SPESA_FINANZIATO,IM_STOASS_SPESA_COFINANZIATO,DACR,UTCR,DUVA,UTUV,PG_VER_REC)
+                        values (recPiaeco.pg_progetto,pPgRimodulazione,recPiaeco.cd_unita_organizzativa,recPiaeco.cd_voce_piano,aEs-1,-recPiaeco.daRiportare,0,0,0,0,sysdate,aUser,sysdate,aUser,'1');
+                    --inserisci rimodulazione
+                    if ( pStanziatoAnnoCorrente=recPiaeco.daRiportare) then
+                         begin
+                            insert into PROGETTO_PIANO_ECONOMICO (PG_PROGETTO,CD_UNITA_ORGANIZZATIVA,CD_VOCE_PIANO,ESERCIZIO_PIANO,IM_SPESA_FINANZIATO,IM_ENTRATA,im_spesa_cofinanziato,FL_CTRL_DISP,DACR,UTCR,DUVA,UTUV,PG_VER_REC)
+                            values (recPiaeco.pg_progetto,recPiaeco.cd_unita_organizzativa,recPiaeco.cd_voce_piano,aEs,recPiaeco.daRiportare,0,0,'Y',sysdate,aUser,sysdate,aUser,'1');
+                         end;
+                    else
+                        begin
+                            update PROGETTO_PIANO_ECONOMICO
+                            set IM_SPESA_FINANZIATO=pStanziatoAnnoCorrente
+                            where PG_PROGETTO=recPiaeco.pg_progetto
+                            and CD_UNITA_ORGANIZZATIVA=recPiaeco.cd_unita_organizzativa
+                            and CD_VOCE_PIANO=recPiaeco.cd_voce_piano
+                            and ESERCIZIO_PIANO=aEs;
+                        end;
+                    end if;
+                    aMessage := 'progetto: '||recPiaeco.cd_progetto||' cd_voce_piano:'||recPiaeco.cd_voce_piano||' quota da Riportare :'||recPiaeco.daRiportare||' quota Anno Corrente finale:'||pStanziatoAnnoCorrente;
+                       ibmutl200.LOGINF(pg_exec,aMessage,'','');
+                    update PROGETTO_PIANO_ECONOMICO
+                            set IM_SPESA_FINANZIATO=IM_SPESA_FINANZIATO-recPiaeco.daRiportare
+                            where PG_PROGETTO=recPiaeco.pg_progetto
+                            and CD_UNITA_ORGANIZZATIVA=recPiaeco.cd_unita_organizzativa
+                            and CD_VOCE_PIANO=recPiaeco.cd_voce_piano
+                            and ESERCIZIO_PIANO=aEsPrec;
+
+					insert into ass_progetto_piaeco_voce
+						select pg_progetto,cd_unita_organizzativa,cd_voce_piano,aEs,aEs,ti_appartenenza,ti_gestione,cd_elemento_voce,sysdate,aUser,sysdate,aUser,1
+						from ass_progetto_piaeco_voce
+						where  pg_progetto=recPiaeco.pg_progetto
+						and esercizio_piano=aEsPrec
+						and cd_voce_piano=recPiaeco.cd_voce_piano
+						and not EXISTS(select pg_progetto from
+						ass_progetto_piaeco_voce
+						where  pg_progetto=recPiaeco.pg_progetto
+						and esercizio_piano=aEs
+						and cd_voce_piano=recPiaeco.cd_voce_piano);
+                end;
+             end; --Loop
+	    End Loop;
+    aMessage := 'Fine aggiornamento Piani economici Progetti con la quota di avanzo dell''anno precendente.';
+    ibmutl200.LOGINF(pg_exec,aMessage,'','');
+end;
 
 procedure RIBALTA_PROGETTI(aEs number, aUser String) as
 	pg_exec NUMBER;
     pApertura CONFIGURAZIONE_CNR.val02%TYPE;
     pChiusura CONFIGURAZIONE_CNR.val02%TYPE;
+    aMessage varchar2(500);
 BEGIN
     pg_exec := ibmutl200.LOGSTART('Procedura di ribaltamento progetti - esercizio: ' ||aEs , aUser, null, null);
 
@@ -4043,11 +4144,15 @@ BEGIN
 	 	  ibmutl200.logInf(pg_exec,'Procedura di ribaltamento progetti - esercizio: ' ||aEs, 'Start:'||to_char(sysdate,'YYYY/MM/DD HH-MI-SS'), '');
        	  INSERIMENTO_PROGETTI(aEs,pg_exec);
 	   	  AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
+          AGGIORNAMENTO_PRG_PIAECO(aEs,pg_exec);
           ibmutl200.logInf(pg_exec,'Procedura di ribaltamento progetti - esercizio: ' ||aEs, 'End:'||to_char(sysdate,'YYYY/MM/DD HH-MI-SS'), '');
 	   END IF;
 	END IF;
+  exception when OTHERS then
+                rollback;
+                aMessage := 'Errore non gestito: '||DBMS_UTILITY.FORMAT_ERROR_STACK;
+                ibmutl200.LOGERR(pg_exec,aMessage,'','');
 END;
-
 procedure INIT_RIBALTAMENTO_DECIS_GEST(aEs number, aCdCentroResponsabilita VARCHAR2,aCdLineaAttivita VARCHAR2,aPgEsec number, aMessage in out varchar2) as
 stato_fine      char(1) := 'I';
 aTSNow date;
@@ -4248,10 +4353,15 @@ begin
 	   INIT_RIBALTAMENTO_pdgp(aEs,pg_exec,aMessage);
 	   AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
        INSERIMENTO_PROGETTI(aEs,pg_exec);
+       AGGIORNAMENTO_PRG_PIAECO(aEs,pg_exec);
 
        ibmutl200.logInf(pg_exec,aMessage, '', '');
        ibmutl200.logInf(pg_exec,'Batch di ribaltamento configurazione, str.organizzativa, anagrafica capitoli e piano dei conti.', 'End:'||to_char(sysdate,'YYYY/MM/DD HH-MI-SS'), '');
     end if;
+  exception when OTHERS then
+    	    rollback;
+    		aMessage := 'Errore non gestito: '||DBMS_UTILITY.FORMAT_ERROR_STACK;
+    		ibmutl200.LOGERR(lPgExec,aMessage,'','');
  end;
 ----------------------------------------------------------------------------
 

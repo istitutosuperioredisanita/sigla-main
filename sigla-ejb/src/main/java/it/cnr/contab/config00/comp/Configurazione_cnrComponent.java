@@ -50,7 +50,6 @@ import java.util.Optional;
 public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComponent implements IConfigurazione_cnrMgr, Cloneable, Serializable {
 
     public static final String ASTERISCO = "*";
-
     private final static Logger logger = LoggerFactory.getLogger(Configurazione_cnrComponent.class);
 
     public Configurazione_cnrComponent() {
@@ -1603,5 +1602,9 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
             throw handleException(e);
         }
     }
-
+    @Override
+    public void initializeKeysAndOptionsInto(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException{
+        ((Configurazione_cnrBulk)oggettobulk).caricaEsercizioList(usercontext);
+        super.initializeKeysAndOptionsInto(usercontext,oggettobulk);
+    }
 }

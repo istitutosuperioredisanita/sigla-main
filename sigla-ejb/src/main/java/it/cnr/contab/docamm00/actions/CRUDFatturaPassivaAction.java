@@ -372,9 +372,9 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                         for (Iterator i = titoloCapitoloValidolist.iterator(); (i.hasNext() && (compatibile == null || !compatibile)); ) {
                             Categoria_gruppo_voceBulk bulk = (Categoria_gruppo_voceBulk) i.next();
                             if (bulk.getCd_elemento_voce().compareTo(titoloCapitoloObbligazione.getCd_elemento_voce()) == 0)
-                                compatibile = new Boolean(true);
+                                compatibile = Boolean.TRUE;
                             else
-                                compatibile = new Boolean(false);
+                                compatibile = Boolean.FALSE;
                         }
                     if (compatibile != null && !compatibile)
                         throw new it.cnr.jada.comp.ApplicationException("L'impegno selezionato non è compatibile con il titolo capitolo della categoria");//+ titoloCapitoloValido.getCd_ds_elemento_voce() + "\"!");
@@ -529,9 +529,9 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                         for (Iterator i = titoloCapitoloValidolist.iterator(); (i.hasNext() && (compatibile == null || !compatibile)); ) {
                             Categoria_gruppo_voceBulk bulk = (Categoria_gruppo_voceBulk) i.next();
                             if (bulk.getCd_elemento_voce().compareTo(titoloCapitoloObbligazione.getCd_elemento_voce()) == 0)
-                                compatibile = new Boolean(true);
+                                compatibile = Boolean.TRUE;
                             else
-                                compatibile = new Boolean(false);
+                                compatibile = Boolean.FALSE;
                         }
                     if (compatibile != null && !compatibile)
                         throw new it.cnr.jada.comp.ApplicationException("L'impegno selezionato non è compatibile con il titolo capitolo della categoria");//+ titoloCapitoloValido.getCd_ds_elemento_voce() + "\"!");

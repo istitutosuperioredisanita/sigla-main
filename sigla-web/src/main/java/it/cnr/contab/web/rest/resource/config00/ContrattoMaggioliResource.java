@@ -97,7 +97,5 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
     }
     public Response insertContratto( HttpServletRequest request,   ContrattoDtoBulk contrattoBulk) throws Exception {
         return insertContratto( request, contrattoBulk, DefaultContrattoLocal.ApiVersion.V1);
-
     }
-
 }

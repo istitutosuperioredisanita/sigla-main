@@ -936,6 +936,11 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         if (StatoProgetto.STATO_NEGOZIAZIONE.value().equals(newStato) || StatoProgetto.STATO_APPROVATO.value().equals(newStato) ||
                 StatoProgetto.STATO_ANNULLATO.value().equals(newStato)) {
             optOtherField.get().setStato(newStato);
+
+            if(StatoProgetto.STATO_APPROVATO.value().equals(newStato) && optProgetto.get().isAreaProgettualeFunzionamentoUO() && optOtherField.get().isProgettoAnnuale()){
+                optOtherField.get().setFlAutoRimodulazioneEnable(false);
+            }
+
             optOtherField.get().setToBeUpdated();
             if (!optProgetto.get().isDatePianoEconomicoRequired()) {
                 optOtherField.get().setDtInizio(null);
