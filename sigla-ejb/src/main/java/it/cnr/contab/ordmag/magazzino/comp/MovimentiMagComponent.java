@@ -164,7 +164,6 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 			" l.CD_VOCE_IVA, " +
 			" null " +
 			" FROM  " +
-			" DUAL CNRSEQ00_MOVIMENTI_MAG, "+
 			" CHIUSURA_ANNO_MAG_RIM c " +
 			"        inner join MAGAZZINO m on c.CD_MAGAZZINO=m.CD_MAGAZZINO and c.CD_CDS_MAG=m.CD_CDS " +
 			"        inner join LOTTO_MAG l on c.CD_CDS_LOTTO = l.cd_cds and c.CD_MAGAZZINO_LOTTO=l.cd_magazzino " +

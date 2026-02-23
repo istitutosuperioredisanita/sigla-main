@@ -20,16 +20,10 @@
  * Date 03/10/2017
  */
 package it.cnr.contab.ordmag.magazzino.bulk;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.NumerazioneMagBulk;
-
 import it.cnr.contab.ordmag.anag00.TipoMovimentoMagBulk;
 import it.cnr.contab.ordmag.anag00.TipoMovimentoMagHome;
 import it.cnr.contab.ordmag.ejb.NumeratoriOrdMagComponentSession;
@@ -43,12 +37,17 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.CHARToBooleanConverter;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.DateUtils;
 import it.cnr.jada.util.Orderable;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 public class LottoMagHome extends BulkHome {
 	public LottoMagHome(Connection conn) {
 		super(LottoMagBulk.class, conn);
@@ -130,17 +129,17 @@ public class LottoMagHome extends BulkHome {
 				case TipoMovimentoMagBulk.AZIONE_SOMMA:
 					lotto.setValoreUnitario(Utility.nvl(lotto.getValoreUnitario()).add(movimentoMag.getPrezzoUnitarioEffettivo()));
 					lotto.setCostoUnitario(Utility.nvl(lotto.getCostoUnitario()).add(movimentoMag.getPrezzoUnitarioEffettivo()));
-					lotto.setImIva(Utility.nvl(lotto.getImIva()).add(Utility.nvl(movimentoMag.getImIva())));
+					lotto.setImIva(Utility.nvl(lotto.getImIva()).add(Utility.nvl(movimentoMag.getImpIvaUnitarioEffettivo())));
 					break;
 				case TipoMovimentoMagBulk.AZIONE_SOTTRAE:
 					lotto.setValoreUnitario(Utility.nvl(lotto.getValoreUnitario()).subtract(movimentoMag.getPrezzoUnitarioEffettivo()));
 					lotto.setCostoUnitario(Utility.nvl(lotto.getCostoUnitario()).subtract(movimentoMag.getPrezzoUnitarioEffettivo()));
-					lotto.setImIva(Utility.nvl(lotto.getImIva()).subtract(Utility.nvl(movimentoMag.getImIva())));
+					lotto.setImIva(Utility.nvl(lotto.getImIva()).subtract(Utility.nvl(movimentoMag.getImpIvaUnitarioEffettivo())));
 					break;
 				case TipoMovimentoMagBulk.AZIONE_SOSTITUISCE:
 					lotto.setValoreUnitario(movimentoMag.getPrezzoUnitarioEffettivo());
 					lotto.setCostoUnitario(movimentoMag.getPrezzoUnitarioEffettivo());
-					lotto.setImIva(Utility.nvl(movimentoMag.getImIva()));
+					lotto.setImIva(Utility.nvl(movimentoMag.getImpIvaUnitarioEffettivo()));
 					break;
 				default: break;
 			}

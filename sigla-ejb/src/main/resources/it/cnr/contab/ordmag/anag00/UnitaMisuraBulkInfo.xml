@@ -56,18 +56,21 @@
 			name="dsUnitaMisura" 
 			inputSize="20" />
 	</form>
+
 	<formFieldProperty
 		name="cdUnitaMisura" />
 	<formFieldProperty
 		name="dsUnitaMisura" />
 	<formFieldProperty
 		name="dtCancellazione" />
+
 	<findFieldProperty
 		name="cdUnitaMisura" />
 	<findFieldProperty
 		name="dsUnitaMisura" />
 	<findFieldProperty
 		name="dtCancellazione" />
+
 	<columnFieldProperty
 		name="cdUnitaMisura" />
 	<columnFieldProperty

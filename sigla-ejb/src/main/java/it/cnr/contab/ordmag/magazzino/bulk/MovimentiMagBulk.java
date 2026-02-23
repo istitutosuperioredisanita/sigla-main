@@ -326,6 +326,12 @@ public class MovimentiMagBulk extends MovimentiMagBase {
 
 		return this.getPrezzoUnitario().divide(this.getCoeffConv(), 6, RoundingMode.HALF_UP);
 	}
+	public BigDecimal getImpIvaUnitarioEffettivo( ){
+		if (this.getImIva()==null || this.getImIva().compareTo(BigDecimal.ZERO)==0)
+			return BigDecimal.ZERO;
+
+		return this.getImIva().divide(this.getCoeffConv(), 6, RoundingMode.HALF_UP);
+	}
 
 	public boolean isStatoAnnullato() {
 		return STATO_ANNULLATO.equals(this.getStato());

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="massimiliano.digregorio" id="update_albero_main_consultazione_impegni_accertamenti">
+        <update tableName="albero_main">
+            <column name="cd_nodo" type="STRING" value="0.DOC.OBBLIG.CONS.OBPLVO"/>
+            <column name="pg_ordinamento" type="BIGINT" value="5"/>
+            <column name="cd_nodo_padre" type="STRING" value="0.DOC.OBBLIG.CONS"/>
+            <where>CD_NODO='0.DOC.OBBLIG.STAMPE.OBPLVO'</where>
+        </update>
+
+        <update tableName="albero_main">
+            <column name="cd_nodo" type="STRING" value="0.DOC.ACCERT.CONS.OBPLVO"/>
+            <column name="pg_ordinamento" type="BIGINT" value="5"/>
+            <column name="cd_nodo_padre" type="STRING" value="0.DOC.ACCERT.CONS"/>
+            <where>CD_NODO='0.DOC.ACCERT.STAMPE.ACPLVO'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

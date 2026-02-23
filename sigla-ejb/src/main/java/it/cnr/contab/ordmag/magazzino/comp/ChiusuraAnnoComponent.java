@@ -22,8 +22,6 @@ import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBulk;
 import it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioHome;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniHome;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.RaggrMagazzinoBulk;
@@ -469,7 +467,7 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 			Chiusura_anno_inventarioHome chiusuraAnnoHome = (Chiusura_anno_inventarioHome) getHome(userContext, Chiusura_anno_inventarioBulk.class);
 
 			ps = new LoggableStatement(getConnection(userContext),
-					chiusuraAnnoHome.insertChiusuraAnnoInventario(), true, this.getClass());
+					chiusuraAnnoHome.insertChiusuraAnnoInventario(userContext), true, this.getClass());
 
 			ps.setObject( 1, pgChiusura );
 			ps.setObject( 2, esercizio );

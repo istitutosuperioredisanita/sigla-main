@@ -74,6 +74,8 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 	public static final String LABEL_COMMESSA = "Commessa";
 	public static final String LABEL_MODULO = "Modulo";
 
+	public static final String AREA_PROGETTUALE_FUNZIONAMENTO_UO = "AREA008";
+
 	public static final String TIPO_FASE_SEARCH_SOLO_PREVISIONE  ="P";
 	public static final String TIPO_FASE_SEARCH_SOLO_GESTIONE ="G";
 	public static final String TIPO_FASE_SEARCH_PREVISIONE_E_GESTIONE ="X";
@@ -1409,6 +1411,11 @@ public void setUnita_organizzativa(it.cnr.contab.config00.sto.bulk.Unita_organiz
 	public Progetto_anagraficoBulk removeFromAnagraficheProgetto(int index) {
 		Progetto_anagraficoBulk dett = (Progetto_anagraficoBulk)getAnagraficheProgetto().remove(index);
 		return dett;
+	}
+
+	public boolean isAreaProgettualeFunzionamentoUO(){
+		return this.getProgettopadre()!=null && this.getProgettopadre().getCd_progetto() != null &&
+				this.getProgettopadre().getCd_progetto().equals(AREA_PROGETTUALE_FUNZIONAMENTO_UO);
 	}
 
 }

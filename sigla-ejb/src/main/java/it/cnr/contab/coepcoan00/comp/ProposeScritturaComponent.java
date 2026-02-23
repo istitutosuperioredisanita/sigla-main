@@ -4973,7 +4973,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		Scrittura_analiticaBulk scritturaAnalitica;
 
 		scritturaPartitaDoppia.setToBeCreated();
-		scritturaPartitaDoppia.setDt_contabilizzazione(doccoge.getDt_contabilizzazione());
 		scritturaPartitaDoppia.setUser(userContext.getUser());
 		scritturaPartitaDoppia.setCd_unita_organizzativa(doccoge.getCd_uo());
 		scritturaPartitaDoppia.setCd_cds(doccoge.getCd_cds());
@@ -4991,6 +4990,11 @@ public class ProposeScritturaComponent extends CRUDComponent {
                             .concat(String.valueOf(doccoge.getEsercizio()))
             );
         } else if (doccoge instanceof OrdineAcqConsegnaBulk) {
+            try {
+                completeOrdineConsegna(userContext, (OrdineAcqConsegnaBulk)doccoge);
+			} catch (ComponentException | PersistencyException e) {
+				throw new ApplicationRuntimeException(e);
+            }
             scritturaPartitaDoppia.setDs_scrittura(
                     "Contabilizzazione "
                             .concat(doccoge.getCd_tipo_doc()).concat(": ")
@@ -5018,6 +5022,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
         } catch (ComponentException | PersistencyException e) {
             throw new RuntimeException(e);
         }
+		scritturaPartitaDoppia.setDt_contabilizzazione(doccoge.getDt_contabilizzazione());
         scritturaPartitaDoppia.setEsercizio(esercizioScritture);
 		scritturaPartitaDoppia.setEsercizio_documento_amm(doccoge.getEsercizio());
 		scritturaPartitaDoppia.setCd_cds_documento(doccoge.getCd_cds());
@@ -6600,10 +6605,25 @@ public class ProposeScritturaComponent extends CRUDComponent {
 		}
 	}
 
+	private void completeOrdineConsegna(UserContext userContext, OrdineAcqConsegnaBulk consegna) throws ComponentException, PersistencyException {
+		Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache(userContext).getHome(Fattura_passivaBulk.class);
+		consegna.setOrdineAcqRiga((OrdineAcqRigaBulk)fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga()));
+		consegna.getOrdineAcqRiga().setOrdineAcq((OrdineAcqBulk)fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getOrdineAcq()));
+		consegna.getOrdineAcqRiga().getOrdineAcq().setUnitaOperativaOrd((UnitaOperativaOrdBulk) fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getOrdineAcq().getUnitaOperativaOrd()));
+
+		if (consegna.getEvasioneOrdineRigaBulk() == null)
+			consegna.setEvasioneOrdineRigaBulk(((EvasioneOrdineRigaHome) getHome(userContext, EvasioneOrdineRigaBulk.class)).findByConsegna(consegna));
+
+		if (consegna.getEvasioneOrdineRigaBulk() != null)
+			consegna.getEvasioneOrdineRigaBulk().setEvasioneOrdine((EvasioneOrdineBulk) fatpasHome.loadIfNeededObject(consegna.getEvasioneOrdineRigaBulk().getEvasioneOrdine()));
+	}
+
     private ResultScrittureContabili proposeScritturaPartitaDoppiaOrdineConsegna(UserContext userContext, OrdineAcqConsegnaBulk consegna, boolean makeAnalitica) throws ComponentException, ScritturaPartitaDoppiaNotRequiredException {
         try {
             if (!consegna.isStatoConsegnaEvasa())
                 throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non necessaria in quanto la consegna non risulta evasa.");
+
+			completeOrdineConsegna(userContext, consegna);
 
             //Questo metodo carica l'oggetto evasioneRiga sulla consegna
             Integer esercizioScritture = this.getEsercizioScritture(userContext, consegna);
@@ -6613,11 +6633,6 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
             if (evasioneRiga==null)
                 throw new ScritturaPartitaDoppiaNotRequiredException("Scrittura Economica non necessaria in quanto la consegna risulta evasa ma non è presente alcuna scrittura di evasione associata. Contattare il Customer Support.");
-
-            Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache(userContext).getHome(Fattura_passivaBulk.class);
-            consegna.setOrdineAcqRiga((OrdineAcqRigaBulk)fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga()));
-            consegna.getOrdineAcqRiga().setOrdineAcq((OrdineAcqBulk)fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getOrdineAcq()));
-            consegna.getOrdineAcqRiga().getOrdineAcq().setUnitaOperativaOrd((UnitaOperativaOrdBulk) fatpasHome.loadIfNeededObject(consegna.getOrdineAcqRiga().getOrdineAcq().getUnitaOperativaOrd()));
 
             TestataPrimaNota testataPrimaNota = new TestataPrimaNota(evasioneRiga.getDacr(), evasioneRiga.getDacr());
 
