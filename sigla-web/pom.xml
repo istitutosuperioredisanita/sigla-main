@@ -548,6 +548,13 @@
             <artifactId>jaxb-runtime</artifactId>
             <version>4.0.5</version>
         </dependency>
+        <!-- JAX-WS RI runtime (provides com.sun.xml.ws.spi.ProviderImpl) -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+
         <!--### [test dependencies] -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
