@@ -633,6 +633,7 @@ public class OrdineAcqComponent
                         stato = null;
                     } else {
                         stato = cons.getStato();
+                        riga.setDspConto(cons.getContoBulk());
                         primoGiro = false;
                     }
                 }
