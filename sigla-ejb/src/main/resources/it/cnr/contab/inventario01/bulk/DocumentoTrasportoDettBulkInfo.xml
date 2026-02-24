@@ -37,7 +37,6 @@
 			maxLength="10"
 			label="Numero Documento" />
 
-
 	<fieldProperty
 			name="esercizio_rif"
 			property="docRientroDettRif.documentoRientro.esercizio"
@@ -61,14 +60,6 @@
 			inputSize="1"
 			maxLength="1"
 			label="Tipo Documento Rif" />
-
-	<fieldProperty
-			name="pg_doc_trasporto_rientro_rif"
-			property="docRientroDettRif.documentoRientro.pgDocTrasportoRientro"
-			inputType="TEXT"
-			inputSize="10"
-			maxLength="10"
-			label="Doc. Rientro Rif." />
 
 	<fieldProperty
 			name="pg_doc_trasporto_rientro_rif"
@@ -105,19 +96,26 @@
 
 	<columnSet name="righeTrasporto">
 		<columnFieldProperty
-				name="nr_inventario"/>
+				name="nr_inventario"
+				style="width:80px"/>
 		<columnFieldProperty
-				name="etichetta"/>
+				name="etichetta"
+				style="width:80px"/>
 		<columnFieldProperty
-				name="progressivo"/>
+				name="progressivo"
+				style="width:40px"/>
 		<columnFieldProperty
-				name="ds_bene"/>
+				name="ds_bene"
+				style="width:300px"/>
 		<columnFieldProperty
-				name="valore_bene"/>
+				name="valore_bene"
+				style="width:100px"/>
 		<columnFieldProperty
-				name="pg_doc_trasporto_rientro_rif"/>
+				name="pg_doc_trasporto_rientro_rif"
+				style="width:80px"/>
 		<columnFieldProperty
-				name="data_registrazione"/>
+				name="data_registrazione"
+				style="width:80px"/>
 	</columnSet>
 
 </bulkInfo>

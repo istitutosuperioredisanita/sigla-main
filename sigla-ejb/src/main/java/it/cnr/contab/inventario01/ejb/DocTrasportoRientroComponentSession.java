@@ -209,4 +209,10 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             UserContext userContext,
             Integer cdAnag)
             throws ComponentException, RemoteException;
+
+    /**
+     * Valida che nel documento non sia già presente un allegato firmato
+     */
+    void validaAggiuntaAllegatoFirmato(Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException;
 }

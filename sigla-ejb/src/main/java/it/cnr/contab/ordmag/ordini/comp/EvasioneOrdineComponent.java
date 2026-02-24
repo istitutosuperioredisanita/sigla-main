@@ -359,61 +359,55 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 			if(evasioneOrdine.getDataBolla() != null && evasioneOrdine.getDataBolla().compareTo(evasioneOrdine.getDataConsegna()) > 0){
 				throw new ApplicationException("La \"Data Bolla\" non può essere maggiore della \"Data Consegna\" ");
 			}
-			validaAllegati(evasioneOrdine);
+			validaAllegatiComp(evasioneOrdine);
 		}
 	}
 
 	/**
-	 * Valida presenza DDT obbligatorio e assenza duplicati
+	 * Valida presenza DDT obbligatorio e assenza duplicati.
+	 * I controlli su file vuoto/null/descrizione sono già in AllegatoEvasioneOrdineBulk.validate().
 	 */
-	private void validaAllegati(EvasioneOrdineBulk evasione) throws ApplicationException {
+	private void validaAllegatiComp(EvasioneOrdineBulk evasione) throws ApplicationException {
 
-		if (evasione == null || evasione.getArchivioAllegati() == null || evasione.getArchivioAllegati().isEmpty()) {
-			throw ddtObbligatorioException();
+		if (evasione == null
+				|| evasione.getArchivioAllegati() == null
+				|| evasione.getArchivioAllegati().isEmpty()) {
+			throw new ApplicationException(
+					"Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).");
 		}
 
-		boolean hasDDT = false;
-		Set<String> nomiAllegati = new HashSet<>();
+		List<AllegatoGenericoBulk> attivi = evasione.getArchivioAllegati().stream()
+				.filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
+				.collect(Collectors.toList());
 
-		for (AllegatoGenericoBulk allegato : evasione.getArchivioAllegati()) {
-
-			if (allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
-				continue;
-			}
-
-			// Verifica presenza DDT
-			if (allegato instanceof AllegatoEvasioneOrdineBulk) {
-				AllegatoEvasioneOrdineBulk allegatoEvasione = (AllegatoEvasioneOrdineBulk) allegato;
-				if (AllegatoEvasioneOrdineBulk.P_SIGLA_EVASIONE_ATTACHMENT_DDT
-						.equals(allegatoEvasione.getAspectName())) {
-					hasDDT = true;
-				}
-			}
-
-			// Verifica duplicati
+		// Verifica duplicati per nome
+		Set<String> nomi = new HashSet<>();
+		for (AllegatoGenericoBulk allegato : attivi) {
 			String nome = getNomeAllegato(allegato);
-			if (nome != null && !nome.isEmpty()) {
-				String nomeLower = nome.toLowerCase();
-				if (!nomiAllegati.add(nomeLower)) {
-					throw new ApplicationException(
-							"Impossibile caricare l'allegato '" + nome +
-									"': esiste già un file con lo stesso nome nella lista degli Allegati."
-					);
-				}
+			if (nome != null && !nome.isEmpty() && !nomi.add(nome.toLowerCase())) {
+				throw new ApplicationException(
+						"Attenzione: impossibile caricare l'allegato '" + nome +
+								"' poiché esiste già un file con lo stesso nome.");
 			}
 		}
 
-		if (!hasDDT) {
-			throw ddtObbligatorioException();
+		// Verifica DDT
+		long countDDT = attivi.stream()
+				.filter(a -> a instanceof AllegatoEvasioneOrdineBulk)
+				.map(a -> (AllegatoEvasioneOrdineBulk) a)
+				.filter(a -> AllegatoEvasioneOrdineBulk.P_SIGLA_EVASIONE_ATTACHMENT_DDT
+						.equals(a.getAspectName()))
+				.count();
+
+		if (countDDT == 0) {
+			throw new ApplicationException(
+					"Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).");
+		}
+		if (countDDT > 1) {
+			throw new ApplicationException(
+					"Attenzione: è consentito allegare un solo Documento di Trasporto (DDT).");
 		}
 	}
-
-	private ApplicationException ddtObbligatorioException() {
-		return new ApplicationException(
-				"ATTENZIONE: È necessario caricare un DOCUMENTO DI TRASPORTO prima di salvare L'EVASIONE ORDINE."
-		);
-	}
-
 
 	private String getNomeAllegato(AllegatoGenericoBulk allegato) {
 		if (allegato == null || allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
