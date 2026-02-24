@@ -837,9 +837,31 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         return (Doc_trasporto_rientroBulk) super.modificaConBulk(aUC, docT);
     }
 
+
+
     /**
-     * Valida unicità del documento firmato e assenza di nomi duplicati.
-     * I controlli su file vuoto/null/descrizione sono già in AllegatoDocTraspRientroBulk.validate().
+     * Fornisce una determinazione robusta e normalizzata del nome dell’allegato.
+     * Applica una priorità coerente tra nome esplicito e nome file, evitando ambiguità.
+     */
+    private String estraiNomeAllegato(AllegatoGenericoBulk allegato) {
+        if (allegato == null) return null;
+        String nome = allegato.getNome();
+        if (nome != null && !nome.isEmpty()) {
+            return nome.toLowerCase();
+        }
+        if (allegato.getFile() != null && allegato.getFile().getName() != null) {
+            String fromFile = allegato.parseFilename(allegato.getFile().getName());
+            if (fromFile != null && !fromFile.isEmpty()) {
+                return fromFile.toLowerCase();
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Esegue la validazione completa del set di allegati del documento.
+     * Impedisce voci incomplete, previene duplicazioni e tutela l’univocità del firmato.
      */
     private void validaAllegatiComp(Doc_trasporto_rientroBulk doc) throws ApplicationException {
 
@@ -849,16 +871,29 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 .filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
                 .collect(Collectors.toList());
 
-        // Verifica duplicati per nome
-        Set<String> nomi = new HashSet<>();
+        Set<String> nomiVisti = new HashSet<>();
+
         for (AllegatoGenericoBulk allegato : attivi) {
-            String nome = allegato.getFile() != null
-                    ? allegato.parseFilename(allegato.getFile().getName())
-                    : allegato.getNome();
-            if (nome != null && !nome.isEmpty() && !nomi.add(nome.toLowerCase())) {
-                throw new ApplicationException(
-                        "Attenzione: impossibile caricare l'allegato '" + nome +
-                                "' poiché esiste già un file con lo stesso nome.");
+
+            // Controllo extra: allegato TO_BE_CREATED senza file e senza nome
+            if (allegato.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+                boolean haFile = allegato.getFile() != null;
+                boolean haNome = allegato.getNome() != null && !allegato.getNome().isEmpty();
+                if (!haFile && !haNome) {
+                    throw new ApplicationException(
+                            "Attenzione: è presente un allegato senza file selezionato. " +
+                                    "Selezionare un file per ogni allegato prima di salvare.");
+                }
+            }
+
+            // Controllo duplicati per nome — include allegati con e senza file fisico
+            String nome = estraiNomeAllegato(allegato);
+            if (nome != null) {
+                if (!nomiVisti.add(nome)) {
+                    throw new ApplicationException(
+                            "Attenzione: impossibile caricare l'allegato '" + allegato.getNome() +
+                                    "' poiché esiste già un file con lo stesso nome.");
+                }
             }
         }
 

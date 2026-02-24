@@ -364,8 +364,30 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 	}
 
 	/**
-	 * Valida presenza DDT obbligatorio e assenza duplicati.
-	 * I controlli su file vuoto/null/descrizione sono già in AllegatoEvasioneOrdineBulk.validate().
+	 * Fornisce una determinazione robusta e normalizzata del nome dell’allegato.
+	 * Applica una priorità coerente tra nome esplicito e nome file, evitando ambiguità.
+	 */
+	private String getNomeAllegato(AllegatoGenericoBulk allegato) {
+		if (allegato == null || allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
+			return null;
+		}
+		String nome = allegato.getNome();
+		if (nome != null && !nome.isEmpty()) {
+			return nome;
+		}
+		if (allegato.getFile() != null && allegato.getFile().getName() != null) {
+			String fromFile = allegato.parseFilename(allegato.getFile().getName());
+			if (fromFile != null && !fromFile.isEmpty()) {
+				return fromFile;
+			}
+		}
+		return null;
+	}
+
+
+	/**
+	 * Esegue la validazione completa del set di allegati del documento.
+	 * Impedisce voci incomplete, previene duplicazioni e tutela l’univocità del firmato.
 	 */
 	private void validaAllegatiComp(EvasioneOrdineBulk evasione) throws ApplicationException {
 
@@ -380,18 +402,33 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 				.filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
 				.collect(Collectors.toList());
 
-		// Verifica duplicati per nome
-		Set<String> nomi = new HashSet<>();
+		Set<String> nomiVisti = new HashSet<>();
+
 		for (AllegatoGenericoBulk allegato : attivi) {
+
+			// Controllo extra: allegato TO_BE_CREATED senza file e senza nome
+			if (allegato.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+				boolean haFile = allegato.getFile() != null;
+				boolean haNome = allegato.getNome() != null && !allegato.getNome().isEmpty();
+				if (!haFile && !haNome) {
+					throw new ApplicationException(
+							"Attenzione: è presente un allegato senza file selezionato. " +
+									"Selezionare un file per ogni allegato prima di salvare.");
+				}
+			}
+
+			// Controllo duplicati per nome — include allegati con e senza file fisico
 			String nome = getNomeAllegato(allegato);
-			if (nome != null && !nome.isEmpty() && !nomi.add(nome.toLowerCase())) {
-				throw new ApplicationException(
-						"Attenzione: impossibile caricare l'allegato '" + nome +
-								"' poiché esiste già un file con lo stesso nome.");
+			if (nome != null && !nome.isEmpty()) {
+				if (!nomiVisti.add(nome.toLowerCase())) {
+					throw new ApplicationException(
+							"Attenzione: impossibile caricare l'allegato '" + nome +
+									"' poiché esiste già un file con lo stesso nome.");
+				}
 			}
 		}
 
-		// Verifica DDT
+		// Verifica DDT obbligatorio e unicità
 		long countDDT = attivi.stream()
 				.filter(a -> a instanceof AllegatoEvasioneOrdineBulk)
 				.map(a -> (AllegatoEvasioneOrdineBulk) a)
@@ -409,14 +446,6 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 		}
 	}
 
-	private String getNomeAllegato(AllegatoGenericoBulk allegato) {
-		if (allegato == null || allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
-			return null;
-		}
-		return allegato.getFile() != null
-				? allegato.parseFilename(allegato.getFile().getName())
-				: allegato.getNome();
-	}
 
 	private void assegnaProgressivo(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException {
 		try {
