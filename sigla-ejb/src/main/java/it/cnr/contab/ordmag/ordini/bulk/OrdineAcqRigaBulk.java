@@ -118,6 +118,8 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	 **/
 	private BulkList<AllegatoGenericoBulk> dettaglioAllegati = new BulkList<AllegatoGenericoBulk>();
 
+	private Boolean flagOnereRiga=false;
+
 	public OrdineAcqRigaBulk() {
 		super();
 	}
@@ -373,6 +375,19 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	public boolean isROPrezzoUnitario(){
 		if (getDettaglioContratto() == null || getDettaglioContratto().getPrezzoUnitario() == null){
 			return false;
+		}
+		return true;
+	}
+	public boolean isROFlagOnereRiga(){
+		if(getBeneServizio() != null && getBeneServizio().getFl_gestione_inventario() != null && getBeneServizio().getFl_gestione_inventario()){
+			return false;
+		}
+		setFlagOnereRiga(false);
+		if(this.getRigheConsegnaColl() !=null){
+			for (java.util.Iterator j = this.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
+				OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+				consegna.setFlOnere(false);
+			}
 		}
 		return true;
 	}
@@ -690,5 +705,13 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 		public String getLabel() {
 			return label;
 		}
+	}
+
+	public Boolean getFlagOnereRiga() {
+		return flagOnereRiga;
+	}
+
+	public void setFlagOnereRiga(Boolean flagOnereRiga) {
+		this.flagOnereRiga = flagOnereRiga;
 	}
 }

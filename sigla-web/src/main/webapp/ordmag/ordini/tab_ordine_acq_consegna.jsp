@@ -17,6 +17,9 @@
 
 <div class="Group card p-2 mb-2">
     <div class="form-row">
+        <div class="col-md-4"><% bp.getConsegne().writeFormField(out, "fl_onere"); %></div>
+    </div>
+    <div class="form-row">
         <div class="col-md-4"><% bp.getConsegne().writeFormField(out, "quantita"); %></div>
         <div class="col-md-4 h-100"><% bp.getConsegne().writeFormField(out, "tipoConsegna"); %></div>
         <div class="col-md-4"><% bp.getConsegne().writeFormField(out, "dtPrevConsegna"); %></div>
