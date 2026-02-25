@@ -211,6 +211,12 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             Integer cdAnag)
             throws ComponentException, RemoteException;
 
+    /**
+     * Valida che nel documento non sia già presente un allegato firmato
+     */
+    void validaAggiuntaAllegatoFirmato(Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException;
+
     /** Inserisce nel documento i dettagli provenienti dal DTO REST. */
     Doc_trasporto_rientroBulk aggiungiBeniDaDTO(
             UserContext userContext,

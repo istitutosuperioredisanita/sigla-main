@@ -43,6 +43,7 @@
             enabledOnInsert="true"
             enabledOnEdit="true"
             caseSensitiveSearch="false"
+            readonlyProperty="allegatoEsistente"
             label="Descrizione"/>
 
     <fieldProperty

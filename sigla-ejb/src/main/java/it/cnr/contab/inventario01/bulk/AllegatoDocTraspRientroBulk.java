@@ -3,9 +3,11 @@ package it.cnr.contab.inventario01.bulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.si.spring.storage.annotation.StoragePolicy;
 import it.cnr.si.spring.storage.annotation.StorageProperty;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,5 +81,39 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 	public void complete(UserContext userContext) {
 		setUtenteSIGLA(CNRUserContext.getUser(userContext));
 		super.complete(userContext);
+	}
+
+	public boolean isAllegatoEsistente() {
+		return !this.isToBeCreated();
+	}
+
+	@Override
+	public void validate() throws ValidationException {
+
+		if (isToBeCreated()) {
+
+			File file = getFile();
+			String fileName = (file != null ? file.getName() : "sconosciuto");
+
+			if (file == null) {
+				throw new ValidationException("Attenzione: selezionare un file!");
+			}
+
+			if (!file.exists() || file.length() == 0) {
+				throw new ValidationException(
+						"Attenzione: il file selezionato (" + fileName + ") è vuoto o non accessibile!"
+				);
+			}
+
+			if (getAspectName() == null || getAspectName().isEmpty()) {
+				throw new ValidationException("Attenzione: selezionare la tipologia di File!");
+			}
+
+			if (getDescrizione() == null || getDescrizione().trim().isEmpty()) {
+				throw new ValidationException("Attenzione: inserire la descrizione del File!");
+			}
+		}
+
+		super.validate();
 	}
 }

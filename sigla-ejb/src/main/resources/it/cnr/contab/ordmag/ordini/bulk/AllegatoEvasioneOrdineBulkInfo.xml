@@ -21,10 +21,11 @@
 			property="descrizione"
 			inputType="TEXTAREA"
 			inputSize="2000"
-			nullable="false"
 			maxLength="2000"
 			cols="80"
 			rows="3"
+			readonlyProperty="allegatoEsistente"
+			nullable="false"
 			enabledOnInsert="true"
 			enabledOnEdit="true"
 			caseSensitiveSearch="false"
@@ -32,16 +33,16 @@
 
 	<fieldProperty
 			name="utente"
-			inputType="TEXT"
 			property="utenteSIGLA"
+			inputType="TEXT"
 			enabledOnInsert="false"
 			enabledOnEdit="false"
 			label="Utente"/>
 
 	<fieldProperty
 			name="data"
-			inputType="TEXT"
 			property="lastModificationDate"
+			inputType="TEXT"
 			formatName="timestamp"
 			enabledOnInsert="false"
 			enabledOnEdit="false"
@@ -52,7 +53,6 @@
 		<formFieldProperty name="nome"/>
 		<formFieldProperty name="descrizione"/>
 		<formFieldProperty name="file"/>
-		<formFieldProperty name="attivaFile"/>
 	</form>
 
 	<columnSet name="default">

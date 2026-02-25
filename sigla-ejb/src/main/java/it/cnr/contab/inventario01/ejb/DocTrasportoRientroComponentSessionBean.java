@@ -721,4 +721,25 @@ public class DocTrasportoRientroComponentSessionBean
             throw uncaughtError(userContext, componentObj, e);
         }    }
 
+    @Override
+    public void validaAggiuntaAllegatoFirmato(Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+        pre_component_invocation(null, componentObj);
+        try {
+            ((DocTrasportoRientroComponent) componentObj)
+                    .validaAggiuntaAllegatoFirmato(doc);
+            component_invocation_succes(null, componentObj);
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(null, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(null, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(null, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(null, componentObj, e);
+        }
+    }
+
 }
