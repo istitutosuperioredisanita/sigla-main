@@ -31,6 +31,7 @@ import java.rmi.RemoteException;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.*;
 
@@ -634,10 +635,105 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
+
     /**
-     * Modifica un documento di trasporto/rientro: carica i dettagli, valida (inclusi i beni)
-     * e gestisce sia il caso di progressivo temporaneo (assegnazione definitivo) sia quello già definitivo,
-     * aggiornando dettagli e allegati.
+     * Restituisce la sigla dell’aspect del documento firmato
+     * in base al tipo di documento (Trasporto o Rientro).
+     */
+    private String getAspectFirmato(Doc_trasporto_rientroBulk doc) {
+        if (doc instanceof DocumentoTrasportoBulk)
+            return AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
+        if (doc instanceof DocumentoRientroBulk)
+            return AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
+        return null;
+    }
+
+
+    /**
+     * Conta gli allegati firmati attivi (esclusi quelli in TO_BE_DELETED)
+     * che corrispondono all’aspect indicato.
+     */
+    private long countAllegatiFirmati(Doc_trasporto_rientroBulk doc, String aspectAtteso) {
+        if (doc == null || doc.getArchivioAllegati() == null || aspectAtteso == null)
+            return 0;
+        return doc.getArchivioAllegati().stream()
+                .filter(o -> o instanceof AllegatoDocTraspRientroBulk)
+                .map(o -> (AllegatoDocTraspRientroBulk) o)
+                .filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
+                .filter(a -> aspectAtteso.equals(a.getAspectName()))
+                .count();
+    }
+
+
+    /**
+     * Esegue la verifica di unicità del documento firmato
+     * e converte eventuali errori in ComponentException.
+     */
+    public void validaAggiuntaAllegatoFirmato(Doc_trasporto_rientroBulk doc)
+            throws ComponentException {
+        try {
+            validaAllegatiComp(doc);
+        } catch (ApplicationException e) {
+            throw new ComponentException(e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * Indica se è presente esattamente un allegato firmato.
+     * Solleva eccezione se ne sono presenti più di uno.
+     */
+    private boolean hasAllegatoFirmato(Doc_trasporto_rientroBulk doc) {
+        String aspectAtteso = getAspectFirmato(doc);
+        return countAllegatiFirmati(doc, aspectAtteso) == 1;
+    }
+
+
+    /**
+     * Salva definitivamente il documento verificando la presenza dell’allegato firmato,
+     * validando dati e allegati e aggiornando lo stato a DEFINITIVO.
+     */
+    public Doc_trasporto_rientroBulk salvaDefinitivo(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk docTR)
+            throws ComponentException {
+        try {
+            if (!hasAllegatoFirmato(docTR)) {
+                throw new ApplicationException(
+                        "È obbligatorio allegare il documento firmato prima di rendere definitivo il documento.");
+            }
+            validaAllegatiComp(docTR);
+
+            caricaDettagliDocumento(userContext, docTR);
+            validaDoc(userContext, docTR, true);
+
+            if (docTR.getArchivioAllegati() != null) {
+                for (AllegatoGenericoBulk allegato : docTR.getArchivioAllegati()) {
+                    if (allegato != null)
+                        updateBulk(userContext, allegato);
+                }
+            }
+
+            boolean beneInIstituto = docTR instanceof DocumentoRientroBulk;
+            aggiornaStatoBeni(userContext, docTR, beneInIstituto);
+
+            docTR.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+            docTR.setToBeUpdated();
+
+            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, docTR);
+
+        } catch (ApplicationException e) {
+            throw new ComponentException(e.getMessage(), e);
+        } catch (PersistencyException e) {
+            throw new ComponentException("Errore durante il salvataggio definitivo", e);
+        }
+    }
+
+
+    /**
+     * Aggiorna il documento caricando dettagli, validandolo,
+     * verificando l’unicità dell’allegato firmato e gestendo
+     * progressivo temporaneo o definitivo.
      */
     @Override
     public OggettoBulk modificaConBulk(UserContext aUC, OggettoBulk bulk)
@@ -651,63 +747,173 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             docT.setDoc_trasporto_rientro_dettColl(new BulkList(dettHome.getDetailsFor(docT)));
 
             caricaDettagliDocumento(aUC, docT);
-
             validaDoc(aUC, docT, true);
+            validaAllegatiComp(docT);
 
-            // 3) Caso progressivo temporaneo: assegna progressivo definitivo e riallinea
-            if (docT.getPgDocTrasportoRientro() != null && docT.getPgDocTrasportoRientro() < 0) {
-
-                Numeratore_doc_t_rHome numHome = (Numeratore_doc_t_rHome) getHome(aUC, Numeratore_doc_t_rBulk.class);
-                Long nuovoPgDoc = numHome.getNextPg(
-                        aUC,
-                        docT.getEsercizio(),
-                        docT.getPgInventario(),
-                        docT.getTiDocumento(),
-                        aUC.getUser()
-                );
-
-                Doc_trasporto_rientroHome home = (Doc_trasporto_rientroHome) getHome(aUC, docT);
-                home.confirmDocTrasportoRientroTemporaneo(aUC, docT, nuovoPgDoc);
-
-                docT.setPgDocTrasportoRientro(nuovoPgDoc);
-
-                docT.setArchivioAllegati(new BulkList<>());
-
-                docT.setToBeUpdated();
-                docT = (Doc_trasporto_rientroBulk) inizializzaBulkPerModifica(aUC, docT);
-                preparaEAggiornaRiferimentiInversi(aUC, docT);
-
+            if (isProgressivoTemporaneo(docT)) {
+                return gestisciProgressivoTemporaneo(aUC, docT);
             } else {
-                // Caso progressivo positivo: aggiorna dettagli e allegati
-                if (docT.getDoc_trasporto_rientro_dettColl() != null) {
-                    for (Iterator i = docT.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext(); ) {
-                        Doc_trasporto_rientro_dettBulk dettaglio = (Doc_trasporto_rientro_dettBulk) i.next();
-                        updateBulk(aUC, dettaglio);
-                    }
-                }
-
-                if (docT.getArchivioAllegati() != null) {
-                    for (AllegatoGenericoBulk allegato : docT.getArchivioAllegati()) {
-                        if (allegato != null) {
-                            updateBulk(aUC, allegato);
-                        }
-                    }
-                }
-
-                preparaEAggiornaRiferimentiInversi(aUC, docT);
-
-                docT.setToBeUpdated();
-                return super.modificaConBulk(aUC, docT);
+                return gestisciProgressivoDefinitivo(aUC, docT);
             }
 
+        } catch (ApplicationException e) {
+            throw new ComponentException(e.getMessage(), e);
         } catch (PersistencyException e) {
             throw new ComponentException(e);
-        } catch (ApplicationException e) {
-            throw e;
         } catch (Throwable e) {
             throw new ComponentException(e);
         }
+    }
+
+
+    /**
+     * Restituisce true se il documento ha un progressivo temporaneo (valore negativo).
+     */
+    private boolean isProgressivoTemporaneo(Doc_trasporto_rientroBulk docT) {
+        return docT.getPgDocTrasportoRientro() != null
+                && docT.getPgDocTrasportoRientro() < 0;
+    }
+
+
+
+
+    /**
+     * Assegna un nuovo progressivo definitivo al documento,
+     * riallinea dati e ricostruisce correttamente la struttura del bulk.
+     */
+    private Doc_trasporto_rientroBulk gestisciProgressivoTemporaneo(
+            UserContext aUC, Doc_trasporto_rientroBulk docT)
+            throws PersistencyException, ComponentException, IntrospectionException {
+
+        Numeratore_doc_t_rHome numHome = (Numeratore_doc_t_rHome)
+                getHome(aUC, Numeratore_doc_t_rBulk.class);
+
+        Long nuovoPgDoc = numHome.getNextPg(
+                aUC,
+                docT.getEsercizio(),
+                docT.getPgInventario(),
+                docT.getTiDocumento(),
+                aUC.getUser()
+        );
+
+        Doc_trasporto_rientroHome home = (Doc_trasporto_rientroHome) getHome(aUC, docT);
+        home.confirmDocTrasportoRientroTemporaneo(aUC, docT, nuovoPgDoc);
+
+        docT.setPgDocTrasportoRientro(nuovoPgDoc);
+        docT.setArchivioAllegati(new BulkList<>());
+        docT.setToBeUpdated();
+
+        docT = (Doc_trasporto_rientroBulk) inizializzaBulkPerModifica(aUC, docT);
+        preparaEAggiornaRiferimentiInversi(aUC, docT);
+
         return docT;
+    }
+
+
+    /**
+     * Aggiorna dettagli e allegati di un documento già definitivo
+     * e salva le modifiche tramite il componente.
+     */
+    private Doc_trasporto_rientroBulk gestisciProgressivoDefinitivo(
+            UserContext aUC, Doc_trasporto_rientroBulk docT)
+            throws ComponentException, PersistencyException {
+
+        if (docT.getDoc_trasporto_rientro_dettColl() != null) {
+            for (Iterator i = docT.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext(); ) {
+                updateBulk(aUC, (Doc_trasporto_rientro_dettBulk) i.next());
+            }
+        }
+
+        if (docT.getArchivioAllegati() != null) {
+            for (AllegatoGenericoBulk allegato : docT.getArchivioAllegati()) {
+                if (allegato != null)
+                    updateBulk(aUC, allegato);
+            }
+        }
+
+        preparaEAggiornaRiferimentiInversi(aUC, docT);
+        docT.setToBeUpdated();
+
+        return (Doc_trasporto_rientroBulk) super.modificaConBulk(aUC, docT);
+    }
+
+
+
+    /**
+     * Fornisce una determinazione robusta e normalizzata del nome dell’allegato.
+     * Applica una priorità coerente tra nome esplicito e nome file, evitando ambiguità.
+     */
+    private String estraiNomeAllegato(AllegatoGenericoBulk allegato) {
+        if (allegato == null) return null;
+        String nome = allegato.getNome();
+        if (nome != null && !nome.isEmpty()) {
+            return nome.toLowerCase();
+        }
+        if (allegato.getFile() != null && allegato.getFile().getName() != null) {
+            String fromFile = allegato.parseFilename(allegato.getFile().getName());
+            if (fromFile != null && !fromFile.isEmpty()) {
+                return fromFile.toLowerCase();
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Esegue la validazione completa del set di allegati del documento.
+     * Impedisce voci incomplete, previene duplicazioni e tutela l’univocità del firmato.
+     */
+    private void validaAllegatiComp(Doc_trasporto_rientroBulk doc) throws ApplicationException {
+
+        if (doc == null || doc.getArchivioAllegati() == null) return;
+
+        List<AllegatoGenericoBulk> attivi = doc.getArchivioAllegati().stream()
+                .filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
+                .collect(Collectors.toList());
+
+        Set<String> nomiVisti = new HashSet<>();
+
+        for (AllegatoGenericoBulk allegato : attivi) {
+
+            // Controllo extra: allegato TO_BE_CREATED senza file e senza nome
+            if (allegato.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+                boolean haFile = allegato.getFile() != null;
+                boolean haNome = allegato.getNome() != null && !allegato.getNome().isEmpty();
+                if (!haFile && !haNome) {
+                    throw new ApplicationException(
+                            "Attenzione: è presente un allegato senza file selezionato. " +
+                                    "Selezionare un file per ogni allegato prima di salvare.");
+                }
+            }
+
+            // Controllo duplicati per nome — include allegati con e senza file fisico
+            String nome = estraiNomeAllegato(allegato);
+            if (nome != null) {
+                if (!nomiVisti.add(nome)) {
+                    throw new ApplicationException(
+                            "Attenzione: impossibile caricare l'allegato '" + allegato.getNome() +
+                                    "' poiché esiste già un file con lo stesso nome.");
+                }
+            }
+        }
+
+        // Verifica unicità documento firmato
+        String aspectAtteso = getAspectFirmato(doc);
+        if (aspectAtteso != null) {
+            long countFirmati = attivi.stream()
+                    .filter(a -> a instanceof AllegatoDocTraspRientroBulk)
+                    .map(a -> (AllegatoDocTraspRientroBulk) a)
+                    .filter(a -> aspectAtteso.equals(a.getAspectName()))
+                    .count();
+
+            if (countFirmati > 1) {
+                String tipo = doc instanceof DocumentoTrasportoBulk
+                        ? "Documento di Trasporto FIRMATO"
+                        : "Documento di Rientro FIRMATO";
+                throw new ApplicationException(
+                        "Attenzione: è consentito allegare un solo " + tipo + ".");
+            }
+        }
     }
 
 
@@ -1453,47 +1659,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    /**
-     * Rende definitivo il documento: verifica la presenza dell’allegato firmato,
-     * persiste eventuali eliminazioni, ricarica i dettagli, valida (inclusi i beni),
-     * aggiorna lo stato dei beni e salva il documento come DEFINITIVO.
-     */
-    public Doc_trasporto_rientroBulk salvaDefinitivo(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk docTR)
-            throws ComponentException {
-
-        try {
-            // ========== 1. VALIDA ALLEGATO FIRMATO ==========
-            if (!hasAllegatoFirmato(docTR)) {
-                throw new ApplicationException(
-                        "È obbligatorio allegare il documento firmato prima di rendere definitivo il documento."
-                );
-            }
-
-            // ========== 2. RICARICA DETTAGLI DAL DB (stato REALE) ==========
-            // Questo sovrascrive la collection in memoria con i dati del DB
-            caricaDettagliDocumento(userContext, docTR);
-
-            // ========== 3. VALIDA PRESENZA BENI (sui dati REALI dal DB) ==========
-            validaDoc(userContext, docTR, true);  // ← true = CONTROLLA i beni
-
-            // ========== 4. AGGIORNA STATO BENI E SALVA ==========
-            boolean beneInIstituto = docTR instanceof DocumentoRientroBulk;
-            aggiornaStatoBeni(userContext, docTR, beneInIstituto);
-
-            docTR.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-            docTR.setToBeUpdated();
-
-            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, docTR);
-
-        } catch (ApplicationException e) {
-            throw new ComponentException(e.getMessage(), e);
-        } catch (PersistencyException e) {
-            throw new ComponentException("Errore durante il salvataggio definitivo", e);
-        }
-    }
-
 
     /**
      * Annulla il documento: ricarica i dettagli, valida, verifica le condizioni di annullamento,
@@ -1676,39 +1841,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         );
     }
 
-    /**
-     * Verifica presenza di almeno un allegato firmato valido.
-     */
-    private boolean hasAllegatoFirmato(Doc_trasporto_rientroBulk doc) {
-
-        if (doc == null || doc.getArchivioAllegati() == null) {
-            return false;
-        }
-
-        String aspectFirmatoAtteso;
-        if (doc instanceof DocumentoTrasportoBulk) {
-            aspectFirmatoAtteso = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
-        } else if (doc instanceof DocumentoRientroBulk) {
-            aspectFirmatoAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
-        } else {
-            return false;
-        }
-
-        for (Object obj : doc.getArchivioAllegati()) {
-            if (obj instanceof AllegatoDocTraspRientroBulk) {
-                AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) obj;
-                String aspectName = allegato.getAspectName();
-
-                if (aspectName != null
-                        && aspectName.equals(aspectFirmatoAtteso)
-                        && allegato.getCrudStatus() != OggettoBulk.TO_BE_DELETED) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Ricerca anagrafico INCARICATO delegando al componente Anagrafico.

@@ -44,6 +44,7 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk.STATO_INSERITO;
@@ -1699,74 +1700,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
     }
 
-    /**
-     * Aggiorna documento con validazione allegati e prevenzione duplicati
-     */
-    @Override
-    public void update(ActionContext context) throws BusinessProcessException {
-        try {
-            fillModel(context);
-            setSkipAllegatiReload(false);
-
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-
-            if (doc.getArchivioAllegati() != null) {
-                List<AllegatoGenericoBulk> allegatiValidi = new ArrayList<>();
-
-                for (AllegatoGenericoBulk allegato : doc.getArchivioAllegati()) {
-                    if (allegato.getFile() != null ||
-                            allegato.getStorageKey() != null ||
-                            allegato.getCrudStatus() == OggettoBulk.NORMAL) {
-                        allegatiValidi.add(allegato);
-                    }
-                }
-
-                doc.getArchivioAllegati().clear();
-                doc.getArchivioAllegati().addAll(allegatiValidi);
-            }
-
-            if (doc.getArchivioAllegati() != null) {
-                List<AllegatoGenericoBulk> allegati = doc.getArchivioAllegati();
-
-                for (AllegatoGenericoBulk nuovo : allegati) {
-                    if (nuovo != null && nuovo.getFile() != null) {
-                        String nomeNuovo = nuovo.parseFilename(nuovo.getFile().getName());
-
-                        boolean duplicatoTrovato = allegati.stream()
-                                .filter(esistente -> esistente != nuovo)
-                                .anyMatch(esistente ->
-                                        esistente != null &&
-                                                esistente.getNome() != null &&
-                                                esistente.getNome().equalsIgnoreCase(nomeNuovo)
-                                );
-
-                        if (duplicatoTrovato) {
-                            throw new ApplicationException(
-                                    "Impossibile caricare l'allegato '" + nomeNuovo +
-                                            "': esiste già un file con lo stesso nome sul documento."
-                            );
-                        }
-                    }
-                }
-            }
-
-            archiviaAllegati(context);
-
-            getModel().setToBeUpdated();
-            Doc_trasporto_rientroBulk docAggiornato = (Doc_trasporto_rientroBulk)
-                    createComponentSession().modificaConBulk(
-                            context.getUserContext(),
-                            getModel()
-                    );
-
-            setModel(context, docAggiornato);
-
-        } catch (ApplicationException e) {
-            throw new BusinessProcessException(e);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }
 
     /**
      * Pulisce nome file per stampa (rimuove slash e estensione)
@@ -1971,7 +1904,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                     if (secondaryType.equals(aspectFirmatoAtteso)) {
                         allegato.setAspectName(aspectFirmatoAtteso);
                         break;
-
                     } else if (secondaryType.equals(aspectAltroAtteso)) {
                         allegato.setAspectName(aspectAltroAtteso);
                         break;
@@ -1983,61 +1915,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         super.completeAllegato(allegato, storageObject);
     }
 
-    /**
-     * Salva il documento in stato DEFINITIVO, applicando validazioni,
-     * gestendo gli allegati ed effettuando un salvataggio intermedio
-     * se presenti modifiche nei dettagli.
-     */
-    public void salvaDefinitivo(ActionContext context) throws BusinessProcessException {
-        try {
-            fillModel(context);
-            archiviaAllegati(context);
 
-            Doc_trasporto_rientroBulk doc = getDoc();
 
-            if (doc.getDoc_trasporto_rientro_dettColl() != null) {
-                boolean hasChanges = false;
-
-                for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
-                    Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) obj;
-                    int status = dett.getCrudStatus();
-
-                    if (status == OggettoBulk.TO_BE_DELETED ||
-                            status == OggettoBulk.TO_BE_CREATED ||
-                            status == OggettoBulk.TO_BE_UPDATED) {
-                        hasChanges = true;
-                        break;
-                    }
-                }
-
-                if (hasChanges) {
-                    doc.setToBeUpdated();
-                    doc = (Doc_trasporto_rientroBulk) getComp().modificaConBulk(
-                            context.getUserContext(), doc);
-                    setModel(context, doc);
-                }
-            }
-
-            doc.setToBeUpdated();
-            doc = getComp().salvaDefinitivo(context.getUserContext(), doc);
-
-            setModel(context, doc);
-            commitUserTransaction();
-
-            doc.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-            doc.setCrudStatus(OggettoBulk.NORMAL);
-
-            setStatus(VIEW);
-            setMessage("Documento salvato in stato DEFINITIVO");
-
-        } catch (ComponentException | RemoteException ex) {
-            rollbackUserTransaction();
-            throw handleException(ex);
-        } catch (FillException e) {
-            rollbackUserTransaction();
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Valida campi obbligatori prima di accedere ai dettagli
@@ -2286,6 +2165,117 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             }
         }
         return false;
+    }
+
+
+    /**
+     * Assegna il file caricato via multipart al primo allegato in stato TO_BE_CREATED
+     * che non ha ancora un file associato. Non effettua validazioni.
+     */
+    private void assegnaFileUploadato(ActionContext context, Doc_trasporto_rientroBulk doc) {
+        it.cnr.jada.util.upload.UploadedFile uploadedFile =
+                ((it.cnr.jada.action.HttpActionContext) context)
+                        .getMultipartParameter("main.ArchivioAllegati.file");
+
+        if (uploadedFile == null || uploadedFile.getName().isEmpty()) return;
+
+        doc.getArchivioAllegati().stream()
+                .filter(a -> a.isToBeCreated() && a.getFile() == null)
+                .findFirst()
+                .ifPresent(a -> {
+                    a.setFile(uploadedFile.getFile());
+                    a.setContentType(uploadedFile.getContentType());
+                    a.setNome(a.parseFilename(uploadedFile.getName()));
+                });
+    }
+
+
+    /**
+     * Esegue la validate() su tutti gli allegati del documento.
+     * Solleva ValidationException se uno o più allegati non risultano validi.
+     */
+    private void validaAllegati(Doc_trasporto_rientroBulk doc) throws ValidationException {
+        if (doc.getArchivioAllegati() == null) return;
+        for (AllegatoGenericoBulk allegato : doc.getArchivioAllegati()) {
+            allegato.validate();
+        }
+    }
+
+
+    /**
+     * Aggiorna il documento:
+     * - assegna l’eventuale file caricato,
+     * - valida gli allegati,
+     * - invia il documento al componente per l’aggiornamento,
+     * - archivia fisicamente gli allegati.
+     * Gestisce rollback e converte eventuali errori in BusinessProcessException.
+     */
+    @Override
+    public void update(ActionContext context) throws BusinessProcessException {
+        try {
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
+            if (doc.getArchivioAllegati() == null)
+                doc.setArchivioAllegati(new BulkList<>());
+
+            assegnaFileUploadato(context, doc);
+            validaAllegati(doc);
+
+            getModel().setToBeUpdated();
+            Doc_trasporto_rientroBulk docAggiornato =
+                    (Doc_trasporto_rientroBulk) createComponentSession()
+                            .modificaConBulk(context.getUserContext(), getModel());
+
+            setModel(context, docAggiornato);
+            setSkipAllegatiReload(false);
+            archiviaAllegati(context);
+
+        } catch (ApplicationException e) {
+            rollbackUserTransaction();
+            throw new BusinessProcessException(e);
+        } catch (Exception e) {
+            rollbackUserTransaction();
+            throw handleException(e);
+        }
+    }
+
+
+    /**
+     * Salva il documento in modo definitivo:
+     * - assegna file caricati,
+     * - valida allegati e allegato firmato,
+     * - esegue il salvataggio definitivo tramite componente,
+     * - archivia allegati e imposta lo stato a DEFINITIVO.
+     * Gestisce rollback ed errori applicativi.
+     */
+    public void salvaDefinitivo(ActionContext context) throws BusinessProcessException {
+        try {
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
+            if (doc == null)
+                throw new BusinessProcessException("Modello non disponibile.");
+            if (doc.getArchivioAllegati() == null)
+                doc.setArchivioAllegati(new BulkList<>());
+
+            assegnaFileUploadato(context, doc);
+            validaAllegati(doc);
+            getComp().validaAggiuntaAllegatoFirmato(doc);
+
+            doc.setToBeUpdated();
+            doc = getComp().salvaDefinitivo(context.getUserContext(), doc);
+
+            setModel(context, doc);
+            setSkipAllegatiReload(false);
+            commitUserTransaction();
+            archiviaAllegati(context);
+
+            doc.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+            doc.setCrudStatus(OggettoBulk.NORMAL);
+            setStatus(VIEW);
+            setMessage("Documento salvato in stato DEFINITIVO");
+
+        } catch (ComponentException | RemoteException | ValidationException ex) {
+            rollbackUserTransaction();
+            throw handleException(ex);
+        }
     }
 
 }

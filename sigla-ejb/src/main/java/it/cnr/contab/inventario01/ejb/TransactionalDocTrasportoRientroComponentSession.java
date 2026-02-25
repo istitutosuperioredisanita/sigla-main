@@ -841,4 +841,22 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
+    @Override
+    public void validaAggiuntaAllegatoFirmato(Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+        try {
+            invoke("validaAggiuntaAllegatoFirmato", new Object[]{doc});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
 }

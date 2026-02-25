@@ -36,12 +36,14 @@ import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.ordmag.ordini.ejb.EvasioneOrdineComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
@@ -186,30 +188,77 @@ public class CRUDEvasioneOrdineBP extends AllegatiCRUDBP<AllegatoEvasioneOrdineB
 		return "bollaScaricoforPrint";
 	}
 
+
 	/**
-	 * Esegue l'evasione delle consegne per l'ordine e restituisce una mappa con l'evasione ordine e le bolle di scarico generate.
+	 * Assegna il file caricato via multipart al primo allegato in stato TO_BE_CREATED
+	 * che non ha ancora un file associato. Non esegue validazioni.
 	 */
-	public Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> evadiConsegne(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException
-	{
+	private void assegnaFileUploadato(ActionContext context, EvasioneOrdineBulk bulk) {
+		if (bulk.getArchivioAllegati() == null) return;
+
+		it.cnr.jada.util.upload.UploadedFile uploadedFile =
+				((it.cnr.jada.action.HttpActionContext) context)
+						.getMultipartParameter("main.ArchivioAllegati.file");
+
+		if (uploadedFile == null || uploadedFile.getName().isEmpty()) return;
+
+		bulk.getArchivioAllegati().stream()
+				.filter(a -> a.isToBeCreated() && a.getFile() == null)
+				.findFirst()
+				.ifPresent(a -> {
+					a.setFile(uploadedFile.getFile());
+					a.setContentType(uploadedFile.getContentType());
+					a.setNome(a.parseFilename(uploadedFile.getName()));
+				});
+	}
+
+
+	/**
+	 * Valida tutti gli allegati dell'evasione invocando validate() su ciascuno.
+	 * Solleva ValidationException se uno o più allegati non sono validi.
+	 */
+	private void validaAllegati(EvasioneOrdineBulk bulk) throws ValidationException {
+		if (bulk.getArchivioAllegati() == null) return;
+		for (AllegatoGenericoBulk allegato : bulk.getArchivioAllegati()) {
+			allegato.validate();
+		}
+	}
+
+
+	/**
+	 * Esegue l'evasione dell'ordine:
+	 * - assegna eventuali file caricati,
+	 * - valida gli allegati,
+	 * - invoca il componente per evadere le consegne,
+	 * - archivia gli allegati e aggiorna il modello.
+	 * Restituisce la mappa evasione → bolle generate.
+	 */
+	public Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> evadiConsegne(ActionContext context)
+			throws BusinessProcessException {
+
 		EvasioneOrdineBulk bulk = (EvasioneOrdineBulk) getModel();
-		try
-		{
-			EvasioneOrdineComponentSession comp = (EvasioneOrdineComponentSession)createComponentSession();
-			Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> result = comp.evadiOrdine(context.getUserContext(), bulk);
-			// Recupera l'evasione ordine salvata
+
+		try {
+			assegnaFileUploadato(context, bulk);
+			validaAllegati(bulk);
+
+			EvasioneOrdineComponentSession comp =
+					(EvasioneOrdineComponentSession) createComponentSession();
+			Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> result =
+					comp.evadiOrdine(context.getUserContext(), bulk);
+
 			EvasioneOrdineBulk evasioneAggiornata = result.keySet().iterator().next();
-			// Aggiorna il model con l'oggetto salvato
 			setModel(context, evasioneAggiornata);
 			archiviaAllegati(context);
 			commitUserTransaction();
 			setDirty(false);
+
 			return result;
-		} catch(Exception e)
-		{
+
+		} catch (Exception e) {
 			throw handleException(e);
 		}
 	}
-
 
 	@Override
 	public boolean isNewButtonHidden() {

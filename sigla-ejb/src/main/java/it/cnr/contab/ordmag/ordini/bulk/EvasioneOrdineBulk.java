@@ -323,7 +323,7 @@ public class EvasioneOrdineBulk extends EvasioneOrdineBase implements AllegatoPa
 
 	/**
 	 * Restituisce il percorso di storage CMIS per gli allegati dell'evasione ordine.
-	 * Formato: PathComunicazioniDal/Evasione Ordini/[Esercizio]/[CD_UO]/[CD_MAGAZZINO]/[NUMERO]/Evasione [Esercizio]_[Numero]
+	 * Formato: PathComunicazioniDal/Evasione Ordini/[CD_CDS]/[ESERCIZIO]/[CD_MAGAZZINO]/[CD_NUMERATORE_MAG]/[NUMERO]
 	 *
 	 * @return lista contenente il percorso completo
 	 */
@@ -332,10 +332,6 @@ public class EvasioneOrdineBulk extends EvasioneOrdineBase implements AllegatoPa
 		String esercizio = Optional.ofNullable(this.getEsercizio())
 				.map(Object::toString)
 				.orElse("0");
-		String uo = Optional.ofNullable(this.getCdUnitaOperativa())
-				.orElse("NO_UO");
-		String cdMagazzino = Optional.ofNullable(this.getCdMagazzino())
-				.orElse("NO_MAG");
 		String numeroStr = Optional.ofNullable(this.getNumero())
 				.map(numero -> Utility.lpad(numero.toString(), 10, '0'))
 				.orElse("0000000000");
@@ -343,11 +339,11 @@ public class EvasioneOrdineBulk extends EvasioneOrdineBase implements AllegatoPa
 		String path = Arrays.asList(
 				SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
 				EVASIONE_ORDINE_FILEFOLDER,
+				this.getCdCds(),
 				esercizio,
-				uo,
-				cdMagazzino,
-				numeroStr,
-				"Evasione " + esercizio + "_" + numeroStr
+				this.getCdMagazzino(),
+				this.getCdNumeratoreMag(),
+				numeroStr
 		).stream().collect(Collectors.joining(StorageDriver.SUFFIX));
 
 		return Collections.singletonList(path);
