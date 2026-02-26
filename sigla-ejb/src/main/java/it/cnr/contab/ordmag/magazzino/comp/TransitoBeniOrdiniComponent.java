@@ -153,9 +153,9 @@ public class TransitoBeniOrdiniComponent extends CRUDComponent implements ICRUDM
 					bene.setInventario(inventario);
 					bene.setMovimentiMag(movimentoCarico);
 					bene.setStato(Transito_beni_ordiniBulk.STATO_INSERITO);
-					LottoMagHome LottoMagHome = (LottoMagHome)getHome(userContext, LottoMagBulk.class);
-					LottoMagBulk LottoMagBulk = (LottoMagBulk) LottoMagHome.findByPrimaryKey(movimentoCarico.getLottoMag());
-					bene.setValore_unitario(LottoMagBulk.getCostoUnitario());
+					LottoMagHome lottoMagHome = (LottoMagHome)getHome(userContext, LottoMagBulk.class);
+					LottoMagBulk lottoMagBulk = (LottoMagBulk) lottoMagHome.findByPrimaryKey(movimentoCarico.getLottoMag());
+					bene.setValore_unitario(lottoMagBulk.getCostoUnitario());
 					bene.setDs_bene(bene_servizioBulk.getDs_bene_servizio());
 					bene.setDt_acquisizione(movimentoCarico.getDtRiferimento());
 					bene.setValore_iniziale(bene.getValore_unitario());
