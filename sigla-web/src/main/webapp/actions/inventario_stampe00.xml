@@ -47,7 +47,7 @@
       path="/ConsultazioniAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction">
       </action>
 
-	<businessProcess name="ConAssBeniFattureBP" className="it.cnr.contab.inventario00.bp.ConAssBeniFattureBP">
+	<businessProcess name="ConAssBeniFattureBP" className="it.cnr.jada.util.action.ConsultazioniBP">
         <forward name="default" path="/consultazioni/form_lista.jsp"/>
 	    <init-param name="bulkClassName" value="it.cnr.contab.inventario00.docs.bulk.V_ass_inv_bene_fatturaBulk" />
 	    <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />								
