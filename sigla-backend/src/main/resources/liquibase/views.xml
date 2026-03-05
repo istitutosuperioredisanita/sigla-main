@@ -3225,4 +3225,11 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_INDICATORE_PAGAMENTI_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_CONS_INDICATORE_PAGAMENTI_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_BUONO_CARICO_INV">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_BUONO_CARICO_INV.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_BUONO_CARICO_INV_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_BUONO_CARICO_INV.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+
 </databaseChangeLog>
