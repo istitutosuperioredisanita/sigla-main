@@ -1,5 +1,6 @@
 package it.cnr.contab.inventario01.bulk;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.util.Utility;
@@ -27,7 +28,13 @@ public class DocumentoRientroBulk extends Doc_trasporto_rientroBulk {
     }
 
     // ==================== IMPLEMENTAZIONE STORAGE PATH ====================
+    /**
+     * @JsonIgnore: evita che Jackson invochi questo metodo durante la
+     * serializzazione, poiché richiede il contesto Spring non disponibile nei test.
+     * Il campo non fa parte del body REST e non deve comparire nel JSON.
+     */
     @Override
+    @JsonIgnore
     public List<String> getStorePath() {
 
         // ========== VALIDAZIONE ==========

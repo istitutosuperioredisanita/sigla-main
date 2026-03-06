@@ -10,7 +10,6 @@
 
 <%
     CRUDRientroBeniInvBP bp = (CRUDRientroBeniInvBP)BusinessProcess.getBusinessProcess(request);
-    // Seleziona il controller corretto una volta sola
     it.cnr.jada.util.action.RemoteDetailCRUDController controller =
         bp.isEditable() ? bp.getDettBeniController() : bp.getEditDettController();
 %>
@@ -23,9 +22,9 @@
           <% bp.getDettBeniController().writeHTMLTable(
                 pageContext,
                 "righeRientro",
-                true,
+                bp.isEditable(),
                 false,
-                true,
+                bp.isEditable(),
                 null,
                 "100px",
                 true); %>
