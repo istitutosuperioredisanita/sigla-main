@@ -32,7 +32,7 @@ import static it.cnr.jada.bulk.OggettoBulk.isNullOrEmpty;
 
 /**
  * Resource REST per la gestione dei documenti di Trasporto e Rientro dei beni inventariali.
- *
+ * <p>
  * Espone le operazioni per:
  * - creazione di documenti di Trasporto o Rientro
  * - validazione dei dati ricevuti via REST
@@ -40,7 +40,7 @@ import static it.cnr.jada.bulk.OggettoBulk.isNullOrEmpty;
  * - gestione degli allegati associati al documento
  * - archiviazione degli allegati nel repository documentale
  * - ricerca dei documenti associati ad un bene inventariale
- *
+ * <p>
  * La logica applicativa principale viene delegata al componente
  * {@link DocTrasportoRientroComponentSession}.
  */
@@ -59,10 +59,9 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
 
     private static final int MIN_PDF_FILE_SIZE_BYTES = 512; // sotto questa soglia il file è considerato vuoto
 
-
     /**
      * Salva un documento di Trasporto o Rientro.
-     *
+     * <p>
      * Il metodo esegue:
      * - estrazione del contesto utente
      * - deserializzazione del body JSON
@@ -73,7 +72,7 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
      * - archiviazione eventuali allegati
      *
      * @param request richiesta HTTP
-     * @param body body JSON della richiesta
+     * @param body    body JSON della richiesta
      * @return Response HTTP con documento salvato
      * @throws Exception errore durante il processo di salvataggio
      */
@@ -112,7 +111,7 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
      * Ricerca documenti di Trasporto o Rientro associati ad un bene inventariale.
      *
      * @param request richiesta HTTP
-     * @param filtro filtro di ricerca
+     * @param filtro  filtro di ricerca
      * @return lista dei documenti trovati
      * @throws Exception errore durante la ricerca
      */
@@ -132,9 +131,14 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
                     esercizio
             );
 
-            if (trovato == null) return Response.ok(Collections.emptyList()).build();
+            if (trovato == null) {
+                return Response.ok(Collections.emptyList()).build();
+            }
 
-            try { componenteDocTR.getDetailsFor(ctx, trovato); } catch (Exception ignored) {}
+            try {
+                componenteDocTR.getDetailsFor(ctx, trovato);
+            } catch (Exception ignored) {
+            }
 
             return Response.ok(Collections.singletonList(trovato)).build();
 
@@ -152,8 +156,10 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
             String json = MAPPER.writeValueAsString(body);
             return MAPPER.readValue(json, Doc_trasporto_rientroBulk.class);
         } catch (JsonProcessingException e) {
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "Body testata non valido: " + e.getOriginalMessage());
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "Body testata non valido: " + e.getOriginalMessage()
+            );
         }
     }
 
@@ -164,7 +170,9 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
             Doc_trasporto_rientroBulk bulk,
             List<Map<String, Object>> rawDettagli) {
 
-        if (rawDettagli == null || rawDettagli.isEmpty()) return Collections.emptyList();
+        if (rawDettagli == null || rawDettagli.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         List<Doc_trasporto_rientro_dettBulk> result = new ArrayList<>();
         boolean isRientro = Doc_trasporto_rientroBulk.RIENTRO.equals(bulk.getTiDocumento());
@@ -235,7 +243,11 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
     private static Long toLong(Object o) {
         if (o == null) return null;
         if (o instanceof Number) return ((Number) o).longValue();
-        try { return Long.parseLong(o.toString()); } catch (NumberFormatException e) { return null; }
+        try {
+            return Long.parseLong(o.toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**
@@ -244,28 +256,36 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
     private static Integer toInt(Object o) {
         if (o == null) return null;
         if (o instanceof Number) return ((Number) o).intValue();
-        try { return Integer.parseInt(o.toString()); } catch (NumberFormatException e) { return null; }
+        try {
+            return Integer.parseInt(o.toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**
      * Deserializza gli allegati presenti nel body della richiesta.
      */
+    @SuppressWarnings("unchecked")
     private List<AttachmentDocTrasportoRientro> deserializzaAllegati(Map<String, Object> body) {
 
         List<Map<String, Object>> rawAllegati =
                 (List<Map<String, Object>>) body.get("attachments");
 
-        if (rawAllegati == null || rawAllegati.isEmpty()) return Collections.emptyList();
+        if (rawAllegati == null || rawAllegati.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         List<AttachmentDocTrasportoRientro> allegati = new ArrayList<>();
 
         for (int i = 0; i < rawAllegati.size(); i++) {
             try {
-                allegati.add(MAPPER.convertValue(rawAllegati.get(i),
-                        AttachmentDocTrasportoRientro.class));
+                allegati.add(MAPPER.convertValue(rawAllegati.get(i), AttachmentDocTrasportoRientro.class));
             } catch (IllegalArgumentException e) {
-                throw new RestException(Response.Status.BAD_REQUEST,
-                        "Allegato[" + i + "] non valido: " + e.getMessage());
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
+                        "Allegato[" + i + "] non valido: " + e.getMessage()
+                );
             }
         }
 
@@ -277,62 +297,99 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
      */
     private void validaRichiestaHttp(Doc_trasporto_rientroBulk bulk, CNRUserContext ctx) {
 
-        if (isNullOrEmpty(bulk.getTiDocumento()))
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "tiDocumento obbligatorio (valori ammessi: 'T' per Trasporto, 'R' per Rientro)");
+        if (isNullOrEmpty(bulk.getTiDocumento())) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "tiDocumento obbligatorio (valori ammessi: 'T' per Trasporto, 'R' per Rientro)"
+            );
+        }
 
         if (!Doc_trasporto_rientroBulk.TRASPORTO.equals(bulk.getTiDocumento())
-                && !Doc_trasporto_rientroBulk.RIENTRO.equals(bulk.getTiDocumento()))
-            throw new RestException(Response.Status.BAD_REQUEST,
+                && !Doc_trasporto_rientroBulk.RIENTRO.equals(bulk.getTiDocumento())) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
                     "tiDocumento non valido '" + bulk.getTiDocumento()
-                            + "': deve essere 'T' (Trasporto) o 'R' (Rientro)");
+                            + "': deve essere 'T' (Trasporto) o 'R' (Rientro)"
+            );
+        }
 
-        if (bulk.getEsercizio() == null)
+        if (bulk.getEsercizio() == null) {
             throw new RestException(Response.Status.BAD_REQUEST, "esercizio obbligatorio");
+        }
 
-        if (!ctx.getEsercizio().equals(bulk.getEsercizio()))
-            throw new RestException(Response.Status.BAD_REQUEST,
+        if (!ctx.getEsercizio().equals(bulk.getEsercizio())) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
                     "esercizio nel body (" + bulk.getEsercizio()
-                            + ") diverso dal contesto utente (" + ctx.getEsercizio() + ")");
+                            + ") diverso dal contesto utente (" + ctx.getEsercizio() + ")"
+            );
+        }
 
-        if (bulk.getPgInventario() == null)
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "pgInventario obbligatorio nella testata");
+        if (bulk.getPgInventario() == null) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "pgInventario obbligatorio nella testata"
+            );
+        }
 
-        if (isNullOrEmpty(bulk.getCdTipoTrasportoRientro()))
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "Attenzione: specificare un Tipo di Movimento (cdTipoTrasportoRientro obbligatorio)");
+        if (isNullOrEmpty(bulk.getCdTipoTrasportoRientro())) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "Attenzione: specificare un Tipo di Movimento (cdTipoTrasportoRientro obbligatorio)"
+            );
+        }
 
-        if (isNullOrEmpty(bulk.getDsDocTrasportoRientro()))
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "Attenzione: indicare una Descrizione (dsDocTrasportoRientro obbligatorio)");
+        if (isNullOrEmpty(bulk.getDsDocTrasportoRientro())) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "Attenzione: indicare una Descrizione (dsDocTrasportoRientro obbligatorio)"
+            );
+        }
 
-        if (!isNullOrEmpty(bulk.getStato()) && Doc_trasporto_rientroBulk.STATO.get(bulk.getStato()) == null)
-            throw new RestException(Response.Status.BAD_REQUEST,
+        if (!isNullOrEmpty(bulk.getStato()) && Doc_trasporto_rientroBulk.STATO.get(bulk.getStato()) == null) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
                     "stato non valido '" + bulk.getStato()
-                            + "': valori ammessi: " + Doc_trasporto_rientroBulk.STATO.toString());
+                            + "': valori ammessi: " + Doc_trasporto_rientroBulk.STATO.toString()
+            );
+        }
 
-        if (Boolean.TRUE.equals(bulk.getFlIncaricato()) && bulk.getCdTerzoIncaricato() == null)
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "cdTerzoIncaricato obbligatorio quando flIncaricato=true");
+        if (Boolean.TRUE.equals(bulk.getFlIncaricato()) && bulk.getCdTerzoIncaricato() == null) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "cdTerzoIncaricato obbligatorio quando flIncaricato=true"
+            );
+        }
 
-        if (Boolean.TRUE.equals(bulk.getFlVettore()) && isNullOrEmpty(bulk.getNominativoVettore()))
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "nominativoVettore obbligatorio quando flVettore=true");
+        if (Boolean.TRUE.equals(bulk.getFlVettore()) && isNullOrEmpty(bulk.getNominativoVettore())) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "nominativoVettore obbligatorio quando flVettore=true"
+            );
+        }
 
-        if (bulk.isSmartworking() &&
-                (bulk.getTerzoSmartworking() == null || bulk.getTerzoSmartworking().getCd_terzo() == null))
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "cdTerzoSmartworking obbligatorio quando il documento è di tipo Smartworking");
+        if (bulk.isSmartworking()
+                && (bulk.getTerzoSmartworking() == null || bulk.getTerzoSmartworking().getCd_terzo() == null)) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "cdTerzoSmartworking obbligatorio quando il documento è di tipo Smartworking"
+            );
+        }
 
-        if (Boolean.TRUE.equals(bulk.getFlIncaricato()) && Boolean.TRUE.equals(bulk.getFlVettore()))
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "flIncaricato e flVettore non possono essere entrambi true contemporaneamente");
+        if (Boolean.TRUE.equals(bulk.getFlIncaricato()) && Boolean.TRUE.equals(bulk.getFlVettore())) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "flIncaricato e flVettore non possono essere entrambi true contemporaneamente"
+            );
+        }
 
-        if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(bulk.getStato()))
-            throw new RestException(Response.Status.BAD_REQUEST,
+        if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(bulk.getStato())) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
                     "Operazione consentita solo per documenti in stato INSERITO. Stato attuale: "
-                            + bulk.getStato());
+                            + bulk.getStato()
+            );
+        }
     }
 
     /**
@@ -342,9 +399,12 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
                                     List<Doc_trasporto_rientro_dettBulk> dettagli,
                                     List<Map<String, Object>> rawDettagli) {
 
-        if (dettagli == null || dettagli.isEmpty())
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "Attenzione: è necessario specificare almeno un bene (dettagli obbligatori)");
+        if (dettagli == null || dettagli.isEmpty()) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "Attenzione: è necessario specificare almeno un bene (dettagli obbligatori)"
+            );
+        }
 
         boolean isRientro = Doc_trasporto_rientroBulk.RIENTRO.equals(bulk.getTiDocumento());
         Set<String> chiaviBeniViste = new LinkedHashSet<>();
@@ -354,63 +414,93 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
             Doc_trasporto_rientro_dettBulk d = dettagli.get(i);
             String pfx = "Dettaglio[" + i + "]: ";
 
-            if (d.getPg_inventario() == null)
+            if (d.getPg_inventario() == null) {
                 throw new RestException(Response.Status.BAD_REQUEST, pfx + "pgInventario mancante");
+            }
 
-            if (d.getNr_inventario() == null)
+            if (d.getNr_inventario() == null) {
                 throw new RestException(Response.Status.BAD_REQUEST, pfx + "nrInventario mancante");
+            }
 
-            if (d.getProgressivo() == null)
+            if (d.getProgressivo() == null) {
                 throw new RestException(Response.Status.BAD_REQUEST, pfx + "progressivo mancante");
+            }
 
-            if (!bulk.getPgInventario().equals(d.getPg_inventario()))
-                throw new RestException(Response.Status.BAD_REQUEST,
+            if (!bulk.getPgInventario().equals(d.getPg_inventario())) {
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
                         pfx + "pgInventario (" + d.getPg_inventario()
                                 + ") non coincide con pgInventario della testata ("
-                                + bulk.getPgInventario() + ")");
+                                + bulk.getPgInventario() + ")"
+                );
+            }
 
             String chiaveBene = d.getNr_inventario() + "_" + d.getProgressivo();
 
-            if (!chiaviBeniViste.add(chiaveBene))
-                throw new RestException(Response.Status.BAD_REQUEST,
+            if (!chiaviBeniViste.add(chiaveBene)) {
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
                         pfx + "bene duplicato nella stessa richiesta (nrInventario="
-                                + d.getNr_inventario() + ", progressivo=" + d.getProgressivo() + ")");
+                                + d.getNr_inventario() + ", progressivo=" + d.getProgressivo() + ")"
+                );
+            }
 
             if (isRientro) {
 
                 DocumentoRientroDettBulk rDett = (DocumentoRientroDettBulk) d;
 
-                if (rDett.getPgDocTrasportoRientroRif() == null)
-                    throw new RestException(Response.Status.BAD_REQUEST,
-                            pfx + "pgDocTrasportoRientroRif obbligatorio per documenti di Rientro");
+                if (rDett.getPgDocTrasportoRientroRif() == null) {
+                    throw new RestException(
+                            Response.Status.BAD_REQUEST,
+                            pfx + "pgDocTrasportoRientroRif obbligatorio per documenti di Rientro"
+                    );
+                }
 
-                if (rDett.getNrInventarioRif() == null)
-                    throw new RestException(Response.Status.BAD_REQUEST,
-                            pfx + "nrInventarioRif obbligatorio per documenti di Rientro");
+                if (rDett.getNrInventarioRif() == null) {
+                    throw new RestException(
+                            Response.Status.BAD_REQUEST,
+                            pfx + "nrInventarioRif obbligatorio per documenti di Rientro"
+                    );
+                }
 
-                if (rDett.getProgressivoRif() == null)
-                    throw new RestException(Response.Status.BAD_REQUEST,
-                            pfx + "progressivoRif obbligatorio per documenti di Rientro");
+                if (rDett.getProgressivoRif() == null) {
+                    throw new RestException(
+                            Response.Status.BAD_REQUEST,
+                            pfx + "progressivoRif obbligatorio per documenti di Rientro"
+                    );
+                }
 
-                if (rDett.getPgInventarioRif() == null)
-                    throw new RestException(Response.Status.BAD_REQUEST,
-                            pfx + "pgInventarioRif obbligatorio per documenti di Rientro");
+                if (rDett.getPgInventarioRif() == null) {
+                    throw new RestException(
+                            Response.Status.BAD_REQUEST,
+                            pfx + "pgInventarioRif obbligatorio per documenti di Rientro"
+                    );
+                }
 
-                if (!bulk.getPgInventario().equals(rDett.getPgInventarioRif()))
-                    throw new RestException(Response.Status.BAD_REQUEST,
+                if (!bulk.getPgInventario().equals(rDett.getPgInventarioRif())) {
+                    throw new RestException(
+                            Response.Status.BAD_REQUEST,
                             pfx + "pgInventarioRif (" + rDett.getPgInventarioRif()
                                     + ") deve coincidere con pgInventario della testata ("
-                                    + bulk.getPgInventario() + ")");
+                                    + bulk.getPgInventario() + ")"
+                    );
+                }
 
-                if (!d.getNr_inventario().equals(rDett.getNrInventarioRif()))
-                    throw new RestException(Response.Status.BAD_REQUEST,
+                if (!d.getNr_inventario().equals(rDett.getNrInventarioRif())) {
+                    throw new RestException(
+                            Response.Status.BAD_REQUEST,
                             pfx + "nrInventario (" + d.getNr_inventario()
-                                    + ") deve coincidere con nrInventarioRif (" + rDett.getNrInventarioRif() + ")");
+                                    + ") deve coincidere con nrInventarioRif (" + rDett.getNrInventarioRif() + ")"
+                    );
+                }
 
-                if (!d.getProgressivo().equals(rDett.getProgressivoRif()))
-                    throw new RestException(Response.Status.BAD_REQUEST,
+                if (!d.getProgressivo().equals(rDett.getProgressivoRif())) {
+                    throw new RestException(
+                            Response.Status.BAD_REQUEST,
                             pfx + "progressivo (" + d.getProgressivo()
-                                    + ") deve coincidere con progressivoRif (" + rDett.getProgressivoRif() + ")");
+                                    + ") deve coincidere con progressivoRif (" + rDett.getProgressivoRif() + ")"
+                    );
+                }
             }
         }
     }
@@ -438,8 +528,10 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
 
         if (allegati == null || allegati.isEmpty()) {
             if (bulk.isDefinitivo()) {
-                throw new RestException(Response.Status.BAD_REQUEST,
-                        "Documento DEFINITIVO: obbligatorio un allegato FIRMATO.");
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
+                        "Documento DEFINITIVO: obbligatorio un allegato FIRMATO."
+                );
             }
             return;
         }
@@ -450,30 +542,52 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
             String pfx = "Allegato[" + i + "]: ";
             String nomeFile = att.getNomeFile();
 
-            if (isNullOrEmpty(att.getNomeFile()))
+            if (isNullOrEmpty(att.getNomeFile())) {
                 throw new RestException(Response.Status.BAD_REQUEST, pfx + "nomeFile mancante");
+            }
 
-            if (att.getBytes() == null)
-                throw new RestException(Response.Status.BAD_REQUEST,
-                        nomeFile + ": file non fornito");
+            if (att.getBytes() == null) {
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
+                        nomeFile + ": file non fornito"
+                );
+            }
 
-            if (att.getBytes().length < MIN_PDF_FILE_SIZE_BYTES)
-                throw new RestException(Response.Status.BAD_REQUEST,
-                        nomeFile + ": file vuoto o non accessibile (dimensione: " + att.getBytes().length + " bytes)");
+            if (att.getBytes().length < MIN_PDF_FILE_SIZE_BYTES) {
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
+                        nomeFile + ": file vuoto o non accessibile (dimensione: "
+                                + att.getBytes().length + " bytes)"
+                );
+            }
 
-            if (isNullOrEmpty(att.getTypeAttachment()))
-                throw new RestException(Response.Status.BAD_REQUEST, nomeFile + ": typeAttachment mancante");
+            if (isNullOrEmpty(att.getTypeAttachment())) {
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
+                        nomeFile + ": typeAttachment mancante"
+                );
+            }
 
-            if (isNullOrEmpty(att.getDescrizione()))
-                throw new RestException(Response.Status.BAD_REQUEST, nomeFile + ": Descrizione mancante");
+            if (isNullOrEmpty(att.getDescrizione())) {
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
+                        nomeFile + ": Descrizione mancante"
+                );
+            }
 
-            if (!aspectValidi.contains(att.getTypeAttachment()))
-                throw new RestException(Response.Status.BAD_REQUEST,
-                        nomeFile + ": typeAttachment non valido per il tipo documento");
+            if (!aspectValidi.contains(att.getTypeAttachment())) {
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
+                        nomeFile + ": typeAttachment non valido per il tipo documento"
+                );
+            }
 
-            if (!nomiVisti.add(att.getNomeFile().toLowerCase()))
-                throw new RestException(Response.Status.BAD_REQUEST,
-                        nomeFile + ": nomeFile duplicato nella richiesta");
+            if (!nomiVisti.add(att.getNomeFile().toLowerCase())) {
+                throw new RestException(
+                        Response.Status.BAD_REQUEST,
+                        nomeFile + ": nomeFile duplicato nella richiesta"
+                );
+            }
 
             if (aspectFirmato.equals(att.getTypeAttachment())) {
                 countFirmato++;
@@ -481,13 +595,17 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
         }
 
         if (countFirmato > 1) {
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "È consentito allegare al massimo un documento FIRMATO (trovati: " + countFirmato + ")");
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "È consentito allegare al massimo un documento FIRMATO (trovati: " + countFirmato + ")"
+            );
         }
 
         if (bulk.isDefinitivo() && countFirmato != 1) {
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "Documento DEFINITIVO: deve essere presente esattamente un allegato FIRMATO.");
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "Documento DEFINITIVO: deve essere presente esattamente un allegato FIRMATO."
+            );
         }
     }
 
@@ -521,14 +639,19 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
                 componenteDocTR.archiviaAllegatiDocTR(ctx, docSalvato);
             } catch (Exception e) {
                 log.error("Errore durante archiviaAllegatiDocTR", e);
-                throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,
-                        "Documento salvato ma errore nell'archiviazione allegati: " + e.getMessage());
+                throw new RestException(
+                        Response.Status.INTERNAL_SERVER_ERROR,
+                        "Documento salvato ma errore nell'archiviazione allegati: " + e.getMessage()
+                );
             }
 
         } finally {
 
             for (File f : tmpFiles) {
-                try { Files.deleteIfExists(f.toPath()); } catch (IOException ignored) {}
+                try {
+                    Files.deleteIfExists(f.toPath());
+                } catch (IOException ignored) {
+                }
             }
         }
     }
@@ -551,10 +674,12 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
         a.setTitolo(att.getNomeFile());
 
         a.setDescrizione(!isNullOrEmpty(att.getDescrizione())
-                ? att.getDescrizione() : att.getNomeFile());
+                ? att.getDescrizione()
+                : att.getNomeFile());
 
-        if (att.getMimeTypes() != null)
+        if (att.getMimeTypes() != null) {
             a.setContentType(att.getMimeTypes().mimetype());
+        }
 
         a.setFile(tmp);
 
@@ -571,7 +696,9 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
             String pref = nome.contains(".") ? nome.substring(0, nome.lastIndexOf(".")) : nome;
             String suff = nome.contains(".") ? nome.substring(nome.lastIndexOf(".")) : ".tmp";
 
-            if (pref.length() < 3) pref += "___";
+            if (pref.length() < 3) {
+                pref += "___";
+            }
 
             File tmp = File.createTempFile(pref, suff);
             tmp.deleteOnExit();
@@ -583,8 +710,10 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
             return tmp;
 
         } catch (IOException e) {
-            throw new RestException(Response.Status.INTERNAL_SERVER_ERROR,
-                    "Errore creazione file temporaneo per: " + nome);
+            throw new RestException(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    "Errore creazione file temporaneo per: " + nome
+            );
         }
     }
 }

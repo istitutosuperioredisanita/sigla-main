@@ -1,9 +1,7 @@
 package it.cnr.contab.inventario01.comp;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
-import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
@@ -66,15 +64,20 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     public DocTrasportoRientroComponent() {
     }
 
+    // =========================================================================
+    // INIZIALIZZAZIONE
+    // =========================================================================
 
     /**
      * Inizializza le chiavi e opzioni del documento caricando i tipi di movimento disponibili.
      */
-    public void initializeKeysAndOptionsInto(UserContext usercontext, OggettoBulk oggettobulk) throws ComponentException {
+    public void initializeKeysAndOptionsInto(UserContext usercontext, OggettoBulk oggettobulk)
+            throws ComponentException {
         try {
-            Tipo_trasporto_rientroHome tipoHome = (Tipo_trasporto_rientroHome) getHome(usercontext, Tipo_trasporto_rientroBulk.class);
-            java.util.Collection tipi;
-            tipi = tipoHome.findTipoMovimenti(((Doc_trasporto_rientroBulk) oggettobulk).getTiDocumento());
+            Tipo_trasporto_rientroHome tipoHome =
+                    (Tipo_trasporto_rientroHome) getHome(usercontext, Tipo_trasporto_rientroBulk.class);
+            Collection tipi = tipoHome.findTipoMovimenti(
+                    ((Doc_trasporto_rientroBulk) oggettobulk).getTiDocumento());
             ((Doc_trasporto_rientroBulk) oggettobulk).setTipoMovimenti(tipi);
         } catch (PersistencyException e) {
             throw new ComponentException(e);
@@ -86,6 +89,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
     /**
      * Inizializza un nuovo documento di trasporto/rientro con valori di default.
+     * NOTA: non imposta local_transactionID.
      */
     @Override
     public OggettoBulk inizializzaBulkPerInserimento(UserContext aUC, OggettoBulk bulk)
@@ -101,9 +105,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             inizializzaTipoMovimento(aUC, doc);
             doc.setDoc_trasporto_rientro_dettColl(new SimpleBulkList());
 
-            doc.setCds_scrivania(it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(aUC));
-            doc.setUo_scrivania(it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(aUC));
-            doc.setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(aUC));
+            doc.setCds_scrivania(CNRUserContext.getCd_cds(aUC));
+            doc.setUo_scrivania(CNRUserContext.getCd_unita_organizzativa(aUC));
+            doc.setEsercizio(CNRUserContext.getEsercizio(aUC));
 
             doc.setCondizioni(getHome(aUC, Condizione_beneBulk.class).findAll());
             doc.setInventario(caricaInventario(aUC));
@@ -137,43 +141,47 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Assegna il progressivo al documento tramite il numeratore.
+     * Inizializza i tipi di movimento disponibili per il documento.
      */
-    protected Doc_trasporto_rientroBulk assegnaProgressivo(UserContext userContext,
-                                                           Doc_trasporto_rientroBulk doc) throws ComponentException,
-            PersistencyException {
+    protected void inizializzaTipoMovimento(UserContext userContext, OggettoBulk oggettoBulk)
+            throws ComponentException {
         try {
-            ((Doc_trasporto_rientroHome) getHome(userContext, doc.getClass()))
-                    .inizializzaProgressivo(userContext, doc);
-            return doc;
-        } catch (Exception e) {
-            throw handleException(e);
+            Tipo_trasporto_rientroHome tipoHome =
+                    (Tipo_trasporto_rientroHome) getHome(userContext, Tipo_trasporto_rientroBulk.class);
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) oggettoBulk;
+
+            Collection tipi = tipoHome.findTipiPerDocumento(userContext, doc.getTiDocumento());
+            doc.setTipoMovimenti(tipi);
+
+            if (tipi != null && tipi.size() == 1) {
+                doc.setTipoMovimento((Tipo_trasporto_rientroBulk) tipi.iterator().next());
+            }
+        } catch (PersistencyException e) {
+            throw new ComponentException(e);
         }
+        super.initializeKeysAndOptionsInto(userContext, oggettoBulk);
     }
 
     /**
-     * Restituisce la Home appropriata per i dettagli in base al tipo di documento.
+     * Carica l'inventario associato alla UO dell'utente.
      */
-    private BulkHome getHomeDocumentoTrasportoRientroDett(UserContext aUC, OggettoBulk bulk) throws ComponentException {
-        if (bulk instanceof DocumentoTrasportoBulk)
-            return getHome(aUC, DocumentoTrasportoDettBulk.class);
-        else
-            return getHome(aUC, DocumentoRientroDettBulk.class);
+    public Id_inventarioBulk caricaInventario(UserContext aUC)
+            throws ComponentException, PersistencyException, IntrospectionException {
+        Id_inventarioHome invHome = (Id_inventarioHome) getHome(aUC, Id_inventarioBulk.class);
+        Id_inventarioBulk inventario = invHome.findInventarioFor(aUC, false);
+        if (inventario == null) {
+            throw new ApplicationException("Nessun inventario associato alla UO!");
+        }
+        return inventario;
     }
 
-    /**
-     * Crea un'istanza del dettaglio appropriato in base alla Home fornita.
-     */
-    private OggettoBulk getDettBulkFromHome(BulkHome home) throws ComponentException {
-        if (home instanceof DocumentoTrasportoDettHome)
-            return new DocumentoTrasportoDettBulk();
-        else
-            return new DocumentoRientroDettBulk();
-    }
+    // =========================================================================
+    // INIZIALIZZA PER MODIFICA
+    // =========================================================================
 
     /**
      * Inizializza il documento per la modifica con controllo lock su documento e beni.
-     * Carica manualmente tutti i dati usando la Home PADRE per evitare problemi di ereditarietà.
+     * Carica incaricato e smartworking direttamente come TerzoBulk.
      */
     @Override
     public OggettoBulk inizializzaBulkPerModifica(UserContext aUC, OggettoBulk bulk)
@@ -276,80 +284,32 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         return docTR;
     }
 
+    // =========================================================================
+    // INIZIALIZZA PER RICERCA
+    // =========================================================================
 
     /**
      * Inizializza il documento per la ricerca caricando inventario e dati correlati.
      */
     @Override
-    public OggettoBulk inizializzaBulkPerRicerca(
-            UserContext userContext,
-            OggettoBulk bulk)
+    public OggettoBulk inizializzaBulkPerRicerca(UserContext userContext, OggettoBulk bulk)
             throws ComponentException {
 
         if (bulk == null) {
             throw new ApplicationException(
-                    "Attenzione: non esiste alcun documento corrispondente ai criteri di ricerca!"
-            );
+                    "Attenzione: non esiste alcun documento corrispondente ai criteri di ricerca!");
         }
 
         bulk = super.inizializzaBulkPerRicerca(userContext, bulk);
-
         Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
         inizializzaTipoMovimento(userContext, doc);
 
-        String cds = CNRUserContext.getCd_cds(userContext);
-        String uo = CNRUserContext.getCd_unita_organizzativa(userContext);
-        Integer esercizio = CNRUserContext.getEsercizio(userContext);
-
-        doc.setCds_scrivania(cds);
-        doc.setUo_scrivania(uo);
-        doc.setEsercizio(esercizio);
+        doc.setCds_scrivania(CNRUserContext.getCd_cds(userContext));
+        doc.setUo_scrivania(CNRUserContext.getCd_unita_organizzativa(userContext));
+        doc.setEsercizio(CNRUserContext.getEsercizio(userContext));
 
         try {
-            if (doc.getPgInventario() != null) {
-                Id_inventarioBulk inventario = (Id_inventarioBulk) getHome(userContext, Id_inventarioBulk.class)
-                        .findByPrimaryKey(new Id_inventarioBulk(doc.getPgInventario()));
-                doc.setInventario(inventario);
-
-                if (inventario != null) {
-                    Id_inventarioHome inventarioHome =
-                            (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
-
-                    doc.setConsegnatario(
-                            inventarioHome.findConsegnatarioFor(inventario)
-                    );
-                    doc.setDelegato(
-                            inventarioHome.findDelegatoFor(inventario)
-                    );
-                    doc.setUo_consegnataria(
-                            inventarioHome.findUoRespFor(userContext, inventario)
-                    );
-                }
-            }
-
-            if (doc.getCd_tipo_trasporto_rientro() != null) {
-                Tipo_trasporto_rientroBulk tipoMovimento =
-                        (Tipo_trasporto_rientroBulk) getHome(userContext, Tipo_trasporto_rientroBulk.class)
-                                .findByPrimaryKey(new Tipo_trasporto_rientroBulk(
-                                        doc.getCd_tipo_trasporto_rientro()
-                                ));
-                doc.setTipoMovimento(tipoMovimento);
-            }
-
-            if (doc.getCdTerzoIncaricato() != null) {
-                TerzoBulk terzoIncaricato =
-                        (TerzoBulk) getHome(userContext, TerzoBulk.class)
-                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoIncaricato()));
-                doc.setTerzoIncRitiro(terzoIncaricato);
-            }
-
-            if (doc.getCdTerzoResponsabile() != null) {
-                TerzoBulk terzoResponsabile =
-                        (TerzoBulk) getHome(userContext, TerzoBulk.class)
-                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoResponsabile()));
-                doc.setTerzoRespDip(terzoResponsabile);
-            }
-
+            caricaRelazioni(userContext, doc);
         } catch (PersistencyException | IntrospectionException e) {
             System.out.println("Errore caricamento relazioni per ricerca: " + e.getMessage());
         }
@@ -361,75 +321,24 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      * Inizializza il documento per la ricerca libera.
      */
     @Override
-    public OggettoBulk inizializzaBulkPerRicercaLibera(
-            UserContext userContext,
-            OggettoBulk bulk)
+    public OggettoBulk inizializzaBulkPerRicercaLibera(UserContext userContext, OggettoBulk bulk)
             throws ComponentException {
 
         if (bulk == null) {
             throw new ComponentException(
-                    "Attenzione: non esiste alcun documento corrispondente ai criteri di ricerca!"
-            );
+                    "Attenzione: non esiste alcun documento corrispondente ai criteri di ricerca!");
         }
 
         bulk = super.inizializzaBulkPerRicercaLibera(userContext, bulk);
-
         Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
         inizializzaTipoMovimento(userContext, doc);
 
-        String cds = CNRUserContext.getCd_cds(userContext);
-        String uo = CNRUserContext.getCd_unita_organizzativa(userContext);
-        Integer esercizio = CNRUserContext.getEsercizio(userContext);
-
-        doc.setCds_scrivania(cds);
-        doc.setUo_scrivania(uo);
-        doc.setEsercizio(esercizio);
+        doc.setCds_scrivania(CNRUserContext.getCd_cds(userContext));
+        doc.setUo_scrivania(CNRUserContext.getCd_unita_organizzativa(userContext));
+        doc.setEsercizio(CNRUserContext.getEsercizio(userContext));
 
         try {
-            if (doc.getPgInventario() != null) {
-                Id_inventarioBulk inventario = (Id_inventarioBulk) getHome(userContext, Id_inventarioBulk.class)
-                        .findByPrimaryKey(new Id_inventarioBulk(doc.getPgInventario()));
-                doc.setInventario(inventario);
-
-                if (inventario != null) {
-                    Id_inventarioHome inventarioHome =
-                            (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
-
-                    doc.setConsegnatario(
-                            inventarioHome.findConsegnatarioFor(inventario)
-                    );
-                    doc.setDelegato(
-                            inventarioHome.findDelegatoFor(inventario)
-                    );
-                    doc.setUo_consegnataria(
-                            inventarioHome.findUoRespFor(userContext, inventario)
-                    );
-                }
-            }
-
-            if (doc.getCd_tipo_trasporto_rientro() != null) {
-                Tipo_trasporto_rientroBulk tipoMovimento =
-                        (Tipo_trasporto_rientroBulk) getHome(userContext, Tipo_trasporto_rientroBulk.class)
-                                .findByPrimaryKey(new Tipo_trasporto_rientroBulk(
-                                        doc.getCd_tipo_trasporto_rientro()
-                                ));
-                doc.setTipoMovimento(tipoMovimento);
-            }
-
-            if (doc.getCdTerzoIncaricato() != null) {
-                TerzoBulk terzoIncaricato =
-                        (TerzoBulk) getHome(userContext, TerzoBulk.class)
-                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoIncaricato()));
-                doc.setTerzoIncRitiro(terzoIncaricato);
-            }
-
-            if (doc.getCdTerzoResponsabile() != null) {
-                TerzoBulk terzoResponsabile =
-                        (TerzoBulk) getHome(userContext, TerzoBulk.class)
-                                .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoResponsabile()));
-                doc.setTerzoRespDip(terzoResponsabile);
-            }
-
+            caricaRelazioni(userContext, doc);
         } catch (PersistencyException | IntrospectionException e) {
             System.out.println("Errore caricamento relazioni per ricerca libera: " + e.getMessage());
         }
@@ -438,9 +347,52 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
+     * Carica le relazioni comuni (inventario, tipo movimento, terzi) per la ricerca.
+     */
+    private void caricaRelazioni(UserContext userContext, Doc_trasporto_rientroBulk doc)
+            throws PersistencyException, IntrospectionException, ComponentException {
+
+        if (doc.getPgInventario() != null) {
+            Id_inventarioBulk inventario = (Id_inventarioBulk) getHome(userContext, Id_inventarioBulk.class)
+                    .findByPrimaryKey(new Id_inventarioBulk(doc.getPgInventario()));
+            doc.setInventario(inventario);
+
+            if (inventario != null) {
+                Id_inventarioHome inventarioHome =
+                        (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
+                doc.setConsegnatario(inventarioHome.findConsegnatarioFor(inventario));
+                doc.setDelegato(inventarioHome.findDelegatoFor(inventario));
+                doc.setUo_consegnataria(inventarioHome.findUoRespFor(userContext, inventario));
+            }
+        }
+
+        if (doc.getCd_tipo_trasporto_rientro() != null) {
+            Tipo_trasporto_rientroBulk tipoMovimento =
+                    (Tipo_trasporto_rientroBulk) getHome(userContext, Tipo_trasporto_rientroBulk.class)
+                            .findByPrimaryKey(new Tipo_trasporto_rientroBulk(doc.getCd_tipo_trasporto_rientro()));
+            doc.setTipoMovimento(tipoMovimento);
+        }
+
+        if (doc.getCdTerzoIncaricato() != null) {
+            TerzoBulk terzoIncaricato = (TerzoBulk) getHome(userContext, TerzoBulk.class)
+                    .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoIncaricato()));
+            doc.setTerzoIncRitiro(terzoIncaricato);
+        }
+
+        if (doc.getCdTerzoResponsabile() != null) {
+            TerzoBulk terzoResponsabile = (TerzoBulk) getHome(userContext, TerzoBulk.class)
+                    .findByPrimaryKey(new TerzoBulk(doc.getCdTerzoResponsabile()));
+            doc.setTerzoRespDip(terzoResponsabile);
+        }
+    }
+
+    // =========================================================================
+    // CREA / MODIFICA
+    // =========================================================================
+
+    /**
      * Crea un nuovo documento di trasporto/rientro salvando solo la testata.
-     * Esegue validazioni preliminari, imposta i soggetti coinvolti
-     * e inizializza la collezione dei dettagli senza inserirli.
+     * Gestisce incaricato e smartworking direttamente tramite TerzoBulk.
      */
     @Override
     public OggettoBulk creaConBulk(UserContext userContext, OggettoBulk bulk)
@@ -450,8 +402,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Doc_trasporto_rientroBulk docT = (Doc_trasporto_rientroBulk) bulk;
 
             if (docT.getPgDocTrasportoRientro() != null) {
-                Doc_trasporto_rientroBulk existing = (Doc_trasporto_rientroBulk)
-                        findByPrimaryKey(userContext, docT);
+                Doc_trasporto_rientroBulk existing =
+                        (Doc_trasporto_rientroBulk) findByPrimaryKey(userContext, docT);
                 if (existing != null) {
                     return modificaConBulk(userContext, docT);
                 }
@@ -508,12 +460,10 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     private void verificaDocumentoNonEsistente(UserContext userContext, Doc_trasporto_rientroBulk docT)
             throws ComponentException, PersistencyException {
 
-        if (docT.getPgDocTrasportoRientro() != null) {
-            return;
-        }
+        if (docT.getPgDocTrasportoRientro() != null) return;
 
-        Doc_trasporto_rientroBulk existing = (Doc_trasporto_rientroBulk)
-                findByPrimaryKey(userContext, docT);
+        Doc_trasporto_rientroBulk existing =
+                (Doc_trasporto_rientroBulk) findByPrimaryKey(userContext, docT);
 
         if (existing != null) {
             throw new ApplicationException(
@@ -521,138 +471,122 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-
     /**
-     * Trova il dettaglio più recente di un documento originale (TRASPORTO o RIENTRO).
+     * Aggiorna il documento caricando dettagli, validandolo,
+     * verificando l'unicità dell'allegato firmato e gestendo
+     * progressivo temporaneo o definitivo.
      */
-    private Doc_trasporto_rientro_dettBulk trovaDettaglioOriginale(
-            UserContext userContext,
-            InventarioDocTRBulk bene,
-            Long pgInventario,
-            String tipoDocumentoDaCercare)
+    @Override
+    public OggettoBulk modificaConBulk(UserContext aUC, OggettoBulk bulk)
             throws ComponentException {
 
+        Doc_trasporto_rientroBulk docT = (Doc_trasporto_rientroBulk) bulk;
+
         try {
-            if (OggettoBulk.isNullOrEmpty(String.valueOf(bene.getNr_inventario()))) {
-                return null;
-            }
+            Doc_trasporto_rientro_dettHome dettHome =
+                    (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(aUC, docT);
+            docT.setDoc_trasporto_rientro_dettColl(new BulkList(dettHome.getDetailsFor(docT)));
 
-            Doc_trasporto_rientro_dettHome dettHome;
+            caricaDettagliDocumento(aUC, docT);
+            validaDoc(aUC, docT, true);
+            validaAllegatiComp(docT);
 
-            if (TRASPORTO.equals(tipoDocumentoDaCercare)) {
-                dettHome = (Doc_trasporto_rientro_dettHome) getHome(
-                        userContext, DocumentoTrasportoDettBulk.class);
+            if (isProgressivoTemporaneo(docT)) {
+                return gestisciProgressivoTemporaneo(aUC, docT);
             } else {
-                dettHome = (Doc_trasporto_rientro_dettHome) getHome(
-                        userContext, DocumentoRientroDettBulk.class);
+                return gestisciProgressivoDefinitivo(aUC, docT);
             }
 
-            SQLBuilder sql = dettHome.createSQLBuilder();
-
-            sql.addTableToHeader("DOC_TRASPORTO_RIENTRO d");
-            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", "d.PG_INVENTARIO");
-            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.TI_DOCUMENTO", "d.TI_DOCUMENTO");
-            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.ESERCIZIO", "d.ESERCIZIO");
-            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO",
-                    "d.PG_DOC_TRASPORTO_RIENTRO");
-
-            sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
-                    SQLBuilder.EQUALS, pgInventario);
-            sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO",
-                    SQLBuilder.EQUALS, bene.getNr_inventario());
-            sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO",
-                    SQLBuilder.EQUALS, bene.getProgressivo());
-
-            sql.addSQLClause("AND", "d.TI_DOCUMENTO",
-                    SQLBuilder.EQUALS, tipoDocumentoDaCercare);
-
-            sql.addSQLClause("AND", "d.STATO",
-                    SQLBuilder.EQUALS, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-
-            sql.addSQLClause("AND", "d.STATO",
-                    SQLBuilder.NOT_EQUALS, Doc_trasporto_rientroBulk.STATO_ANNULLATO);
-
-            sql.addOrderBy("d.DATA_REGISTRAZIONE DESC");
-
-            List risultati = dettHome.fetchAll(sql);
-
-            if (risultati != null && !risultati.isEmpty()) {
-                return (Doc_trasporto_rientro_dettBulk) risultati.get(0);
-            }
-
-            return null;
-
-        } catch (PersistencyException e) {
-            throw handleException(e);
-        }
-    }
-
-
-    /**
-     * Restituisce la sigla dell’aspect del documento firmato
-     * in base al tipo di documento (Trasporto o Rientro).
-     */
-    private String getAspectFirmato(Doc_trasporto_rientroBulk doc) {
-        if (doc instanceof DocumentoTrasportoBulk)
-            return AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
-        if (doc instanceof DocumentoRientroBulk)
-            return AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
-        return null;
-    }
-
-
-    /**
-     * Conta gli allegati firmati attivi (esclusi quelli in TO_BE_DELETED)
-     * che corrispondono all’aspect indicato.
-     */
-    private int countAllegatiFirmati(Doc_trasporto_rientroBulk doc, String aspectAtteso) {
-        if (doc == null || doc.getArchivioAllegati() == null || aspectAtteso == null)
-            return 0;
-        return (int) doc.getArchivioAllegati().stream()
-                .filter(o -> o instanceof AllegatoDocTraspRientroBulk)
-                .map(o -> (AllegatoDocTraspRientroBulk) o)
-                .filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
-                .filter(a -> aspectAtteso.equals(a.getAspectName()))
-                .count();
-    }
-
-    /**
-     * Esegue la verifica di unicità del documento firmato
-     * e converte eventuali errori in ComponentException.
-     */
-    public void validaAggiuntaAllegatoFirmato(Doc_trasporto_rientroBulk doc)
-            throws ComponentException {
-        try {
-            validaAllegatiComp(doc);
         } catch (ApplicationException e) {
             throw new ComponentException(e.getMessage(), e);
+        } catch (PersistencyException e) {
+            throw new ComponentException(e);
+        } catch (Throwable e) {
+            throw new ComponentException(e);
         }
     }
 
-
     /**
-     * Indica se è presente esattamente un allegato firmato.
-     * Solleva eccezione se ne sono presenti più di uno.
+     * Restituisce true se il documento ha un progressivo temporaneo (valore negativo).
      */
-    private boolean hasAllegatoFirmato(Doc_trasporto_rientroBulk doc) {
-        String aspectAtteso = getAspectFirmato(doc);
-        if (doc.getArchivioAllegati() == null) {
-            return false;
-        }
-        return countAllegatiFirmati(doc, aspectAtteso) == 1;
+    private boolean isProgressivoTemporaneo(Doc_trasporto_rientroBulk docT) {
+        return docT.getPgDocTrasportoRientro() != null
+                && docT.getPgDocTrasportoRientro() < 0;
     }
 
+    /**
+     * Assegna un nuovo progressivo definitivo al documento,
+     * riallinea dati e ricostruisce correttamente la struttura del bulk.
+     */
+    private Doc_trasporto_rientroBulk gestisciProgressivoTemporaneo(
+            UserContext aUC, Doc_trasporto_rientroBulk docT)
+            throws PersistencyException, ComponentException, IntrospectionException {
+
+        Numeratore_doc_t_rHome numHome =
+                (Numeratore_doc_t_rHome) getHome(aUC, Numeratore_doc_t_rBulk.class);
+
+        Long nuovoPgDoc = numHome.getNextPg(
+                aUC,
+                docT.getEsercizio(),
+                docT.getPgInventario(),
+                docT.getTiDocumento(),
+                aUC.getUser()
+        );
+
+        Doc_trasporto_rientroHome home = (Doc_trasporto_rientroHome) getHome(aUC, docT);
+        home.confirmDocTrasportoRientroTemporaneo(aUC, docT, nuovoPgDoc);
+
+        docT.setPgDocTrasportoRientro(nuovoPgDoc);
+        docT.setArchivioAllegati(new BulkList<>());
+        docT.setToBeUpdated();
+
+        docT = (Doc_trasporto_rientroBulk) inizializzaBulkPerModifica(aUC, docT);
+        preparaEAggiornaRiferimentiInversi(aUC, docT);
+
+        return docT;
+    }
 
     /**
-     * Salva definitivamente il documento verificando la presenza dell’allegato firmato,
+     * Aggiorna dettagli e allegati di un documento già definitivo
+     * e salva le modifiche tramite il componente.
+     */
+    private Doc_trasporto_rientroBulk gestisciProgressivoDefinitivo(
+            UserContext aUC, Doc_trasporto_rientroBulk docT)
+            throws ComponentException, PersistencyException {
+
+        if (docT.getDoc_trasporto_rientro_dettColl() != null) {
+            for (Iterator i = docT.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext(); ) {
+                Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) i.next();
+                updateBulk(aUC, dett);
+            }
+        }
+
+        if (docT.getArchivioAllegati() != null) {
+            for (AllegatoGenericoBulk allegato : docT.getArchivioAllegati()) {
+                if (allegato != null) {
+                    updateBulk(aUC, allegato);
+                }
+            }
+        }
+
+        preparaEAggiornaRiferimentiInversi(aUC, docT);
+        docT.setToBeUpdated();
+
+        return (Doc_trasporto_rientroBulk) super.modificaConBulk(aUC, docT);
+    }
+
+    // =========================================================================
+    // SALVA DEFINITIVO
+    // =========================================================================
+
+    /**
+     * Salva definitivamente il documento verificando la presenza dell'allegato firmato,
      * validando dati e allegati e aggiornando lo stato a DEFINITIVO.
      */
-
     public Doc_trasporto_rientroBulk salvaDefinitivo(
             UserContext userContext,
             Doc_trasporto_rientroBulk docTR) throws ComponentException {
         try {
-
             if (!hasAllegatoFirmato(docTR)) {
                 throw new ApplicationException(
                         "È obbligatorio allegare il documento firmato prima di rendere definitivo il documento.");
@@ -670,7 +604,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 } else {
                     for (Object o : docTR.getDoc_trasporto_rientro_dettColl()) {
                         DocumentoRientroDettBulk dettRientro = (DocumentoRientroDettBulk) o;
-
                         if (dettRientro.getDocTrasportoDettRif() == null) {
                             setRifFields = true;
                             break;
@@ -702,22 +635,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, docTR);
 
-
-//            boolean beneInIstituto = docTR instanceof DocumentoRientroBulk;
-//            aggiornaStatoBeni(userContext, docTR, beneInIstituto);
-//
-//            docTR.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-//            docTR.setToBeUpdated();
-//            Long pgDocDef = docTR.getPgDocTrasportoRientro();
-//            updateBulk(userContext, docTR);
-//            docTR.setPgDocTrasportoRientro(pgDocDef);
-//            docTR.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-//            docTR.setCrudStatus(OggettoBulk.NORMAL);
-//
-//            preparaEAggiornaRiferimentiInversi(userContext, docTR);
-//
-//            return docTR;
-
         } catch (ApplicationException e) {
             throw new ComponentException(e.getMessage(), e);
         } catch (PersistencyException e) {
@@ -725,26 +642,19 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-
+    /**
+     * Popola i campi di riferimento sui dettagli di rientro.
+     */
     public void popolaCampiRiferimento(UserContext uc, Doc_trasporto_rientroBulk docTR)
             throws ComponentException, PersistencyException {
 
-        if (!(docTR instanceof DocumentoRientroBulk)) {
-            return;
-        }
-
-        if (docTR.getDoc_trasporto_rientro_dettColl() == null) {
-            return;
-        }
+        if (!(docTR instanceof DocumentoRientroBulk)) return;
+        if (docTR.getDoc_trasporto_rientro_dettColl() == null) return;
 
         for (Object o : docTR.getDoc_trasporto_rientro_dettColl()) {
             DocumentoRientroDettBulk dettRientro = (DocumentoRientroDettBulk) o;
-
             DocumentoTrasportoDettBulk dettTrasporto = dettRientro.getDocTrasportoDettRif();
-
-            if (dettTrasporto == null) {
-                continue;
-            }
+            if (dettTrasporto == null) continue;
 
             dettRientro.setDocTrasportoDettRif(dettTrasporto);
             dettRientro.setToBeUpdated();
@@ -752,229 +662,292 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
+    // =========================================================================
+    // CAMBIO STATO
+    // =========================================================================
 
     /**
-     * Aggiorna il documento caricando dettagli, validandolo,
-     * verificando l’unicità dell’allegato firmato e gestendo
-     * progressivo temporaneo o definitivo.
+     * Cambia lo stato del documento da INSERITO a INVIATO predisponendolo alla firma.
      */
-    @Override
-    public OggettoBulk modificaConBulk(UserContext aUC, OggettoBulk bulk)
+    public Doc_trasporto_rientroBulk changeStatoInInviato(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk docTR)
+            throws ComponentException {
+        try {
+            if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(docTR.getStato())) {
+                throw new ApplicationException("Stato deve essere INSERITO per inviare alla firma.");
+            }
+
+            docTR.setStato(Doc_trasporto_rientroBulk.STATO_INVIATO);
+            docTR.setStatoFlusso("INV");
+
+            if (docTR.getIdFlussoHappysign() == null || docTR.getIdFlussoHappysign().isEmpty()) {
+                throw new ApplicationException("ID flusso HappySign non impostato");
+            }
+
+            if (docTR.getDataInvioFirma() == null) {
+                docTR.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
+            }
+
+            docTR.setToBeUpdated();
+            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, docTR);
+
+        } catch (ApplicationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ComponentException("Errore predisposizione firma: " + e.getMessage(), e);
+        }
+    }
+
+    // =========================================================================
+    // ANNULLAMENTO
+    // =========================================================================
+
+    /**
+     * Annulla il documento: ricarica i dettagli, valida, verifica le condizioni di annullamento,
+     * aggiorna lo stato dei beni e imposta lo stato del documento su ANNULLATO.
+     */
+    public Doc_trasporto_rientroBulk annullaDocumento(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
             throws ComponentException {
 
-        Doc_trasporto_rientroBulk docT = (Doc_trasporto_rientroBulk) bulk;
-
         try {
-            Doc_trasporto_rientro_dettHome dettHome = (Doc_trasporto_rientro_dettHome)
-                    getHomeDocumentoTrasportoRientroDett(aUC, docT);
-            docT.setDoc_trasporto_rientro_dettColl(new BulkList(dettHome.getDetailsFor(docT)));
+            caricaDettagliDocumento(userContext, doc);
+            validaAnnullamento(doc);
 
-            caricaDettagliDocumento(aUC, docT);
-            validaDoc(aUC, docT, true);
-            validaAllegatiComp(docT);
+            boolean beneInIstituto;
 
-            if (isProgressivoTemporaneo(docT)) {
-                return gestisciProgressivoTemporaneo(aUC, docT);
+            if (doc instanceof DocumentoTrasportoBulk) {
+                verificaNonEsistonoRientri((DocumentoTrasportoBulk) doc);
+                beneInIstituto = true;
+            } else if (doc instanceof DocumentoRientroBulk) {
+                rimuoviRiferimentiDaTrasportoOriginale((DocumentoRientroBulk) doc);
+                beneInIstituto = false;
             } else {
-                return gestisciProgressivoDefinitivo(aUC, docT);
+                throw new ComponentException(
+                        "Tipo documento non riconosciuto: " + doc.getClass().getName());
             }
+
+            aggiornaStatoBeni(userContext, doc, beneInIstituto);
+
+            doc.setStato(Doc_trasporto_rientroBulk.STATO_ANNULLATO);
+            doc.setToBeUpdated();
+
+            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, doc);
 
         } catch (ApplicationException e) {
             throw new ComponentException(e.getMessage(), e);
-        } catch (PersistencyException e) {
-            throw new ComponentException(e);
-        } catch (Throwable e) {
-            throw new ComponentException(e);
+        } catch (Exception e) {
+            throw new ComponentException(
+                    "Errore durante l'annullamento del documento: " + e.getMessage(), e);
         }
     }
 
-
-    /**
-     * Restituisce true se il documento ha un progressivo temporaneo (valore negativo).
-     */
-    private boolean isProgressivoTemporaneo(Doc_trasporto_rientroBulk docT) {
-        return docT.getPgDocTrasportoRientro() != null
-                && docT.getPgDocTrasportoRientro() < 0;
+    private void validaAnnullamento(Doc_trasporto_rientroBulk doc) throws ApplicationException {
+        if (Doc_trasporto_rientroBulk.STATO_ANNULLATO.equals(doc.getStato()))
+            throw new ApplicationException("Il documento è già annullato");
+        if (Doc_trasporto_rientroBulk.STATO_INVIATO.equals(doc.getStato()))
+            throw new ApplicationException("Impossibile annullare un documento inviato in firma");
     }
 
+    private void verificaNonEsistonoRientri(DocumentoTrasportoBulk doc) throws ApplicationException {
+        if (doc.getDoc_trasporto_rientro_dettColl().isEmpty()) return;
+        for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
+            DocumentoTrasportoDettBulk dettaglio = (DocumentoTrasportoDettBulk) obj;
+            if (dettaglio.getDocRientroDettRif() != null) {
+                throw new ApplicationException(
+                        "Impossibile annullare il documento di TRASPORTO: " +
+                                "esistono documenti di RIENTRO collegati. " +
+                                "Annullare prima i documenti di RIENTRO.");
+            }
+        }
+    }
+
+    private void rimuoviRiferimentiDaTrasportoOriginale(DocumentoRientroBulk doc)
+            throws ComponentException {
+        if (doc.getDoc_trasporto_rientro_dettColl() == null) return;
+        for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
+            Doc_trasporto_rientro_dettBulk dettRientro = (Doc_trasporto_rientro_dettBulk) obj;
+            if (dettRientro.getDoc_trasporto_rientroDettRif() != null) {
+                Doc_trasporto_rientro_dettBulk ref = dettRientro.getDoc_trasporto_rientroDettRif();
+                ref.setDoc_trasporto_rientroDettRif(null);
+                ref.setToBeUpdated();
+            }
+        }
+    }
+
+    // =========================================================================
+    // AGGIORNAMENTO STATO BENI (InventarioDocTRBulk/Home)
+    // =========================================================================
 
     /**
-     * Assegna un nuovo progressivo definitivo al documento,
-     * riallinea dati e ricostruisce correttamente la struttura del bulk.
+     * Aggiorna FL_BENE_IN_IST per tutti i beni del documento.
      */
-    private Doc_trasporto_rientroBulk gestisciProgressivoTemporaneo(
-            UserContext aUC, Doc_trasporto_rientroBulk docT)
-            throws PersistencyException, ComponentException, IntrospectionException {
+    private void aggiornaStatoBeni(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            boolean beneInIstituto)
+            throws ComponentException {
 
-        Numeratore_doc_t_rHome numHome = (Numeratore_doc_t_rHome)
-                getHome(aUC, Numeratore_doc_t_rBulk.class);
+        try {
+            if (doc.getDoc_trasporto_rientro_dettColl() == null ||
+                    doc.getDoc_trasporto_rientro_dettColl().isEmpty()) return;
 
-        Long nuovoPgDoc = numHome.getNextPg(
-                aUC,
-                docT.getEsercizio(),
-                docT.getPgInventario(),
-                docT.getTiDocumento(),
-                aUC.getUser()
+            InventarioDocTRHome beneHome =
+                    (InventarioDocTRHome) getHome(userContext, InventarioDocTRBulk.class);
+
+            for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
+                Doc_trasporto_rientro_dettBulk dettaglio = (Doc_trasporto_rientro_dettBulk) obj;
+                InventarioDocTRBulk bene = caricaBeneDaDettaglio(userContext, beneHome, dettaglio);
+                if (bene != null) {
+                    bene.setFl_bene_in_ist(beneInIstituto);
+                    bene.setToBeUpdated();
+                    updateBulk(userContext, bene);
+                }
+            }
+        } catch (PersistencyException e) {
+            throw new ComponentException(
+                    "Errore durante l'aggiornamento dello stato dei beni: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Carica un InventarioDocTRBulk dal database usando le informazioni del dettaglio.
+     */
+    private InventarioDocTRBulk caricaBeneDaDettaglio(
+            UserContext userContext,
+            InventarioDocTRHome beneHome,
+            Doc_trasporto_rientro_dettBulk dettaglio)
+            throws PersistencyException {
+
+        return (InventarioDocTRBulk) beneHome.findByPrimaryKey(
+                new InventarioDocTRBulk(
+                        dettaglio.getNr_inventario(),
+                        dettaglio.getPg_inventario(),
+                        Long.valueOf(dettaglio.getProgressivo())
+                )
         );
-
-        Doc_trasporto_rientroHome home = (Doc_trasporto_rientroHome) getHome(aUC, docT);
-        home.confirmDocTrasportoRientroTemporaneo(aUC, docT, nuovoPgDoc);
-
-        docT.setPgDocTrasportoRientro(nuovoPgDoc);
-        docT.setArchivioAllegati(new BulkList<>());
-        docT.setToBeUpdated();
-
-        docT = (Doc_trasporto_rientroBulk) inizializzaBulkPerModifica(aUC, docT);
-        preparaEAggiornaRiferimentiInversi(aUC, docT);
-
-        return docT;
     }
 
+    // =========================================================================
+    // HELPER HOMES
+    // =========================================================================
 
     /**
-     * Aggiorna dettagli e allegati di un documento già definitivo
-     * e salva le modifiche tramite il componente.
+     * Restituisce la Home appropriata per i dettagli in base al tipo di documento.
      */
-    private Doc_trasporto_rientroBulk gestisciProgressivoDefinitivo(
-            UserContext aUC, Doc_trasporto_rientroBulk docT)
+    private BulkHome getHomeDocumentoTrasportoRientroDett(UserContext aUC, OggettoBulk bulk)
+            throws ComponentException {
+        if (bulk instanceof DocumentoTrasportoBulk)
+            return getHome(aUC, DocumentoTrasportoDettBulk.class);
+        else
+            return getHome(aUC, DocumentoRientroDettBulk.class);
+    }
+
+    /**
+     * Carica i dettagli del documento dal database.
+     */
+    private void caricaDettagliDocumento(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws ComponentException, PersistencyException {
 
+        Doc_trasporto_rientro_dettHome dettHome =
+                (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(userContext, doc);
 
-        if (docT.getDoc_trasporto_rientro_dettColl() != null) {
-            for (Iterator i = docT.getDoc_trasporto_rientro_dettColl().iterator(); i.hasNext(); ) {
-                Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) i.next();
-                updateBulk(aUC, dett);
-            }
-        }
-
-        if (docT.getArchivioAllegati() != null) {
-            for (AllegatoGenericoBulk allegato : docT.getArchivioAllegati()) {
-                if (allegato != null) {
-                    updateBulk(aUC, allegato);
-                }
-            }
-        }
-
-        preparaEAggiornaRiferimentiInversi(aUC, docT);
-        docT.setToBeUpdated();
-
-        return (Doc_trasporto_rientroBulk) super.modificaConBulk(aUC, docT);
+        doc.setDoc_trasporto_rientro_dettColl(
+                new BulkList(dettHome.getDetailsFor(doc))
+        );
     }
 
+    // =========================================================================
+    // ASSEGNA PROGRESSIVO
+    // =========================================================================
 
     /**
-     * Fornisce una determinazione robusta e normalizzata del nome dell’allegato.
-     * Applica una priorità coerente tra nome esplicito e nome file, evitando ambiguità.
+     * Assegna il progressivo al documento tramite il numeratore.
      */
-    private String estraiNomeAllegato(AllegatoGenericoBulk allegato) {
-        if (allegato == null) return null;
-        String nome = allegato.getNome();
-        if (nome != null && !nome.isEmpty()) {
-            return nome.toLowerCase();
+    protected Doc_trasporto_rientroBulk assegnaProgressivo(UserContext userContext,
+                                                           Doc_trasporto_rientroBulk doc)
+            throws ComponentException, PersistencyException {
+        try {
+            ((Doc_trasporto_rientroHome) getHome(userContext, doc.getClass()))
+                    .inizializzaProgressivo(userContext, doc);
+            return doc;
+        } catch (Exception e) {
+            throw handleException(e);
         }
-        if (allegato.getFile() != null && allegato.getFile().getName() != null) {
-            String fromFile = allegato.parseFilename(allegato.getFile().getName());
-            if (fromFile != null && !fromFile.isEmpty()) {
-                return fromFile.toLowerCase();
-            }
-        }
-        return null;
     }
 
+    // =========================================================================
+    // RICERCA TERZI (TerzoBulk diretto)
+    // =========================================================================
 
     /**
-     * Esegue la validazione completa del set di allegati del documento.
-     * Impedisce voci incomplete, previene duplicazioni e tutela l’univocità del firmato.
+     * Ricerca INCARICATO delegando al componente Terzo (TerzoBulk diretto).
      */
-    private void validaAllegatiComp(Doc_trasporto_rientroBulk doc) throws ApplicationException {
-
-        if (doc == null || doc.getArchivioAllegati() == null) return;
-
-        List<AllegatoGenericoBulk> attivi = doc.getArchivioAllegati().stream()
-                .filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
-                .collect(Collectors.toList());
-
-        Set<String> nomiVisti = new HashSet<>();
-
-        for (AllegatoGenericoBulk allegato : attivi) {
-
-            // Controllo extra: allegato TO_BE_CREATED senza file e senza nome
-            if (allegato.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
-                boolean haFile = allegato.getFile() != null;
-                boolean haNome = allegato.getNome() != null && !allegato.getNome().isEmpty();
-                if (!haFile && !haNome) {
-                    throw new ApplicationException(
-                            "Attenzione: è presente un allegato senza file selezionato. " +
-                                    "Selezionare un file per ogni allegato prima di salvare.");
-                }
-            }
-
-            // Controllo duplicati per nome — include allegati con e senza file fisico
-            String nome = estraiNomeAllegato(allegato);
-            if (nome != null) {
-                if (!nomiVisti.add(nome)) {
-                    throw new ApplicationException(
-                            "Attenzione: impossibile caricare l'allegato '" + allegato.getNome() +
-                                    "' poiché esiste già un file con lo stesso nome.");
-                }
-            }
-        }
-
-        // Verifica unicità documento firmato
-        String aspectAtteso = getAspectFirmato(doc);
-        if (aspectAtteso != null) {
-            long countFirmati = attivi.stream()
-                    .filter(a -> a instanceof AllegatoDocTraspRientroBulk)
-                    .map(a -> (AllegatoDocTraspRientroBulk) a)
-                    .filter(a -> aspectAtteso.equals(a.getAspectName()))
-                    .count();
-
-            if (countFirmati > 1) {
-                String tipo = doc instanceof DocumentoTrasportoBulk
-                        ? "Documento di Trasporto FIRMATO"
-                        : "Documento di Rientro FIRMATO";
-                throw new ApplicationException(
-                        "Attenzione: è consentito allegare un solo " + tipo + ".");
-            }
+    public SQLBuilder selectTerzoIncRitiroByClause(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            TerzoBulk terzo,
+            CompoundFindClause clause)
+            throws ComponentException, RemoteException {
+        try {
+            TerzoComponentSession sess = (TerzoComponentSession)
+                    it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+                            "CNRANAGRAF00_EJB_TerzoComponentSession",
+                            TerzoComponentSession.class);
+            return sess.findTerziDipendentiByClause(userContext, terzo, clause);
+        } catch (PersistencyException | IntrospectionException e) {
+            throw new ComponentException(e);
         }
     }
 
+    /**
+     * Ricerca SMARTWORKING delegando al componente Terzo (TerzoBulk diretto).
+     */
+    public SQLBuilder selectTerzoSmartworkingByClause(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            TerzoBulk terzo,
+            CompoundFindClause clause)
+            throws ComponentException, RemoteException {
+        try {
+            TerzoComponentSession sess = (TerzoComponentSession)
+                    it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+                            "CNRANAGRAF00_EJB_TerzoComponentSession",
+                            TerzoComponentSession.class);
+            return sess.findTerziDipendentiByClause(userContext, terzo, clause);
+        } catch (PersistencyException | IntrospectionException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    // =========================================================================
+    // RIFERIMENTI INVERSI TRASPORTO ↔ RIENTRO
+    // =========================================================================
 
     /**
      * Prepara e aggiorna la relazione bidirezionale tra TRASPORTO e RIENTRO.
-     * Per ogni dettaglio di rientro che referenzia un dettaglio trasporto,
-     * aggiorna il dettaglio trasporto con il riferimento inverso al rientro.
      */
     public void preparaEAggiornaRiferimentiInversi(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc)
             throws ComponentException {
 
-
-        if (!(doc instanceof DocumentoRientroBulk)) {
-            return;
-        }
+        if (!(doc instanceof DocumentoRientroBulk)) return;
         if (doc.getDoc_trasporto_rientro_dettColl() == null ||
-                doc.getDoc_trasporto_rientro_dettColl().isEmpty()) {
-            return;
-        }
+                doc.getDoc_trasporto_rientro_dettColl().isEmpty()) return;
 
         try {
             DocumentoTrasportoDettHome trasportoDettHome =
                     (DocumentoTrasportoDettHome) getHome(userContext, DocumentoTrasportoDettBulk.class);
 
             for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
-
-                if (!(obj instanceof DocumentoRientroDettBulk)) {
-                    continue;
-                }
+                if (!(obj instanceof DocumentoRientroDettBulk)) continue;
 
                 DocumentoRientroDettBulk dettaglioRientro = (DocumentoRientroDettBulk) obj;
                 DocumentoTrasportoDettBulk dettaglioTrasportoRef = dettaglioRientro.getDocTrasportoDettRif();
-
-                if (dettaglioTrasportoRef == null) {
-                    continue;
-                }
+                if (dettaglioTrasportoRef == null) continue;
 
                 DocumentoTrasportoDettBulk dettaglioTrasportoDB =
                         (DocumentoTrasportoDettBulk) trasportoDettHome.findByPrimaryKey(dettaglioTrasportoRef);
@@ -999,74 +972,176 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
+    // =========================================================================
+    // ALLEGATI
+    // =========================================================================
 
+    private String getAspectFirmato(Doc_trasporto_rientroBulk doc) {
+        if (doc instanceof DocumentoTrasportoBulk)
+            return AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
+        if (doc instanceof DocumentoRientroBulk)
+            return AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
+        return null;
+    }
 
-    /**
-     * Cambia lo stato del documento da INSERITO a INVIATO predisponendolo alla firma.
-     */
-    public Doc_trasporto_rientroBulk changeStatoInInviato(UserContext userContext, Doc_trasporto_rientroBulk docTR)
+    private int countAllegatiFirmati(Doc_trasporto_rientroBulk doc, String aspectAtteso) {
+        if (doc == null || doc.getArchivioAllegati() == null || aspectAtteso == null) return 0;
+        return (int) doc.getArchivioAllegati().stream()
+                .filter(o -> o instanceof AllegatoDocTraspRientroBulk)
+                .map(o -> (AllegatoDocTraspRientroBulk) o)
+                .filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
+                .filter(a -> aspectAtteso.equals(a.getAspectName()))
+                .count();
+    }
+
+    private boolean hasAllegatoFirmato(Doc_trasporto_rientroBulk doc) {
+        String aspectAtteso = getAspectFirmato(doc);
+        if (doc.getArchivioAllegati() == null) return false;
+        return countAllegatiFirmati(doc, aspectAtteso) == 1;
+    }
+
+    public void validaAggiuntaAllegatoFirmato(Doc_trasporto_rientroBulk doc)
             throws ComponentException {
         try {
-            if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(docTR.getStato())) {
-                throw new ApplicationException("Stato deve essere INSERITO per inviare alla firma.");
-            }
-
-            docTR.setStato(Doc_trasporto_rientroBulk.STATO_INVIATO);
-            docTR.setStatoFlusso("INV");
-
-            if (docTR.getIdFlussoHappysign() == null || docTR.getIdFlussoHappysign().isEmpty()) {
-                throw new ApplicationException("ID flusso HappySign non impostato");
-            }
-
-            if (docTR.getDataInvioFirma() == null) {
-                docTR.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
-            }
-
-            docTR.setToBeUpdated();
-
-            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, docTR);
-
+            validaAllegatiComp(doc);
         } catch (ApplicationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ComponentException("Errore predisposizione firma: " + e.getMessage(), e);
+            throw new ComponentException(e.getMessage(), e);
         }
     }
 
-    /**
-     * Inizializza i tipi di movimento disponibili per il documento.
-     */
-    protected void inizializzaTipoMovimento(UserContext userContext, OggettoBulk oggettoBulk)
-            throws ComponentException {
-        try {
-            Tipo_trasporto_rientroHome tipoHome = (Tipo_trasporto_rientroHome)
-                    getHome(userContext, Tipo_trasporto_rientroBulk.class);
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) oggettoBulk;
+    private String estraiNomeAllegato(AllegatoGenericoBulk allegato) {
+        if (allegato == null) return null;
+        String nome = allegato.getNome();
+        if (nome != null && !nome.isEmpty()) return nome.toLowerCase();
+        if (allegato.getFile() != null && allegato.getFile().getName() != null) {
+            String fromFile = allegato.parseFilename(allegato.getFile().getName());
+            if (fromFile != null && !fromFile.isEmpty()) return fromFile.toLowerCase();
+        }
+        return null;
+    }
 
-            java.util.Collection tipi = tipoHome.findTipiPerDocumento(userContext, doc.getTiDocumento());
-            doc.setTipoMovimenti(tipi);
+    private void validaAllegatiComp(Doc_trasporto_rientroBulk doc) throws ApplicationException {
+        if (doc == null || doc.getArchivioAllegati() == null) return;
 
-            if (tipi != null && tipi.size() == 1) {
-                doc.setTipoMovimento((Tipo_trasporto_rientroBulk) tipi.iterator().next());
+        List<AllegatoGenericoBulk> attivi = doc.getArchivioAllegati().stream()
+                .filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
+                .collect(Collectors.toList());
+
+        Set<String> nomiVisti = new HashSet<>();
+
+        for (AllegatoGenericoBulk allegato : attivi) {
+            if (allegato.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+                boolean haFile = allegato.getFile() != null;
+                boolean haNome = allegato.getNome() != null && !allegato.getNome().isEmpty();
+                if (!haFile && !haNome) {
+                    throw new ApplicationException(
+                            "Attenzione: è presente un allegato senza file selezionato. " +
+                                    "Selezionare un file per ogni allegato prima di salvare.");
+                }
             }
-        } catch (PersistencyException e) {
-            throw new ComponentException(e);
+
+            String nome = estraiNomeAllegato(allegato);
+            if (nome != null) {
+                if (!nomiVisti.add(nome)) {
+                    throw new ApplicationException(
+                            "Attenzione: impossibile caricare l'allegato '" + allegato.getNome() +
+                                    "' poiché esiste già un file con lo stesso nome.");
+                }
+            }
         }
-        super.initializeKeysAndOptionsInto(userContext, oggettoBulk);
+
+        String aspectAtteso = getAspectFirmato(doc);
+        if (aspectAtteso != null) {
+            long countFirmati = attivi.stream()
+                    .filter(a -> a instanceof AllegatoDocTraspRientroBulk)
+                    .map(a -> (AllegatoDocTraspRientroBulk) a)
+                    .filter(a -> aspectAtteso.equals(a.getAspectName()))
+                    .count();
+
+            if (countFirmati > 1) {
+                String tipo = doc instanceof DocumentoTrasportoBulk
+                        ? "Documento di Trasporto FIRMATO"
+                        : "Documento di Rientro FIRMATO";
+                throw new ApplicationException(
+                        "Attenzione: è consentito allegare un solo " + tipo + ".");
+            }
+        }
     }
 
     /**
-     * Carica l'inventario associato alla UO dell'utente.
+     * Gestisce archiviazione, aggiornamento e cancellazione degli allegati T/R su CMIS.
      */
-    public Id_inventarioBulk caricaInventario(UserContext aUC)
-            throws ComponentException, PersistencyException, IntrospectionException {
-        Id_inventarioHome invHome = (Id_inventarioHome) getHome(aUC, Id_inventarioBulk.class);
-        Id_inventarioBulk inventario = invHome.findInventarioFor(aUC, false);
-        if (inventario == null) {
-            throw new ApplicationException("Nessun inventario associato alla UO!");
+    public void archiviaAllegatiDocTR(UserContext userContext, Doc_trasporto_rientroBulk doc)
+            throws ApplicationException {
+
+        List<String> storePathList = doc.isTrasporto()
+                ? ((DocumentoTrasportoBulk) doc).getStorePath()
+                : ((DocumentoRientroBulk) doc).getStorePath();
+
+        if (storePathList == null || storePathList.isEmpty())
+            throw new ApplicationException(
+                    "StorePath non calcolabile per il documento PG=" + doc.getPgDocTrasportoRientro());
+
+        String storePath = storePathList.get(0);
+        if (doc.getArchivioAllegati() == null) return;
+
+        if (storeService == null)
+            storeService = SpringUtil.getBean("storeService", StoreService.class);
+
+        for (AllegatoGenericoBulk allegatoGen : doc.getArchivioAllegati()) {
+            if (!(allegatoGen instanceof AllegatoDocTraspRientroBulk)) continue;
+            AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) allegatoGen;
+
+            if (allegato.isToBeCreated()) {
+                File file = Optional.ofNullable(allegato.getFile())
+                        .orElseThrow(() -> new ApplicationException(
+                                "File non presente per allegato: " + allegato.getNome()));
+                try {
+                    allegato.complete(userContext);
+                    storeService.storeSimpleDocument(
+                            allegato, new FileInputStream(file),
+                            allegato.getContentType(), allegato.getNome(), storePath);
+                    allegato.setCrudStatus(OggettoBulk.NORMAL);
+                } catch (FileNotFoundException e) {
+                    throw new ApplicationException("File non trovato: " + allegato.getNome(), e);
+                } catch (StorageException e) {
+                    if (e.getType().equals(StorageException.Type.CONSTRAINT_VIOLATED))
+                        throw new ApplicationException("File già presente: " + allegato.getNome());
+                    throw new ApplicationException("Errore storage per: " + allegato.getNome(), e);
+                }
+            } else if (allegato.isToBeUpdated()) {
+                try {
+                    if (allegato.getFile() != null)
+                        storeService.updateStream(allegato.getStorageKey(),
+                                new FileInputStream(allegato.getFile()), allegato.getContentType());
+                    allegato.complete(userContext);
+                    storeService.updateProperties(allegato,
+                            storeService.getStorageObjectBykey(allegato.getStorageKey()));
+                    allegato.setCrudStatus(OggettoBulk.NORMAL);
+                } catch (FileNotFoundException e) {
+                    throw new ApplicationException("File non trovato: " + allegato.getNome(), e);
+                } catch (StorageException e) {
+                    if (e.getType().equals(StorageException.Type.CONSTRAINT_VIOLATED))
+                        throw new ApplicationException("File già presente: " + allegato.getNome());
+                    throw new ApplicationException("Errore storage per: " + allegato.getNome(), e);
+                }
+            }
         }
-        return inventario;
+
+        for (Iterator<AllegatoDocTraspRientroBulk> it =
+             doc.getArchivioAllegati().deleteIterator(); it.hasNext(); ) {
+            AllegatoDocTraspRientroBulk allegato = it.next();
+            if (allegato.isToBeDeleted()) {
+                Optional.ofNullable(allegato.getStorageKey())
+                        .ifPresent(key -> storeService.delete(key));
+                allegato.setCrudStatus(OggettoBulk.NORMAL);
+            }
+        }
     }
+
+    // =========================================================================
+    // SELEZIONE / ITERATORI BENI (InventarioDocTRBulk)
+    // =========================================================================
 
     /**
      * Ritorna un iteratore sui dettagli del documento per la modifica.
@@ -1080,7 +1155,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         if (docTR == null || docTR.getPgDocTrasportoRientro() == null)
             return new it.cnr.jada.util.EmptyRemoteIterator();
 
-        SQLBuilder sql = getHome(userContext, (docTR.isRientro() ? DocumentoRientroDettBulk.class : DocumentoTrasportoDettBulk.class)).createSQLBuilder();
+        SQLBuilder sql = getHome(userContext,
+                (docTR.isRientro() ? DocumentoRientroDettBulk.class : DocumentoTrasportoDettBulk.class))
+                .createSQLBuilder();
 
         sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, docTR.getPgInventario());
         sql.addSQLClause("AND", "TI_DOCUMENTO", sql.EQUALS, docTR.getTiDocumento());
@@ -1088,15 +1165,21 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO", sql.EQUALS, docTR.getPgDocTrasportoRientro());
 
         try {
-            it.cnr.jada.util.RemoteIterator ri = iterator(userContext, sql, bulkClass, null);
-            return ri;
+            return iterator(userContext, sql, bulkClass, null);
         } catch (Exception e) {
             throw handleException(e);
         }
     }
 
+    /** Wrapper per selezionare dettagli rientro per modifica. */
+    public RemoteIterator selectEditDettagliRientro(
+            UserContext userContext, Doc_trasporto_rientroBulk doc,
+            Class bulkClass, CompoundFindClause filters) throws ComponentException {
+        return selectEditDettagliTrasporto(userContext, doc, bulkClass, filters);
+    }
+
     /**
-     * Ritorna la lista dei beni disponibili per il trasporto.
+     * Ritorna la lista dei beni disponibili per il trasporto (usa InventarioDocTRBulk).
      */
     public RemoteIterator getListaBeniDaTrasportare(
             UserContext userContext,
@@ -1105,13 +1188,10 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             CompoundFindClause clauses) throws ComponentException {
 
         try {
-            SQLBuilder sql = new SQLBuilder();
-            InventarioDocTRHome  invBeniHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
-            sql = invBeniHome.getListaBeniDaTrasportare(
-                    userContext
-                    , (Doc_trasporto_rientroBulk) bulk
-                    , beni_da_escludere);
-
+            InventarioDocTRHome invBeniHome =
+                    (InventarioDocTRHome) getHome(userContext, InventarioDocTRBulk.class);
+            SQLBuilder sql = invBeniHome.getListaBeniDaTrasportare(
+                    userContext, (Doc_trasporto_rientroBulk) bulk, beni_da_escludere);
             sql.addClause(clauses);
             try {
                 return iterator(userContext, sql, InventarioDocTRBulk.class, null);
@@ -1120,20 +1200,18 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             }
         } catch (PersistencyException ex) {
             throw handleException(ex);
-        } catch (it.cnr.jada.persistency.IntrospectionException ex) {
+        } catch (IntrospectionException ex) {
             throw handleException(ex);
         }
     }
 
     /**
-     * Ritorna la lista dei beni già selezionati nel documento.
+     * Ritorna la lista dei beni già selezionati nel documento (usa InventarioDocTRBulk).
      */
-    public SimpleBulkList selezionati(it.cnr.jada.UserContext userContext, Doc_trasporto_rientroBulk docT)
-            throws it.cnr.jada.comp.ComponentException {
+    public SimpleBulkList selezionati(UserContext userContext, Doc_trasporto_rientroBulk docT)
+            throws ComponentException {
 
-        if (docT.getPgDocTrasportoRientro() == null) {
-            return new SimpleBulkList();
-        }
+        if (docT.getPgDocTrasportoRientro() == null) return new SimpleBulkList();
 
         try {
             SQLBuilder sql = getHome(userContext, InventarioDocTRBulk.class).createSQLBuilder();
@@ -1159,29 +1237,24 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             sql.addOrderBy("PROGRESSIVO");
 
             List risultato = getHome(userContext, InventarioDocTRBulk.class).fetchAll(sql);
-
-            if (risultato != null && risultato.size() > 0) {
-                return new SimpleBulkList(risultato);
-            }
+            if (risultato != null && risultato.size() > 0) return new SimpleBulkList(risultato);
 
         } catch (PersistencyException pe) {
             throw new ComponentException(pe);
         }
-
         return new SimpleBulkList();
     }
 
     /**
-     * Ritorna iteratore sui beni associati al documento.
+     * Ritorna iteratore sui beni associati al documento (usa InventarioDocTRBulk).
      */
     public RemoteIterator selectBeniAssociatiByClause(
             UserContext userContext,
             Doc_trasporto_rientroBulk docT,
             Class bulkClass) throws ComponentException {
 
-        if (docT.getPgDocTrasportoRientro() == null) {
+        if (docT.getPgDocTrasportoRientro() == null)
             return new it.cnr.jada.util.EmptyRemoteIterator();
-        }
 
         try {
             SQLBuilder sql = getHome(userContext, InventarioDocTRBulk.class).createSQLBuilder();
@@ -1213,81 +1286,13 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    /**
-     * Restituisce la data di modifica più recente tra tutti i beni del documento.
-     */
-    private java.sql.Timestamp getMaxDataFor(UserContext userContext, Doc_trasporto_rientroBulk docT)
-            throws ComponentException {
-
-        if (docT.getPgDocTrasportoRientro() == null) {
-            throw new ApplicationException("Attenzione: è necessario specificare almeno un bene!");
-        }
-
-        try {
-            Doc_trasporto_rientro_dettHome dettHome = (Doc_trasporto_rientro_dettHome)
-                    getHome(userContext, Doc_trasporto_rientro_dettBulk.class);
-
-            Timestamp max_data = dettHome.getMaxDataValiditaVariazione(docT);
-
-            if (max_data == null) {
-                throw new ApplicationException("Attenzione: è necessario specificare almeno un bene!");
-            }
-
-            return max_data;
-
-        } catch (PersistencyException pe) {
-            throw handleException(pe);
-        }
-    }
-
-
-    /**
-     * Cerca gli accessori associati a un bene principale.
-     */
-    public List cercaBeniAccessoriAssociati(
-            UserContext userContext,
-            InventarioDocTRBulk benePrincipale)
-            throws ComponentException {
-
-        try {
-            InventarioDocTRHome  home = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
-
-            SQLBuilder sql = home.createSQLBuilder();
-
-            sql.addSQLClause("AND", "PG_INVENTARIO",
-                    SQLBuilder.EQUALS, benePrincipale.getPg_inventario());
-            sql.addSQLClause("AND", "NR_INVENTARIO",
-                    SQLBuilder.EQUALS, benePrincipale.getNr_inventario());
-
-            sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.GREATER, 0);
-
-            sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.NOT_EQUALS, benePrincipale.getProgressivo());
-
-            List beniAccessori = home.fetchAll(sql);
-
-            if (beniAccessori != null && !beniAccessori.isEmpty()) {
-                return beniAccessori;
-            }
-
-        } catch (PersistencyException pe) {
-            throw handleException(pe);
-        }
-        return java.util.Collections.emptyList();
-    }
-
+    // =========================================================================
+    // MODIFICA BENI (InventarioDocTRBulk)
+    // =========================================================================
 
     /**
      * Aggiunge o rimuove beni dal documento di TRASPORTO o RIENTRO.
-     *
-     * AGGIUNTA:
-     *   - Ricarica il bene dal DB prima del lock per allineare la versione ed evitare
-     *     OutdatedResourceException su beni appartenenti a documenti annullati.
-     *   - Acquisisce il lock esclusivo; se occupato da altro utente lancia errore parlante.
-     *   - TRASPORTO: crea il dettaglio con eventuale riferimento al RIENTRO originale.
-     *   - RIENTRO: cerca il TRASPORTO DEFINITIVO originale; se assente blocca con errore.
-     *
-     * RIMOZIONE:
-     *   - Rimuove il dettaglio dalla collezione in memoria ed elimina il record dal DB.
+     * Usa InventarioDocTRBulk e TerzoBulk direttamente.
      */
     public void modificaBeniTrasportatiConAccessori(
             UserContext userContext,
@@ -1310,15 +1315,14 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 if (old_ass.get(i) != ass.get(i)) {
 
                     if (ass.get(i)) {
-
+                        // Ricarica dal DB per allineare versione
                         try {
                             InventarioDocTRBulk beneDB =
                                     (InventarioDocTRBulk) getHome(userContext, InventarioDocTRBulk.class)
                                             .findByPrimaryKey(new InventarioDocTRBulk(
                                                     bene.getNr_inventario(),
                                                     bene.getPg_inventario(),
-                                                    bene.getProgressivo()
-                                            ));
+                                                    bene.getProgressivo()));
                             if (beneDB != null) {
                                 bene = beneDB;
                                 beni[i] = beneDB;
@@ -1334,8 +1338,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                                 throw new ApplicationException(
                                         "Risorsa occupata.\nIl bene " +
                                                 bene.getNumeroBeneCompleto() +
-                                                " è bloccato da un altro utente."
-                                );
+                                                " è bloccato da un altro utente.");
                             }
                             throw handleException(e);
                         }
@@ -1344,12 +1347,12 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             DocumentoTrasportoDettBulk dett = new DocumentoTrasportoDettBulk();
                             dett.setDocumentoTrasporto((DocumentoTrasportoBulk) docT);
                             dett.setBene(bene);
-
                             dett.setPg_inventario(docT.getPgInventario());
                             dett.setTi_documento(docT.getTiDocumento());
                             dett.setEsercizio(docT.getEsercizio());
                             dett.setPg_doc_trasporto_rientro(docT.getPgDocTrasportoRientro());
 
+                            // Assegnatario da TerzoBulk
                             if (docT.isSmartworking() && docT.getTerzoSmartworking() != null) {
                                 dett.setCdTerzoAssegnatario(docT.getTerzoSmartworking().getCd_terzo());
                             } else if (docT.getFlIncaricato() && docT.getTerzoIncRitiro() != null) {
@@ -1359,9 +1362,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             }
 
                             Doc_trasporto_rientro_dettBulk dettRientroOrig =
-                                    trovaDettaglioOriginale(userContext, bene,
-                                            docT.getPgInventario(), RIENTRO);
-
+                                    trovaDettaglioOriginale(userContext, bene, docT.getPgInventario(), RIENTRO);
                             if (dettRientroOrig != null) {
                                 dett.setDocRientroDettRif((DocumentoRientroDettBulk) dettRientroOrig);
                             }
@@ -1374,12 +1375,12 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             DocumentoRientroDettBulk dett = new DocumentoRientroDettBulk();
                             dett.setDocumentoRientro((DocumentoRientroBulk) docT);
                             dett.setBene(bene);
-
                             dett.setPg_inventario(docT.getPgInventario());
                             dett.setTi_documento(docT.getTiDocumento());
                             dett.setEsercizio(docT.getEsercizio());
                             dett.setPg_doc_trasporto_rientro(docT.getPgDocTrasportoRientro());
 
+                            // Assegnatario da TerzoBulk
                             if (docT.isSmartworking() && docT.getTerzoSmartworking() != null) {
                                 dett.setCdTerzoAssegnatario(docT.getTerzoSmartworking().getCd_terzo());
                             } else if (docT.getFlIncaricato() && docT.getTerzoIncRitiro() != null) {
@@ -1389,9 +1390,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             }
 
                             Doc_trasporto_rientro_dettBulk dettTrasportoOrig =
-                                    trovaDettaglioOriginale(userContext, bene,
-                                            docT.getPgInventario(), TRASPORTO);
-
+                                    trovaDettaglioOriginale(userContext, bene, docT.getPgInventario(), TRASPORTO);
                             if (dettTrasportoOrig == null) {
                                 throw new ApplicationException(
                                         "Bene " + bene.getNumeroBeneCompleto() +
@@ -1400,30 +1399,24 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
                             dett.setDocTrasportoDettRif((DocumentoTrasportoDettBulk) dettTrasportoOrig);
                             docT.getDoc_trasporto_rientro_dettColl().add(dett);
-
                             dett.setToBeCreated();
                             super.creaConBulk(userContext, dett);
                         }
 
                     } else {
                         SimpleBulkList collection = docT.getDoc_trasporto_rientro_dettColl();
-
                         if (collection != null) {
                             Doc_trasporto_rientro_dettBulk toDelete = null;
-
                             for (Iterator it = collection.iterator(); it.hasNext(); ) {
                                 Doc_trasporto_rientro_dettBulk dett =
                                         (Doc_trasporto_rientro_dettBulk) it.next();
-
                                 if (dett.getNr_inventario().equals(bene.getNr_inventario()) &&
                                         dett.getProgressivo().equals(bene.getProgressivo().intValue())) {
-
                                     toDelete = dett;
                                     it.remove();
                                     break;
                                 }
                             }
-
                             if (toDelete != null && docT.getPgDocTrasportoRientro() != null) {
                                 toDelete.setToBeDeleted();
                                 super.eliminaConBulk(userContext, toDelete);
@@ -1438,414 +1431,104 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-
-
-    /**
-     * Wrapper per ottenere la lista dei beni da far rientrare.
-     */
-    public RemoteIterator getListaBeniDaFarRientrare(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            SimpleBulkList beniEsclusi,
-            CompoundFindClause clauses)
-            throws ComponentException {
-
-        return cercaBeniDaFarRientrare(userContext, doc, beniEsclusi, clauses);
-    }
-
-    /**
-     * Wrapper per modificare beni rientrati con accessori.
-     */
+    /** Wrapper per modificare beni rientrati con accessori. */
     public void modificaBeniRientratiConAccessori(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            OggettoBulk[] beni,
-            BitSet oldSelection,
-            BitSet newSelection)
+            UserContext userContext, Doc_trasporto_rientroBulk doc,
+            OggettoBulk[] beni, BitSet oldSelection, BitSet newSelection)
             throws ComponentException {
-
         modificaBeniTrasportatiConAccessori(userContext, doc, beni, oldSelection, newSelection);
     }
 
+    // =========================================================================
+    // TROVA DETTAGLIO ORIGINALE (InventarioDocTRBulk)
+    // =========================================================================
+
     /**
-     * Wrapper per selezionare dettagli rientro per modifica.
+     * Trova il dettaglio più recente di un documento originale (TRASPORTO o RIENTRO).
+     * Accetta InventarioDocTRBulk.
      */
-    public RemoteIterator selectEditDettagliRientro(
+    private Doc_trasporto_rientro_dettBulk trovaDettaglioOriginale(
             UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            Class bulkClass,
-            CompoundFindClause filters)
+            InventarioDocTRBulk bene,
+            Long pgInventario,
+            String tipoDocumentoDaCercare)
             throws ComponentException {
 
-        return selectEditDettagliTrasporto(userContext, doc, bulkClass, filters);
-    }
-
-    /**
-     * Verifica se l'esercizio COEP è chiuso.
-     */
-    public boolean isEsercizioCOEPChiuso(UserContext userContext) throws ComponentException {
-        LoggableStatement cs = null;
-        String status = null;
         try {
-            cs = new LoggableStatement(getConnection(userContext),
-                    "{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
-                            "CNRCTB200.isChiusuraCoepDef(?,?)}", false, this.getClass());
-            cs.registerOutParameter(1, java.sql.Types.VARCHAR);
-            cs.setObject(2, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-            cs.setObject(3, it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
-            cs.executeQuery();
-            status = new String(cs.getString(1));
-            if (status.compareTo("Y") == 0)
-                return true;
+            if (OggettoBulk.isNullOrEmpty(String.valueOf(bene.getNr_inventario()))) return null;
 
-            Id_inventarioHome inventarioHome = (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
-            Id_inventarioBulk inventario = inventarioHome.findInventarioFor(userContext, false);
-            if (!inventarioHome.isAperto(inventario, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext)))
-                return true;
+            Doc_trasporto_rientro_dettHome dettHome;
+            if (TRASPORTO.equals(tipoDocumentoDaCercare)) {
+                dettHome = (Doc_trasporto_rientro_dettHome) getHome(
+                        userContext, DocumentoTrasportoDettBulk.class);
+            } else {
+                dettHome = (Doc_trasporto_rientro_dettHome) getHome(
+                        userContext, DocumentoRientroDettBulk.class);
+            }
 
-        } catch (java.sql.SQLException ex) {
-            throw handleException(ex);
+            SQLBuilder sql = dettHome.createSQLBuilder();
+            sql.addTableToHeader("DOC_TRASPORTO_RIENTRO d");
+            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", "d.PG_INVENTARIO");
+            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.TI_DOCUMENTO", "d.TI_DOCUMENTO");
+            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.ESERCIZIO", "d.ESERCIZIO");
+            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO",
+                    "d.PG_DOC_TRASPORTO_RIENTRO");
+
+            sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
+                    SQLBuilder.EQUALS, pgInventario);
+            sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO",
+                    SQLBuilder.EQUALS, bene.getNr_inventario());
+            sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO",
+                    SQLBuilder.EQUALS, bene.getProgressivo());
+            sql.addSQLClause("AND", "d.TI_DOCUMENTO",
+                    SQLBuilder.EQUALS, tipoDocumentoDaCercare);
+            sql.addSQLClause("AND", "d.STATO",
+                    SQLBuilder.EQUALS, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+            sql.addSQLClause("AND", "d.STATO",
+                    SQLBuilder.NOT_EQUALS, Doc_trasporto_rientroBulk.STATO_ANNULLATO);
+            sql.addOrderBy("d.DATA_REGISTRAZIONE DESC");
+
+            List risultati = dettHome.fetchAll(sql);
+            if (risultati != null && !risultati.isEmpty())
+                return (Doc_trasporto_rientro_dettBulk) risultati.get(0);
+
+            return null;
+
         } catch (PersistencyException e) {
             throw handleException(e);
-        } catch (IntrospectionException e) {
-            throw handleException(e);
-        } finally {
-            try {
-                if (cs != null)
-                    cs.close();
-            } catch (java.sql.SQLException e) {
-                throw handleException(e);
-            }
         }
-        return false;
     }
 
+    // =========================================================================
+    // ACCESSORI (InventarioDocTRBulk)
+    // =========================================================================
+
     /**
-     * Recupera i documenti in stato INVIATO con filtri aggiuntivi.
+     * Cerca gli accessori associati a un bene principale (usa InventarioDocTRBulk).
      */
-    public List getDocumentiPredispostiAllaFirma(UserContext userContext)
+    public List cercaBeniAccessoriAssociati(UserContext userContext, InventarioDocTRBulk benePrincipale)
             throws ComponentException {
 
         try {
-            Doc_trasporto_rientroHome home = (Doc_trasporto_rientroHome)
-                    getHome(userContext, Doc_trasporto_rientroBulk.class);
-
+            InventarioDocTRHome home = (InventarioDocTRHome) getHome(userContext, InventarioDocTRBulk.class);
             SQLBuilder sql = home.createSQLBuilder();
 
-            sql.addSQLClause("AND", "STATO", SQLBuilder.EQUALS,
-                    Doc_trasporto_rientroBulk.STATO_INVIATO);
+            sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, benePrincipale.getPg_inventario());
+            sql.addSQLClause("AND", "NR_INVENTARIO", SQLBuilder.EQUALS, benePrincipale.getNr_inventario());
+            sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.GREATER, 0);
+            sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.NOT_EQUALS, benePrincipale.getProgressivo());
 
-            sql.addSQLClause("AND", "STATO_FLUSSO", SQLBuilder.EQUALS, "INV");
+            List beniAccessori = home.fetchAll(sql);
+            if (beniAccessori != null && !beniAccessori.isEmpty()) return beniAccessori;
 
-            sql.addSQLClause("AND", "ID_FLUSSO_HAPPYSIGN", SQLBuilder.ISNOTNULL, null);
-
-            Integer esercizioCorrente = CNRUserContext.getEsercizio(userContext);
-            sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.LESS_EQUALS, esercizioCorrente);
-
-            sql.addOrderBy("DATA_INVIO_FIRMA ASC");
-
-            List documenti = home.fetchAll(sql);
-
-            return documenti != null ? documenti : java.util.Collections.emptyList();
-
-        } catch (PersistencyException e) {
-            throw handleException(e);
+        } catch (PersistencyException pe) {
+            throw handleException(pe);
         }
+        return Collections.emptyList();
     }
 
     /**
-     * Valida il documento per la stampa.
-     */
-    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext aUC, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
-        validateBulkForPrint(aUC, (Stampa_doc_trasporto_rientroBulk) bulk);
-        return bulk;
-    }
-
-    /**
-     * Inizializza il documento per la stampa.
-     */
-    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext userContext, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
-
-        if (bulk instanceof Stampa_doc_trasporto_rientroBulk)
-            inizializzaBulkPerStampa(userContext, (Stampa_doc_trasporto_rientroBulk) bulk);
-        return bulk;
-    }
-
-    /**
-     * Prepara i parametri per la stampa del documento.
-     */
-    public void inizializzaBulkPerStampa(UserContext userContext, Stampa_doc_trasporto_rientroBulk stampa) throws it.cnr.jada.comp.ComponentException {
-
-        Stampa_doc_trasporto_rientroBulk stampaDoc = (Stampa_doc_trasporto_rientroBulk) stampa;
-        stampaDoc.setEsercizio(it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
-        stampaDoc.setCds_scrivania(it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
-        stampaDoc.setPgInizio(new Integer(0));
-        stampaDoc.setPgFine(new Integer(999999999));
-
-        try {
-            String cd_uo_scrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_unita_organizzativa(userContext);
-
-            Unita_organizzativaHome uoHome = (Unita_organizzativaHome) getHome(userContext, Unita_organizzativaBulk.class);
-            Unita_organizzativaBulk uo = (Unita_organizzativaBulk) uoHome.findByPrimaryKey(new Unita_organizzativaBulk(cd_uo_scrivania));
-
-            if (!uo.isUoCds()) {
-                stampaDoc.setUoForPrint(uo);
-                stampaDoc.setIsUOForPrintEnabled(false);
-            } else {
-                stampaDoc.setUoForPrint(new Unita_organizzativaBulk());
-                stampaDoc.setIsUOForPrintEnabled(true);
-            }
-
-        } catch (it.cnr.jada.persistency.PersistencyException pe) {
-            throw new ComponentException(pe);
-        }
-    }
-
-    /**
-     * Valida i parametri di stampa del documento.
-     */
-    private void validateBulkForPrint(it.cnr.jada.UserContext userContext, Stampa_doc_trasporto_rientroBulk stampa) throws ComponentException {
-
-        try {
-            if (stampa.getPgInizio() == null)
-                throw new ValidationException("Il campo NUMERO INIZIO è obbligatorio");
-            if (stampa.getPgFine() == null)
-                throw new ValidationException("Il campo NUMERO FINE è obbligatorio");
-            if (stampa.getPgInizio().compareTo(stampa.getPgFine()) > 0)
-                throw new ValidationException("Il NUMERO INIZIO non può essere superiore al NUMERO FINE");
-            if (stampa.getUoForPrint().getCd_unita_organizzativa() == null)
-                throw new ValidationException("Il campo Unità Organizzativa è obbligatorio");
-
-        } catch (ValidationException ex) {
-            throw new ApplicationException(ex);
-        }
-    }
-
-
-    /**
-     * Annulla il documento: ricarica i dettagli, valida, verifica le condizioni di annullamento,
-     * aggiorna lo stato dei beni e imposta lo stato del documento su ANNULLATO.
-     */
-    public Doc_trasporto_rientroBulk annullaDocumento(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
-            throws ComponentException {
-
-        try {
-            caricaDettagliDocumento(userContext, doc);
-            validaAnnullamento(doc);
-
-            boolean beneInIstituto;
-
-            if (doc instanceof DocumentoTrasportoBulk) {
-                verificaNonEsistonoRientri((DocumentoTrasportoBulk) doc);
-                beneInIstituto = true;
-
-            } else if (doc instanceof DocumentoRientroBulk) {
-                rimuoviRiferimentiDaTrasportoOriginale((DocumentoRientroBulk) doc);
-                beneInIstituto = false;
-
-            } else {
-                throw new ComponentException(
-                        "Tipo documento non riconosciuto: " + doc.getClass().getName());
-            }
-
-            aggiornaStatoBeni(userContext, doc, beneInIstituto);
-
-            doc.setStato(Doc_trasporto_rientroBulk.STATO_ANNULLATO);
-            doc.setToBeUpdated();
-
-            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, doc);
-
-        } catch (ApplicationException e) {
-            throw new ComponentException(e.getMessage(), e);
-        } catch (Exception e) {
-            throw new ComponentException(
-                    "Errore durante l'annullamento del documento: " + e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * Carica i dettagli del documento dal database.
-     */
-    private void caricaDettagliDocumento(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
-            throws ComponentException, PersistencyException {
-
-        Doc_trasporto_rientro_dettHome dettHome =
-                (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(userContext, doc);
-
-        doc.setDoc_trasporto_rientro_dettColl(
-                new BulkList(dettHome.getDetailsFor(doc))
-        );
-    }
-
-    /**
-     * Valida che il documento possa essere annullato.
-     */
-    private void validaAnnullamento(Doc_trasporto_rientroBulk doc)
-            throws ApplicationException {
-
-        if (Doc_trasporto_rientroBulk.STATO_ANNULLATO.equals(doc.getStato())) {
-            throw new ApplicationException("Il documento è già annullato");
-        }
-
-        if (Doc_trasporto_rientroBulk.STATO_INVIATO.equals(doc.getStato())) {
-            throw new ApplicationException(
-                    "Impossibile annullare un documento inviato in firma"
-            );
-        }
-    }
-
-    /**
-     * Verifica che il TRASPORTO non abbia rientri collegati.
-     */
-    private void verificaNonEsistonoRientri(DocumentoTrasportoBulk doc)
-            throws ApplicationException {
-
-        if (doc.getDoc_trasporto_rientro_dettColl().isEmpty()) {
-            return;
-        }
-
-        for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
-            DocumentoTrasportoDettBulk dettaglio = (DocumentoTrasportoDettBulk) obj;
-
-            if (dettaglio.getDocRientroDettRif() != null) {
-                throw new ApplicationException(
-                        "Impossibile annullare il documento di TRASPORTO: " +
-                                "esistono documenti di RIENTRO collegati. " +
-                                "Annullare prima i documenti di RIENTRO."
-                );
-            }
-        }
-    }
-
-    /**
-     * Rimuove i riferimenti dal TRASPORTO quando si annulla un RIENTRO.
-     */
-    private void rimuoviRiferimentiDaTrasportoOriginale(DocumentoRientroBulk doc)
-            throws ComponentException {
-
-        if (doc.getDoc_trasporto_rientro_dettColl() == null) {
-            return;
-        }
-
-        for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
-            Doc_trasporto_rientro_dettBulk dettRientro =
-                    (Doc_trasporto_rientro_dettBulk) obj;
-
-            if (dettRientro.getDoc_trasporto_rientroDettRif() != null) {
-                Doc_trasporto_rientro_dettBulk docTrasportoDettRif =
-                        dettRientro.getDoc_trasporto_rientroDettRif();
-
-                docTrasportoDettRif.setDoc_trasporto_rientroDettRif(null);
-                docTrasportoDettRif.setToBeUpdated();
-            }
-        }
-    }
-
-    /**
-     * Aggiorna FL_BENE_IN_IST per tutti i beni del documento.
-     */
-    private void aggiornaStatoBeni(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            boolean beneInIstituto)
-            throws ComponentException {
-
-        try {
-            if (doc.getDoc_trasporto_rientro_dettColl() == null ||
-                    doc.getDoc_trasporto_rientro_dettColl().isEmpty()) {
-                return;
-            }
-
-            InventarioDocTRHome  beneHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
-
-
-            for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
-                Doc_trasporto_rientro_dettBulk dettaglio =
-                        (Doc_trasporto_rientro_dettBulk) obj;
-
-                InventarioDocTRBulk bene = caricaBeneDaDettaglio(
-                        userContext, beneHome, dettaglio);
-
-                if (bene != null) {
-                    bene.setFl_bene_in_ist(beneInIstituto);
-                    bene.setToBeUpdated();
-                    updateBulk(userContext, bene);
-                }
-            }
-
-        } catch (PersistencyException e) {
-            throw new ComponentException(
-                    "Errore durante l'aggiornamento dello stato dei beni: " +
-                            e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Carica un bene dal database usando le informazioni del dettaglio.
-     */
-    private InventarioDocTRBulk caricaBeneDaDettaglio(
-            UserContext userContext,
-            InventarioDocTRHome beneHome,
-            Doc_trasporto_rientro_dettBulk dettaglio)
-            throws PersistencyException {
-
-        return (InventarioDocTRBulk) beneHome.findByPrimaryKey(
-                new InventarioDocTRBulk(
-                        dettaglio.getNr_inventario(),
-                        dettaglio.getPg_inventario(),
-                        Long.valueOf(dettaglio.getProgressivo())
-                )
-        );
-    }
-
-
-    /**
-     * Ricerca anagrafico INCARICATO delegando al componente Anagrafico.
-     */
-    public SQLBuilder selectTerzoIncRitiroByClause(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            TerzoBulk terzo,
-            CompoundFindClause clause)
-            throws ComponentException, RemoteException {
-        try {
-            TerzoComponentSession sess = (TerzoComponentSession)
-                    it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
-                            "CNRANAGRAF00_EJB_TerzoComponentSession",
-                            TerzoComponentSession.class);
-            return sess.findTerziDipendentiByClause(userContext, terzo, clause);
-        } catch (PersistencyException | IntrospectionException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * Ricerca anagrafico SMARTWORKING delegando al componente Anagrafico.
-     */
-    public SQLBuilder selectTerzoSmartworkingByClause(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            TerzoBulk terzo,
-            CompoundFindClause clause)
-            throws ComponentException, RemoteException {
-        try {
-            TerzoComponentSession sess = (TerzoComponentSession)
-                    it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
-                            "CNRANAGRAF00_EJB_TerzoComponentSession",
-                            TerzoComponentSession.class);
-            return sess.findTerziDipendentiByClause(userContext, terzo, clause);
-        } catch (PersistencyException | IntrospectionException e) {
-            throw new ComponentException(e);
-        }
-    }
-
-    /**
-     * Cerca accessori presenti nel TRASPORTO originale per un RIENTRO.
+     * Cerca accessori presenti nel TRASPORTO originale per un RIENTRO (usa InventarioDocTRBulk).
      */
     public List cercaBeniAccessoriPresentinelTrasportoOriginale(
             UserContext userContext,
@@ -1854,22 +1537,17 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException {
 
         try {
-            if (beneRientro == null || doc == null) {
-                return java.util.Collections.emptyList();
-            }
+            if (beneRientro == null || doc == null) return Collections.emptyList();
 
             Doc_trasporto_rientro_dettBulk dettaglioTrasportoOriginale =
                     trovaDettaglioOriginale(userContext, beneRientro, doc.getPgInventario(), TRASPORTO);
 
-            if (dettaglioTrasportoOriginale == null) {
-                return java.util.Collections.emptyList();
-            }
+            if (dettaglioTrasportoOriginale == null) return Collections.emptyList();
 
             Doc_trasporto_rientro_dettHome dettHome =
                     (Doc_trasporto_rientro_dettHome) getHome(userContext, DocumentoTrasportoDettBulk.class);
 
             SQLBuilder sql = dettHome.createSQLBuilder();
-
             sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS,
                     dettaglioTrasportoOriginale.getPg_inventario());
             sql.addSQLClause("AND", "TI_DOCUMENTO", SQLBuilder.EQUALS,
@@ -1878,49 +1556,31 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     dettaglioTrasportoOriginale.getEsercizio());
             sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.EQUALS,
                     dettaglioTrasportoOriginale.getPg_doc_trasporto_rientro());
-
             sql.addSQLClause("AND", "NR_INVENTARIO", SQLBuilder.EQUALS,
                     beneRientro.getNr_inventario());
-
             sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.GREATER, 0);
-
             sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.NOT_EQUALS,
                     beneRientro.getProgressivo());
 
             List dettagliAccessori = dettHome.fetchAll(sql);
+            if (dettagliAccessori == null || dettagliAccessori.isEmpty()) return Collections.emptyList();
 
-            if (dettagliAccessori == null || dettagliAccessori.isEmpty()) {
-                return java.util.Collections.emptyList();
-            }
-
-            InventarioDocTRHome  beneHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
-
+            InventarioDocTRHome beneHome = (InventarioDocTRHome) getHome(userContext, InventarioDocTRBulk.class);
             List<InventarioDocTRBulk> accessoriDisponibili = new ArrayList<>();
 
             for (Object obj : dettagliAccessori) {
                 Doc_trasporto_rientro_dettBulk dettaglioAccessorio =
                         (Doc_trasporto_rientro_dettBulk) obj;
-
-                boolean giaRientrato = verificaSeAccessorioGiaRientrato(
-                        userContext,
-                        dettaglioAccessorio
-                );
-
+                boolean giaRientrato = verificaSeAccessorioGiaRientrato(userContext, dettaglioAccessorio);
                 if (!giaRientrato) {
                     InventarioDocTRBulk accessorio = (InventarioDocTRBulk) beneHome.findByPrimaryKey(
                             new InventarioDocTRBulk(
                                     dettaglioAccessorio.getNr_inventario(),
                                     dettaglioAccessorio.getPg_inventario(),
-                                    Long.valueOf(dettaglioAccessorio.getProgressivo())
-                            )
-                    );
-
-                    if (accessorio != null) {
-                        accessoriDisponibili.add(accessorio);
-                    }
+                                    Long.valueOf(dettaglioAccessorio.getProgressivo())));
+                    if (accessorio != null) accessoriDisponibili.add(accessorio);
                 }
             }
-
             return accessoriDisponibili;
 
         } catch (PersistencyException pe) {
@@ -1928,9 +1588,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    /**
-     * Verifica se un accessorio è già rientrato.
-     */
     private boolean verificaSeAccessorioGiaRientrato(
             UserContext userContext,
             Doc_trasporto_rientro_dettBulk dettaglioTrasportoAccessorio)
@@ -1938,11 +1595,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         try {
             Doc_trasporto_rientro_dettHome dettHome =
-                    (Doc_trasporto_rientro_dettHome) getHome(
-                            userContext, DocumentoRientroDettBulk.class);
+                    (Doc_trasporto_rientro_dettHome) getHome(userContext, DocumentoRientroDettBulk.class);
 
             SQLBuilder sql = dettHome.createSQLBuilder();
-
             sql.addTableToHeader("DOC_TRASPORTO_RIENTRO dr");
             sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", "dr.PG_INVENTARIO");
             sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.TI_DOCUMENTO", "dr.TI_DOCUMENTO");
@@ -1962,13 +1617,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     SQLBuilder.EQUALS, dettaglioTrasportoAccessorio.getEsercizio());
             sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO_RIF",
                     SQLBuilder.EQUALS, dettaglioTrasportoAccessorio.getPg_doc_trasporto_rientro());
-
             sql.addSQLClause("AND", "dr.TI_DOCUMENTO", SQLBuilder.EQUALS, RIENTRO);
             sql.addSQLClause("AND", "dr.STATO",
                     SQLBuilder.NOT_EQUALS, Doc_trasporto_rientroBulk.STATO_ANNULLATO);
 
             List risultati = dettHome.fetchAll(sql);
-
             return risultati != null && !risultati.isEmpty();
 
         } catch (PersistencyException pe) {
@@ -1977,31 +1630,84 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Cerca beni trasportabili (wrapper).
+     * Cerca accessori di un bene nei dettagli già salvati (usa InventarioDocTRBulk).
      */
-    public RemoteIterator cercaBeniTrasportabili(
+    public List cercaBeniAccessoriNeiDettagliSalvati(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            SimpleBulkList beniEsclusi,
-            CompoundFindClause clauses)
+            InventarioDocTRBulk benePrincipale)
             throws ComponentException {
+
+        if (doc == null || doc.getPgDocTrasportoRientro() == null) return Collections.emptyList();
+
+        try {
+            Doc_trasporto_rientro_dettHome dettHome =
+                    (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(userContext, doc);
+
+            SQLBuilder sql = dettHome.createSQLBuilder();
+            sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, doc.getPgInventario());
+            sql.addSQLClause("AND", "TI_DOCUMENTO", SQLBuilder.EQUALS, doc.getTiDocumento());
+            sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, doc.getEsercizio());
+            sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.EQUALS,
+                    doc.getPgDocTrasportoRientro());
+            sql.addSQLClause("AND", "NR_INVENTARIO", SQLBuilder.EQUALS,
+                    benePrincipale.getNr_inventario());
+            sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.GREATER, 0);
+            sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.NOT_EQUALS,
+                    benePrincipale.getProgressivo());
+
+            List dettagli = dettHome.fetchAll(sql);
+
+            if (dettagli != null && !dettagli.isEmpty()) {
+                List<InventarioDocTRBulk> beniAccessori = new ArrayList<>();
+                InventarioDocTRHome beneHome =
+                        (InventarioDocTRHome) getHome(userContext, InventarioDocTRBulk.class);
+
+                for (Iterator it = dettagli.iterator(); it.hasNext(); ) {
+                    Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) it.next();
+                    InventarioDocTRBulk bene = (InventarioDocTRBulk) beneHome.findByPrimaryKey(
+                            new InventarioDocTRBulk(
+                                    dett.getNr_inventario(),
+                                    dett.getPg_inventario(),
+                                    Long.valueOf(dett.getProgressivo())));
+                    if (bene != null) beniAccessori.add(bene);
+                }
+                return beniAccessori;
+            }
+
+        } catch (PersistencyException pe) {
+            throw handleException(pe);
+        }
+        return Collections.emptyList();
+    }
+
+    // =========================================================================
+    // CERCA BENI UNIFICATO / FILTRI (InventarioDocTRBulk)
+    // =========================================================================
+
+    /** Wrapper beni trasportabili. */
+    public RemoteIterator cercaBeniTrasportabili(
+            UserContext userContext, Doc_trasporto_rientroBulk doc,
+            SimpleBulkList beniEsclusi, CompoundFindClause clauses) throws ComponentException {
         return cercaBeniUnificato(userContext, doc, beniEsclusi, clauses, true);
     }
 
-    /**
-     * Cerca beni da far rientrare (wrapper).
-     */
+    /** Wrapper beni da far rientrare. */
     public RemoteIterator cercaBeniDaFarRientrare(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            SimpleBulkList beniEsclusi,
-            CompoundFindClause clauses)
-            throws ComponentException {
+            UserContext userContext, Doc_trasporto_rientroBulk doc,
+            SimpleBulkList beniEsclusi, CompoundFindClause clauses) throws ComponentException {
         return cercaBeniUnificato(userContext, doc, beniEsclusi, clauses, false);
     }
 
+    /** Wrapper lista beni da far rientrare. */
+    public RemoteIterator getListaBeniDaFarRientrare(
+            UserContext userContext, Doc_trasporto_rientroBulk doc,
+            SimpleBulkList beniEsclusi, CompoundFindClause clauses) throws ComponentException {
+        return cercaBeniDaFarRientrare(userContext, doc, beniEsclusi, clauses);
+    }
+
     /**
-     * Metodo unificato per cercare beni trasportabili o da far rientrare.
+     * Metodo unificato per cercare beni trasportabili o da far rientrare (usa InventarioDocTRBulk).
      */
     public RemoteIterator cercaBeniUnificato(
             UserContext userContext,
@@ -2012,12 +1718,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException {
 
         try {
-
-            InventarioDocTRHome  invHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
-
+            InventarioDocTRHome invHome =
+                    (InventarioDocTRHome) getHome(userContext, InventarioDocTRBulk.class);
             SQLBuilder sql = invHome.findBeniUnificato(userContext, doc, clauses);
-
-            // ========== AGGIUNGI DISTINCT PER ELIMINARE DUPLICATI ==========
             sql.setDistinctClause(true);
 
             if (isTrasporto) {
@@ -2040,17 +1743,13 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Applica filtri specifici per documenti di TRASPORTO.
-     *
-     * LOGICA BENI DISPONIBILI:
-     * 1. Beni liberi (non in documenti) E dentro l'istituto
-     * 2. Beni in trasporto annullato E dentro l'istituto
-     * 3. Beni in rientro definitivo E dentro l'istituto (sono rientrati con successo)
+     * Applica filtri per TRASPORTO.
+     * Filtra smartworking direttamente da TerzoBulk (doc.getTerzoSmartworking().getCd_terzo()).
      */
     private void applicaFiltriTrasporto(SQLBuilder sql, Doc_trasporto_rientroBulk doc, UserContext userContext)
             throws ComponentException, PersistencyException, IntrospectionException {
 
-        // SMARTWORKING: filtro per assegnatario direttamente da TerzoBulk
+        // SMARTWORKING: filtro diretto su TerzoBulk
         if (doc.isSmartworking() &&
                 doc.getTerzoSmartworking() != null &&
                 doc.getTerzoSmartworking().getCd_terzo() != null) {
@@ -2066,18 +1765,14 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         sql.closeParenthesis();
 
         sql.openParenthesis(FindClause.OR);
-        sql.addSQLClause(FindClause.AND, "t.TI_DOCUMENTO", SQLBuilder.EQUALS,
-                Doc_trasporto_rientroBulk.TRASPORTO);
-        sql.addSQLClause(FindClause.AND, "t.STATO", SQLBuilder.EQUALS,
-                Doc_trasporto_rientroBulk.STATO_ANNULLATO);
+        sql.addSQLClause(FindClause.AND, "t.TI_DOCUMENTO", SQLBuilder.EQUALS, TRASPORTO);
+        sql.addSQLClause(FindClause.AND, "t.STATO", SQLBuilder.EQUALS, STATO_ANNULLATO);
         sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.FL_BENE_IN_IST", SQLBuilder.EQUALS, "Y");
         sql.closeParenthesis();
 
         sql.openParenthesis(FindClause.OR);
-        sql.addSQLClause(FindClause.AND, "t.TI_DOCUMENTO", SQLBuilder.EQUALS,
-                Doc_trasporto_rientroBulk.RIENTRO);
-        sql.addSQLClause(FindClause.AND, "t.STATO", SQLBuilder.EQUALS,
-                Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+        sql.addSQLClause(FindClause.AND, "t.TI_DOCUMENTO", SQLBuilder.EQUALS, RIENTRO);
+        sql.addSQLClause(FindClause.AND, "t.STATO", SQLBuilder.EQUALS, STATO_DEFINITIVO);
         sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.FL_BENE_IN_IST", SQLBuilder.EQUALS, "Y");
         sql.closeParenthesis();
 
@@ -2096,26 +1791,17 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-
     /**
-     * Applica filtri specifici per documenti di RIENTRO.
-     * Mostra SOLO beni che:
-     * 1. Sono in TRASPORTI DEFINITIVI
-     * 2. NON sono già in RIENTRI attivi (INSERITO/INVIATO/DEFINITIVO)
+     * Applica filtri per RIENTRO.
      */
-    private void applicaFiltriRientro(SQLBuilder sql, Doc_trasporto_rientroBulk doc) throws IntrospectionException {
+    private void applicaFiltriRientro(SQLBuilder sql, Doc_trasporto_rientroBulk doc)
+            throws IntrospectionException {
 
         sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.FL_BENE_IN_IST", SQLBuilder.EQUALS, "N");
-
         sql.addSQLClause(FindClause.AND, "t.PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.ISNOTNULL, null);
+        sql.addSQLClause(FindClause.AND, "t.TI_DOCUMENTO", SQLBuilder.EQUALS, TRASPORTO);
+        sql.addSQLClause(FindClause.AND, "t.STATO", SQLBuilder.EQUALS, STATO_DEFINITIVO);
 
-        // SOLO beni in TRASPORTI DEFINITIVI
-        sql.addSQLClause(FindClause.AND, "t.TI_DOCUMENTO", SQLBuilder.EQUALS,
-                Doc_trasporto_rientroBulk.TRASPORTO);
-        sql.addSQLClause(FindClause.AND, "t.STATO", SQLBuilder.EQUALS,
-                Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-
-        // Costruisci la subquery NOT EXISTS manualmente
         StringBuilder notExistsClause = new StringBuilder();
         notExistsClause.append("NOT EXISTS (");
         notExistsClause.append("SELECT 1 FROM DOC_TRASPORTO_RIENTRO_DETT dett_r, DOC_TRASPORTO_RIENTRO doc_r ");
@@ -2126,8 +1812,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         notExistsClause.append("AND dett_r.PG_INVENTARIO = INVENTARIO_BENI.PG_INVENTARIO ");
         notExistsClause.append("AND dett_r.NR_INVENTARIO = INVENTARIO_BENI.NR_INVENTARIO ");
         notExistsClause.append("AND dett_r.PROGRESSIVO = INVENTARIO_BENI.PROGRESSIVO ");
-        notExistsClause.append("AND doc_r.TI_DOCUMENTO = '").append(Doc_trasporto_rientroBulk.RIENTRO).append("' ");
-        notExistsClause.append("AND doc_r.STATO <> '").append(Doc_trasporto_rientroBulk.STATO_ANNULLATO).append("' ");
+        notExistsClause.append("AND doc_r.TI_DOCUMENTO = '").append(RIENTRO).append("' ");
+        notExistsClause.append("AND doc_r.STATO <> '").append(STATO_ANNULLATO).append("' ");
 
         if (doc.getPgDocTrasportoRientro() != null && doc.getPgDocTrasportoRientro() > 0) {
             notExistsClause.append("AND (doc_r.PG_DOC_TRASPORTO_RIENTRO <> ")
@@ -2136,35 +1822,21 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     .append(doc.getEsercizio())
                     .append(") ");
         }
-
         notExistsClause.append(")");
 
-        // Aggiungi la clausola NOT EXISTS
         sql.addSQLClause("AND", notExistsClause.toString());
     }
 
-    /**
-     * Esclude i beni già selezionati dalla ricerca.
-     */
     private void escludiBeniGiaSelezionati(
-            SQLBuilder sql,
-            Doc_trasporto_rientroBulk doc,
-            SimpleBulkList beni_da_escludere) {
+            SQLBuilder sql, Doc_trasporto_rientroBulk doc, SimpleBulkList beni_da_escludere) {
 
-        if (beni_da_escludere == null || beni_da_escludere.isEmpty()) {
-            return;
-        }
+        if (beni_da_escludere == null || beni_da_escludere.isEmpty()) return;
 
         StringBuilder exclusionList = new StringBuilder();
-
         for (Object obj : beni_da_escludere) {
             InventarioDocTRBulk bene = (InventarioDocTRBulk) obj;
-
             if (bene.getNr_inventario() != null && bene.getProgressivo() != null) {
-                if (exclusionList.length() > 0) {
-                    exclusionList.append(",");
-                }
-
+                if (exclusionList.length() > 0) exclusionList.append(",");
                 exclusionList.append("(")
                         .append(bene.getNr_inventario())
                         .append(",")
@@ -2180,12 +1852,14 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
+    // =========================================================================
+    // ELIMINA DETTAGLI
+    // =========================================================================
+
     /**
      * Elimina tutti i dettagli salvati di un documento, gestendo i riferimenti incrociati.
      */
-    public void eliminaTuttiDettagliSalvati(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
+    public void eliminaTuttiDettagliSalvati(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws ComponentException {
 
         try {
@@ -2196,13 +1870,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, doc.getPgInventario());
             sql.addSQLClause("AND", "TI_DOCUMENTO", SQLBuilder.EQUALS, doc.getTiDocumento());
             sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, doc.getEsercizio());
-            sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.EQUALS, doc.getPgDocTrasportoRientro());
+            sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.EQUALS,
+                    doc.getPgDocTrasportoRientro());
 
             List<Doc_trasporto_rientro_dettBulk> dettagliDaEliminare = dettHome.fetchAll(sql);
-
-            if (dettagliDaEliminare == null || dettagliDaEliminare.isEmpty()) {
-                return;
-            }
+            if (dettagliDaEliminare == null || dettagliDaEliminare.isEmpty()) return;
 
             if (doc instanceof DocumentoRientroBulk) {
                 rimuoviRiferimentiTrasportoARientro(userContext, dettagliDaEliminare);
@@ -2219,12 +1891,10 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Elimina dettagli specifici salvati di un documento, gestendo i riferimenti incrociati.
+     * Elimina dettagli specifici salvati di un documento (usa InventarioDocTRBulk).
      */
     public void eliminaDettagliSalvati(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            OggettoBulk[] beni)
+            UserContext userContext, Doc_trasporto_rientroBulk doc, OggettoBulk[] beni)
             throws ComponentException {
 
         if (beni == null || beni.length == 0) return;
@@ -2237,24 +1907,20 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             for (OggettoBulk o : beni) {
                 InventarioDocTRBulk bene = (InventarioDocTRBulk) o;
-
                 SQLBuilder sql = dettHome.createSQLBuilder();
                 sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, doc.getPgInventario());
                 sql.addSQLClause("AND", "TI_DOCUMENTO", SQLBuilder.EQUALS, doc.getTiDocumento());
                 sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, doc.getEsercizio());
-                sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.EQUALS, doc.getPgDocTrasportoRientro());
+                sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.EQUALS,
+                        doc.getPgDocTrasportoRientro());
                 sql.addSQLClause("AND", "NR_INVENTARIO", SQLBuilder.EQUALS, bene.getNr_inventario());
                 sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.EQUALS, bene.getProgressivo());
 
                 List<Doc_trasporto_rientro_dettBulk> trovati = dettHome.fetchAll(sql);
-                if (trovati != null && !trovati.isEmpty()) {
-                    dettagliDaEliminare.addAll(trovati);
-                }
+                if (trovati != null && !trovati.isEmpty()) dettagliDaEliminare.addAll(trovati);
             }
 
-            if (dettagliDaEliminare.isEmpty()) {
-                return;
-            }
+            if (dettagliDaEliminare.isEmpty()) return;
 
             if (doc instanceof DocumentoRientroBulk) {
                 rimuoviRiferimentiTrasportoARientro(userContext, dettagliDaEliminare);
@@ -2271,135 +1937,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Rimuove i riferimenti bidirezionali TRASPORTO ↔ RIENTRO prima di eliminare i RIENTRI.
-     */
-    private void rimuoviRiferimentiTrasportoARientro(
-            UserContext userContext,
-            List<Doc_trasporto_rientro_dettBulk> dettagliDaEliminare)
-            throws ComponentException {
-
-        try {
-            for (Doc_trasporto_rientro_dettBulk dettaglio : dettagliDaEliminare) {
-                if (!(dettaglio instanceof DocumentoRientroDettBulk)) {
-                    continue;
-                }
-
-                DocumentoRientroDettBulk rientro = (DocumentoRientroDettBulk) dettaglio;
-
-                DocumentoTrasportoDettBulk trasporto = trovaTrasportoChePuntaARientro(userContext, rientro);
-
-                if (trasporto != null) {
-                    trasporto.setDocRientroDettRif(null);
-                    trasporto.setToBeUpdated();
-                    updateBulk(userContext, trasporto);
-                }
-
-                rientro.setDoc_trasporto_rientroDettRif(null);
-                rientro.setToBeUpdated();
-                updateBulk(userContext, rientro);
-            }
-
-        } catch (PersistencyException e) {
-            throw new ComponentException(
-                    "Errore nella rimozione dei riferimenti tra trasporto e rientro: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Trova il TRASPORTO che punta a un RIENTRO.
-     * Cerca TRASPORTI che hanno nei loro campi _RIF la chiave del RIENTRO.
-     */
-    private DocumentoTrasportoDettBulk trovaTrasportoChePuntaARientro(
-            UserContext userContext,
-            DocumentoRientroDettBulk rientro)
-            throws ComponentException, PersistencyException {
-
-        DocumentoTrasportoDettHome trasportoHome =
-                (DocumentoTrasportoDettHome) getHome(userContext, DocumentoTrasportoDettBulk.class);
-
-        SQLBuilder sql = trasportoHome.createSQLBuilder();
-        sql.addSQLClause("AND", "PG_INVENTARIO_RIF", SQLBuilder.EQUALS, rientro.getPg_inventario());
-        sql.addSQLClause("AND", "TI_DOCUMENTO_RIF", SQLBuilder.EQUALS, rientro.getTi_documento());
-        sql.addSQLClause("AND", "ESERCIZIO_RIF", SQLBuilder.EQUALS, rientro.getEsercizio());
-        sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO_RIF", SQLBuilder.EQUALS, rientro.getPg_doc_trasporto_rientro());
-        sql.addSQLClause("AND", "NR_INVENTARIO_RIF", SQLBuilder.EQUALS, rientro.getNr_inventario());
-        sql.addSQLClause("AND", "PROGRESSIVO_RIF", SQLBuilder.EQUALS, rientro.getProgressivo());
-
-        List<DocumentoTrasportoDettBulk> risultati = trasportoHome.fetchAll(sql);
-        return (risultati != null && !risultati.isEmpty()) ? risultati.get(0) : null;
-    }
-
-    /**
-     * Cerca accessori di un bene nei dettagli già salvati.
-     */
-    public List cercaBeniAccessoriNeiDettagliSalvati(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            InventarioDocTRBulk benePrincipale)
-            throws ComponentException {
-
-        if (doc == null || doc.getPgDocTrasportoRientro() == null) {
-            return java.util.Collections.emptyList();
-        }
-
-        try {
-            Doc_trasporto_rientro_dettHome dettHome =
-                    (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(userContext, doc);
-
-            SQLBuilder sql = dettHome.createSQLBuilder();
-
-            sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS,
-                    doc.getPgInventario());
-            sql.addSQLClause("AND", "TI_DOCUMENTO", SQLBuilder.EQUALS,
-                    doc.getTiDocumento());
-            sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS,
-                    doc.getEsercizio());
-            sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.EQUALS,
-                    doc.getPgDocTrasportoRientro());
-
-            sql.addSQLClause("AND", "NR_INVENTARIO", SQLBuilder.EQUALS,
-                    benePrincipale.getNr_inventario());
-
-            sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.GREATER, 0);
-
-            sql.addSQLClause("AND", "PROGRESSIVO", SQLBuilder.NOT_EQUALS,
-                    benePrincipale.getProgressivo());
-
-            List dettagli = dettHome.fetchAll(sql);
-
-            if (dettagli != null && !dettagli.isEmpty()) {
-                List<InventarioDocTRBulk> beniAccessori = new ArrayList();
-                InventarioDocTRHome  beneHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
-
-                for (Iterator it = dettagli.iterator(); it.hasNext(); ) {
-                    Doc_trasporto_rientro_dettBulk dett =
-                            (Doc_trasporto_rientro_dettBulk) it.next();
-
-                    InventarioDocTRBulk bene = (InventarioDocTRBulk) beneHome.findByPrimaryKey(
-                            new InventarioDocTRBulk(
-                                    dett.getNr_inventario(),
-                                    dett.getPg_inventario(),
-                                    Long.valueOf(dett.getProgressivo())
-                            )
-                    );
-
-                    if (bene != null) {
-                        beniAccessori.add(bene);
-                    }
-                }
-
-                return beniAccessori;
-            }
-
-        } catch (PersistencyException pe) {
-            throw handleException(pe);
-        }
-
-        return java.util.Collections.emptyList();
-    }
-
-    /**
-     * Elimina bene principale con accessori dai dettagli salvati.
+     * Elimina bene principale con accessori dai dettagli salvati (usa InventarioDocTRBulk).
      */
     public void eliminaBeniPrincipaleConAccessoriDaDettagli(
             UserContext userContext,
@@ -2408,15 +1946,13 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             List beniAccessori)
             throws ComponentException {
 
-        if (doc == null || doc.getPgDocTrasportoRientro() == null) {
+        if (doc == null || doc.getPgDocTrasportoRientro() == null)
             throw new ComponentException("Documento non valido per eliminazione dettagli");
-        }
 
         PreparedStatement pstmt = null;
 
         try {
             StringBuilder inClause = new StringBuilder();
-
             inClause.append("(")
                     .append(benePrincipale.getNr_inventario())
                     .append(",")
@@ -2436,9 +1972,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             String deleteSQL =
                     "DELETE FROM DOC_TRASPORTO_RIENTRO_DETT " +
-                            "WHERE PG_INVENTARIO = ? " +
-                            "  AND TI_DOCUMENTO = ? " +
-                            "  AND ESERCIZIO = ? " +
+                            "WHERE PG_INVENTARIO = ? AND TI_DOCUMENTO = ? AND ESERCIZIO = ? " +
                             "  AND PG_DOC_TRASPORTO_RIENTRO = ? " +
                             "  AND (NR_INVENTARIO, PROGRESSIVO) IN (" + inClause + ")";
 
@@ -2449,15 +1983,13 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             pstmt.setLong(4, doc.getPgDocTrasportoRientro());
 
             int recordEliminati = pstmt.executeUpdate();
-
             System.out.println("Eliminati " + recordEliminati +
                     " dettagli (principale + accessori) dal documento " +
                     doc.getPgDocTrasportoRientro());
 
         } catch (java.sql.SQLException e) {
             throw new ComponentException(
-                    "Errore eliminazione principale + accessori dai dettagli: " +
-                            e.getMessage(), e);
+                    "Errore eliminazione principale + accessori dai dettagli: " + e.getMessage(), e);
         } finally {
             try {
                 if (pstmt != null) pstmt.close();
@@ -2467,37 +1999,78 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
+    private void rimuoviRiferimentiTrasportoARientro(
+            UserContext userContext,
+            List<Doc_trasporto_rientro_dettBulk> dettagliDaEliminare)
+            throws ComponentException {
+
+        try {
+            for (Doc_trasporto_rientro_dettBulk dettaglio : dettagliDaEliminare) {
+                if (!(dettaglio instanceof DocumentoRientroDettBulk)) continue;
+
+                DocumentoRientroDettBulk rientro = (DocumentoRientroDettBulk) dettaglio;
+                DocumentoTrasportoDettBulk trasporto = trovaTrasportoChePuntaARientro(userContext, rientro);
+
+                if (trasporto != null) {
+                    trasporto.setDocRientroDettRif(null);
+                    trasporto.setToBeUpdated();
+                    updateBulk(userContext, trasporto);
+                }
+
+                rientro.setDoc_trasporto_rientroDettRif(null);
+                rientro.setToBeUpdated();
+                updateBulk(userContext, rientro);
+            }
+        } catch (PersistencyException e) {
+            throw new ComponentException(
+                    "Errore nella rimozione dei riferimenti tra trasporto e rientro: " + e.getMessage(), e);
+        }
+    }
+
+    private DocumentoTrasportoDettBulk trovaTrasportoChePuntaARientro(
+            UserContext userContext, DocumentoRientroDettBulk rientro)
+            throws ComponentException, PersistencyException {
+
+        DocumentoTrasportoDettHome trasportoHome =
+                (DocumentoTrasportoDettHome) getHome(userContext, DocumentoTrasportoDettBulk.class);
+
+        SQLBuilder sql = trasportoHome.createSQLBuilder();
+        sql.addSQLClause("AND", "PG_INVENTARIO_RIF", SQLBuilder.EQUALS, rientro.getPg_inventario());
+        sql.addSQLClause("AND", "TI_DOCUMENTO_RIF", SQLBuilder.EQUALS, rientro.getTi_documento());
+        sql.addSQLClause("AND", "ESERCIZIO_RIF", SQLBuilder.EQUALS, rientro.getEsercizio());
+        sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO_RIF", SQLBuilder.EQUALS,
+                rientro.getPg_doc_trasporto_rientro());
+        sql.addSQLClause("AND", "NR_INVENTARIO_RIF", SQLBuilder.EQUALS, rientro.getNr_inventario());
+        sql.addSQLClause("AND", "PROGRESSIVO_RIF", SQLBuilder.EQUALS, rientro.getProgressivo());
+
+        List<DocumentoTrasportoDettBulk> risultati = trasportoHome.fetchAll(sql);
+        return (risultati != null && !risultati.isEmpty()) ? risultati.get(0) : null;
+    }
+
+    // =========================================================================
+    // SELEZIONA TUTTI / CARICA PER INSERIMENTO (InventarioDocTRBulk)
+    // =========================================================================
+
     /**
      * Seleziona e inserisce tutti i beni senza limite.
      */
     public void selezionaTuttiBeni(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            CompoundFindClause clauses)
+            UserContext userContext, Doc_trasporto_rientroBulk doc, CompoundFindClause clauses)
             throws ComponentException {
 
         try {
             boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
-
-            List<InventarioDocTRBulk> beniFiltrati = caricaBeniPerInserimento(
-                    userContext,
-                    doc,
-                    clauses,
-                    isTrasporto
-            );
+            List<InventarioDocTRBulk> beniFiltrati =
+                    caricaBeniPerInserimento(userContext, doc, clauses, isTrasporto);
 
             if (beniFiltrati.isEmpty()) {
                 System.out.println("Nessun bene da inserire");
                 return;
             }
 
-            System.out.println("Caricati " + beniFiltrati.size() +
-                    " beni, inizio creazione dettagli...");
-
+            System.out.println("Caricati " + beniFiltrati.size() + " beni, inizio creazione dettagli...");
             inserisciBeniComeDettagli(userContext, doc, beniFiltrati);
-
-            System.out.println("Creazione completata: inseriti " +
-                    beniFiltrati.size() + " dettagli");
+            System.out.println("Creazione completata: inseriti " + beniFiltrati.size() + " dettagli");
 
         } catch (Exception e) {
             throw handleException(e);
@@ -2505,7 +2078,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Carica i beni da inserire applicando i filtri appropriati.
+     * Carica i beni da inserire applicando i filtri appropriati (usa InventarioDocTRBulk).
      */
     public List<InventarioDocTRBulk> caricaBeniPerInserimento(
             UserContext userContext,
@@ -2515,8 +2088,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException {
 
         try {
-            InventarioDocTRHome  invHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
-
+            InventarioDocTRHome invHome =
+                    (InventarioDocTRHome) getHome(userContext, InventarioDocTRBulk.class);
             SQLBuilder sql = invHome.findBeniUnificato(userContext, doc, clauses);
 
             if (isTrasporto) {
@@ -2542,29 +2115,27 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     SQLBuilder.EQUALS, doc.getEsercizio());
             sqlEsclusiDett.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO",
                     SQLBuilder.EQUALS, doc.getPgDocTrasportoRientro());
-
-            sqlEsclusiDett.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", SQLBuilder.EQUALS,
-                    "INVENTARIO_BENI.PG_INVENTARIO");
-            sqlEsclusiDett.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO", SQLBuilder.EQUALS,
-                    "INVENTARIO_BENI.NR_INVENTARIO");
-            sqlEsclusiDett.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO", SQLBuilder.EQUALS,
-                    "INVENTARIO_BENI.PROGRESSIVO");
+            sqlEsclusiDett.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
+                    SQLBuilder.EQUALS, "INVENTARIO_BENI.PG_INVENTARIO");
+            sqlEsclusiDett.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO",
+                    SQLBuilder.EQUALS, "INVENTARIO_BENI.NR_INVENTARIO");
+            sqlEsclusiDett.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO",
+                    SQLBuilder.EQUALS, "INVENTARIO_BENI.PROGRESSIVO");
 
             sql.addSQLNotExistsClause("AND", sqlEsclusiDett);
             sql.addOrderBy("INVENTARIO_BENI.NR_INVENTARIO, INVENTARIO_BENI.PROGRESSIVO");
 
             List risultati = invHome.fetchAll(sql);
-
-            return risultati != null ? risultati : java.util.Collections.emptyList();
+            return risultati != null ? risultati : Collections.emptyList();
 
         } catch (Exception e) {
             throw handleException(e);
         }
     }
 
-
     /**
-     * Inserisce una lista di beni come dettagli del documento.
+     * Inserisce una lista di beni come dettagli del documento (usa InventarioDocTRBulk).
+     * Assegnatario determinato da TerzoBulk direttamente.
      */
     private void inserisciBeniComeDettagli(
             UserContext userContext,
@@ -2580,17 +2151,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
 
         boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
-
         int totalInserted = 0;
 
         for (InventarioDocTRBulk bene : beniFiltrati) {
-
-            Doc_trasporto_rientro_dettBulk dett;
-            if (isTrasporto) {
-                dett = new DocumentoTrasportoDettBulk();
-            } else {
-                dett = new DocumentoRientroDettBulk();
-            }
+            Doc_trasporto_rientro_dettBulk dett =
+                    isTrasporto ? new DocumentoTrasportoDettBulk() : new DocumentoRientroDettBulk();
 
             dett.setDoc_trasporto_rientro(doc);
             dett.setBene(bene);
@@ -2603,30 +2168,20 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             dett.setToBeCreated();
             super.creaConBulk(userContext, dett);
-
             totalInserted++;
 
             if (totalInserted % 100 == 0) {
-                System.out.println("Inseriti " + totalInserted + " / " +
-                        beniFiltrati.size() + " beni...");
+                System.out.println("Inseriti " + totalInserted + " / " + beniFiltrati.size() + " beni...");
             }
         }
     }
 
+    // =========================================================================
+    // VALIDA BENI NON IN ALTRI DOCUMENTI (InventarioDocTRBulk)
+    // =========================================================================
 
     /**
-     * Valida che i beni non siano già occupati in altri documenti attivi.
-     *
-     * Controllo beni in altri documenti INSERITI (stesso tipo T/R): sempre bloccato.
-     *
-     * Controllo beni in altri documenti DEFINITIVI (stesso tipo T/R):
-     *   - RIENTRO: sempre bloccato.
-     *   - TRASPORTO: bloccato solo se il TRASPORTO DEFINITIVO non ha ancora un RIENTRO
-     *     DEFINITIVO associato (bene ancora fuori istituto). Se il bene è già rientrato
-     *     è libero per un nuovo trasporto.
-     *
-     * Controllo (solo RIENTRO): il bene deve essere presente in almeno un TRASPORTO
-     *   DEFINITIVO senza RIENTRO DEFINITIVO associato. Altrimenti bloccato con lista beni.
+     * Valida che i beni non siano già occupati in altri documenti attivi (usa InventarioDocTRBulk).
      */
     public void validaBeniNonInAltriDocumenti(
             UserContext userContext,
@@ -2634,14 +2189,12 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             List<InventarioDocTRBulk> beniDaValidare)
             throws ComponentException {
 
-        if (beniDaValidare == null || beniDaValidare.isEmpty()) {
-            return;
-        }
+        if (beniDaValidare == null || beniDaValidare.isEmpty()) return;
 
         try {
             boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
             String tipoDocDaVerificare = isTrasporto ? TRASPORTO : RIENTRO;
-            String tipoDocLabel        = isTrasporto ? "TRASPORTO" : "RIENTRO";
+            String tipoDocLabel = isTrasporto ? "TRASPORTO" : "RIENTRO";
 
             StringBuilder inClauseBeni = new StringBuilder();
             for (int i = 0; i < beniDaValidare.size(); i++) {
@@ -2657,126 +2210,71 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Doc_trasporto_rientro_dettHome dettHome =
                     (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(userContext, doc);
 
-            SQLBuilder sql1a = dettHome.createSQLBuilder();
-
-            sql1a.addTableToHeader("DOC_TRASPORTO_RIENTRO t");
-            sql1a.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", "t.PG_INVENTARIO");
-            sql1a.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.TI_DOCUMENTO", "t.TI_DOCUMENTO");
-            sql1a.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.ESERCIZIO", "t.ESERCIZIO");
-            sql1a.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO", "t.PG_DOC_TRASPORTO_RIENTRO");
-
-            sql1a.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
-                    SQLBuilder.EQUALS, doc.getPgInventario());
-            sql1a.addSQLClause("AND", "t.TI_DOCUMENTO",
-                    SQLBuilder.EQUALS, tipoDocDaVerificare);
-            sql1a.addSQLClause("AND", "t.STATO",
-                    SQLBuilder.NOT_EQUALS, Doc_trasporto_rientroBulk.STATO_ANNULLATO);
-            sql1a.addSQLClause("AND", "t.STATO",
-                    SQLBuilder.NOT_EQUALS, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-
-            if (doc.getPgDocTrasportoRientro() != null && doc.getPgDocTrasportoRientro() > 0) {
-                sql1a.openParenthesis(FindClause.AND);
-                sql1a.addSQLClause(FindClause.AND, "t.PG_DOC_TRASPORTO_RIENTRO",
-                        SQLBuilder.NOT_EQUALS, doc.getPgDocTrasportoRientro());
-                sql1a.addSQLClause(FindClause.OR, "t.ESERCIZIO",
-                        SQLBuilder.NOT_EQUALS, doc.getEsercizio());
-                sql1a.closeParenthesis();
-            }
-
-            sql1a.addSQLClause("AND",
-                    "(DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO, DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO) IN (" +
-                            inClauseBeni + ")");
+            // Controllo 1a: beni in altri INSERITI
+            SQLBuilder sql1a = buildSqlBeniInAltriDoc(dettHome, doc, tipoDocDaVerificare, inClauseBeni, false);
+            sql1a.addSQLClause("AND", "t.STATO", SQLBuilder.NOT_EQUALS, STATO_ANNULLATO);
+            sql1a.addSQLClause("AND", "t.STATO", SQLBuilder.NOT_EQUALS, STATO_DEFINITIVO);
 
             List beniInAltriInseriti = dettHome.fetchAll(sql1a);
-
             if (beniInAltriInseriti != null && !beniInAltriInseriti.isEmpty()) {
                 throw new ApplicationException(
                         "Impossibile procedere: alcuni beni sono già presenti in un altro documento di "
                                 + tipoDocLabel + " in stato INSERITO.");
             }
 
-            SQLBuilder sql1b = dettHome.createSQLBuilder();
-
-            sql1b.addTableToHeader("DOC_TRASPORTO_RIENTRO t");
-            sql1b.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", "t.PG_INVENTARIO");
-            sql1b.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.TI_DOCUMENTO", "t.TI_DOCUMENTO");
-            sql1b.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.ESERCIZIO", "t.ESERCIZIO");
-            sql1b.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO", "t.PG_DOC_TRASPORTO_RIENTRO");
-
-            sql1b.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
-                    SQLBuilder.EQUALS, doc.getPgInventario());
-            sql1b.addSQLClause("AND", "t.TI_DOCUMENTO",
-                    SQLBuilder.EQUALS, tipoDocDaVerificare);
-            sql1b.addSQLClause("AND", "t.STATO",
-                    SQLBuilder.EQUALS, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-
-            if (doc.getPgDocTrasportoRientro() != null && doc.getPgDocTrasportoRientro() > 0) {
-                sql1b.openParenthesis(FindClause.AND);
-                sql1b.addSQLClause(FindClause.AND, "t.PG_DOC_TRASPORTO_RIENTRO",
-                        SQLBuilder.NOT_EQUALS, doc.getPgDocTrasportoRientro());
-                sql1b.addSQLClause(FindClause.OR, "t.ESERCIZIO",
-                        SQLBuilder.NOT_EQUALS, doc.getEsercizio());
-                sql1b.closeParenthesis();
-            }
-
-            sql1b.addSQLClause("AND",
-                    "(DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO, DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO) IN (" +
-                            inClauseBeni + ")");
+            // Controllo 1b: beni in altri DEFINITIVI
+            SQLBuilder sql1b = buildSqlBeniInAltriDoc(dettHome, doc, tipoDocDaVerificare, inClauseBeni, false);
+            sql1b.addSQLClause("AND", "t.STATO", SQLBuilder.EQUALS, STATO_DEFINITIVO);
 
             if (isTrasporto) {
                 sql1b.addSQLClause("AND",
-                        "NOT EXISTS (" +
-                                "  SELECT 1 FROM DOC_TRASPORTO_RIENTRO_DETT rd2" +
-                                "  JOIN DOC_TRASPORTO_RIENTRO r2" +
-                                "    ON rd2.PG_INVENTARIO = r2.PG_INVENTARIO" +
-                                "   AND rd2.TI_DOCUMENTO = r2.TI_DOCUMENTO" +
-                                "   AND rd2.ESERCIZIO = r2.ESERCIZIO" +
-                                "   AND rd2.PG_DOC_TRASPORTO_RIENTRO = r2.PG_DOC_TRASPORTO_RIENTRO" +
-                                "  WHERE r2.TI_DOCUMENTO = '" + RIENTRO + "'" +
-                                "    AND r2.STATO = '" + Doc_trasporto_rientroBulk.STATO_DEFINITIVO + "'" +
-                                "    AND rd2.NR_INVENTARIO = DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO" +
-                                "    AND rd2.PROGRESSIVO = DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO" +
-                                ")");
+                        "NOT EXISTS (SELECT 1 FROM DOC_TRASPORTO_RIENTRO_DETT rd2" +
+                                " JOIN DOC_TRASPORTO_RIENTRO r2" +
+                                " ON rd2.PG_INVENTARIO = r2.PG_INVENTARIO" +
+                                " AND rd2.TI_DOCUMENTO = r2.TI_DOCUMENTO" +
+                                " AND rd2.ESERCIZIO = r2.ESERCIZIO" +
+                                " AND rd2.PG_DOC_TRASPORTO_RIENTRO = r2.PG_DOC_TRASPORTO_RIENTRO" +
+                                " WHERE r2.TI_DOCUMENTO = '" + RIENTRO + "'" +
+                                " AND r2.STATO = '" + STATO_DEFINITIVO + "'" +
+                                " AND rd2.NR_INVENTARIO = DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO" +
+                                " AND rd2.PROGRESSIVO = DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO)");
             }
 
             List beniInAltriDefinitivi = dettHome.fetchAll(sql1b);
-
             if (beniInAltriDefinitivi != null && !beniInAltriDefinitivi.isEmpty()) {
                 throw new ApplicationException(
                         "Impossibile procedere: alcuni beni sono già presenti in un altro documento di "
                                 + tipoDocLabel + " in stato DEFINITIVO.");
             }
 
+            // Controllo 2 (solo RIENTRO): bene deve avere un TRASPORTO definitivo senza RIENTRO definitivo
             if (!isTrasporto) {
                 SQLBuilder sql2 = dettHome.createSQLBuilder();
-
                 sql2.addTableToHeader("DOC_TRASPORTO_RIENTRO t");
                 sql2.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", "t.PG_INVENTARIO");
                 sql2.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.TI_DOCUMENTO", "t.TI_DOCUMENTO");
                 sql2.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.ESERCIZIO", "t.ESERCIZIO");
-                sql2.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO", "t.PG_DOC_TRASPORTO_RIENTRO");
+                sql2.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO",
+                        "t.PG_DOC_TRASPORTO_RIENTRO");
 
                 sql2.addSQLClause("AND", "t.TI_DOCUMENTO", SQLBuilder.EQUALS, TRASPORTO);
-                sql2.addSQLClause("AND", "t.STATO", SQLBuilder.EQUALS, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+                sql2.addSQLClause("AND", "t.STATO", SQLBuilder.EQUALS, STATO_DEFINITIVO);
                 sql2.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
                         SQLBuilder.EQUALS, doc.getPgInventario());
                 sql2.addSQLClause("AND",
-                        "(DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO, DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO) IN (" +
-                                inClauseBeni + ")");
-
+                        "(DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO, DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO) IN ("
+                                + inClauseBeni + ")");
                 sql2.addSQLClause("AND",
-                        "NOT EXISTS (" +
-                                "  SELECT 1 FROM DOC_TRASPORTO_RIENTRO_DETT rd2" +
-                                "  JOIN DOC_TRASPORTO_RIENTRO r2" +
-                                "    ON rd2.PG_INVENTARIO = r2.PG_INVENTARIO" +
-                                "   AND rd2.TI_DOCUMENTO = r2.TI_DOCUMENTO" +
-                                "   AND rd2.ESERCIZIO = r2.ESERCIZIO" +
-                                "   AND rd2.PG_DOC_TRASPORTO_RIENTRO = r2.PG_DOC_TRASPORTO_RIENTRO" +
-                                "  WHERE r2.TI_DOCUMENTO = '" + RIENTRO + "'" +
-                                "    AND r2.STATO = '" + Doc_trasporto_rientroBulk.STATO_DEFINITIVO + "'" +
-                                "    AND rd2.NR_INVENTARIO = DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO" +
-                                "    AND rd2.PROGRESSIVO = DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO" +
-                                ")");
+                        "NOT EXISTS (SELECT 1 FROM DOC_TRASPORTO_RIENTRO_DETT rd2" +
+                                " JOIN DOC_TRASPORTO_RIENTRO r2" +
+                                " ON rd2.PG_INVENTARIO = r2.PG_INVENTARIO" +
+                                " AND rd2.TI_DOCUMENTO = r2.TI_DOCUMENTO" +
+                                " AND rd2.ESERCIZIO = r2.ESERCIZIO" +
+                                " AND rd2.PG_DOC_TRASPORTO_RIENTRO = r2.PG_DOC_TRASPORTO_RIENTRO" +
+                                " WHERE r2.TI_DOCUMENTO = '" + RIENTRO + "'" +
+                                " AND r2.STATO = '" + STATO_DEFINITIVO + "'" +
+                                " AND rd2.NR_INVENTARIO = DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO" +
+                                " AND rd2.PROGRESSIVO = DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO)");
 
                 List beniInTrasportoDefinitivo = dettHome.fetchAll(sql2);
 
@@ -2784,22 +2282,14 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 if (beniInTrasportoDefinitivo != null) {
                     for (Object obj : beniInTrasportoDefinitivo) {
                         Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) obj;
-                        beniTrovati.add(dett.getBene());
+                        beniTrovati.add((InventarioDocTRBulk) dett.getBene());
                     }
                 }
 
                 List<InventarioDocTRBulk> beniMancanti = new ArrayList<>();
                 for (InventarioDocTRBulk bene : beniDaValidare) {
-                    boolean trovato = false;
-                    for (InventarioDocTRBulk beneTrovato : beniTrovati) {
-                        if (beneTrovato.equalsByPrimaryKey(bene)) {
-                            trovato = true;
-                            break;
-                        }
-                    }
-                    if (!trovato) {
-                        beniMancanti.add(bene);
-                    }
+                    boolean trovato = beniTrovati.stream().anyMatch(bt -> bt.equalsByPrimaryKey(bene));
+                    if (!trovato) beniMancanti.add(bene);
                 }
 
                 if (!beniMancanti.isEmpty()) {
@@ -2822,25 +2312,58 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
+    /**
+     * Helper per costruire la query di verifica beni in altri documenti.
+     */
+    private SQLBuilder buildSqlBeniInAltriDoc(
+            Doc_trasporto_rientro_dettHome dettHome,
+            Doc_trasporto_rientroBulk doc,
+            String tipoDocDaVerificare,
+            StringBuilder inClauseBeni,
+            boolean ignorato) {
+
+        SQLBuilder sql = dettHome.createSQLBuilder();
+        sql.addTableToHeader("DOC_TRASPORTO_RIENTRO t");
+        sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", "t.PG_INVENTARIO");
+        sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.TI_DOCUMENTO", "t.TI_DOCUMENTO");
+        sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.ESERCIZIO", "t.ESERCIZIO");
+        sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO", "t.PG_DOC_TRASPORTO_RIENTRO");
+
+        sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
+                SQLBuilder.EQUALS, doc.getPgInventario());
+        sql.addSQLClause("AND", "t.TI_DOCUMENTO", SQLBuilder.EQUALS, tipoDocDaVerificare);
+
+        if (doc.getPgDocTrasportoRientro() != null && doc.getPgDocTrasportoRientro() > 0) {
+            sql.openParenthesis(FindClause.AND);
+            sql.addSQLClause(FindClause.AND, "t.PG_DOC_TRASPORTO_RIENTRO",
+                    SQLBuilder.NOT_EQUALS, doc.getPgDocTrasportoRientro());
+            sql.addSQLClause(FindClause.OR, "t.ESERCIZIO",
+                    SQLBuilder.NOT_EQUALS, doc.getEsercizio());
+            sql.closeParenthesis();
+        }
+
+        sql.addSQLClause("AND",
+                "(DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO, DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO) IN ("
+                        + inClauseBeni + ")");
+        return sql;
+    }
+
+    // =========================================================================
+    // RECUPERO DETTAGLI / TERZO RESPONSABILE
+    // =========================================================================
 
     /**
      * Recupera tutti i dettagli di un documento.
      */
-    public BulkList getDetailsFor(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
+    public BulkList getDetailsFor(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws ComponentException {
 
         try {
             Doc_trasporto_rientro_dettHome dettHome =
                     (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(userContext, doc);
-
             BulkList dettagli = new BulkList(dettHome.getDetailsFor(doc));
-
             doc.setDoc_trasporto_rientro_dettColl(dettagli);
-
             return dettagli;
-
         } catch (PersistencyException e) {
             throw handleException(e);
         }
@@ -2849,46 +2372,164 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     /**
      * Recupera il terzo responsabile dell'UO di contesto.
      */
-    public TerzoBulk recuperaTerzoResponsabileUO(UserContext userContext)
-            throws ComponentException {
+    public TerzoBulk recuperaTerzoResponsabileUO(UserContext userContext) throws ComponentException {
         try {
             String cdUo = CNRUserContext.getCd_unita_organizzativa(userContext);
-            if (cdUo == null) {
-                return null;
-            }
+            if (cdUo == null) return null;
 
             Unita_organizzativaHome uoHome =
                     (Unita_organizzativaHome) getHome(userContext, Unita_organizzativaBulk.class);
-
             Unita_organizzativaBulk uo =
-                    (Unita_organizzativaBulk) uoHome.findByPrimaryKey(
-                            new Unita_organizzativaBulk(cdUo));
+                    (Unita_organizzativaBulk) uoHome.findByPrimaryKey(new Unita_organizzativaBulk(cdUo));
 
             Integer cdTerzoResp = (uo != null) ? uo.getCd_responsabile() : null;
-            if (cdTerzoResp == null) {
-                return null;
-            }
+            if (cdTerzoResp == null) return null;
 
-            TerzoHome terzoHome =
-                    (TerzoHome) getHome(userContext, TerzoBulk.class);
-
-            return (TerzoBulk) terzoHome.findByPrimaryKey(
-                    new TerzoBulk(cdTerzoResp));
+            TerzoHome terzoHome = (TerzoHome) getHome(userContext, TerzoBulk.class);
+            return (TerzoBulk) terzoHome.findByPrimaryKey(new TerzoBulk(cdTerzoResp));
 
         } catch (PersistencyException e) {
-            throw new ComponentException(
-                    "Errore durante il recupero del responsabile UO", e);
+            throw new ComponentException("Errore durante il recupero del responsabile UO", e);
         }
     }
 
+    // =========================================================================
+    // ESERCIZIO COEP / DOCUMENTI PREDISPOSTI ALLA FIRMA
+    // =========================================================================
+
+    /**
+     * Verifica se l'esercizio COEP è chiuso.
+     */
+    public boolean isEsercizioCOEPChiuso(UserContext userContext) throws ComponentException {
+        LoggableStatement cs = null;
+        try {
+            cs = new LoggableStatement(getConnection(userContext),
+                    "{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
+                            "CNRCTB200.isChiusuraCoepDef(?,?)}", false, this.getClass());
+            cs.registerOutParameter(1, java.sql.Types.VARCHAR);
+            cs.setObject(2, CNRUserContext.getEsercizio(userContext));
+            cs.setObject(3, CNRUserContext.getCd_cds(userContext));
+            cs.executeQuery();
+            String status = cs.getString(1);
+            if ("Y".compareTo(status) == 0) return true;
+
+            Id_inventarioHome inventarioHome =
+                    (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
+            Id_inventarioBulk inventario = inventarioHome.findInventarioFor(userContext, false);
+            if (!inventarioHome.isAperto(inventario, CNRUserContext.getEsercizio(userContext)))
+                return true;
+
+        } catch (java.sql.SQLException ex) {
+            throw handleException(ex);
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        } catch (IntrospectionException e) {
+            throw handleException(e);
+        } finally {
+            try {
+                if (cs != null) cs.close();
+            } catch (java.sql.SQLException e) {
+                throw handleException(e);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Recupera i documenti in stato INVIATO predisposti alla firma.
+     */
+    public List getDocumentiPredispostiAllaFirma(UserContext userContext) throws ComponentException {
+        try {
+            Doc_trasporto_rientroHome home =
+                    (Doc_trasporto_rientroHome) getHome(userContext, Doc_trasporto_rientroBulk.class);
+
+            SQLBuilder sql = home.createSQLBuilder();
+            sql.addSQLClause("AND", "STATO", SQLBuilder.EQUALS, STATO_INVIATO);
+            sql.addSQLClause("AND", "STATO_FLUSSO", SQLBuilder.EQUALS, "INV");
+            sql.addSQLClause("AND", "ID_FLUSSO_HAPPYSIGN", SQLBuilder.ISNOTNULL, null);
+            sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.LESS_EQUALS,
+                    CNRUserContext.getEsercizio(userContext));
+            sql.addOrderBy("DATA_INVIO_FIRMA ASC");
+
+            List documenti = home.fetchAll(sql);
+            return documenti != null ? documenti : Collections.emptyList();
+
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+
+    // =========================================================================
+    // STAMPA
+    // =========================================================================
+
+    public OggettoBulk stampaConBulk(UserContext aUC, OggettoBulk bulk) throws ComponentException {
+        validateBulkForPrint(aUC, (Stampa_doc_trasporto_rientroBulk) bulk);
+        return bulk;
+    }
+
+    public OggettoBulk inizializzaBulkPerStampa(UserContext userContext, OggettoBulk bulk)
+            throws ComponentException {
+        if (bulk instanceof Stampa_doc_trasporto_rientroBulk)
+            inizializzaBulkPerStampa(userContext, (Stampa_doc_trasporto_rientroBulk) bulk);
+        return bulk;
+    }
+
+    public void inizializzaBulkPerStampa(UserContext userContext, Stampa_doc_trasporto_rientroBulk stampa)
+            throws ComponentException {
+
+        stampa.setEsercizio(CNRUserContext.getEsercizio(userContext));
+        stampa.setCds_scrivania(CNRUserContext.getCd_cds(userContext));
+        stampa.setPgInizio(0);
+        stampa.setPgFine(999999999);
+
+        try {
+            String cd_uo_scrivania = CNRUserContext.getCd_unita_organizzativa(userContext);
+            Unita_organizzativaHome uoHome =
+                    (Unita_organizzativaHome) getHome(userContext, Unita_organizzativaBulk.class);
+            Unita_organizzativaBulk uo =
+                    (Unita_organizzativaBulk) uoHome.findByPrimaryKey(
+                            new Unita_organizzativaBulk(cd_uo_scrivania));
+
+            if (!uo.isUoCds()) {
+                stampa.setUoForPrint(uo);
+                stampa.setIsUOForPrintEnabled(false);
+            } else {
+                stampa.setUoForPrint(new Unita_organizzativaBulk());
+                stampa.setIsUOForPrintEnabled(true);
+            }
+        } catch (PersistencyException pe) {
+            throw new ComponentException(pe);
+        }
+    }
+
+    private void validateBulkForPrint(UserContext userContext, Stampa_doc_trasporto_rientroBulk stampa)
+            throws ComponentException {
+        try {
+            if (stampa.getPgInizio() == null)
+                throw new ValidationException("Il campo NUMERO INIZIO è obbligatorio");
+            if (stampa.getPgFine() == null)
+                throw new ValidationException("Il campo NUMERO FINE è obbligatorio");
+            if (stampa.getPgInizio().compareTo(stampa.getPgFine()) > 0)
+                throw new ValidationException("Il NUMERO INIZIO non può essere superiore al NUMERO FINE");
+            if (stampa.getUoForPrint().getCd_unita_organizzativa() == null)
+                throw new ValidationException("Il campo Unità Organizzativa è obbligatorio");
+        } catch (ValidationException ex) {
+            throw new ApplicationException(ex);
+        }
+    }
+
+    // =========================================================================
+    // WEB SERVICE (InventarioDocTRBulk, TerzoBulk diretto)
+    // =========================================================================
 
     /**
      * Salva un documento T/R da WS: normalizza, applica default, costruisce dettagli,
-     * valida allegati/beni/documento, assegna PG definitivo e restituisce il documento completo.
+     * valida allegati/beni/documento, assegna PG definitivo.
+     * Usa InventarioDocTRBulk e TerzoBulk direttamente (niente AnagraficoBulk, niente local_transactionID).
      */
     public Doc_trasporto_rientroBulk saveDocFromWS(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk bulk) throws ComponentException {
+            UserContext userContext, Doc_trasporto_rientroBulk bulk) throws ComponentException {
 
         try {
             Doc_trasporto_rientroBulk doc = normalizzaBulkWS(bulk);
@@ -2912,7 +2553,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             if (!dettagliCostruiti.isEmpty()) {
                 List<InventarioDocTRBulk> beniDaValidare = dettagliCostruiti.stream()
-                        .map(Doc_trasporto_rientro_dettBulk::getBene)
+                        .map(d -> (InventarioDocTRBulk) d.getBene())
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
                 validaBeniNonInAltriDocumenti(userContext, doc, beniDaValidare);
@@ -2937,12 +2578,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-
-    /**
-     * Normalizza il Bulk alla sottoclasse corretta (Trasporto/Rientro) copiando i campi base.
-     */
     private Doc_trasporto_rientroBulk normalizzaBulkWS(Doc_trasporto_rientroBulk bulk) {
-        if (Doc_trasporto_rientroBulk.TRASPORTO.equals(bulk.getTiDocumento())) {
+        if (TRASPORTO.equals(bulk.getTiDocumento())) {
             if (bulk instanceof DocumentoTrasportoBulk) return bulk;
             DocumentoTrasportoBulk d = new DocumentoTrasportoBulk();
             copiaCampiBaseWS(bulk, d);
@@ -2955,9 +2592,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    /**
-     * Copia i campi fondamentali prima dell’inizializzazione framework.
-     */
     private void copiaCampiBaseWS(Doc_trasporto_rientroBulk src, Doc_trasporto_rientroBulk dst) {
         dst.setTiDocumento(src.getTiDocumento());
         dst.setEsercizio(src.getEsercizio());
@@ -2967,11 +2601,12 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Inizializza il Bulk con i default di framework e ripristina i valori provenienti dal WS.
+     * Inizializza il Bulk con i default di framework e ripristina i valori dal WS.
+     * Gestisce incaricato/smartworking come TerzoBulk diretto.
+     * Non imposta local_transactionID.
      */
     private void applicaCampiDaRichiestaWS(
-            Doc_trasporto_rientroBulk src,
-            UserContext userContext) throws ComponentException {
+            Doc_trasporto_rientroBulk src, UserContext userContext) throws ComponentException {
 
         try {
             Doc_trasporto_rientroBulk dst =
@@ -3018,7 +2653,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             if (Boolean.TRUE.equals(src.getFlVettore()))
                 Optional.ofNullable(src.getNominativoVettore()).ifPresent(dst::setNominativoVettore);
 
-            // INCARICATO: direttamente TerzoBulk
+            // INCARICATO: TerzoBulk diretto
             if (Boolean.TRUE.equals(src.getFlIncaricato()) && src.getCdTerzoIncaricato() != null) {
                 TerzoBulk t = new TerzoBulk();
                 t.setCd_terzo(src.getCdTerzoIncaricato());
@@ -3026,7 +2661,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 dst.setCdTerzoIncaricato(src.getCdTerzoIncaricato());
             }
 
-            // SMARTWORKING: direttamente TerzoBulk
+            // SMARTWORKING: TerzoBulk diretto
             if (src.getTerzoSmartworking() != null &&
                     src.getTerzoSmartworking().getCd_terzo() != null) {
                 TerzoBulk t = new TerzoBulk();
@@ -3045,9 +2680,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-
     /**
-     * Salva i dettagli verificando esistenza del bene, coerenza con il tipo documento e persistenza.
+     * Salva i dettagli verificando esistenza del bene (InventarioDocTRBulk).
      */
     private void setDettBeniFromWS(
             UserContext userContext,
@@ -3059,7 +2693,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 docCreato.setDoc_trasporto_rientro_dettColl(new SimpleBulkList());
 
             boolean isTrasporto = docCreato instanceof DocumentoTrasportoBulk;
-            InventarioDocTRHome  beneHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
+            InventarioDocTRHome beneHome =
+                    (InventarioDocTRHome) getHome(userContext, InventarioDocTRBulk.class);
 
             for (Doc_trasporto_rientro_dettBulk dett : dettagliDTO) {
                 Long pgInventario = dett.getPg_inventario() != null
@@ -3068,8 +2703,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
                 InventarioDocTRBulk bene = (InventarioDocTRBulk) beneHome.findByPrimaryKey(
                         new InventarioDocTRBulk(dett.getNr_inventario(), pgInventario,
-                                Long.valueOf(dett.getProgressivo()))
-                );
+                                Long.valueOf(dett.getProgressivo())));
 
                 if (bene == null)
                     throw new ApplicationException(
@@ -3100,9 +2734,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    /**
-     * Converte il documento temporaneo in definitivo aggiornando testata e dettagli.
-     */
     private void confermaProgTempToDef(
             UserContext userContext,
             Doc_trasporto_rientroBulk docT,
@@ -3116,16 +2747,10 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Numeratore_doc_t_rHome numHome =
                     (Numeratore_doc_t_rHome) getHome(userContext, Numeratore_doc_t_rBulk.class);
             Long nuovoPgDoc = numHome.getNextPg(
-                    userContext,
-                    docT.getEsercizio(),
-                    docT.getPgInventario(),
-                    docT.getTiDocumento(),
-                    userContext.getUser()
-            );
+                    userContext, docT.getEsercizio(), docT.getPgInventario(),
+                    docT.getTiDocumento(), userContext.getUser());
 
-            Doc_trasporto_rientroHome home =
-                    (Doc_trasporto_rientroHome) getHome(userContext, docT);
-
+            Doc_trasporto_rientroHome home = (Doc_trasporto_rientroHome) getHome(userContext, docT);
             home.confirmDocTrasportoRientroTemporaneo(userContext, docT, nuovoPgDoc);
 
             docT.setPgDocTrasportoRientro(nuovoPgDoc);
@@ -3143,8 +2768,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     /**
-     * Costruisce la lista tipizzata dei dettagli partendo dai DTO WS,
-     * applicando i campi chiave e quelli specifici di Rientro quando presenti.
+     * Costruisce la lista tipizzata dei dettagli partendo dai DTO WS (usa InventarioDocTRBulk).
      */
     private List<Doc_trasporto_rientro_dettBulk> costruisciDettagliBeniWS(
             BulkList<Doc_trasporto_rientro_dettBulk> dettagliTemp,
@@ -3152,31 +2776,22 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         if (dettagliTemp == null || dettagliTemp.isEmpty()) return Collections.emptyList();
 
-        boolean isTrasporto = Doc_trasporto_rientroBulk.TRASPORTO.equals(doc.getTiDocumento());
+        boolean isTrasporto = TRASPORTO.equals(doc.getTiDocumento());
         List<Doc_trasporto_rientro_dettBulk> result = new ArrayList<>();
 
         for (Doc_trasporto_rientro_dettBulk srcDett : dettagliTemp) {
-
             Doc_trasporto_rientro_dettBulk dett;
 
             if (isTrasporto) {
                 dett = new DocumentoTrasportoDettBulk(
-                        srcDett.getPg_inventario(),
-                        doc.getTiDocumento(),
-                        doc.getEsercizio(),
-                        doc.getPgDocTrasportoRientro(),
-                        srcDett.getNr_inventario(),
-                        srcDett.getProgressivo()
-                );
+                        srcDett.getPg_inventario(), doc.getTiDocumento(),
+                        doc.getEsercizio(), doc.getPgDocTrasportoRientro(),
+                        srcDett.getNr_inventario(), srcDett.getProgressivo());
             } else {
                 DocumentoRientroDettBulk rr = new DocumentoRientroDettBulk(
-                        srcDett.getPg_inventario(),
-                        doc.getTiDocumento(),
-                        doc.getEsercizio(),
-                        doc.getPgDocTrasportoRientro(),
-                        srcDett.getNr_inventario(),
-                        srcDett.getProgressivo()
-                );
+                        srcDett.getPg_inventario(), doc.getTiDocumento(),
+                        doc.getEsercizio(), doc.getPgDocTrasportoRientro(),
+                        srcDett.getNr_inventario(), srcDett.getProgressivo());
                 if (srcDett instanceof DocumentoRientroDettBulk) {
                     DocumentoRientroDettBulk srcR = (DocumentoRientroDettBulk) srcDett;
                     if (srcR.getDocTrasportoDettRif() != null)
@@ -3208,15 +2823,17 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         return result;
     }
 
+    // =========================================================================
+    // CERCA DOCUMENTI PER BENE
+    // =========================================================================
+
     /**
      * Cerca il primo documento T/R che contiene un bene dato per stato ed esercizio.
      */
     public Doc_trasporto_rientroBulk cercaDocumentiPerBene(
             UserContext userContext,
-            String tiDocumento,
-            String stato,
-            Long nrInventario,
-            Integer esercizio) throws ComponentException {
+            String tiDocumento, String stato, Long nrInventario, Integer esercizio)
+            throws ComponentException {
 
         try {
             Doc_trasporto_rientroHome home;
@@ -3229,23 +2846,22 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             SQLBuilder sql = home.createSQLBuilder();
             sql.addTableToHeader("DOC_TRASPORTO_RIENTRO_DETT dett");
-            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.PG_INVENTARIO",             "dett.PG_INVENTARIO");
-            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.TI_DOCUMENTO",              "dett.TI_DOCUMENTO");
-            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.ESERCIZIO",                 "dett.ESERCIZIO");
-            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.PG_DOC_TRASPORTO_RIENTRO", "dett.PG_DOC_TRASPORTO_RIENTRO");
+            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.PG_INVENTARIO", "dett.PG_INVENTARIO");
+            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.TI_DOCUMENTO", "dett.TI_DOCUMENTO");
+            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.ESERCIZIO", "dett.ESERCIZIO");
+            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.PG_DOC_TRASPORTO_RIENTRO",
+                    "dett.PG_DOC_TRASPORTO_RIENTRO");
 
             if (tiDocumento != null)
                 sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO.TI_DOCUMENTO",
                         SQLBuilder.EQUALS, tiDocumento);
             if (stato != null)
-                sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO.STATO",
-                        SQLBuilder.EQUALS, stato);
+                sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO.STATO", SQLBuilder.EQUALS, stato);
             if (esercizio != null)
                 sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO.ESERCIZIO",
                         SQLBuilder.EQUALS, esercizio);
             if (nrInventario != null)
-                sql.addSQLClause("AND", "dett.NR_INVENTARIO",
-                        SQLBuilder.EQUALS, nrInventario);
+                sql.addSQLClause("AND", "dett.NR_INVENTARIO", SQLBuilder.EQUALS, nrInventario);
 
             sql.setDistinctClause(true);
             sql.addOrderBy("DOC_TRASPORTO_RIENTRO.PG_DOC_TRASPORTO_RIENTRO DESC");
@@ -3258,92 +2874,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    /**
-     * Gestisce archiviazione, aggiornamento e cancellazione degli allegati T/R su CMIS.
-     */
-    public void archiviaAllegatiDocTR(UserContext userContext, Doc_trasporto_rientroBulk doc)
-            throws ApplicationException {
-
-        List<String> storePathList = doc.isTrasporto()
-                ? ((DocumentoTrasportoBulk) doc).getStorePath()
-                : ((DocumentoRientroBulk) doc).getStorePath();
-
-        if (storePathList == null || storePathList.isEmpty())
-            throw new ApplicationException(
-                    "StorePath non calcolabile per il documento PG=" + doc.getPgDocTrasportoRientro());
-
-        String storePath = storePathList.get(0);
-
-        if (doc.getArchivioAllegati() == null) return;
-
-        if (storeService == null)
-            storeService = SpringUtil.getBean("storeService", StoreService.class);
-
-        for (AllegatoGenericoBulk allegatoGen : doc.getArchivioAllegati()) {
-
-            if (!(allegatoGen instanceof AllegatoDocTraspRientroBulk)) continue;
-
-            AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) allegatoGen;
-
-            if (allegato.isToBeCreated()) {
-                File file = Optional.ofNullable(allegato.getFile())
-                        .orElseThrow(() -> new ApplicationException(
-                                "File non presente per allegato: " + allegato.getNome()));
-                try {
-                    allegato.complete(userContext);
-                    storeService.storeSimpleDocument(
-                            allegato,
-                            new FileInputStream(file),
-                            allegato.getContentType(),
-                            allegato.getNome(),
-                            storePath
-                    );
-                    allegato.setCrudStatus(OggettoBulk.NORMAL);
-
-                } catch (FileNotFoundException e) {
-                    throw new ApplicationException("File non trovato: " + allegato.getNome(), e);
-                } catch (StorageException e) {
-                    if (e.getType().equals(StorageException.Type.CONSTRAINT_VIOLATED))
-                        throw new ApplicationException("File già presente: " + allegato.getNome());
-                    throw new ApplicationException("Errore storage per: " + allegato.getNome(), e);
-                }
-
-            } else if (allegato.isToBeUpdated()) {
-                try {
-                    if (allegato.getFile() != null)
-                        storeService.updateStream(
-                                allegato.getStorageKey(),
-                                new FileInputStream(allegato.getFile()),
-                                allegato.getContentType()
-                        );
-                    allegato.complete(userContext);
-                    storeService.updateProperties(
-                            allegato,
-                            storeService.getStorageObjectBykey(allegato.getStorageKey())
-                    );
-                    allegato.setCrudStatus(OggettoBulk.NORMAL);
-
-                } catch (FileNotFoundException e) {
-                    throw new ApplicationException("File non trovato: " + allegato.getNome(), e);
-                } catch (StorageException e) {
-                    if (e.getType().equals(StorageException.Type.CONSTRAINT_VIOLATED))
-                        throw new ApplicationException("File già presente: " + allegato.getNome());
-                    throw new ApplicationException("Errore storage per: " + allegato.getNome(), e);
-                }
-            }
-        }
-
-        for (Iterator<AllegatoDocTraspRientroBulk> it =
-             doc.getArchivioAllegati().deleteIterator(); it.hasNext(); ) {
-
-            AllegatoDocTraspRientroBulk allegato = it.next();
-            if (allegato.isToBeDeleted()) {
-                Optional.ofNullable(allegato.getStorageKey())
-                        .ifPresent(key -> storeService.delete(key));
-                allegato.setCrudStatus(OggettoBulk.NORMAL);
-            }
-        }
-    }
+    // =========================================================================
+    // VALIDAZIONE DOCUMENTO
+    // =========================================================================
 
     /**
      * Valida obbligatori del documento e coerenza data rispetto alle modifiche dei beni.
@@ -3380,6 +2913,25 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         } catch (Throwable t) {
             throw handleException(t);
+        }
+    }
+
+    private Timestamp getMaxDataFor(UserContext userContext, Doc_trasporto_rientroBulk docT)
+            throws ComponentException {
+
+        if (docT.getPgDocTrasportoRientro() == null)
+            throw new ApplicationException("Attenzione: è necessario specificare almeno un bene!");
+
+        try {
+            Doc_trasporto_rientro_dettHome dettHome =
+                    (Doc_trasporto_rientro_dettHome) getHome(
+                            userContext, Doc_trasporto_rientro_dettBulk.class);
+            Timestamp max_data = dettHome.getMaxDataValiditaVariazione(docT);
+            if (max_data == null)
+                throw new ApplicationException("Attenzione: è necessario specificare almeno un bene!");
+            return max_data;
+        } catch (PersistencyException pe) {
+            throw handleException(pe);
         }
     }
 }
