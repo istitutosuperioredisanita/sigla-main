@@ -7,12 +7,12 @@ public class AllegatoDocumentoRientroBulk extends AllegatoDocTraspRientroBulk {
 
 	public static OrderedHashtable aspectNamesKeys = new OrderedHashtable();
 
-	public static final String P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO = "P:sigla_doctrientro_attachment:altro";
-	public static final String P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO = "P:sigla_docrientro_attachment:docrientro_firmato";
+	public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO = "P:sigla_doctrientro_attachment:altro";
+	public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO = "P:sigla_docrientro_attachment:docrientro_firmato";
 
 	static {
-		aspectNamesKeys.put(P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO,"Altro");
-		aspectNamesKeys.put(P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO,"Doc. Rientro Firmato");
+		aspectNamesKeys.put(P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO,"Altro");
+		aspectNamesKeys.put(P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO,"Doc. Rientro Firmato");
 	}
 
 	private String aspectName;

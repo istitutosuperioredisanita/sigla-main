@@ -27,6 +27,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDDetailComponentSession;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 
@@ -217,17 +218,41 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
     void validaAggiuntaAllegatoFirmato(Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException;
 
-    /** Inserisce nel documento i dettagli provenienti dal DTO REST. */
-    Doc_trasporto_rientroBulk aggiungiBeniDaDTO(
+
+    /** Popola i campi riferimento del rientro in fase di salvataggio INS */
+    void popolaCampiRiferimento(
             UserContext userContext,
-            Doc_trasporto_rientroBulk docCreato,
-            List<Doc_trasporto_rientro_dettBulk> dettagliDTO)
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException, PersistencyException;
+
+    /** Aggiorna i riferimenti inversi del documento */
+    void preparaEAggiornaRiferimentiInversi(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException;
 
-    /** Converte un documento con PG temporaneo assegnando il PG definitivo. */
-    Doc_trasporto_rientroBulk confermaDocumentoTemporaneo(
+    /**
+     * Cerca documenti (dettagli) associati a un bene.
+     */
+    Doc_trasporto_rientroBulk cercaDocumentoPerBene(
             UserContext userContext,
-            Doc_trasporto_rientroBulk docT)
+            String tiDocumento,
+            String stato,
+            Long nrInventario,
+            Integer esercizio)
             throws ComponentException, RemoteException;
+
+    /**
+     * Salvataggio completo documento Trasporto Rientro da Web Service.
+     */
+    Doc_trasporto_rientroBulk saveDocFromWS(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk bulk)
+            throws ComponentException, RemoteException;
+
+    /**
+     * Archivia gli allegati dei doc Trasporto/Rientro.
+     */
+    void archiviaAllegatiDocTR(UserContext userContext, Doc_trasporto_rientroBulk doc) throws ComponentException, RemoteException;
 
 }

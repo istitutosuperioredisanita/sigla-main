@@ -17,6 +17,8 @@
 
 package it.cnr.contab.inventario01.bulk;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
@@ -28,6 +30,22 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.StrServ;
 
 
+
+/**
+ * Classe base astratta per le righe dei documenti di Trasporto e Rientro.
+ * Gestisce il bene inventariale associato, i dati derivati dal documento
+ * principale, e fornisce logica condivisa per entrambe le tipologie (T e R).
+ */
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "tiDocumento",
+        visible = true
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = DocumentoTrasportoDettBulk.class, name = "T"),
+        @JsonSubTypes.Type(value = DocumentoRientroDettBulk.class, name = "R")
+})
 public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBase {
 
 

@@ -1,344 +1,322 @@
 package it.cnr.test.contab.rest;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import it.cnr.contab.inventario01.bulk.AllegatoDocumentoRientroBulk;
-import it.cnr.contab.inventario01.bulk.AllegatoDocumentoTrasportoBulk;
-import it.cnr.contab.web.rest.config.SIGLASecurityContext;
-import it.cnr.contab.web.rest.model.AttachmentDocTrasportoRientro;
-import it.cnr.contab.web.rest.model.DocTrasportoRientroDTOBulk;
-import it.cnr.contab.web.rest.model.DocTrasportoRientroDettDTOBulk;
-import it.cnr.si.spring.storage.MimeTypes;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.junit.runners.MethodSorters;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-@RunWith(JUnit4.class)
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RestServiceDocTRTest {
 
-    private static final String BASE_URL  = "http://localhost:8080/SIGLA/restapi";
-    private static final String USERNAME  = "ente";
-    private static final String PASSWORD  = "2023enteiss";
+    private static final String BASE_URL  = "http://localhost:8080";
+    private static final String ENDPOINT  = "/SIGLA/restapi/docTrasportoRientro";
     private static final String CD_CDS    = "000";
     private static final String CD_UO     = "000.000";
     private static final int    ESERCIZIO = 2026;
-    private static final String ENDPOINT  = "docTrasportoRientro";
 
-    private static Long pgTrasportoDefCreato = null;
+    /** 19/02/2025 00:00:00 UTC */
+    private static final long DATE_INS = 1739919600000L;
+    /** 02/03/2025 00:00:00 UTC */
+    private static final long DATE_SW  = 1740873600000L;
 
-    // =========================================================================
-    // TEST A — TRASPORTO INS (Replica DB)
-    // =========================================================================
+    private static final String PDF_BYTES =
+            "JVBERi0xLjAKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoK"
+                    + "PDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUg"
+                    + "L1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSA+PgplbmRvYmoKeHJlZgowIDQKMDAw"
+                    + "MDAwMDAwMCA2NTUzNSBmCjAwMDAwMDAwMDkgMDAwMDAgbgowMDAwMDAwMDU4IDAwMDAwIG4KMDAwMDAwMDExNSAw"
+                    + "MDAwMCBuCnRyYWlsZXIKPDwgL1NpemUgNCAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKMTk0CiUlRU9G";
+
+    private static final String TYPE_TRASPORTO_ALTRO   = "P:sigla_doctrasporto_attachment:altro";
+    private static final String TYPE_TRASPORTO_FIRMATO = "P:sigla_doctrasporto_attachment:firmato";
+    private static final String TYPE_RIENTRO_ALTRO     = "P:sigla_doctrientro_attachment:altro";
+
+    private final ObjectMapper mapper = new ObjectMapper()
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
+    // -------------------------------------------------------------------------
+    // test01 – Trasporto INS vettore
+    // -------------------------------------------------------------------------
     @Test
-    public void A_testTrasportoIns() throws Exception {
-
-        Timestamp dataReg = toTimestamp("20260219");
-
-        DocTrasportoRientroDTOBulk dto = new DocTrasportoRientroDTOBulk();
-
-        dto.setTiDocumento("T");
-        dto.setStato("INS");
-        dto.setEsercizio(ESERCIZIO);
-
-        dto.setDsDocTrasportoRientro("fdsfsdf");
-        dto.setCdTipoTrasportoRientro("1");
-        dto.setDataRegistrazione(dataReg);
-
-        dto.setDestinazione("dsf");
-        dto.setIndirizzo("dsfd");
-
-        dto.setFlIncaricato(Boolean.FALSE);
-        dto.setFlVettore(Boolean.TRUE);
-        dto.setNominativoVettore("sdfsdfdf");
-
-        dto.setCdTerzoResponsabile(3942L);
-
-        List<DocTrasportoRientroDettDTOBulk> dettagli = new ArrayList<>();
-        dettagli.add(buildDettaglioTrasporto(1321L, 0, 4008L));
-        dettagli.add(buildDettaglioTrasporto(1322L, 0, 4008L));
-        dettagli.add(buildDettaglioTrasporto(1320L, 0, 4008L));
-
-        dto.setDettagli(dettagli);
-        dto.setAttachments(buildAllegatiTrasportoIns());
-
-        eseguiChiamataRest(dto, "Trasporto INS (Replica DB)");
-    }
-
-    // =========================================================================
-    // TEST B — TRASPORTO DEF (Documento Master)
-    // =========================================================================
-    @Test
-    public void B_testTrasportoDef() throws Exception {
-
-        Timestamp dataReg = toTimestamp("20260219");
-
-        DocTrasportoRientroDTOBulk dto = new DocTrasportoRientroDTOBulk();
-
-        dto.setTiDocumento("T");
-        dto.setStato("DEF");
-        dto.setEsercizio(ESERCIZIO);
-
-        dto.setDsDocTrasportoRientro("qqqq");
-        dto.setCdTipoTrasportoRientro("1");
-        dto.setDataRegistrazione(dataReg);
-
-        dto.setDestinazione("qqq");
-        dto.setIndirizzo("qqq");
-
-        dto.setFlIncaricato(Boolean.FALSE);
-        dto.setFlVettore(Boolean.TRUE);
-        dto.setNominativoVettore("qqq");
-
-        dto.setCdTerzoResponsabile(3942L);
-
-        List<DocTrasportoRientroDettDTOBulk> dettagli = new ArrayList<>();
-        dettagli.add(buildDettaglioTrasporto(1637L, 0, 4008L));
-        dettagli.add(buildDettaglioTrasporto(1638L, 0, 4008L));
-
-        dto.setDettagli(dettagli);
-        dto.setAttachments(buildAllegatiTrasportoDef());
-
-        DocTrasportoRientroDTOBulk risposta =
-                eseguiChiamataRest(dto, "Trasporto DEF");
-
-        if (risposta != null) {
-            pgTrasportoDefCreato = risposta.getPgDocTrasportoRientro();
-            System.out.println(">>> PG Trasporto DEF: " + pgTrasportoDefCreato);
-        }
-    }
-
-    // =========================================================================
-    // TEST C — RIENTRO INS (Replica DB)
-    // =========================================================================
-    @Test
-    public void C_testRientroIns() throws Exception {
-
-        Timestamp dataReg = toTimestamp("20260219");
-
-        DocTrasportoRientroDTOBulk dto = new DocTrasportoRientroDTOBulk();
-
-        dto.setTiDocumento("R");
-        dto.setStato("INS");
-        dto.setEsercizio(ESERCIZIO);
-
-        dto.setDsDocTrasportoRientro("werwerwe");
-        dto.setCdTipoTrasportoRientro("2");
-        dto.setDataRegistrazione(dataReg);
-
-        dto.setDestinazione("erwerwer");
-        dto.setIndirizzo("werwerwerw");
-
-        dto.setFlIncaricato(Boolean.FALSE);
-        dto.setFlVettore(Boolean.TRUE);
-        dto.setNominativoVettore("rwerwer");
-
-        dto.setNote("rewrwerwe");
-
-        dto.setCdTerzoResponsabile(3942L);
-
-        List<DocTrasportoRientroDettDTOBulk> dettagli = new ArrayList<>();
-        dettagli.add(buildDettaglioRientro(1637L, 0, 4008L));
-        dettagli.add(buildDettaglioRientro(1638L, 0, 4008L));
-
-        dto.setDettagli(dettagli);
-        dto.setAttachments(buildAllegatiRientroIns());
-
-        eseguiChiamataRest(dto, "Rientro INS (Replica DB)");
-    }
-
-    // =========================================================================
-    // TEST D — RIENTRO DEF
-    // =========================================================================
-    @Test
-    public void D_testRientroDef() throws Exception {
-
-        Timestamp dataReg = toTimestamp("20260219");
-
-        DocTrasportoRientroDTOBulk dto = new DocTrasportoRientroDTOBulk();
-
-        dto.setTiDocumento("R");
-        dto.setStato("DEF");
-        dto.setEsercizio(ESERCIZIO);
-
-        dto.setDsDocTrasportoRientro("Rientro TEST");
-        dto.setCdTipoTrasportoRientro("2");
-        dto.setDataRegistrazione(dataReg);
-
-        dto.setFlVettore(Boolean.TRUE);
-        dto.setNominativoVettore("Vettore Rientro");
-
-        dto.setCdTerzoResponsabile(3942L);
-
-        List<DocTrasportoRientroDettDTOBulk> dettagli = new ArrayList<>();
-        dettagli.add(buildDettaglioRientro(1637L, 0, 4008L));
-        dettagli.add(buildDettaglioRientro(1638L, 0, 4008L));
-
-        dto.setDettagli(dettagli);
-        dto.setAttachments(buildAllegatiRientroDef());
-
-        eseguiChiamataRest(dto, "Rientro DEF");
-    }
-
-    // =========================================================================
-    // FACTORY DETTAGLI
-    // =========================================================================
-    private DocTrasportoRientroDettDTOBulk buildDettaglioTrasporto(
-            Long nrInventario, int progressivo, Long cdTerzo) {
-
-        DocTrasportoRientroDettDTOBulk det = new DocTrasportoRientroDettDTOBulk();
-        det.setPgInventario(1L);
-        det.setNrInventario(nrInventario);
-        det.setProgressivo(progressivo);
-        det.setCdTerzoAssegnatario(cdTerzo);
-
-        return det;
-    }
-
-    private DocTrasportoRientroDettDTOBulk buildDettaglioRientro(
-            Long nrInventario, int progressivo, Long cdTerzo) {
-
-        DocTrasportoRientroDettDTOBulk det =
-                buildDettaglioTrasporto(nrInventario, progressivo, cdTerzo);
-
-        det.setTiDocumentoRif("T");
-        det.setEsercizioRif(ESERCIZIO);
-        det.setPgInventarioRif(1L);
-        det.setPgDocTrasportoRientroRif(pgTrasportoDefCreato);
-        det.setNrInventarioRif(nrInventario);
-        det.setProgressivoRif(progressivo);
-
-        return det;
-    }
-
-    // =========================================================================
-    // ALLEGATI
-    // =========================================================================
-    private List<AttachmentDocTrasportoRientro> buildAllegatiTrasportoIns() {
-
-        List<AttachmentDocTrasportoRientro> lista = new ArrayList<>();
-
-        lista.add(buildAllegato(
-                "trasporto_ins.pdf",
-                AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO
+    public void test01_trasportoInsVettore() throws Exception {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("pgInventario",          1);
+        body.put("tiDocumento",           "T");
+        body.put("stato",                 "INS");
+        body.put("esercizio",             ESERCIZIO);
+        body.put("dsDocTrasportoRientro", "Trasporto INS Vettore");
+        body.put("cdTipoTrasportoRientro","1");
+        body.put("dataRegistrazione",     DATE_INS);
+        body.put("destinazione",          "Destinazione INS Vettore");
+        body.put("indirizzo",             "Indirizzo INS Vettore");
+        body.put("flVettore",             true);
+        body.put("flIncaricato",          false);
+        body.put("nominativoVettore",     "Vettore Trasporto INS");
+        body.put("cdTerzoResponsabile",   3942);
+        body.put("dettagli", Arrays.asList(
+                dettaglio(1, 1321L, 0, 4008),
+                dettaglio(1, 1322L, 0, 4008),
+                dettaglio(1, 1320L, 0, 4008)
+        ));
+        body.put("attachments", Arrays.asList(
+                allegato("trasporto_ins_vettore_1.pdf", TYPE_TRASPORTO_ALTRO),
+                allegato("trasporto_ins_vettore_2.pdf", TYPE_TRASPORTO_ALTRO)
         ));
 
-        return lista;
+        int status = post(body);
+        assertEquals("Trasporto INS vettore: atteso 201", 201, status);
     }
 
-    private List<AttachmentDocTrasportoRientro> buildAllegatiTrasportoDef() {
-
-        List<AttachmentDocTrasportoRientro> lista = new ArrayList<>();
-
-        lista.add(buildAllegato(
-                "trasporto_firmato.pdf",
-                AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO
+    // -------------------------------------------------------------------------
+    // test02 – Trasporto INS incaricato
+    // -------------------------------------------------------------------------
+    @Test
+    public void test02_trasportoInsIncaricato() throws Exception {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("pgInventario",          1);
+        body.put("tiDocumento",           "T");
+        body.put("stato",                 "INS");
+        body.put("esercizio",             ESERCIZIO);
+        body.put("dsDocTrasportoRientro", "Trasporto INS Incaricato");
+        body.put("cdTipoTrasportoRientro","1");
+        body.put("dataRegistrazione",     DATE_INS);
+        body.put("destinazione",          "Destinazione INS Incaricato");
+        body.put("indirizzo",             "Indirizzo INS Incaricato");
+        body.put("flIncaricato",          true);
+        body.put("flVettore",             false);
+        body.put("cdTerzoIncaricato",     5969);
+        body.put("cdTerzoResponsabile",   3942);
+        body.put("dettagli", Arrays.asList(
+                dettaglio(1, 1324L, 0, 4008),
+                dettaglio(1, 1325L, 0, 4008),
+                dettaglio(1, 1326L, 0, 4008)
+        ));
+        body.put("attachments", Arrays.asList(
+                allegato("trasporto_ins_incaricato_1.pdf", TYPE_TRASPORTO_ALTRO),
+                allegato("trasporto_ins_incaricato_2.pdf", TYPE_TRASPORTO_ALTRO)
         ));
 
-        return lista;
+        int status = post(body);
+        assertEquals("Trasporto INS incaricato: atteso 201", 201, status);
     }
 
-    private List<AttachmentDocTrasportoRientro> buildAllegatiRientroIns() {
-
-        List<AttachmentDocTrasportoRientro> lista = new ArrayList<>();
-
-        lista.add(buildAllegato(
-                "rientro_ins.pdf",
-                AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO
+    // -------------------------------------------------------------------------
+    // test03 – Trasporto INS smartworking OK
+    // -------------------------------------------------------------------------
+    @Test
+    public void test03_trasportoInsSmartworkingOk() throws Exception {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("pgInventario",          1);
+        body.put("tiDocumento",           "T");
+        body.put("stato",                 "INS");
+        body.put("esercizio",             ESERCIZIO);
+        body.put("dsDocTrasportoRientro", "SW OK");
+        body.put("cdTipoTrasportoRientro","9");
+        body.put("dataRegistrazione",     DATE_SW);
+        body.put("destinazione",          "Sede ISS");
+        body.put("indirizzo",             "Roma");
+        body.put("cdAnagSmartworking",    "4924");
+        body.put("cdTerzoResponsabile",   3942);
+        body.put("dettagli", Arrays.asList(
+                dettaglio(1, 3824L, 0, 5091),
+                dettaglio(1, 3689L, 0, 5091)
+        ));
+        body.put("attachments", Arrays.asList(
+                allegato("sw_1.pdf", TYPE_TRASPORTO_ALTRO),
+                allegato("sw_2.pdf", TYPE_TRASPORTO_ALTRO)
         ));
 
-        return lista;
+        int status = post(body);
+        assertEquals("Trasporto INS smartworking OK: atteso 201", 201, status);
     }
 
-    private List<AttachmentDocTrasportoRientro> buildAllegatiRientroDef() {
-
-        List<AttachmentDocTrasportoRientro> lista = new ArrayList<>();
-
-        lista.add(buildAllegato(
-                "rientro_firmato.pdf",
-                AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO
+    // -------------------------------------------------------------------------
+    // test04 – Trasporto INS smartworking ERROR (inventari inesistenti)
+    // -------------------------------------------------------------------------
+    @Test
+    public void test04_trasportoInsSmartworkingError() throws Exception {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("pgInventario",          1);
+        body.put("tiDocumento",           "T");
+        body.put("stato",                 "INS");
+        body.put("esercizio",             ESERCIZIO);
+        body.put("dsDocTrasportoRientro", "SW ERROR");
+        body.put("cdTipoTrasportoRientro","9");
+        body.put("dataRegistrazione",     DATE_SW);
+        body.put("destinazione",          "Sede ISS");
+        body.put("indirizzo",             "Roma");
+        body.put("cdAnagSmartworking",    "4924");
+        body.put("cdTerzoResponsabile",   3942);
+        body.put("dettagli", Arrays.asList(
+                dettaglio(1, 9999L, 0, 5091),
+                dettaglio(1, 9998L, 0, 5091)
+        ));
+        body.put("attachments", Arrays.asList(
+                allegato("sw_err_1.pdf", TYPE_TRASPORTO_ALTRO),
+                allegato("sw_err_2.pdf", TYPE_TRASPORTO_ALTRO)
         ));
 
-        return lista;
+        int status = post(body);
+        assertTrue("Trasporto INS smartworking ERROR: atteso 4xx, ricevuto " + status,
+                status >= 400 && status < 500);
     }
 
-    private AttachmentDocTrasportoRientro buildAllegato(String nome, String tipo) {
+    // -------------------------------------------------------------------------
+    // test05 – Trasporto DEF
+    // -------------------------------------------------------------------------
+    @Test
+    public void test05_trasportoDef() throws Exception {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("pgInventario",          1);
+        body.put("tiDocumento",           "T");
+        body.put("stato",                 "DEF");
+        body.put("esercizio",             ESERCIZIO);
+        body.put("dsDocTrasportoRientro", "Trasporto DEF");
+        body.put("cdTipoTrasportoRientro","1");
+        body.put("dataRegistrazione",     DATE_INS);
+        body.put("destinazione",          "Destinazione DEF");
+        body.put("indirizzo",             "Indirizzo DEF");
+        body.put("flVettore",             true);
+        body.put("flIncaricato",          false);
+        body.put("nominativoVettore",     "Vettore Trasporto DEF");
+        body.put("cdTerzoResponsabile",   3942);
+        body.put("dettagli", Arrays.asList(
+                dettaglio(1, 1637L, 0, 4008),
+                dettaglio(1, 1638L, 0, 4008)
+        ));
+        body.put("attachments", Arrays.asList(
+                allegato("trasporto_def_altro.pdf",   TYPE_TRASPORTO_ALTRO),
+                allegato("trasporto_def_firmato.pdf", TYPE_TRASPORTO_FIRMATO)
+        ));
 
-        AttachmentDocTrasportoRientro att = new AttachmentDocTrasportoRientro();
-        att.setNomeFile(nome);
-        att.setMimeTypes(MimeTypes.PDF);
-        att.setTypeAttachment(tipo);
-        att.setBytes(("PDF-FITTIZIO-" + nome).getBytes());
+        int status = post(body);
+        assertEquals("Trasporto DEF: atteso 201", 201, status);
+    }
 
-        return att;
+    // -------------------------------------------------------------------------
+    // test06 – Rientro INS (riferimento al Trasporto DEF di test05)
+    // -------------------------------------------------------------------------
+    @Test
+    public void test06_rientroIns() throws Exception {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("pgInventario",          1);
+        body.put("tiDocumento",           "R");
+        body.put("stato",                 "INS");
+        body.put("esercizio",             ESERCIZIO);
+        body.put("dsDocTrasportoRientro", "Rientro INS");
+        body.put("cdTipoTrasportoRientro","2");
+        body.put("dataRegistrazione",     DATE_INS);
+        body.put("destinazione",          "Destinazione Rientro INS");
+        body.put("indirizzo",             "Indirizzo Rientro INS");
+        body.put("flIncaricato",          false);
+        body.put("flVettore",             true);
+        body.put("nominativoVettore",     "Vettore Rientro INS");
+        body.put("cdTerzoResponsabile",   3942);
+        body.put("dettagli", Arrays.asList(
+                dettaglioRientro(1, 1637L, 0, 4008, "T", ESERCIZIO, 1, 3, 1637L, 0),
+                dettaglioRientro(1, 1638L, 0, 4008, "T", ESERCIZIO, 1, 3, 1638L, 0)
+        ));
+        body.put("attachments", Arrays.asList(
+                allegato("rientro_ins_1.pdf", TYPE_RIENTRO_ALTRO),
+                allegato("rientro_ins_2.pdf", TYPE_RIENTRO_ALTRO)
+        ));
+
+        int status = post(body);
+        assertEquals("Rientro INS: atteso 201", 201, status);
     }
 
     // =========================================================================
-    // HELPER
+    // Helper methods
     // =========================================================================
-    private Timestamp toTimestamp(String data) throws Exception {
-        return new Timestamp(new SimpleDateFormat("yyyyMMdd").parse(data).getTime());
+
+    /**
+     * Costruisce un dettaglio senza riferimento (Trasporto).
+     */
+    private Map<String, Object> dettaglio(int pgInventario, long nrInventario,
+                                          int progressivo, int cdTerzoAssegnatario) {
+        Map<String, Object> d = new LinkedHashMap<>();
+        d.put("pgInventario",       pgInventario);
+        d.put("nrInventario",       nrInventario);
+        d.put("progressivo",        progressivo);
+        d.put("cdTerzoAssegnatario",cdTerzoAssegnatario);
+        return d;
     }
 
-    private DocTrasportoRientroDTOBulk eseguiChiamataRest(
-            DocTrasportoRientroDTOBulk dto, String descrizione) throws Exception {
+    /**
+     * Costruisce un dettaglio con riferimento al documento di trasporto (Rientro).
+     */
+    private Map<String, Object> dettaglioRientro(int pgInventario, long nrInventario,
+                                                 int progressivo, int cdTerzoAssegnatario,
+                                                 String tiDocumentoRif, int esercizioRif,
+                                                 int pgInventarioRif, int pgDocTrasportoRientroRif,
+                                                 long nrInventarioRif, int progressivoRif) {
+        Map<String, Object> d = dettaglio(pgInventario, nrInventario, progressivo, cdTerzoAssegnatario);
+        d.put("tiDocumentoRif",            tiDocumentoRif);
+        d.put("esercizioRif",              esercizioRif);
+        d.put("pgInventarioRif",           pgInventarioRif);
+        d.put("pgDocTrasportoRientroRif",  pgDocTrasportoRientroRif);
+        d.put("nrInventarioRif",           nrInventarioRif);
+        d.put("progressivoRif",            progressivoRif);
+        return d;
+    }
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+    /**
+     * Costruisce un allegato con il PDF minimo condiviso.
+     */
+    private Map<String, Object> allegato(String nomeFile, String typeAttachment) {
+        Map<String, Object> a = new LinkedHashMap<>();
+        a.put("nomeFile",        nomeFile);
+        a.put("mimeTypes",       "PDF");
+        a.put("typeAttachment",  typeAttachment);
+        a.put("bytes",           PDF_BYTES);
+        return a;
+    }
 
-        String json = mapper.writeValueAsString(dto);
+    // =========================================================================
+    // HTTP helper
+    // =========================================================================
 
-        CredentialsProvider provider = new BasicCredentialsProvider();
-        provider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials(USERNAME, PASSWORD));
+    /**
+     * Esegue una POST verso {@code ENDPOINT} con Basic Auth e restituisce l'HTTP status code.
+     */
+    private int post(Map<String, Object> body) throws Exception {
+        String json = mapper.writeValueAsString(body);
 
-        HttpClient client = HttpClientBuilder.create()
-                .setDefaultCredentialsProvider(provider)
-                .build();
+        URL url = new URL(BASE_URL + ENDPOINT
+                + "?cdCds=" + CD_CDS
+                + "&cdUo="  + CD_UO
+                + "&esercizio=" + ESERCIZIO);
 
-        HttpPost request = new HttpPost(BASE_URL + "/" + ENDPOINT);
-        request.setHeader("Content-Type", "application/json;charset=UTF-8");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        conn.setRequestProperty("Accept",       "application/json");
 
-        request.setHeader(SIGLASecurityContext.X_SIGLA_CD_CDS, CD_CDS);
-        request.setHeader(SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA, CD_UO);
-        request.setHeader(SIGLASecurityContext.X_SIGLA_ESERCIZIO, String.valueOf(ESERCIZIO));
+        // Basic Auth: ente / 2023enteiss
+        String credentials = Base64.getEncoder()
+                .encodeToString("ente:2023enteiss".getBytes(StandardCharsets.UTF_8));
+        conn.setRequestProperty("Authorization", "Basic " + credentials);
 
-        request.setEntity(new StringEntity(json, "UTF-8"));
-
-        HttpResponse response = client.execute(request);
-        int statusCode = response.getStatusLine().getStatusCode();
-
-        System.out.println("\n=== " + descrizione + " ===");
-        System.out.println("HTTP Status: " + statusCode);
-
-        if (response.getEntity() != null) {
-            String body = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-            System.out.println(body);
-
-            if (statusCode == 201) {
-                return mapper.readValue(body, DocTrasportoRientroDTOBulk.class);
-            }
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(json.getBytes(StandardCharsets.UTF_8));
         }
 
-        Assert.assertEquals(201, statusCode);
-        return null;
+        return conn.getResponseCode();
     }
 }

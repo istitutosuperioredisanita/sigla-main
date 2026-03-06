@@ -859,42 +859,129 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
+
     @Override
-    public Doc_trasporto_rientroBulk aggiungiBeniDaDTO(UserContext userContext, Doc_trasporto_rientroBulk docCreato, List<Doc_trasporto_rientro_dettBulk> dettagliDTO) throws ComponentException, RemoteException {
+    public void popolaCampiRiferimento(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
         try {
-            return (Doc_trasporto_rientroBulk) invoke("aggiungiBeniDaDTO", new Object[]{
+            invoke("popolaCampiRiferimento", new Object[]{
                     userContext,
-                    docCreato,
-                    dettagliDTO});
+                    doc
+            });
         } catch (java.rmi.RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {
             try {
                 throw e.getTargetException();
-            } catch (it.cnr.jada.comp.ComponentException ex) {
+            } catch (ComponentException ex) {
                 throw ex;
             } catch (Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+                throw new RemoteException("Uncaught exception", ex);
             }
         }
-
     }
 
     @Override
-    public Doc_trasporto_rientroBulk confermaDocumentoTemporaneo(UserContext userContext, Doc_trasporto_rientroBulk docT) throws ComponentException, RemoteException {
+    public void preparaEAggiornaRiferimentiInversi(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
         try {
-            return (Doc_trasporto_rientroBulk) invoke("confermaDocumentoTemporaneo", new Object[]{
+            invoke("preparaEAggiornaRiferimentiInversi", new Object[]{
                     userContext,
-                    docT});
+                    doc
+            });
         } catch (java.rmi.RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {
             try {
                 throw e.getTargetException();
-            } catch (it.cnr.jada.comp.ComponentException ex) {
+            } catch (ComponentException ex) {
                 throw ex;
             } catch (Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+                throw new RemoteException("Uncaught exception", ex);
             }
-        }    }
+        }
+    }
+
+    @Override
+    public Doc_trasporto_rientroBulk cercaDocumentoPerBene(
+            UserContext userContext,
+            String tiDocumento,
+            String stato,
+            Long nrInventario,
+            Integer esercizio) throws ComponentException, RemoteException {
+
+        try {
+            return (Doc_trasporto_rientroBulk) invoke("cercaDocumentoPerBene", new Object[]{
+                    userContext,
+                    tiDocumento,
+                    stato,
+                    nrInventario,
+                    esercizio
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public void archiviaAllegatiDocTR(UserContext userContext, Doc_trasporto_rientroBulk doc) throws ComponentException, RemoteException {
+        try {
+            invoke("archiviaAllegatiDocTR", new Object[]{
+                    userContext,
+                    doc
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Doc_trasporto_rientroBulk saveDocFromWS(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk bulk)
+            throws ComponentException, RemoteException {
+
+        try {
+            return (Doc_trasporto_rientroBulk) invoke(
+                    "saveDocFromWS",
+                    new Object[]{ userContext, bulk });
+
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+
+        } catch (java.lang.reflect.InvocationTargetException e) {
+
+            try {
+                throw e.getTargetException();
+
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
 }

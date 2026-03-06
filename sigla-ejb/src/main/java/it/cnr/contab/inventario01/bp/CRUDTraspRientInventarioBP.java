@@ -44,7 +44,6 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk.STATO_INSERITO;
@@ -515,6 +514,11 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         return !isVisualizzazione() && super.isEditable();
     }
 
+    @Override
+    protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
+        return !isDocumentoNonModificabile();
+    }
+
     /**
      * Determina se gli input devono essere readonly
      */
@@ -793,7 +797,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         if (doc instanceof DocumentoTrasportoBulk) {
             aspectFirmatoAtteso = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
         } else if (doc instanceof DocumentoRientroBulk) {
-            aspectFirmatoAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
+            aspectFirmatoAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
         } else {
             return false;
         }
@@ -1890,8 +1894,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 aspectFirmatoAtteso = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
                 aspectAltroAtteso = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO;
             } else if (allegato instanceof AllegatoDocumentoRientroBulk) {
-                aspectFirmatoAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
-                aspectAltroAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO;
+                aspectFirmatoAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
+                aspectAltroAtteso = AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO;
             }
 
             if (aspectFirmatoAtteso != null && aspectAltroAtteso != null) {
@@ -2203,31 +2207,29 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
 
     /**
-     * Aggiorna il documento:
-     * - assegna l’eventuale file caricato,
-     * - valida gli allegati,
-     * - invia il documento al componente per l’aggiornamento,
-     * - archivia fisicamente gli allegati.
-     * Gestisce rollback e converte eventuali errori in BusinessProcessException.
+     * Aggiorna il documento: assegna file, valida allegati, aggiorna il modello
+     * e archivia gli allegati. Gestisce rollback ed errori applicativi.
      */
     @Override
     public void update(ActionContext context) throws BusinessProcessException {
         try {
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
-            if (doc.getArchivioAllegati() == null)
+            if (doc.getArchivioAllegati() == null) {
                 doc.setArchivioAllegati(new BulkList<>());
+            }
 
             assegnaFileUploadato(context, doc);
             validaAllegati(doc);
-
             getModel().setToBeUpdated();
+
             Doc_trasporto_rientroBulk docAggiornato =
                     (Doc_trasporto_rientroBulk) createComponentSession()
                             .modificaConBulk(context.getUserContext(), getModel());
 
             setModel(context, docAggiornato);
             setSkipAllegatiReload(false);
-            archiviaAllegati(context);
+
+            getComp().archiviaAllegatiDocTR(context.getUserContext(), docAggiornato);
 
         } catch (ApplicationException e) {
             rollbackUserTransaction();
@@ -2240,12 +2242,9 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
 
     /**
-     * Salva il documento in modo definitivo:
-     * - assegna file caricati,
-     * - valida allegati e allegato firmato,
-     * - esegue il salvataggio definitivo tramite componente,
-     * - archivia allegati e imposta lo stato a DEFINITIVO.
-     * Gestisce rollback ed errori applicativi.
+     * Salva il documento in modo definitivo: assegna file, valida allegati,
+     * salva tramite componente, archivia gli allegati e imposta lo stato
+     * a DEFINITIVO. Gestisce rollback ed errori applicativi.
      */
     public void salvaDefinitivo(ActionContext context) throws BusinessProcessException {
         try {
@@ -2262,14 +2261,17 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             doc.setToBeUpdated();
             doc = getComp().salvaDefinitivo(context.getUserContext(), doc);
 
+            setStatus(VIEW);
+
             setModel(context, doc);
             setSkipAllegatiReload(false);
             commitUserTransaction();
-            archiviaAllegati(context);
+
+            getComp().archiviaAllegatiDocTR(context.getUserContext(), doc);
 
             doc.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
             doc.setCrudStatus(OggettoBulk.NORMAL);
-            setStatus(VIEW);
+
             setMessage("Documento salvato in stato DEFINITIVO");
 
         } catch (ComponentException | RemoteException | ValidationException ex) {
@@ -2277,5 +2279,4 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             throw handleException(ex);
         }
     }
-
 }
