@@ -331,7 +331,7 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                     //verifico se sulla riga del docamm ci sia un bene inventariabile
                     Bene_servizioBulk myBeneServizio = (Bene_servizioBulk) fatpasHome.loadIfNeededObject(docRiga.getBene_servizio());
 
-                    if (Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
+                    if (myBeneServizio.getFl_gestione_inventario() && Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
                         AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHomeCache().getHome(AssCatgrpInventVoceEpBulk.class);
                         AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(docRiga.getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
                         if (result != null && result.getConto() != null && result.getConto().getCd_voce_ep() != null)
@@ -356,6 +356,16 @@ public class Fattura_passiva_rigaHome extends BulkHome {
                                 .findAny().orElse(null);
                     }
                 } else {
+                    //verifico se sulla riga del docamm ci sia un bene ed uso quello nel caso
+                    Bene_servizioBulk myBeneServizio = (Bene_servizioBulk) fatpasHome.loadIfNeededObject(docRiga.getBene_servizio());
+
+                    if (Optional.ofNullable(myBeneServizio.getCd_categoria_gruppo()).isPresent()) {
+                        AssCatgrpInventVoceEpHome assCatgrpInventVoceEpHome = (AssCatgrpInventVoceEpHome) getHomeCache().getHome(AssCatgrpInventVoceEpBulk.class);
+                        AssCatgrpInventVoceEpBulk result = assCatgrpInventVoceEpHome.findDefaultByCategoria(docRiga.getEsercizio(), myBeneServizio.getCd_categoria_gruppo());
+                        if (result != null && result.getConto() != null && result.getConto().getCd_voce_ep() != null)
+                            return result.getConto();
+                    }
+
                     Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
                     return configHome.getContoDocumentoNonLiquidabile(docRiga);
                 }
