@@ -119,7 +119,8 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         if (Optional.ofNullable(bulk).filter(IDocumentoCogeBulk.class::isInstance).isPresent()) {
             try {
                 ResultScrittureContabili resultScrittureContabili = this.createScrittura(usercontext, (IDocumentoCogeBulk) bulk);
-                bulk = (OggettoBulk) resultScrittureContabili.getDocumentoCoge();
+                if ( Optional.ofNullable(resultScrittureContabili).isPresent())
+                    bulk = (OggettoBulk) resultScrittureContabili.getDocumentoCoge();
             } catch (NoRollbackException ignored) {
             } catch (ApplicationException e) {
                 try {
