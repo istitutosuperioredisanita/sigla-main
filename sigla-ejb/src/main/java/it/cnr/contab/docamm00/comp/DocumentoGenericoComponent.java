@@ -34,6 +34,7 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteHome;
 import it.cnr.contab.docamm00.docs.bulk.*;
+import it.cnr.contab.docamm00.ejb.FatturaAttivaSingolaComponentSession;
 import it.cnr.contab.docamm00.ejb.ProgressiviAmmComponentSession;
 import it.cnr.contab.docamm00.ejb.RiportoDocAmmComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.CambioBulk;
@@ -66,9 +67,9 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.ejb.EJBException;
 
 import javax.naming.OperationNotSupportedException;
-import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -6508,12 +6509,17 @@ public class DocumentoGenericoComponent
             List<IDocumentoAmministrativoRigaBulk> rigaBulks
     ) throws ComponentException {
         try {
+            Map<Accertamento_scadenzarioBulk, BigDecimal> accertamentoScadNewImporti = new HashMap<Accertamento_scadenzarioBulk, BigDecimal>();
             ObbligazioneAbstractComponentSession obbligazioneSession =
                     (ObbligazioneAbstractComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
                             "CNRDOCCONT00_EJB_ObbligazioneAbstractComponentSession", ObbligazioneAbstractComponentSession.class);
             AccertamentoAbstractComponentSession accertamentoSession =
                     (AccertamentoAbstractComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
                             "CNRDOCCONT00_EJB_AccertamentoAbstractComponentSession", AccertamentoAbstractComponentSession.class);
+            FatturaAttivaSingolaComponentSession fatturaAttivaSingolaComponentSession =
+                    (FatturaAttivaSingolaComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+                            "CNRDOCAMM00_EJB_FatturaAttivaSingolaComponentSession", FatturaAttivaSingolaComponentSession.class);
+
             CausaleContabileBulk causaleContabileBulk = new CausaleContabileBulk(stornaDocumentoGenericoBulk.getCausaleContabile());
             causaleContabileBulk = (CausaleContabileBulk) getHome(userContext, CausaleContabileBulk.class).findByPrimaryKey(causaleContabileBulk);
 
@@ -6621,8 +6627,14 @@ public class DocumentoGenericoComponent
                     if (fatturaAttivaRigaIBulk.getFattura_attivaI().getCd_modalita_pag_uo_cds() != null) {
                         documentoGenericoRigaNew.setModalita_pagamento_uo_cds(new Rif_modalita_pagamentoBulk(fatturaAttivaRigaIBulk.getFattura_attivaI().getCd_modalita_pag_uo_cds()));
                     }
-                    documentoGenericoRigaNew.setIm_riga(fatturaAttivaRigaIBulk.getIm_riga());
-                    documentoGenericoRigaNew.setIm_riga_divisa(fatturaAttivaRigaIBulk.getIm_riga());
+                    fatturaAttivaRigaIBulk.getFattura_attiva().setAttivoSplitPayment(fatturaAttivaSingolaComponentSession.isAttivoSplitPayment(userContext,fatturaAttivaRigaIBulk.getFattura_attiva().getDt_registrazione()) );
+                    if ( fatturaAttivaRigaIBulk.getFattura_attiva().quadraturaInDeroga()) {
+                        documentoGenericoRigaNew.setIm_riga(fatturaAttivaRigaIBulk.getIm_imponibile());
+                        documentoGenericoRigaNew.setIm_riga_divisa(fatturaAttivaRigaIBulk.getIm_imponibile());
+                    }else {
+                        documentoGenericoRigaNew.setIm_riga(fatturaAttivaRigaIBulk.getIm_riga());
+                        documentoGenericoRigaNew.setIm_riga_divisa(fatturaAttivaRigaIBulk.getIm_riga());
+                    }
                     documentoGenericoRigaNew.setFattura_attiva_riga_storno(fatturaAttivaRigaIBulk);
                     Accertamento_scadenzarioBulk accertamentoScadenziario = fatturaAttivaRigaIBulk.getAccertamento_scadenzario();
                     /**
@@ -6633,11 +6645,16 @@ public class DocumentoGenericoComponent
                     documentoGenericoRigaNew.setAccertamento_scadenziario(accertamentoScadenziario);
                     accertamentoScadenziario.setIm_associato_doc_amm(
                             accertamentoScadenziario.getIm_associato_doc_amm()
-                                    .subtract(fatturaAttivaRigaIBulk.getIm_riga())
+                                    .subtract(documentoGenericoRigaNew.getIm_riga())
                     );
                     updateImportoAssociatoDocAmm(userContext, accertamentoScadenziario);
-                    accertamentoSession.sdoppiaScadenzaInAutomatico(userContext, accertamentoScadenziario, accertamentoScadenziario.getIm_scadenza()
-                            .subtract(fatturaAttivaRigaIBulk.getIm_riga()));
+                    BigDecimal importoScadenza= BigDecimal.ZERO;
+                    if ( accertamentoScadNewImporti.containsKey(accertamentoScadenziario))
+                        accertamentoScadNewImporti.put(accertamentoScadenziario, accertamentoScadNewImporti.get(accertamentoScadenziario).subtract(documentoGenericoRigaNew.getIm_riga()));
+                    else
+                        accertamentoScadNewImporti.put(accertamentoScadenziario,accertamentoScadenziario.getIm_scadenza().subtract(documentoGenericoRigaNew.getIm_riga()));
+                    //accertamentoSession.sdoppiaScadenzaInAutomatico(userContext, accertamentoScadenziario, accertamentoScadenziario.getIm_scadenza()
+                    //        .subtract(documentoGenericoRigaNew.getIm_riga()));
                 }
                 if (rigaBulk instanceof Fattura_passiva_rigaIBulk) {
                     Fattura_passiva_rigaIBulk fatturaPassivaRigaIBulk = (Fattura_passiva_rigaIBulk)rigaBulk;
@@ -6672,6 +6689,17 @@ public class DocumentoGenericoComponent
                     updateImportoAssociatoDocAmm(userContext, obbligazioneScadenziario);
                     obbligazioneSession.sdoppiaScadenzaInAutomatico(userContext, obbligazioneScadenziario, obbligazioneScadenziario.getIm_scadenza()
                             .subtract(fatturaPassivaRigaIBulk.getIm_riga()));
+                }
+            }
+            if ( !accertamentoScadNewImporti.isEmpty()){
+                for (Map.Entry<Accertamento_scadenzarioBulk, BigDecimal> entry : accertamentoScadNewImporti.entrySet()) {
+                    Accertamento_scadenzarioBulk accertamentoScadenziario = entry.getKey();
+                    BigDecimal importo = entry.getValue();
+                    try {
+                        accertamentoSession.sdoppiaScadenzaInAutomatico(userContext, accertamentoScadenziario, importo);
+                    } catch (RemoteException | PersistencyException | ComponentException e) {
+                        throw e;
+                    }
                 }
             }
             return (Documento_genericoBulk) creaConBulk(userContext, documentoGenericoBulk);

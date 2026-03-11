@@ -17,20 +17,21 @@
 
 package it.cnr.contab.doccont00.comp;
 
-import java.math.BigDecimal;
-import it.cnr.contab.doccont00.ejb.*;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
-import java.sql.*;
-import java.util.*;
 import it.cnr.contab.doccont00.core.bulk.*;
+import it.cnr.contab.doccont00.ejb.AccertamentoComponentSession;
+import it.cnr.contab.doccont00.ejb.AccertamentoPGiroComponentSession;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.comp.*;
-import it.cnr.jada.persistency.sql.*;
-import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.bulk.BulkCollections;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.Map;
 public class AccertamentoAbstractComponent extends it.cnr.jada.comp.CRUDComponent implements IDocumentoContabileMgr,IAccertamentoAbstractMgr,ICRUDMgr,Cloneable,Serializable
 {
 //@@<< CONSTRUCTORCST

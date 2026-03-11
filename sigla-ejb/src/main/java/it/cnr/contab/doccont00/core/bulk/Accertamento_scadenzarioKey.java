@@ -17,10 +17,8 @@
 
 package it.cnr.contab.doccont00.core.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.KeyedPersistent;
 
 public class Accertamento_scadenzarioKey extends OggettoBulk implements KeyedPersistent {
 	// CD_CDS VARCHAR(30) NOT NULL (PK)
@@ -60,6 +58,15 @@ public boolean equalsByPrimaryKey(Object o) {
 	if(!compareKey(getPg_accertamento_scadenzario(),k.getPg_accertamento_scadenzario())) return false;
 	return true;
 }
+	@Override
+	public int hashCode() {
+		return primaryKeyHashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.equalsByPrimaryKey(obj);
+	}
 /* 
  * Getter dell'attributo cd_cds
  */
