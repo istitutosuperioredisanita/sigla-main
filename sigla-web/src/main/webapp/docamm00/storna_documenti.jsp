@@ -10,6 +10,8 @@
 <html>
     <head>
         <% JSPUtils.printBaseUrl(pageContext); %>
+        <script language="javascript" src="scripts/css.js"></script>
+        <script language="JavaScript" src="scripts/util.js"></script>
         <title>Storna documenti</title>
     </head>
 <body class="Workspace">
