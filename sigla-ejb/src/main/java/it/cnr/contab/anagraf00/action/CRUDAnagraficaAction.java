@@ -17,27 +17,27 @@
 
 package it.cnr.contab.anagraf00.action;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
-import it.cnr.contab.anagraf00.ejb.*;
-import it.cnr.contab.anagraf00.tabrif.bulk.*;
+import it.cnr.contab.anagraf00.bp.CRUDAnagraficaBP;
+import it.cnr.contab.anagraf00.bp.CRUDTerzoBP;
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
+import it.cnr.contab.anagraf00.core.bulk.Carico_familiare_anagBulk;
+import it.cnr.contab.anagraf00.core.bulk.Pagamento_esternoBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
-import it.cnr.contab.anagraf00.bp.*;
-import it.cnr.contab.anagraf00.core.bulk.*;
-import it.cnr.contab.compensi00.bp.CRUDCompensoBP;
-import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
-import it.cnr.contab.docamm00.bp.CRUDFatturaAttivaBP;
 import it.cnr.contab.doccont00.comp.DateServices;
 import it.cnr.jada.action.*;
-import it.cnr.jada.bulk.*;
+import it.cnr.jada.bulk.FillException;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.ejb.*;
-import it.cnr.jada.util.*;
-import it.cnr.jada.util.action.*;
+import it.cnr.jada.util.DateUtils;
+import it.cnr.jada.util.action.CRUDBP;
+import it.cnr.jada.util.action.OptionBP;
+
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
 /**
  * Adatta e implementa la {@link it.cnr.jada.util.action.CRUDAction } per le funzionalità supplementari
@@ -125,7 +125,7 @@ public Forward doBringBackTerzo(ActionContext context) {
 				((it.cnr.contab.anagraf00.bp.CRUDAnagraficaBP)context.getBusinessProcess()).getAnagrafico();
 
 			if (!anagraficoBulk.getAssociatiStudio().isEmpty() && !oldTi_entita.equals(anagraficoBulk.getTi_entita())){
-				((it.cnr.contab.anagraf00.bp.CRUDAnagraficaBP)context.getBusinessProcess()).setMessage("Attenzione, risultano associati terzi allo \"Studio associato\". Modifica non consentita!");
+				((it.cnr.contab.anagraf00.bp.CRUDAnagraficaBP)context.getBusinessProcess()).setMessage("Attenzione, risultano associati terzi allo \"Studio associato o Rtp\". Modifica non consentita!");
 				anagraficoBulk.setTi_entita(oldTi_entita);
 				return context.findDefaultForward();
 			}

@@ -68,7 +68,7 @@
 				<% bp.getController().writeFormInput(out,"fl_fatturazione_differita");%>
 				<% bp.getController().writeFormLabel(out,"fl_fatturazione_differita");%>
 		<%} %>
-		<%if (anagrafico.isPersonaGiuridica()) { %>
+		<%if (anagrafico.isPersonaGiuridica()||anagrafico.isPersonaFisica()) { %>
 				<% bp.getController().writeFormInput(out,"fl_studio_associato");%>
 				<% bp.getController().writeFormLabel(out,"fl_studio_associato");%>
 		<%} %>
