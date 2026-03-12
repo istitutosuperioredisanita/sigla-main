@@ -19,17 +19,15 @@
           <% bp.getDettBeniController().writeHTMLTable(
                 pageContext,
                 "righeRientro",
-                true,
+                bp.isEditable(),
                 false,
-                true,
+                bp.isEditable(),
                 null,
                 "100px",
                 true); %>
         </td>
       </tr>
     </table>
-
-    <!-- ==================== FORM DETTAGLI BENE ==================== -->
 
     <table>
       <tr>
@@ -52,11 +50,11 @@
 
     <table>
       <tr>
-       <td><% bp.getDettBeniController().writeFormLabel(out,"find_assegnatario"); %></td>
-         <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"find_assegnatario",true,null,null); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out,"find_assegnatario"); %></td>
+        <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"find_assegnatario",true,null,null); %></td>
       </tr>
       <tr>
-      <td><% bp.getDettBeniController().writeFormLabel(out,"find_ubicazione"); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out,"find_ubicazione"); %></td>
         <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"find_ubicazione",true,null,null); %></td>
       </tr>
       <tr>

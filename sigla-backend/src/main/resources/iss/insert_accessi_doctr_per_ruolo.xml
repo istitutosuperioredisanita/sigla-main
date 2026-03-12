@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+
+    <!-- 5. Inserimento RUOLO_ACCESSO per DOCTR_REST -->
+    <changeSet id="insert_ruolo_accesso_doctr_rest" author="davide.mirra">
+        <insert tableName="RUOLO_ACCESSO">
+            <column name="CD_RUOLO" value="DOCTR_REST"/>
+            <column name="CD_ACCESSO" value="AMMINVENTTRASBENIM"/>
+            <column name="UTUV" value="SYSTEM"/>
+            <column name="DACR" valueDate="${now}"/>
+            <column name="UTCR" value="SYSTEM"/>
+            <column name="DUVA" valueDate="${now}"/>
+            <column name="PG_VER_REC" value="1"/>
+        </insert>
+
+        <insert tableName="RUOLO_ACCESSO">
+            <column name="CD_RUOLO" value="DOCTR_REST"/>
+            <column name="CD_ACCESSO" value="AMMINVENTTRASBENIV"/>
+            <column name="UTUV" value="SYSTEM"/>
+            <column name="DACR" valueDate="${now}"/>
+            <column name="UTCR" value="SYSTEM"/>
+            <column name="DUVA" valueDate="${now}"/>
+            <column name="PG_VER_REC" value="1"/>
+        </insert>
+
+        <insert tableName="RUOLO_ACCESSO">
+            <column name="CD_RUOLO" value="DOCTR_REST"/>
+            <column name="CD_ACCESSO" value="AMMINVENTRENTBENIV"/>
+            <column name="UTUV" value="SYSTEM"/>
+            <column name="DACR" valueDate="${now}"/>
+            <column name="UTCR" value="SYSTEM"/>
+            <column name="DUVA" valueDate="${now}"/>
+            <column name="PG_VER_REC" value="1"/>
+        </insert>
+
+        <insert tableName="RUOLO_ACCESSO">
+            <column name="CD_RUOLO" value="DOCTR_REST"/>
+            <column name="CD_ACCESSO" value="AMMTIPOTRARIENBENIM"/>
+            <column name="UTUV" value="SYSTEM"/>
+            <column name="DACR" valueDate="${now}"/>
+            <column name="UTCR" value="SYSTEM"/>
+            <column name="DUVA" valueDate="${now}"/>
+            <column name="PG_VER_REC" value="1"/>
+        </insert>
+
+        <insert tableName="RUOLO_ACCESSO">
+            <column name="CD_RUOLO" value="DOCTR_REST"/>
+            <column name="CD_ACCESSO" value="AMMINVENTRENTBENIM"/>
+            <column name="UTUV" value="SYSTEM"/>
+            <column name="DACR" valueDate="${now}"/>
+            <column name="UTCR" value="SYSTEM"/>
+            <column name="DUVA" valueDate="${now}"/>
+            <column name="PG_VER_REC" value="1"/>
+        </insert>
+
+        <insert tableName="RUOLO_ACCESSO">
+            <column name="CD_RUOLO" value="DOCTR_REST"/>
+            <column name="CD_ACCESSO" value="AMMTIPOTRARIENBENIV"/>
+            <column name="UTUV" value="SYSTEM"/>
+            <column name="DACR" valueDate="${now}"/>
+            <column name="UTCR" value="SYSTEM"/>
+            <column name="DUVA" valueDate="${now}"/>
+            <column name="PG_VER_REC" value="1"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

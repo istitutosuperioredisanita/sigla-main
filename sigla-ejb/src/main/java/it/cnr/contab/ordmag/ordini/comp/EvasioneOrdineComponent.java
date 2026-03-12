@@ -194,8 +194,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					consegneColl.stream().collect(Collectors.groupingBy(o -> o.getOrdineAcqRiga().getOrdineAcq()));
 
 			for (OrdineAcqBulk ordineSelected : mapOrdine.keySet()) {
-
-				for (OrdineAcqConsegnaBulk consegnaSelected : consegneColl) {
+				for (OrdineAcqConsegnaBulk consegnaSelected : mapOrdine.get(ordineSelected)) {
 
 					Optional.ofNullable(consegnaSelected.getQuantitaEvasa()).filter(el->el.compareTo(BigDecimal.ZERO)>0)
 							.orElseThrow(()->new DetailedRuntimeException("Indicare la quantità da evadere per la consegna " + consegnaSelected.getConsegnaOrdineString()));
@@ -258,7 +257,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 				OrdineAcqBulk ordineComp = ((OrdineAcqHome)getHome(userContext, OrdineAcqBulk.class)).initializeBulkForEdit(ordineSelected);
 				getHomeCache(userContext).fetchAll(userContext);
 
-				for (OrdineAcqConsegnaBulk consegnaSelected : consegneColl) {
+				for (OrdineAcqConsegnaBulk consegnaSelected : mapOrdine.get(ordineSelected)) {
 					//recupero la riga nell'ambito dell'ordine ricaricato
 					OrdineAcqConsegnaBulk finalConsegnaEvasa = consegnaSelected;
 					OrdineAcqConsegnaBulk consegnaCompSelected = ordineComp.getRigheOrdineColl().stream().flatMap(el -> el.getRigheConsegnaColl().stream()).filter(el -> el.equalsByPrimaryKey(finalConsegnaEvasa))
