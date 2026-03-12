@@ -179,6 +179,36 @@
 				propertyName="ds_scrittura"
 				sqlTypeName="VARCHAR"
 				columnSize="250" />
+		<columnMapping
+				columnName="CDR_GAE"
+				propertyName="cdr_gae"
+				sqlTypeName="VARCHAR"
+				columnSize="30" />
+		<columnMapping
+				columnName="CD_GAE"
+				propertyName="cd_gae"
+				sqlTypeName="VARCHAR"
+				columnSize="10" />
+		<columnMapping
+				columnName="DS_GAE"
+				propertyName="ds_gae"
+				sqlTypeName="VARCHAR"
+				columnSize="300" />
+		<columnMapping
+				columnName="CD_CAUSALE_CONTABILE"
+				propertyName="cd_causale_contabile"
+				sqlTypeName="VARCHAR"
+				columnSize="10" />
+		<columnMapping
+				columnName="DS_CAUSALE_CONTABILE"
+				propertyName="ds_causale_contabile"
+				sqlTypeName="VARCHAR"
+				columnSize="250" />
+		<columnMapping
+				columnName="DESC_DOCUMENTO"
+				propertyName="desc_documento"
+				sqlTypeName="VARCHAR"
+				columnSize="2000" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="cd_cds" />
@@ -232,5 +262,16 @@
 		name="ti_istituz_commerc" />
 	<persistentProperty
 		name="fl_mov_terzo" />
-
+	<persistentProperty
+			name="cdr_gae" />
+	<persistentProperty
+			name="cd_gae" />
+	<persistentProperty
+			name="ds_gae" />
+	<persistentProperty
+			name="cd_causale_contabile" />
+	<persistentProperty
+			name="ds_causale_contabile" />
+	<persistentProperty
+			name="desc_documento" />
 </SQLPersistentInfo>

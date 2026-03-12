@@ -99,7 +99,14 @@ public class V_coge_scr_movBase extends OggettoBulk implements Persistent {
 //    FL_MOV_TERZO CHAR(1)
 	private java.lang.Boolean fl_mov_terzo;
 	private java.lang.String ds_scrittura;
- 
+
+	private java.lang.String cdr_gae;
+	private java.lang.String cd_gae;
+	private java.lang.String ds_gae;
+	private java.lang.String cd_causale_contabile;
+	private java.lang.String ds_causale_contabile;
+	private java.lang.String desc_documento;
+
 	public V_coge_scr_movBase() {
 		super();
 	}
@@ -258,5 +265,53 @@ public class V_coge_scr_movBase extends OggettoBulk implements Persistent {
 	}
 	public void setDs_scrittura(String ds_scrittura) {
 		this.ds_scrittura = ds_scrittura;
+	}
+
+	public String getCdr_gae() {
+		return cdr_gae;
+	}
+
+	public void setCdr_gae(String cdr_gae) {
+		this.cdr_gae = cdr_gae;
+	}
+
+	public String getCd_gae() {
+		return cd_gae;
+	}
+
+	public void setCd_gae(String cd_gae) {
+		this.cd_gae = cd_gae;
+	}
+
+	public String getDs_gae() {
+		return ds_gae;
+	}
+
+	public void setDs_gae(String ds_gae) {
+		this.ds_gae = ds_gae;
+	}
+
+	public String getCd_causale_contabile() {
+		return cd_causale_contabile;
+	}
+
+	public void setCd_causale_contabile(String cd_causale_contabile) {
+		this.cd_causale_contabile = cd_causale_contabile;
+	}
+
+	public String getDs_causale_contabile() {
+		return ds_causale_contabile;
+	}
+
+	public void setDs_causale_contabile(String ds_causale_contabile) {
+		this.ds_causale_contabile = ds_causale_contabile;
+	}
+
+	public String getDesc_documento() {
+		return desc_documento;
+	}
+
+	public void setDesc_documento(String desc_documento) {
+		this.desc_documento = desc_documento;
 	}
 }

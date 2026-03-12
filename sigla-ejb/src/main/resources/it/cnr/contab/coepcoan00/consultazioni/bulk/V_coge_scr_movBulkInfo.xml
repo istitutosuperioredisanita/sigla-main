@@ -205,6 +205,61 @@
 			caseSensitiveSearch="false"
 			nullable="false"/>
 
+	<fieldProperty
+			name="cdr_gae"
+			property="cdr_gae"
+			maxLength="30"
+			inputSize="30"
+			inputType="TEXT"
+			label="Cdr Linea Attività"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false"/>
+	<fieldProperty
+			name="cd_gae"
+			property="cd_gae"
+			maxLength="10"
+			inputSize="10"
+			inputType="TEXT"
+			label="Codice Linea Attività"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false"/>
+	<fieldProperty
+			name="ds_gae"
+			property="ds_gae"
+			maxLength="300"
+			inputSize="100"
+			inputType="TEXT"
+			label="Descrizione Linea Attività"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false"/>
+	<fieldProperty
+			name="cd_causale_contabile"
+			property="cd_causale_contabile"
+			maxLength="10"
+			inputSize="10"
+			inputType="TEXT"
+			label="Codice Causale Contabile"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false"/>
+	<fieldProperty
+			name="ds_causale_contabile"
+			property="ds_causale_contabile"
+			maxLength="250"
+			inputSize="100"
+			inputType="TEXT"
+			label="Descrizione Causale Contabile"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false"/>
+	<fieldProperty
+			name="desc_documento"
+			property="desc_documento"
+			maxLength="250"
+			inputSize="100"
+			inputType="TEXT"
+			label="Descrizione Documento"
+			enabledOnSearch="true"
+			caseSensitiveSearch="false"/>
+
 	<formFieldProperty
 		name="cd_cds" />
 	<formFieldProperty
@@ -257,6 +312,18 @@
 		name="fl_mov_terzo" />
 	<formFieldProperty
 			name="ds_scrittura"/>
+	<formFieldProperty
+			name="cdr_gae"/>
+	<formFieldProperty
+			name="cd_gae"/>
+	<formFieldProperty
+			name="ds_gae"/>
+	<formFieldProperty
+			name="cd_causale_contabile"/>
+	<formFieldProperty
+			name="ds_causale_contabile"/>
+	<formFieldProperty
+			name="desc_documento"/>
 
 	<findFieldProperty
 		name="cd_cds" />
@@ -310,6 +377,19 @@
 		name="fl_mov_terzo" />
 	<findFieldProperty
 			name="ds_scrittura" />
+	<findFieldProperty
+			name="cdr_gae"/>
+	<findFieldProperty
+			name="cd_gae"/>
+	<findFieldProperty
+			name="ds_gae"/>
+	<findFieldProperty
+			name="cd_causale_contabile"/>
+	<findFieldProperty
+			name="ds_causale_contabile"/>
+	<findFieldProperty
+			name="desc_documento"/>
+
 
 	<columnFieldProperty
 		name="cd_cds" />
@@ -355,5 +435,16 @@
 		name="dt_a_competenza_coge" />
 	<columnFieldProperty
 		name="ti_istituz_commerc" />
-
+	<columnFieldProperty
+			name="cdr_gae"/>
+	<columnFieldProperty
+			name="cd_gae"/>
+	<columnFieldProperty
+			name="ds_gae"/>
+	<columnFieldProperty
+			name="cd_causale_contabile"/>
+	<columnFieldProperty
+			name="ds_causale_contabile"/>
+	<columnFieldProperty
+			name="desc_documento"/>
 </bulkInfo>
