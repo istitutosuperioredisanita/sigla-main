@@ -4938,7 +4938,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 								.filter(ana->ana.getSezione().equals(mc.getSezione()))
 								.map(Movimento_coanBulk::getIm_movimento)
 								.reduce(BigDecimal.ZERO, BigDecimal::add);
-						if (totAnalitica.compareTo(mc.getIm_movimento())!=0 && 1!=1)
+						if (totAnalitica.compareTo(mc.getIm_movimento())!=0)
 							throw new ApplicationRuntimeException("Errore nella generazione scrittura prima nota e analitica del documento "+
 									doccoge.getTipoDocumentoEnum()+"/"+doccoge.getEsercizio()+"/"+doccoge.getCd_cds()+"/"+doccoge.getCd_uo()+
 									"/"+doccoge.getPg_doc()+". Il totale ripartito in analitica (" +
