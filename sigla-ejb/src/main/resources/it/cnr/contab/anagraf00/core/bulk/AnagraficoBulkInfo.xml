@@ -635,7 +635,7 @@
 		name="fl_studio_associato"
 		property="fl_studio_associato"
 		readonlyProperty="ROFl_studio_associato"
-		label="Studio Associato"
+		label="Studio Associato/Rtp"
 		command="doDefault"
 		inputType="CHECKBOX" />
 	<fieldProperty
