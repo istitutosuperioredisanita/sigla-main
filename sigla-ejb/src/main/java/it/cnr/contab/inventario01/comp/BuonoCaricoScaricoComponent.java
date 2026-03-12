@@ -280,6 +280,7 @@ try{
 		if (!buonoC.isByFattura() && !buonoC.isByDocumento() && !buonoC.isByOrdini()){
 			buonoC = (Buono_carico_scaricoBulk)super.inizializzaBulkPerModifica(aUC, bulk);
 		}
+		Tipo_carico_scaricoBulk tipoMovimento = ((Buono_carico_scaricoBulk)bulk).getTipoMovimento();
 		buonoC.setByOrdini(((Buono_carico_scaricoBulk)bulk).getTipoMovimento().getFl_da_ordini());
 		inizializzaTipo(aUC,buonoC);	 
 		// Carica l'Inventario associato alla UO
@@ -292,6 +293,11 @@ try{
 
 			if (buonoC.getTi_documento().equals(buonoC.CARICO) || (!buonoC.isByFattura() && !buonoC.isByDocumento() && !buonoC.isByOrdini())){
 				buonoC = (Buono_carico_scaricoBulk)getHome(aUC, Buono_carico_scaricoBulk.class).findByPrimaryKey(buonoC);
+
+				if(tipoMovimento.getFl_da_ordini()){
+					buonoC.setByOrdini(((Buono_carico_scaricoBulk)bulk).getTipoMovimento().getFl_da_ordini());
+					inizializzaTipo(aUC,buonoC);
+				}
 				Buono_carico_scarico_dettHome dettHome = (Buono_carico_scarico_dettHome)getHome(aUC, Buono_carico_scarico_dettBulk.class);
 				buonoC.setBuono_carico_scarico_dettColl(new BulkList(dettHome.getDetailsFor(buonoC)));
 
@@ -6710,6 +6716,10 @@ private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCa
 			if (dett.getValore_unitario()==null || dett.getValore_unitario().compareTo(new java.math.BigDecimal(0))<=0)
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare il Prezzo Unitario del Bene " + (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":""));
 
+			// CONTROLLA PER CHE IL BENE "ONERE" SIA STATO CARICATO COME ACCESSORIO
+			if(dett.getFlagOnereConsOrdine() && !dett.getFl_bene_accessorio()){
+				throw new it.cnr.jada.comp.ApplicationException("Attenzione: Il Bene " + (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":"") +" risulta un onere, è obbligatorio inventariarlo come bene accessorio");
+			}
 			// CONTROLLA, NEL CASO DI GESTIONE ATTIVA, CHE SIA STATA IMPOSTATA L'ETICHETTA DEL BENE
 			try {
 				if (Utility.createConfigurazioneCnrComponentSession().isGestioneEtichettaInventarioBeneAttivo(aUC))

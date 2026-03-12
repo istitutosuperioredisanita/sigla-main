@@ -424,6 +424,15 @@
 		inputSize="20"
 		label="Etichetta"
 		nullable="false"/>
+	<fieldProperty
+		name="flagOnereConsOrdine"
+		property="flagOnereConsOrdine"
+		inputType="CHECKBOX"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		label="Onere"/>
+
 	<formFieldProperty
 		name="pg_inventario" />
 	<formFieldProperty
@@ -621,6 +630,30 @@
 		<columnFieldProperty
 			name="valore_totale"
 			style="width:80px" />			
+	</columnSet>
+	<columnSet name="righeSetPerOrdine">
+		<columnFieldProperty
+				name="numeroBeneCompleto"
+				style="width:80px" />
+		<columnFieldProperty
+				name="etichetta"
+				style="width:80px" />
+		<columnFieldProperty
+				name="ds_bene"
+				style="width:300px"/>
+		<columnFieldProperty
+				name="ti_istituzionale_commerciale" />
+		<columnFieldProperty
+				name="flagOnereConsOrdine" />
+		<columnFieldProperty
+				name="quantita"
+				style="width:60px"/>
+		<columnFieldProperty
+				name="valore_unitario"
+				style="width:80px" />
+		<columnFieldProperty
+				name="valore_totale"
+				style="width:80px" />
 	</columnSet>
 
 	<columnSet name="righeSetDaFattura">	

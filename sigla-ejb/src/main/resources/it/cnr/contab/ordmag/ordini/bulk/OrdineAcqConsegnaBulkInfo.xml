@@ -659,7 +659,7 @@
 		<columnFieldProperty
 				name="fl_onere"
 				headerLabel="ARTICOLO"
-				label="Onere/Accessorio" />
+				label="Onere" />
 		<columnFieldProperty
 				name="cdUnitaMisura"
 				headerLabel="ORDINE"

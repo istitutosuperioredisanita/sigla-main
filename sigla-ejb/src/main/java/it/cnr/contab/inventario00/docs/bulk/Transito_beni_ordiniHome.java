@@ -133,7 +133,8 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 							clause.getPropertyName() != null && clause.getPropertyName().equals("numeratoreOrdine") ||
 							clause.getPropertyName() != null && clause.getPropertyName().equals("numeroOrdine") ||
 							clause.getPropertyName() != null && clause.getPropertyName().equals("rigaOrdine") ||
-							clause.getPropertyName() != null && clause.getPropertyName().equals("rigaConsegnaOrdine")) {
+							clause.getPropertyName() != null && clause.getPropertyName().equals("rigaConsegnaOrdine") ||
+							clause.getPropertyName() != null && clause.getPropertyName().equals("flOnereConsegnaOrd")) {
 
 						if (clause.getPropertyName() != null && clause.getPropertyName().equals("numeroBolla")) {
 							sql.addSQLClause("AND", "MOVIMENTI_MAG.NUMERO_BOLLA", clause.getOperator(), clause.getValue());
@@ -159,6 +160,8 @@ public Transito_beni_ordiniHome(java.sql.Connection conn, PersistentCache persis
 									sql.addSQLClause("AND", "ORDINE_ACQ_CONSEGNA.RIGA", clause.getOperator(), clause.getValue());
 								}else if (clause.getPropertyName() != null && clause.getPropertyName().equals("rigaConsegnaOrdine")) {
 									sql.addSQLClause("AND", "ORDINE_ACQ_CONSEGNA.CONSEGNA", clause.getOperator(), clause.getValue());
+								}else if (clause.getPropertyName() != null && clause.getPropertyName().equals("flOnereConsegnaOrd")) {
+									sql.addSQLClause("AND", "ORDINE_ACQ_CONSEGNA.FL_ONERE", clause.getOperator(), (boolean)clause.getValue()?"Y":"N");
 								}
 								//NUMERATORE ORDINE
 								else {

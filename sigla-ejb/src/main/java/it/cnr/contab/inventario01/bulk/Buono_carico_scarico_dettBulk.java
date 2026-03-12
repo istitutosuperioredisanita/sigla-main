@@ -74,6 +74,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 		return buono_cs;
 	}
 	private Long idTransito;
+	private Boolean flagOnereConsOrdine=false;
 
 	public Long getIdTransito() {
 		return idTransito;
@@ -81,6 +82,14 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 
 	public void setIdTransito(Long idTransito) {
 		this.idTransito = idTransito;
+	}
+
+	public Boolean getFlagOnereConsOrdine() {
+		return flagOnereConsOrdine;
+	}
+
+	public void setFlagOnereConsOrdine(Boolean flagOnereConsOrdine) {
+		this.flagOnereConsOrdine = flagOnereConsOrdine;
 	}
 
 	public void setBuono_cs(Buono_carico_scaricoBulk bulk) {

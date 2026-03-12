@@ -38,7 +38,6 @@ import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.action.CRUDBP;
 import org.apache.commons.lang.StringUtils;
-
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Dictionary;
@@ -131,6 +130,36 @@ public class Transito_beni_ordiniBulk extends Transito_beni_ordiniBase {
 		return null;
 	}
 
+	public Boolean isFlOnereConsegnaOrd(){
+		if(getMovimentiMag() != null){
+			if(getMovimentiMag().getLottoMag() !=null){
+				LottoMagBulk lotto = getMovimentiMag().getLottoMag();
+				if(lotto.getOrdineAcqConsegna() != null){
+					if(lotto.getOrdineAcqConsegna()!=null){
+						OrdineAcqConsegnaBulk ordineAcq = lotto.getOrdineAcqConsegna();
+						if(ordineAcq!=null)
+							return ordineAcq.getFlOnere();
+					}
+				}
+			}
+		}
+		return null;
+	}
+	public Boolean getFlOnereConsegnaOrd(){
+		if(getMovimentiMag() != null){
+			if(getMovimentiMag().getLottoMag() !=null){
+				LottoMagBulk lotto = getMovimentiMag().getLottoMag();
+				if(lotto.getOrdineAcqConsegna() != null){
+					if(lotto.getOrdineAcqConsegna()!=null){
+						OrdineAcqConsegnaBulk ordineAcq = lotto.getOrdineAcqConsegna();
+						if(ordineAcq!=null)
+							return ordineAcq.getFlOnere();
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 	public String getNumeratoreOrdine() {
 		if(getMovimentiMag() != null){
