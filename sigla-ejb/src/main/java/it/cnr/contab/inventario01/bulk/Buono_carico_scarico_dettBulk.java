@@ -21,6 +21,7 @@
 */
 package it.cnr.contab.inventario01.bulk;
 
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
@@ -43,6 +44,9 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	public final static String STATO_COGE_C = "C";
 	public final static String STATO_COGE_R = "R";
 	private Inventario_beniBulk bene;
+
+	private AnagraficoBulk anagAssegnatario = new AnagraficoBulk();
+
 	private int gruppi;
 	private Buono_carico_scaricoBulk buono_cs;
 	private Boolean fl_accessorio_contestuale=new Boolean(false);
@@ -56,7 +60,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	public Buono_carico_scarico_dettBulk(java.lang.Long pg_inventario, java.lang.String ti_documento, java.lang.Integer esercizio, java.lang.Long pg_buono_c_s, java.lang.Long nr_inventario, java.lang.Integer progressivo) {
 		super(pg_inventario, ti_documento, esercizio, pg_buono_c_s, nr_inventario, progressivo);
 		setBuono_cs(new it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk(pg_inventario,  ti_documento, esercizio, pg_buono_c_s));
-		setBene(new Inventario_beniBulk(nr_inventario,pg_inventario,new Long (progressivo.longValue())));
+		setBene(new Inventario_beniBulk(nr_inventario,pg_inventario,Long.valueOf(progressivo)));
 	}
 	
 	public Inventario_beniBulk getBene() {
@@ -375,6 +379,25 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 		if(this.getBene() != null && this.getBene().getId_transito_beni_ordini() != null)
 			return true;
 		return false;
+	}
+
+
+	public AnagraficoBulk getAnagAssegnatario() {
+		return anagAssegnatario;
+	}
+
+	public void setAnagAssegnatario(AnagraficoBulk anagAssegnatario) {
+		this.anagAssegnatario = anagAssegnatario;
+	}
+
+	/**
+	 * Restituisce la denominazione dell'assegnatario per visualizzazione
+	 */
+	public String getDs_assegnatario() {
+		if (bene != null && bene.getAssegnatario() != null) {
+			return bene.getAssegnatario().getDenominazione_sede();
+		}
+		return "";
 	}
 
 }

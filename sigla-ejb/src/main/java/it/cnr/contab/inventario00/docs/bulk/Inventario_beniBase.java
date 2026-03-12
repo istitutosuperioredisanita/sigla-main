@@ -116,6 +116,9 @@ public class Inventario_beniBase extends Inventario_beniKey implements Keyed {
 
 	private java.lang.Long id_transito_beni_ordini;
 
+	private java.lang.Boolean fl_bene_in_ist=false;
+
+
 	public Inventario_beniBase() {
 	super();
 }
@@ -446,5 +449,13 @@ public void setSeriale(java.lang.String seriale) {
 
 	public void setCausale_dismissione(String causale_dismissione) {
 		this.causale_dismissione = causale_dismissione;
+	}
+
+	public Boolean getFl_bene_in_ist() {
+		return fl_bene_in_ist;
+	}
+
+	public void setFl_bene_in_ist(Boolean fl_bene_in_ist) {
+		this.fl_bene_in_ist = fl_bene_in_ist;
 	}
 }

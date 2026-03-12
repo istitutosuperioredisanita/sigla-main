@@ -221,26 +221,34 @@
 		nullable="false"
 		caseSensitiveSearch="false" />
 
-	/********** Assegnatario ******************************/
+
+	/********** Assegnatario - DIPENDENTI ******************************/
 	<fieldProperty
-		name="find_assegnatario"
-		property="bene.assegnatario"
-		inputType="SEARCHTOOL" 					
-		formName="searchtool" 					
-		readonlyProperty="ROsearchTool"		
-		enabledOnSearch="true"		
-		enabledOnEdit="true"
-		completeOnSave = "true"
-		label="Assegnatario" />
+			name="findAnagAssegnatario"
+			property="anagAssegnatario"
+			inputType="SEARCHTOOL"
+			formName="searchtool_dipendenti"
+			readonlyProperty="ROsearchTool"
+			enabledOnSearch="true"
+			enabledOnEdit="true"
+			completeOnSave = "true"
+			label="Assegnatario" />
+
 	<fieldProperty
-		name="cd_assegnatario"
-		property="bene.assegnatario.cd_terzo"
-		inputType="TEXT"
-		maxLength="10"
-		inputSize="6"
-		label="Assegnatario"		
-		caseSensitiveSearch="false" />
-		
+			name="cd_assegnatario"
+			property="bene.assegnatario.cd_terzo"
+			inputType="TEXT"
+			maxLength="10"
+			inputSize="6"
+			label="Assegnatario"
+			caseSensitiveSearch="false" />
+
+	<fieldProperty
+			name="ds_assegnatario"
+			property="bene.assegnatario.denominazione_sede"
+			inputType="ROTEXT"
+			label="Assegnatario" />
+
 /********** Bene Principale ******************************/
 	<fieldProperty
 		name="find_bene_principale"
@@ -416,14 +424,6 @@
 		inputSize="20"
 		label="Etichetta"
 		nullable="false"/>
-	<fieldProperty
-		name="ds_assegnatario"
-		property="bene.assegnatario.denominazione_sede"
-		maxLength="300"
-		inputSize="50"
-		inputType="TEXT"
-		label="Assegnatario"
-		caseSensitiveSearch="false" />	
 	<formFieldProperty
 		name="pg_inventario" />
 	<formFieldProperty
@@ -457,13 +457,11 @@
 	<formFieldProperty
 			name="causale_dismissione" />
 
-
 	/************** Assegnatario ************************/
-	<formFieldProperty
-		name="find_assegnatario" />
-	<formFieldProperty
-		name="cd_assegnatario" />
-		
+	<formFieldProperty name="findAnagAssegnatario" />
+	<formFieldProperty name="cd_assegnatario" />
+	<formFieldProperty name="ds_assegnatario" />
+
 /************** Ubicazione ************************/		
 	<formFieldProperty
 		name="find_ubicazione" />

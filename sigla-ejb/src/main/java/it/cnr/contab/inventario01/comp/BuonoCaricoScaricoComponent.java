@@ -23,6 +23,8 @@
  */
 package it.cnr.contab.inventario01.comp;
 
+import it.cnr.contab.anagraf00.core.bulk.*;
+import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.*;
@@ -279,7 +281,7 @@ try{
 			buonoC = (Buono_carico_scaricoBulk)super.inizializzaBulkPerModifica(aUC, bulk);
 		}
 		buonoC.setByOrdini(((Buono_carico_scaricoBulk)bulk).getTipoMovimento().getFl_da_ordini());
-		inizializzaTipo(aUC,buonoC);	 
+		inizializzaTipo(aUC,buonoC);
 		// Carica l'Inventario associato alla UO
 		try{
 			buonoC.setInventario(caricaInventario(aUC));
@@ -297,19 +299,17 @@ try{
 					 dettaglio.setBene(inv);
 					 dettaglio.setFl_bene_accessorio(inv.isBeneAccessorio());
 					 dettaglio.CalcolaTotaleBene();
-				 }	    
+				 }
   				 getHomeCache(aUC).fetchAll(aUC,dettHome);
 			 }
 		}
-		catch(it.cnr.jada.persistency.PersistencyException pe){
+		catch(PersistencyException | IntrospectionException pe){
 			throw new ComponentException (pe);
 		}
-		catch (it.cnr.jada.persistency.IntrospectionException ie){
-			throw new ComponentException (ie);
-		}
-		 
-		return buonoC;
-	}	
+
+        return buonoC;
+	}
+
 		
 	/** 
 	  *  L'oggetto non esiste
@@ -6668,7 +6668,7 @@ private void validaBuonoCarico(UserContext aUC, Buono_carico_scaricoBulk buonoCa
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: la Quantita' del Bene " + (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":"") + " non è valida.\n La Quantità deve essere maggiore di 0");
 
 			// CONTROLLA CHE SIA STATO INSERITO IL PREZZO UNITARIO PER IL BENE
-			if (dett.getValore_unitario()==null || dett.getValore_unitario().compareTo(new java.math.BigDecimal(0))<0)
+			if (dett.getValore_unitario()==null || dett.getValore_unitario().compareTo(new java.math.BigDecimal(0))<=0)
 				throw new it.cnr.jada.comp.ApplicationException("Attenzione: indicare il Prezzo Unitario del Bene " + (bene.getDs_bene()!=null?"'"+bene.getDs_bene()+"'":""));
 
 			// CONTROLLA, NEL CASO DI GESTIONE ATTIVA, CHE SIA STATA IMPOSTATA L'ETICHETTA DEL BENE
@@ -7616,7 +7616,7 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 	 public void scaricaTuttiBeniDef(UserContext userContext,Buono_carico_scaricoBulk buonoS ) throws ComponentException {
 		try {
 				Boolean accesorio_presente;
-			    Inventario_beni_apgHome homebeni =(Inventario_beni_apgHome)getHome(userContext,Inventario_beni_apgBulk.class); 
+			    Inventario_beni_apgHome homebeni =(Inventario_beni_apgHome)getHome(userContext,Inventario_beni_apgBulk.class);
 				SQLBuilder sql = homebeni.createSQLBuilder();
 				sql.addTableToHeader("INVENTARIO_BENI");
 				sql.addSQLClause("AND","INVENTARIO_BENI.PG_INVENTARIO",SQLBuilder.EQUALS, buonoS.getInventario().getPg_inventario());
@@ -7741,6 +7741,74 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 			return invBeniHome.IsEtichettaBeneAlreadyExist(dett);
 		} catch (SQLException ex) {
 			throw handleException(ex);
+		}
+	}
+	public boolean isPresentiAccessoriPerBeni(UserContext userContext,Buono_carico_scaricoBulk buonoCs) throws ComponentException, PersistencyException {
+
+		Inventario_beniHome homebeni =(Inventario_beniHome)getHome(userContext,Inventario_beniBulk.class);
+		SQLBuilder sql = homebeni.createSQLBuilder();
+		sql.addTableToHeader("INVENTARIO_BENI_APG");
+		sql.addSQLJoin("INVENTARIO_BENI.PG_INVENTARIO","INVENTARIO_BENI_APG.PG_INVENTARIO");
+		sql.addSQLJoin("INVENTARIO_BENI.NR_INVENTARIO","INVENTARIO_BENI_APG.NR_INVENTARIO");
+
+		sql.addSQLClause("AND","INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO",SQLBuilder.EQUALS,Inventario_beniBulk.ISNOTTOTALMENTESCARICATO);
+		sql.addSQLClause("AND","INVENTARIO_BENI.PROGRESSIVO",SQLBuilder.GREATER,0);
+		sql.addSQLClause("AND","INVENTARIO_BENI_APG.LOCAL_TRANSACTION_ID",SQLBuilder.EQUALS,buonoCs.getLocal_transactionID());
+
+		List beni = homebeni.fetchAll(sql);
+
+		return (beni!=null && !beni.isEmpty());
+	}
+
+	/**
+	 * Carica il TerzoBulk completo partendo da un codice anagrafico.
+	 */
+	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk caricaTerzoDaAnagrafico(
+			it.cnr.jada.UserContext userContext,
+			Integer cdAnag)
+			throws it.cnr.jada.comp.ComponentException {
+
+		if (cdAnag == null) {
+			return null;
+		}
+
+		try {
+			it.cnr.contab.anagraf00.core.bulk.TerzoHome terzoHome =
+					(it.cnr.contab.anagraf00.core.bulk.TerzoHome)
+							getHome(userContext, it.cnr.contab.anagraf00.core.bulk.TerzoBulk.class);
+
+			return terzoHome.findTerzoByAnag(cdAnag);
+
+		} catch (it.cnr.jada.persistency.PersistencyException e) {
+			throw handleException(e);
+		} catch (it.cnr.jada.persistency.IntrospectionException e) {
+			throw handleException(e);
+		}
+	}
+
+	/**
+	 * Metodo per la ricerca dell'anagrafico ASSEGNATARIO CARICO tramite SEARCHTOOL.
+	 * Delega la ricerca al componente Anagrafico per ottenere solo dipendenti attivi.
+	 */
+	public SQLBuilder selectAnagAssegnatarioByClause(
+			UserContext userContext,
+			Buono_carico_scarico_dettBulk buono,
+			AnagraficoBulk anag_find,
+			CompoundFindClause clause)
+			throws ComponentException, RemoteException {
+
+		try {
+			// Delega al componente Anagrafico per cercare solo dipendenti attivi
+			AnagraficoComponentSession sess = (AnagraficoComponentSession)
+					it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+							"CNRANAGRAF00_EJB_AnagraficoComponentSession",
+							AnagraficoComponentSession.class
+					);
+
+			return sess.findAnagraficoDipendenteByClause(userContext, anag_find, clause);
+
+		} catch (Exception e) {
+			throw new ComponentException("Errore ricerca anagrafico smartworking: " + e.getMessage(), e);
 		}
 	}
 

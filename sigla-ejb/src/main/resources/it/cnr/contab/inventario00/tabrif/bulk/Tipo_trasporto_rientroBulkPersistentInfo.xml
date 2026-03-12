@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk"
+	homeClassName="it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroHome">
+	<defaultColumnMap
+		tableName="TIPO_TRASPORTO_RIENTRO">
+	</defaultColumnMap>
+</SQLPersistentInfo>

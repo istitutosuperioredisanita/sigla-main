@@ -19,8 +19,7 @@ package it.cnr.contab.ordmag.ordini.action;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.UnitaMisuraBulk;
@@ -30,15 +29,18 @@ import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.CaricoMagazzinoBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.ScaricoMagazzinoRigaBulk;
 import it.cnr.contab.ordmag.ordini.bp.CRUDEvasioneOrdineBP;
+import it.cnr.contab.ordmag.ordini.bulk.AllegatoEvasioneOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.bulk.BulkInfo;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.util.RemoteIterator;
@@ -122,24 +124,41 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 		catch(Exception e) {return handleException(context,e);}
 	}
 
+
+	/**
+	 * Salva un'evasione ordine bulk, valida gli allegati,
+	 * aggiorna il modello e gestisce eventuali bolle di scarico.
+	 */
 	@Override
 	public Forward doSalva(ActionContext actioncontext) throws RemoteException {
 		try
 		{
 			fillModel(actioncontext);
-			List<BollaScaricoMagBulk> listaBolleScarico = gestioneSalvataggio(actioncontext);
+			Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> resultMap = gestioneSalvataggio(actioncontext);
 			CRUDEvasioneOrdineBP bp = (CRUDEvasioneOrdineBP)actioncontext.getBusinessProcess();
-			bp.setModel(actioncontext, bp.initializeModelForInsert(actioncontext, new EvasioneOrdineBulk()));
+
+			EvasioneOrdineBulk evasioneOrdineSalvata = null;
+			List<BollaScaricoMagBulk> listaBolleScarico = new ArrayList<>();
+
+			for (Map.Entry<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> entry : resultMap.entrySet()) {
+				evasioneOrdineSalvata = entry.getKey();
+				listaBolleScarico = entry.getValue();
+				break;
+			}
+
+			bp.setModel(actioncontext, bp.initializeModelForInsert(actioncontext,
+					evasioneOrdineSalvata != null ? evasioneOrdineSalvata : new EvasioneOrdineBulk()));
+
 			if (!listaBolleScarico.isEmpty()){
 				SelezionatoreListaBP nbp = (SelezionatoreListaBP)actioncontext.createBusinessProcess("BolleScaricoGenerate");
 				nbp.setMultiSelection(false);
-	
+
 				RemoteIterator iterator = Utility.createMovimentiMagComponentSession().preparaQueryBolleScaricoDaVisualizzare(actioncontext.getUserContext(), listaBolleScarico);
-				
+
 				nbp.setIterator(actioncontext,iterator);
 				BulkInfo bulkInfo = BulkInfo.getBulkInfo(BollaScaricoMagBulk.class);
 				nbp.setBulkInfo(bulkInfo);
-	
+
 				String columnsetName = bp.getColumnSetForBollaScarico();
 				if (columnsetName != null)
 					nbp.setColumns(bulkInfo.getColumnFieldPropertyDictionary(columnsetName));
@@ -159,8 +178,8 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 		}
 		return actioncontext.findDefaultForward();
 	}
-	
-	private List<BollaScaricoMagBulk> gestioneSalvataggio(ActionContext actioncontext) throws ValidationException, ApplicationException,  BusinessProcessException {
+
+	private Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> gestioneSalvataggio(ActionContext actioncontext) throws ValidationException, ApplicationException,  BusinessProcessException {
 		CRUDEvasioneOrdineBP bp = (CRUDEvasioneOrdineBP)actioncontext.getBusinessProcess();
 		it.cnr.jada.util.action.Selection selection = bp.getConsegne().getSelection();
 		EvasioneOrdineBulk bulk = (EvasioneOrdineBulk) bp.getModel();
@@ -173,9 +192,9 @@ public class CRUDEvasioneOrdineAction extends it.cnr.jada.util.action.CRUDAction
 		if (bulk.getRigheConsegnaSelezionate() == null || bulk.getRigheConsegnaSelezionate().isEmpty()){
 			throw new it.cnr.jada.comp.ApplicationException("Selezionare almeno una consegna da evadere!");
 		} else {
-			List<BollaScaricoMagBulk> listaBolleScarico = bp.evadiConsegne(actioncontext);
+			Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> result = bp.evadiConsegne(actioncontext);
 			bulk.setRigheConsegnaDaEvadereColl(new BulkList<>());
-			return listaBolleScarico;
+			return result;
 		}
 	}
 	

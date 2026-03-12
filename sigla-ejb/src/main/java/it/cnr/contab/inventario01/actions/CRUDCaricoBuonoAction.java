@@ -23,6 +23,8 @@ package it.cnr.contab.inventario01.actions;
   * 
 **/
 
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
@@ -1611,6 +1613,54 @@ public Forward doOnData_registrazioneChange(ActionContext context)  {
 				riga_inventario.setTi_documento("C");
 		 }
 		}
+	}
+
+	/**
+	 * Avvia la ricerca dell'assegnatario tramite view dipendenti
+	 */
+	public Forward doSearchFindAnagAssegnatario(ActionContext context) {
+		return search(context, getFormField(context, "main.Dettaglio.findAnagAssegnatario"), null);
+	}
+
+	/**
+	 * Pulisce i campi relativi all'assegnatario
+	 */
+	public Forward doBlankSearchFindAnagAssegnatario(ActionContext context,
+													 Buono_carico_scarico_dettBulk dettaglio) {
+		dettaglio.setAnagAssegnatario(new AnagraficoBulk());
+		dettaglio.getBene().setAssegnatario(null);
+		return context.findDefaultForward();
+	}
+
+	/**
+	 * Gestisce la selezione di un anagrafico come assegnatario.
+	 * Converte AnagraficoBulk in TerzoBulk e lo assegna al bene.
+	 */
+	public Forward doBringBackSearchFindAnagAssegnatario(ActionContext context,
+														 Buono_carico_scarico_dettBulk dettaglio,
+														 AnagraficoBulk anagSelezionato) {
+		try {
+			if (anagSelezionato != null && anagSelezionato.getCd_anag() != null) {
+				dettaglio.setAnagAssegnatario(anagSelezionato);
+				TerzoBulk terzoCompleto = caricaTerzoDaAnagrafico(context, anagSelezionato);
+				dettaglio.getBene().setAssegnatario(terzoCompleto);
+			}
+			return context.findDefaultForward();
+		} catch (Throwable e) {
+			return handleException(context, e);
+		}
+	}
+
+	/**
+	 * Carica il TerzoBulk completo dall'anagrafico
+	 */
+	private TerzoBulk caricaTerzoDaAnagrafico(ActionContext context, AnagraficoBulk anagrafico)
+			throws Exception {
+		if (anagrafico == null || anagrafico.getCd_anag() == null) {
+			return null;
+		}
+		CRUDCaricoInventarioBP bp = (CRUDCaricoInventarioBP) getBusinessProcess(context);
+		return bp.caricaTerzoDaAnagrafico(context, anagrafico);
 	}
 
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_respintoBulk"
+	homeClassName="it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_respintoHome">
+	<defaultColumnMap
+		tableName="DOC_TRASPORTO_RIENTRO_RESPINTO">
+		<columnMapping
+			columnName="PG_INVENTARIO"
+			propertyName="docTrasportoRientro.pg_inventario" />
+		<columnMapping
+			columnName="TI_DOCUMENTO"
+			propertyName="docTrasportoRientro.ti_documento" />
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="docTrasportoRientro.esercizio" />
+		<columnMapping
+			columnName="PG_DOC_TRASPORTO_RIENTRO"
+			propertyName="docTrasportoRientro.pg_doc_trasporto_rientro" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="docTrasportoRientro" />
+</SQLPersistentInfo>

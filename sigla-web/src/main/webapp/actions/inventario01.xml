@@ -16,15 +16,21 @@
   -->
 
 <action-mappings>
-  
-  <action 
-	path="/CRUDCaricoBuonoAction" 
+
+  <action
+	path="/CRUDCaricoBuonoAction"
 	actionClass="it.cnr.contab.inventario01.actions.CRUDCaricoBuonoAction" />
-  <action 
-	path="/CRUDScaricoBuonoAction" 
+  <action
+	path="/CRUDScaricoBuonoAction"
 	actionClass="it.cnr.contab.inventario01.actions.CRUDScaricoBuonoAction" />
-  <action 
-	path="/AssBeneFatturaAction" 
+	<action
+	path="/CRUDTrasportoDocAction"
+    actionClass="it.cnr.contab.inventario01.actions.CRUDTrasportoDocAction" />
+    <action
+    path="/CRUDRientroDocAction"
+    actionClass="it.cnr.contab.inventario01.actions.CRUDRientroDocAction" />
+    <action
+	path="/AssBeneFatturaAction"
 	actionClass="it.cnr.contab.inventario00.actions.AssBeneFatturaAction" />
   <action
 	path="/CRUDTipoAmmortamentoAction"
@@ -41,14 +47,14 @@
 	<action
 	path="/CRUDTrasferimentoInventarioAction"
 	actionClass="it.cnr.contab.inventario00.actions.CRUDTrasferimentoInventarioAction" />
-  <action 
-	path="/CRUDAggiornamentoInventarioAction" 
+  <action
+	path="/CRUDAggiornamentoInventarioAction"
 	actionClass="it.cnr.contab.inventario00.actions.CRUDAggiornamentoInventarioAction" />
-	
- 
+
+
   <businessProcess name="CRUDCaricoInventarioBP" className="it.cnr.contab.inventario01.bp.CRUDCaricoInventarioBP">
 	<forward name="default" path="/inventario00/carico_inventario.jsp"/>
-	<forward name="daFattura" path="/inventario00/inventario_aggrega.jsp"/>    
+	<forward name="daFattura" path="/inventario00/inventario_aggrega.jsp"/>
 	<forward name="daDocumento" path="/inventario00/inventario_aggrega_doc.jsp"/>
 	<init-param name="printbp" value="OfflineReportPrintBP"/>
 	<init-param name="bulkClassName" value="it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk" />
@@ -63,16 +69,34 @@
 	<init-param name="defaultAction" value="CRUDScaricoBuonoAction"/>
   </businessProcess>
 
+
+    <!--TODO creare tabelle e bulk(buonotrasportorientro, buonotrasportorientrodett, Numeratore_buono_t_r??)-->
+    <!--TODO verifica utilizzo e gestione jsp-->
+    <businessProcess name="CRUDRientroBeniInvBP" className="it.cnr.contab.inventario01.bp.CRUDRientroBeniInvBP">
+        <forward name="default" path="/inventario00/rientro_inventario.jsp"/>
+        <init-param name="printbp" value="OfflineReportPrintBP"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.inventario01.bulk.DocumentoRientroBulk" />
+        <init-param name="componentSessionName" value="CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession"/>
+        <init-param name="defaultAction" value="CRUDRientroDocAction"/>
+    </businessProcess>
+    <businessProcess name="CRUDTrasportoBeniInvBP" className="it.cnr.contab.inventario01.bp.CRUDTrasportoBeniInvBP">
+        <forward name="default" path="/inventario00/trasporto_inventario.jsp"/>
+        <init-param name="printbp" value="OfflineReportPrintBP"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.inventario01.bulk.DocumentoTrasportoBulk" />
+        <init-param name="componentSessionName" value="CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession"/>
+        <init-param name="defaultAction" value="CRUDTrasportoDocAction"/>
+    </businessProcess>
+
   <businessProcess name="AssBeneFatturaBP" className="it.cnr.contab.inventario00.bp.AssBeneFatturaBP">
 	<forward name="default" path="/inventario00/ass_inv_bene_fattura.jsp"/>
 	<forward name="daDocumento" path="/inventario00/ass_inv_bene_fattura_doc.jsp"/>
-	<forward name="perAumentoValore" path="/inventario00/ass_inv_bene_fattura_per_aumento.jsp"/>	
-	<forward name="perAumentoValoreDoc" path="/inventario00/ass_inv_bene_fattura_per_aumento_doc.jsp"/>	
+	<forward name="perAumentoValore" path="/inventario00/ass_inv_bene_fattura_per_aumento.jsp"/>
+	<forward name="perAumentoValoreDoc" path="/inventario00/ass_inv_bene_fattura_per_aumento_doc.jsp"/>
 	<init-param name="bulkClassName" value="it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk" />
 	<init-param name="componentSessionName" value="CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession"/>
 	<init-param name="defaultAction" value="AssBeneFatturaAction"/>
   </businessProcess>
-  
+
   <businessProcess
 		name="CRUDTipoAmmortamentoBP" className="it.cnr.contab.inventario00.bp.CRUDTipoAmmortamentoBP">
 		<forward name="default" path="/inventario00/tipo_ammortamento.jsp"/>
@@ -122,7 +146,7 @@
 	<init-param name="defaultAction" value="CRUDTrasferimentoInventarioAction"/>
 	<init-param name="TIPO_TRASFERIMENTO" value="EXTRA" />
   </businessProcess>
-  
+
   <businessProcess name="CRUDTrasferimentoIntraInventarioBP" className="it.cnr.contab.inventario00.bp.CRUDTrasferimentoInventarioBP">
 	<forward name="default" path="/inventario00/trasferimento_inventario.jsp"/>
 	<init-param name="bulkClassName" value="it.cnr.contab.inventario00.docs.bulk.Trasferimento_inventarioBulk" />

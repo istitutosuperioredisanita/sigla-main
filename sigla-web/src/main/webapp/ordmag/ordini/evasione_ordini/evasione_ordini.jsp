@@ -1,8 +1,3 @@
-<!-- 
- ?ResourceName "TemplateForm.jsp"
- ?ResourceTimestamp "08/11/00 16.43.22"
- ?ResourceEdition "1.0"
--->
 <%@page import="it.cnr.contab.ordmag.ordini.bp.CRUDEvasioneOrdineBP"%>
 <%@ page pageEncoding="UTF-8"
 	import="it.cnr.jada.util.jsp.*,
@@ -40,18 +35,20 @@
 </div>		
 
 <%
-	JSPUtils.tabbed(
-					pageContext,
-					"tab",
-					new String[][] {
-						{ "tabEvasioneConsegne", "Consegne", "/ordmag/ordini/evasione_ordini/tab_evasione_consegne.jsp" },
-		      			{ "tabEvasioneRichieste", "Richieste", "/ordmag/ordini/evasione_ordini/tab_evasione_richieste.jsp" }},
-					bp.getTab("tab"),
-					"center",
-					"100%",
-					null);
+    JSPUtils.tabbed(
+                pageContext,
+                "tab",
+                new String[][] {
+                   { "tabEvasioneConsegne", "Consegne", "/ordmag/ordini/evasione_ordini/tab_evasione_consegne.jsp" },
+                   { "tabEvasioneRichieste", "Richieste", "/ordmag/ordini/evasione_ordini/tab_evasione_richieste.jsp" },
+                   { "tabAllegati", "Allegati", "/util00/tab_allegati.jsp" }
+                },
+                bp.getTab("tab"),
+                "center",
+                "100%",
+                null);
 
-	bp.closeFormWindow(pageContext);
+    bp.closeFormWindow(pageContext);
 %>
 </body>
 </html>

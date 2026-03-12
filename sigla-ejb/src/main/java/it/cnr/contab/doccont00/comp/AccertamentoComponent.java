@@ -4671,13 +4671,11 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
                     throw new ApplicationException("Impostare Importo dell'Accertamento Pluriennale");
                 }
             }
-            if (isAnnoPluriennaleMaggioreScadenzaProgetto(uc, bulk, linee)) {
-                throw new ApplicationException("Attenzione l'anno dell'accertamento pluriennale è successivo alla scadenza del progetto");
-            }
+            verificaAnnoPluriennaleMaggioreScadenzaProgettoEGae(uc, bulk, linee);
         }
     }
 
-    private boolean isAnnoPluriennaleMaggioreScadenzaProgetto(UserContext uc, AccertamentoBulk accertamento, HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> linee) throws ComponentException, IntrospectionException, PersistencyException {
+    private void verificaAnnoPluriennaleMaggioreScadenzaProgettoEGae(UserContext uc, AccertamentoBulk accertamento, HashMap<it.cnr.contab.config00.latt.bulk.WorkpackageBulk, BigDecimal> linee) throws ComponentException, IntrospectionException, PersistencyException {
 
         ProgettoBulk progetto = null;
         ProgettoHome progettoHome = (ProgettoHome) getHome(uc, ProgettoBulk.class);
@@ -4699,12 +4697,14 @@ private void modificoDettagliScadenza(UserContext aUC,AccertamentoBulk accertame
 
             for (Accertamento_pluriennaleBulk accertamentoPlur : accertamento.getAccertamentiPluriennali()) {
                 if (otherFieldBulk.getAnnoFine().compareTo(accertamentoPlur.getAnno()) < 0) {
-                    return true;
+                    throw new ApplicationException("Attenzione l'anno dell'accertamento pluriennale è successivo alla scadenza del progetto");
+                }
+                if(accertamentoPlur.getAnno().compareTo(linea.getEsercizio_fine())>0){
+                    throw new ApplicationException("Attenzione l'anno dell'accertamento pluriennale è successivo alla scadenza della GAE "+linea.getCd_linea_attivita());
                 }
             }
         }
 
-        return false;
     }
 
     private boolean isAnnoDuplicato(AccertamentoBulk bulk) {

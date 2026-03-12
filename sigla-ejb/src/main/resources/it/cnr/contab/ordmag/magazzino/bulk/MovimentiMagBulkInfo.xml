@@ -786,6 +786,8 @@
 		<columnFieldProperty
 			name="pgLotto" />
 		<columnFieldProperty
+			name="cdMagazzino" />
+		<columnFieldProperty
 			name="esercizioBollaSca" />
 		<columnFieldProperty
 			name="cdNumeratoreBollaSca" />

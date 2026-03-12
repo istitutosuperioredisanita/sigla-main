@@ -1057,4 +1057,18 @@ public void setTi_entita_persona_struttura(int newTi_entita_persona_struttura) {
 	public void setUnitaOrganizzativa(Unita_organizzativaBulk unitaOrganizzativa) {
 		this.unitaOrganizzativa = unitaOrganizzativa;
 	}
+
+	@Override
+	public String getCd_unita_organizzativa() {
+		Unita_organizzativaBulk unitaOrganizzativa = this.getUnitaOrganizzativa();
+		if(unitaOrganizzativa == null){
+			return null;
+		}
+		return unitaOrganizzativa.getCd_unita_organizzativa();
+	}
+
+	@Override
+	public void setCd_unita_organizzativa(String cd_unita_organizzativa) {
+		this.getUnitaOrganizzativa().setCd_unita_organizzativa(cd_unita_organizzativa);
+	}
 }

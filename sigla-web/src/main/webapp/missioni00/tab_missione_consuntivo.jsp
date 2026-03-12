@@ -50,6 +50,10 @@
             <td><% bp.getController().writeFormInput( out, "im_spese_anticipate"); %></td>
             <td><% bp.getController().writeFormLabel( out, "im_spese"); %></td>
             <td><% bp.getController().writeFormInput( out, "im_spese"); %></td>
+            <td><% bp.getController().writeFormLabel( out, "im_spese_tracc"); %></td>
+            <td><% bp.getController().writeFormInput( out, "im_spese_tracc"); %></td>
+            <td><% bp.getController().writeFormLabel( out, "im_spese_no_tracc"); %></td>
+            <td><% bp.getController().writeFormInput( out, "im_spese_no_tracc"); %></td>
         </tr>
         <tr>
             <td><span class="text-primary">TOTALE DIARIA :  </span></td>

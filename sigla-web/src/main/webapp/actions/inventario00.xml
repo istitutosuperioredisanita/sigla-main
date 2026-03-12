@@ -35,6 +35,9 @@
 	<action
 		path="/CRUDTipoCaricoScaricoAction"
 		actionClass="it.cnr.contab.inventario00.actions.CRUDTipoCaricoScaricoAction" />
+	<action
+			path="/CRUDTipoTrasportoRientroAction"
+			actionClass="it.cnr.contab.inventario00.actions.CRUDTipoTrasportoRientroAction" />
         <action 
                 path="/ListaBeniAction" actionClass="it.cnr.contab.inventario00.actions.ListaBeniAction">
         </action>  
@@ -96,6 +99,13 @@
 			<init-param name="bulkClassName" value="it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoBulk" />
 			<init-param name="componentSessionName" value="CNRINVENTARIO00_EJB_TipoCaricoScaricoComponentSession"/>
 			<init-param name="defaultAction" value="CRUDTipoCaricoScaricoAction"/>
+	</businessProcess>
+	<businessProcess
+			name="CRUDTipoTrasportoRientroBP" className="it.cnr.contab.inventario00.bp.CRUDTipoTrasportoRientroBP">
+		<forward name="default" path="/inventario00/tipo_trasporto_rientro.jsp"/>
+		<init-param name="bulkClassName" value="it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk" />
+		<init-param name="componentSessionName" value="CNRINVENTARIO00_EJB_TipoTrasportoRientroComponentSession"/>
+		<init-param name="defaultAction" value="CRUDTipoTrasportoRientroAction"/>
 	</businessProcess>
         <businessProcess
                 name="ListaBeniBP" className="it.cnr.contab.inventario00.bp.ListaBeniBP">

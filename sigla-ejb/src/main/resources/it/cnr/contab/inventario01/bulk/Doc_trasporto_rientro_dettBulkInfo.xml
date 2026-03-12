@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA"
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<!-- ============================================ -->
+	<!-- CHIAVI PRIMARIE - TESTATA (Foreign Key) -->
+	<!-- ============================================ -->
+
+	<!-- ============================================ -->
+	<!-- CHIAVI PRIMARIE - BENE -->
+	<!-- ============================================ -->
+
+
+	<fieldProperty
+			name="nr_inventario"
+			property="bene.nr_inventario"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			label="Numero Inventario" />
+
+	<fieldProperty
+			name="progressivo"
+			property="bene.progressivo"
+			inputType="TEXT"
+			inputSize="3"
+			maxLength="3"
+			label="Progressivo" />
+
+
+	<!-- ============================================ -->
+	<!-- INFORMAZIONI SUL BENE (delegate al bene) -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="ds_bene"
+			property="bene.ds_bene"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="4"
+			inputSize="1000"
+			nullable="false"
+			label="Descrizione Bene" />
+
+	<fieldProperty
+			name="collocazione"
+			property="bene.collocazione"
+			inputType="TEXT"
+			readonlyProperty="ROcollocazione"
+			label="Collocazione" />
+
+	<fieldProperty
+			name="ti_istituzionale_commerciale"
+			property="bene.ti_commerciale_istituzionale"
+			keysProperty="bene.ti_istituzionale_commercialeKeys"
+			label="Tipo Bene"
+			inputType="RADIOGROUP"/>
+
+	<fieldProperty
+			name="numeroBeneCompleto"
+			property="bene.numeroBeneCompleto"
+			inputType="ROTEXT"
+			inputSize="30"
+			label="Codice Completo" />
+
+	<fieldProperty
+			name="cod_bene"
+			property="cod_bene"
+			inputType="ROTEXT"
+			inputSize="15"
+			label="Codice Bene" />
+
+	<!-- ============================================ -->
+	<!-- FLAGS E STATI -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="fl_bene_accessorio"
+			property="fl_bene_accessorio"
+			inputType="CHECKBOX"
+			readonlyProperty="ROfl_accessorio"
+			label="Bene Accessorio" />
+
+	<fieldProperty
+			name="fl_accessorio_contestuale"
+			property="fl_accessorio_contestuale"
+			inputType="CHECKBOX"
+			label="Associa a Bene non registrato" />
+
+	<fieldProperty
+			name="fl_dismesso"
+			property="bene.fl_dismesso"
+			inputType="CHECKBOX"
+			label="Dismesso" />
+
+	<fieldProperty
+			name="dt_dismesso"
+			property="bene.dt_dismesso"
+			inputType="TEXT"
+			formatName="date_short"
+			label="Data Dismissione"/>
+
+	<fieldProperty
+			name="causale_dismissione"
+			property="bene.causale_dismissione"
+			inputType="TEXT"
+			inputSize="100"
+			maxLength="100"
+			label="Causale Dismissione" />
+
+	<fieldProperty
+			name="fl_totalmente_scaricato"
+			property="bene.fl_totalmente_scaricato"
+			inputType="CHECKBOX"
+			label="Scarico Definitivo" />
+
+	<!-- ============================================ -->
+	<!-- CONDIZIONE BENE -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="condizione"
+			property="bene.condizioneBene"
+			printProperty="ds_condizione_bene"
+			optionsProperty="doc_trasporto_rientro.condizioni"
+			maxLength="30"
+			inputSize="30"
+			inputType="SELECT"
+			nullable="false"
+			enabledOnFreeSearch="true"
+			enabledOnSearch="true"
+			enabledOnEdit="true"
+			label="Condizione Bene"/>
+
+	<fieldProperty
+			name="condizione_notIns"
+			property="bene.condizioneBene.ds_condizione_bene"
+			inputType="ROTEXT"
+			inputSize="30"
+			label="Condizione Bene" />
+
+
+	<!-- ============================================ -->
+	<!-- CATEGORIA BENE -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="find_categoria_bene"
+			property="bene.categoria_Bene"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			label="Categoria Bene"
+			readonlyProperty="ROcategoriaBene"
+			enabledOnSearch="true"
+			enabledOnInsert="true"
+			enabledOnEdit="true" />
+
+	<fieldProperty
+			name="cd_categoria_bene"
+			property="bene.categoria_Bene.cd_categoria_gruppo"
+			inputType="TEXT"
+			maxLength="20"
+			inputSize="20"
+			label="Categoria Bene"
+			nullable="false"
+			caseSensitiveSearch="false" />
+
+	<fieldProperty
+			name="ds_categoria_bene"
+			property="bene.categoria_Bene.ds_categoria_gruppo"
+			inputType="ROTEXT"
+			inputSize="50"
+			label="Descrizione Categoria" />
+
+	<!-- ============================================ -->
+	<!-- CATEGORIA VOCE -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="find_cat_voce"
+			property="cat_voce"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			label="Categoria Voce"
+			enabledOnSearch="true"
+			enabledOnInsert="true"
+			enabledOnEdit="true" />
+
+	<fieldProperty
+			name="cd_cat_voce"
+			property="cat_voce.cd_voce"
+			inputType="TEXT"
+			maxLength="20"
+			inputSize="20"
+			label="Cod. Voce"
+			caseSensitiveSearch="false" />
+
+	<!-- ============================================ -->
+	<!-- UBICAZIONE -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="find_ubicazione"
+			property="bene.ubicazione"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			label="Ubicazione"
+			readonlyProperty="ROsearchTool"
+			enabledOnInsert="true"
+			enabledOnSearch="true"
+			enabledOnEdit="true" />
+
+	<fieldProperty
+			name="cd_ubicazione"
+			property="bene.ubicazione.cd_ubicazione"
+			inputType="TEXT"
+			label="Ubicazione"
+			maxLength="10"
+			inputSize="10"
+			nullable="false"
+			caseSensitiveSearch="false" />
+
+	<fieldProperty
+			name="ds_ubicazione"
+			property="bene.ubicazione.ds_ubicazione"
+			inputType="ROTEXT"
+			inputSize="50"
+			label="Descrizione Ubicazione" />
+
+	<!-- ============================================ -->
+	<!-- ASSEGNATARIO -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="find_assegnatario"
+			property="bene.assegnatario"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			readonlyProperty="ROsearchTool"
+			enabledOnSearch="true"
+			enabledOnEdit="true"
+			completeOnSave="true"
+			label="Assegnatario" />
+
+	<fieldProperty
+			name="cd_assegnatario"
+			property="bene.assegnatario.cd_terzo"
+			inputType="TEXT"
+			maxLength="10"
+			inputSize="10"
+			label="Codice Assegnatario"
+			caseSensitiveSearch="false" />
+
+	<fieldProperty
+			name="ds_assegnatario"
+			property="bene.assegnatario.denominazione_sede"
+			inputType="ROTEXT"
+			inputSize="50"
+			label="Denominazione Assegnatario" />
+
+	<!-- ============================================ -->
+	<!-- BENE PRINCIPALE (per accessori) -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="find_bene_principale"
+			property="bene.bene_principale"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			label="Bene Principale"
+			enabledOnSearch="true"
+			enabledOnEdit="true"
+			completeOnSave="false"
+			freeSearchSet="freeSearchWithoutProgressivoSet" />
+
+	<fieldProperty
+			name="cd_bene_principale"
+			property="bene.bene_principale.nr_inventario"
+			inputType="TEXT"
+			maxLength="10"
+			inputSize="10"
+			label="Cod. Bene Principale"
+			caseSensitiveSearch="false" />
+
+	<fieldProperty
+			name="ds_bene_principale"
+			property="bene.bene_principale.ds_bene"
+			inputType="ROTEXT"
+			inputSize="50"
+			label="Descrizione Bene Principale" />
+
+	<fieldProperty
+			name="ds_bene_principale_contestuale"
+			property="bene.bene_principale.ds_bene"
+			inputType="ROTEXT"
+			inputSize="30"
+			label="Bene Principale"
+			enabledOnSearch="true"
+			enabledOnEdit="true"
+			caseSensitiveSearch="false" />
+
+	<!-- ============================================ -->
+	<!-- CAMPI AGGIUNTIVI -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="gruppi"
+			property="gruppi"
+			inputType="TEXT"
+			inputSize="5"
+			label="Numero di blocchi"
+			enabledOnEdit="true"
+			enabledOnInsert="true"/>
+
+	<fieldProperty
+			name="cd_barre"
+			property="bene.cd_barre"
+			inputType="TEXT"
+			maxLength="20"
+			inputSize="20"
+			label="Codice a Barre"/>
+
+	<fieldProperty
+			name="targa"
+			property="bene.targa"
+			inputType="TEXT"
+			readonlyProperty="bene.ROtarga"
+			maxLength="8"
+			inputSize="8"
+			label="Targa"/>
+
+	<fieldProperty
+			name="seriale"
+			property="bene.seriale"
+			inputType="TEXT"
+			readonlyProperty="bene.ROseriale"
+			maxLength="25"
+			inputSize="25"
+			label="Numero Seriale"/>
+
+	<fieldProperty
+			name="etichetta"
+			property="bene.etichetta"
+			inputType="TEXT"
+			inputSize="20"
+			readonlyProperty="ROEtichetta"
+			maxLength="20"
+			label="Etichetta"
+			nullable="false"/>
+
+	<fieldProperty
+			name="ds_documento"
+			property="doc_trasporto_rientro.dsDocTrasportoRientro"
+			inputType="TEXT"
+			inputSize="100"
+			maxLength="100"
+			label="Descrizione Documento"/>
+
+	<fieldProperty
+			name="chiave_hash"
+			property="chiaveHash"
+			inputType="ROTEXT"
+			inputSize="30"
+			label="Chiave Hash" />
+
+	<!-- ============================================ -->
+	<!-- VALORI BENE -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="valore_bene"
+			property="bene.valoreBene"
+			inputType="ROTEXT"
+			formatName="it.cnr.contab.util.EuroPositivoFormat"
+			label="Valore Bene" />
+
+	<fieldProperty
+			name="valore_iniziale_bene"
+			property="bene.valore_iniziale"
+			inputType="ROTEXT"
+			maxLength="20"
+			formatName="it.cnr.contab.util.EuroPositivoFormat"
+			label="Valore Iniziale" />
+
+	<!-- ============================================ -->
+	<!-- AMMORTAMENTO -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="ti_ammortamento"
+			property="bene.tipo_ammortamento"
+			printProperty="tipo_ammortamento.ds_tipo_ammortamento"
+			optionsProperty="bene.ti_ammortamenti"
+			maxLength="100"
+			inputSize="30"
+			inputType="SELECT"
+			label="Tipo Ammortamento"/>
+
+	<fieldProperty
+			name="ti_ammortamento_notIns"
+			property="bene.tipo_ammortamento.ds_tipo_ammortamento"
+			inputType="ROTEXT"
+			inputSize="30"
+			label="Tipo Ammortamento" />
+
+	<fieldProperty
+			name="fl_ammortamento"
+			property="bene.fl_ammortamento"
+			inputType="CHECKBOX"
+			label="Soggetto ad Ammortamento" />
+
+	<fieldProperty
+			name="imponibile_ammortamento"
+			property="bene.imponibile_ammortamento"
+			inputType="ROTEXT"
+			formatName="it.cnr.contab.util.EuroPositivoFormat"
+			label="Valore da ammortizzare" />
+
+	<!-- ============================================ -->
+	<!-- DATA ACQUISIZIONE -->
+	<!-- ============================================ -->
+
+	<fieldProperty
+			name="dt_acquisizione"
+			property="bene.dt_acquisizione"
+			inputType="TEXT"
+			formatName="date_short"
+			maxLength="10"
+			inputSize="10"
+			label="Data Acquisizione" />
+
+
+	<!-- ============================================ -->
+	<!-- FORM FIELDS -->
+	<!-- ============================================ -->
+
+	<formFieldProperty name="pg_inventario" />
+	<formFieldProperty name="ti_documento" />
+	<formFieldProperty name="esercizio" />
+	<formFieldProperty name="pg_doc_trasporto_rientro" />
+	<formFieldProperty name="nr_inventario" />
+	<formFieldProperty name="progressivo" />
+	<formFieldProperty name="gruppi" />
+	<formFieldProperty name="fl_dismesso" />
+	<formFieldProperty name="dt_dismesso" />
+	<formFieldProperty name="causale_dismissione" />
+	<formFieldProperty name="find_assegnatario" />
+	<formFieldProperty name="cd_assegnatario" />
+	<formFieldProperty name="ds_assegnatario" />
+	<formFieldProperty name="find_ubicazione" />
+	<formFieldProperty name="cd_ubicazione" />
+	<formFieldProperty name="ds_ubicazione" />
+	<formFieldProperty name="find_categoria_bene" />
+	<formFieldProperty name="cd_categoria_bene" />
+	<formFieldProperty name="ds_categoria_bene" />
+	<formFieldProperty name="find_cat_voce" />
+	<formFieldProperty name="cd_cat_voce" />
+	<formFieldProperty name="find_bene_principale" />
+	<formFieldProperty name="cd_bene_principale" />
+	<formFieldProperty name="ds_bene_principale" />
+	<formFieldProperty name="ds_bene_principale_contestuale" />
+	<formFieldProperty name="ti_ammortamento" />
+	<formFieldProperty name="ti_ammortamento_notIns" />
+	<formFieldProperty name="fl_ammortamento" />
+	<formFieldProperty name="imponibile_ammortamento" />
+	<formFieldProperty name="fl_totalmente_scaricato" />
+	<formFieldProperty name="valore_iniziale_bene"/>
+	<formFieldProperty name="valore_bene" />
+	<formFieldProperty name="condizione" />
+	<formFieldProperty name="condizione_notIns" />
+	<formFieldProperty name="cd_condizione_bene" />
+	<formFieldProperty name="ds_bene" />
+	<formFieldProperty name="ti_istituzionale_commerciale" />
+	<formFieldProperty name="collocazione" />
+	<formFieldProperty name="fl_bene_accessorio" />
+	<formFieldProperty name="fl_accessorio_contestuale" />
+	<formFieldProperty name="numeroBeneCompleto" />
+	<formFieldProperty name="cod_bene" />
+	<formFieldProperty name="cd_barre" />
+	<formFieldProperty name="targa" />
+	<formFieldProperty name="seriale" />
+	<formFieldProperty name="etichetta"/>
+	<formFieldProperty name="ds_documento" />
+	<formFieldProperty name="chiave_hash" />
+	<formFieldProperty name="dt_acquisizione" />
+	<formFieldProperty name="id_transito" />
+
+	<!-- ============================================ -->
+	<!-- FIND FIELDS -->
+	<!-- ============================================ -->
+
+	<findFieldProperty name="nr_inventario" />
+	<findFieldProperty name="progressivo" />
+	<findFieldProperty name="ds_bene" />
+	<findFieldProperty name="ds_documento" />
+	<findFieldProperty name="pg_doc_trasporto_rientro" />
+	<findFieldProperty name="cd_barre" />
+	<findFieldProperty name="seriale" />
+	<findFieldProperty name="etichetta" />
+	<findFieldProperty name="cd_assegnatario" />
+	<findFieldProperty name="cd_ubicazione" />
+
+	<!-- ============================================ -->
+	<!-- COLUMN FIELDS -->
+	<!-- ============================================ -->
+
+	<columnFieldProperty name="nr_inventario" />
+	<columnFieldProperty name="progressivo" />
+	<columnFieldProperty name="ds_bene" style="width:250px" />
+	<columnFieldProperty name="pg_doc_trasporto_rientro" />
+	<columnFieldProperty name="ds_documento" style="width:250px" />
+	<columnFieldProperty name="seriale" />
+
+	<!-- ============================================ -->
+	<!-- COLUMN SETS -->
+	<!-- ============================================ -->
+
+	<columnSet name="righeSet">
+		<columnFieldProperty name="cod_bene" style="width:100px" />
+		<columnFieldProperty name="ds_bene" style="width:300px" />
+		<columnFieldProperty name="ti_istituzionale_commerciale" style="width:80px" />
+	</columnSet>
+
+	<columnSet name="righeSetConCodice">
+		<columnFieldProperty name="numeroBeneCompleto" style="width:80px" />
+		<columnFieldProperty name="etichetta" style="width:80px" />
+		<columnFieldProperty name="ds_bene" style="width:300px" />
+		<columnFieldProperty name="ti_istituzionale_commerciale" />
+	</columnSet>
+
+	<!-- ============================================ -->
+	<!-- COLUMN SET PER TRASPORTO BENI -->
+	<!-- ============================================ -->
+
+
+
+</bulkInfo>
