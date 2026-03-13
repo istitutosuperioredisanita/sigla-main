@@ -39,7 +39,10 @@ SELECT
     t.cd_cds_documento, t.cd_uo_documento, t.pg_numero_documento,
     t.esercizio_documento_amm, t.cd_comp_documento, t.im_scrittura,
     t.stato, t.attiva, d.cd_voce_ep,
-    cnrctb002.getdesvoceep (d.esercizio, d.cd_voce_ep) ds_voce_ep,
+    CASE WHEN d.cd_voce_ep is not null
+        then cnrctb002.getdesvoceep (d.esercizio, d.cd_voce_ep)
+        else NULL
+        END ds_voce_ep,
     d2.CD_CENTRO_RESPONSABILITA CDR_GAE, d2.CD_LINEA_ATTIVITA CD_GAE, la.DENOMINAZIONE DS_LINEA_ATTIVITA,
     nvl(d2.sezione, d.sezione), nvl(d2.im_movimento, d.im_movimento),
     d.dt_da_competenza_coge,
