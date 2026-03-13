@@ -6315,4 +6315,10 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : Massimiliano Di Gregorio - Spostamento nel menu delle voci "Stampa impegni\accertamenti pluriennali da Stampe a Consultazioni" -->
     <include file="bootstrap/update_albero_main_consultazione_impegni_accertamenti.xml"/>
+    <!-- Autore : Valentina Tomada - Inserita colonna FL_ONERE_ACCESS in ORDINE_ACQ_CONSEGNA" -->
+    <include file="bootstrap/add_column_fl_onere_access_ord_consegna.xml"/>
+    <!-- Autore : Valentina Tomada - Inserita colonna FL_ONERE in ORDINE_ACQ_CONSEGNA (drop FL_ONERE_ACCESS)" -->
+    <include file="bootstrap/drop_column_fl_onere_access_ord_consegna.xml"/>
+
+
 </databaseChangeLog>

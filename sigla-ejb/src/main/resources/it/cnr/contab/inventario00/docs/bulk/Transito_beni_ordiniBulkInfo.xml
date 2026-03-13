@@ -166,6 +166,15 @@
 			enabledOnEdit = "false"
 			enabledOnSearch="false" />
 	<fieldProperty
+			name="flOnereConsegnaOrd"
+			property="movimentiMag.lottoMag.ordineAcqConsegna.flOnere"
+			inputType="CHECKBOX"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			label="Onere"/>
+
+	<fieldProperty
 			name="ordineForFreeSearch"
 			property="numeroOrdine"
 			inputType="TEXT"
@@ -181,6 +190,12 @@
 			enabledOnSearch="true"
 			enabledOnFreeSearch="true"
 	/>
+	<fieldProperty
+			name="flOnereConsegnaOrdForFreeSearch"
+			property="flOnereConsegnaOrd"
+			inputType="CHECKBOX"
+			enabledOnSearch="true"
+			label="Onere"/>
 	<fieldProperty
 		name="dtRiferimento"
 		property="movimentiMag.dtRiferimento"
@@ -572,9 +587,10 @@
 			name="dataBolla" />
 	<formFieldProperty
 			name="numeroBolla" />
-
 	<formFieldProperty
 		name="ti_istituzionale_commerciale" />
+	<formFieldProperty
+		name="flOnereConsegnaOrd" />
 	<formFieldProperty
 		name="progressivo" />
 	<formFieldProperty
@@ -711,6 +727,9 @@
 			name="rigaOrdine"/>
 	<columnFieldProperty
 			name="rigaConsegnaOrdine"/>
+	<columnFieldProperty
+			name="flOnereConsegnaOrd"/>
+
 
 
 	<!-- Column set per beni in transito cancellati-->
@@ -812,7 +831,6 @@
 			name="numeratoreOrdineForFreeSearch" />
 	<findFieldProperty
 			name="id_movimenti_mag" />
-
-
-
+	<findFieldProperty
+			name="flOnereConsegnaOrdForFreeSearch" />
 </bulkInfo>

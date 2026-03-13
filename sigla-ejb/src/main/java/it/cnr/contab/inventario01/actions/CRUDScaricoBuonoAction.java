@@ -323,10 +323,23 @@ public Forward impostaScaricoTotale(ActionContext context, CRUDScaricoInventario
 						da_scaricare=true;
 				}
 				if (da_scaricare){
-					OptionBP optionBP = openConfirm(context,"Attenzione: il bene selezionato ha degli accessori che devono essere scaricati totalmente. Vuoi continuare?",OptionBP.CONFIRM_YES_NO,"doConfirmScaricoBene");
-					optionBP.addAttribute("EditDettagliScarico", bene);
-					optionBP.addAttribute("selected_righe_fatt", selected_righe_fatt);
-					return optionBP;
+					Buono_carico_scaricoBulk buonoCS= (Buono_carico_scaricoBulk)bp.getModel();
+					OptionBP optionBP = null;
+					if(Optional.ofNullable(buonoCS.getTipoMovimento()).isPresent() && buonoCS.getTipoMovimento().getFl_dismissione()) {
+						bp.setMessage("Il bene selezionato ha degli accessori che devono essere scaricati totalmente.");
+						optionBP = new OptionBP();
+						optionBP.setOption(OptionBP.YES_BUTTON);
+						optionBP.addAttribute("EditDettagliScarico", bene);
+						optionBP.addAttribute("selected_righe_fatt", selected_righe_fatt);
+						return doConfirmScaricoBene(context,optionBP);
+					}else {
+						optionBP = openConfirm(context, "Attenzione: il bene selezionato ha degli accessori che devono essere scaricati totalmente. Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmScaricoBene");
+						optionBP.addAttribute("EditDettagliScarico", bene);
+						optionBP.addAttribute("selected_righe_fatt", selected_righe_fatt);
+						return optionBP;
+					}
+
+
 				}else{
 					bene.setValore_unitario(bene.getValoreBene());
 					bp.scaricoTotale(context.getUserContext(),bene,selected_righe_fatt,false);
@@ -349,6 +362,7 @@ public Forward impostaScaricoTotale(ActionContext context, CRUDScaricoInventario
 		return handleException(context,e);
 	}
 }
+
 public Forward doClickFlagScaricoTotale(ActionContext context) throws it.cnr.jada.comp.ApplicationException{
 
 	CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);	
@@ -368,7 +382,11 @@ public Forward doScaricaTutti(ActionContext context) {
 		boolean accessoriPresenti = bp.isAccessoriPresenti(context);
 
 		if(accessoriPresenti){
-			return openConfirm(context,"Attenzione: sono presenti degli accessori che verrano scaricati totalmente. Vuoi continuare?",OptionBP.CONFIRM_YES_NO,"doConfirmScaricoTotale");
+			Buono_carico_scaricoBulk buonoCS= (Buono_carico_scaricoBulk)bp.getModel();
+			// per il
+			if(!buonoCS.getTipoMovimento().getFl_dismissione()) {
+				return openConfirm(context, "Attenzione: sono presenti degli accessori che verrano scaricati totalmente. Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmScaricoTotale");
+			}
 		}
 		return doConfirmScaricoTotale(context,OptionBP.YES_BUTTON);
 

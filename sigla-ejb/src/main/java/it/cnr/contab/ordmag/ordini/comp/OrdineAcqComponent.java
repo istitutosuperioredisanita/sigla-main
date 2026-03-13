@@ -667,6 +667,7 @@ public class OrdineAcqComponent
             riga.setDspUopDest(cons.getUnitaOperativaOrd());
             riga.setDspConto(cons.getContoBulk());
             riga.setDspStato(cons.getStato());
+            riga.setFlagOnereRiga(cons.getFlOnere());
             riga.getRigheConsegnaColl()
                     .stream()
                     .findAny()
@@ -686,6 +687,7 @@ public class OrdineAcqComponent
                     primoGiro = false;
                 }
             }
+            riga.setFlagOnereRiga(riga.getRigheConsegnaColl().get(0).getFlOnere());
             riga.setDspStato(stato);
             final boolean contabilizzate = riga.getRigheConsegnaColl()
                     .stream()
