@@ -18,8 +18,8 @@
 package it.cnr.contab.inventario01.ejb;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import jakarta.ejb.Remote;
 
-import javax.ejb.Remote;
 
 @Remote
 public interface NumerazioneTempDocTRComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

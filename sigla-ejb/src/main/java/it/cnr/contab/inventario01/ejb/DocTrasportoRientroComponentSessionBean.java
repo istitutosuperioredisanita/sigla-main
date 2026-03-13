@@ -20,7 +20,6 @@ package it.cnr.contab.inventario01.ejb;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.comp.DocTrasportoRientroComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
@@ -31,13 +30,10 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
-import it.cnr.si.spring.storage.StoreService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
 import java.rmi.RemoteException;
 import java.util.BitSet;
 import java.util.List;
@@ -59,7 +55,7 @@ public class DocTrasportoRientroComponentSessionBean
     }
 
     public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance()
-            throws javax.ejb.EJBException {
+            throws EJBException {
         return new DocTrasportoRientroComponentSessionBean();
     }
 
@@ -400,7 +396,7 @@ public class DocTrasportoRientroComponentSessionBean
     }
 
 
-    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((DocTrasportoRientroComponent) componentObj).inizializzaBulkPerStampa(param0, param1);
@@ -420,7 +416,7 @@ public class DocTrasportoRientroComponentSessionBean
     }
 
 
-    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, javax.ejb.EJBException {
+    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws it.cnr.jada.comp.ComponentException, EJBException {
         pre_component_invocation(param0, componentObj);
         try {
             it.cnr.jada.bulk.OggettoBulk result = ((DocTrasportoRientroComponent) componentObj).stampaConBulk(param0, param1);

@@ -24,14 +24,14 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.SecurityContext;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.SQLException;

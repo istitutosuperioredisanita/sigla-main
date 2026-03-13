@@ -19,11 +19,13 @@ package it.cnr.contab.inventario01.ejb;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.comp.NumerazioneTempDocTRComponent;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+
 
 @Stateless(name="CNRINVENTARIO01_EJB_NumerazioneTempDocTRComponentSession")
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -32,10 +34,10 @@ public class NumerazioneTempDocTRComponentSessionBean extends it.cnr.jada.ejb.CR
 	public void ejbCreate() {
 	componentObj = new NumerazioneTempDocTRComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
+public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
 	return new NumerazioneTempDocTRComponentSessionBean();
 }
-public Long getNextTempPG(it.cnr.jada.UserContext param0, Doc_trasporto_rientroBulk param1) throws it.cnr.jada.comp.ComponentException,javax.ejb.EJBException {
+public Long getNextTempPG(it.cnr.jada.UserContext param0, Doc_trasporto_rientroBulk param1) throws it.cnr.jada.comp.ComponentException,EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
 		Long result = ((NumerazioneTempDocTRComponent)componentObj).getNextTempPG(param0,param1);

@@ -18,9 +18,8 @@
 package it.cnr.contab.inventario01.ejb;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -30,8 +29,8 @@ import it.cnr.jada.ejb.CRUDDetailComponentSession;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
+import jakarta.ejb.Remote;
 
-import javax.ejb.Remote;
 import java.rmi.RemoteException;
 import java.util.BitSet;
 import java.util.List;

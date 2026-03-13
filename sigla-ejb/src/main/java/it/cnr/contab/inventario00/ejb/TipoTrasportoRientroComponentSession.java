@@ -16,8 +16,7 @@
  */
 
 package it.cnr.contab.inventario00.ejb;
-
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface TipoTrasportoRientroComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {

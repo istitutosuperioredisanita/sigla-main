@@ -22,7 +22,7 @@
     <parent>
         <groupId>it.cnr.si.sigla</groupId>
         <artifactId>sigla-parent</artifactId>
-        <version>7.0.66-SNAPSHOT</version>
+        <version>7.0.64-SNAPSHOT</version>
     </parent>
     <dependencyManagement>
         <dependencies>
@@ -316,7 +316,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -677,6 +676,5 @@
                 </dependency>
             </dependencies>
         </profile>
-
     </profiles>
 </project>

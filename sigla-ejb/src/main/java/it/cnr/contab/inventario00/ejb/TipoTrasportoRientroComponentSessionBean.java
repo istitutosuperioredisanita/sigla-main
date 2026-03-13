@@ -17,8 +17,11 @@
 
 package it.cnr.contab.inventario00.ejb;
 
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
+
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+
 
 @Stateless(name="CNRINVENTARIO00_EJB_TipoTrasportoRientroComponentSession")
 public class TipoTrasportoRientroComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements TipoTrasportoRientroComponentSession {
@@ -26,7 +29,7 @@ public class TipoTrasportoRientroComponentSessionBean extends it.cnr.jada.ejb.CR
 	public void ejbCreate() {
 	componentObj = new it.cnr.contab.inventario00.comp.TipoTrasportoRientroComponent();
 }
-public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
+public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
 	return new TipoTrasportoRientroComponentSessionBean();
 }
 }

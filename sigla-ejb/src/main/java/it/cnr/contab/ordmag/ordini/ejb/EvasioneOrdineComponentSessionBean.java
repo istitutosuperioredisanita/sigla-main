@@ -21,19 +21,19 @@ import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.ordmag.ordini.comp.EvasioneOrdineComponent;
-import it.cnr.contab.ordmag.ordini.comp.OrdineAcqComponent;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-
 import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
+
 import java.util.List;
 import java.util.Map;
 
 @Stateless(name = "CNRORDMAG00_EJB_EvasioneOrdineComponentSession")
 public class EvasioneOrdineComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements EvasioneOrdineComponentSession {
-    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
+    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws EJBException {
         return new EvasioneOrdineComponentSessionBean();
     }
 
@@ -61,7 +61,7 @@ public class EvasioneOrdineComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         }
     }
 
-    public Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException, javax.ejb.EJBException {
+    public Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException, EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
             Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> result = ((EvasioneOrdineComponent) componentObj).evadiOrdine(userContext, evasioneOrdine);
