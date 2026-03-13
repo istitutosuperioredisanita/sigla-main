@@ -2,25 +2,21 @@ package it.cnr.test.contab.rest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
+
 public class RestServiceDocTRTest {
 
     private static final String BASE_URL  = "http://localhost:8080";
@@ -79,7 +75,7 @@ public class RestServiceDocTRTest {
         ));
 
         int status = post(body);
-        assertEquals("Trasporto INS vettore: atteso 201", 201, status);
+        Assertions.assertEquals(201, status);
     }
 
     // -------------------------------------------------------------------------
@@ -112,7 +108,7 @@ public class RestServiceDocTRTest {
         ));
 
         int status = post(body);
-        assertEquals("Trasporto INS incaricato: atteso 201", 201, status);
+        Assertions.assertEquals( 201, status);
     }
 
     // -------------------------------------------------------------------------
@@ -142,7 +138,7 @@ public class RestServiceDocTRTest {
         ));
 
         int status = post(body);
-        assertEquals("Trasporto INS smartworking OK: atteso 201", 201, status);
+        Assertions.assertEquals( 201, status);
     }
 
     // -------------------------------------------------------------------------
@@ -172,8 +168,8 @@ public class RestServiceDocTRTest {
         ));
 
         int status = post(body);
-        assertTrue("Trasporto INS smartworking ERROR: atteso 4xx, ricevuto " + status,
-                status >= 400 && status < 500);
+        Assertions.assertTrue( status >= 400 && status < 500);
+
     }
 
     // -------------------------------------------------------------------------
@@ -205,7 +201,7 @@ public class RestServiceDocTRTest {
         ));
 
         int status = post(body);
-        assertEquals("Trasporto DEF: atteso 201", 201, status);
+        Assertions.assertEquals( 201, status);
     }
 
     // -------------------------------------------------------------------------
@@ -237,7 +233,7 @@ public class RestServiceDocTRTest {
         ));
 
         int status = post(body);
-        assertEquals("Rientro INS: atteso 201", 201, status);
+        Assertions.assertEquals( 201, status);
     }
 
     // =========================================================================

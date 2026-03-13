@@ -6,7 +6,6 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.config00.ContrattoMaggioliLocal;
-import it.cnr.contab.web.rest.local.config00.DefaultContrattoLocal;
 import it.cnr.contab.web.rest.model.ContrattoDtoBulk;
 import it.cnr.contab.web.rest.model.EnumNaturaContabileContratto;
 import it.cnr.contab.web.rest.model.EnumTipoDettaglioContratto;
@@ -17,13 +16,13 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import jakarta.ejb.Stateless;
-import jakarta.servlet.http.HttpServletRequest;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Optional;
@@ -89,6 +88,11 @@ public class ContrattoMaggioliResource  extends AbstractContrattoResource implem
 
     protected ContrattoBulk innerCreaContrattoBulk( CNRUserContext userContext ,ContrattoBulk contratto) throws ComponentException, RemoteException {
         return (ContrattoBulk) contrattoComponentSession.creaContrattoDaFlussoAcquisti(userContext, contratto,true);
+    }
+
+    @Override
+    public Response insertContratto(HttpServletRequest request, ContrattoDtoBulk contrattoMaggioliBulk) throws Exception {
+        return null;
     }
 
     @Override
