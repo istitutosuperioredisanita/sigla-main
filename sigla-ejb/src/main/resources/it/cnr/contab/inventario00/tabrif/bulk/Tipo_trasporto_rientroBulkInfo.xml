@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+			name="cdTipoTrasportoRientro"
+			property="cdTipoTrasportoRientro"
+			inputType="TEXT"
+			inputSize="10"
+			maxLength="10"
+			enabledOnEdit="true"
+			enabledOnSearch="false"
+			nullable="false"
+			label="Codice" />
+	<fieldProperty
+			name="dsTipoTrasportoRientro"
+			property="dsTipoTrasportoRientro"
+			inputType="TEXTAREA"
+			cols="60"
+			rows="5"
+			maxLength="100"
+			enabledOnEdit="true"
+			nullable="false"
+			label="Descrizione" />
+	<fieldProperty
+			name="tiDocumento"
+			property="tiDocumento"
+			inputType="RADIOGROUP"
+			keysProperty="tipoDocumentoKeys"
+			layout="HORIZONTAL"
+			nullable="false"
+			enabledOnSearch="true"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			label="Tipo Documento" />
+	<fieldProperty
+			name="dtCancellazione"
+			property="dtCancellazione"
+			inputType="TEXT"
+			formatName="date_short"
+			enabledOnEdit="true"
+			label="Data Cancellazione" />
+	<fieldProperty
+			name="flAbilitaNote"
+			property="flAbilitaNote"
+			inputType="CHECKBOX"
+			enabledOnEdit="true"
+			nullable="false"
+			label="Note Aggiuntive" />
+	<form
+			name="searchtool">
+		<formFieldProperty
+				name="cdTipoTrasportoRientro" />
+	</form>
+	<formFieldProperty
+			name="cdTipoTrasportoRientro" />
+	<formFieldProperty
+			name="dsTipoTrasportoRientro" />
+	<formFieldProperty
+			name="tiDocumento" />
+	<formFieldProperty
+			name="dtCancellazione" />
+	<formFieldProperty
+			name="flAbilitaNote" />
+	<findFieldProperty
+			name="cdTipoTrasportoRientro" />
+	<findFieldProperty
+			name="dsTipoTrasportoRientro" />
+	<findFieldProperty
+			name="tiDocumento" />
+	<findFieldProperty
+			name="dtCancellazione" />
+	<findFieldProperty
+			name="flAbilitaNote" />
+	<columnFieldProperty
+			name="cdTipoTrasportoRientro" />
+	<columnFieldProperty
+			name="dsTipoTrasportoRientro" />
+	<columnFieldProperty
+			name="tiDocumento" />
+	<columnFieldProperty
+			name="dtCancellazione" />
+	<columnFieldProperty
+			name="flAbilitaNote" />
+</bulkInfo>

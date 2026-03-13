@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="davide.mirra" id="create_table_tipo_trasporto_rientro">
+        <createTable remarks="Tabella dei tipi di movimenti di trasporto/rientro inventario"
+                     tableName="tipo_trasporto_rientro">
+
+            <!-- PRIMARY KEY -->
+            <column name="cd_tipo_trasporto_rientro"
+                    remarks="Codice del movimento di trasporto/rientro di inventario"
+                    type="VARCHAR(10)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- CAMPI BUSINESS -->
+            <column name="ds_tipo_trasporto_rientro"
+                    remarks="Descrizione del movimento di trasporto/rientro di inventario"
+                    type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ti_documento"
+                    remarks="Flag per stabilire se il movimento risulta essere un trasporto o un rientro di inventario (T=Trasporto, R=Rientro)"
+                    type="CHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="dt_cancellazione"
+                    remarks="Data di fine validita per il movimento in esame"
+                    type="${date.type}"/>
+
+            <column name="fl_abilita_note"
+                    remarks="Flag che indica se per questa tipologia di documento e' possibile inserire delle note. Dominio: Y = Abilita campo NOTE nel documento, N = Non abilita campo NOTE"
+                    type="CHAR(1)"
+                    defaultValue="N">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- CAMPI STANDARD SIGLA -->
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record" type="BIGINT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <!-- Indice per ricerche per tipo documento -->
+        <createIndex indexName="idx_tipo_trasp_rient_01" tableName="tipo_trasporto_rientro">
+            <column name="ti_documento"/>
+        </createIndex>
+
+        <!-- Indice per ricerche su cancellazione -->
+        <createIndex indexName="idx_tipo_trasp_rient_02" tableName="tipo_trasporto_rientro">
+            <column name="dt_cancellazione"/>
+        </createIndex>
+
+    </changeSet>
+</databaseChangeLog>

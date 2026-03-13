@@ -31,6 +31,7 @@ import it.cnr.contab.ordmag.ordini.bulk.*;
 import it.cnr.contab.ordmag.ordini.ejb.OrdineAcqComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
@@ -183,39 +184,40 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 		return null;
 	}
 
-	public List<BollaScaricoMagBulk> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException {
+	public Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException {
 		try {
 			OrdineAcqComponentSession ordineComponent = Utility.createOrdineAcqComponentSession();
 			MovimentiMagComponentSession movimentiMagComponent = Utility.createMovimentiMagComponentSession();
 
 			List<OrdineAcqConsegnaBulk> listaConsegneDaForzare = new ArrayList<>();
 			List<BollaScaricoMagBulk> listaBolleScarico = new ArrayList<>();
-			List<MovimentiMagBulk> listaMovimentiScarico;
+			List<MovimentiMagBulk> listaMovimentiScarico = new ArrayList<>();
 
 			validaEvasioneOrdine(userContext,evasioneOrdine);
 
-
 			final List<OrdineAcqConsegnaBulk> consegneColl = evasioneOrdine.getRigheConsegnaSelezionate();
+			OrdineAcqConsegnaHome consegnaHome = (OrdineAcqConsegnaHome) getHome(userContext, OrdineAcqConsegnaBulk.class);
+
 			final Map<OrdineAcqBulk, List<OrdineAcqConsegnaBulk>> mapOrdine =
 					consegneColl.stream().collect(Collectors.groupingBy(o -> o.getOrdineAcqRiga().getOrdineAcq()));
 
 			for (OrdineAcqBulk ordineSelected : mapOrdine.keySet()) {
-                for (OrdineAcqConsegnaBulk consegnaSelected : mapOrdine.get(ordineSelected)) {
+				for (OrdineAcqConsegnaBulk consegnaSelected : mapOrdine.get(ordineSelected)) {
 
-                    Optional.ofNullable(consegnaSelected.getQuantitaEvasa()).filter(el -> el.compareTo(BigDecimal.ZERO) > 0)
-                            .orElseThrow(() -> new DetailedRuntimeException("Indicare la quantità da evadere per la consegna " + consegnaSelected.getConsegnaOrdineString()));
-                    if (consegnaSelected.isQuantitaEvasaMinoreOrdine() && consegnaSelected.getOperazioneQuantitaEvasaMinore() == null)
-                        throw new DetailedRuntimeException("Per la consegna " + consegnaSelected.getConsegnaOrdineString() + " è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente");
-                    if (consegnaSelected.isQuantitaEvasaMaggioreOrdine())
-                        throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere maggiore di quella ordinata.");
-                    if (consegnaSelected.getQuantitaEvasa() != null && !Utility.isInteger(consegnaSelected.getQuantitaEvasa()) && consegnaSelected.getOrdineAcqRiga().getBeneServizio().getFl_gestione_inventario())
-                        throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere con decimali.");
+					Optional.ofNullable(consegnaSelected.getQuantitaEvasa()).filter(el->el.compareTo(BigDecimal.ZERO)>0)
+							.orElseThrow(()->new DetailedRuntimeException("Indicare la quantità da evadere per la consegna " + consegnaSelected.getConsegnaOrdineString()));
+					if (consegnaSelected.isQuantitaEvasaMinoreOrdine() && consegnaSelected.getOperazioneQuantitaEvasaMinore() == null)
+						throw new DetailedRuntimeException("Per la consegna " + consegnaSelected.getConsegnaOrdineString() + " è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente");
+					if (consegnaSelected.isQuantitaEvasaMaggioreOrdine())
+						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere maggiore di quella ordinata.");
+					if(consegnaSelected.getQuantitaEvasa()!=null &&  !Utility.isInteger(consegnaSelected.getQuantitaEvasa()) && consegnaSelected.getOrdineAcqRiga().getBeneServizio().getFl_gestione_inventario()){
+						throw new DetailedRuntimeException("La quantità evasa della consegna " + consegnaSelected.getConsegnaOrdineString() + " non può essere con decimali.");
+					}
 
-                    //Ricarico la consegna dal DB per verificare che non sia stata già evasa
-                    OrdineAcqConsegnaBulk consegnaDB = (OrdineAcqConsegnaBulk) findByPrimaryKey(userContext, consegnaSelected);
-                    consegnaDB.setOrdineAcqRiga(consegnaSelected.getOrdineAcqRiga());
-                    if (consegnaDB.isStatoConsegnaEvasa())
-                        throw new DetailedRuntimeException("La consegna " + consegnaDB.getConsegnaOrdineString() + " è stata già evasa");
+					//Ricarico la consegna dal DB per verificare che non sia stata già evasa
+					OrdineAcqConsegnaBulk consegnaDB = (OrdineAcqConsegnaBulk) findByPrimaryKey(userContext, consegnaSelected);
+					if (consegnaDB.isStatoConsegnaEvasa())
+						throw new DetailedRuntimeException("La consegna " + consegnaDB.getConsegnaOrdineString() + " è stata già evasa");
 
                     if (consegnaSelected.isQuantitaEvasaMinoreOrdine()) {
                         consegnaDB.setQuantitaOrig(consegnaSelected.getQtEvasaConvertita());
@@ -317,11 +319,12 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
                 OrdineAcqBulk ordineComp = ((OrdineAcqHome) getHome(userContext, OrdineAcqBulk.class)).initializeBulkForEdit(ordineSelected);
                 getHomeCache(userContext).fetchAll(userContext);
 
-                for (OrdineAcqConsegnaBulk consegnaSelected : mapOrdine.get(ordineSelected)) {
-                    //recupero la riga nell'ambito dell'ordine ricaricato
-                    OrdineAcqConsegnaBulk consegnaCompSelected = ordineComp.getRigheOrdineColl().stream().flatMap(el -> el.getRigheConsegnaColl().stream()).filter(el -> el.equalsByPrimaryKey(consegnaSelected))
-                            .findAny().orElseThrow(() -> new DetailedRuntimeException("Attenzione! Non è stato possibile individuare nell'ordine una riga di consegna che risulta essere stata evasa. Aprire " +
-                                    "una segnalazione HelpDesk!"));
+				for (OrdineAcqConsegnaBulk consegnaSelected : mapOrdine.get(ordineSelected)) {
+					//recupero la riga nell'ambito dell'ordine ricaricato
+					OrdineAcqConsegnaBulk finalConsegnaEvasa = consegnaSelected;
+					OrdineAcqConsegnaBulk consegnaCompSelected = ordineComp.getRigheOrdineColl().stream().flatMap(el -> el.getRigheConsegnaColl().stream()).filter(el -> el.equalsByPrimaryKey(finalConsegnaEvasa))
+							.findAny().orElseThrow(() -> new DetailedRuntimeException("Attenzione! Non è stato possibile individuare nell'ordine una riga di consegna che risulta essere stata evasa. Aprire " +
+									"una segnalazione HelpDesk!"));
 
                     //Riallineo i campi del lotto fornitore noBaseTable di consegnaCompSelected con quelli presenti in consegnaSelected
                     consegnaCompSelected.setLottoFornitore(consegnaSelected.getLottoFornitore());
@@ -379,7 +382,11 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 			for (OrdineAcqConsegnaBulk consegnaDaForzare : listaConsegneDaForzare)
 				ordineComponent.chiusuraForzataOrdini(userContext, consegnaDaForzare);
 
-			return listaBolleScarico;
+			// Creo e restituisco la Map con EvasioneOrdineBulk e Lista Bolle Scarico
+			Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> result = new HashMap<>();
+			result.put(evasioneOrdine, listaBolleScarico);
+			return result;
+
 		} catch (DetailedRuntimeException|RemoteException e) {
 			throw new ApplicationException(e.getMessage());
 		}
@@ -420,8 +427,93 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 			if(evasioneOrdine.getDataBolla() != null && evasioneOrdine.getDataBolla().compareTo(evasioneOrdine.getDataConsegna()) > 0){
 				throw new ApplicationException("La \"Data Bolla\" non può essere maggiore della \"Data Consegna\" ");
 			}
+			validaAllegatiComp(evasioneOrdine);
 		}
 	}
+
+	/**
+	 * Fornisce una determinazione robusta e normalizzata del nome dell’allegato.
+	 * Applica una priorità coerente tra nome esplicito e nome file, evitando ambiguità.
+	 */
+	private String getNomeAllegato(AllegatoGenericoBulk allegato) {
+		if (allegato == null || allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
+			return null;
+		}
+		String nome = allegato.getNome();
+		if (nome != null && !nome.isEmpty()) {
+			return nome;
+		}
+		if (allegato.getFile() != null && allegato.getFile().getName() != null) {
+			String fromFile = allegato.parseFilename(allegato.getFile().getName());
+			if (fromFile != null && !fromFile.isEmpty()) {
+				return fromFile;
+			}
+		}
+		return null;
+	}
+
+
+	/**
+	 * Esegue la validazione completa del set di allegati del documento.
+	 * Impedisce voci incomplete, previene duplicazioni e tutela l’univocità del firmato.
+	 */
+	private void validaAllegatiComp(EvasioneOrdineBulk evasione) throws ApplicationException {
+
+		if (evasione == null
+				|| evasione.getArchivioAllegati() == null
+				|| evasione.getArchivioAllegati().isEmpty()) {
+			throw new ApplicationException(
+					"Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).");
+		}
+
+		List<AllegatoGenericoBulk> attivi = evasione.getArchivioAllegati().stream()
+				.filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
+				.collect(Collectors.toList());
+
+		Set<String> nomiVisti = new HashSet<>();
+
+		for (AllegatoGenericoBulk allegato : attivi) {
+
+			// Controllo extra: allegato TO_BE_CREATED senza file e senza nome
+			if (allegato.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
+				boolean haFile = allegato.getFile() != null;
+				boolean haNome = allegato.getNome() != null && !allegato.getNome().isEmpty();
+				if (!haFile && !haNome) {
+					throw new ApplicationException(
+							"Attenzione: è presente un allegato senza file selezionato. " +
+									"Selezionare un file per ogni allegato prima di salvare.");
+				}
+			}
+
+			// Controllo duplicati per nome — include allegati con e senza file fisico
+			String nome = getNomeAllegato(allegato);
+			if (nome != null && !nome.isEmpty()) {
+				if (!nomiVisti.add(nome.toLowerCase())) {
+					throw new ApplicationException(
+							"Attenzione: impossibile caricare l'allegato '" + nome +
+									"' poiché esiste già un file con lo stesso nome.");
+				}
+			}
+		}
+
+		// Verifica DDT obbligatorio e unicità
+		long countDDT = attivi.stream()
+				.filter(a -> a instanceof AllegatoEvasioneOrdineBulk)
+				.map(a -> (AllegatoEvasioneOrdineBulk) a)
+				.filter(a -> AllegatoEvasioneOrdineBulk.P_SIGLA_EVASIONE_ATTACHMENT_DDT
+						.equals(a.getAspectName()))
+				.count();
+
+		if (countDDT == 0) {
+			throw new ApplicationException(
+					"Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).");
+		}
+		if (countDDT > 1) {
+			throw new ApplicationException(
+					"Attenzione: è consentito allegare un solo Documento di Trasporto (DDT).");
+		}
+	}
+
 
 	private void assegnaProgressivo(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException {
 		try {

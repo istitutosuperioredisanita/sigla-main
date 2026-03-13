@@ -18,6 +18,7 @@
 package it.cnr.contab.inventario01.ejb;
 import java.rmi.*;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
@@ -1466,6 +1467,25 @@ public Ass_inv_bene_fatturaBulk sdoppiaAssociazioneFor(UserContext param0,Fattur
 				throw ex;
 			} catch(Throwable ex) {
 				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+
+	@Override
+	public TerzoBulk caricaTerzoDaAnagrafico(UserContext userContext, Integer cdAnag) throws RemoteException, ComponentException {
+		try {
+			return (TerzoBulk) invoke("caricaTerzoDaAnagrafico", new Object[]{
+					userContext,
+					cdAnag
+			});
+		} catch (java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch (ComponentException ex) {
+				throw ex;
+			} catch (Throwable ex) {
+				throw new RemoteException("Uncaught exception", ex);
 			}
 		}
 	}

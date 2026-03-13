@@ -1986,6 +1986,25 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
             return handleException(context, e);
         }
     }
+    public Forward doOnFlagOnereRigaChange(ActionContext context) {
+
+        try {
+            CRUDOrdineAcqBP bp = (CRUDOrdineAcqBP) getBusinessProcess(context);
+            fillModel(context);
+            OrdineAcqRigaBulk riga = (OrdineAcqRigaBulk) bp.getRighe().getModel();
+            gestioneConsegnaNonPresente(riga);
+            for (java.util.Iterator j = riga.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
+                OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+                consegna.setFlOnere(riga.getFlagOnereRiga());
+                consegna.setToBeUpdated();
+            }
+            return context.findDefaultForward();
+
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
+
 
     private OrdineAcqRigaBulk gestioneConsegnaNonPresente(OrdineAcqRigaBulk riga) {
         if (riga.getRigheConsegnaColl() == null || riga.getRigheConsegnaColl().isEmpty()) {
@@ -1997,6 +2016,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
             consegna.setContoBulk(riga.getDspConto());
             consegna.setMagazzino(riga.getDspMagazzino());
             consegna.setLuogoConsegnaMag(riga.getDspLuogoConsegna());
+            consegna.setFlOnere(riga.getFlagOnereRiga());
             riga.addToRigheConsegnaColl(consegna);
         }
         return riga;

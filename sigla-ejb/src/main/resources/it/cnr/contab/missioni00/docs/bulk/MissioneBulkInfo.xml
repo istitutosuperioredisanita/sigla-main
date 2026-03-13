@@ -585,6 +585,28 @@
 		enabledOnFreeSearch="true"										
 		/>
 	<fieldProperty
+			name="im_spese_tracc"
+			property="im_spese_tracc"
+			formatName="it.cnr.contab.util.EuroFormat"
+			inputType="TEXT"
+			label="tracciate"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+	/>
+	<fieldProperty
+			name="im_spese_no_tracc"
+			property="im_spese_no_tracc"
+			formatName="it.cnr.contab.util.EuroFormat"
+			inputType="TEXT"
+			label="non tracciate"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+	/>
+	<fieldProperty
 		name="im_diaria_netto"
 		property="im_diaria_netto"
 		formatName = "it.cnr.contab.util.EuroFormat"		
@@ -993,40 +1015,40 @@
 			formatName="it.cnr.contab.util.EuroFormat"
 			label="Importo da Ripartire" />
 
-/******************** TAB. TESTATA **********************/		
+/******************** TAB. TESTATA **********************/
 	<formFieldProperty name="esercizio" />
-	<formFieldProperty name="tipo_missione" />	
+	<formFieldProperty name="tipo_missione" />
 	<formFieldProperty name="cd_cds" />
-	<formFieldProperty name="cd_unita_organizzativa" />	
-	<formFieldProperty name="pg_missione" />				
-	<formFieldProperty name="daRimborsoDaCompletare" />				
+	<formFieldProperty name="cd_unita_organizzativa" />
+	<formFieldProperty name="pg_missione" />
+	<formFieldProperty name="daRimborsoDaCompletare" />
 	<formFieldProperty name="dt_inizio_missione" command="doOnInizioMissioneChange"/>
-	<formFieldProperty name="dt_fine_missione" command="doOnFineMissioneChange"/>		
+	<formFieldProperty name="dt_fine_missione" command="doOnFineMissioneChange"/>
 	<formFieldProperty name="ds_missione" />
 	<formFieldProperty name="ti_istituz_commerc" />
 	<formFieldProperty name="ti_provvisorio_definitivo" />
-	<formFieldProperty name="ti_provvisorio_definitivoForSearch" />	
+	<formFieldProperty name="ti_provvisorio_definitivoForSearch" />
 	<formFieldProperty name="stato_cofi" />
-	<formFieldProperty name="stato_cofiForSearch" />	
+	<formFieldProperty name="stato_cofiForSearch" />
 	<formFieldProperty name="ti_associato_manrev" />
-	<formFieldProperty name="ti_associato_manrevForSearch" />	
+	<formFieldProperty name="ti_associato_manrevForSearch" />
 	<formFieldProperty name="dt_registrazione"  command="doOnDataRegistrazioneChange"/>
-	<formFieldProperty name="dt_cancellazione" />		
-/******************** TAB. ANAGRAFICO **********************/			
-	<formFieldProperty name="ti_anagrafico" />	
+	<formFieldProperty name="dt_cancellazione" />
+/******************** TAB. ANAGRAFICO **********************/
+	<formFieldProperty name="ti_anagrafico" />
 	<formFieldProperty name="find_terzo" />
-	<formFieldProperty name="crea_terzo" />		
-	<formFieldProperty name="cd_terzo"/>	
-	<formFieldProperty name="cd_precedente"/>	
-	<formFieldProperty name="cognome" />	
-	<formFieldProperty name="nome" />	
+	<formFieldProperty name="crea_terzo" />
+	<formFieldProperty name="cd_terzo"/>
+	<formFieldProperty name="cd_precedente"/>
+	<formFieldProperty name="cognome" />
+	<formFieldProperty name="nome" />
 	<formFieldProperty name="codice_fiscale" />
 	<formFieldProperty name="partita_iva" />
 	<formFieldProperty name="ragione_sociale" />
 	<formFieldProperty name="via_fiscale" />
-	<formFieldProperty name="num_civico" />		
+	<formFieldProperty name="num_civico" />
 	<formFieldProperty name="ds_comune" />
-	<formFieldProperty name="ds_provincia" />					
+	<formFieldProperty name="ds_provincia" />
 	<formFieldProperty name="termini_pagamento" />
 	<formFieldProperty name="modalita_pagamento" />
 	<formFieldProperty name="listabanche" />
@@ -1042,6 +1064,8 @@
 	<formFieldProperty name="giorno_consuntivo" />
 	<formFieldProperty name="im_spese" />
 	<formFieldProperty name="im_spese_anticipate" />
+	<formFieldProperty name="im_spese_tracc"/>
+	<formFieldProperty name="im_spese_no_tracc"/>
 	<formFieldProperty name="im_quota_esente" />
 	<formFieldProperty name="im_diaria_netto" />
 	<formFieldProperty name="im_diaria_lorda" />
@@ -1053,15 +1077,15 @@
 	<formFieldProperty name="totale_esente_diaria_del_giorno" />
 	<formFieldProperty name="im_rimborso" />
 /******************** TAB. FONDO + OBBLIGAZIONE + ANTICIPO + COMPENSO**********************/
-	<formFieldProperty name="dt_pagamento_fondo_eco" />	
+	<formFieldProperty name="dt_pagamento_fondo_eco" />
 	<formFieldProperty name="stato_pagamento_fondo_eco" />
-	<formFieldProperty name="stato_pagamento_fondo_ecoForSearch" />	
+	<formFieldProperty name="stato_pagamento_fondo_ecoForSearch" />
 	<formFieldProperty name="pg_obbligazione_scadenzario" />
 	<formFieldProperty name="ds_scadenza_obbligazione" />
 	<formFieldProperty name="dt_scadenza" />
-	<formFieldProperty name="im_scadenza" />	
-	<formFieldProperty name="esercizio_ori_obbligazione" />	
-	<formFieldProperty name="pg_obbligazione" />	
+	<formFieldProperty name="im_scadenza" />
+	<formFieldProperty name="esercizio_ori_obbligazione" />
+	<formFieldProperty name="pg_obbligazione" />
 	<formFieldProperty name="esercizio_obbligazione" />
 	<formFieldProperty name="cd_cds_obbligazione" />
 	<formFieldProperty name="cd_cds_compenso" />
@@ -1072,7 +1096,7 @@
 	<formFieldProperty name="pg_anticipo" />
 	<formFieldProperty name="cd_cds_anticipo" />
 	<formFieldProperty name="cd_uo_anticipo" />
-	<formFieldProperty name="esercizio_anticipo" />	
+	<formFieldProperty name="esercizio_anticipo" />
 	<formFieldProperty name="im_anticipo" />
 	<formFieldProperty name="stato_liquidazione"/>
 
@@ -1106,39 +1130,39 @@
 	<columnFieldProperty name="ti_associato_manrev" />
 	<columnFieldProperty name="stato_liquidazione"/>							
 
-	<findFieldProperty name="esercizio" />		
-	<findFieldProperty name="cd_tipo_missione" />	
-	<findFieldProperty name="pg_missione"/>	
-	<findFieldProperty name="daRimborsoDaCompletare"/>	
-	<findFieldProperty name="dt_inizio_missione" />
-	<findFieldProperty name="dt_fine_missione" />
-	<findFieldProperty name="dt_registrazione" />
-	<findFieldProperty name="dt_cancellazione" />	
-	<findFieldProperty name="ds_missione" />
-	<findFieldProperty name="ti_istituz_commerc" />
-	<findFieldProperty name="ti_anagrafico" />	
-	<findFieldProperty name="cd_terzo" label="Cod. terzo"/>
-	<findFieldProperty name="cd_precedente" />	
-	<findFieldProperty name="nome" />
-	<findFieldProperty name="cognome" />
-	<findFieldProperty name="ragione_sociale" />
-	<findFieldProperty name="partita_iva" />
-	<findFieldProperty name="codice_fiscale" />		
-	<findFieldProperty name="cd_trattamento" />
-	<findFieldProperty name="cd_tipo_rapporto" />
-	<findFieldProperty name="pg_rif_inquadramento" />	
-	<findFieldProperty name="im_totale_missione" label="Tot. missione"/>
-	<findFieldProperty name="ti_provvisorio_definitivoForSearch" />
-	<findFieldProperty name="stato_cofiForSearch" />	
-	<findFieldProperty name="stato_coan" />
-	<findFieldProperty name="stato_coge" />		
-	<findFieldProperty name="ti_associato_manrevForSearch" />
-	<findFieldProperty name="stato_pagamento_fondo_ecoForSearch" />
-	<findFieldProperty name="dt_pagamento_fondo_eco" />				
-	<findFieldProperty name="esercizio_ori_obbligazione" />
-	<findFieldProperty name="pg_obbligazione" />
-	<findFieldProperty name="pg_obbligazione_scadenzario" />
-	<findFieldProperty name="pg_anticipo" />
-	<findFieldProperty name="fl_associato_compenso" />	
-	<findFieldProperty name="stato_liquidazione"/>					
+    <findFieldProperty name="esercizio"/>
+    <findFieldProperty name="cd_tipo_missione"/>
+    <findFieldProperty name="pg_missione"/>
+    <findFieldProperty name="daRimborsoDaCompletare"/>
+    <findFieldProperty name="dt_inizio_missione"/>
+    <findFieldProperty name="dt_fine_missione"/>
+    <findFieldProperty name="dt_registrazione"/>
+    <findFieldProperty name="dt_cancellazione"/>
+    <findFieldProperty name="ds_missione"/>
+    <findFieldProperty name="ti_istituz_commerc"/>
+    <findFieldProperty name="ti_anagrafico"/>
+    <findFieldProperty name="cd_terzo" label="Cod. terzo"/>
+    <findFieldProperty name="cd_precedente"/>
+    <findFieldProperty name="nome"/>
+    <findFieldProperty name="cognome"/>
+    <findFieldProperty name="ragione_sociale"/>
+    <findFieldProperty name="partita_iva"/>
+    <findFieldProperty name="codice_fiscale"/>
+    <findFieldProperty name="cd_trattamento"/>
+    <findFieldProperty name="cd_tipo_rapporto"/>
+    <findFieldProperty name="pg_rif_inquadramento"/>
+    <findFieldProperty name="im_totale_missione" label="Tot. missione"/>
+    <findFieldProperty name="ti_provvisorio_definitivoForSearch"/>
+    <findFieldProperty name="stato_cofiForSearch"/>
+    <findFieldProperty name="stato_coan"/>
+    <findFieldProperty name="stato_coge"/>
+    <findFieldProperty name="ti_associato_manrevForSearch"/>
+    <findFieldProperty name="stato_pagamento_fondo_ecoForSearch"/>
+    <findFieldProperty name="dt_pagamento_fondo_eco"/>
+    <findFieldProperty name="esercizio_ori_obbligazione"/>
+    <findFieldProperty name="pg_obbligazione"/>
+    <findFieldProperty name="pg_obbligazione_scadenzario"/>
+    <findFieldProperty name="pg_anticipo"/>
+    <findFieldProperty name="fl_associato_compenso"/>
+    <findFieldProperty name="stato_liquidazione"/>
 </bulkInfo>

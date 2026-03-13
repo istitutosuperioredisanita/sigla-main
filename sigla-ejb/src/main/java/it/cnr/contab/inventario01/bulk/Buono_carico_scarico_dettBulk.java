@@ -21,6 +21,7 @@
 */
 package it.cnr.contab.inventario01.bulk;
 
+import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
@@ -43,6 +44,9 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	public final static String STATO_COGE_C = "C";
 	public final static String STATO_COGE_R = "R";
 	private Inventario_beniBulk bene;
+
+	private AnagraficoBulk anagAssegnatario = new AnagraficoBulk();
+
 	private int gruppi;
 	private Buono_carico_scaricoBulk buono_cs;
 	private Boolean fl_accessorio_contestuale=new Boolean(false);
@@ -69,6 +73,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 		return buono_cs;
 	}
 	private Long idTransito;
+	private Boolean flagOnereConsOrdine=false;
 
 	public Long getIdTransito() {
 		return idTransito;
@@ -76,6 +81,14 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 
 	public void setIdTransito(Long idTransito) {
 		this.idTransito = idTransito;
+	}
+
+	public Boolean getFlagOnereConsOrdine() {
+		return flagOnereConsOrdine;
+	}
+
+	public void setFlagOnereConsOrdine(Boolean flagOnereConsOrdine) {
+		this.flagOnereConsOrdine = flagOnereConsOrdine;
 	}
 
 	public void setBuono_cs(Buono_carico_scaricoBulk bulk) {
@@ -296,10 +309,10 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 		this.getBene().setNr_inventario(nr_inventario);
 	}
 	public Integer getProgressivo () {
-		return Integer.valueOf(this.getBene().getProgressivo().intValue());
+		return new Integer(this.getBene().getProgressivo().intValue());
 	}
 	public void setProgressivo (Integer progressivo) {
-		this.getBene().setProgressivo(Long.valueOf(progressivo.longValue()));
+		this.getBene().setProgressivo(new Long(progressivo.longValue()));
 	}
 	
 	public void setTi_documento(java.lang.String ti_documento)  {
@@ -322,7 +335,7 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	}
 	public void CalcolaTotaleBene() { 
 
-		if (getQuantita() == null) setQuantita(Long.valueOf(1));
+		if (getQuantita() == null) setQuantita(new Long(1));
 		if (getValore_unitario() == null) setValore_unitario(new java.math.BigDecimal(0));
 	    	setTotale(new BigDecimal(getQuantita().longValue()).multiply(getValore_unitario()).setScale(2,java.math.BigDecimal.ROUND_HALF_UP));
 	    	
@@ -375,6 +388,25 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 		if(this.getBene() != null && this.getBene().getId_transito_beni_ordini() != null)
 			return true;
 		return false;
+	}
+
+
+	public AnagraficoBulk getAnagAssegnatario() {
+		return anagAssegnatario;
+	}
+
+	public void setAnagAssegnatario(AnagraficoBulk anagAssegnatario) {
+		this.anagAssegnatario = anagAssegnatario;
+	}
+
+	/**
+	 * Restituisce la denominazione dell'assegnatario per visualizzazione
+	 */
+	public String getDs_assegnatario() {
+		if (bene != null && bene.getAssegnatario() != null) {
+			return bene.getAssegnatario().getDenominazione_sede();
+		}
+		return "";
 	}
 
 }

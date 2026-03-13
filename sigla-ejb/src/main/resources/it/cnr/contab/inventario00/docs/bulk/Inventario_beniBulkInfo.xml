@@ -600,6 +600,14 @@
 			maxLength="30"
 			inputSize="20"
 			label="Ordine"  />
+	<fieldProperty
+			name="flOnereOrdine"
+			property="transito_beni_ordini.movimentiMag.lottoMag.ordineAcqConsegna.flOnere"
+			inputType="CHECKBOX"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="false"
+			label="Onere"/>
 	<formFieldProperty
 		name="codiceCompleto" />
 	<formFieldProperty
@@ -739,6 +747,10 @@
 			name="numeroBolla" />
 	<formFieldProperty
 			name="estremiOrdine" />
+	<formFieldProperty
+			name="flOnereOrdine" />
+
+
 	<columnFieldProperty
 		name="etichetta" 
 		style="width:130px" />
@@ -860,7 +872,15 @@
 		<findFieldProperty
 				name="dt_acquisizione" />
 	</freeSearchSet>
-    <form name="searchtool">		
+
+	<freeSearchSet name="searchTrasportoRientro">
+		<findFieldProperty name="nr_inventario" />
+		<findFieldProperty name="etichetta" />
+		<findFieldProperty name="progressivo" />
+		<findFieldProperty name="ds_bene" />
+	</freeSearchSet>
+
+    <form name="searchtool">
 	    <formFieldProperty
 			name="nr_inventario"
 			enabledOnSearch="true"
@@ -889,4 +909,44 @@
 		<columnFieldProperty
 			name="valore_alienazione" />
 	</columnSet>
+
+	<columnSet name="righeTrasporto">
+		<columnFieldProperty
+				name="nr_inventario"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="etichetta"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="progressivo"
+				style="width:40px"/>
+		<columnFieldProperty
+				name="ds_bene"
+				style="width:300px"/>
+		<columnFieldProperty
+				name="valore_bene"
+				style="width:100px"/>
+	</columnSet>
+
+
+	<!-- ColumnSet per Rientro Beni -->
+	<columnSet name="righeRientro">
+		<columnFieldProperty
+				name="nr_inventario"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="etichetta"
+				style="width:80px"/>
+		<columnFieldProperty
+				name="progressivo"
+				style="width:40px"/>
+		<columnFieldProperty
+				name="ds_bene"
+				style="width:300px"/>
+		<columnFieldProperty
+				name="valore_bene"
+				style="width:100px"/>
+	</columnSet>
+
+
 </bulkInfo>

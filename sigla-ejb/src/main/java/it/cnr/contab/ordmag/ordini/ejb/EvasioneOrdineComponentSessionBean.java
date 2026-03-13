@@ -29,10 +29,13 @@ import it.cnr.jada.persistency.PersistencyException;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Stateless;
 import java.util.List;
+import java.util.Map;
 
 @Stateless(name = "CNRORDMAG00_EJB_EvasioneOrdineComponentSession")
 public class EvasioneOrdineComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements EvasioneOrdineComponentSession {
-
+    public static it.cnr.jada.ejb.CRUDComponentSessionBean newInstance() throws javax.ejb.EJBException {
+        return new EvasioneOrdineComponentSessionBean();
+    }
 
     @PostConstruct
     public void ejbCreate() {
@@ -58,10 +61,10 @@ public class EvasioneOrdineComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         }
     }
 
-    public List<BollaScaricoMagBulk> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException, jakarta.ejb.EJBException {
+    public Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> evadiOrdine(UserContext userContext, EvasioneOrdineBulk evasioneOrdine) throws ComponentException, PersistencyException, javax.ejb.EJBException {
         pre_component_invocation(userContext, componentObj);
         try {
-            List<BollaScaricoMagBulk> result = ((EvasioneOrdineComponent) componentObj).evadiOrdine(userContext, evasioneOrdine);
+            Map<EvasioneOrdineBulk, List<BollaScaricoMagBulk>> result = ((EvasioneOrdineComponent) componentObj).evadiOrdine(userContext, evasioneOrdine);
             component_invocation_succes(userContext, componentObj);
             return result;
         } catch (it.cnr.jada.comp.NoRollbackException e) {

@@ -628,6 +628,14 @@
 			formatName="it.cnr.contab.util.GenericImportoFormat"
 			enabledOnEdit="false"
 			label="Totale" />
+	fieldProperty
+	name="fl_onere"
+	property="flOnere"
+	inputType="CHECKBOX"
+	enabledOnInsert="false"
+	enabledOnEdit="false"
+	enabledOnSearch="true"
+	label="Onere"/>
 
 	<form
 			name="searchtool">
@@ -669,6 +677,8 @@
 				name="quantita"/>
 		<columnFieldProperty
 				name="imTotaleConsegna" />
+		<columnFieldProperty
+				name="fl_onere" />
 	</columnSet>
 	<columnSet
 			name="consegneSet">
@@ -687,6 +697,10 @@
 				name="cdUnitaMisuraMinima"
 				headerLabel="ARTICOLO"
 				label="UM Minima" />
+		<columnFieldProperty
+				name="fl_onere"
+				headerLabel="ARTICOLO"
+				label="Onere" />
 		<columnFieldProperty
 				name="cdUnitaMisura"
 				headerLabel="ORDINE"
@@ -711,8 +725,6 @@
 			name="consegna" />
 	<formFieldProperty
 			name="stato" />
-    <formFieldProperty
-            name="stato_consegna" />
 	<formFieldProperty
 			name="statoFatt" />
 	<formFieldProperty
@@ -782,7 +794,8 @@
 	<formFieldProperty name="imIvaConsegnaModificato" />
 	<formFieldProperty name="imIvaDConsegnaModificato" />
 	<formFieldProperty name="imTotaleConsegnaModificato" />
-
+	<formFieldProperty
+			name="fl_onere" />
 	<columnSet
 			name="evasioneOrdineForzata">
 		<columnFieldProperty
@@ -821,6 +834,8 @@
 				name="tipoConsegna"/>
 		<columnFieldProperty
 				name="dtPrevConsegna"/>
+		<columnFieldProperty
+				name="fl_onere"/>
 	</columnSet>
 
 	<columnSet
@@ -853,6 +868,8 @@
 				name="cdBeneServizio"/>
 		<columnFieldProperty
 				name="dsBeneServizio"/>
+		<columnFieldProperty
+				name="fl_onere"/>
 		<columnFieldProperty
 				name="percentuale_voce_iva"/>
 		<columnFieldProperty
@@ -902,6 +919,8 @@
 				name="cdBeneServizio"/>
 		<columnFieldProperty
 				name="dsBeneServizio"/>
+		<columnFieldProperty
+				name="fl_onere"/>
 		<columnFieldProperty
 				name="percentuale_voce_iva"/>
 		<columnFieldProperty
@@ -977,6 +996,9 @@
 			name="cdVoceEp" />
 	<findFieldProperty
 			name="dsVoceEp" />
+	<findFieldProperty
+			name="fl_onere"/>
+
 	<columnFieldProperty
 			name="cdCds" />
 	<columnFieldProperty
@@ -1031,4 +1053,6 @@
 			name="cdVoceEp" />
 	<columnFieldProperty
 			name="dsVoceEp" />
+	<columnFieldProperty
+			name="fl_onere" />
 </bulkInfo>

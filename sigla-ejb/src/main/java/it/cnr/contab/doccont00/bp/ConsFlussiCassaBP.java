@@ -90,6 +90,8 @@ public class ConsFlussiCassaBP extends BulkBP {
 			setModel(context,bulk);
 			bulk.setEsercizio(esercizio);
 
+
+
 			super.init(config, context);
 		}
 

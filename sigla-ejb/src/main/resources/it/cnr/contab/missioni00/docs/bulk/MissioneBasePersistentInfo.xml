@@ -87,6 +87,20 @@
 			columnScale="2"
 			nullable="false" />
 		<columnMapping
+				columnName="IM_SPESE_TRACC"
+				propertyName="im_spese_tracc"
+				sqlTypeName="DECIMAL"
+				columnSize="15"
+				columnScale="2"
+				nullable="false"/>
+		<columnMapping
+				columnName="IM_SPESE_NO_TRACC"
+				propertyName="im_spese_no_tracc"
+				sqlTypeName="DECIMAL"
+				columnSize="15"
+				columnScale="2"
+				nullable="false"/>
+		<columnMapping
 			columnName="CD_TERMINI_PAG"
 			propertyName="cd_termini_pag"
 			sqlTypeName="VARCHAR"
@@ -429,6 +443,10 @@
 	<persistentProperty
 		name="im_spese_anticipate" />
 	<persistentProperty
+			name="im_spese_tracc"/>
+	<persistentProperty
+			name="im_spese_no_tracc"/>
+	<persistentProperty
 		name="cd_termini_pag" />
 	<persistentProperty
 		name="cognome" />
@@ -519,9 +537,9 @@
 	<persistentProperty
 		name="cd_tipo_rapporto" />
 	<persistentProperty
-		name="im_rimborso" />		
+		name="im_rimborso" />
 	<persistentProperty
-		name="stato_liquidazione" />	
+		name="stato_liquidazione" />
 	<persistentProperty
 		name="idRimborsoMissione" />
 	<persistentProperty

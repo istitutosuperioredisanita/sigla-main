@@ -6222,6 +6222,10 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/remove_schedulazione_gest_ammortamento.xml"/>
     <!-- Autore : CIRO SALVIO - Remove Schedulazione gestione ammortamento( Calcolo e Annulla Ammortamento) -->
     <include file="bootstrap/add_schedulazione_check_congr_dati.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunta colonna FL_SPESA_TRACCIATA su MISSIONE_DETTAGLIO-->
+    <include file="bootstrap/add_column_fl_spesa_tracc_miss_dett.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunte colonne im_spese_tracc e im_spese_no_tracc su MISSIONE-->
+    <include file="bootstrap/add_columns_imp_spesa_tracc_NO_tracc.xml"/>
     <!-- Autore : VALENTINA TOMADA - Nuovo flag per dismissione in TIPO_CARICO_SCARICO-->
     <include file="bootstrap/add_column_fl_dismissioni_to_tipo_carico_scarico.xml"/>
 
@@ -6274,12 +6278,37 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accesso_flussi_di_cassa_rend.xml"/>
     <!-- Autore : VALENTINA TOMADA - Nuova voce di menu per consultazione correlazione Partite di Giro e Entrate/Spese-->
     <include file="bootstrap/add_accesso_ass_partita_giro.xml"/>
-    <!-- Autore : MARCO SPASIANO - Accessi consultazione scadenzario anno corrente -->
-    <include file="bootstrap/add_accessi_cons_scadenzario_anno_corrente.xml"/>
+
+    <!-- Autore : DAVIDE MIRRA - Creata tabella di supporto Tipo Trasporto Rientro -->
+    <include file="bootstrap/create_table_tipo_trasporto_rientro.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Creata tabella di supporto Numeratore Documento Trasporto Rientro -->
+    <include file="bootstrap/create_table_numeratore_doc_t_r.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Creata tabella principale Documento Trasporto Rientro -->
+    <include file="bootstrap/create_table_doc_trasporto_rientro.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Creata tabella principale Dettaglio Documento Trasporto Rientro -->
+    <include file="bootstrap/create_table_doc_trasporto_rientro_dett.xml"/>
+      <!-- Autore : DAVIDE MIRRA - Creata tabella per la gestione dei documenti TR respinti in Happysign -->
+    <!--<include file="bootstrap/create_table_docTR_respinto_happysign.xml"/>!-->
+    <!-- Autore : DAVIDE MIRRA - Aggiunta configurazione stampe prioritarie per Documento Trasporto Rientro -->
+    <include file="bootstrap/add_print_priority_doc_trasporto_rientro.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunti accessi per Documento Trasporto Rientro Beni -->
+    <include file="bootstrap/add_accessi_doc_trasp_rient_beni.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunto accesso per Tipo Trasporto Rientro -->
+    <include file="bootstrap/add_accesso_tipo_tras_rient.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Aggiunta configurazione gestione invio in firma Documento Trasporto Rientro -->
+    <include file="bootstrap/add_conf_gestione_invio_docTR.xml"/>
+    <!-- Autore : DAVIDE MIRRA - Flag che indica se il bene e' presente o meno all'interno dell' Istituto -->
+    <include file="bootstrap/add_column_fl_bene_in_ist.xml"/>
     <!-- Autore : MASSIMILIANO DI GREGORIO - Nuova voce di menu per impegni pluriennali-->
     <include file="bootstrap/add_accesso_stampa_obbligazioni_pluriennali_voci.xml"/>
     <!-- Autore : STEFANO LUCATTINI - Nuova voce di menu per accertamenti pluriennali-->
     <include file="bootstrap/add_accesso_stampa_accertamenti_pluriennali_voci.xml"/>
+
+    <!-- Autore : MARCO SPASIANO - Accessi consultazione scadenzario anno corrente -->
+    <include file="bootstrap/add_accessi_cons_scadenzario_anno_corrente.xml"/>
+
+    <!-- Autore : Massimiliano Di Gregorio - Nuova voce di menu per consultazione configurazione CNR-->
+    <include file="bootstrap/add_accesso_cons_configurazione_cnr.xml"/>
     <!-- Autore : Stefano Lucattini - Nuova voce di menu per la gestione della tabella configurazione CNR-->
     <include file="bootstrap/add_accesso_gestione_configurazione_cnr.xml"/>
     <!-- Autore : Valentina Tomada - Modifica colonna TI_FUNZIONE di ASS_BP_ACCESSO x la gestione della tabella configurazione CNR-->
@@ -6299,4 +6328,10 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_column_on_scrittura_partita_doppia.xml"/>
     <include file="bootstrap/add_schedulazione_check_congr_dati2.xml"/>
     <include file="bootstrap/add_tipo_docamm_ordine_consegna.xml"/>
+    <!-- Autore : Valentina Tomada - Inserita colonna FL_ONERE_ACCESS in ORDINE_ACQ_CONSEGNA" -->
+    <include file="bootstrap/add_column_fl_onere_access_ord_consegna.xml"/>
+    <!-- Autore : Valentina Tomada - Inserita colonna FL_ONERE in ORDINE_ACQ_CONSEGNA (drop FL_ONERE_ACCESS)" -->
+    <include file="bootstrap/drop_column_fl_onere_access_ord_consegna.xml"/>
+
+
 </databaseChangeLog>

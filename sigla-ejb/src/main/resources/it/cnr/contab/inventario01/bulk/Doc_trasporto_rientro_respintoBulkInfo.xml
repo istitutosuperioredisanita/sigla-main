@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="id"
+		property="id"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Identificativo univoco del record" />
+	<fieldProperty
+		name="pgInventario"
+		property="pgInventario"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Codice dell'inventario" />
+	<fieldProperty
+		name="tiDocumento"
+		property="tiDocumento"
+		inputType="TEXT"
+		inputSize="1"
+		maxLength="1"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Flag per stabilire se il documento risulta essere un trasporto o un rientro (T=Trasporto, R=Rientro)" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Esercizio di riferimento" />
+	<fieldProperty
+		name="pgDocTrasportoRientro"
+		property="pgDocTrasportoRientro"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Numero che identifica il documento di trasporto/rientro" />
+	<fieldProperty
+		name="dataInserimento"
+		property="dataInserimento"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Data e ora di inserimento del record di rifiuto" />
+	<fieldProperty
+		name="uidInsert"
+		property="uidInsert"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="256"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Utente che ha rifiutato il documento" />
+	<fieldProperty
+		name="tipoOperazioneDoc"
+		property="tipoOperazioneDoc"
+		inputType="TEXT"
+		inputSize="2"
+		maxLength="2"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Tipo di operazione: TR=Trasporto, RI=Rientro" />
+	<fieldProperty
+		name="tipoFaseRespingi"
+		property="tipoFaseRespingi"
+		inputType="TEXT"
+		inputSize="3"
+		maxLength="3"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Fase in cui è avvenuto il rifiuto: RFI=Rifiuto Firma" />
+	<fieldProperty
+		name="motivoRespingi"
+		property="motivoRespingi"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="2000"
+		enabledOnEdit="false"
+		label="Motivazione del rifiuto" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="id" />
+	</form>
+	<formFieldProperty
+		name="id" />
+	<formFieldProperty
+		name="dataInserimento" />
+	<formFieldProperty
+		name="uidInsert" />
+	<formFieldProperty
+		name="tipoOperazioneDoc" />
+	<formFieldProperty
+		name="tipoFaseRespingi" />
+	<formFieldProperty
+		name="motivoRespingi" />
+	<findFieldProperty
+		name="id" />
+	<findFieldProperty
+		name="pgInventario" />
+	<findFieldProperty
+		name="tiDocumento" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="pgDocTrasportoRientro" />
+	<findFieldProperty
+		name="dataInserimento" />
+	<findFieldProperty
+		name="uidInsert" />
+	<findFieldProperty
+		name="tipoOperazioneDoc" />
+	<findFieldProperty
+		name="tipoFaseRespingi" />
+	<findFieldProperty
+		name="motivoRespingi" />
+	<columnFieldProperty
+		name="id" />
+	<columnFieldProperty
+		name="pgInventario" />
+	<columnFieldProperty
+		name="tiDocumento" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="pgDocTrasportoRientro" />
+	<columnFieldProperty
+		name="dataInserimento" />
+	<columnFieldProperty
+		name="uidInsert" />
+	<columnFieldProperty
+		name="tipoOperazioneDoc" />
+	<columnFieldProperty
+		name="tipoFaseRespingi" />
+	<columnFieldProperty
+		name="motivoRespingi" />
+</bulkInfo>

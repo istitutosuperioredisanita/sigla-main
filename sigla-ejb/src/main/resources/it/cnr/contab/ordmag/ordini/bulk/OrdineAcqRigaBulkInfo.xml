@@ -557,6 +557,14 @@
 			formatName="it.cnr.contab.util.GenericImportoFormat"
 			enabledOnEdit="false"
 			label="Totale" />
+	<fieldProperty
+			name="flagOnereRiga"
+			property="flagOnereRiga"
+			inputType="CHECKBOX"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			enabledOnSearch="true"
+			label="Onere"/>
 
 	<columnSet
 		name="righeSet">
@@ -566,6 +574,8 @@
 			name="cdBeneServizio" />
 		<columnFieldProperty
 			name="dsBeneServizio" />
+		<columnFieldProperty
+				name="flagOnereRiga" />
 		<columnFieldProperty
 			name="cd_voce_iva" />
 		<columnFieldProperty
@@ -703,6 +713,10 @@
 	<formFieldProperty name="imIvaConsegne" />
 	<formFieldProperty name="imIvaDConsegne" />
 	<formFieldProperty name="imTotaleConsegne" />
+	<formFieldProperty
+			name="flagOnereRiga"
+			command="doOnFlagOnereRigaChange"
+			readonlyProperty="ROFlagOnereRiga"/>
 
 	<findFieldProperty
 		name="cdCds" />
@@ -752,6 +766,10 @@
 		name="imTotaleRiga" />
 	<findFieldProperty
 		name="dtCancellazione" />
+	<findFieldProperty
+			name="flagOnereRiga" />
+
+
 	<columnFieldProperty
 		name="cdCds" />
 	<columnFieldProperty
@@ -802,4 +820,7 @@
 		name="imTotaleRiga" />
 	<columnFieldProperty
 		name="dtCancellazione" />
+	<columnFieldProperty
+		name="flagOnereRiga" />
+
 </bulkInfo>

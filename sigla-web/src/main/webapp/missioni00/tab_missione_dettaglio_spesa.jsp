@@ -44,6 +44,12 @@
 					<% bp.getSpesaController().writeFormInput( out, "default", "fl_spesa_anticipata", !bp.getSpesaController().isEditingSpesa(), null, null); %>					
 				</td>
 			</tr>
+			<tr>
+            	<td colspan="2">
+            		<% bp.getSpesaController().writeFormLabel( out, "fl_spesa_tracciata"); %>
+            		<% bp.getSpesaController().writeFormInput( out, "default", "fl_spesa_tracciata", !bp.getSpesaController().isEditingSpesa(), null, null); %>
+            	</td>
+            </tr>
 			<tr>	
 				<td class="w-10"><% bp.getSpesaController().writeFormLabel( out, "localita_spostamento"); %></td>
 				<td><% bp.getSpesaController().writeFormInput( out, "default", "localita_spostamento", !bp.getSpesaController().isEditingSpesa(), null, null); %></td>

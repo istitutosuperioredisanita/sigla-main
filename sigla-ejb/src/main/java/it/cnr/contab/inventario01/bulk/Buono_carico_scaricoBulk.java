@@ -360,6 +360,7 @@ public class Buono_carico_scaricoBulk extends Buono_carico_scaricoBase {
 				rigoInventario.setBuono_cs(this);
 				bene.setDs_bene(transito.getDs_bene());
 				rigoInventario.setQuantita(Long.valueOf("1"));
+				rigoInventario.setFlagOnereConsOrdine(transito.getMovimentiMag().getLottoMag().getOrdineAcqConsegna().getFlOnere());
 				rigoInventario.setBene(bene);
 				bene.setCollocazione(transito.getCollocazione());
 				bene.setValore_iniziale(transito.getValore_iniziale());

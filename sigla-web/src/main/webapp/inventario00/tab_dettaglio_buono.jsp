@@ -15,7 +15,11 @@
    if (riga != null){
         bene = riga.getBene();
    }
-   bp.getDettaglio().writeHTMLTable(pageContext,"righeSetConCodice",bp.isCRUDAddButtonEnabled(),false,bp.isCRUDDeleteButtonEnabled(),"100%","200px");
+   if (riga!= null && riga.getBuono_cs().isByOrdini()){
+        bp.getDettaglio().writeHTMLTable(pageContext,"righeSetPerOrdine",bp.isCRUDAddButtonEnabled(),false,bp.isCRUDDeleteButtonEnabled(),"100%","200px");
+   }else{
+        bp.getDettaglio().writeHTMLTable(pageContext,"righeSetConCodice",bp.isCRUDAddButtonEnabled(),false,bp.isCRUDDeleteButtonEnabled(),"100%","200px");
+   }
 %>
 
 	<table>			
@@ -187,14 +191,14 @@
 				<% bp.getDettaglio().writeFormInput(out,null,"ti_utilizzatore",bp.isEditing(),null,null); %>
 			</td>			
 		</tr>
-		<tr>
-			<td>
-				<% bp.getDettaglio().writeFormLabel(out,"find_assegnatario"); %>
-			</td>
-			<td colspan="3">
-				<% bp.getDettaglio().writeFormInput(out,null,"find_assegnatario",bp.isEditing(),null,null); %>
-			</td>
-		</tr>		
+        <tr>
+            <td>
+                <% bp.getDettaglio().writeFormLabel(out,"findAnagAssegnatario"); %>
+            </td>
+            <td colspan="3">
+                <% bp.getDettaglio().writeFormInput(out,null,"findAnagAssegnatario",bp.isEditing(),null,null); %>
+            </td>
+        </tr>
 		<tr>
 			<td>
 				<% bp.getDettaglio().writeFormLabel(out,"quantita"); %>

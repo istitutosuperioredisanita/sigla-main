@@ -123,6 +123,8 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 
 	private ContoBulk voce_ep = new ContoBulk();
 
+	private Boolean flagOnereRiga=false;
+
 	public OrdineAcqRigaBulk() {
 		super();
 	}
@@ -381,6 +383,19 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 		}
 		return true;
 	}
+	public boolean isROFlagOnereRiga(){
+		if(getBeneServizio() != null && getBeneServizio().getFl_gestione_inventario() != null && getBeneServizio().getFl_gestione_inventario()){
+			return false;
+		}
+		setFlagOnereRiga(false);
+		if(this.getRigheConsegnaColl() !=null){
+			for (java.util.Iterator j = this.getRigheConsegnaColl().iterator(); j.hasNext(); ) {
+				OrdineAcqConsegnaBulk consegna = (OrdineAcqConsegnaBulk) j.next();
+				consegna.setFlOnere(false);
+			}
+		}
+		return true;
+	}
 	public Boolean isROCoefConv(){
 		if (getUnitaMisura() != null && getUnitaMisura().getCdUnitaMisura() != null && 
 				getBeneServizio() != null && getBeneServizio().getUnitaMisura() != null && getBeneServizio().getCdUnitaMisura() != null && 
@@ -439,7 +454,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 //			java.sql.Timestamp ts = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
 //			nuovoRigo.setDt_da_competenza_coge((getDt_da_competenza_coge() == null)?ts : getDt_da_competenza_coge());
 //			nuovoRigo.setDt_a_competenza_coge((getDt_a_competenza_coge() == null)?ts : getDt_a_competenza_coge());
-//		} catch (jakarta.ejb.EJBException e) {
+//		} catch (javax.ejb.EJBException e) {
 //			throw new it.cnr.jada.DetailedRuntimeException(e);
 //		}	
 		nuovoRigo.setStato(OrdineAcqRigaBulk.STATO_INSERITA);
@@ -448,7 +463,7 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 			int prog = ((OrdineAcqConsegnaBulk)i.next()).getConsegna();
 			if (prog > max) max = prog;
 		}
-		nuovoRigo.setConsegna(Integer.valueOf(max+1));
+		nuovoRigo.setConsegna(new Integer(max+1));
 		righeConsegnaColl.add(nuovoRigo);
 		return righeConsegnaColl.size()-1;
 	}
@@ -470,7 +485,6 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 
 		return new it.cnr.jada.bulk.BulkCollection[] { 
 				righeConsegnaColl,
-				righeEconomica,
 				dettaglioAllegati
 		};
 	}
@@ -530,7 +544,6 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 	public IDocumentoAmministrativoBulk getFather() {
 		return getOrdineAcq();
 	}
-
 	@Override
 	public BigDecimal getIm_diponibile_nc() {
 		return null;
@@ -914,5 +927,12 @@ Da questa gestione sono ricavati gli elementi per la gestione di magazziono e di
 		return Optional.ofNullable(this.getVoce_ep()).map(ContoBulk::isAnaliticaEnabled).orElse(Boolean.FALSE)?
                 Optional.ofNullable(this.getImCostoEcoConsegne()).orElse(BigDecimal.ZERO)
 				.subtract(Optional.ofNullable(this.getImCostoEcoRipartitoConsegne()).orElse(BigDecimal.ZERO)):BigDecimal.ZERO;
+	}
+	public Boolean getFlagOnereRiga() {
+		return flagOnereRiga;
+	}
+
+	public void setFlagOnereRiga(Boolean flagOnereRiga) {
+		this.flagOnereRiga = flagOnereRiga;
 	}
 }

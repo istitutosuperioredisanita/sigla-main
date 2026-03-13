@@ -622,6 +622,7 @@ public class OrdineAcqComponent
                 riga.setDspUopDest(cons.getUnitaOperativaOrd());
                 riga.setDspConto(cons.getContoBulk());
                 riga.setDspStato(cons.getStato());
+                riga.setFlagOnereRiga(cons.getFlOnere());
                 if (isAttivaFinanziaria && Optional.ofNullable(cons.getObbligazioneScadenzario()).isPresent())
                     riga.setDspStatoContabilizzazione(OrdineAcqRigaBulk.StatoContabilizzazione.CONTABILIZZATA);
             } else if (riga.getRigheConsegnaColl().size() > 1) {
@@ -637,6 +638,7 @@ public class OrdineAcqComponent
                         primoGiro = false;
                     }
                 }
+                riga.setFlagOnereRiga(riga.getRigheConsegnaColl().get(0).getFlOnere());
                 riga.setDspStato(stato);
                 if (isAttivaFinanziaria) {
                     final boolean contabilizzate = riga.getRigheConsegnaColl()
