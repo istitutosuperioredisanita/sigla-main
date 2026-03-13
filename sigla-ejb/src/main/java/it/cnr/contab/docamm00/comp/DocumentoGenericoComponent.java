@@ -198,7 +198,7 @@ public class DocumentoGenericoComponent
                             aggiornaSaldi(userContext, documento, scadenza.getAccertamento(), status);
                         for (Iterator r = documento.getDocumento_generico_dettColl().iterator(); r.hasNext(); ) {
                             Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) r.next();
-                            if (riga.getAccertamento_scadenziario().equalsByPrimaryKey(scadenza))
+                            if (riga.getAccertamento_scadenziario() != null && riga.getAccertamento_scadenziario().equalsByPrimaryKey(scadenza))
                                 if (riga.getIm_imponibile().compareTo(riga.getIm_riga_iniziale()) != 0)
                                     importoAssociatoAllaScadenza =
                                             importoAssociatoAllaScadenza.add((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_imponibile().subtract(riga.getIm_riga_iniziale())).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
@@ -541,7 +541,7 @@ public class DocumentoGenericoComponent
                             aggiornaSaldi(userContext, documento, scadenza.getObbligazione(), status);
                         for (Iterator r = documento.getDocumento_generico_dettColl().iterator(); r.hasNext(); ) {
                             Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) r.next();
-                            if (riga.getObbligazione_scadenziario().equalsByPrimaryKey(scadenza))
+                            if (riga.getObbligazione_scadenziario() != null && riga.getObbligazione_scadenziario().equalsByPrimaryKey(scadenza))
                                 if (riga.getIm_imponibile().compareTo(Optional.ofNullable(riga.getIm_riga_iniziale()).orElse(BigDecimal.ZERO)) != 0)
                                     importoAssociatoAllaScadenza =
                                             importoAssociatoAllaScadenza.add((riga.getIm_riga_iniziale() == null ? riga.getIm_imponibile() : riga.getIm_imponibile().subtract(riga.getIm_riga_iniziale())).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
@@ -5062,10 +5062,10 @@ public class DocumentoGenericoComponent
         //controlla compatibilità dei clienti/fornitori x accertamenti/obbligazioni
         for (java.util.Iterator i = documentoGenerico.getDocumento_generico_dettColl().iterator(); i.hasNext(); ) {
             Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) i.next();
-            if (riga.getStato_cofi().equals(Documento_generico_rigaBulk.STATO_INIZIALE))
-                throw new it.cnr.jada.comp.ApplicationException("Attenzione la riga " + riga.getDs_riga() + " è in stato iniziale");
+            //if (riga.getStato_cofi().equals(Documento_generico_rigaBulk.STATO_INIZIALE))
+            //    throw new it.cnr.jada.comp.ApplicationException("Attenzione la riga " + riga.getDs_riga() + " è in stato iniziale");
             if (documentoGenerico.getTi_entrate_spese() == Documento_genericoBulk.ENTRATE) {
-                if (!riga.getTerzo().getCd_terzo().equals(riga.getAccertamento_scadenziario().getAccertamento().getCd_terzo())
+                if (riga.getAccertamento_scadenziario() != null && !riga.getTerzo().getCd_terzo().equals(riga.getAccertamento_scadenziario().getAccertamento().getCd_terzo())
                         && (!riga
                         .getAccertamento_scadenziario()
                         .getAccertamento()
@@ -5077,21 +5077,23 @@ public class DocumentoGenericoComponent
                     throw new it.cnr.jada.comp.ApplicationException(
                             "Attenzione la riga " + riga.getDs_riga() + " ha un terzo incompatibile con il documento contabile associato.");
             } else {
-                if (!riga.getTerzo().getCd_terzo().equals(riga.getObbligazione_scadenziario().getObbligazione().getCd_terzo())) {
-                    if (riga.getObbligazione_scadenziario().getObbligazione().getCreditore().getAnagrafico()==null) {
-                        try {
-                            TerzoHome terzohome = (TerzoHome) getHome(aUC, TerzoBulk.class);
-                            TerzoBulk creditore = (TerzoBulk)getHome(aUC, TerzoBulk.class).findByPrimaryKey(riga.getObbligazione_scadenziario().getObbligazione().getCreditore());
-                            creditore.setAnagrafico((AnagraficoBulk) getHome(aUC, AnagraficoBulk.class).findByPrimaryKey(creditore.getAnagrafico()));
-                            riga.getObbligazione_scadenziario().getObbligazione().setCreditore(creditore);
-                        } catch (PersistencyException e) {
-                            throw handleException(e);
+                if(!riga.getStato_cofi().equals(Documento_generico_rigaBulk.STATO_INIZIALE)) {
+                    if (!riga.getTerzo().getCd_terzo().equals(riga.getObbligazione_scadenziario().getObbligazione().getCd_terzo())) {
+                        if (riga.getObbligazione_scadenziario().getObbligazione().getCreditore().getAnagrafico() == null) {
+                            try {
+                                TerzoHome terzohome = (TerzoHome) getHome(aUC, TerzoBulk.class);
+                                TerzoBulk creditore = (TerzoBulk) getHome(aUC, TerzoBulk.class).findByPrimaryKey(riga.getObbligazione_scadenziario().getObbligazione().getCreditore());
+                                creditore.setAnagrafico((AnagraficoBulk) getHome(aUC, AnagraficoBulk.class).findByPrimaryKey(creditore.getAnagrafico()));
+                                riga.getObbligazione_scadenziario().getObbligazione().setCreditore(creditore);
+                            } catch (PersistencyException e) {
+                                throw handleException(e);
+                            }
                         }
+                        if (!riga.getObbligazione_scadenziario().getObbligazione().getCreditore().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI) &&
+                                !(riga.getTerzo().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI)))
+                            throw new it.cnr.jada.comp.ApplicationException(
+                                    "Attenzione la riga " + riga.getDs_riga() + " ha un terzo incompatibile con il documento contabile associato.");
                     }
-                    if (!riga.getObbligazione_scadenziario().getObbligazione().getCreditore().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI) &&
-                            !(riga.getTerzo().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI)))
-                        throw new it.cnr.jada.comp.ApplicationException(
-                                "Attenzione la riga " + riga.getDs_riga() + " ha un terzo incompatibile con il documento contabile associato.");
                 }
             }
         }
@@ -5102,33 +5104,35 @@ public class DocumentoGenericoComponent
                 throw new ApplicationException("Per Documenti Generici Esteri in Euro non è necessario il Documento 1210, bisogna Eliminarlo.");
         }
         //controllo obbligazione/accertamento
-        if (!documentoGenerico.isPassivo_ente()) {
-            if (documentoGenerico.getTi_entrate_spese() == Documento_genericoBulk.SPESE) {
-                controllaQuadraturaObbligazioni(aUC, documentoGenerico);
+     //   if(!documentoGenerico.hasDettagliNonContabilizzati()) {
+            if (!documentoGenerico.isPassivo_ente()) {
+                if (documentoGenerico.getTi_entrate_spese() == Documento_genericoBulk.SPESE) {
+                    controllaQuadraturaObbligazioni(aUC, documentoGenerico);
+                } else {
+                    controllaQuadraturaAccertamenti(aUC, documentoGenerico);
+                }
             } else {
-                controllaQuadraturaAccertamenti(aUC, documentoGenerico);
+                if (documentoGenerico.getTi_entrate_spese() == Documento_genericoBulk.SPESE) {
+                    ObbligazioniTable obbligazioniHash = documentoGenerico.getObbligazioniHash();
+                    if (obbligazioniHash != null)
+                        for (java.util.Enumeration e = obbligazioniHash.keys(); e.hasMoreElements(); ) {
+                            Obbligazione_scadenzarioBulk scadenza = (Obbligazione_scadenzarioBulk) e.nextElement();
+                            controllaOmogeneitaTraTerzi(aUC, scadenza, (Vector) obbligazioniHash.get(scadenza));
+                            controlloTrovato(aUC, scadenza);
+                        }
+                } else {
+                    AccertamentiTable accertamentiHash = documentoGenerico.getAccertamentiHash();
+                    if (accertamentiHash != null)
+                        for (java.util.Enumeration e = accertamentiHash.keys(); e.hasMoreElements(); ) {
+                            Accertamento_scadenzarioBulk scadenza = (Accertamento_scadenzarioBulk) e.nextElement();
+                            controllaOmogeneitaTraTerzi(aUC, scadenza, (Vector) accertamentiHash.get(scadenza));
+                            controlloTrovato(aUC, scadenza);
+                        }
+                }
             }
-        } else {
-            if (documentoGenerico.getTi_entrate_spese() == Documento_genericoBulk.SPESE) {
-                ObbligazioniTable obbligazioniHash = documentoGenerico.getObbligazioniHash();
-                if (obbligazioniHash != null)
-                    for (java.util.Enumeration e = obbligazioniHash.keys(); e.hasMoreElements(); ) {
-                        Obbligazione_scadenzarioBulk scadenza = (Obbligazione_scadenzarioBulk) e.nextElement();
-                        controllaOmogeneitaTraTerzi(aUC, scadenza, (Vector) obbligazioniHash.get(scadenza));
-                        controlloTrovato(aUC, scadenza);
-                    }
-            } else {
-                AccertamentiTable accertamentiHash = documentoGenerico.getAccertamentiHash();
-                if (accertamentiHash != null)
-                    for (java.util.Enumeration e = accertamentiHash.keys(); e.hasMoreElements(); ) {
-                        Accertamento_scadenzarioBulk scadenza = (Accertamento_scadenzarioBulk) e.nextElement();
-                        controllaOmogeneitaTraTerzi(aUC, scadenza, (Vector) accertamentiHash.get(scadenza));
-                        controlloTrovato(aUC, scadenza);
-                    }
-            }
-        }
 
-        controllaContabilizzazioneDiTutteLeRighe(aUC, documentoGenerico);
+            controllaContabilizzazioneDiTutteLeRighe(aUC, documentoGenerico);
+     //   }
 
         //controlli per la lettera di pagamento
         if (documentoGenerico.getLettera_pagamento_estero() != null) {
