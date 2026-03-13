@@ -65,6 +65,7 @@ it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk"%>
 				 <tr>
 				 	<td><% bp.getConsegne().writeFormLabel(out, "findBeneServizio");	%></td>
 					<td colspan="4"><% bp.getConsegne().writeFormInput(out,"default","findBeneServizio",true, null, null);%></td>
+					<td ><% bp.getConsegne().writeFormField(out, "fl_onere"); %></td>
 					<td class="d-flex flex-row-reverse">
 						<table>
 							<tr>

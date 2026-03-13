@@ -15,7 +15,11 @@
    if (riga != null){
         bene = riga.getBene();
    }
-   bp.getDettaglio().writeHTMLTable(pageContext,"righeSetConCodice",bp.isCRUDAddButtonEnabled(),false,bp.isCRUDDeleteButtonEnabled(),"100%","200px");
+   if (riga!= null && riga.getBuono_cs().isByOrdini()){
+        bp.getDettaglio().writeHTMLTable(pageContext,"righeSetPerOrdine",bp.isCRUDAddButtonEnabled(),false,bp.isCRUDDeleteButtonEnabled(),"100%","200px");
+   }else{
+        bp.getDettaglio().writeHTMLTable(pageContext,"righeSetConCodice",bp.isCRUDAddButtonEnabled(),false,bp.isCRUDDeleteButtonEnabled(),"100%","200px");
+   }
 %>
 
 	<table>			

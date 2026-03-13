@@ -469,6 +469,15 @@
 			formatName="it.cnr.contab.util.PositiveDecimalFormat"
 			enabledOnEdit="false"
 			label="Quantità Ordinata" />
+	<fieldProperty
+			name="flagOnereRiga"
+			property="flagOnereRiga"
+			inputType="CHECKBOX"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			enabledOnSearch="true"
+			label="Onere"/>
+
 	<columnSet
 		name="righeSet">
 		<columnFieldProperty
@@ -477,6 +486,8 @@
 			name="cdBeneServizio" />
 		<columnFieldProperty
 			name="dsBeneServizio" />
+		<columnFieldProperty
+				name="flagOnereRiga" />
 		<columnFieldProperty
 			name="cd_voce_iva" />
 		<columnFieldProperty
@@ -600,6 +611,13 @@
 		name="dtCancellazione" />
 	<formFieldProperty
 			name="cercaDspConto" />
+	<formFieldProperty
+			name="flagOnereRiga"
+			command="doOnFlagOnereRigaChange"
+			readonlyProperty="ROFlagOnereRiga"/>
+
+
+
 	<findFieldProperty
 		name="cdCds" />
 	<findFieldProperty
@@ -648,6 +666,10 @@
 		name="imTotaleRiga" />
 	<findFieldProperty
 		name="dtCancellazione" />
+	<findFieldProperty
+			name="flagOnereRiga" />
+
+
 	<columnFieldProperty
 		name="cdCds" />
 	<columnFieldProperty
@@ -697,5 +719,5 @@
 	<columnFieldProperty
 		name="imTotaleRiga" />
 	<columnFieldProperty
-		name="dtCancellazione" />
+		name="flagOnereRiga" />
 </bulkInfo>

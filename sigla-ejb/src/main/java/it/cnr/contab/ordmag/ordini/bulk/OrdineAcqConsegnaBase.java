@@ -127,7 +127,9 @@ public class OrdineAcqConsegnaBase extends OrdineAcqConsegnaKey implements Keyed
 
 //    DT_CANCELLAZIONE TIMESTAMP(7)
 	private java.sql.Timestamp dtCancellazione;
- 
+
+	//FL_ONERE CHAR(1)
+	private Boolean flOnere = new Boolean(false);
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: ORDINE_ACQ_CONSEGNA
@@ -438,6 +440,15 @@ public class OrdineAcqConsegnaBase extends OrdineAcqConsegnaKey implements Keyed
 	public void setQuantitaOrig(BigDecimal quantitaOrig) {
 		this.quantitaOrig = quantitaOrig;
 	}
+
+	public Boolean getFlOnere() {
+		return flOnere;
+	}
+
+	public void setFlOnere(Boolean flOnere) {
+		this.flOnere = flOnere;
+	}
+
 	public static Timestamp recuperoDataDefaultPrevistaConsegna(UserContext userContext){
 		BigDecimal value = null;
 		try {
