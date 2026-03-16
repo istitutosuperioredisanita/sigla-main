@@ -13,6 +13,29 @@
 		CRUDObbligazioneBP bp = (CRUDObbligazioneBP)BusinessProcess.getBusinessProcess(request);
 		it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk obbligazione = (it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk)bp.getModel();
 %>
+<div class="Group card p-2 m-1">
+    <div class="form-row">
+        <div class="col-md-6"><% bp.getController().writeFormLabel( out, "esercizio_originale"); %></div>
+        <div class="col-md-6"><% bp.getController().writeFormInput( out,"default","esercizio_originale",false,null,null); %></div>
+        <div class="col-md-6"><% bp.getController().writeFormInput(out,"default","fl_calcolo_automatico",false,null,"onclick=\"submitForm('doCambiaFl_calcolo_automatico')\""); %></div>
+        <div class="col-md-6"><% bp.getController().writeFormLabel( out, "fl_calcolo_automatico"); %></div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-4"><% bp.getController().writeFormLabel( out, "cd_unita_organizzativa"); %></div>
+        <div class="col-md-3"><% bp.getController().writeFormInput( out, "cd_unita_organizzativa"); %></div>
+        <div class="col-md-3"><% bp.getController().writeFormInput( out, "ds_unita_organizzativa"); %></div>
+    </div>
+    <div class="form-row">
+            <div class="col-md-4"><% bp.getController().writeFormLabel( out, "pg_obbligazione"); %></div>
+            <div class="col-md-3"><% bp.getController().writeFormInput( out, "pg_obbligazione"); %></div>
+            <div class="col-md-4"><% bp.getController().writeFormLabel( out, "dt_registrazione"); %></div>
+            <div class="col-md-3"<% bp.getController().writeFormInput( out, "dt_registrazione"); %></div>
+            <div class="col-md-4"><% bp.getController().writeFormLabel( out, "stato_obbligazione"); %></div>
+            <div class="col-md-4"><% bp.getController().writeFormLabel( out, "stato_obbligazione"); %></div>
+
+        </div>
+</div>
+
 <div class="card p-3 m-1">
   <table border="0" cellspacing="0" cellpadding="2" class="w-100">
 	<tr colspan=3>
@@ -26,38 +49,36 @@
 	<td align="right">
 	    <% bp.getController().writeFormInput(out,"default","fl_calcolo_automatico",false,null,"onclick=\"submitForm('doCambiaFl_calcolo_automatico')\""); %>
 	    <% bp.getController().writeFormLabel( out, "fl_calcolo_automatico"); %></td>
-<!--	<td align="right">
-	    <% bp.getController().writeFormInput(out,"fl_pluriennale");%>
-	    <% bp.getController().writeFormLabel(out,"fl_pluriennale");%></td> -->
-
 	</tr>
 	<tr>
 	<td><% bp.getController().writeFormLabel( out, "cd_unita_organizzativa"); %></td>
-	<td colspan=2>
+	<td>
 		<div class="input-group input-group-searchtool w-100 ">
 	    	<% bp.getController().writeFormInput( out, "cd_unita_organizzativa"); %>
 			<% bp.getController().writeFormInput( out, "ds_unita_organizzativa"); %></td>
 		</div>				 
 	</tr>
 	<tr>  
-	<td><% bp.getController().writeFormLabel( out, "pg_obbligazione"); %></td>	
-	<td colspan=2>
-		<% bp.getController().writeFormInput( out, "pg_obbligazione"); %>
-		<% bp.getController().writeFormLabel( out, "dt_registrazione"); %>
-		<% bp.getController().writeFormInput( out, "dt_registrazione"); %>
-		<% bp.getController().writeFormLabel( out, "stato_obbligazione"); %>
-		<% bp.getController().writeFormInput( out, "stato_obbligazione"); %></td>
+	<td><% bp.getController().writeFormLabel( out, "pg_obbligazione"); %></td>
+	<td>><% bp.getController().writeFormInput( out, "pg_obbligazione"); %></td>
+	<td><% bp.getController().writeFormLabel( out, "dt_registrazione"); %></td>
+	<td><% bp.getController().writeFormInput( out, "dt_registrazione"); %></td>
+	</td>
+	    <div class="input-group input-group-searchtool w-100 ">
+            <% bp.getController().writeFormLabel( out, "stato_obbligazione"); %></td>
+            <% bp.getController().writeFormInput( out, "stato_obbligazione"); %></td>
+        </div>
 	</tr>
 	<tr>
 	<td><% bp.getController().writeFormLabel( out, "pg_obbligazione_ori_riporto"); %></td>
-	<td colspan=2>
+	<td >
 		<% bp.getController().writeFormInput( out, "pg_obbligazione_ori_riporto"); %></td>
 	</tr>
 
 	<%  if( bp instanceof CRUDObbligazioneResBP  && ((CRUDObbligazioneResBP)bp).isStatoResiduoVisibile()) { %>
 		<tr>
 			<td><% bp.getController().writeFormLabel( out, ((CRUDObbligazioneResBP)bp).isROStato() ?"statoResiduoObbligazione_ro":"statoResiduoObbligazione"); %></td>
-			<td colspan=2>
+			<td>
 			<% bp.getController().writeFormInput( out, "default", ((CRUDObbligazioneResBP)bp).isROStato() ?"statoResiduoObbligazione_ro":"statoResiduoObbligazione",bp.isRoCampiResiduoProprio(),null,null); %>
 			</td>
 		</tr>		  		
