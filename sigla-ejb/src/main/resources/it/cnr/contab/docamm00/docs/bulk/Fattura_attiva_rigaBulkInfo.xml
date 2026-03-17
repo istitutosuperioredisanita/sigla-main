@@ -284,7 +284,8 @@
 		label="Conto EP"
 		nullable="false"
 		formName="searchtool"
-		enabledOnSearch="false" />
+		enabledOnSearch="false"
+		completeOnSave="false"/>
 
 	<fieldProperty
 			name="imCostoEco"
