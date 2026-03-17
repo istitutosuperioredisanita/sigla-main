@@ -21,7 +21,6 @@
 */
 package it.cnr.contab.inventario01.bulk;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
@@ -44,8 +43,6 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 	public final static String STATO_COGE_C = "C";
 	public final static String STATO_COGE_R = "R";
 	private Inventario_beniBulk bene;
-
-	private AnagraficoBulk anagAssegnatario = new AnagraficoBulk();
 
 	private int gruppi;
 	private Buono_carico_scaricoBulk buono_cs;
@@ -390,14 +387,6 @@ public class Buono_carico_scarico_dettBulk extends Buono_carico_scarico_dettBase
 		return false;
 	}
 
-
-	public AnagraficoBulk getAnagAssegnatario() {
-		return anagAssegnatario;
-	}
-
-	public void setAnagAssegnatario(AnagraficoBulk anagAssegnatario) {
-		this.anagAssegnatario = anagAssegnatario;
-	}
 
 	/**
 	 * Restituisce la denominazione dell'assegnatario per visualizzazione

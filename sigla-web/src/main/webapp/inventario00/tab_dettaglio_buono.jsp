@@ -191,14 +191,14 @@
 				<% bp.getDettaglio().writeFormInput(out,null,"ti_utilizzatore",bp.isEditing(),null,null); %>
 			</td>			
 		</tr>
-        <tr>
-            <td>
-                <% bp.getDettaglio().writeFormLabel(out,"findAnagAssegnatario"); %>
-            </td>
-            <td colspan="3">
-                <% bp.getDettaglio().writeFormInput(out,null,"findAnagAssegnatario",bp.isEditing(),null,null); %>
-            </td>
-        </tr>
+		<tr>
+			<td>
+				<% bp.getDettaglio().writeFormLabel(out,"findTerzoAssegnatario"); %>
+			</td>
+			<td colspan="3">
+				<% bp.getDettaglio().writeFormInput(out,null,"findTerzoAssegnatario",bp.isEditing(),null,null); %>
+			</td>
+		</tr>
 		<tr>
 			<td>
 				<% bp.getDettaglio().writeFormLabel(out,"quantita"); %>

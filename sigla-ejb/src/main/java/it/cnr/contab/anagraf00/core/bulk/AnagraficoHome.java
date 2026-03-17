@@ -822,29 +822,106 @@ public boolean findRapportoDipendenteFor(AnagraficoBulk anagrafico) throws Intro
 		return fetchAll(sql);
 	}
 
-	public SQLBuilder findAnagraficoDipendenteByClause(UserContext userContext,CompoundFindClause clause)
-			throws ComponentException, it.cnr.jada.persistency.PersistencyException {
+
+
+
+	/**
+	 * Costruisce una subquery EXISTS per verificare se un anagrafico
+	 * risulta dipendente attivo alla data odierna.
+	 *
+	 * @param cdAnagRef codice anagrafico da verificare.
+	 *
+	 * @return SQLBuilder oggetto che rappresenta la subquery EXISTS.
+	 */
+	private SQLBuilder buildExistsDipendente(String cdAnagRef)
+			throws ComponentException, PersistencyException {
+
+		final java.sql.Timestamp dataOdierna = this.getServerDate();
+		final String schema = it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema();
+
+		final String subQueryTipoRapporto =
+				"R.CD_TIPO_RAPPORTO IN (" +
+						"  SELECT CD_TIPO_RAPPORTO" +
+						"  FROM " + schema + "TIPO_RAPPORTO" +
+						"  WHERE TI_DIPENDENTE_ALTRO = '" + Tipo_rapportoBulk.DIPENDENTE + "'" +
+						"    AND CD_TIPO_RAPPORTO = 'DIP'" +
+						")";
+
+		SQLBuilder sqlExists = this.createSQLBuilder();
+		sqlExists.setHeader(
+				"SELECT 1" +
+						" FROM "  + schema + "ANAGRAFICO A" +
+						" INNER JOIN " + schema + "RAPPORTO R ON R.CD_ANAG = A.CD_ANAG"
+		);
+
+		sqlExists.setFromClause(null);
+
+		sqlExists.addSQLClause("AND", "R.DT_INI_VALIDITA", SQLBuilder.LESS_EQUALS,    dataOdierna);
+		sqlExists.addSQLClause("AND", "R.DT_FIN_VALIDITA", SQLBuilder.GREATER_EQUALS, dataOdierna);
+		sqlExists.addSQLClause("AND", "A.CD_ANAG = " + cdAnagRef);
+		sqlExists.addSQLClause("AND", subQueryTipoRapporto);
+
+		return sqlExists;
+	}
+
+
+	/**
+	 * Recupera tutte le anagrafiche che soddisfano la clausola di ricerca,
+	 * includendo solo quelle che risultano dipendenti attivi.
+	 *
+	 * @param userContext contesto utente chiamante.
+	 * @param clause criteri di ricerca da applicare.
+	 *
+	 * @return SQLBuilder contenente la query per la selezione degli anagrafici.
+	 */
+	public SQLBuilder findAnagraficoDipendenteByClause(
+			UserContext userContext,
+			CompoundFindClause clause)
+			throws ComponentException, PersistencyException {
+
 		SQLBuilder sql = this.selectByClause(userContext, clause);
-		sql.addTableToHeader("RAPPORTO");
 
-		// RECUPERA LA DATA DI SISTEMA PER I CONFRONTI
-		java.sql.Timestamp dataOdierna = this.getServerDate();
-
-
-
-		String schema = it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema();
-
-		String subQuery = "RAPPORTO.CD_TIPO_RAPPORTO IN ( " +
-				"SELECT CD_TIPO_RAPPORTO FROM "+ schema + "TIPO_RAPPORTO " +
-				"WHERE TI_DIPENDENTE_ALTRO = '" + Tipo_rapportoBulk.DIPENDENTE + "' )";
-
-		sql.addSQLJoin("ANAGRAFICO.CD_ANAG", "RAPPORTO.CD_ANAG");
-		sql.addSQLClause("AND","RAPPORTO.DT_INI_VALIDITA",sql.LESS_EQUALS,dataOdierna);
-		sql.addSQLClause("AND","RAPPORTO.DT_FIN_VALIDITA",sql.GREATER_EQUALS,dataOdierna);
-		sql.addSQLClause("AND", subQuery);
-
+		sql.addSQLExistsClause("AND", buildExistsDipendente("ANAGRAFICO.CD_ANAG"));
 		sql.addOrderBy("COGNOME");
 
 		return sql;
 	}
+
+
+	/**
+	 * Recupera i terzi che risultano dipendenti attivi, applicando la clausola
+	 * di ricerca e le ulteriori condizioni sui dati anagrafici.
+	 *
+	 * @param userContext contesto utente chiamante.
+	 * @param terzo oggetto TerzoBulk di riferimento.
+	 * @param clause criteri di ricerca da applicare.
+	 *
+	 * @return SQLBuilder contenente la query per la selezione dei terzi dipendenti.
+	 */
+	public SQLBuilder findTerziDipendentiByClause(
+			UserContext userContext,
+			TerzoBulk terzo,
+			CompoundFindClause clause)
+			throws IntrospectionException, PersistencyException, ComponentException {
+
+		java.sql.Timestamp dataOdierna = this.getServerDate();
+
+		TerzoHome terzoHome = (TerzoHome) getHomeCache().getHome(TerzoBulk.class);
+
+		SQLBuilder sql = terzoHome.selectByClause(userContext, clause);
+
+		sql.addSQLExistsClause("AND", buildExistsDipendente("V_TERZO_CF_PI.CD_ANAG"));
+
+		sql.openParenthesis("AND");
+		sql.addSQLClause("AND", "V_TERZO_CF_PI.DT_CANC IS NULL");
+		sql.addSQLClause("OR",  "V_TERZO_CF_PI.DT_CANC", SQLBuilder.GREATER_EQUALS, dataOdierna);
+		sql.closeParenthesis();
+
+		sql.addSQLClause("AND", "V_TERZO_CF_PI.CD_PRECEDENTE IS NOT NULL");
+		sql.addOrderBy("V_TERZO_CF_PI.COGNOME_ANAGRAFICO");
+
+		return sql;
+	}
+
+
 }

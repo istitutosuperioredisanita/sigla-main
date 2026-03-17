@@ -140,32 +140,27 @@
     <!-- ============================================ -->
     <!-- INCARICATO RITIRO - tramite VIEW DIPENDENTI -->
     <!-- ============================================ -->
-
-    <!-- ============================================ -->
-    <!-- INCARICATO RITIRO - tramite VIEW DIPENDENTI -->
-    <!-- ============================================ -->
-
     <fieldProperty
-            name="findAnagIncRitiro"
-            property="anagIncRitiro"
+            name="findTerzoIncRitiro"
+            property="terzoIncRitiro"
             inputType="SEARCHTOOL"
-            formName="searchtool_dipendenti"
+            formName="searchtool"
             enabledOnSearch="true"
             enabledOnEdit="true"
             label="Dipendente Incaricato" />
 
     <fieldProperty
-            name="cdAnagIncaricato"
-            property="anagIncRitiro.cd_anag"
+            name="cd_terzo_inc_ritiro"
+            property="terzoIncRitiro.cd_terzo"
             inputType="TEXT"
             maxLength="8"
             inputSize="8"
-            label="Cod. Anagrafico Incaricato"
+            label="Cod. Terzo Incaricato"
             caseSensitiveSearch="false" />
 
     <fieldProperty
-            name="dsAnagIncaricato"
-            property="ds_anag_incaricato"
+            name="ds_terzo_inc_ritiro"
+            property="terzoIncRitiro.denominazione_sede"
             inputType="ROTEXT"
             inputSize="50"
             label="Nominativo Incaricato" />
@@ -177,26 +172,26 @@
     <!-- ============================================ -->
 
     <fieldProperty
-            name="findAnagSmartworking"
-            property="anagSmartworking"
+            name="findTerzoSmartworking"
+            property="terzoSmartworking"
             inputType="SEARCHTOOL"
-            formName="searchtool_dipendenti"
+            formName="searchtool"
             enabledOnSearch="true"
             enabledOnEdit="true"
             label="Assegnatario Smartworking" />
 
     <fieldProperty
-            name="cdAnagSmartworking"
-            property="anagSmartworking.cd_anag"
+            name="cd_terzo_smartworking"
+            property="terzoSmartworking.cd_terzo"
             inputType="TEXT"
             maxLength="8"
             inputSize="8"
-            label="Cod. Anagrafico Smartworking"
+            label="Cod. Terzo Smartworking"
             caseSensitiveSearch="false" />
 
     <fieldProperty
-            name="dsAnagSmartworking"
-            property="ds_anag_smartworking"
+            name="ds_terzo_smartworking"
+            property="terzoSmartworking.denominazione_sede"
             inputType="ROTEXT"
             inputSize="50"
             label="Nominativo Assegnatario" />
@@ -294,13 +289,13 @@
     <formFieldProperty name="indirizzo" />
     <formFieldProperty name="tipoRitiro"/>
 
-    <formFieldProperty name="findAnagIncRitiro" />
-    <formFieldProperty name="cdAnagIncaricato" />
-    <formFieldProperty name="dsAnagIncaricato" />
+    <formFieldProperty name="findTerzoIncRitiro" />
+    <formFieldProperty name="cd_terzo_inc_ritiro" />
+    <formFieldProperty name="ds_terzo_inc_ritiro" />
 
-    <formFieldProperty name="findAnagSmartworking" />
-    <formFieldProperty name="cdAnagSmartworking" />
-    <formFieldProperty name="dsAnagSmartworking" />
+    <formFieldProperty name="findTerzoSmartworking" />
+    <formFieldProperty name="cd_terzo_smartworking" />
+    <formFieldProperty name="ds_terzo_smartworking" />
 
     <formFieldProperty name="nominativoVettore" />
     <formFieldProperty name="note" />

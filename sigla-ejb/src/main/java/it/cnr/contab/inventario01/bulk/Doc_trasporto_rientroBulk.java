@@ -73,9 +73,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     private   TerzoBulk                  terzoRespDip;
     private   TerzoBulk                  terzoSmartworking;
 
-    private AnagraficoBulk anagIncRitiro   = new AnagraficoBulk();
-    private AnagraficoBulk anagSmartworking = new AnagraficoBulk();
-
     private TerzoBulk              consegnatario;
     private TerzoBulk              delegato;
     private Unita_organizzativaBulk uo_consegnataria;
@@ -211,14 +208,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     // TERZO INCARICATO
     // =========================================================================
 
-    public AnagraficoBulk getAnagIncRitiro() {
-        return anagIncRitiro;
-    }
-
-    public void setAnagIncRitiro(AnagraficoBulk anagIncRitiro) {
-        this.anagIncRitiro = anagIncRitiro;
-    }
-
     public TerzoBulk getTerzoIncRitiro() {
         return terzoIncRitiro;
     }
@@ -238,24 +227,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         super.setCdTerzoIncaricato(cdTerzoIncaricato);
         if (terzoIncRitiro != null && cdTerzoIncaricato != null)
             terzoIncRitiro.setCd_terzo(cdTerzoIncaricato);
-    }
-
-    public Integer getCdAnagIncaricato() {
-        return anagIncRitiro != null ? anagIncRitiro.getCd_anag() : null;
-    }
-
-    public void setCdAnagIncaricato(Integer cdAnag) {
-        if (this.anagIncRitiro == null && cdAnag != null)
-            this.anagIncRitiro = new AnagraficoBulk();
-        if (this.anagIncRitiro != null)
-            this.anagIncRitiro.setCd_anag(cdAnag);
-    }
-
-    public String getDs_anag_incaricato() {
-        if (anagIncRitiro != null && anagIncRitiro.getCognome() != null)
-            return anagIncRitiro.getCognome() + " " +
-                    (anagIncRitiro.getNome() != null ? anagIncRitiro.getNome() : "");
-        return "";
     }
 
     // =========================================================================
@@ -282,32 +253,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     // =========================================================================
     // SMARTWORKING
     // =========================================================================
-
-    public AnagraficoBulk getAnagSmartworking() {
-        return anagSmartworking;
-    }
-
-    public void setAnagSmartworking(AnagraficoBulk anagSmartworking) {
-        this.anagSmartworking = anagSmartworking;
-    }
-
-    public Integer getCdAnagSmartworking() {
-        return anagSmartworking != null ? anagSmartworking.getCd_anag() : null;
-    }
-
-    public void setCdAnagSmartworking(Integer cdAnag) {
-        if (this.anagSmartworking == null && cdAnag != null)
-            this.anagSmartworking = new AnagraficoBulk();
-        if (this.anagSmartworking != null)
-            this.anagSmartworking.setCd_anag(cdAnag);
-    }
-
-    public String getDs_anag_smartworking() {
-        if (anagSmartworking != null && anagSmartworking.getCognome() != null)
-            return anagSmartworking.getCognome() + " " +
-                    (anagSmartworking.getNome() != null ? anagSmartworking.getNome() : "");
-        return "";
-    }
 
     public TerzoBulk getTerzoSmartworking() {
         return terzoSmartworking;

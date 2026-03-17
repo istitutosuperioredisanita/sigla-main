@@ -20,7 +20,10 @@ package it.cnr.contab.anagraf00.ejb;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.rmi.RemoteException;
@@ -41,4 +44,5 @@ java.util.List findListaTerziSIP_rendicontazione(it.cnr.jada.UserContext param0,
 java.util.List findNazioniIban(it.cnr.jada.UserContext param0,it.cnr.contab.anagraf00.core.bulk.BancaBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 TerzoBulk completaTerzo(UserContext userContext, TerzoBulk terzo) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 RemoteIterator cercaTerziPerUnitaOrganizzativa(it.cnr.jada.UserContext param0,it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk param1) throws ComponentException, RemoteException, PersistencyException;
+SQLBuilder findTerziDipendentiByClause(UserContext param0, TerzoBulk param1, CompoundFindClause param2) throws ComponentException, PersistencyException, RemoteException, IntrospectionException;
 }

@@ -2,6 +2,7 @@ package it.cnr.contab.inventario01.bp;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.*;
@@ -35,6 +36,7 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.SelectionListener;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.si.spring.storage.StorageObject;
 
@@ -699,7 +701,9 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     @Override
     public boolean isSaveButtonHidden() {
         Doc_trasporto_rientroBulk doc = getDoc();
-        return doc != null && (doc.isDefinitivo() || doc.isAnnullato());
+        return doc != null && (
+                doc.isDefinitivo() || doc.isAnnullato() || doc.getCrudStatus() == OggettoBulk.TO_BE_CREATED
+        );
     }
 
     @Override
@@ -1939,9 +1943,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
 
         if (doc.isSmartworking()) {
-            if (doc.getAnagSmartworking() == null ||
-                    doc.getAnagSmartworking().getCd_anag() == null) {
-
+            if (doc.getTerzoSmartworking() == null ||
+                    doc.getTerzoSmartworking().getCd_terzo() == null) {
                 throw new ApplicationException(
                         "Per il tipo di movimento Smartworking è necessario selezionare l'Assegnatario Smartworking."
                 );
@@ -1954,9 +1957,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             }
 
             if (doc.isRitiroIncaricato()) {
-                if (doc.getAnagIncRitiro() == null ||
-                        doc.getAnagIncRitiro().getCd_anag() == null) {
-
+                if (doc.getTerzoIncRitiro() == null ||
+                        doc.getTerzoIncRitiro().getCd_terzo() == null) {
                     throw new ApplicationException(
                             "Selezionare il Dipendente Incaricato."
                     );
@@ -2135,27 +2137,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
     }
 
-    /**
-     * Carica TerzoBulk completo da AnagraficoBulk tramite component
-     */
-    public TerzoBulk caricaTerzoDaAnagrafico(ActionContext context,
-                                             AnagraficoBulk anagrafico)
-            throws BusinessProcessException {
-
-        if (anagrafico == null || anagrafico.getCd_anag() == null) {
-            return null;
-        }
-
-        try {
-            return getComp().caricaTerzoDaAnagrafico(
-                    context.getUserContext(),
-                    anagrafico.getCd_anag()
-            );
-
-        } catch (ComponentException | RemoteException e) {
-            throw handleException(e);
-        }
-    }
 
     private boolean beneAccNelDettaglio(Inventario_beniBulk bene) {
         if (getDoc().getDoc_trasporto_rientro_dettColl() == null) return false;

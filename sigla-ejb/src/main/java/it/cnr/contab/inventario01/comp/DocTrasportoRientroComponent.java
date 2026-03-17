@@ -4,6 +4,7 @@ import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
 import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
+import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
@@ -194,22 +195,19 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             docTR = (Doc_trasporto_rientroBulk) docHome.findByPrimaryKey(docTR);
 
-            if (docTR == null) {
+            if (docTR == null)
                 throw new ComponentException("Documento non trovato nel database!");
-            }
 
             try {
                 lockBulk(aUC, docTR);
             } catch (BusyResourceException bre) {
                 throw new ApplicationException(
                         "Il documento è già in modifica da un altro utente.\n" +
-                                "Attendere che l'altro utente completi le modifiche prima di procedere."
-                );
+                                "Attendere che l'altro utente completi le modifiche prima di procedere.");
             } catch (OutdatedResourceException ore) {
                 throw new ApplicationException(
                         "Il documento è stato modificato da un altro utente.\n" +
-                                "Ricaricare il documento per visualizzare le modifiche più recenti."
-                );
+                                "Ricaricare il documento per visualizzare le modifiche più recenti.");
             }
 
             initializeKeysAndOptionsInto(aUC, docTR);
@@ -229,20 +227,12 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             docTR.setDelegato(inventarioHome.findDelegatoFor(docTR.getInventario()));
             docTR.setUo_consegnataria(inventarioHome.findUoRespFor(aUC, docTR.getInventario()));
 
+            // INCARICATO: carica direttamente TerzoBulk
             if (docTR.getCdTerzoIncaricato() != null) {
                 TerzoBulk terzo = (TerzoBulk) getHome(aUC, TerzoBulk.class)
                         .findByPrimaryKey(new TerzoBulk(docTR.getCdTerzoIncaricato()));
                 if (terzo != null) {
                     docTR.setTerzoIncRitiro(terzo);
-
-                    if (terzo.getCd_anag() != null) {
-                        AnagraficoBulk anagrafico = (AnagraficoBulk)
-                                getHome(aUC, AnagraficoBulk.class)
-                                        .findByPrimaryKey(new AnagraficoBulk(terzo.getCd_anag()));
-                        if (anagrafico != null) {
-                            docTR.setAnagIncRitiro(anagrafico);
-                        }
-                    }
                 }
             }
 
@@ -251,8 +241,10 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     new BulkList(((Doc_trasporto_rientro_dettHome) dettHome).getDetailsFor(docTR))
             );
 
-            if (docTR.isSmartworking() && docTR.getDoc_trasporto_rientro_dettColl() != null
-                    && !docTR.getDoc_trasporto_rientro_dettColl().isEmpty()) {
+            // SMARTWORKING: carica TerzoBulk dal primo dettaglio
+            if (docTR.isSmartworking() &&
+                    docTR.getDoc_trasporto_rientro_dettColl() != null &&
+                    !docTR.getDoc_trasporto_rientro_dettColl().isEmpty()) {
 
                 Doc_trasporto_rientro_dettBulk primoDettaglio =
                         (Doc_trasporto_rientro_dettBulk) docTR.getDoc_trasporto_rientro_dettColl().get(0);
@@ -260,18 +252,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 if (primoDettaglio.getCdTerzoAssegnatario() != null) {
                     TerzoBulk terzoSmart = (TerzoBulk) getHome(aUC, TerzoBulk.class)
                             .findByPrimaryKey(new TerzoBulk(primoDettaglio.getCdTerzoAssegnatario()));
-
                     if (terzoSmart != null) {
                         docTR.setTerzoSmartworking(terzoSmart);
-
-                        if (terzoSmart.getCd_anag() != null) {
-                            AnagraficoBulk anagSmart = (AnagraficoBulk)
-                                    getHome(aUC, AnagraficoBulk.class)
-                                            .findByPrimaryKey(new AnagraficoBulk(terzoSmart.getCd_anag()));
-                            if (anagSmart != null) {
-                                docTR.setAnagSmartworking(anagSmart);
-                            }
-                        }
                     }
                 }
             }
@@ -474,66 +456,30 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             if (docT.getPgDocTrasportoRientro() != null) {
                 Doc_trasporto_rientroBulk existing = (Doc_trasporto_rientroBulk)
                         findByPrimaryKey(userContext, docT);
-
                 if (existing != null) {
                     return modificaConBulk(userContext, docT);
                 }
             }
 
             verificaDocumentoNonEsistente(userContext, docT);
-
-            // Validazione solo testata (senza beni)
             validaDoc(userContext, docT, false);
 
             TerzoBulk terzoResponsabile = recuperaTerzoResponsabileUO(userContext);
-
             if (terzoResponsabile != null) {
                 docT.setTerzoRespDip(terzoResponsabile);
                 docT.setCdTerzoResponsabile(terzoResponsabile.getCd_terzo());
             }
 
-            if (docT.getAnagIncRitiro() != null &&
-                    docT.getAnagIncRitiro().getCd_anag() != null) {
-
-                it.cnr.contab.anagraf00.core.bulk.TerzoHome terzoHome =
-                        (it.cnr.contab.anagraf00.core.bulk.TerzoHome) getHome(
-                                userContext, TerzoBulk.class);
-
-                SQLBuilder sql = terzoHome.createSQLBuilder();
-                sql.addSQLClause("AND", "CD_ANAG", SQLBuilder.EQUALS,
-                        docT.getAnagIncRitiro().getCd_anag());
-
-                List terzi = terzoHome.fetchAll(sql);
-
-                if (terzi != null && !terzi.isEmpty()) {
-                    TerzoBulk terzo = (TerzoBulk) terzi.get(0);
-                    docT.setTerzoIncRitiro(terzo);
-                    docT.setCdTerzoIncaricato(terzo.getCd_terzo());
-                }
+            // INCARICATO: già TerzoBulk, nessuna conversione da Anagrafico
+            if (docT.getTerzoIncRitiro() != null &&
+                    docT.getTerzoIncRitiro().getCd_terzo() != null) {
+                docT.setCdTerzoIncaricato(docT.getTerzoIncRitiro().getCd_terzo());
             }
 
-            if (docT.isSmartworking() &&
-                    docT.getAnagSmartworking() != null &&
-                    docT.getAnagSmartworking().getCd_anag() != null) {
-
-                it.cnr.contab.anagraf00.core.bulk.TerzoHome terzoHome =
-                        (it.cnr.contab.anagraf00.core.bulk.TerzoHome) getHome(
-                                userContext, TerzoBulk.class);
-
-                SQLBuilder sql = terzoHome.createSQLBuilder();
-                sql.addSQLClause("AND", "CD_ANAG", SQLBuilder.EQUALS,
-                        docT.getAnagSmartworking().getCd_anag());
-
-                List terzi = terzoHome.fetchAll(sql);
-
-                if (terzi != null && !terzi.isEmpty()) {
-                    TerzoBulk terzo = (TerzoBulk) terzi.get(0);
-                    docT.setTerzoSmartworking(terzo);
-                }
-            }
-
+            // SMARTWORKING: già TerzoBulk, nessuna conversione da Anagrafico
             if (docT.isSmartworking()) {
-                if (docT.getTerzoSmartworking() != null) {
+                if (docT.getTerzoSmartworking() != null &&
+                        docT.getTerzoSmartworking().getCd_terzo() != null) {
                     docT.setCdTerzoIncaricato(docT.getTerzoSmartworking().getCd_terzo());
                 }
             } else if (docT.getFlIncaricato()) {
@@ -546,7 +492,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             docT.setToBeCreated();
             docT.setStato(STATO_INSERITO);
             docT = (Doc_trasporto_rientroBulk) super.creaConBulk(userContext, docT);
-
             docT.setToBeUpdated();
             return docT;
 
@@ -1894,48 +1839,40 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     /**
      * Ricerca anagrafico INCARICATO delegando al componente Anagrafico.
      */
-    public SQLBuilder selectAnagIncRitiroByClause(
+    public SQLBuilder selectTerzoIncRitiroByClause(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            AnagraficoBulk anag_find,
+            TerzoBulk terzo,
             CompoundFindClause clause)
             throws ComponentException, RemoteException {
-
         try {
-            AnagraficoComponentSession sess = (AnagraficoComponentSession)
+            TerzoComponentSession sess = (TerzoComponentSession)
                     it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
-                            "CNRANAGRAF00_EJB_AnagraficoComponentSession",
-                            AnagraficoComponentSession.class
-                    );
-
-            return sess.findAnagraficoDipendenteByClause(userContext, anag_find, clause);
-
-        } catch (Exception e) {
-            throw new ComponentException("Errore ricerca anagrafico incaricato: " + e.getMessage(), e);
+                            "CNRANAGRAF00_EJB_TerzoComponentSession",
+                            TerzoComponentSession.class);
+            return sess.findTerziDipendentiByClause(userContext, terzo, clause);
+        } catch (PersistencyException | IntrospectionException e) {
+            throw new ComponentException(e);
         }
     }
 
     /**
      * Ricerca anagrafico SMARTWORKING delegando al componente Anagrafico.
      */
-    public SQLBuilder selectAnagSmartworkingByClause(
+    public SQLBuilder selectTerzoSmartworkingByClause(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            AnagraficoBulk anag_find,
+            TerzoBulk terzo,
             CompoundFindClause clause)
             throws ComponentException, RemoteException {
-
         try {
-            AnagraficoComponentSession sess = (AnagraficoComponentSession)
+            TerzoComponentSession sess = (TerzoComponentSession)
                     it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
-                            "CNRANAGRAF00_EJB_AnagraficoComponentSession",
-                            AnagraficoComponentSession.class
-                    );
-
-            return sess.findAnagraficoDipendenteByClause(userContext, anag_find, clause);
-
-        } catch (Exception e) {
-            throw new ComponentException("Errore ricerca anagrafico smartworking: " + e.getMessage(), e);
+                            "CNRANAGRAF00_EJB_TerzoComponentSession",
+                            TerzoComponentSession.class);
+            return sess.findTerziDipendentiByClause(userContext, terzo, clause);
+        } catch (PersistencyException | IntrospectionException e) {
+            throw new ComponentException(e);
         }
     }
 
@@ -2147,16 +2084,12 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     private void applicaFiltriTrasporto(SQLBuilder sql, Doc_trasporto_rientroBulk doc, UserContext userContext)
             throws ComponentException, PersistencyException, IntrospectionException {
 
-        TerzoHome terzoHome = (TerzoHome) getHome(userContext, TerzoBulk.class);
-        TerzoBulk terzo = null;
-
-        if (doc.getAnagSmartworking() != null && doc.getAnagSmartworking().getCd_anag() != null) {
-            terzo = terzoHome.findTerzoByAnag(doc.getAnagSmartworking().getCd_anag());
-        }
-
-        if (doc.isSmartworking() && terzo != null && terzo.getCd_terzo() != null) {
+        // SMARTWORKING: filtro per assegnatario direttamente da TerzoBulk
+        if (doc.isSmartworking() &&
+                doc.getTerzoSmartworking() != null &&
+                doc.getTerzoSmartworking().getCd_terzo() != null) {
             sql.addSQLClause(FindClause.AND, "INVENTARIO_BENI.CD_ASSEGNATARIO",
-                    SQLBuilder.EQUALS, terzo.getCd_terzo());
+                    SQLBuilder.EQUALS, doc.getTerzoSmartworking().getCd_terzo());
         }
 
         sql.openParenthesis(FindClause.AND);
@@ -2184,22 +2117,19 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         sql.closeParenthesis();
 
-        // ========== ESCLUSIONE DOCUMENTO CORRENTE (se in modifica) ==========
         if (doc.getPgDocTrasportoRientro() != null && doc.getPgDocTrasportoRientro() > 0) {
             sql.openParenthesis(FindClause.AND);
-
             sql.addSQLClause(FindClause.AND, "t.PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.ISNULL, null);
-
             sql.openParenthesis(FindClause.OR);
             sql.addSQLClause(FindClause.AND, "t.PG_DOC_TRASPORTO_RIENTRO",
                     SQLBuilder.NOT_EQUALS, doc.getPgDocTrasportoRientro());
             sql.addSQLClause(FindClause.OR, "t.ESERCIZIO",
                     SQLBuilder.NOT_EQUALS, doc.getEsercizio());
             sql.closeParenthesis();
-
             sql.closeParenthesis();
         }
     }
+
 
     /**
      * Applica filtri specifici per documenti di RIENTRO.
@@ -2930,30 +2860,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
 
     /**
-     * Carica il TerzoBulk completo partendo da un codice anagrafico.
-     */
-    public TerzoBulk caricaTerzoDaAnagrafico(UserContext userContext, Integer cdAnag)
-            throws ComponentException {
-
-        if (cdAnag == null) {
-            return null;
-        }
-
-        try {
-            it.cnr.contab.anagraf00.core.bulk.TerzoHome terzoHome =
-                    (it.cnr.contab.anagraf00.core.bulk.TerzoHome)
-                            getHome(userContext, TerzoBulk.class);
-
-            return terzoHome.findTerzoByAnag(cdAnag);
-
-        } catch (it.cnr.jada.persistency.PersistencyException e) {
-            throw handleException(e);
-        } catch (it.cnr.jada.persistency.IntrospectionException e) {
-            throw handleException(e);
-        }
-    }
-
-    /**
      * Recupera tutti i dettagli di un documento.
      */
     public BulkList getDetailsFor(
@@ -3149,6 +3055,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             if (Boolean.TRUE.equals(src.getFlVettore()))
                 Optional.ofNullable(src.getNominativoVettore()).ifPresent(dst::setNominativoVettore);
 
+            // INCARICATO: direttamente TerzoBulk
             if (Boolean.TRUE.equals(src.getFlIncaricato()) && src.getCdTerzoIncaricato() != null) {
                 TerzoBulk t = new TerzoBulk();
                 t.setCd_terzo(src.getCdTerzoIncaricato());
@@ -3156,20 +3063,16 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 dst.setCdTerzoIncaricato(src.getCdTerzoIncaricato());
             }
 
+            // SMARTWORKING: direttamente TerzoBulk
+            if (src.getTerzoSmartworking() != null &&
+                    src.getTerzoSmartworking().getCd_terzo() != null) {
+                TerzoBulk t = new TerzoBulk();
+                t.setCd_terzo(src.getTerzoSmartworking().getCd_terzo());
+                dst.setTerzoSmartworking(t);
+            }
+
             if (src.getCdTerzoResponsabile() != null)
                 dst.setCdTerzoResponsabile(src.getCdTerzoResponsabile());
-
-            if (src.getCdAnagIncaricato() != null) {
-                AnagraficoBulk a = new AnagraficoBulk();
-                a.setCd_anag(src.getCdAnagIncaricato());
-                dst.setAnagIncRitiro(a);
-            }
-
-            if (src.getCdAnagSmartworking() != null) {
-                AnagraficoBulk a = new AnagraficoBulk();
-                a.setCd_anag(src.getCdAnagSmartworking());
-                dst.setAnagSmartworking(a);
-            }
 
             Optional.ofNullable(src.getPgInventario()).ifPresent(dst::setPgInventario);
             dst.setToBeCreated();
@@ -3178,6 +3081,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throw new ComponentException(e);
         }
     }
+
 
     /**
      * Salva i dettagli verificando esistenza del bene, coerenza con il tipo documento e persistenza.

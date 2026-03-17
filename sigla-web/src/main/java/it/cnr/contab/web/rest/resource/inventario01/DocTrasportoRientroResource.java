@@ -315,32 +315,27 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
                     "stato non valido '" + bulk.getStato()
                             + "': valori ammessi: " + Doc_trasporto_rientroBulk.STATO.toString());
 
-        if (Boolean.TRUE.equals(bulk.getFlIncaricato())) {
-            boolean haCdTerzo = bulk.getCdTerzoIncaricato() != null;
-            boolean haCdAnag  = bulk.getCdAnagIncaricato() != null;
-            if (!haCdTerzo && !haCdAnag)
-                throw new RestException(Response.Status.BAD_REQUEST,
-                        "cdTerzoIncaricato oppure cdAnagIncaricato obbligatorio quando flIncaricato=true");
-        }
+        if (Boolean.TRUE.equals(bulk.getFlIncaricato()) && bulk.getCdTerzoIncaricato() == null)
+            throw new RestException(Response.Status.BAD_REQUEST,
+                    "cdTerzoIncaricato obbligatorio quando flIncaricato=true");
 
-        if (Boolean.TRUE.equals(bulk.getFlVettore())
-                && isNullOrEmpty(bulk.getNominativoVettore()))
+        if (Boolean.TRUE.equals(bulk.getFlVettore()) && isNullOrEmpty(bulk.getNominativoVettore()))
             throw new RestException(Response.Status.BAD_REQUEST,
                     "nominativoVettore obbligatorio quando flVettore=true");
 
-        if (bulk.isSmartworking() && bulk.getCdAnagSmartworking() == null)
+        if (bulk.isSmartworking() &&
+                (bulk.getTerzoSmartworking() == null || bulk.getTerzoSmartworking().getCd_terzo() == null))
             throw new RestException(Response.Status.BAD_REQUEST,
-                    "cdAnagSmartworking obbligatorio quando il documento è di tipo Smartworking");
+                    "cdTerzoSmartworking obbligatorio quando il documento è di tipo Smartworking");
 
         if (Boolean.TRUE.equals(bulk.getFlIncaricato()) && Boolean.TRUE.equals(bulk.getFlVettore()))
             throw new RestException(Response.Status.BAD_REQUEST,
                     "flIncaricato e flVettore non possono essere entrambi true contemporaneamente");
 
-        if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(bulk.getStato())) {
+        if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(bulk.getStato()))
             throw new RestException(Response.Status.BAD_REQUEST,
                     "Operazione consentita solo per documenti in stato INSERITO. Stato attuale: "
                             + bulk.getStato());
-        }
     }
 
     /**

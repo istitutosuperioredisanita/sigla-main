@@ -402,7 +402,6 @@ public class Inventario_beniHome extends BulkHome {
 
         SQLBuilder sql = createSQLBuilder();
 
-        // ==================== FROM SENZA ALIAS ==================
         StringBuffer from = new StringBuffer();
         from.append("INVENTARIO_BENI ")
                 .append("INNER JOIN TERZO TZ ON INVENTARIO_BENI.CD_ASSEGNATARIO = TZ.CD_TERZO ")
@@ -419,14 +418,14 @@ public class Inventario_beniHome extends BulkHome {
 
         sql.setFromClause(from);
 
-        // ==================== FILTRI BASE COMUNI ====================
+        // SOSTITUIRE: doc.getAnagSmartworking() != null && doc.getAnagSmartworking().getCd_anag() != null
+        // CON: doc.getTerzoSmartworking() != null && doc.getTerzoSmartworking().getCd_terzo() != null
         boolean isSmartworking = doc.isSmartworking() &&
-                doc.getAnagSmartworking() != null &&
-                doc.getAnagSmartworking().getCd_anag() != null;
+                doc.getTerzoSmartworking() != null &&
+                doc.getTerzoSmartworking().getCd_terzo() != null;
 
         applicaFiltriBaseComuni(sql, doc, userContext, isSmartworking);
 
-        // ==================== AGGIUNGI CLAUSOLE UTENTE ====================
         if (clausesUtente != null) {
             sql.addClause(clausesUtente);
         }

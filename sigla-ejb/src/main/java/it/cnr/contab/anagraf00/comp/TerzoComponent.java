@@ -35,6 +35,8 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.persistency.Broker;
+import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 
@@ -1285,5 +1287,45 @@ public class TerzoComponent extends UtilitaAnagraficaComponent implements ICRUDM
             throw handleException(e);
         }
     }
+
+    public SQLBuilder findTerziDipendentiByClause(UserContext userContext,
+                                                  TerzoBulk terzo,
+                                                  CompoundFindClause clause)
+            throws ComponentException, PersistencyException, IntrospectionException {
+
+        AnagraficoHome anagraficoHome = (AnagraficoHome) getHome(userContext, AnagraficoBulk.class);
+        return anagraficoHome.findTerziDipendentiByClause(userContext, terzo, clause);
+    }
+
+    /**
+     * Carica il TerzoBulk completo partendo da un codice anagrafico.
+     * Restituisce null se l'anagrafico non esiste o non è un dipendente attivo.
+     */
+    @SuppressWarnings("unchecked")
+    public TerzoBulk caricaTerzoDaAnagrafico(UserContext userContext, Integer cdAnag)
+            throws ComponentException {
+
+        if (cdAnag == null) {
+            return null;
+        }
+
+        try {
+            TerzoHome terzoHome = (TerzoHome) getHome(userContext, TerzoBulk.class);
+            TerzoBulk terzo = terzoHome.findTerzoByAnag(cdAnag);
+
+            if (terzo == null) {
+                return null;
+            }
+            terzo = completaTerzo(userContext, terzo);
+            if (!terzo.isDipendente()) {
+                return null;
+            }
+            return terzo;
+
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
 
 }

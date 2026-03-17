@@ -206,12 +206,6 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             List<Inventario_beniBulk> beniDaValidare)
             throws ComponentException, RemoteException;
 
-    /** Carica TerzoBulk completo da codice anagrafico */
-    TerzoBulk caricaTerzoDaAnagrafico(
-            UserContext userContext,
-            Integer cdAnag)
-            throws ComponentException, RemoteException;
-
     /**
      * Valida che nel documento non sia già presente un allegato firmato
      */
