@@ -113,7 +113,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             doc.setDelegato(invHome.findDelegatoFor(doc.getInventario()));
             doc.setUo_consegnataria(invHome.findUoRespFor(aUC, doc.getInventario()));
 
-            doc.setLocal_transactionID(getLocalTransactionID(aUC, true));
             doc.setDataRegistrazione(new Timestamp(System.currentTimeMillis()));
             doc.setToBeCreated();
 
@@ -1067,31 +1066,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throw new ApplicationException("Nessun inventario associato alla UO!");
         }
         return inventario;
-    }
-
-    /**
-     * Genera un ID di transazione locale per il documento.
-     */
-    public String getLocalTransactionID(UserContext aUC, boolean force)
-            throws ComponentException, PersistencyException, IntrospectionException {
-        LoggableStatement cs = null;
-        try {
-            cs = new LoggableStatement(getConnection(aUC),
-                    "{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
-                            "IBMUTL001.getLocalTransactionID(" + (force ? "TRUE" : "FALSE") + ")}",
-                    false, this.getClass());
-            cs.registerOutParameter(1, java.sql.Types.VARCHAR);
-            cs.executeQuery();
-            return cs.getString(1);
-        } catch (Throwable e) {
-            throw handleException(e);
-        } finally {
-            try {
-                if (cs != null) cs.close();
-            } catch (java.sql.SQLException e) {
-                throw handleException(e);
-            }
-        }
     }
 
     /**
@@ -3023,7 +2997,6 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             dst.setDelegato(invHome.findDelegatoFor(dst.getInventario()));
             dst.setUo_consegnataria(invHome.findUoRespFor(userContext, dst.getInventario()));
 
-            dst.setLocal_transactionID(getLocalTransactionID(userContext, true));
             dst.setDataRegistrazione(new Timestamp(System.currentTimeMillis()));
 
             dst.setDsDocTrasportoRientro(Optional.ofNullable(src.getDsDocTrasportoRientro()).orElse(""));

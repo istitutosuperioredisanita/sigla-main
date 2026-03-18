@@ -65,8 +65,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         tipoRitiroKeys.put(TIPO_RITIRO_VETTORE,    "Ritiro Vettore");
     }
 
-    private String local_transactionID;
-
     protected Id_inventarioBulk          inventario;
     protected Tipo_trasporto_rientroBulk tipoMovimento;
     private   TerzoBulk                  terzoIncRitiro;
@@ -314,9 +312,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public PrimaryKeyHashtable getAccessoriContestualiHash() { return accessoriContestualiHash; }
     public void setAccessoriContestualiHash(PrimaryKeyHashtable hashtable) { accessoriContestualiHash = hashtable; }
-
-    public String getLocal_transactionID() { return local_transactionID; }
-    public void setLocal_transactionID(String local_transactionID) { this.local_transactionID = local_transactionID; }
 
     // =========================================================================
     // DETTAGLI COLL
