@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_voceBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
@@ -49,7 +50,7 @@ import it.cnr.jada.util.StrServ;
 public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rientro_dettBase {
 
 
-    private Inventario_beniBulk bene;
+    private InventarioDocTRBulk bene;
     private int gruppi;
     private Boolean fl_accessorio_contestuale = Boolean.FALSE;
     protected Boolean fl_bene_accessorio;
@@ -68,16 +69,16 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
                 nr_inventario, progressivo);
 
 
-        setBene(new Inventario_beniBulk(nr_inventario, pg_inventario,
+        setBene(new InventarioDocTRBulk(nr_inventario, pg_inventario,
                 Long.valueOf(progressivo)));
     }
 
 
-    public Inventario_beniBulk getBene() {
+    public InventarioDocTRBulk getBene() {
         return bene;
     }
 
-    public void setBene(Inventario_beniBulk bulk) {
+    public void setBene(InventarioDocTRBulk bulk) {
         bene = bulk;
     }
 
@@ -187,7 +188,7 @@ public abstract class Doc_trasporto_rientro_dettBulk extends Doc_trasporto_rient
 
     @Override
     public OggettoBulk initialize(it.cnr.jada.util.action.CRUDBP bp, it.cnr.jada.action.ActionContext context) {
-        bene = new Inventario_beniBulk();
+        bene = new InventarioDocTRBulk();
         bene.setTi_commerciale_istituzionale(TipoIVA.ISTITUZIONALE.value());
         return this;
     }

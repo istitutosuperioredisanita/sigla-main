@@ -3,7 +3,7 @@
        it.cnr.jada.action.*,
        java.util.*,
        it.cnr.jada.util.action.*,
-       it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk,
+       it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk,
        it.cnr.contab.inventario01.bulk.*,
        it.cnr.contab.inventario01.bp.*"
 %>

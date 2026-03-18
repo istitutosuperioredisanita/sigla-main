@@ -113,9 +113,9 @@ function doStampaDocTraspRient() {
 
     <% if (bp.isAssegnatarioVisible()) { %>
         <tr>
-            <td><% bp.getController().writeFormLabel(out,"findAnagIncRitiro"); %></td>
+            <td><% bp.getController().writeFormLabel(out,"findTerzoIncRitiro"); %></td>
             <td colspan="3">
-                <% bp.getController().writeFormInput(out, null, "findAnagIncRitiro",
+                <% bp.getController().writeFormInput(out, null, "findTerzoIncRitiro",
                     false, null,
                     "onChange=\"submitForm('doOnDipendenteChange')\""); %>
             </td>

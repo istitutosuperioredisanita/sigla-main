@@ -2,7 +2,7 @@ package it.cnr.contab.inventario01.actions;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
@@ -147,7 +147,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
             rlbp.setCanPerformSearchWithoutClauses(true);
-            Inventario_beniBulk prototype = new Inventario_beniBulk();
+            InventarioDocTRBulk prototype = new InventarioDocTRBulk();
             rlbp.setPrototype(prototype, null, null, "searchTrasportoRientro");
 
             context.addHookForward("searchResult", this, getBringBackMethod());
@@ -177,7 +177,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 EJBCommonServices.closeRemoteIterator(context, ri);
                 return context.findDefaultForward();
             }
-            SelezionatoreListaBP slbp = select(context, ri, it.cnr.jada.bulk.BulkInfo.getBulkInfo(Inventario_beniBulk.class), null, getSelezionaMethod(), null, bp);
+            SelezionatoreListaBP slbp = select(context, ri, it.cnr.jada.bulk.BulkInfo.getBulkInfo(InventarioDocTRBulk.class), null, getSelezionaMethod(), null, bp);
             slbp.setMultiSelection(true);
             return slbp;
         } catch (Throwable e) {
@@ -193,7 +193,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             CRUDTraspRientInventarioBP bp = getBP(context);
             boolean isEliminazione = bp.isUltimaOperazioneEliminazione();
             HookForward caller = (HookForward) context.getCaller();
-            List<Inventario_beniBulk> beniDaElaborare = (List<Inventario_beniBulk>) caller.getParameter("beniDaElaborare");
+            List<InventarioDocTRBulk> beniDaElaborare = (List<InventarioDocTRBulk>) caller.getParameter("beniDaElaborare");
             Integer index = (Integer) caller.getParameter("index");
 
             if (opt == OptionBP.CANCEL_BUTTON) {
@@ -243,7 +243,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             }
 
             if (!bp.getPendingDelete().getPrincipaliConAccessori().isEmpty()) {
-                List<Inventario_beniBulk> beniConAccessori = new ArrayList<>(bp.getPendingDelete().getPrincipaliConAccessori().keySet());
+                List<InventarioDocTRBulk> beniConAccessori = new ArrayList<>(bp.getPendingDelete().getPrincipaliConAccessori().keySet());
                 return apriFlussoRicorsivoGenerico(context, bp, true, beniConAccessori, 0);
             }
 
@@ -264,7 +264,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             aggiungiImmediatamenteBeniSemplici(context, bp);
 
-            List<Inventario_beniBulk> beniConAccessoriDaConfermare = new ArrayList<>(bp.getPendingAdd().getPrincipaliConAccessori().keySet());
+            List<InventarioDocTRBulk> beniConAccessoriDaConfermare = new ArrayList<>(bp.getPendingAdd().getPrincipaliConAccessori().keySet());
             if (beniConAccessoriDaConfermare.isEmpty()) {
                 bp.getDettBeniController().reset(context);
                 bp.setMessage("Aggiunta beni completata con successo");
@@ -282,16 +282,16 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
      */
     private void aggiungiImmediatamenteBeniSemplici(ActionContext context, CRUDTraspRientInventarioBP bp) throws BusinessProcessException {
         try {
-            List<Inventario_beniBulk> beniSemplici = new ArrayList<>();
+            List<InventarioDocTRBulk> beniSemplici = new ArrayList<>();
             beniSemplici.addAll(bp.getPendingAdd().getPrincipaliSenza());
             beniSemplici.addAll(bp.getPendingAdd().getAccessori());
 
             if (beniSemplici.isEmpty()) return;
 
             BitSet newSelection = new BitSet(bp.getPendingAdd().getBulks().length);
-            for (Inventario_beniBulk beneSemplice : beniSemplici) {
+            for (InventarioDocTRBulk beneSemplice : beniSemplici) {
                 for (int i = 0; i < bp.getPendingAdd().getBulks().length; i++) {
-                    if (bp.getPendingAdd().getBulks()[i] instanceof Inventario_beniBulk && ((Inventario_beniBulk) bp.getPendingAdd().getBulks()[i]).equalsByPrimaryKey(beneSemplice)) {
+                    if (bp.getPendingAdd().getBulks()[i] instanceof InventarioDocTRBulk && ((InventarioDocTRBulk) bp.getPendingAdd().getBulks()[i]).equalsByPrimaryKey(beneSemplice)) {
                         newSelection.set(i);
                         break;
                     }
@@ -306,13 +306,13 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     /**
      * Gestisce l'apertura della finestra di conferma per ogni bene con accessori nel flusso ricorsivo.
      */
-    private Forward apriFlussoRicorsivoGenerico(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, List<Inventario_beniBulk> beniDaElaborare, int index) throws ComponentException, RemoteException, BusinessProcessException {
+    private Forward apriFlussoRicorsivoGenerico(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, List<InventarioDocTRBulk> beniDaElaborare, int index) throws ComponentException, RemoteException, BusinessProcessException {
         if (beniDaElaborare == null || index >= beniDaElaborare.size()) {
             finalizeFlusso(context, bp, isEliminazione, true);
             return context.findDefaultForward();
         }
 
-        Inventario_beniBulk beneCorrente = beniDaElaborare.get(index);
+        InventarioDocTRBulk beneCorrente = beniDaElaborare.get(index);
         bp.setUltimaOperazioneEliminazione(isEliminazione);
 
         if (isEliminazione) bp.setIndexBeneCurrentePerEliminazione(index);
@@ -602,13 +602,10 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             if (wasSmartworking && !isSmartworking) {
                 doc.setTerzoSmartworking(null);
-                doc.setAnagSmartworking(null);
             } else if (!wasSmartworking && isSmartworking) {
                 doc.setTerzoIncRitiro(null);
-                doc.setAnagIncRitiro(null);
             } else {
                 doc.setTerzoIncRitiro(null);
-                doc.setAnagIncRitiro(null);
             }
 
             bp.setModel(context, doc);
@@ -647,7 +644,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             }
 
             doc.setTerzoIncRitiro(null);
-            doc.setAnagIncRitiro(null);
 
             if (Doc_trasporto_rientroBulk.TIPO_RITIRO_INCARICATO.equals(newValue)) {
                 doc.setNominativoVettore(null);
@@ -671,71 +667,23 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         return (terzo != null) ? terzo.getCd_terzo() : null;
     }
 
-    /**
-     * Avvia la ricerca dell'assegnatario smartworking.
-     */
-    public Forward doSearchFindAnagSmartworking(ActionContext context) {
-        return search(context, getFormField(context, "main.findAnagSmartworking"), null);
+    public Forward doSearchFindTerzoIncRitiro(ActionContext context) {
+        return search(context, getFormField(context, "main.findTerzoIncRitiro"), null);
     }
 
-    /**
-     * Pulisce i campi relativi all'assegnatario smartworking.
-     */
-    public Forward doBlankSearchFindAnagSmartworking(ActionContext context, Doc_trasporto_rientroBulk doc) {
-        doc.setAnagSmartworking(new AnagraficoBulk());
-        doc.setTerzoSmartworking(null);
-        return context.findDefaultForward();
-    }
-
-    /**
-     * Associa l'anagrafico selezionato come assegnatario smartworking e ricarica il terzo.
-     */
-    public Forward doBringBackSearchFindAnagSmartworking(ActionContext context, Doc_trasporto_rientroBulk doc, AnagraficoBulk anagSelezionato) {
-        try {
-            if (anagSelezionato != null && anagSelezionato.getCd_anag() != null) {
-                CRUDTraspRientInventarioBP bp = getBP(context);
-                Integer oldCdAnag = getCdAnag(doc.getAnagSmartworking());
-                doc.setAnagSmartworking(anagSelezionato);
-                doc.setTerzoSmartworking(caricaTerzoDaAnagrafico(context, anagSelezionato));
-
-                if (!valoreUguale(oldCdAnag, anagSelezionato.getCd_anag())) {
-                    eliminaBeniSePresenti(context, bp, doc, "Assegnatario Smartworking modificato. Beni precedenti rimossi.");
-                }
-            }
-            return context.findDefaultForward();
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
-    }
-
-    /**
-     * Avvia la ricerca del dipendente incaricato al ritiro.
-     */
-    public Forward doSearchFindAnagIncRitiro(ActionContext context) {
-        return search(context, getFormField(context, "main.findAnagIncRitiro"), null);
-    }
-
-    /**
-     * Pulisce i campi relativi al dipendente incaricato al ritiro.
-     */
-    public Forward doBlankSearchFindAnagIncRitiro(ActionContext context, Doc_trasporto_rientroBulk doc) {
-        doc.setAnagIncRitiro(new AnagraficoBulk());
+    public Forward doBlankSearchFindTerzoIncRitiro(ActionContext context, Doc_trasporto_rientroBulk doc) {
         doc.setTerzoIncRitiro(null);
         return context.findDefaultForward();
     }
 
-    /**
-     * Associa l'anagrafico selezionato come dipendente incaricato e ricarica il terzo.
-     */
-    public Forward doBringBackSearchFindAnagIncRitiro(ActionContext context, Doc_trasporto_rientroBulk doc, AnagraficoBulk anagSelezionato) {
+    public Forward doBringBackSearchFindTerzoIncRitiro(ActionContext context,
+                                                       Doc_trasporto_rientroBulk doc, TerzoBulk terzoSelezionato) {
         try {
-            if (anagSelezionato != null && anagSelezionato.getCd_anag() != null) {
+            if (terzoSelezionato != null) {
                 CRUDTraspRientInventarioBP bp = getBP(context);
-                Integer oldCdAnag = getCdAnag(doc.getAnagIncRitiro());
-                doc.setAnagIncRitiro(anagSelezionato);
-                doc.setTerzoIncRitiro(caricaTerzoDaAnagrafico(context, anagSelezionato));
-
-                if (!valoreUguale(oldCdAnag, anagSelezionato.getCd_anag())) {
+                Integer oldCd = doc.getTerzoIncRitiro() != null ? doc.getTerzoIncRitiro().getCd_terzo() : null;
+                doc.setTerzoIncRitiro(terzoSelezionato);
+                if (!valoreUguale(oldCd, terzoSelezionato.getCd_terzo())) {
                     eliminaBeniSePresenti(context, bp, doc, "Dipendente Incaricato modificato. Beni precedenti rimossi.");
                 }
             }
@@ -745,12 +693,30 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Carica il TerzoBulk associato all'anagrafico tramite il Business Process.
-     */
-    private TerzoBulk caricaTerzoDaAnagrafico(ActionContext context, AnagraficoBulk anagrafico) throws Exception {
-        if (anagrafico == null || anagrafico.getCd_anag() == null) return null;
-        return getBP(context).caricaTerzoDaAnagrafico(context, anagrafico);
+    public Forward doSearchFindTerzoSmartworking(ActionContext context) {
+        return search(context, getFormField(context, "main.findTerzoSmartworking"), null);
+    }
+
+    public Forward doBlankSearchFindTerzoSmartworking(ActionContext context, Doc_trasporto_rientroBulk doc) {
+        doc.setTerzoSmartworking(null);
+        return context.findDefaultForward();
+    }
+
+    public Forward doBringBackSearchFindTerzoSmartworking(ActionContext context,
+                                                          Doc_trasporto_rientroBulk doc, TerzoBulk terzoSelezionato) {
+        try {
+            if (terzoSelezionato != null) {
+                CRUDTraspRientInventarioBP bp = getBP(context);
+                Integer oldCd = doc.getTerzoSmartworking() != null ? doc.getTerzoSmartworking().getCd_terzo() : null;
+                doc.setTerzoSmartworking(terzoSelezionato);
+                if (!valoreUguale(oldCd, terzoSelezionato.getCd_terzo())) {
+                    eliminaBeniSePresenti(context, bp, doc, "Assegnatario Smartworking modificato. Beni precedenti rimossi.");
+                }
+            }
+            return context.findDefaultForward();
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
     }
 
     /**

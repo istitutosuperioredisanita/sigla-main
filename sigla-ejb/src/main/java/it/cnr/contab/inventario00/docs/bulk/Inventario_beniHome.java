@@ -43,6 +43,14 @@ public class Inventario_beniHome extends BulkHome {
         super(Inventario_beniBulk.class, conn, persistentCache);
     }
 
+    protected Inventario_beniHome(Class bulkClass, java.sql.Connection conn) {
+        super(bulkClass, conn);
+    }
+
+    protected Inventario_beniHome(Class bulkClass, java.sql.Connection conn, PersistentCache persistentCache) {
+        super(bulkClass, conn, persistentCache);
+    }
+
 
 
 
@@ -391,7 +399,6 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 
         SQLBuilder sql = createSQLBuilder();
 
-        // ==================== FROM SENZA ALIAS ==================
         StringBuffer from = new StringBuffer();
         from.append("INVENTARIO_BENI ")
                 .append("INNER JOIN TERZO TZ ON INVENTARIO_BENI.CD_ASSEGNATARIO = TZ.CD_TERZO ")
@@ -408,14 +415,14 @@ public java.util.Collection findDettagliBuono(Buono_carico_scaricoBulk buono)thr
 
         sql.setFromClause(from);
 
-        // ==================== FILTRI BASE COMUNI ====================
+        // SOSTITUIRE: doc.getAnagSmartworking() != null && doc.getAnagSmartworking().getCd_anag() != null
+        // CON: doc.getTerzoSmartworking() != null && doc.getTerzoSmartworking().getCd_terzo() != null
         boolean isSmartworking = doc.isSmartworking() &&
-                doc.getAnagSmartworking() != null &&
-                doc.getAnagSmartworking().getCd_anag() != null;
+                doc.getTerzoSmartworking() != null &&
+                doc.getTerzoSmartworking().getCd_terzo() != null;
 
         applicaFiltriBaseComuni(sql, doc, userContext, isSmartworking);
 
-        // ==================== AGGIUNGI CLAUSOLE UTENTE ====================
         if (clausesUtente != null) {
             sql.addClause(clausesUtente);
         }

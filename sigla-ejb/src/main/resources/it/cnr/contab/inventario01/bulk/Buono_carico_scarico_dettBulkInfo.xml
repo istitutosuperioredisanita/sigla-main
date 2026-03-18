@@ -222,18 +222,17 @@
 		caseSensitiveSearch="false" />
 
 
-	/********** Assegnatario - DIPENDENTI ******************************/
+	/********** Assegnatario ******************************/
 	<fieldProperty
-			name="findAnagAssegnatario"
-			property="anagAssegnatario"
+			name="findTerzoAssegnatario"
+			property="bene.assegnatario"
 			inputType="SEARCHTOOL"
-			formName="searchtool_dipendenti"
+			formName="searchtool"
 			readonlyProperty="ROsearchTool"
 			enabledOnSearch="true"
 			enabledOnEdit="true"
-			completeOnSave = "true"
+			completeOnSave="true"
 			label="Assegnatario" />
-
 	<fieldProperty
 			name="cd_assegnatario"
 			property="bene.assegnatario.cd_terzo"
@@ -247,6 +246,7 @@
 			name="ds_assegnatario"
 			property="bene.assegnatario.denominazione_sede"
 			inputType="ROTEXT"
+			inputSize="50"
 			label="Assegnatario" />
 
 /********** Bene Principale ******************************/
@@ -467,11 +467,12 @@
 			name="causale_dismissione" />
 
 	/************** Assegnatario ************************/
-	<formFieldProperty name="findAnagAssegnatario" />
+	<formFieldProperty name="findTerzoAssegnatario" />
 	<formFieldProperty name="cd_assegnatario" />
 	<formFieldProperty name="ds_assegnatario" />
 
-/************** Ubicazione ************************/		
+
+	/************** Ubicazione ************************/
 	<formFieldProperty
 		name="find_ubicazione" />
 	<formFieldProperty
@@ -558,8 +559,6 @@
 		name="ds_buono" />	
 	<formFieldProperty
 		name="etichetta"/>
-	<formFieldProperty
-		name="ds_assegnatario" />	
 	<findFieldProperty
 		name="nr_inventario" />		
 		

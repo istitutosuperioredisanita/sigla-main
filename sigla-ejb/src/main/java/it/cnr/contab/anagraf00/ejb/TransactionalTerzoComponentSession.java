@@ -21,6 +21,8 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.rmi.RemoteException;
@@ -458,6 +460,25 @@ public it.cnr.contab.anagraf00.core.bulk.TerzoBulk completaTerzo(it.cnr.jada.Use
 				throw ex;
 			} catch(Throwable ex) {
 				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@Override
+	public SQLBuilder findTerziDipendentiByClause(UserContext param0, TerzoBulk param1, CompoundFindClause param2)
+			throws ComponentException, PersistencyException, RemoteException {
+		try {
+			return ((SQLBuilder) invoke("findTerziDipendentiByClause",
+					new Object[]{param0, param1, param2}));
+		} catch (RemoteException e) {
+			throw e;
+		} catch (java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch (ComponentException ex) {
+				throw ex;
+			} catch (Throwable ex) {
+				throw new RemoteException("Uncaught exception", ex);
 			}
 		}
 	}

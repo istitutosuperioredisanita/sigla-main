@@ -92,9 +92,9 @@ function doStampaDocTraspRient() {
     <!-- ASSEGNATARIO SMARTWORKING -->
     <% if (bp.isTerzoSmartworkingVisible()) { %>
       <tr>
-        <td><% bp.getController().writeFormLabel(out,"findAnagSmartworking"); %></td>
+        <td><% bp.getController().writeFormLabel(out,"findTerzoSmartworking"); %></td>
         <td colspan="3">
-          <% bp.getController().writeFormInput(out, null, "findAnagSmartworking",
+          <% bp.getController().writeFormInput(out, null, "findTerzoSmartworking",
               bp.isAnagraficiReadonly(), null, null); %>
         </td>
       </tr>
@@ -133,9 +133,9 @@ function doStampaDocTraspRient() {
     <!-- DIPENDENTE INCARICATO -->
     <% if (bp.isAssegnatarioVisible()) { %>
       <tr>
-        <td><% bp.getController().writeFormLabel(out,"findAnagIncRitiro"); %></td>
+        <td><% bp.getController().writeFormLabel(out,"findTerzoIncRitiro"); %></td>
         <td colspan="3">
-          <% bp.getController().writeFormInput(out, null, "findAnagIncRitiro",
+          <% bp.getController().writeFormInput(out, null, "findTerzoIncRitiro",
               bp.isAnagraficiReadonly(), null, null); %>
         </td>
       </tr>

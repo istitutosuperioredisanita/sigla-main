@@ -18,8 +18,8 @@
 package it.cnr.contab.inventario01.ejb;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -93,7 +93,7 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
     /** Trova beni accessori associati a un bene principale */
     List cercaBeniAccessoriAssociati(
             UserContext userContext,
-            Inventario_beniBulk benePrincipale)
+            InventarioDocTRBulk benePrincipale)
             throws ComponentException, RemoteException;
 
     /** Modifica beni trasportati includendo opzionalmente gli accessori */
@@ -145,7 +145,7 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
     /** Cerca accessori presenti nel trasporto originale (per rientro) */
     List cercaBeniAccessoriPresentinelTrasportoOriginale(
             UserContext userContext,
-            Inventario_beniBulk beneRientro,
+            InventarioDocTRBulk beneRientro,
             Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException;
 
@@ -173,14 +173,14 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
     List cercaBeniAccessoriNeiDettagliSalvati(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale)
+            InventarioDocTRBulk benePrincipale)
             throws ComponentException, RemoteException;
 
     /** Elimina bene principale e accessori dai dettagli salvati */
     void eliminaBeniPrincipaleConAccessoriDaDettagli(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale,
+            InventarioDocTRBulk benePrincipale,
             List beniAccessori)
             throws ComponentException, RemoteException;
 
@@ -191,7 +191,7 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             throws ComponentException, RemoteException;
 
     /** Carica beni disponibili per inserimento con validazione */
-    List<Inventario_beniBulk> caricaBeniPerInserimento(
+    List<InventarioDocTRBulk> caricaBeniPerInserimento(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             CompoundFindClause clauses,
@@ -202,13 +202,7 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
     void validaBeniNonInAltriDocumenti(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            List<Inventario_beniBulk> beniDaValidare)
-            throws ComponentException, RemoteException;
-
-    /** Carica TerzoBulk completo da codice anagrafico */
-    TerzoBulk caricaTerzoDaAnagrafico(
-            UserContext userContext,
-            Integer cdAnag)
+            List<InventarioDocTRBulk> beniDaValidare)
             throws ComponentException, RemoteException;
 
     /**

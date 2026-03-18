@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA"
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<!-- ================================================================
+         FIELD PROPERTIES
+         ================================================================ -->
+
+	<fieldProperty
+			name="nr_inventario"
+			property="nr_inventario"
+			inputType="TEXT"
+			label="Codice Bene"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="true" />
+
+	<fieldProperty
+			name="etichetta"
+			property="etichetta"
+			inputType="TEXT"
+			inputSize="20"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnFreeSearch="true"
+			enabledOnSearch="true"
+			label="Etichetta" />
+
+	<fieldProperty
+			name="progressivo"
+			property="progressivo"
+			inputType="TEXT"
+			label="Progressivo"
+			enabledOnInsert="false"
+			enabledOnEdit="false"
+			enabledOnSearch="true" />
+
+	<fieldProperty
+			name="ds_bene"
+			property="ds_bene"
+			maxLength="1000"
+			inputSize="60"
+			inputType="TEXT"
+			label="Descrizione"
+			caseSensitiveSearch="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true" />
+
+	<fieldProperty
+			name="valore_bene"
+			property="valoreBene"
+			inputType="ROTEXT"
+			formatName="it.cnr.contab.util.EuroPositivoFormat"
+			label="Valore bene" />
+
+	<fieldProperty
+			name="cd_assegnatario"
+			property="assegnatario.cd_terzo"
+			maxLength="10"
+			inputSize="10"
+			inputType="TEXT"
+			label="Cod.Assegnatario"
+			caseSensitiveSearch="false"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			enabledOnFreeSearch="true" />
+
+	<fieldProperty
+			name="ds_assegnatario"
+			property="assegnatario.denominazione_sede"
+			maxLength="300"
+			inputSize="50"
+			inputType="TEXT"
+			label="Assegnatario"
+			caseSensitiveSearch="false" />
+
+	<!-- ================================================================
+         FREE SEARCH SET usato dal selezionatore beni in DocTrasportoRientro
+         ================================================================ -->
+
+	<freeSearchSet name="searchTrasportoRientro">
+		<findFieldProperty name="nr_inventario" />
+		<findFieldProperty name="etichetta" />
+		<findFieldProperty name="progressivo" />
+		<findFieldProperty name="ds_bene" />
+	</freeSearchSet>
+
+	<!-- ================================================================
+         FORM per SEARCHTOOL interni (es. find_assegnatario nel selezionatore)
+         ================================================================ -->
+
+	<form name="searchtool">
+		<formFieldProperty
+				name="nr_inventario"
+				enabledOnSearch="true"
+				enabledOnFreeSearch="true" />
+		<formFieldProperty
+				name="ds_bene"
+				inputSize="60"
+				enabledOnSearch="true"
+				enabledOnFreeSearch="true" />
+	</form>
+
+	<!-- ================================================================
+         COLUMN SET per la griglia del documento di TRASPORTO
+         ================================================================ -->
+
+	<columnSet name="righeTrasporto">
+		<columnFieldProperty
+				name="nr_inventario"
+				style="width:80px" />
+		<columnFieldProperty
+				name="etichetta"
+				style="width:80px" />
+		<columnFieldProperty
+				name="progressivo"
+				style="width:40px" />
+		<columnFieldProperty
+				name="ds_bene"
+				style="width:300px" />
+		<columnFieldProperty
+				name="valore_bene"
+				style="width:100px" />
+	</columnSet>
+
+	<!-- ================================================================
+         COLUMN SET per la griglia del documento di RIENTRO
+         ================================================================ -->
+
+	<columnSet name="righeRientro">
+		<columnFieldProperty
+				name="nr_inventario"
+				style="width:80px" />
+		<columnFieldProperty
+				name="etichetta"
+				style="width:80px" />
+		<columnFieldProperty
+				name="progressivo"
+				style="width:40px" />
+		<columnFieldProperty
+				name="ds_bene"
+				style="width:300px" />
+		<columnFieldProperty
+				name="valore_bene"
+				style="width:100px" />
+	</columnSet>
+
+</bulkInfo>

@@ -19,11 +19,16 @@ package it.cnr.contab.anagraf00.ejb;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 
+import it.cnr.contab.anagraf00.comp.AnagraficoComponent;
 import it.cnr.contab.anagraf00.comp.TerzoComponent;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 
 import jakarta.annotation.PostConstruct;
@@ -229,6 +234,27 @@ public it.cnr.contab.anagraf00.core.bulk.TerzoBulk completaTerzo(it.cnr.jada.Use
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
+
+	public SQLBuilder findTerziDipendentiByClause(UserContext param0, TerzoBulk param1, CompoundFindClause param2)
+			throws ComponentException, PersistencyException, RemoteException, IntrospectionException {
+		try {
+			SQLBuilder result = ((TerzoComponent) componentObj)
+					.findTerziDipendentiByClause(param0, param1, param2);
+			component_invocation_succes(param0, componentObj);
+			return result;
+		} catch (it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0, componentObj);
+			throw e;
+		} catch (it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0, componentObj);
+			throw e;
+		} catch (RuntimeException e) {
+			throw uncaughtRuntimeException(param0, componentObj, e);
+		} catch (Error e) {
+			throw uncaughtError(param0, componentObj, e);
+		}
+	}
+
 
 }
 

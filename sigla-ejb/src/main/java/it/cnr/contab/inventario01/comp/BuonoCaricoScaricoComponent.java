@@ -27,6 +27,7 @@ import it.cnr.contab.coepcoan00.core.bulk.Chiusura_coepBase;
 import it.cnr.contab.coepcoan00.core.bulk.Chiusura_coepHome;
 import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
+import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.*;
@@ -6127,14 +6128,8 @@ private void insertBeni (UserContext aUC,Buono_carico_scaricoBulk buonoC, Simple
 		bene.setInventario(dett.getBuono_cs().getInventario());
 		bene.setFl_totalmente_scaricato(false);
 
-		if (dett.getAnagAssegnatario() != null &&
-				dett.getAnagAssegnatario().getCd_anag() != null) {
-
-			Integer cdAnag = dett.getAnagAssegnatario().getCd_anag();
-			TerzoBulk terzoAsseg = caricaTerzoDaAnagrafico(aUC, cdAnag);
-			if (terzoAsseg != null) {
-				bene.setAssegnatario(terzoAsseg);
-			}
+		if (bene.getAssegnatario() != null) {
+			bene.setCd_assegnatario(bene.getAssegnatario().getCd_terzo());
 		}
 
 		if (bene.getAssegnatario() != null){
@@ -7735,55 +7730,25 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 		return (beni!=null && !beni.isEmpty());
 	}
 
-	/**
-	 * Carica il TerzoBulk completo partendo da un codice anagrafico.
-	 */
-	public it.cnr.contab.anagraf00.core.bulk.TerzoBulk caricaTerzoDaAnagrafico(
-			it.cnr.jada.UserContext userContext,
-			Integer cdAnag)
-			throws it.cnr.jada.comp.ComponentException {
-
-		if (cdAnag == null) {
-			return null;
-		}
-
-		try {
-			it.cnr.contab.anagraf00.core.bulk.TerzoHome terzoHome =
-					(it.cnr.contab.anagraf00.core.bulk.TerzoHome)
-							getHome(userContext, it.cnr.contab.anagraf00.core.bulk.TerzoBulk.class);
-
-			return terzoHome.findTerzoByAnag(cdAnag);
-
-		} catch (it.cnr.jada.persistency.PersistencyException e) {
-			throw handleException(e);
-		} catch (it.cnr.jada.persistency.IntrospectionException e) {
-			throw handleException(e);
-		}
-	}
 
 	/**
-	 * Metodo per la ricerca dell'anagrafico ASSEGNATARIO CARICO tramite SEARCHTOOL.
-	 * Delega la ricerca al componente Anagrafico per ottenere solo dipendenti attivi.
+	 * Searchtool: ricerca assegnatario filtrando solo i dipendenti attivi.
+	 * Nome costruito da property="bene.assegnatario" → selectBene_assegnatarioByClause
 	 */
-	public SQLBuilder selectAnagAssegnatarioByClause(
+	public SQLBuilder selectBene_assegnatarioByClause(
 			UserContext userContext,
 			Buono_carico_scarico_dettBulk buono,
-			AnagraficoBulk anag_find,
+			TerzoBulk terzo,
 			CompoundFindClause clause)
 			throws ComponentException, RemoteException {
-
 		try {
-			// Delega al componente Anagrafico per cercare solo dipendenti attivi
-			AnagraficoComponentSession sess = (AnagraficoComponentSession)
+			TerzoComponentSession sess = (TerzoComponentSession)
 					it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
-							"CNRANAGRAF00_EJB_AnagraficoComponentSession",
-							AnagraficoComponentSession.class
-					);
-
-			return sess.findAnagraficoDipendenteByClause(userContext, anag_find, clause);
-
-		} catch (Exception e) {
-			throw new ComponentException("Errore ricerca anagrafico smartworking: " + e.getMessage(), e);
+							"CNRANAGRAF00_EJB_TerzoComponentSession",
+							TerzoComponentSession.class);
+			return sess.findTerziDipendentiByClause(userContext, terzo, clause);
+		} catch (PersistencyException | IntrospectionException e) {
+			throw new ComponentException(e);
 		}
 	}
 

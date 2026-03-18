@@ -2,7 +2,7 @@ package it.cnr.contab.web.rest.resource.inventario01;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
@@ -184,10 +184,10 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
 
                 DocumentoTrasportoDettBulk rif = new DocumentoTrasportoDettBulk();
                 rif.setDoc_trasporto_rientro(new DocumentoTrasportoBulk());
-                rif.setBene(new Inventario_beniBulk());
+                rif.setBene(new InventarioDocTRBulk());
                 rDett.setDocTrasportoDettRif(rif);
 
-                Inventario_beniBulk bene = new Inventario_beniBulk();
+                InventarioDocTRBulk bene = new InventarioDocTRBulk();
                 bene.setInventario(new Id_inventarioBulk());
                 bene.setNr_inventario(nrInventario);
                 bene.setPg_inventario(pgInventario);
@@ -210,7 +210,7 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
 
                 DocumentoTrasportoDettBulk tDett = new DocumentoTrasportoDettBulk();
 
-                Inventario_beniBulk bene = new Inventario_beniBulk();
+                InventarioDocTRBulk bene = new InventarioDocTRBulk();
                 bene.setInventario(new Id_inventarioBulk());
                 bene.setNr_inventario(nrInventario);
                 bene.setPg_inventario(pgInventario);
@@ -312,32 +312,27 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
                     "stato non valido '" + bulk.getStato()
                             + "': valori ammessi: " + Doc_trasporto_rientroBulk.STATO.toString());
 
-        if (Boolean.TRUE.equals(bulk.getFlIncaricato())) {
-            boolean haCdTerzo = bulk.getCdTerzoIncaricato() != null;
-            boolean haCdAnag  = bulk.getCdAnagIncaricato() != null;
-            if (!haCdTerzo && !haCdAnag)
-                throw new RestException(Response.Status.BAD_REQUEST,
-                        "cdTerzoIncaricato oppure cdAnagIncaricato obbligatorio quando flIncaricato=true");
-        }
+        if (Boolean.TRUE.equals(bulk.getFlIncaricato()) && bulk.getCdTerzoIncaricato() == null)
+            throw new RestException(Response.Status.BAD_REQUEST,
+                    "cdTerzoIncaricato obbligatorio quando flIncaricato=true");
 
-        if (Boolean.TRUE.equals(bulk.getFlVettore())
-                && isNullOrEmpty(bulk.getNominativoVettore()))
+        if (Boolean.TRUE.equals(bulk.getFlVettore()) && isNullOrEmpty(bulk.getNominativoVettore()))
             throw new RestException(Response.Status.BAD_REQUEST,
                     "nominativoVettore obbligatorio quando flVettore=true");
 
-        if (bulk.isSmartworking() && bulk.getCdAnagSmartworking() == null)
+        if (bulk.isSmartworking() &&
+                (bulk.getTerzoSmartworking() == null || bulk.getTerzoSmartworking().getCd_terzo() == null))
             throw new RestException(Response.Status.BAD_REQUEST,
-                    "cdAnagSmartworking obbligatorio quando il documento è di tipo Smartworking");
+                    "cdTerzoSmartworking obbligatorio quando il documento è di tipo Smartworking");
 
         if (Boolean.TRUE.equals(bulk.getFlIncaricato()) && Boolean.TRUE.equals(bulk.getFlVettore()))
             throw new RestException(Response.Status.BAD_REQUEST,
                     "flIncaricato e flVettore non possono essere entrambi true contemporaneamente");
 
-        if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(bulk.getStato())) {
+        if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(bulk.getStato()))
             throw new RestException(Response.Status.BAD_REQUEST,
                     "Operazione consentita solo per documenti in stato INSERITO. Stato attuale: "
                             + bulk.getStato());
-        }
     }
 
     /**

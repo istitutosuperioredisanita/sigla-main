@@ -1472,22 +1472,4 @@ public Ass_inv_bene_fatturaBulk sdoppiaAssociazioneFor(UserContext param0,Fattur
 	}
 
 
-	@Override
-	public TerzoBulk caricaTerzoDaAnagrafico(UserContext userContext, Integer cdAnag) throws RemoteException, ComponentException {
-		try {
-			return (TerzoBulk) invoke("caricaTerzoDaAnagrafico", new Object[]{
-					userContext,
-					cdAnag
-			});
-		} catch (java.lang.reflect.InvocationTargetException e) {
-			try {
-				throw e.getTargetException();
-			} catch (ComponentException ex) {
-				throw ex;
-			} catch (Throwable ex) {
-				throw new RemoteException("Uncaught exception", ex);
-			}
-		}
-	}
-
 }

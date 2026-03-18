@@ -1615,52 +1615,25 @@ public Forward doOnData_registrazioneChange(ActionContext context)  {
 		}
 	}
 
-	/**
-	 * Avvia la ricerca dell'assegnatario tramite view dipendenti
-	 */
-	public Forward doSearchFindAnagAssegnatario(ActionContext context) {
-		return search(context, getFormField(context, "main.Dettaglio.findAnagAssegnatario"), null);
+	public Forward doSearchFindTerzoAssegnatario(ActionContext context) {
+		return search(context, getFormField(context, "main.Dettaglio.findTerzoAssegnatario"), null);
 	}
 
-	/**
-	 * Pulisce i campi relativi all'assegnatario
-	 */
-	public Forward doBlankSearchFindAnagAssegnatario(ActionContext context,
-													 Buono_carico_scarico_dettBulk dettaglio) {
-		dettaglio.setAnagAssegnatario(new AnagraficoBulk());
+	public Forward doBlankSearchFindTerzoAssegnatario(ActionContext context,
+												  Buono_carico_scarico_dettBulk dettaglio) {
 		dettaglio.getBene().setAssegnatario(null);
 		return context.findDefaultForward();
 	}
 
-	/**
-	 * Gestisce la selezione di un anagrafico come assegnatario.
-	 * Converte AnagraficoBulk in TerzoBulk e lo assegna al bene.
-	 */
-	public Forward doBringBackSearchFindAnagAssegnatario(ActionContext context,
-														 Buono_carico_scarico_dettBulk dettaglio,
-														 AnagraficoBulk anagSelezionato) {
+	public Forward doBringBackSearchFindTerzoAssegnatario(ActionContext context,
+													  Buono_carico_scarico_dettBulk dettaglio,
+													  TerzoBulk terzoSelezionato) {
 		try {
-			if (anagSelezionato != null && anagSelezionato.getCd_anag() != null) {
-				dettaglio.setAnagAssegnatario(anagSelezionato);
-				TerzoBulk terzoCompleto = caricaTerzoDaAnagrafico(context, anagSelezionato);
-				dettaglio.getBene().setAssegnatario(terzoCompleto);
-			}
+			dettaglio.getBene().setAssegnatario(terzoSelezionato);
 			return context.findDefaultForward();
 		} catch (Throwable e) {
 			return handleException(context, e);
 		}
-	}
-
-	/**
-	 * Carica il TerzoBulk completo dall'anagrafico
-	 */
-	private TerzoBulk caricaTerzoDaAnagrafico(ActionContext context, AnagraficoBulk anagrafico)
-			throws Exception {
-		if (anagrafico == null || anagrafico.getCd_anag() == null) {
-			return null;
-		}
-		CRUDCaricoInventarioBP bp = (CRUDCaricoInventarioBP) getBusinessProcess(context);
-		return bp.caricaTerzoDaAnagrafico(context, anagrafico);
 	}
 
 }

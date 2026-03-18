@@ -830,27 +830,5 @@ public class CRUDCaricoInventarioBP extends CRUDCaricoScaricoInventarioBP{
 		return false;
 	}
 
-
-	/**
-	 * Carica TerzoBulk completo da AnagraficoBulk tramite component
-	 */
-	public TerzoBulk caricaTerzoDaAnagrafico(ActionContext context, AnagraficoBulk anagrafico)
-			throws BusinessProcessException {
-
-		if (anagrafico == null || anagrafico.getCd_anag() == null) {
-			return null;
-		}
-
-		try {
-			return ((it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession)
-					createComponentSession())
-					.caricaTerzoDaAnagrafico(
-							context.getUserContext(),
-							anagrafico.getCd_anag()
-					);
-		} catch (ComponentException | RemoteException e) {
-			throw handleException(e);
-		}
-	}
 }
 
