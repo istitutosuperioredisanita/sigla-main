@@ -17,6 +17,8 @@
 
 package it.cnr.contab.ordmag.ordini.action;
 
+import it.cnr.contab.ordmag.anag00.NumerazioneOrdBulk;
+import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
 import it.cnr.contab.ordmag.magazzino.bp.ParametriSelezioneMovimentiMagBP;
 import it.cnr.contab.ordmag.magazzino.bulk.ParametriSelezioneMovimentiBulk;
 import it.cnr.contab.ordmag.ordini.bp.ParametriSelezioneOrdiniAcqBP;
@@ -132,9 +134,9 @@ public class ParametriSelezioneOrdiniAcqAction extends BulkAction {
     public Forward doBlankSearchFindUnitaOperativaOrd(ActionContext context,
 			ParametriSelezioneOrdiniAcqBulk parametri)
             throws java.rmi.RemoteException {
-        parametri.setUnitaOperativaOrdine(null);
-        parametri.setUnitaOperativaAbilitata(null);
-        parametri.setNumerazioneOrd(null);
+        parametri.setUnitaOperativaOrdine(new UnitaOperativaOrdBulk());
+        parametri.setUnitaOperativaAbilitata(new UnitaOperativaOrdBulk());
+        parametri.setNumerazioneOrd(new NumerazioneOrdBulk());
         return context.findDefaultForward();
     }
 
