@@ -4,7 +4,7 @@ import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
@@ -85,9 +85,9 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      * Classe interna per gestire la selezione ricorsiva di beni con accessori
      */
     public static class PendingSelection {
-        Map<Inventario_beniBulk, List<Inventario_beniBulk>> principaliConAccessori = new LinkedHashMap<>();
-        List<Inventario_beniBulk> accessori = new ArrayList<>();
-        List<Inventario_beniBulk> principaliSenza = new ArrayList<>();
+        Map<InventarioDocTRBulk, List<InventarioDocTRBulk>> principaliConAccessori = new LinkedHashMap<>();
+        List<InventarioDocTRBulk> accessori = new ArrayList<>();
+        List<InventarioDocTRBulk> principaliSenza = new ArrayList<>();
         OggettoBulk[] bulks = null;
         BitSet oldSel = null;
         BitSet newSel = null;
@@ -106,9 +106,9 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         public PendingSelection() {
         }
 
-        public PendingSelection(Map<Inventario_beniBulk, List<Inventario_beniBulk>> principaliConAccessori,
-                                List<Inventario_beniBulk> accessori,
-                                List<Inventario_beniBulk> principaliSenza,
+        public PendingSelection(Map<InventarioDocTRBulk, List<InventarioDocTRBulk>> principaliConAccessori,
+                                List<InventarioDocTRBulk> accessori,
+                                List<InventarioDocTRBulk> principaliSenza,
                                 OggettoBulk[] bulks,
                                 BitSet oldSel,
                                 BitSet newSel) {
@@ -125,27 +125,27 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             return principaliConAccessori.isEmpty() && accessori.isEmpty() && principaliSenza.isEmpty();
         }
 
-        public Map<Inventario_beniBulk, List<Inventario_beniBulk>> getPrincipaliConAccessori() {
+        public Map<InventarioDocTRBulk, List<InventarioDocTRBulk>> getPrincipaliConAccessori() {
             return principaliConAccessori;
         }
 
-        public void setPrincipaliConAccessori(Map<Inventario_beniBulk, List<Inventario_beniBulk>> principaliConAccessori) {
+        public void setPrincipaliConAccessori(Map<InventarioDocTRBulk, List<InventarioDocTRBulk>> principaliConAccessori) {
             this.principaliConAccessori = principaliConAccessori;
         }
 
-        public List<Inventario_beniBulk> getAccessori() {
+        public List<InventarioDocTRBulk> getAccessori() {
             return accessori;
         }
 
-        public void setAccessori(List<Inventario_beniBulk> accessori) {
+        public void setAccessori(List<InventarioDocTRBulk> accessori) {
             this.accessori = accessori;
         }
 
-        public List<Inventario_beniBulk> getPrincipaliSenza() {
+        public List<InventarioDocTRBulk> getPrincipaliSenza() {
             return principaliSenza;
         }
 
-        public void setPrincipaliSenza(List<Inventario_beniBulk> principaliSenza) {
+        public void setPrincipaliSenza(List<InventarioDocTRBulk> principaliSenza) {
             this.principaliSenza = principaliSenza;
         }
 
@@ -912,7 +912,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      */
     protected final RemoteDetailCRUDController dettBeniController = new RemoteDetailCRUDController(
             "DettBeniController",
-            Inventario_beniBulk.class,
+            InventarioDocTRBulk.class,
             "",
             "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession",
             this) {
@@ -956,12 +956,12 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 ps.bulks = details;
 
                 for (OggettoBulk o : details) {
-                    Inventario_beniBulk bene = (Inventario_beniBulk) o;
+                    InventarioDocTRBulk bene = (InventarioDocTRBulk) o;
 
                     if (bene.isBeneAccessorio()) {
                         ps.accessori.add(bene);
                     } else {
-                        List<Inventario_beniBulk> found = getComp().cercaBeniAccessoriNeiDettagliSalvati(
+                        List<InventarioDocTRBulk> found = getComp().cercaBeniAccessoriNeiDettagliSalvati(
                                 context.getUserContext(),
                                 getDoc(),
                                 bene
@@ -1039,7 +1039,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             return getComp().selectBeniAssociatiByClause(
                     context.getUserContext(),
                     getDoc(),
-                    Inventario_beniBulk.class
+                    InventarioDocTRBulk.class
             );
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
@@ -1138,7 +1138,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) getModel();
 
             boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
-            List<Inventario_beniBulk> beniFiltrati = getComp().caricaBeniPerInserimento(
+            List<InventarioDocTRBulk> beniFiltrati = getComp().caricaBeniPerInserimento(
                     context.getUserContext(),
                     doc,
                     getClauses(),
@@ -1186,7 +1186,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             ps.newSel = newSelection != null ? (BitSet) newSelection.clone() : new BitSet();
             ps.selectionAccumulata = oldSelection != null ? (BitSet) oldSelection.clone() : new BitSet();
 
-            List<Inventario_beniBulk> beniDaAggiungere = new ArrayList<>();
+            List<InventarioDocTRBulk> beniDaAggiungere = new ArrayList<>();
 
             for (int i = 0; i < bulks.length; i++) {
                 assert oldSelection != null;
@@ -1195,7 +1195,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                     continue;
                 }
 
-                Inventario_beniBulk bene = (Inventario_beniBulk) bulks[i];
+                InventarioDocTRBulk bene = (InventarioDocTRBulk) bulks[i];
 
                 if (ps.newSel.get(i)) {
                     beniDaAggiungere.add(bene);
@@ -1261,7 +1261,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     /**
      * Restituisce bene principale corrente nel flusso ricorsivo
      */
-    public Inventario_beniBulk getBenePrincipaleCorrente(boolean isEliminazione) {
+    public InventarioDocTRBulk getBenePrincipaleCorrente(boolean isEliminazione) {
         PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
         int index = isEliminazione ? indexBeneCurrentePerEliminazione : indexBeneCurrentePerAggiunta;
 
@@ -1270,7 +1270,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
 
         int idx = 0;
-        for (Inventario_beniBulk bene : ps.principaliConAccessori.keySet()) {
+        for (InventarioDocTRBulk bene : ps.principaliConAccessori.keySet()) {
             if (idx == index) {
                 return bene;
             }
@@ -1282,8 +1282,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     /**
      * Restituisce accessori del bene corrente
      */
-    public List<Inventario_beniBulk> getAccessoriCorrente(boolean isEliminazione) {
-        Inventario_beniBulk bene = getBenePrincipaleCorrente(isEliminazione);
+    public List<InventarioDocTRBulk> getAccessoriCorrente(boolean isEliminazione) {
+        InventarioDocTRBulk bene = getBenePrincipaleCorrente(isEliminazione);
         PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
 
         if (bene != null && ps != null) {
@@ -1296,14 +1296,14 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      * Genera messaggio utente per scelta inclusione accessori
      */
     public String getMessaggioSingoloBene(boolean isEliminazione) {
-        Inventario_beniBulk beneCorrente = getBenePrincipaleCorrente(isEliminazione);
+        InventarioDocTRBulk beneCorrente = getBenePrincipaleCorrente(isEliminazione);
 
         if (beneCorrente == null) {
             return "";
         }
 
         PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
-        List<Inventario_beniBulk> accessori = (ps != null) ? ps.principaliConAccessori.get(beneCorrente) : null;
+        List<InventarioDocTRBulk> accessori = (ps != null) ? ps.principaliConAccessori.get(beneCorrente) : null;
         int numAccessori = (accessori != null) ? accessori.size() : 0;
 
         StringBuilder msg = new StringBuilder();
@@ -1350,7 +1350,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     public void elaboraBeneCorrente(ActionContext context, boolean isEliminazione, boolean includiAccessori)
             throws BusinessProcessException {
 
-        Inventario_beniBulk beneCorrente = getBenePrincipaleCorrente(isEliminazione);
+        InventarioDocTRBulk beneCorrente = getBenePrincipaleCorrente(isEliminazione);
 
         if (isEliminazione) {
             if (includiAccessori) {
@@ -1372,7 +1372,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     private void aggiungiBenesCorrente(ActionContext context, boolean includiAccessori)
             throws BusinessProcessException {
 
-        Inventario_beniBulk benePrincipale = getBenePrincipaleCorrente(false);
+        InventarioDocTRBulk benePrincipale = getBenePrincipaleCorrente(false);
         if (benePrincipale == null) return;
 
         try {
@@ -1384,15 +1384,15 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             modificaBeniConAccessoriComponente(context, soloBenePrincipale, vuoto, selezionato);
 
             PendingSelection pending = getPendingAdd();
-            List<Inventario_beniBulk> accessoriDaAggiungere = new ArrayList<>();
+            List<InventarioDocTRBulk> accessoriDaAggiungere = new ArrayList<>();
 
             if (includiAccessori) {
                 if (pending != null && pending.principaliConAccessori != null) {
-                    List<Inventario_beniBulk> accessoriStrutturali =
+                    List<InventarioDocTRBulk> accessoriStrutturali =
                             pending.principaliConAccessori.get(benePrincipale);
 
                     if (accessoriStrutturali != null) {
-                        for (Inventario_beniBulk accStrutturale : accessoriStrutturali) {
+                        for (InventarioDocTRBulk accStrutturale : accessoriStrutturali) {
                             if (!beneAccNelDettaglio(accStrutturale) &&
                                     !contieneAccessorio(accessoriDaAggiungere, accStrutturale)) {
                                 accessoriDaAggiungere.add(accStrutturale);
@@ -1403,12 +1403,12 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             } else {
                 if (pending != null && pending.accessori != null) {
 
-                    List<Inventario_beniBulk> accessoriStrutturali = null;
+                    List<InventarioDocTRBulk> accessoriStrutturali = null;
                     if (pending.principaliConAccessori != null) {
                         accessoriStrutturali = pending.principaliConAccessori.get(benePrincipale);
                     }
 
-                    for (Inventario_beniBulk accManuale : pending.accessori) {
+                    for (InventarioDocTRBulk accManuale : pending.accessori) {
                         if (isAccessorioDelPrincipale(accManuale, benePrincipale) &&
                                 !beneAccNelDettaglio(accManuale) &&
                                 !contieneAccessorio(accessoriDaAggiungere, accManuale)) {
@@ -1419,7 +1419,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 }
             }
 
-            for (Inventario_beniBulk accessorio : accessoriDaAggiungere) {
+            for (InventarioDocTRBulk accessorio : accessoriDaAggiungere) {
                 if (beneAccNelDettaglio(accessorio)) {
                     continue;
                 }
@@ -1438,8 +1438,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
 
-    private boolean contieneAccessorio(List<Inventario_beniBulk> lista, Inventario_beniBulk candidato) {
-        for (Inventario_beniBulk presente : lista) {
+    private boolean contieneAccessorio(List<InventarioDocTRBulk> lista, InventarioDocTRBulk candidato) {
+        for (InventarioDocTRBulk presente : lista) {
             if (presente.equalsByPrimaryKey(candidato)) {
                 return true;
             }
@@ -1450,8 +1450,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
 
 
-    private boolean isAccessorioDelPrincipale(Inventario_beniBulk accessorio,
-                                              Inventario_beniBulk principale) {
+    private boolean isAccessorioDelPrincipale(InventarioDocTRBulk accessorio,
+                                              InventarioDocTRBulk principale) {
 
         return accessorio.getNr_inventario().equals(principale.getNr_inventario())
                 && accessorio.getProgressivo().equals(principale.getProgressivo());
@@ -1463,17 +1463,17 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     /**
      * Aggiunge accessori non presenti in bulks[] (pagine successive)
      */
-    private void aggiungiAccessoriMancanti(ActionContext context, List<Inventario_beniBulk> accessori)
+    private void aggiungiAccessoriMancanti(ActionContext context, List<InventarioDocTRBulk> accessori)
             throws BusinessProcessException {
 
         if (accessori == null || accessori.isEmpty()) return;
 
         try {
-            for (Inventario_beniBulk acc : accessori) {
+            for (InventarioDocTRBulk acc : accessori) {
                 boolean trovatoInBulks = false;
                 for (int i = 0; i < pendingAdd.bulks.length; i++) {
-                    if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
-                        Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
+                    if (pendingAdd.bulks[i] instanceof InventarioDocTRBulk) {
+                        InventarioDocTRBulk b = (InventarioDocTRBulk) pendingAdd.bulks[i];
                         if (b.equalsByPrimaryKey(acc)) {
                             trovatoInBulks = true;
                             break;
@@ -1753,7 +1753,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     public void elaboraBeneConAccessori(ActionContext context, boolean isEliminazione, boolean includiAccessori)
             throws BusinessProcessException {
 
-        Inventario_beniBulk beneCorrente = getBenePrincipaleCorrente(isEliminazione);
+        InventarioDocTRBulk beneCorrente = getBenePrincipaleCorrente(isEliminazione);
 
         if (beneCorrente == null) {
             throw new BusinessProcessException("Nessun bene corrente da elaborare");
@@ -1769,11 +1769,11 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     /**
      * Elabora eliminazione bene con/senza accessori
      */
-    private void elaboraBenePerEliminazione(ActionContext context, Inventario_beniBulk beneCorrente,
+    private void elaboraBenePerEliminazione(ActionContext context, InventarioDocTRBulk beneCorrente,
                                             boolean includiAccessori) throws BusinessProcessException {
         try {
             if (includiAccessori) {
-                List<Inventario_beniBulk> accessori = pendingDelete.principaliConAccessori.get(beneCorrente);
+                List<InventarioDocTRBulk> accessori = pendingDelete.principaliConAccessori.get(beneCorrente);
                 getComp().eliminaBeniPrincipaleConAccessoriDaDettagli(
                         context.getUserContext(), getDoc(), beneCorrente, accessori);
             } else {
@@ -1789,10 +1789,10 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     /**
      * Elabora aggiunta bene con validazione preventiva e gestione accessori
      */
-    private void elaboraBenePerAggiunta(ActionContext context, Inventario_beniBulk beneCorrente,
+    private void elaboraBenePerAggiunta(ActionContext context, InventarioDocTRBulk beneCorrente,
                                         boolean includiAccessori) throws BusinessProcessException {
         try {
-            List<Inventario_beniBulk> accessoriDaValidare = null;
+            List<InventarioDocTRBulk> accessoriDaValidare = null;
             if (includiAccessori && pendingAdd.principaliConAccessori.containsKey(beneCorrente)) {
                 accessoriDaValidare = pendingAdd.principaliConAccessori.get(beneCorrente);
             }
@@ -1801,8 +1801,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
             int indiceBenePrincipale = -1;
             for (int i = 0; i < pendingAdd.bulks.length; i++) {
-                if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
-                    Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
+                if (pendingAdd.bulks[i] instanceof InventarioDocTRBulk) {
+                    InventarioDocTRBulk b = (InventarioDocTRBulk) pendingAdd.bulks[i];
                     if (b.equalsByPrimaryKey(beneCorrente)) {
                         indiceBenePrincipale = i;
                         break;
@@ -1820,13 +1820,13 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             newSelection.set(indiceBenePrincipale);
 
             if (includiAccessori) {
-                List<Inventario_beniBulk> accessori = pendingAdd.principaliConAccessori.get(beneCorrente);
+                List<InventarioDocTRBulk> accessori = pendingAdd.principaliConAccessori.get(beneCorrente);
 
                 if (accessori != null && !accessori.isEmpty()) {
-                    for (Inventario_beniBulk acc : accessori) {
+                    for (InventarioDocTRBulk acc : accessori) {
                         for (int i = 0; i < pendingAdd.bulks.length; i++) {
-                            if (pendingAdd.bulks[i] instanceof Inventario_beniBulk) {
-                                Inventario_beniBulk b = (Inventario_beniBulk) pendingAdd.bulks[i];
+                            if (pendingAdd.bulks[i] instanceof InventarioDocTRBulk) {
+                                InventarioDocTRBulk b = (InventarioDocTRBulk) pendingAdd.bulks[i];
                                 if (b.equalsByPrimaryKey(acc)) {
                                     newSelection.set(i);
                                     break;
@@ -1840,7 +1840,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
             modificaBeniConAccessoriComponente(context, pendingAdd.bulks, oldSelection, newSelection);
 
             if (includiAccessori) {
-                List<Inventario_beniBulk> accessori = pendingAdd.principaliConAccessori.get(beneCorrente);
+                List<InventarioDocTRBulk> accessori = pendingAdd.principaliConAccessori.get(beneCorrente);
                 aggiungiAccessoriMancanti(context, accessori);
             }
 
@@ -1854,12 +1854,12 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      */
     private void validaBeneConAccessoriPerAggiunta(
             ActionContext context,
-            Inventario_beniBulk benePrincipale,
-            List<Inventario_beniBulk> accessori)
+            InventarioDocTRBulk benePrincipale,
+            List<InventarioDocTRBulk> accessori)
             throws BusinessProcessException {
 
         try {
-            List<Inventario_beniBulk> beniDaValidare = new ArrayList<>();
+            List<InventarioDocTRBulk> beniDaValidare = new ArrayList<>();
             beniDaValidare.add(benePrincipale);
 
             if (accessori != null && !accessori.isEmpty()) {
@@ -2030,7 +2030,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
             if (doc.getDoc_trasporto_rientro_dettColl() != null && details != null) {
                 for (OggettoBulk beneObj : details) {
-                    Inventario_beniBulk beneDaRimuovere = (Inventario_beniBulk) beneObj;
+                    InventarioDocTRBulk beneDaRimuovere = (InventarioDocTRBulk) beneObj;
 
                     doc.getDoc_trasporto_rientro_dettColl().removeIf(obj -> {
                         if (obj instanceof Doc_trasporto_rientro_dettBulk) {
@@ -2057,8 +2057,8 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      * Elimina il bene principale corrente insieme ai suoi accessori.
      */
     private void eliminaBeneCorrente(ActionContext context) throws BusinessProcessException {
-        Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
-        List<Inventario_beniBulk> accessori = getAccessoriCorrente(true);
+        InventarioDocTRBulk bene = getBenePrincipaleCorrente(true);
+        List<InventarioDocTRBulk> accessori = getAccessoriCorrente(true);
 
         if (bene != null) {
             try {
@@ -2079,7 +2079,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                     });
 
                     if (accessori != null) {
-                        for (Inventario_beniBulk acc : accessori) {
+                        for (InventarioDocTRBulk acc : accessori) {
                             doc.getDoc_trasporto_rientro_dettColl().removeIf(obj -> {
                                 if (obj instanceof Doc_trasporto_rientro_dettBulk) {
                                     Doc_trasporto_rientro_dettBulk dett =
@@ -2107,7 +2107,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      */
     private void eliminaBenePrincipaleSenzaAccessori(ActionContext context)
             throws BusinessProcessException {
-        Inventario_beniBulk bene = getBenePrincipaleCorrente(true);
+        InventarioDocTRBulk bene = getBenePrincipaleCorrente(true);
 
         if (bene != null) {
             try {
@@ -2138,7 +2138,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
 
-    private boolean beneAccNelDettaglio(Inventario_beniBulk bene) {
+    private boolean beneAccNelDettaglio(InventarioDocTRBulk bene) {
         if (getDoc().getDoc_trasporto_rientro_dettColl() == null) return false;
 
         for (Object o : getDoc().getDoc_trasporto_rientro_dettColl()) {

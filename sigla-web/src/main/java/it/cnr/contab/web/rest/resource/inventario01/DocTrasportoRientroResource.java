@@ -2,7 +2,7 @@ package it.cnr.contab.web.rest.resource.inventario01;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
@@ -187,10 +187,10 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
 
                 DocumentoTrasportoDettBulk rif = new DocumentoTrasportoDettBulk();
                 rif.setDoc_trasporto_rientro(new DocumentoTrasportoBulk());
-                rif.setBene(new Inventario_beniBulk());
+                rif.setBene(new InventarioDocTRBulk());
                 rDett.setDocTrasportoDettRif(rif);
 
-                Inventario_beniBulk bene = new Inventario_beniBulk();
+                InventarioDocTRBulk bene = new InventarioDocTRBulk();
                 bene.setInventario(new Id_inventarioBulk());
                 bene.setNr_inventario(nrInventario);
                 bene.setPg_inventario(pgInventario);
@@ -213,7 +213,7 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
 
                 DocumentoTrasportoDettBulk tDett = new DocumentoTrasportoDettBulk();
 
-                Inventario_beniBulk bene = new Inventario_beniBulk();
+                InventarioDocTRBulk bene = new InventarioDocTRBulk();
                 bene.setInventario(new Id_inventarioBulk());
                 bene.setNr_inventario(nrInventario);
                 bene.setPg_inventario(pgInventario);

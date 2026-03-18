@@ -7,10 +7,7 @@ import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
 import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniHome;
-import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rBulk;
-import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rHome;
+import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.service.SpringUtil;
@@ -262,8 +259,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 Doc_trasporto_rientro_dettBulk dettaglio = (Doc_trasporto_rientro_dettBulk) dett.next();
                 dettaglio.setDoc_trasporto_rientro(docTR);
 
-                Inventario_beniBulk inv = (Inventario_beniBulk) getHome(aUC, Inventario_beniBulk.class)
-                        .findByPrimaryKey(new Inventario_beniBulk(
+                InventarioDocTRBulk inv = (InventarioDocTRBulk) getHome(aUC, InventarioDocTRBulk.class)
+                        .findByPrimaryKey(new InventarioDocTRBulk(
                                 dettaglio.getNr_inventario(),
                                 dettaglio.getPg_inventario(),
                                 new Long(dettaglio.getProgressivo().longValue())
@@ -531,7 +528,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      */
     private Doc_trasporto_rientro_dettBulk trovaDettaglioOriginale(
             UserContext userContext,
-            Inventario_beniBulk bene,
+            InventarioDocTRBulk bene,
             Long pgInventario,
             String tipoDocumentoDaCercare)
             throws ComponentException {
@@ -1135,7 +1132,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         try {
             SQLBuilder sql = new SQLBuilder();
-            Inventario_beniHome invBeniHome = (Inventario_beniHome) getHome(userContext, Inventario_beniBulk.class);
+            InventarioDocTRHome  invBeniHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
             sql = invBeniHome.getListaBeniDaTrasportare(
                     userContext
                     , (Doc_trasporto_rientroBulk) bulk
@@ -1143,7 +1140,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             sql.addClause(clauses);
             try {
-                return iterator(userContext, sql, Inventario_beniBulk.class, null);
+                return iterator(userContext, sql, InventarioDocTRBulk.class, null);
             } catch (Exception e) {
                 throw handleException(e);
             }
@@ -1165,7 +1162,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
 
         try {
-            SQLBuilder sql = getHome(userContext, Inventario_beniBulk.class).createSQLBuilder();
+            SQLBuilder sql = getHome(userContext, InventarioDocTRBulk.class).createSQLBuilder();
 
             sql.addTableToHeader("DOC_TRASPORTO_RIENTRO_DETT");
             sql.addSQLJoin("INVENTARIO_BENI.PG_INVENTARIO", SQLBuilder.EQUALS,
@@ -1187,7 +1184,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             sql.addOrderBy("NR_INVENTARIO");
             sql.addOrderBy("PROGRESSIVO");
 
-            List risultato = getHome(userContext, Inventario_beniBulk.class).fetchAll(sql);
+            List risultato = getHome(userContext, InventarioDocTRBulk.class).fetchAll(sql);
 
             if (risultato != null && risultato.size() > 0) {
                 return new SimpleBulkList(risultato);
@@ -1213,7 +1210,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
 
         try {
-            SQLBuilder sql = getHome(userContext, Inventario_beniBulk.class).createSQLBuilder();
+            SQLBuilder sql = getHome(userContext, InventarioDocTRBulk.class).createSQLBuilder();
 
             sql.addTableToHeader("DOC_TRASPORTO_RIENTRO_DETT");
             sql.addSQLJoin("INVENTARIO_BENI.PG_INVENTARIO", SQLBuilder.EQUALS,
@@ -1275,14 +1272,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      */
     public List cercaBeniAccessoriAssociati(
             UserContext userContext,
-            Inventario_beniBulk benePrincipale)
+            InventarioDocTRBulk benePrincipale)
             throws ComponentException {
 
         try {
-            Inventario_beniHome home = (Inventario_beniHome) getHome(
-                    userContext,
-                    Inventario_beniBulk.class
-            );
+            InventarioDocTRHome  home = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
 
             SQLBuilder sql = home.createSQLBuilder();
 
@@ -1337,16 +1331,16 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             boolean isTrasporto = docT instanceof DocumentoTrasportoBulk;
 
             for (int i = 0; i < beni.length; i++) {
-                Inventario_beniBulk bene = (Inventario_beniBulk) beni[i];
+                InventarioDocTRBulk bene = (InventarioDocTRBulk) beni[i];
 
                 if (old_ass.get(i) != ass.get(i)) {
 
                     if (ass.get(i)) {
 
                         try {
-                            Inventario_beniBulk beneDB =
-                                    (Inventario_beniBulk) getHome(userContext, Inventario_beniBulk.class)
-                                            .findByPrimaryKey(new Inventario_beniBulk(
+                            InventarioDocTRBulk beneDB =
+                                    (InventarioDocTRBulk) getHome(userContext, InventarioDocTRBulk.class)
+                                            .findByPrimaryKey(new InventarioDocTRBulk(
                                                     bene.getNr_inventario(),
                                                     bene.getPg_inventario(),
                                                     bene.getProgressivo()
@@ -1793,14 +1787,14 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 return;
             }
 
-            Inventario_beniHome beneHome = (Inventario_beniHome)
-                    getHome(userContext, Inventario_beniBulk.class);
+            InventarioDocTRHome  beneHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
+
 
             for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
                 Doc_trasporto_rientro_dettBulk dettaglio =
                         (Doc_trasporto_rientro_dettBulk) obj;
 
-                Inventario_beniBulk bene = caricaBeneDaDettaglio(
+                InventarioDocTRBulk bene = caricaBeneDaDettaglio(
                         userContext, beneHome, dettaglio);
 
                 if (bene != null) {
@@ -1820,14 +1814,14 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     /**
      * Carica un bene dal database usando le informazioni del dettaglio.
      */
-    private Inventario_beniBulk caricaBeneDaDettaglio(
+    private InventarioDocTRBulk caricaBeneDaDettaglio(
             UserContext userContext,
-            Inventario_beniHome beneHome,
+            InventarioDocTRHome beneHome,
             Doc_trasporto_rientro_dettBulk dettaglio)
             throws PersistencyException {
 
-        return (Inventario_beniBulk) beneHome.findByPrimaryKey(
-                new Inventario_beniBulk(
+        return (InventarioDocTRBulk) beneHome.findByPrimaryKey(
+                new InventarioDocTRBulk(
                         dettaglio.getNr_inventario(),
                         dettaglio.getPg_inventario(),
                         Long.valueOf(dettaglio.getProgressivo())
@@ -1881,7 +1875,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      */
     public List cercaBeniAccessoriPresentinelTrasportoOriginale(
             UserContext userContext,
-            Inventario_beniBulk beneRientro,
+            InventarioDocTRBulk beneRientro,
             Doc_trasporto_rientroBulk doc)
             throws ComponentException {
 
@@ -1925,10 +1919,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 return java.util.Collections.emptyList();
             }
 
-            Inventario_beniHome beneHome = (Inventario_beniHome)
-                    getHome(userContext, Inventario_beniBulk.class);
+            InventarioDocTRHome  beneHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
 
-            List<Inventario_beniBulk> accessoriDisponibili = new ArrayList<>();
+            List<InventarioDocTRBulk> accessoriDisponibili = new ArrayList<>();
 
             for (Object obj : dettagliAccessori) {
                 Doc_trasporto_rientro_dettBulk dettaglioAccessorio =
@@ -1940,8 +1933,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 );
 
                 if (!giaRientrato) {
-                    Inventario_beniBulk accessorio = (Inventario_beniBulk) beneHome.findByPrimaryKey(
-                            new Inventario_beniBulk(
+                    InventarioDocTRBulk accessorio = (InventarioDocTRBulk) beneHome.findByPrimaryKey(
+                            new InventarioDocTRBulk(
                                     dettaglioAccessorio.getNr_inventario(),
                                     dettaglioAccessorio.getPg_inventario(),
                                     Long.valueOf(dettaglioAccessorio.getProgressivo())
@@ -2045,9 +2038,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException {
 
         try {
-            Inventario_beniHome invHome =
-                    (Inventario_beniHome) getHome(
-                            userContext, Inventario_beniBulk.class);
+
+            InventarioDocTRHome  invHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
 
             SQLBuilder sql = invHome.findBeniUnificato(userContext, doc, clauses);
 
@@ -2066,7 +2058,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             sql.addOrderBy("INVENTARIO_BENI.NR_INVENTARIO, INVENTARIO_BENI.PROGRESSIVO");
 
-            return iterator(userContext, sql, Inventario_beniBulk.class, null);
+            return iterator(userContext, sql, InventarioDocTRBulk.class, null);
 
         } catch (Exception e) {
             throw handleException(e);
@@ -2192,7 +2184,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         StringBuilder exclusionList = new StringBuilder();
 
         for (Object obj : beni_da_escludere) {
-            Inventario_beniBulk bene = (Inventario_beniBulk) obj;
+            InventarioDocTRBulk bene = (InventarioDocTRBulk) obj;
 
             if (bene.getNr_inventario() != null && bene.getProgressivo() != null) {
                 if (exclusionList.length() > 0) {
@@ -2270,7 +2262,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             List<Doc_trasporto_rientro_dettBulk> dettagliDaEliminare = new ArrayList<>();
 
             for (OggettoBulk o : beni) {
-                Inventario_beniBulk bene = (Inventario_beniBulk) o;
+                InventarioDocTRBulk bene = (InventarioDocTRBulk) o;
 
                 SQLBuilder sql = dettHome.createSQLBuilder();
                 sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, doc.getPgInventario());
@@ -2369,7 +2361,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     public List cercaBeniAccessoriNeiDettagliSalvati(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale)
+            InventarioDocTRBulk benePrincipale)
             throws ComponentException {
 
         if (doc == null || doc.getPgDocTrasportoRientro() == null) {
@@ -2402,16 +2394,15 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             List dettagli = dettHome.fetchAll(sql);
 
             if (dettagli != null && !dettagli.isEmpty()) {
-                List<Inventario_beniBulk> beniAccessori = new ArrayList();
-                Inventario_beniHome beneHome = (Inventario_beniHome)
-                        getHome(userContext, Inventario_beniBulk.class);
+                List<InventarioDocTRBulk> beniAccessori = new ArrayList();
+                InventarioDocTRHome  beneHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
 
                 for (Iterator it = dettagli.iterator(); it.hasNext(); ) {
                     Doc_trasporto_rientro_dettBulk dett =
                             (Doc_trasporto_rientro_dettBulk) it.next();
 
-                    Inventario_beniBulk bene = (Inventario_beniBulk) beneHome.findByPrimaryKey(
-                            new Inventario_beniBulk(
+                    InventarioDocTRBulk bene = (InventarioDocTRBulk) beneHome.findByPrimaryKey(
+                            new InventarioDocTRBulk(
                                     dett.getNr_inventario(),
                                     dett.getPg_inventario(),
                                     Long.valueOf(dett.getProgressivo())
@@ -2439,7 +2430,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     public void eliminaBeniPrincipaleConAccessoriDaDettagli(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale,
+            InventarioDocTRBulk benePrincipale,
             List beniAccessori)
             throws ComponentException {
 
@@ -2460,7 +2451,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             if (beniAccessori != null && !beniAccessori.isEmpty()) {
                 for (Iterator it = beniAccessori.iterator(); it.hasNext(); ) {
-                    Inventario_beniBulk accessorio = (Inventario_beniBulk) it.next();
+                    InventarioDocTRBulk accessorio = (InventarioDocTRBulk) it.next();
                     inClause.append(",(")
                             .append(accessorio.getNr_inventario())
                             .append(",")
@@ -2514,7 +2505,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         try {
             boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
 
-            List<Inventario_beniBulk> beniFiltrati = caricaBeniPerInserimento(
+            List<InventarioDocTRBulk> beniFiltrati = caricaBeniPerInserimento(
                     userContext,
                     doc,
                     clauses,
@@ -2542,7 +2533,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     /**
      * Carica i beni da inserire applicando i filtri appropriati.
      */
-    public List<Inventario_beniBulk> caricaBeniPerInserimento(
+    public List<InventarioDocTRBulk> caricaBeniPerInserimento(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             CompoundFindClause clauses,
@@ -2550,8 +2541,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException {
 
         try {
-            Inventario_beniHome invHome = (Inventario_beniHome)
-                    getHome(userContext, Inventario_beniBulk.class);
+            InventarioDocTRHome  invHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
 
             SQLBuilder sql = invHome.findBeniUnificato(userContext, doc, clauses);
 
@@ -2605,7 +2595,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     private void inserisciBeniComeDettagli(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            List<Inventario_beniBulk> beniFiltrati)
+            List<InventarioDocTRBulk> beniFiltrati)
             throws ComponentException {
 
         Integer cdTerzoAssegnatario = null;
@@ -2619,7 +2609,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         int totalInserted = 0;
 
-        for (Inventario_beniBulk bene : beniFiltrati) {
+        for (InventarioDocTRBulk bene : beniFiltrati) {
 
             Doc_trasporto_rientro_dettBulk dett;
             if (isTrasporto) {
@@ -2667,7 +2657,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     public void validaBeniNonInAltriDocumenti(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            List<Inventario_beniBulk> beniDaValidare)
+            List<InventarioDocTRBulk> beniDaValidare)
             throws ComponentException {
 
         if (beniDaValidare == null || beniDaValidare.isEmpty()) {
@@ -2681,7 +2671,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             StringBuilder inClauseBeni = new StringBuilder();
             for (int i = 0; i < beniDaValidare.size(); i++) {
-                Inventario_beniBulk bene = beniDaValidare.get(i);
+                InventarioDocTRBulk bene = beniDaValidare.get(i);
                 if (i > 0) inClauseBeni.append(",");
                 inClauseBeni.append("(")
                         .append(bene.getNr_inventario())
@@ -2816,7 +2806,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
                 List beniInTrasportoDefinitivo = dettHome.fetchAll(sql2);
 
-                List<Inventario_beniBulk> beniTrovati = new ArrayList<>();
+                List<InventarioDocTRBulk> beniTrovati = new ArrayList<>();
                 if (beniInTrasportoDefinitivo != null) {
                     for (Object obj : beniInTrasportoDefinitivo) {
                         Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) obj;
@@ -2824,10 +2814,10 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     }
                 }
 
-                List<Inventario_beniBulk> beniMancanti = new ArrayList<>();
-                for (Inventario_beniBulk bene : beniDaValidare) {
+                List<InventarioDocTRBulk> beniMancanti = new ArrayList<>();
+                for (InventarioDocTRBulk bene : beniDaValidare) {
                     boolean trovato = false;
-                    for (Inventario_beniBulk beneTrovato : beniTrovati) {
+                    for (InventarioDocTRBulk beneTrovato : beniTrovati) {
                         if (beneTrovato.equalsByPrimaryKey(bene)) {
                             trovato = true;
                             break;
@@ -2842,7 +2832,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     StringBuilder msg = new StringBuilder();
                     for (int i = 0; i < beniMancanti.size(); i++) {
                         if (i > 0) msg.append(", ");
-                        Inventario_beniBulk bene = beniMancanti.get(i);
+                        InventarioDocTRBulk bene = beniMancanti.get(i);
                         msg.append(bene.getNr_inventario()).append(".").append(bene.getProgressivo());
                     }
                     throw new ApplicationException(
@@ -2947,7 +2937,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             validaAllegatiComp(doc);
 
             if (!dettagliCostruiti.isEmpty()) {
-                List<Inventario_beniBulk> beniDaValidare = dettagliCostruiti.stream()
+                List<InventarioDocTRBulk> beniDaValidare = dettagliCostruiti.stream()
                         .map(Doc_trasporto_rientro_dettBulk::getBene)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
@@ -3096,16 +3086,15 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 docCreato.setDoc_trasporto_rientro_dettColl(new SimpleBulkList());
 
             boolean isTrasporto = docCreato instanceof DocumentoTrasportoBulk;
-            Inventario_beniHome beneHome =
-                    (Inventario_beniHome) getHome(userContext, Inventario_beniBulk.class);
+            InventarioDocTRHome  beneHome = (InventarioDocTRHome ) getHome(userContext, InventarioDocTRBulk.class);
 
             for (Doc_trasporto_rientro_dettBulk dett : dettagliDTO) {
                 Long pgInventario = dett.getPg_inventario() != null
                         ? dett.getPg_inventario()
                         : docCreato.getPgInventario();
 
-                Inventario_beniBulk bene = (Inventario_beniBulk) beneHome.findByPrimaryKey(
-                        new Inventario_beniBulk(dett.getNr_inventario(), pgInventario,
+                InventarioDocTRBulk bene = (InventarioDocTRBulk) beneHome.findByPrimaryKey(
+                        new InventarioDocTRBulk(dett.getNr_inventario(), pgInventario,
                                 Long.valueOf(dett.getProgressivo()))
                 );
 
@@ -3234,7 +3223,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             dett.setDoc_trasporto_rientro(doc);
 
             if (dett.getBene() == null) {
-                dett.setBene(new Inventario_beniBulk(
+                dett.setBene(new InventarioDocTRBulk(
                         dett.getNr_inventario(),
                         dett.getPg_inventario(),
                         Long.valueOf(dett.getProgressivo())));

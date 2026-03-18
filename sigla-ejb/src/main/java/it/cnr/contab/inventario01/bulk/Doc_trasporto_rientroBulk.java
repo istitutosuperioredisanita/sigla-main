@@ -5,7 +5,7 @@ import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_trasporto_rientroBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -116,7 +116,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     private java.util.Collection condizioni;
     private String               cds_scrivania;
     private String               uo_scrivania;
-    private Inventario_beniBulk  bene;
+    private InventarioDocTRBulk  bene;
 
     // =========================================================================
     // COSTRUTTORI
@@ -306,8 +306,8 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     public String getUo_scrivania() { return uo_scrivania; }
     public void setUo_scrivania(String uo_scrivania) { this.uo_scrivania = uo_scrivania; }
 
-    public Inventario_beniBulk getBene() { return bene; }
-    public void setBene(Inventario_beniBulk bene) { this.bene = bene; }
+    public InventarioDocTRBulk getBene() { return bene; }
+    public void setBene(InventarioDocTRBulk bene) { this.bene = bene; }
 
     public java.util.Collection getTipoMovimenti() { return tipoMovimenti; }
     public void setTipoMovimenti(java.util.Collection collection) { tipoMovimenti = collection; }
@@ -342,7 +342,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         nuovo.setDoc_trasporto_rientro(this);
         getDoc_trasporto_rientro_dettColl().add(nuovo);
 
-        nuovo.setBene(new Inventario_beniBulk());
+        nuovo.setBene(new InventarioDocTRBulk());
         nuovo.getBene().setInventario(this.getInventario());
         nuovo.getBene().setPg_inventario(this.getPgInventario());
         nuovo.getBene().setFl_totalmente_scaricato(Boolean.FALSE);

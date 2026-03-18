@@ -2,7 +2,7 @@ package it.cnr.contab.inventario01.actions;
 
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
@@ -147,7 +147,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
             rlbp.setCanPerformSearchWithoutClauses(true);
-            Inventario_beniBulk prototype = new Inventario_beniBulk();
+            InventarioDocTRBulk prototype = new InventarioDocTRBulk();
             rlbp.setPrototype(prototype, null, null, "searchTrasportoRientro");
 
             context.addHookForward("searchResult", this, getBringBackMethod());
@@ -177,7 +177,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 EJBCommonServices.closeRemoteIterator(context, ri);
                 return context.findDefaultForward();
             }
-            SelezionatoreListaBP slbp = select(context, ri, it.cnr.jada.bulk.BulkInfo.getBulkInfo(Inventario_beniBulk.class), null, getSelezionaMethod(), null, bp);
+            SelezionatoreListaBP slbp = select(context, ri, it.cnr.jada.bulk.BulkInfo.getBulkInfo(InventarioDocTRBulk.class), null, getSelezionaMethod(), null, bp);
             slbp.setMultiSelection(true);
             return slbp;
         } catch (Throwable e) {
@@ -193,7 +193,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             CRUDTraspRientInventarioBP bp = getBP(context);
             boolean isEliminazione = bp.isUltimaOperazioneEliminazione();
             HookForward caller = (HookForward) context.getCaller();
-            List<Inventario_beniBulk> beniDaElaborare = (List<Inventario_beniBulk>) caller.getParameter("beniDaElaborare");
+            List<InventarioDocTRBulk> beniDaElaborare = (List<InventarioDocTRBulk>) caller.getParameter("beniDaElaborare");
             Integer index = (Integer) caller.getParameter("index");
 
             if (opt == OptionBP.CANCEL_BUTTON) {
@@ -243,7 +243,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             }
 
             if (!bp.getPendingDelete().getPrincipaliConAccessori().isEmpty()) {
-                List<Inventario_beniBulk> beniConAccessori = new ArrayList<>(bp.getPendingDelete().getPrincipaliConAccessori().keySet());
+                List<InventarioDocTRBulk> beniConAccessori = new ArrayList<>(bp.getPendingDelete().getPrincipaliConAccessori().keySet());
                 return apriFlussoRicorsivoGenerico(context, bp, true, beniConAccessori, 0);
             }
 
@@ -264,7 +264,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             aggiungiImmediatamenteBeniSemplici(context, bp);
 
-            List<Inventario_beniBulk> beniConAccessoriDaConfermare = new ArrayList<>(bp.getPendingAdd().getPrincipaliConAccessori().keySet());
+            List<InventarioDocTRBulk> beniConAccessoriDaConfermare = new ArrayList<>(bp.getPendingAdd().getPrincipaliConAccessori().keySet());
             if (beniConAccessoriDaConfermare.isEmpty()) {
                 bp.getDettBeniController().reset(context);
                 bp.setMessage("Aggiunta beni completata con successo");
@@ -282,16 +282,16 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
      */
     private void aggiungiImmediatamenteBeniSemplici(ActionContext context, CRUDTraspRientInventarioBP bp) throws BusinessProcessException {
         try {
-            List<Inventario_beniBulk> beniSemplici = new ArrayList<>();
+            List<InventarioDocTRBulk> beniSemplici = new ArrayList<>();
             beniSemplici.addAll(bp.getPendingAdd().getPrincipaliSenza());
             beniSemplici.addAll(bp.getPendingAdd().getAccessori());
 
             if (beniSemplici.isEmpty()) return;
 
             BitSet newSelection = new BitSet(bp.getPendingAdd().getBulks().length);
-            for (Inventario_beniBulk beneSemplice : beniSemplici) {
+            for (InventarioDocTRBulk beneSemplice : beniSemplici) {
                 for (int i = 0; i < bp.getPendingAdd().getBulks().length; i++) {
-                    if (bp.getPendingAdd().getBulks()[i] instanceof Inventario_beniBulk && ((Inventario_beniBulk) bp.getPendingAdd().getBulks()[i]).equalsByPrimaryKey(beneSemplice)) {
+                    if (bp.getPendingAdd().getBulks()[i] instanceof InventarioDocTRBulk && ((InventarioDocTRBulk) bp.getPendingAdd().getBulks()[i]).equalsByPrimaryKey(beneSemplice)) {
                         newSelection.set(i);
                         break;
                     }
@@ -306,13 +306,13 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     /**
      * Gestisce l'apertura della finestra di conferma per ogni bene con accessori nel flusso ricorsivo.
      */
-    private Forward apriFlussoRicorsivoGenerico(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, List<Inventario_beniBulk> beniDaElaborare, int index) throws ComponentException, RemoteException, BusinessProcessException {
+    private Forward apriFlussoRicorsivoGenerico(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, List<InventarioDocTRBulk> beniDaElaborare, int index) throws ComponentException, RemoteException, BusinessProcessException {
         if (beniDaElaborare == null || index >= beniDaElaborare.size()) {
             finalizeFlusso(context, bp, isEliminazione, true);
             return context.findDefaultForward();
         }
 
-        Inventario_beniBulk beneCorrente = beniDaElaborare.get(index);
+        InventarioDocTRBulk beneCorrente = beniDaElaborare.get(index);
         bp.setUltimaOperazioneEliminazione(isEliminazione);
 
         if (isEliminazione) bp.setIndexBeneCurrentePerEliminazione(index);

@@ -43,6 +43,14 @@ public class Inventario_beniHome extends BulkHome {
         super(Inventario_beniBulk.class, conn, persistentCache);
     }
 
+    protected Inventario_beniHome(Class bulkClass, java.sql.Connection conn) {
+        super(bulkClass, conn);
+    }
+
+    protected Inventario_beniHome(Class bulkClass, java.sql.Connection conn, PersistentCache persistentCache) {
+        super(bulkClass, conn, persistentCache);
+    }
+
 
     public java.util.Collection findCondizioni(Buono_carico_scaricoBulk buonoCarico,
                                                it.cnr.contab.inventario01.bulk.Buono_carico_scarico_dettHome h,

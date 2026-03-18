@@ -18,7 +18,7 @@
 package it.cnr.contab.inventario01.ejb;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.comp.DocTrasportoRientroComponent;
@@ -199,7 +199,7 @@ public class DocTrasportoRientroComponentSessionBean
     @Override
     public List cercaBeniAccessoriAssociati(
             UserContext userContext,
-            Inventario_beniBulk benePrincipale)
+            InventarioDocTRBulk benePrincipale)
             throws ComponentException, RemoteException {
 
         pre_component_invocation(userContext, componentObj);
@@ -443,7 +443,7 @@ public class DocTrasportoRientroComponentSessionBean
     @Override
     public List cercaBeniAccessoriPresentinelTrasportoOriginale(
             UserContext userContext,
-            Inventario_beniBulk beneRientro,
+            InventarioDocTRBulk beneRientro,
             Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException {
 
@@ -543,7 +543,7 @@ public class DocTrasportoRientroComponentSessionBean
     public List cercaBeniAccessoriNeiDettagliSalvati(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale)
+            InventarioDocTRBulk benePrincipale)
             throws ComponentException, RemoteException {
 
         pre_component_invocation(userContext, componentObj);
@@ -570,7 +570,7 @@ public class DocTrasportoRientroComponentSessionBean
     public void eliminaBeniPrincipaleConAccessoriDaDettagli(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
-            Inventario_beniBulk benePrincipale,
+            InventarioDocTRBulk benePrincipale,
             List beniAccessori)
             throws ComponentException, RemoteException {
 
@@ -621,10 +621,10 @@ public class DocTrasportoRientroComponentSessionBean
 
 
     @Override
-    public List<Inventario_beniBulk> caricaBeniPerInserimento(UserContext userContext, Doc_trasporto_rientroBulk doc, CompoundFindClause clauses, boolean isTrasporto) throws ComponentException {
+    public List<InventarioDocTRBulk> caricaBeniPerInserimento(UserContext userContext, Doc_trasporto_rientroBulk doc, CompoundFindClause clauses, boolean isTrasporto) throws ComponentException {
         pre_component_invocation(userContext, componentObj);
         try {
-            List<Inventario_beniBulk> result = ((DocTrasportoRientroComponent) componentObj)
+            List<InventarioDocTRBulk> result = ((DocTrasportoRientroComponent) componentObj)
                     .caricaBeniPerInserimento(userContext, doc, clauses, isTrasporto);
             component_invocation_succes(userContext, componentObj);
             return result;
@@ -645,7 +645,7 @@ public class DocTrasportoRientroComponentSessionBean
     @Override
     public void validaBeniNonInAltriDocumenti(UserContext userContext,
                                               Doc_trasporto_rientroBulk doc,
-                                              List<Inventario_beniBulk> beniDaValidare) throws ComponentException, RemoteException {
+                                              List<InventarioDocTRBulk> beniDaValidare) throws ComponentException, RemoteException {
         pre_component_invocation(userContext, componentObj);
         try {
             ((DocTrasportoRientroComponent) componentObj)
