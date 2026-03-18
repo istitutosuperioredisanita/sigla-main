@@ -89,9 +89,17 @@ public class ProposeScritturaComponent extends CRUDComponent {
 			this.importo = importo;
 		}
 
+		public DettaglioScrittura(Voce_epBulk conto, IDocumentoCogeBulk partita, BigDecimal importo, Voce_ivaBulk voceIva) {
+			this.conto = conto;
+			this.partita = partita;
+			this.importo = importo;
+			this.voceIva = voceIva;
+		}
+
 		Voce_epBulk conto;
         IDocumentoCogeBulk partita;
 		BigDecimal importo;
+		Voce_ivaBulk voceIva;
 
 		public Voce_epBulk getConto() {
 			return conto;
@@ -103,6 +111,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
 		public BigDecimal getImporto() {
 			return importo;
+		}
+
+		public Voce_ivaBulk getVoceIva() {
+			return voceIva;
 		}
 	}
 
@@ -1636,7 +1648,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 
                                                                     if (!(ivaDaRegistrareACosto || !pVoceIva.isDetraibile())) {
 																		testataPrimaNota.openDettaglioIva(userContext, docamm, partita, aContoIva, imIva, aCdTerzo, cdCoriIva);
-																		mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), partita, imIva));
+																		mapPatrimonialeIva.add(new DettaglioScrittura(pairContoCosto.getSecond(), partita, imIva, pVoceIva));
 																	}
 																});
 
@@ -1650,11 +1662,13 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																	if (optAutofattura.isPresent()) {
 																		Voce_epBulk aContoIvaAutofattura = this.findContoIva(userContext, optAutofattura.get());
 																		mapPatrimonialeIva.forEach(el-> {
-																			testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, el.getPartita(), el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
-																			if (docamm instanceof Nota_di_creditoBulk || docamm instanceof Nota_di_credito_attivaBulk)
-																				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_VENDITE.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIvaAutofattura, el.getImporto(), aCdTerzo, el.getPartita(), cdCoriIva);
-																			else
-																				testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_VENDITE.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIvaAutofattura, el.getImporto(), aCdTerzo, docamm, cdCoriIva);
+																			if (Optional.ofNullable(el.getVoceIva()).map(Voce_ivaBulk::getFl_autofattura).orElse(Boolean.TRUE)) {
+																				testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, el.getPartita(), el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
+																				if (docamm instanceof Nota_di_creditoBulk || docamm instanceof Nota_di_credito_attivaBulk)
+																					testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_VENDITE.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIvaAutofattura, el.getImporto(), aCdTerzo, el.getPartita(), cdCoriIva);
+																				else
+																					testataPrimaNota.addDettaglio(userContext, Movimento_cogeBulk.TipoRiga.IVA_VENDITE.value(), docamm.getTipoDocumentoEnum().getSezionePatrimoniale(), aContoIvaAutofattura, el.getImporto(), aCdTerzo, docamm, cdCoriIva);
+																			}
 																		});
 																	}
 																}
@@ -1675,8 +1689,10 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																if (isSplitPayment) {
 																	//Rilevo il conto IVA Credito/Debito di tipo SPLIT (a secondo se doc attivo o passivo) e lo compenso con il debito verso il fornitore
 																	mapPatrimonialeIva.forEach(el-> {
-																		testataPrimaNota.closeDettaglioIvaSplit(userContext, docamm, el.getPartita(), aContoIvaSplit, el.getImporto(), aCdTerzo, cdCoriIvaSplit);
-																		testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, el.getPartita(), el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
+																		if (!hasAutofattura || !Optional.ofNullable(el.getVoceIva()).map(Voce_ivaBulk::getFl_autofattura).orElse(Boolean.TRUE)) {
+																			testataPrimaNota.closeDettaglioIvaSplit(userContext, docamm, el.getPartita(), aContoIvaSplit, el.getImporto(), aCdTerzo, cdCoriIvaSplit);
+																			testataPrimaNota.closeDettaglioPatrimonialePartita(userContext, docamm, el.getPartita(), el.getConto(), el.getImporto(), aCdTerzo, DEFAULT_MODIFICABILE);
+																		}
 																	});
 																}
 															}
