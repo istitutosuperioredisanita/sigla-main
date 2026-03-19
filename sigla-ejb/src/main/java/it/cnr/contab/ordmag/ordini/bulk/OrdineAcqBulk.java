@@ -1628,10 +1628,8 @@ public class OrdineAcqBulk extends OrdineAcqBase
         return this.getDataOrdine();
     }
     public boolean isROContratto(){
-        if (getContratto() != null && getRigheOrdineColl().size() > 0){
-            return true;
-        }
-        return false;
+        return !isStatoInserito() &&
+                getContratto() != null && getContratto().getPg_contratto() != null && !this.getRigheOrdineColl().isEmpty();
     }
 
     @Override
