@@ -62,7 +62,7 @@ import it.cnr.si.spring.storage.bulk.StorageFile;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.FatturaElettronicaType;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail2.core.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -62,11 +62,11 @@ import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.bulk.StorageFile;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.activation.MimetypesFileTypeMap;
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.MimetypesFileTypeMap;
 import jakarta.ejb.EJBException;
 import java.io.IOException;
 import java.math.BigDecimal;

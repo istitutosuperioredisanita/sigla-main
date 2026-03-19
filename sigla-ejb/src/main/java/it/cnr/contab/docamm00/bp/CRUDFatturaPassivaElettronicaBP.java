@@ -67,7 +67,7 @@ import it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1.TipoDocumentoType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail2.core.EmailException;
 import org.springframework.web.util.UriUtils;
 
 import jakarta.ejb.EJBException;

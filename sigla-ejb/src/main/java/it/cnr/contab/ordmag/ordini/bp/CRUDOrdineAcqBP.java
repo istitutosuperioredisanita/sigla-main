@@ -70,10 +70,9 @@ import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
+import jakarta.activation.MimetypesFileTypeMap;
 import jakarta.servlet.ServletException;
 import org.apache.commons.io.IOUtils;
-
-import javax.activation.MimetypesFileTypeMap;
 
 import jakarta.servlet.jsp.PageContext;
 import java.io.*;
