@@ -210,7 +210,7 @@ public class ScritturaPartitaDoppiaChiusuraComponent extends CRUDComponent  {
 				if (!isChiusuraProvvisoriaMade) {
 					makeScrittureChiusuraMagazzino(userContext, esercizio);
 					makeScrittureChiusuraInventario(userContext, esercizio);
-					makeScrittureChiusuraFattureDaRicevereDaOrdini(userContext, esercizio);
+					//makeScrittureChiusuraFattureDaRicevereDaOrdini(userContext, esercizio);
 
 					Configurazione_cnrBulk configChiusuraProvvisoria = ((Configurazione_cnrHome)getHome(userContext, Configurazione_cnrBulk.class)).getConfigurazioneChiusuraBilancioProvvisoria(esercizio)
 							.orElseThrow(()->new ApplicationException("Manca Record Configurazione Bilancio Provvisorio per esercizio "+esercizio));
