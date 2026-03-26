@@ -127,9 +127,6 @@ public class GenericDownloadServlet extends HttpServlet {
                 String username = decoded.substring(0, sep);
                 String password = decoded.substring(sep + 1);
 
-                LOGGER.info("username: " + username);
-                LOGGER.info("password: " + password);
-
                 return new UsernamePasswordCredentials(username,
                         password);
 
