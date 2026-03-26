@@ -7,6 +7,7 @@ import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.MessageToUser;
 import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.Config;
@@ -19,6 +20,7 @@ import it.cnr.jada.util.jsp.Button;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Optional;
 
 public class CRUDElaboraBilRiclassificatoBP extends SelezionatoreSearchBP {
 
@@ -65,7 +67,7 @@ public class CRUDElaboraBilRiclassificatoBP extends SelezionatoreSearchBP {
         CRUDComponentSession crudComponentSession = EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession", CRUDComponentSession.class);
         BilRiclassificatoBulk bilRiclassificatoBulk = (BilRiclassificatoBulk)getModel();
         try {
-            bilRiclassificatoBulk.setRettifica(bilRiclassificatoBulk.getImportoFinale().subtract(bilRiclassificatoBulk.getSaldoConto()));
+            bilRiclassificatoBulk.setRettifica(Optional.ofNullable(bilRiclassificatoBulk.getImportoFinale()).orElseThrow(() -> new ApplicationException("Valorizzare l'importo!")).subtract(bilRiclassificatoBulk.getSaldoConto()));
             bilRiclassificatoBulk.setToBeUpdated();
             crudComponentSession.modificaConBulk(actioncontext.getUserContext(), bilRiclassificatoBulk);
         } catch (ComponentException|RemoteException e) {
