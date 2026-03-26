@@ -34,11 +34,11 @@
 	</action>
 
 	<action
-		path="/StampaStatoPatrimRiclassAction" actionClass="it.cnr.contab.pdg00.action.ParametricPrintAndExcelAction">
+		path="/StampaStatoPatrimRiclassAction" actionClass="it.cnr.contab.pdg00.action.StampaRiclassAndExcelAction">
 	</action>
 
 	<action
-		path="/StampaContoEconomRiclassAction" actionClass="it.cnr.contab.pdg00.action.ParametricPrintAndExcelAction">
+		path="/StampaContoEconomRiclassAction" actionClass="it.cnr.contab.pdg00.action.StampaRiclassAndExcelAction">
 	</action>
 	
 	<businessProcess

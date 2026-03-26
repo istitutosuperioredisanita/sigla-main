@@ -1,17 +1,19 @@
 package it.cnr.contab.pdg00.action;
 
+import it.cnr.contab.config00.pdcep.bulk.TipoBilancioEnum;
 import it.cnr.contab.pdg00.bp.ParametricPrintAndExcelBP;
 import it.cnr.contab.pdg00.bulk.Stampa_vpg_bilancio_riclassVBulk;
 import it.cnr.contab.pdg00.bulk.Stampa_vpg_conto_econom_riclassVBulk;
 import it.cnr.contab.pdg00.bulk.Stampa_vpg_stato_patrim_riclassVBulk;
 import it.cnr.contab.pdg00.bulk.VpgBilRiclassificatoBulk;
 import it.cnr.contab.reports.action.ParametricPrintAction;
+import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.bulk.BulkInfo;
 import it.cnr.jada.bulk.ColumnFieldProperty;
-import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.FillException;
 import it.cnr.jada.ejb.BulkLoaderIterator;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.excel.bp.OfflineExcelSpoolerBP;
@@ -23,10 +25,28 @@ import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
+import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Optional;
 
-public class ParametricPrintAndExcelAction extends ParametricPrintAction {
+public class StampaRiclassAndExcelAction extends ParametricPrintAction {
+
+    public Forward doOnChangeTipoBilancio(ActionContext actioncontext) throws BusinessProcessException {
+        try {
+            fillModel(actioncontext);
+            final ParametricPrintAndExcelBP parametricPrintBP = (ParametricPrintAndExcelBP) actioncontext.getBusinessProcess();
+            Stampa_vpg_bilancio_riclassVBulk stampaVpgBilancioRiclassVBulk = (Stampa_vpg_bilancio_riclassVBulk) parametricPrintBP.getModel();
+            if(Optional.ofNullable(stampaVpgBilancioRiclassVBulk.getTipoBilancio())
+                    .flatMap(tipoBilancioBulk -> Optional.ofNullable(tipoBilancioBulk.getCdTipoBilancio()))
+                    .filter(cdTipoBilancio -> cdTipoBilancio.equalsIgnoreCase(TipoBilancioEnum.IRES.name()))
+                    .isPresent()) {
+                stampaVpgBilancioRiclassVBulk.setTi_ist_com(TipoIVA.COMMERCIALE.value());
+            }
+            return actioncontext.findDefaultForward();
+        } catch (FillException e) {
+            return handleException(actioncontext, e);
+        }
+    }
 
     public Forward doExcel(ActionContext actioncontext) {
         try {

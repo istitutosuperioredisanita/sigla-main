@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2026  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="marco.spasiano" id="add_table_bil_riclassificato">
+        <createTable remarks="Rappresenta il dettaglio dei conti con i relativi importi calcolati e poi letti dalla stampa del bilancio" tableName="bil_riclassificato">
+            <column name="esercizio" remarks="Esercizio" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_unita_organizzativa" remarks="Unità Organizzativa" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_tipo_bilancio" remarks="Codice del Bilancio" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cd_voce_ep" remarks="Codice Identificativo completo del conto del piano." type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sezione" remarks="Sezione" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="saldo_conto" remarks="Saldo totale del conto" type="numeric(21, 6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rettifica" remarks="Importo di rettifica" type="numeric(21, 6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="importo_finale" remarks="Importo finale" type="numeric(21, 6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utcr" remarks="Utenza di creazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duva" remarks="Data di ultima variazione del record" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="utuv" remarks="Utenza di ultima variazione del record" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pg_ver_rec" remarks="Progressivo di versione del record: viene incrementato di 1 ad ogni variazione" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="bil_riclassificato" constraintName="bil_riclassificato_pkey" columnNames="esercizio,cd_unita_organizzativa,cd_tipo_bilancio,cd_voce_ep"></addPrimaryKey>
+        <addForeignKeyConstraint
+                baseTableName="bil_riclassificato"
+                baseColumnNames="esercizio,cd_voce_ep"
+                referencedColumnNames="esercizio,cd_voce_ep"
+                referencedTableName="voce_ep"
+                constraintName="fk_voce_ep01"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION" />
+    </changeSet>
+    <changeSet author="marco.spasiano" id="add_accessi_bil_riclassificato_ires">
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMCOEPELABBILRICLAS"/>
+            <column name="ti_accesso" type="CHAR(1)" value="C"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Elabora bilancio riclassificato"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMCOEPELABBILRICLAS"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDElaboraBilRiclassificatoBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value=""/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.CNS.BEPRCL.ELABIL"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="gestione bilancio IRES"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMCOEPELABBILRICLAS"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDElaboraBilRiclassificatoBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="0"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="3"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="ELABIL"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.CNS.BEPRCL"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

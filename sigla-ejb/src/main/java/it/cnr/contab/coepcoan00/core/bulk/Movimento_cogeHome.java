@@ -22,7 +22,12 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome;
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.docamm00.docs.bulk.IDocumentoAmministrativoBulk;
+import it.cnr.contab.doccont00.comp.DateServices;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
@@ -227,5 +232,137 @@ public class Movimento_cogeHome extends BulkHome {
 				result.put(cdVoceEp, Pair.of(Movimento_cogeBulk.SEZIONE_AVERE, saldo.abs()));
 		});
 		return result;
+	}
+	/**
+	 * @param userContext 			Contesto utente, da cui viene recuperato l'esercizio
+	 * @param voceEP 				Conto di economica
+	 * @param ti_istituz_commerc 	Istituzionale/Commerciale
+	 * @return Pair composta dal totale dare e totale avere
+	 */
+	public Pair<BigDecimal, BigDecimal> getMovimentiConto(UserContext userContext, String voceEP, String ti_istituz_commerc) throws PersistencyException{
+		SQLBuilder sql = this.createSQLBuilder();
+		sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+		sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.ATTIVA", SQLBuilder.EQUALS, "Y");
+		sql.addClause(FindClause.AND, "cd_voce_ep", SQLBuilder.EQUALS, voceEP);
+		Optional.ofNullable(ti_istituz_commerc).ifPresent(s -> sql.addClause(FindClause.AND, "ti_istituz_commerc", SQLBuilder.EQUALS, s));
+
+		// Recupero il dettaglio dell'UO per verificare se è UO Ente
+		Unita_organizzativaBulk uo = (Unita_organizzativaBulk) getHomeCache()
+				.getHome(Unita_organizzativaBulk.class)
+				.findByPrimaryKey(new Unita_organizzativaBulk(CNRUserContext.getCd_unita_organizzativa(userContext)));
+
+		if (uo.getCd_tipo_unita().compareTo(Tipo_unita_organizzativaHome.TIPO_UO_ENTE) != 0) {
+			sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, uo.getCd_unita_organizzativa());
+		}
+
+		sql.openParenthesis(FindClause.AND);
+			sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.ISNULL, null);
+			sql.openParenthesis(FindClause.OR);
+				sql.addSQLClause(FindClause.OR, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.name());
+				sql.addSQLClause(FindClause.OR, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name());
+				sql.addSQLClause(FindClause.OR, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.name());
+			sql.closeParenthesis();
+		sql.closeParenthesis();
+		sql.openParenthesis(FindClause.AND);
+			/** ANNO IN CORSO (SOLA COMPETENZA) **/
+			sql.openParenthesis(FindClause.OR);
+				sql.addBetweenClause(FindClause.AND, "dt_da_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext)),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext)));
+				sql.addBetweenClause(FindClause.AND, "dt_a_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext)),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext)));
+			sql.closeParenthesis();
+			/** A CAVALLO TRA ANNO PRECEDENTE ED ANNO ATTUALE **/
+			sql.openParenthesis(FindClause.OR);
+				sql.addBetweenClause(FindClause.AND, "dt_da_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext) - 1),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext) - 1));
+				sql.addBetweenClause(FindClause.AND, "dt_a_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext)),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext)));
+			sql.closeParenthesis();
+			/** A CAVALLO TRA ANNO ATTUALE ED ANNO SUCCESSIVO (TANTO CI SONO I RISCONTI) **/
+			sql.openParenthesis(FindClause.OR);
+				sql.addBetweenClause(FindClause.AND, "dt_da_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext)),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext)));
+				sql.addBetweenClause(FindClause.AND, "dt_a_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext) + 1),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext) + 1));
+			sql.closeParenthesis();
+			/** O COMPLETAMENTE IN ESERCIZIO SUCCESSIVO (TANTO CI SONO I RISCONTI) **/
+			sql.openParenthesis(FindClause.OR);
+				sql.addBetweenClause(FindClause.AND, "dt_da_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext) + 1),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext) + 1));
+				sql.addBetweenClause(FindClause.AND, "dt_a_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext) + 1),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext) + 1));
+			sql.closeParenthesis();
+		sql.closeParenthesis();
+		List<Movimento_cogeBulk> allMovimentiCoge = this.fetchAll(sql);
+		BigDecimal totaleDare = allMovimentiCoge.stream()
+				.filter(Movimento_cogeBulk::isSezioneDare)
+				.map(Movimento_cogeBulk::getIm_movimento).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		BigDecimal totaleAvere = allMovimentiCoge.stream()
+				.filter(Movimento_cogeBulk::isSezioneAvere)
+				.map(Movimento_cogeBulk::getIm_movimento).reduce(BigDecimal.ZERO, BigDecimal::add);
+		return Pair.of(totaleDare, totaleAvere);
+	}
+	/**
+	 * @param userContext 			Contesto utente, da cui viene recuperato l'esercizio
+	 * @param voceEP 				Conto di economica
+	 * @param ti_istituz_commerc 	Istituzionale/Commerciale
+	 * @return Pair composta dal totale dare e totale avere
+	 */
+	public Pair<BigDecimal, BigDecimal> getMovimentiContoAvanzo(UserContext userContext, String voceEP, String ti_istituz_commerc, String contoEconomico) throws PersistencyException{
+		SQLBuilder sql = this.createSQLBuilder();
+		sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
+		sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.ATTIVA", SQLBuilder.EQUALS, "Y");
+		sql.addClause(FindClause.AND, "cd_voce_ep", SQLBuilder.EQUALS, voceEP);
+		Optional.ofNullable(ti_istituz_commerc).ifPresent(s -> sql.addClause(FindClause.AND, "ti_istituz_commerc", SQLBuilder.EQUALS, s));
+
+		// Recupero il dettaglio dell'UO per verificare se è UO Ente
+		Unita_organizzativaBulk uo = (Unita_organizzativaBulk) getHomeCache()
+				.getHome(Unita_organizzativaBulk.class)
+				.findByPrimaryKey(new Unita_organizzativaBulk(CNRUserContext.getCd_unita_organizzativa(userContext)));
+
+		if (uo.getCd_tipo_unita().compareTo(Tipo_unita_organizzativaHome.TIPO_UO_ENTE) != 0) {
+			sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, uo.getCd_unita_organizzativa());
+		}
+		sql.openParenthesis(FindClause.AND);
+			sql.openParenthesis(FindClause.AND);
+				sql.addClause(FindClause.AND, "dt_da_competenza_coge", SQLBuilder.ISNULL, null);
+				sql.addBetweenClause(FindClause.OR, "dt_da_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext)),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext)));
+			sql.closeParenthesis();
+			sql.openParenthesis(FindClause.OR);
+				sql.addClause(FindClause.AND, "dt_a_competenza_coge", SQLBuilder.ISNULL, null);
+				sql.addBetweenClause(FindClause.OR, "dt_a_competenza_coge",
+						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext)),
+						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext)));
+			sql.closeParenthesis();
+		sql.closeParenthesis();
+		SQLBuilder sqlExsists = this.createSQLBuilderWithoutJoin();
+		sqlExsists.setFromClause(new StringBuffer("MOVIMENTO_COGE M2"));
+		sqlExsists.addSQLJoin("MOVIMENTO_COGE.CD_CDS", "M2.CD_CDS");
+		sqlExsists.addSQLJoin("MOVIMENTO_COGE.ESERCIZIO", "M2.ESERCIZIO");
+		sqlExsists.addSQLJoin("MOVIMENTO_COGE.CD_UNITA_ORGANIZZATIVA", "M2.CD_UNITA_ORGANIZZATIVA");
+		sqlExsists.addSQLJoin("MOVIMENTO_COGE.PG_SCRITTURA", "M2.PG_SCRITTURA");
+		sqlExsists.addClause(FindClause.AND, "cd_voce_ep", SQLBuilder.EQUALS, contoEconomico);
+		sql.addSQLExistsClause(FindClause.AND, sqlExsists);
+
+		List<Movimento_cogeBulk> allMovimentiCoge = this.fetchAll(sql);
+		BigDecimal totaleDare = allMovimentiCoge.stream()
+				.filter(Movimento_cogeBulk::isSezioneDare)
+				.map(Movimento_cogeBulk::getIm_movimento).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		BigDecimal totaleAvere = allMovimentiCoge.stream()
+				.filter(Movimento_cogeBulk::isSezioneAvere)
+				.map(Movimento_cogeBulk::getIm_movimento).reduce(BigDecimal.ZERO, BigDecimal::add);
+		return Pair.of(totaleDare, totaleAvere);
 	}
 }
