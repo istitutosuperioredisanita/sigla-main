@@ -32,7 +32,7 @@
 		maxLength="40"
 		enabledOnEdit="true"
 		enabledOnSearch="true"
-		command="doDefault"
+		command="doOnChangeTipoBilancio"
 		nullable="false"
 		label="Tipo bilancio" />
 	<fieldProperty
@@ -104,6 +104,7 @@
 		inputType="SELECT"
 		inputSize="1"
 		maxLength="1"
+		readonlyProperty="ROTiIstCom"
 		enabledOnSearch="true"
 		enabledOnEdit="false"
 		caseSensitiveSearch="false"

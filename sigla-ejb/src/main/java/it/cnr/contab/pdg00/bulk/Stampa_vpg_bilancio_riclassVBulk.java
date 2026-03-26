@@ -18,10 +18,12 @@
 package it.cnr.contab.pdg00.bulk;
 
 import it.cnr.contab.config00.pdcep.bulk.TipoBilancioBulk;
+import it.cnr.contab.config00.pdcep.bulk.TipoBilancioEnum;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.bulk.ValidationException;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Insert the type's description here.
@@ -241,6 +243,13 @@ public void setUoForPrintEnabled(boolean newUoForPrintEnabled) {
 
 	public Collection<TipoBilancioBulk> getTipoBilanci() {
 		return tipoBilanci;
+	}
+
+	public boolean isROTiIstCom() {
+		return Optional.ofNullable(getTipoBilancio())
+				.flatMap(tipoBilancioBulk -> Optional.ofNullable(tipoBilancioBulk.getCdTipoBilancio()))
+				.filter(s -> s.equalsIgnoreCase(TipoBilancioEnum.IRES.name()))
+				.isPresent();
 	}
 
 	@Override

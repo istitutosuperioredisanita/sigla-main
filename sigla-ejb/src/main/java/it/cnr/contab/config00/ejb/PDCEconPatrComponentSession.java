@@ -17,8 +17,10 @@
 
 package it.cnr.contab.config00.ejb;
 
+import it.cnr.jada.UserContext;
 import jakarta.ejb.Remote;
 
 @Remote
 public interface PDCEconPatrComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
+    void generaBilancioIRES(UserContext userContext) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }

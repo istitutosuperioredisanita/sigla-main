@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Esercizio" />
+	<fieldProperty
+		name="cdUnitaOrganizzativa"
+		property="cdUnitaOrganizzativa"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Unità Organizzativa" />
+	<fieldProperty
+		name="cdTipoBilancio"
+		property="cdTipoBilancio"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice del Bilancio" />
+	<fieldProperty
+		name="cdVoceEp"
+		property="cdVoceEp"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Conto" />
+	<fieldProperty
+		name="dsVoceEp"
+		property="voceEp.ds_voce_ep"
+		inputType="TEXT"
+		maxLength="200"
+		enabledOnSearch="true"
+		enabledOnEdit="false"
+		label="Descrizione" />
+	<fieldProperty
+		name="sezione"
+		property="sezione"
+		maxLength="1"
+		inputSize="1"
+		inputType="SELECT"
+		keysProperty="tiSezioneKeys"
+		label="Sezione"
+		enabledOnSearch="true"
+		enabledOnEdit="false"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="saldoConto"
+		property="saldoConto"
+		inputType="TEXT"
+		inputSize="21"
+		maxLength="21"
+		enabledOnEdit="false"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		nullable="false"
+		label="Saldo totale del conto" />
+	<fieldProperty
+		name="rettifica"
+		property="rettifica"
+		inputType="TEXT"
+		inputSize="21"
+		maxLength="21"
+		enabledOnEdit="false"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		nullable="false"
+		label="Importo di rettifica" />
+	<fieldProperty
+		name="importoFinale"
+		property="importoFinale"
+		inputType="TEXT"
+		inputSize="21"
+		maxLength="21"
+		enabledOnEdit="true"
+		enabledOnView="true"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		command="doOnChangeImportoFinale"
+		nullable="false"
+		label="Importo finale" />
+	<form
+		name="searchtool">
+		<formFieldProperty
+			name="esercizio" />
+		<formFieldProperty
+			name="cdUnitaOrganizzativa" />
+		<formFieldProperty
+			name="cdTipoBilancio" />
+		<formFieldProperty
+			name="cdVoceEp" />
+	</form>
+	<formFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<formFieldProperty
+		name="cdTipoBilancio" />
+	<formFieldProperty
+		name="saldoConto" />
+	<formFieldProperty
+		name="rettifica" />
+	<formFieldProperty
+		name="importoFinale" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<findFieldProperty
+		name="cdTipoBilancio" />
+	<findFieldProperty
+		name="cdVoceEp" />
+	<findFieldProperty
+		name="sezione" />
+	<findFieldProperty
+		name="saldoConto" />
+	<findFieldProperty
+		name="rettifica" />
+	<findFieldProperty
+		name="importoFinale" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<columnFieldProperty
+		name="cdTipoBilancio" />
+	<columnFieldProperty
+		name="cdVoceEp" />
+	<columnFieldProperty
+		name="dsVoceEp" />
+	<columnFieldProperty
+		name="sezione" />
+	<columnFieldProperty
+		name="saldoConto" />
+	<columnFieldProperty
+		name="rettifica" />
+	<columnFieldProperty
+		name="importoFinale" />
+	<columnFieldProperty
+			name="dacr"
+			property="dacr"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			headerLabel="Date"
+			label="Creazione"
+			formatName="date_short" />
+	<columnFieldProperty
+			name="duva"
+			property="duva"
+			inputType="TEXT"
+			enabledOnEdit="false"
+			headerLabel="Date"
+			label="Aggiornamento"
+			formatName="date_short" />
+
+</bulkInfo>

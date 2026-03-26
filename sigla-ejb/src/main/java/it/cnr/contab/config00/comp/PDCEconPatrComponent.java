@@ -17,26 +17,36 @@
 
 package it.cnr.contab.config00.comp;
 
+import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeBulk;
+import it.cnr.contab.coepcoan00.core.bulk.Movimento_cogeHome;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.ejb.Lunghezza_chiaviComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.io.Serializable;
+import java.util.Optional;
 
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcep.cla.bulk.V_classificazione_voci_epBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
+import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.*;
 import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import org.springframework.data.util.Pair;
 
 /**
  * Classe che ridefinisce alcune operazioni di CRUD su ContoBulk e CapocontoBulk
@@ -597,5 +607,87 @@ public OggettoBulk modificaConBulk (UserContext userContext,OggettoBulk bulk) th
 		if (clause != null)
 			sql.addClause(clause);
 		return sql;
+	}
+	/**
+	 * Genera il conto economico riclassificato e popola
+	 * {@code BILANCIO_IRES}.
+	 *
+	 * @param userContext   contesto utente
+	 */
+	public void generaBilancioIRES(UserContext userContext) throws ComponentException {
+		try {
+			var esercizio = CNRUserContext.getEsercizio(userContext);
+			var configurazioneCnrHome = (Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class);
+			var contoAvanzo = Optional.ofNullable(configurazioneCnrHome.getConfigurazione(esercizio, null, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_UTILE_PERDITA_ESERCIZIO))
+					.map(Configurazione_cnrBulk::getVal01).orElse("");
+			var profPerd = Optional.ofNullable(configurazioneCnrHome.getConfigurazione(esercizio, null, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_CONTO_ECONOMICO))
+					.map(Configurazione_cnrBulk::getVal01).orElse("");
+			/**
+			 * Recupero lo schema di bilancio civilistico
+			 */
+			var associazioneContoGruppoHome = getHome(userContext, AssociazioneContoGruppoBulk.class);
+			var movimento_cogeHome = (Movimento_cogeHome)getHome(userContext, Movimento_cogeBulk.class);
+			var homeGruppoEP = getHome(userContext, GruppoEPBulk.class);
+			var sqlGruppoEP = homeGruppoEP.createSQLBuilder();
+			sqlGruppoEP.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, AssociazioneContoGruppoBulk.PianoGruppi.CE.name());
+			sqlGruppoEP.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, TipoBilancioEnum.CIVILISTICO.name());
+			List<GruppoEPBulk> gruppoEPBulks = homeGruppoEP.fetchAll(sqlGruppoEP);
+			for(GruppoEPBulk gruppoEPBulk : gruppoEPBulks) {
+				if (gruppoEPBulk.getFlMastrino()) {
+					SQLBuilder sqlAssContoGruppo = associazioneContoGruppoHome.createSQLBuilder();
+					sqlAssContoGruppo.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, AssociazioneContoGruppoBulk.PianoGruppi.CE.name());
+					sqlAssContoGruppo.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
+					sqlAssContoGruppo.addClause(FindClause.AND, "cdGruppoEp", SQLBuilder.EQUALS, gruppoEPBulk.getCdGruppoEp());
+					sqlAssContoGruppo.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, TipoBilancioEnum.CIVILISTICO.name());
+					List<AssociazioneContoGruppoBulk> associazioneContoGruppoBulks = associazioneContoGruppoHome.fetchAll(sqlAssContoGruppo);
+					for(AssociazioneContoGruppoBulk acg : associazioneContoGruppoBulks) {
+						var voceEP = (Voce_epBulk) super.findByPrimaryKey(userContext, new Voce_epBulk(acg.getCdVoceEp(), acg.getEsercizio()));
+						Pair<BigDecimal, BigDecimal> movimentiConto;
+						if (voceEP.getCd_voce_ep().equalsIgnoreCase(contoAvanzo)) {
+							movimentiConto = movimento_cogeHome.getMovimentiContoAvanzo(userContext, voceEP.getCd_voce_ep(), TipoIVA.COMMERCIALE.value(), profPerd);
+						} else {
+							movimentiConto = movimento_cogeHome.getMovimentiConto(userContext, voceEP.getCd_voce_ep(), TipoIVA.COMMERCIALE.value());
+						}
+						BigDecimal saldoConto = acg.getSezione().equalsIgnoreCase(AssociazioneContoGruppoBulk.Sezione.D.name()) ?
+								movimentiConto.getFirst().subtract(movimentiConto.getSecond()) :
+								movimentiConto.getSecond().subtract(movimentiConto.getFirst());
+						/**
+						 * Inserisco i dati nella Tabella
+ 						 */
+						BilRiclassificatoBulk bil = new BilRiclassificatoBulk(
+								esercizio,
+								CNRUserContext.getCd_unita_organizzativa(userContext),
+								TipoBilancioEnum.IRES.name(),
+								voceEP.getCd_voce_ep()
+						);
+						bil.setSezione(acg.getSezione());
+						Optional.ofNullable(super.findByPrimaryKey(userContext, bil))
+								.map(BilRiclassificatoBulk.class::cast)
+								.map(persistent -> {
+									persistent.setSaldoConto(saldoConto);
+									persistent.setRettifica(persistent.getImportoFinale().subtract(saldoConto));
+									persistent.setToBeUpdated();
+                                    try {
+                                        return (BilRiclassificatoBulk)super.modificaConBulk(userContext, persistent);
+                                    } catch (ComponentException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }).orElseGet(() -> {
+									bil.setSaldoConto(saldoConto);
+									bil.setRettifica(BigDecimal.ZERO);
+									bil.setImportoFinale(saldoConto);
+									bil.setToBeCreated();
+									try {
+										return (BilRiclassificatoBulk)super.creaConBulk(userContext, bil);
+									} catch (ComponentException e) {
+										throw new RuntimeException(e);
+									}
+								});
+					}
+				}
+			}
+		} catch (PersistencyException _ex) {
+			throw handleException(_ex);
+		}
 	}
 }
