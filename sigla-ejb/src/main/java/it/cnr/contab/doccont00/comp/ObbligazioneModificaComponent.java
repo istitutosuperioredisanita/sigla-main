@@ -23,26 +23,12 @@
  */
 package it.cnr.contab.doccont00.comp;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.*;
-
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrHome;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.pdcfin.bulk.IVoceBilancioBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Voce_fBulk;
-import it.cnr.contab.config00.sto.bulk.CdrBulk;
-import it.cnr.contab.docamm00.docs.bulk.Documento_generico_rigaHome;
-import it.cnr.contab.doccont00.core.bulk.Linea_attivitaBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_mod_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaHome;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scad_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
-import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneResComponentSession;
@@ -283,6 +269,7 @@ public class ObbligazioneModificaComponent extends it.cnr.jada.comp.CRUDComponen
 							omvb.getLinea_attivita(),
 							omvb.getObbligazione_modifica().getDs_modifica()
 					);
+					omvb.setToBeDeleted();
 				}
 			}
 
