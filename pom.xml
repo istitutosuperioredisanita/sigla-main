@@ -590,7 +590,7 @@
         </dependency>
         <dependency>
             <groupId>org.wildfly.arquillian</groupId>
-            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <artifactId>wildfly-arquillian-container-bootable</artifactId>
             <version>${version.org.wildfly.arquillian}</version>
         </dependency>
         <dependency>
