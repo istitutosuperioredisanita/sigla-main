@@ -133,7 +133,7 @@ public class OrdineAcqConsegnaBase extends OrdineAcqConsegnaKey implements Keyed
 
 
 	//FL_ONERE CHAR(1)
-	private Boolean flOnere = new Boolean(false);
+	private Boolean flOnere = Boolean.FALSE;
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: ORDINE_ACQ_CONSEGNA
