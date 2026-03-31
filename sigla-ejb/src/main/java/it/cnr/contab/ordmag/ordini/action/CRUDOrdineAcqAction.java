@@ -185,6 +185,8 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
         ordine.setContratto(contratto);
         ((CRUDBP) context.getBusinessProcess()).setDirty(true);
         if (contratto != null) {
+            if (contratto.getCig() != null)
+                ordine.setMotivoAssenzaCig(null);
             ordine.setResponsabileProcPers(contratto.getResponsabile());
             ordine.setCup(contratto.getCup());
             ordine.setCig(contratto.getCig());

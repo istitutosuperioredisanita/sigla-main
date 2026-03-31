@@ -413,7 +413,6 @@ public class OrdineAcqComponent
 
         try {
             if (Utility.createConfigurazioneCnrComponentSession().isAttivaEconomica(userContext, consegna.getEsercizio()) &&
-                    !Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, consegna.getEsercizio()) &&
                     (consegna.getContoBulk() == null || consegna.getContoBulk().getCd_voce_ep() == null)) {
                 if (consegna.getOrdineAcqRiga().getDspConto() == null || consegna.getOrdineAcqRiga().getDspConto().getDs_voce_ep() == null)
                     throw new ApplicationException("E' necessario indicare il conto di Economico Patrimoniale sulla riga d'ordine " + consegna.getRiga() + ".");

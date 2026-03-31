@@ -4378,8 +4378,8 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             } catch (ApplicationException e) {
                 throw new it.cnr.jada.comp.ApplicationException(e.getMessage());
             }
-            if (calcolaTotaleSelezionati(models, fatturaPassiva.quadraturaInDeroga()).compareTo(BigDecimal.ZERO)==0)
-                throw new it.cnr.jada.comp.ApplicationException("Per eseguire questa operazione è necessario che la somma dei saldi delle righe da associare sia positiva!");
+            //if (calcolaTotaleSelezionati(models, fatturaPassiva.quadraturaInDeroga()).compareTo(BigDecimal.ZERO)==0)
+            //    throw new it.cnr.jada.comp.ApplicationException("Per eseguire questa operazione è necessario che la somma dei saldi delle righe da associare sia positiva!");
             return basicDoRicercaObbligazione(context, fatturaPassiva, models, false);
         } catch (Throwable e) {
             return handleException(context, e);

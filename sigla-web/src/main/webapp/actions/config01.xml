@@ -284,4 +284,16 @@
         <init-param name="defaultAction" value="ConfCostiCogeCofiAction"/>
     </businessProcess>
 
+    <action
+            path="/CRUDElaboraBilRiclassificatoAction" actionClass="it.cnr.contab.config00.action.CRUDElaboraBilRiclassificatoAction">
+    </action>
+    <businessProcess
+            name="CRUDElaboraBilRiclassificatoBP" className="it.cnr.contab.config00.bp.CRUDElaboraBilRiclassificatoBP">
+        <forward name="default" path="/util/form_lista.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.config00.pdcep.bulk.BilRiclassificatoBulk"/>
+        <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+        <init-param name="defaultAction" value="CRUDElaboraBilRiclassificatoAction"/>
+        <init-param name="openIterator" value="true" />
+    </businessProcess>
+
 </action-mappings>

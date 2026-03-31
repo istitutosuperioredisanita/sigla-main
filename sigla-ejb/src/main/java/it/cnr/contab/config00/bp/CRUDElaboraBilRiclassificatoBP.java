@@ -1,0 +1,94 @@
+package it.cnr.contab.config00.bp;
+
+import it.cnr.contab.config00.ejb.PDCEconPatrComponentSession;
+import it.cnr.contab.config00.pdcep.bulk.BilRiclassificatoBulk;
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.action.MessageToUser;
+import it.cnr.jada.bulk.FillException;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.ejb.CRUDComponentSession;
+import it.cnr.jada.util.Config;
+import it.cnr.jada.util.action.FormBP;
+import it.cnr.jada.util.action.SelectionIterator;
+import it.cnr.jada.util.action.SelezionatoreSearchBP;
+import it.cnr.jada.util.ejb.EJBCommonServices;
+import it.cnr.jada.util.jsp.Button;
+
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.util.List;
+
+public class CRUDElaboraBilRiclassificatoBP extends SelezionatoreSearchBP {
+
+    public CRUDElaboraBilRiclassificatoBP() {
+        super();
+        table.setStatus(EDIT);
+        table.setMultiSelection(true);
+        table.setEditableOnFocus(true);
+        table.setReadonly(false);
+    }
+
+    public OggettoBulk[] fillModels(ActionContext actioncontext) throws FillException {
+        OggettoBulk aoggettobulk[] = getPageContents();
+        for(int i = 0; i < aoggettobulk.length; i++)
+        {
+            OggettoBulk oggettobulk = aoggettobulk[i];
+            if (oggettobulk.fillFromActionContext(actioncontext, "mainTable.[" + (i + getFirstElementIndexOnCurrentPage()), EDIT, getFieldValidationMap()))
+                setDirty(true);
+        }
+        return aoggettobulk;
+    }
+
+    @Override
+    public List<Button> createToolbarList() {
+        List<Button> toolbarList = super.createToolbarList();
+        toolbarList.add(new Button(Config.getHandler().getProperties(getClass()), "CRUDToolbar.elabora"));
+        toolbarList.add(new Button(Config.getHandler().getProperties(getClass()), "CRUDToolbar.refresh"));
+        toolbarList.add(new Button(Config.getHandler().getProperties(getClass()), "CRUDToolbar.delete"));
+        return toolbarList;
+    }
+
+    public void elaboraBilancioIRES(ActionContext actioncontext) throws BusinessProcessException {
+        PDCEconPatrComponentSession pdcEconPatrComponentSession = (PDCEconPatrComponentSession) EJBCommonServices.createEJB("CNRCONFIG00_EJB_PDCEconPatrComponentSession");
+        try {
+            pdcEconPatrComponentSession.generaBilancioIRES(actioncontext.getUserContext());
+            refresh(actioncontext);
+            setMessage(FormBP.INFO_MESSAGE, "Operazione effettuata");
+        } catch (ComponentException|RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    public void aggiornaImportoFinale(ActionContext actioncontext) throws BusinessProcessException{
+        CRUDComponentSession crudComponentSession = EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession", CRUDComponentSession.class);
+        BilRiclassificatoBulk bilRiclassificatoBulk = (BilRiclassificatoBulk)getModel();
+        try {
+            bilRiclassificatoBulk.setRettifica(bilRiclassificatoBulk.getImportoFinale().subtract(bilRiclassificatoBulk.getSaldoConto()));
+            bilRiclassificatoBulk.setToBeUpdated();
+            crudComponentSession.modificaConBulk(actioncontext.getUserContext(), bilRiclassificatoBulk);
+        } catch (ComponentException|RemoteException e) {
+            throw handleException(e);
+        }
+
+    }
+
+    public void elimina(ActionContext actioncontext) throws BusinessProcessException{
+        CRUDComponentSession crudComponentSession = EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession", CRUDComponentSession.class);
+        try {
+            if (!selection.isEmpty()) {
+                for (SelectionIterator i = selection.iterator(); i.hasNext();) {
+                    OggettoBulk bulk = (OggettoBulk) getElementAt( actioncontext,i.nextIndex());
+                    bulk.setToBeDeleted();
+                    crudComponentSession.eliminaConBulk(actioncontext.getUserContext(),bulk);
+                }
+            } else {
+                throw new MessageToUser( "E' necessario selezionare gli elementi da cancellare" );
+            }
+            refresh(actioncontext);
+        } catch (ComponentException|RemoteException e) {
+            throw handleException(e);
+        }
+    }
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.pdcep.bulk.BilRiclassificatoBulk"
+	homeClassName="it.cnr.contab.config00.pdcep.bulk.BilRiclassificatoHome">
+	<defaultColumnMap
+		tableName="BIL_RICLASSIFICATO">
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="voceEp.esercizio" />
+		<columnMapping
+			columnName="CD_VOCE_EP"
+			propertyName="voceEp.cd_voce_ep" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="voceEp"
+		partOfOid="true" />
+
+</SQLPersistentInfo>

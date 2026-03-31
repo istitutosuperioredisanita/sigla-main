@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class DataSourceAdapter implements javax.activation.DataSource {
+public class DataSourceAdapter implements jakarta.activation.DataSource {
     private final jakarta.activation.DataSource jakartaDataSource;
 
     public DataSourceAdapter(jakarta.activation.DataSource jakartaDataSource) {

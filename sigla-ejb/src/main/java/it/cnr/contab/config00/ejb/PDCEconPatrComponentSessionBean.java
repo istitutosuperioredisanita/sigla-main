@@ -17,8 +17,13 @@
 
 package it.cnr.contab.config00.ejb;
 
+import it.cnr.contab.config00.comp.PDCEconPatrComponent;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.comp.ComponentException;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Stateless;
+
+import java.rmi.RemoteException;
 
 @Stateless(name="CNRCONFIG00_EJB_PDCEconPatrComponentSession")
 public class PDCEconPatrComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSessionBean implements PDCEconPatrComponentSession{
@@ -27,4 +32,23 @@ public class PDCEconPatrComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 	componentObj = new it.cnr.contab.config00.comp.PDCEconPatrComponent();
 }
 
+	@Override
+	public void generaBilancioIRES(UserContext param0) throws ComponentException, RemoteException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((PDCEconPatrComponent)componentObj).generaBilancioIRES(param0);
+			component_invocation_succes(param0,componentObj);
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+
+	}
 }

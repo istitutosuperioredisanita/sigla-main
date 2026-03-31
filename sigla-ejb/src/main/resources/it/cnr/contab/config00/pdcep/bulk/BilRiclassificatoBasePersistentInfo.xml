@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.pdcep.bulk.BilRiclassificatoBase"
+	keyClassName="it.cnr.contab.config00.pdcep.bulk.BilRiclassificatoKey"
+	homeClassName="it.cnr.contab.config00.pdcep.bulk.BilRiclassificatoHome">
+	<defaultColumnMap
+		tableName="BIL_RICLASSIFICATO">
+		<columnMapping
+			columnName="SEZIONE"
+			propertyName="sezione"
+			sqlTypeName="VARCHAR"
+			columnSize="1"
+			nullable="false" />
+		<columnMapping
+			columnName="SALDO_CONTO"
+			propertyName="saldoConto"
+			sqlTypeName="DECIMAL"
+			columnSize="21"
+			columnScale="6"
+			nullable="false" />
+		<columnMapping
+			columnName="RETTIFICA"
+			propertyName="rettifica"
+			sqlTypeName="DECIMAL"
+			columnSize="21"
+			columnScale="6"
+			nullable="false" />
+		<columnMapping
+			columnName="IMPORTO_FINALE"
+			propertyName="importoFinale"
+			sqlTypeName="DECIMAL"
+			columnSize="21"
+			columnScale="6"
+			nullable="false" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="false" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="sezione" />
+	<persistentProperty
+		name="saldoConto" />
+	<persistentProperty
+		name="rettifica" />
+	<persistentProperty
+		name="importoFinale" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="utuv" />
+	<persistentProperty
+		name="pg_ver_rec" />
+</SQLPersistentInfo>
