@@ -19,7 +19,7 @@ jobs:
       - name: Update version in pom.xml (Release only) and deploy to Github Package Registry
         run: |
           mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
-          mvn clean deploy -s .m2/settings.xml -PAZURE -Darguments="-DskipTests" -DskipTests --batch-mode --errors --fail-at-end --show-version
+          mvn clean deploy -s .m2/settings.xml -PAZURE,PROD -Darguments="-DskipTests" -DskipTests --batch-mode --errors --fail-at-end --show-version
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

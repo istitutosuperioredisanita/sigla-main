@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
   ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
   ~
   ~     This program is free software: you can redistribute it and/or modify
@@ -17,56 +16,53 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>it.cnr.si.sigla</groupId>
-	<version>7.0.64-SNAPSHOT</version>
-	<artifactId>sigla-parent</artifactId>
-	<description>Sistema Informativo per la Gestione delle Linee di Attività</description>
-	<packaging>pom</packaging>
-	<parent>
-		<artifactId>archetype</artifactId>
-		<groupId>it.cnr.si</groupId>
-		<version>1.2.0</version>
-		<relativePath/>
-	</parent>
-	<modules>
-		<module>sigla-backend</module>
-		<module>sigla-ejb</module>
-		<module>sigla-web</module>
-	</modules>
-	<properties>
-		<ace.version>4.1.18</ace.version>
-		<perlapa.version>1.0.16</perlapa.version>
-		<maven.javadoc.skip>true</maven.javadoc.skip>
-		<sonar.skip>true</sonar.skip>
-		<java.version>21</java.version>
-		<siopeplus.version>2.0.1</siopeplus.version>
-		<version.sdi.fatturapa>1.0.2</version.sdi.fatturapa>
-		<version.sigla-ws.client>1.0.2</version.sigla-ws.client>
-		<spring.version>7.0.2</spring.version>
-		<version.jada>8.0.6</version.jada>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.build.directory>target</project.build.directory>
-		<sigla.build.number>${maven.build.timestamp}</sigla.build.number>
-		<slf4j.version>1.7.21</slf4j.version>
-		<liquibase.version>3.5.3</liquibase.version>
-		<pdfbox.version>2.0.25</pdfbox.version>
-		<version.storage.cloud>3.0.1</version.storage.cloud>
-		<jackson.version>2.10.3</jackson.version>
-		<commons-io.version>2.7</commons-io.version>
-		<git.changelog.maven.plugin.version>1.61</git.changelog.maven.plugin.version>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>sigla</artifactId>
+    <packaging>war</packaging>
+    <version>8.0.0-SNAPSHOT</version>
+    <name>SIGLA</name>
+    <parent>
+        <artifactId>archetype</artifactId>
+        <groupId>it.cnr.si</groupId>
+        <version>1.2.0</version>
+        <relativePath/>
+    </parent>
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
 
-        <version.wildfly>38.0.0.Final</version.wildfly>
-        <version.wildfly.maven.plugin>12.0.0.Final</version.wildfly.maven.plugin>
+        <ace.version>4.1.18</ace.version>
+        <perlapa.version>1.0.16</perlapa.version>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <sonar.skip>true</sonar.skip>
+        <siopeplus.version>2.0.2</siopeplus.version>
+        <version.sdi.fatturapa>1.0.2</version.sdi.fatturapa>
+        <version.sigla-ws.client>1.0.2</version.sigla-ws.client>
+        <spring.version>6.1.0</spring.version>
+        <jada.version>8.0.8</jada.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.directory>target</project.build.directory>
+        <sigla.build.number>DEV</sigla.build.number>
+        <slf4j.version>1.7.21</slf4j.version>
+        <liquibase.version>3.5.3</liquibase.version>
+        <pdfbox.version>2.0.25</pdfbox.version>
+        <version.storage.cloud>3.0.1</version.storage.cloud>
+        <jackson.version>2.10.3</jackson.version>
+        <commons-io.version>2.7</commons-io.version>
+        <git.changelog.maven.plugin.version>1.61</git.changelog.maven.plugin.version>
+
+        <version.wildfly>32.0.0.Final</version.wildfly>
+        <version.wildfly.maven.plugin>5.1.5.Final</version.wildfly.maven.plugin>
         <version.wildfly.datasources.galleon.pack>6.0.0.Final</version.wildfly.datasources.galleon.pack>
+        <bootable.jar>false</bootable.jar>
 
         <version.junit>5.10.1</version.junit>
         <version.org.wildfly.arquillian>6.0.0.Alpha1</version.org.wildfly.arquillian>
         <version.org.jboss.arquillian.junit>1.7.2.Final</version.org.jboss.arquillian.junit>
 
-		<version.arquillian-graphene>3.0.0-alpha.4</version.arquillian-graphene>
-		<test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
-	</properties>
+        <version.arquillian-graphene>3.0.0-alpha.4</version.arquillian-graphene>
+        <test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
+    </properties>
 
     <!-- Repository necessari per le dipendenze WildFly/JBoss -->
     <repositories>
@@ -82,218 +78,859 @@
             </snapshots>
         </repository>
     </repositories>
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<source>${java.version}</source>
-						<target>${java.version}</target>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>se.bjurr.gitchangelog</groupId>
-				<artifactId>git-changelog-maven-plugin</artifactId>
-				<version>${git.changelog.maven.plugin.version}</version>
-				<configuration>
-					<settingsFile>changelog.json</settingsFile>
-					<file>docs/CHANGELOG.md</file>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<profiles>
-		<profile>
-			<id>javadoc</id>
-			<properties>
-				<maven.javadoc.skip>false</maven.javadoc.skip>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.10.3</version>
-						<configuration>
-							<additionalparam>-Xdoclint:none</additionalparam>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>changelog</id>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-scm-plugin</artifactId>
-							<inherited>false</inherited>
-							<configuration>
-								<includes>docs/CHANGELOG.md</includes>
-								<message>Generate CHANGELOG.md [ci skip]</message>
-								<pushChanges>true</pushChanges>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-			</build>
-		</profile>
-		<profile>
-			<id>docs</id>
-			<properties>
-				<timestamp>${maven.build.timestamp}</timestamp>
-				<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-				<scm.plugin.file.list>publiccode.yml,docs/conf.py</scm.plugin.file.list>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>maven-replacer-plugin</artifactId>
-						<version>1.3.5</version>
-						<executions>
-							<execution>
-								<id>replace version on conf.py</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<filesToInclude>docs/conf.py</filesToInclude>
-									<replacements>
-										<replacement>
-											<token>release.*</token>
-											<value>release = '${project.version}'</value>
-										</replacement>
-									</replacements>
-								</configuration>
-							</execution>
-							<execution>
-								<id>replace version on publiccode</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<filesToInclude>*publiccode.yml</filesToInclude>
-									<replacements>
-										<replacement>
-											<token>softwareVersion.*</token>
-											<value>softwareVersion: ${project.version}</value>
-										</replacement>
-										<replacement>
-											<token>releaseDate.*</token>
-											<value>releaseDate: '${timestamp}'</value>
-										</replacement>
-									</replacements>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-	<licenses>
-		<license>
-			<name>GNU AFFERO GENERAL PUBLIC LICENSE</name>
-			<url>https://www.gnu.org/licenses/agpl-3.0.html</url>
-			<comments>
-				Copyright (C) 2019 Consiglio Nazionale delle Ricerche
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-ee-with-tools</artifactId>
+                <version>${version.wildfly}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <finalName>sigla</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>se.bjurr.gitchangelog</groupId>
+                <artifactId>git-changelog-maven-plugin</artifactId>
+                <version>${git.changelog.maven.plugin.version}</version>
+                <configuration>
+                    <settingsFile>changelog.json</settingsFile>
+                    <file>docs/CHANGELOG.md</file>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>*Test.java</include>
+                    </includes>
+                    <excludes>${test.exclude.package}</excludes>
+                    <skipITs>false</skipITs>
+                </configuration>
+            </plugin>
 
-				This program is free software: you can redistribute it and/or modify
-				it under the terms of the GNU Affero General Public License as
-				published by the Free Software Foundation, either version 3 of the
-				License, or (at your option) any later version.
+            <!-- Aggiorna JaCoCo -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-				This program is distributed in the hope that it will be useful,
-				but WITHOUT ANY WARRANTY; without even the implied warranty of
-				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-				GNU Affero General Public License for more details.
+            <!-- WAR Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Implementation-Build>${sigla.build.number}</Implementation-Build>
+                        </manifestEntries>
+                    </archive>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven.plugin}</version>
+                <configuration>
+                    <feature-packs>
+                        <feature-pack>
+                            <location>wildfly@maven(org.jboss.universe:community-universe)#${version.wildfly}</location>
+                        </feature-pack>
+                        <feature-pack>
+                            <location>org.wildfly:wildfly-datasources-galleon-pack:${version.wildfly.datasources.galleon.pack}</location>
+                        </feature-pack>
+                    </feature-packs>
+                    <layers>
+                        <!-- Definisci i layer necessari -->
+                        <layer>jaxrs-server</layer>
+                        <layer>cloud-server</layer>
+                        <layer>ejb</layer>
+                        <layer>jpa</layer>
+                        <layer>datasources</layer>
+                        <layer>management</layer>
+                        <layer>cdi</layer>
+                        <layer>jms-activemq</layer>
+                        <layer>mail</layer>
+                        <layer>webservices</layer>
+                        <layer>elytron-oidc-client</layer>
+                        <layer>microprofile-openapi</layer>
+                        <layer>elytron</layer>
+                        <layer>microprofile-config</layer>
+                        <layer>web-console</layer>
+                        <layer>remoting</layer>
+                    </layers>
 
-				You should have received a copy of the GNU Affero General Public License
-				along with this program.  If not, see https://www.gnu.org/licenses/
-			</comments>
-		</license>
-	</licenses>
-	<developers>
-		<developer>
-			<id>marco.spasiano</id>
-			<name>Marco Spasiano</name>
-			<email>marco.spasiano@cnr.it</email>
-			<organization>Consiglio Nazionale delle Ricerche</organization>
-			<organizationUrl>http://www.cnr.it</organizationUrl>
-			<roles>
-				<role>project lead</role>
-				<role>architet</role>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>raffaele.pagano</id>
-			<name>Raffaele Pagano</name>
-			<email>raffaele.pagano@cnr.it</email>
-			<organization>Consiglio Nazionale delle Ricerche</organization>
-			<organizationUrl>http://www.cnr.it</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>gianfranco.gasparro</id>
-			<name>Gianfranco Gasparro</name>
-			<email>gianfranco.gasparro@cnr.it</email>
-			<organization>Consiglio Nazionale delle Ricerche</organization>
-			<organizationUrl>http://www.cnr.it</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>rosangela.pucciarelli</id>
-			<name>Rosangela Pucciarelli</name>
-			<email>rosangela.pucciarelli@cnr.it</email>
-			<organization>Consiglio Nazionale delle Ricerche</organization>
-			<organizationUrl>http://www.cnr.it</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>francesco.uliana</id>
-			<name>Francesco Uliana</name>
-			<email>francesco@uliana.it</email>
-			<roles>
-				<role>architet</role>
-				<role>developer</role>
-			</roles>
-		</developer>
-	</developers>
-	<scm>
-		<connection>scm:git@github.com:istitutosuperioredisanita/sigla-main.git</connection>
-		<developerConnection>scm:git@github.com:istitutosuperioredisanita/sigla-main.git</developerConnection>
-		<tag>HEAD</tag>
-	</scm>
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/istitutosuperioredisanita/sigla-main</url>
-		</repository>
-		<snapshotRepository>
-			<id>github</id>
-			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/istitutosuperioredisanita/sigla-main</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</snapshotRepository>
-	</distributionManagement>
+                    <!-- IMPORTANTE: Include il modulo custom -->
+                    <extra-server-content-dirs>
+                        <extra-content>src/main/modules</extra-content>
+                    </extra-server-content-dirs>
+                    <!-- nella 5.x plugin-options diventa galleon-options -->
+                    <galleon-options>
+                        <jboss-fork-embedded>true</jboss-fork-embedded>
+                    </galleon-options>
+                    <!-- nella 5.x cli-sessions diventa packaging-scripts -->
+                    <packaging-scripts>
+                        <packaging-script>
+                            <scripts>
+                                <script>src/main/scripts/configure-wildfly.cli</script>
+                            </scripts>
+                            <resolve-expressions>false</resolve-expressions>
+                        </packaging-script>
+                    </packaging-scripts>
+                    <startup-timeout>300</startup-timeout>
+                    <!-- Argomenti JVM passati allo startup dello standalone server -->
+                    <java-opts>
+                        <java-opt>-Xmx2g</java-opt>
+                        <java-opt>-Xms1g</java-opt>
+                        <java-opt>-XX:MaxMetaspaceSize=512m</java-opt>
+                        <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787</java-opt>
+                        <java-opt>-Dcors.allow-origin=${cors.allow-origin}</java-opt>
+                    </java-opts>
+
+                    <!-- Produce un bootable JAR eseguibile con: java -jar target/sigla-bootable.jar -->
+                    <!-- nella 5.x bootable-jar diventa bootableJar (camelCase) -->
+                    <bootableJar>${bootable.jar}</bootableJar>
+                    <bootableJarName>sigla-bootable.jar</bootableJarName>
+                    <!-- web-extensions: file copiati a caldo SENZA causare redeploy/riavvio
+                         durante mvn wildfly:dev. La lista built-in include già html, xhtml, jsp, js, css.
+                         Aggiungendo xml, le modifiche agli XML vengono solo copiate. -->
+                    <webExtensions>
+                        <webExtension>.xml</webExtension>
+                        <webExtension>.properties</webExtension>
+                    </webExtensions>
+                    <ignore-patterns>.*\.java</ignore-patterns>
+                 </configuration>
+                <executions>
+                    <execution>
+                        <id>provision-server</id>
+                        <phase>package</phase>
+                        <goals>
+                            <!-- Effettua il provisioning di WildFly e deploya il WAR in target/server -->
+                            <goal>package</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+
+                <configuration>
+                    <release>${java.version}</release>
+                    <useIncrementalCompilation>true</useIncrementalCompilation>
+                    <staleMillis>0</staleMillis>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <!-- Jakarta EE 10 API (per WildFly 31+) -->
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>10.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- SIGLA  dependency-->
+        <dependency>
+            <groupId>it.cnr.si</groupId>
+            <artifactId>jada</artifactId>
+            <version>${jada.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.cnr.si.sigla</groupId>
+            <artifactId>sigla-ws-client</artifactId>
+            <version>${version.sigla-ws.client}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.cnr.si</groupId>
+            <artifactId>sdi-fatturapa</artifactId>
+            <version>${version.sdi.fatturapa}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.cnr.si</groupId>
+            <artifactId>siopeplus-ordinativi</artifactId>
+            <version>${siopeplus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.cnr.si</groupId>
+            <artifactId>siopeplus-giornaledicassa</artifactId>
+            <version>${siopeplus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.cnr.si.storage</groupId>
+            <artifactId>storage-cloud-filesystem</artifactId>
+            <version>${version.storage.cloud}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.cnr.si</groupId>
+            <artifactId>ace-client</artifactId>
+            <version>${ace.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.cnr.si</groupId>
+            <artifactId>perlapa-client</artifactId>
+            <version>${perlapa.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase.ext</groupId>
+            <artifactId>liquibase-javalogger</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-ldap</artifactId>
+            <version>2.2.6.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Spring WS per Jakarta EE -->
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-core</artifactId>
+            <version>4.0.11</version>
+        </dependency>
+
+        <!-- Jakarta XML SOAP API -->
+        <dependency>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <!-- Implementazione SOAP (SAAJ) -->
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>3.0.4</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.reactivestreams</groupId>
+            <artifactId>reactive-streams</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <!-- Spring Infinispan -->
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-spring5-embedded</artifactId>
+            <version>13.0.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-commons</artifactId>
+            <version>13.0.10.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics-runtime</artifactId>
+            <version>1.11.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics-annotate</artifactId>
+            <version>0.6.3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>4.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.security</groupId>
+            <artifactId>wildfly-elytron</artifactId>
+            <version>2.7.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>9.31</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcmail-jdk15on</artifactId>
+            <version>1.52</version>
+        </dependency>
+        <!-- Swagger Jakarta (invece di javax) -->
+        <dependency>
+            <groupId>org.eclipse.microprofile.openapi</groupId>
+            <artifactId>microprofile-openapi-api</artifactId>
+            <version>3.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- JAXB API per Jakarta EE 10 -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.0</version>
+            <scope>provided</scope> <!-- provided perché WildFly lo fornisce -->
+        </dependency>
+        <!-- JAXB Implementation -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.5</version>
+        </dependency>
+        <!-- JAX-WS RI runtime (provides com.sun.xml.ws.spi.ProviderImpl) -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+
+        <!--### [test dependencies] -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.arquillian</groupId>
+            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <version>${version.org.wildfly.arquillian}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <version>${version.org.jboss.arquillian.junit}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-client-all</artifactId>
+            <version>${version.wildfly}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian Suite Extension -->
+        <!-- JUnit Platform Suite API -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite-api</artifactId>
+            <version>1.10.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Platform Suite Engine (necessario per eseguire le suite) -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite-engine</artifactId>
+            <version>1.10.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.graphene</groupId>
+            <artifactId>graphene-webdriver</artifactId>
+            <version>${version.arquillian-graphene}</version>
+            <type>pom</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.3.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>19.3.0.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <profiles>
+        <profile>
+            <id>javadoc</id>
+            <properties>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.3</version>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>changelog</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-scm-plugin</artifactId>
+                            <inherited>false</inherited>
+                            <configuration>
+                                <includes>docs/CHANGELOG.md</includes>
+                                <message>Generate CHANGELOG.md [ci skip]</message>
+                                <pushChanges>true</pushChanges>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>docs</id>
+            <properties>
+                <timestamp>${sigla.build.number}</timestamp>
+                <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+                <scm.plugin.file.list>publiccode.yml,docs/conf.py</scm.plugin.file.list>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>maven-replacer-plugin</artifactId>
+                        <version>1.3.5</version>
+                        <executions>
+                            <execution>
+                                <id>replace version on conf.py</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                                <configuration>
+                                    <filesToInclude>docs/conf.py</filesToInclude>
+                                    <replacements>
+                                        <replacement>
+                                            <token>release.*</token>
+                                            <value>release = '${project.version}'</value>
+                                        </replacement>
+                                    </replacements>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>replace version on publiccode</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                                <configuration>
+                                    <filesToInclude>*publiccode.yml</filesToInclude>
+                                    <replacements>
+                                        <replacement>
+                                            <token>softwareVersion.*</token>
+                                            <value>softwareVersion: ${project.version}</value>
+                                        </replacement>
+                                        <replacement>
+                                            <token>releaseDate.*</token>
+                                            <value>releaseDate: '${timestamp}'</value>
+                                        </replacement>
+                                    </replacements>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>all-test</id>
+            <properties>
+                <test.exclude.package />
+            </properties>
+        </profile>
+        <profile>
+            <id>CMIS</id>
+            <dependencies>
+                <dependency>
+                    <groupId>it.cnr.si.storage</groupId>
+                    <artifactId>storage-cloud-cmis</artifactId>
+                    <version>${version.storage.cloud}</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-api</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>AZURE</id>
+            <dependencies>
+                <dependency>
+                    <groupId>it.cnr.si.storage</groupId>
+                    <artifactId>storage-cloud-azure</artifactId>
+                    <version>${version.storage.cloud}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>S3</id>
+            <dependencies>
+                <dependency>
+                    <groupId>it.cnr.si.storage</groupId>
+                    <artifactId>storage-cloud-s3</artifactId>
+                    <version>${version.storage.cloud}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>SIGLA-AUTH</id>
+            <build>
+                <plugins>
+                    <!-- JAR Plugin - Crea JAR separato per le classi di security -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>create-security-jar</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>security</classifier>
+                                    <includes>
+                                        <include>it/cnr/contab/security/auth/*.class</include>
+                                        <include>it/cnr/contab/security/auth/**/*.class</include>
+                                    </includes>
+                                    <outputDirectory>src/main/modules/modules/system/layers/base/it/cnr/contab/security/main</outputDirectory>
+                                    <finalName>sigla</finalName>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>PROD</id>
+            <properties>
+                <bootable.jar>true</bootable.jar>
+                <sigla.build.number>${maven.build.timestamp}</sigla.build.number>
+            </properties>
+        </profile>
+    </profiles>
+    <licenses>
+        <license>
+            <name>GNU AFFERO GENERAL PUBLIC LICENSE</name>
+            <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+            <comments>
+                Copyright (C) 2019 Consiglio Nazionale delle Ricerche
+
+                This program is free software: you can redistribute it and/or modify
+                it under the terms of the GNU Affero General Public License as
+                published by the Free Software Foundation, either version 3 of the
+                License, or (at your option) any later version.
+
+                This program is distributed in the hope that it will be useful,
+                but WITHOUT ANY WARRANTY; without even the implied warranty of
+                MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+                GNU Affero General Public License for more details.
+
+                You should have received a copy of the GNU Affero General Public License
+                along with this program.  If not, see https://www.gnu.org/licenses/
+            </comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>marco.spasiano</id>
+            <name>Marco Spasiano</name>
+            <email>marco.spasiano@cnr.it</email>
+            <organization>Consiglio Nazionale delle Ricerche</organization>
+            <organizationUrl>http://www.cnr.it</organizationUrl>
+            <roles>
+                <role>project lead</role>
+                <role>architet</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>raffaele.pagano</id>
+            <name>Raffaele Pagano</name>
+            <email>raffaele.pagano@cnr.it</email>
+            <organization>Consiglio Nazionale delle Ricerche</organization>
+            <organizationUrl>http://www.cnr.it</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>gianfranco.gasparro</id>
+            <name>Gianfranco Gasparro</name>
+            <email>gianfranco.gasparro@cnr.it</email>
+            <organization>Consiglio Nazionale delle Ricerche</organization>
+            <organizationUrl>http://www.cnr.it</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>rosangela.pucciarelli</id>
+            <name>Rosangela Pucciarelli</name>
+            <email>rosangela.pucciarelli@cnr.it</email>
+            <organization>Consiglio Nazionale delle Ricerche</organization>
+            <organizationUrl>http://www.cnr.it</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>francesco.uliana</id>
+            <name>Francesco Uliana</name>
+            <email>francesco@uliana.it</email>
+            <roles>
+                <role>architet</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git@github.com:istitutosuperioredisanita/sigla-main.git</connection>
+        <developerConnection>scm:git@github.com:istitutosuperioredisanita/sigla-main.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/istitutosuperioredisanita/sigla-main</url>
+        </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/istitutosuperioredisanita/sigla-main</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

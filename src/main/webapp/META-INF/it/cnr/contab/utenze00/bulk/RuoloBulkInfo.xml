@@ -1,0 +1,152 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="cd_ruolo"
+		property="cd_ruolo"
+		label="Codice ruolo"
+		inputType="TEXT"
+		maxLength="20"
+		inputSize="20"
+		formatName="it.cnr.jada.util.UppercaseStringFormat"
+		enabledOnSearch="true"
+		enabledOnEdit="false"
+		/>
+	<fieldProperty
+		name="ds_ruolo"
+		property="ds_ruolo"
+		label="Descrizione"
+		inputType="TEXT"
+		maxLength="200"
+		inputSize="70"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="find_cds"
+		property="cds"
+		label="Codice CdS"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="cd_cds"
+		property="cds.cd_unita_organizzativa"
+		label="Codice CdS"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="10"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="ds_cds"
+		property="cds.ds_unita_organizzativa"
+		readonlyProperty="ROCds"
+		label=""
+		inputSize="20"
+		inputType="ROTEXT" />
+	<fieldProperty
+		name="tipo_ruolo"
+		property="tipo_ruolo"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		CRUDBusinessProcessName="CRUDTipoRuoloBP"
+		enabledOnSearch="true"
+		enabledOnEdit="true"
+		label="Tipo"/>
+	<fieldProperty
+		name="tipo"
+		property="tipo_ruolo.tipo"
+		inputSize="6"
+		label="Tipo"
+		inputType="TEXT"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		nullable="true"/>
+	<fieldProperty
+		name="crea_tipo_ruolo"
+		property="tipo_ruolo"
+		inputType="CRUDTOOL"
+		CRUDBusinessProcessName="CRUDTipoRuoloBP" />
+
+	<columnFieldProperty
+		name="cd_ruolo"
+		/>
+	<columnFieldProperty
+		name="ds_ruolo"
+		/>
+	<columnFieldProperty
+		name="cd_cds"
+		/>
+	<columnFieldProperty
+		name="tipo"
+		/>
+	<formFieldProperty
+		name="cd_ruolo"
+		/>
+	<formFieldProperty
+		name="ds_ruolo"
+		inputSize="40"
+		/>
+	<formFieldProperty
+		name="cd_cds"
+		/>
+	<formFieldProperty
+		name="ds_cds"
+		/>
+	<formFieldProperty
+		name="find_cds"
+		/>
+	<formFieldProperty
+		name="tipo"
+		/>
+	<formFieldProperty
+		name="tipo_ruolo"
+		/>
+	<formFieldProperty
+		name="crea_tipo_ruolo"
+		/>
+
+	<findFieldProperty
+		name="cd_ruolo"
+		/>
+	<findFieldProperty
+		name="ds_ruolo"
+		/>
+	<findFieldProperty
+		name="tipo"
+		/>
+
+	<form
+		name="searchtool" >
+		<formFieldProperty
+			name="cd_ruolo"
+			inputType="TEXT" />
+		<formFieldProperty
+			name="ds_ruolo"
+			inputType="TEXT"
+			inputSize="30" />
+	</form>
+
+</bulkInfo>

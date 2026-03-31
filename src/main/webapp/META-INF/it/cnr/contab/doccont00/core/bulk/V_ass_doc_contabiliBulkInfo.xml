@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="cd_cds"
+		property="cd_cds"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="Cds"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="esercizio_coll"
+		property="esercizio_coll"
+		inputType="TEXT"
+		label="Esercizio" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		label="Esercizio" />
+	<fieldProperty
+		name="cd_cds_coll"
+		property="cd_cds_coll"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="Cds"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="pg_documento_cont_coll"
+		property="pg_documento_cont_coll"
+		inputType="TEXT"
+		label="Progressivo" />
+	<fieldProperty
+		name="pg_documento_cont"
+		property="pg_documento_cont"
+		inputType="TEXT"
+		label="Progressivo" />
+	<fieldProperty
+		name="cd_tipo_documento_cont"
+		property="cd_tipo_documento_cont"
+		maxLength="3"
+		inputSize="3"
+		inputType="TEXT"
+		label="Tipo"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="cd_tipo_documento_cont_coll"
+		property="cd_tipo_documento_cont_coll"
+		maxLength="3"
+		inputSize="3"
+		inputType="TEXT"
+		label="Tipo"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="cd_cdsPrintable"
+		property="cd_cdsPrintable"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="Cds"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="pg_documento_contPrintable"
+		property="pg_documento_contPrintable"
+		inputType="TEXT"
+		label="Progressivo" />
+	<fieldProperty
+		name="cd_tipo_documento_contPrintable"
+		property="cd_tipo_documento_contPrintable"
+		maxLength="3"
+		inputSize="3"
+		inputType="TEXT"
+		label="Tipo"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="esercizioPrintable"
+		property="esercizioPrintable"
+		inputType="TEXT"
+		label="Esercizio" />
+	<fieldProperty
+		name="fl_con_man_prc"
+		property="fl_con_man_prc"
+		inputType="CHECKBOX"
+		enabledOnFreeSearch="false"
+		label="fl_con_man_prc" />		
+				
+
+	<formFieldProperty
+		name="cd_cds" />
+	<formFieldProperty
+		name="esercizio_coll" />
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="cd_cds_coll" />
+	<formFieldProperty
+		name="pg_documento_cont_coll" />
+	<formFieldProperty
+		name="pg_documento_cont" />
+	<formFieldProperty
+		name="cd_tipo_documento_cont" />
+	<formFieldProperty
+		name="cd_tipo_documento_cont_coll" />
+
+	<columnFieldProperty
+		name="cd_cds" />
+	<columnFieldProperty
+		name="esercizio_coll" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="cd_cds_coll" />
+	<columnFieldProperty
+		name="pg_documento_cont_coll" />
+	<columnFieldProperty
+		name="pg_documento_cont" />
+	<columnFieldProperty
+		name="cd_tipo_documento_cont" />
+	<columnFieldProperty
+		name="cd_tipo_documento_cont_coll" />
+
+	<columnSet
+		name="doc_cont_coll" >
+		<columnFieldProperty
+			name="cd_tipo_documento_contPrintable" />		
+		<columnFieldProperty
+			name="cd_cdsPrintable" />
+		<columnFieldProperty
+			name="esercizioPrintable" />
+		<columnFieldProperty
+			name="pg_documento_contPrintable" />
+	</columnSet>
+
+	<findFieldProperty
+		name="cd_cds" />
+	<findFieldProperty
+		name="esercizio_coll" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="cd_cds_coll" />
+	<findFieldProperty
+		name="pg_documento_cont_coll" />
+	<findFieldProperty
+		name="pg_documento_cont" />
+	<findFieldProperty
+		name="cd_tipo_documento_cont" />
+	<findFieldProperty
+		name="cd_tipo_documento_cont_coll" />
+
+</bulkInfo>

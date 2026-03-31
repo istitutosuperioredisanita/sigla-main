@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="cd_cds_mandato"
+		property="cd_cds_mandato"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="Cds Mandato" />
+	<fieldProperty
+		name="cd_cds_reversale"
+		property="cd_cds_reversale"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="Cds Reversale" />
+	<fieldProperty
+		name="ti_origine"
+		property="ti_origine"
+		maxLength="1"
+		inputSize="1"
+		inputType="TEXT"
+		label="ti_origine"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="esercizio_mandato"
+		property="esercizio_mandato"
+		inputType="TEXT"
+		label="Esercizio Mandato" />
+	<fieldProperty
+		name="esercizio_reversale"
+		property="esercizio_reversale"
+		inputType="TEXT"
+		label="Esercizio Reversale" />
+	<fieldProperty
+		name="pg_reversale"
+		property="pg_reversale"
+		inputType="TEXT"
+		label="Nr.Reversale" />
+	<fieldProperty
+		name="pg_mandato"
+		property="pg_mandato"
+		inputType="TEXT"
+		label="Nr.Mandato" />
+
+	<formFieldProperty
+		name="cd_cds_mandato" />
+	<formFieldProperty
+		name="cd_cds_reversale" />
+	<formFieldProperty
+		name="ti_origine" />
+	<formFieldProperty
+		name="esercizio_mandato" />
+	<formFieldProperty
+		name="esercizio_reversale" />
+	<formFieldProperty
+		name="pg_reversale" />
+	<formFieldProperty
+		name="pg_mandato" />
+
+	<columnSet
+		name="rev" >
+		<columnFieldProperty
+			name="cd_cds_mandato" />
+		<columnFieldProperty
+			name="esercizio_mandato" />
+		<columnFieldProperty
+			name="pg_mandato" />
+	</columnSet>
+	
+	<columnSet
+		name="man" >
+		<columnFieldProperty
+			name="cd_cds_reversale" />
+		<columnFieldProperty
+			name="esercizio_reversale" />
+		<columnFieldProperty
+			name="pg_reversale" />
+	</columnSet>
+
+	<findFieldProperty
+		name="cd_cds_mandato" />
+	<findFieldProperty
+		name="cd_cds_reversale" />
+	<findFieldProperty
+		name="ti_origine" />
+	<findFieldProperty
+		name="esercizio_mandato" />
+	<findFieldProperty
+		name="esercizio_reversale" />
+	<findFieldProperty
+		name="pg_reversale" />
+	<findFieldProperty
+		name="pg_mandato" />
+
+</bulkInfo>

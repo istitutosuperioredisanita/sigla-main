@@ -1,0 +1,83 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="cd_natura"
+		property="cd_natura"
+		label="Natura"
+		keysProperty="naturaKeys"
+		inputType="SELECT"
+		/>
+	<fieldProperty
+		name="find_elemento_voce"
+		property="elemento_voce"
+		inputType="SEARCHTOOL"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="cd_elemento_voce"
+		property="elemento_voce.cd_elemento_voce"
+		readonlyProperty="ROElemento_voce"
+		label="Capitolo di Entrata CNR"
+		inputType="TEXT"
+		maxLength="20"
+		inputSize="10"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="ds_elemento_voce"
+		property="elemento_voce.ds_elemento_voce"
+		readonlyProperty="ROElemento_voce"
+		label=""
+		inputType="ROTEXT"
+		inputSize="20"
+		enabledOnSearch="true"
+		/>
+		
+	<columnFieldProperty
+		name="cd_natura"
+		/>
+	<columnFieldProperty
+		name="cd_elemento_voce"
+		/>
+	
+	<formFieldProperty
+		name="cd_natura"
+		/>
+	<formFieldProperty
+		name="find_elemento_voce"
+		/>
+	<formFieldProperty
+		name="cd_elemento_voce"
+		/>
+	<formFieldProperty
+		name="ds_elemento_voce"
+		/>
+
+	<findFieldProperty
+		name="cd_natura"
+		/>
+	<findFieldProperty
+		name="cd_elemento_voce"
+		/>
+	
+</bulkInfo>

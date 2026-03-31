@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="ds_causale_var_bilancio"
+		property="ds_causale_var_bilancio"
+		maxLength="200"
+		inputSize="100"
+		inputType="TEXT"
+		label="Descrizione"
+		nullable="false"
+		enabledOnInsert="true"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="cd_causale_var_bilancio"
+		property="cd_causale_var_bilancio"
+		maxLength="10"
+		inputSize="10"
+		inputType="TEXT"
+		nullable="false"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		label="Codice" />
+	<fieldProperty
+		name="ti_causale"
+		property="ti_causale"
+		keysProperty="ti_causaleKeys"
+		inputType="SELECT"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Tipo Causale" />
+
+	<formFieldProperty name="cd_causale_var_bilancio" />
+	<formFieldProperty name="ds_causale_var_bilancio" />
+	<formFieldProperty name="ti_causale" />
+
+    <form 
+    	name="searchtool">
+		<formFieldProperty 
+			name="cd_causale_var_bilancio"
+			maxLength="10"
+			inputSize="10" />
+		<formFieldProperty 
+			name="ds_causale_var_bilancio"
+			maxLength="200"
+			inputSize="70"
+			inputType="TEXT" />
+    </form>	
+	<columnFieldProperty
+		name="cd_causale_var_bilancio"
+		style="width:100px" />
+	<columnFieldProperty
+		name="ds_causale_var_bilancio"
+		style="width:300px" />
+	<columnFieldProperty
+		name="ti_causale"
+		style="width:50px" />
+
+	<findFieldProperty name="cd_causale_var_bilancio" />
+	<findFieldProperty name="ds_causale_var_bilancio" />
+	<findFieldProperty name="ti_causale" />
+
+</bulkInfo>

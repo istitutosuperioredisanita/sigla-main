@@ -1,0 +1,99 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="email"
+		property="email"
+		readonlyPropertyOnEdit="terzo.dipendente"
+		label="Email"
+		inputType="TEXT"
+		maxLength="50"
+		/>
+	<fieldProperty
+		name="motivo"
+		property="motivo"
+		readonlyPropertyOnEdit="terzo.dipendente"
+		label="Motivo"
+		inputType="TEXT"
+		maxLength="50"
+		/>
+	<fieldProperty
+		name="ds_contatto"
+		property="ds_contatto"
+		readonlyPropertyOnEdit="terzo.dipendente"
+		label="Descrizione"
+		inputType="TEXT"
+		nullable="false"
+		maxLength="100"
+		/>
+	<fieldProperty
+		name="telefono"
+		property="telefono"
+		readonlyPropertyOnEdit="terzo.dipendente"
+		label="Telefono"
+		inputType="TEXT"
+		maxLength="50"
+		/>
+	<fieldProperty
+		name="pg_contatto"
+		property="pg_contatto"
+		readonlyPropertyOnEdit="terzo.dipendente"
+		label="pg_contatto"
+		inputType="TEXT"
+		/>
+	<fieldProperty
+		name="fax"
+		property="fax"
+		readonlyPropertyOnEdit="terzo.dipendente"
+		label="Fax"
+		inputType="TEXT"
+		maxLength="50"
+		/>
+
+	<formFieldProperty
+		name="ds_contatto"
+		inputSize="65"
+		/>
+	<formFieldProperty
+		name="motivo"
+		inputSize="65"
+		/>
+	<formFieldProperty
+		name="telefono"
+		inputSize="65"
+		/>
+	<formFieldProperty
+		name="fax"
+		inputSize="65"
+		/>
+	<formFieldProperty
+		name="email"
+		inputSize="65"
+		/>
+
+	<columnFieldProperty
+		name="ds_contatto"
+		/>
+	<columnFieldProperty
+		name="motivo"
+		/>
+</bulkInfo>

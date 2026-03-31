@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="divisa"
+		property="divisa"
+		inputType="SEARCHTOOL" 		
+		enabledOnSearch="false"
+		label="Divisa"
+        enabledOnEdit="false" />	
+	<fieldProperty
+		name="cd_divisa"
+		property="divisa.cd_divisa"
+		maxLength="30"
+		inputSize="6"
+		inputType="TEXT"
+		readonlyProperty="ROValuta"
+		label="Divisa"
+		formatName="it.cnr.jada.util.UppercaseStringFormat"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		nullable="false"
+	 	enabledOnEdit="false"/>
+	<fieldProperty
+		name="ds_divisa"
+		property="divisa.ds_divisa"
+		inputSize="15"
+		inputType="ROTEXT"
+		label="Divisa"
+		caseSensitiveSearch="false" />
+		
+	<fieldProperty
+		name="cambio"
+		property="cambio"
+		inputType="TEXT"
+		formatName="it.cnr.contab.util.Importo4CifrePositivoFormat"
+		label="cambio"
+		nullable="false"
+	 	readonlyProperty="ROCambioDefault"
+		enabledOnEdit="false"/>
+	<fieldProperty
+		name="dt_inizio_validita"
+		property="dt_inizio_validita"
+		inputType="TEXT"
+		formatName="date_short"
+		nullable="false"
+	 	readonlyProperty="ROCambioDefault"
+		label="Inizio Validita'"
+		enabledOnEdit="false"/>
+	<fieldProperty
+		name="dt_fine_validita"
+		property="dt_fine_validita"
+		inputType="TEXT"
+		formatName="date_short"
+		readonlyProperty="ROCambioDefault"
+		label="Fine Validita'"
+		enabledOnEdit="false"/>
+
+	<formFieldProperty
+		name="cd_divisa" />
+	<formFieldProperty
+		name="ds_divisa" />
+	<formFieldProperty
+		name="divisa" />
+	<formFieldProperty
+		name="cambio" />
+	<formFieldProperty
+		name="dt_inizio_validita" />
+	<formFieldProperty
+		name="dt_fine_validita" />
+
+	
+	<columnFieldProperty
+		name="cd_divisa" />
+	<columnFieldProperty
+		name="ds_divisa" />
+	<columnFieldProperty
+		name="cambio" />
+	<columnFieldProperty
+		name="dt_inizio_validita" />
+	<columnFieldProperty
+		name="dt_fine_validita" />
+		
+	<findFieldProperty
+		name="cambio" />
+	<findFieldProperty
+		name="cd_divisa" />
+	<findFieldProperty
+		name="dt_inizio_validita" />
+	<findFieldProperty
+		name="dt_fine_validita" />
+
+</bulkInfo>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="ti_lavoro"
+		property="ti_lavoro"
+		keysProperty="tipoLavoroKeys"
+		layout = "HORIZONTAL"		
+		inputType="RADIOGROUP"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		nullable="false"
+		label="Tipo Lavoro" />		
+	<fieldProperty
+		name="dt_inizio_validita"
+		property="dt_inizio_validita"
+		formatName="date_short"
+		inputType="TEXT"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		maxLength="20"
+		inputSize="20"
+		nullable="false"
+		label="Inizio Validità" />
+	<fieldProperty
+		name="im_inferiore"
+		property="im_inferiore"
+		formatName="it.cnr.contab.util.EuroFormat"
+		inputType="TEXT"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		nullable="false"
+		label="Importo Inferiore" />
+	<fieldProperty
+		name="im_detrazione"
+		property="im_detrazione"
+		formatName="it.cnr.contab.util.EuroFormat"
+		inputType="TEXT"
+		enabledOnInsert="true"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		nullable="false"
+		label="Importo Detrazione" />
+	<fieldProperty
+		name="im_superiore"
+		property="im_superiore"
+		formatName="it.cnr.contab.util.EuroFormat"
+		inputType="TEXT"
+		enabledOnInsert="true"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		nullable="false"
+		label="Importo Superiore" />
+	<fieldProperty
+		name="dt_fine_validita"
+		property="dt_fine_validita"
+		formatName="date_short"
+		inputType="TEXT"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		maxLength="20"
+		inputSize="20"
+		label="Fine Validita" />
+	<fieldProperty
+		name="dataFineValidita"
+		property="dataFineValidita"
+		formatName="date_short"
+		inputType="TEXT"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		maxLength="20"
+		inputSize="20"
+		label="Fine Validita" />
+	<fieldProperty
+		name="im_maggiorazione"
+		property="im_maggiorazione"
+		formatName="it.cnr.contab.util.EuroFormat"
+		inputType="TEXT"
+		enabledOnInsert="true"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Importo Maggiorazione" />
+	<fieldProperty
+		name="moltiplicatore"
+		property="moltiplicatore"
+		formatName="it.cnr.contab.util.EuroFormat"
+		inputType="TEXT"
+		enabledOnInsert="true"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Moltiplicatore"/>	
+	<fieldProperty
+		name="numeratore"
+		property="numeratore"
+		formatName="it.cnr.contab.util.EuroFormat"
+		inputType="TEXT"
+		enabledOnInsert="true"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Numeratore"/>	
+	<fieldProperty
+		name="denominatore"
+		property="denominatore"
+		formatName="it.cnr.contab.util.EuroFormat"
+		inputType="TEXT"
+		enabledOnInsert="true"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Denominatore"/>	
+	<fieldProperty
+		name="im_detrazione_minima"
+		property="im_detrazione_minima"
+		formatName="it.cnr.contab.util.EuroFormat"
+		inputType="TEXT"
+		enabledOnInsert="true"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Importo minimo detrazione" />
+	<fieldProperty
+			name="imIncrFisso"
+			property="imIncrFisso"
+			formatName="it.cnr.contab.util.EuroFormat"
+			inputType="TEXT"
+			enabledOnInsert="true"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			nullable="false"
+			label="Importo Incremento Fisso" />
+	<fieldProperty
+			name="imInfIncrFisso"
+			property="imInfIncrFisso"
+			formatName="it.cnr.contab.util.EuroFormat"
+			inputType="TEXT"
+			enabledOnInsert="true"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			nullable="false"
+			label="Importo Inferiore per Incremento Fisso" />
+	<fieldProperty
+			name="imSupIncrFisso"
+			property="imSupIncrFisso"
+			formatName="it.cnr.contab.util.EuroFormat"
+			inputType="TEXT"
+			enabledOnInsert="true"
+			enabledOnEdit="false"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="true"
+			nullable="false"
+			label="Importo Superiore per Incremento Fisso" />
+
+	<formFieldProperty name="ti_lavoro" />
+	<formFieldProperty name="im_detrazione" />
+	<formFieldProperty name="im_inferiore" />
+	<formFieldProperty name="im_superiore" />
+	<formFieldProperty name="dt_inizio_validita" />
+	<formFieldProperty name="dataFineValidita" />
+	<formFieldProperty name="im_maggiorazione" />
+	<formFieldProperty name="moltiplicatore" />
+	<formFieldProperty name="numeratore" />
+	<formFieldProperty name="denominatore" />
+	<formFieldProperty name="im_detrazione_minima" />
+	<formFieldProperty name="imIncrFisso" />
+	<formFieldProperty name="imInfIncrFisso" />
+	<formFieldProperty name="imSupIncrFisso" />
+
+	<columnFieldProperty name="ti_lavoro" />
+	<columnFieldProperty name="im_detrazione" />
+	<columnFieldProperty name="im_inferiore" />
+	<columnFieldProperty name="im_superiore" />
+	<columnFieldProperty name="dt_inizio_validita" />
+	<columnFieldProperty name="dataFineValidita" />
+	<columnFieldProperty name="im_maggiorazione" />
+	<columnFieldProperty name="moltiplicatore" />
+	<columnFieldProperty name="numeratore"/>
+	<columnFieldProperty name="denominatore"/>
+	<columnFieldProperty name="im_detrazione_minima" />
+	<columnFieldProperty name="imIncrFisso" />
+	<columnFieldProperty name="imInfIncrFisso" />
+	<columnFieldProperty name="imSupIncrFisso" />
+
+	<findFieldProperty name="ti_lavoro" />
+	<findFieldProperty name="im_detrazione" />
+	<findFieldProperty name="im_inferiore" />
+	<findFieldProperty name="im_superiore" />
+	<findFieldProperty name="dt_inizio_validita" />
+	<findFieldProperty name="dt_fine_validita" />
+
+</bulkInfo>

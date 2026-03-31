@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="cd_cds"
+		property="cd_cds"
+		inputSize="8"
+		inputType="TEXT"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="false"		
+		enabledOnFreeSearch="false"						
+		label="Cds" />
+	<fieldProperty
+		name="ds_cds"
+		property="scrittura.cds.ds_unita_organizzativa"
+		inputSize="60"
+		inputType="ROTEXT"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="false"		
+		label="Cds" />
+	<fieldProperty
+		name="cds"
+		property="scrittura.cds"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Cds"/>
+	<fieldProperty
+		name="pg_numero_documento"
+		property="pg_numero_documento"
+		inputType="TEXT"
+		label="pg_numero_documento" />
+	<fieldProperty
+		name="cd_unita_organizzativa"
+		property="scrittura.uo.cd_unita_organizzativa"
+		inputSize="8"
+		inputType="ROTEXT"
+		enabledOnFreeSearch="false"
+		label="Unit&#224; organizzativa" />		
+	<fieldProperty
+		name="ds_unita_organizzativa"
+		property="scrittura.uo.ds_unita_organizzativa"
+		inputSize="60"
+		inputType="ROTEXT"
+		enabledOnFreeSearch="false"								
+		label="Unit&#224; organizzativa" />
+	<fieldProperty
+		name="uo"
+		property="scrittura.uo"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Unit&#224; organizzativa"/>
+	<fieldProperty
+		name="stato"
+		property="stato"
+		maxLength="1"
+		inputSize="1"
+		inputType="TEXT"
+		label="Stato"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="8"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="false"		
+		enabledOnFreeSearch="false"						
+		label="Esercizio" />
+	<fieldProperty
+		name="cd_funzione"
+		property="cd_funzione"
+		maxLength="2"
+		inputSize="2"
+		inputType="TEXT"
+		label="cd_funzione"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="pg_movimento"
+		property="pg_movimento"
+		inputType="TEXT"
+		label="pg_movimento" />
+	<fieldProperty
+		name="im_movimento"
+		property="im_movimento"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		enabledOnSearch="true"						
+		label="Importo"
+		nullable="false"/>
+	<fieldProperty
+		name="cd_voce_ana"
+		property="voceAnalitica.cd_voce_ana"
+		maxLength="45"
+		inputSize="8"
+		inputType="TEXT"
+		label="Conto Analitico"
+		readonlyProperty="ROConto"
+		enabledOnSearch="true"
+		formatName="it.cnr.jada.util.UppercaseStringFormat"		
+		caseSensitiveSearch="false"
+		nullable="false"/>
+	<fieldProperty
+		name="ds_voce_ana"
+		property="voceAnalitica.ds_voce_ana"
+		maxLength="45"
+		inputSize="40"
+		inputType="ROTEXT"
+		label="Descrizione"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="find_voce_ana"
+		property="voceAnalitica"
+		inputType="SEARCHTOOL"
+		enabledOnSearch="true"
+		label="Conto" />
+	<fieldProperty
+		name="find_voce_ana_searchtool"
+		property="voceAnalitica"
+		formName="searchtool"
+		inputType="SEARCHTOOL"
+		enabledOnSearch="true"
+		label="Conto" />
+	<fieldProperty
+		name="cd_linea_attivita"
+		property="latt.cd_linea_attivita"
+		maxLength="10"
+		inputSize="10"
+		inputType="TEXT"
+		label="GAE"
+		readonlyProperty="ROLatt"
+		enabledOnSearch="true"
+		formatName="it.cnr.jada.util.UppercaseStringFormat"		
+		caseSensitiveSearch="false"
+		nullable="false"/>
+	<fieldProperty
+		name="ds_linea_attivita"
+		property="latt.ds_linea_attivita"
+		inputSize="60"
+		inputType="ROTEXT"
+		enabledOnFreeSearch="false" />
+	<fieldProperty
+		name="find_linea_attivita"
+		property="latt"
+		inputType="SEARCHTOOL"
+		formName="searchtool_denominazione"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		nullable="false"
+		label="G.a.e." />
+	<fieldProperty
+		name="centro_responsabilita"
+		property="latt.centro_responsabilita"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		label="Centro di Responsabilit&#224; del GAE"/>
+	<fieldProperty
+		name="cd_centro_responsabilita"
+		property="latt.centro_responsabilita.cd_centro_responsabilita"
+		maxLength="15"
+		inputSize="15"
+		inputType="TEXT"
+		label="Centro di Responsabilit&#224; del GAE"
+		readonlyProperty="ROLatt"
+		formatName="it.cnr.jada.util.UppercaseStringFormat"		
+		enabledOnSearch="true"						
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="ds_movimento"
+		property="ds_movimento"
+		maxLength="100"
+		inputSize="100"
+		inputType="TEXT"
+		label="ds_movimento"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="cd_terzo"
+		property="terzo.cd_terzo"
+		inputType="TEXT"
+		inputSize="8"		
+		enabledOnSearch="true"						
+		label="Terzo" />
+	<fieldProperty
+		name="ds_terzo"
+		property="ds_terzo"
+		inputType="TEXT"
+		label="Terzo" />
+	<fieldProperty
+		name="find_terzo"
+		property="terzo"
+		enabledOnSearch="true"
+		formName="searchtool"
+		inputType="SEARCHTOOL"
+		label="Terzo" />
+	<fieldProperty
+		name="sezione"
+		property="sezione"
+		maxLength="1"
+		inputSize="1"
+		inputType="SELECT"
+		keysProperty="sezioneKeys"
+		label="Sezione"
+		enabledOnSearch="true"						
+		caseSensitiveSearch="false"
+		nullable="false"/>
+	<fieldProperty
+		name="cd_natura"
+		property="cd_natura"
+		maxLength="1"
+		inputSize="1"
+		inputType="TEXT"
+		label="cd_natura"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="pg_scrittura"
+		property="pg_scrittura"
+		inputType="TEXT"
+		enabledOnSearch="true"
+		inputSize="8"		
+		label="Nr. Scrittura" />
+	<fieldProperty
+		name="attiva"
+		property="scrittura.attiva"
+		keysProperty="stato_attivaKeys"				
+		inputType="SELECT"
+		label="Attiva"
+		enabledOnInsert="false"
+		enabledOnEdit="false"		
+		enabledOnFreeSearch="true"		
+		enabledOnSearch="true" />
+	<fieldProperty
+		name="pg_scrittura_annullata"
+		property="scrittura.pg_scrittura_annullata"
+		inputType="TEXT"
+		label="N.scrittura annullata"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true" />
+	<fieldProperty
+		name="ti_istituz_commerc"
+		property="ti_istituz_commerc"
+		maxLength="1"
+		inputSize="1"
+		inputType="SELECT"
+		keysProperty = "tipoKeys"
+		label="Tipo"
+		enabledOnSearch="true"
+		caseSensitiveSearch="false"
+		nullable="false"/>
+	<fieldProperty
+		name="cd_voce_eco"
+		property="movimentoCoge.conto.cd_voce_ep"
+		maxLength="45"
+		inputSize="8"
+		inputType="TEXT"
+		formatName="it.cnr.jada.util.UppercaseStringFormat"
+		label="Conto Economico" />
+
+	<formFieldProperty
+		name="cd_unita_organizzativa" />
+	<formFieldProperty
+		name="ds_unita_organizzativa" />
+	<formFieldProperty
+		name="uo" />
+	<formFieldProperty
+		name="cd_cds" />
+	<formFieldProperty
+		name="ds_cds" />
+	<formFieldProperty
+		name="cds" />
+	<formFieldProperty
+		name="pg_numero_documento" />
+	<formFieldProperty
+		name="stato" />
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="cd_funzione" />
+	<formFieldProperty
+		name="pg_movimento" />
+	<formFieldProperty
+		name="im_movimento" />
+	<formFieldProperty
+		name="cd_linea_attivita" />
+	<formFieldProperty
+		name="ds_linea_attivita" />
+	<formFieldProperty
+		name="find_linea_attivita" />
+	<formFieldProperty
+		name="centro_responsabilita" />
+	<formFieldProperty
+		name="cd_centro_responsabilita" />
+	<formFieldProperty
+		name="cd_voce_ana" />
+	<formFieldProperty
+		name="ds_voce_ana" />
+	<formFieldProperty
+		name="find_voce_ana" />
+	<formFieldProperty
+		name="find_voce_ana_searchtool" />
+	<formFieldProperty
+		name="ds_movimento" />
+	<formFieldProperty
+		name="cd_terzo" />
+	<formFieldProperty
+		name="ds_terzo" />
+	<formFieldProperty
+		name="find_terzo" />
+	<formFieldProperty
+		name="cd_natura" />
+	<formFieldProperty
+		name="sezione" />
+	<formFieldProperty
+		name="pg_scrittura" />
+	<formFieldProperty
+		name="pg_scrittura_annullata" />
+	<formFieldProperty
+		name="attiva" />
+	<formFieldProperty
+		name="ti_istituz_commerc" />
+	<formFieldProperty
+		name="cd_voce_eco" />
+
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="cd_cds" />
+	<columnFieldProperty
+		name="pg_scrittura" />
+	<columnFieldProperty
+		name="sezione" />
+	<columnFieldProperty
+		name="cd_terzo" />
+	<columnFieldProperty
+		name="im_movimento" />
+	<columnFieldProperty
+		name="cd_voce_ana" />
+	<columnFieldProperty
+		name="cd_unita_organizzativa" />
+	<columnFieldProperty
+		name="stato" />
+	<columnFieldProperty
+		name="cd_linea_attivita" />
+	<columnFieldProperty
+		name="cd_centro_responsabilita" />
+	<columnFieldProperty
+		name="ti_istituz_commerc" />
+
+	<columnSet
+		name="latt">
+		<columnFieldProperty
+			name="cd_voce_ana" />
+		<columnFieldProperty
+			name="sezione" />
+		<columnFieldProperty
+			name="cd_centro_responsabilita" />
+		<columnFieldProperty
+			name="cd_linea_attivita" />
+		<columnFieldProperty
+			name="im_movimento" />
+	</columnSet>
+
+	<columnSet
+		name="scrittura">
+		<columnFieldProperty
+			name="cd_voce_eco"
+			label="Conto Economico"/>
+		<columnFieldProperty
+			name="sezione"
+			label="Sezione"
+			headerLabel="Analitica"/>
+		<columnFieldProperty
+			name="cd_voce_ana"
+			label="Conto"
+			headerLabel="Analitica"/>
+		<columnFieldProperty
+			name="ds_voce_ana"
+			label="Descrizione"
+			headerLabel="Analitica"/>
+		<columnFieldProperty
+			name="cd_centro_responsabilita" />
+		<columnFieldProperty
+			name="cd_linea_attivita" />
+		<columnFieldProperty
+			name="stato" />
+		<columnFieldProperty
+			name="im_movimento" />
+	</columnSet>
+
+	<findFieldProperty
+		name="cd_cds" />
+	<findFieldProperty
+		name="cd_unita_organizzativa"
+		inputType="TEXT"/>
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="pg_scrittura" />
+	<findFieldProperty
+		name="attiva" />		
+	<findFieldProperty
+		name="pg_scrittura_annullata" />		
+	<findFieldProperty
+		name="sezione" />
+	<findFieldProperty
+		name="cd_terzo" />
+	<findFieldProperty
+		name="cd_voce_ana" />
+	<findFieldProperty
+		name="cd_centro_responsabilita" />
+	<findFieldProperty
+		name="cd_linea_attivita" />
+	<findFieldProperty
+		name="im_movimento" />
+	<findFieldProperty
+		name="ti_istituz_commerc" />
+
+</bulkInfo>

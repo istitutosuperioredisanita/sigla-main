@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.prevent01.consultazioni.bulk.V_cons_pdgg_dipfo_etrBulk"
+	homeClassName="it.cnr.contab.prevent01.consultazioni.bulk.V_cons_pdgg_dipfo_etrHome">
+	<defaultColumnMap
+		tableName="V_CONS_PDGG_ETR_BIL_IST_DIP_FO">
+		<columnMapping
+			columnName="DS_DETTAGLIO"
+			propertyName="ds_dettaglio"
+			sqlTypeName="VARCHAR"
+			columnSize="300"
+			nullable="true" />
+		<columnMapping
+			columnName="TOT_ENT_IST_A1"
+			propertyName="tot_ent_ist_a1"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="true" />
+		<columnMapping
+			columnName="TOT_ENT_AREE_A1"
+			propertyName="tot_ent_aree_a1"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="true" />
+		<columnMapping
+			columnName="TOT_ENT_A1"
+			propertyName="tot_ent_a1"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="true" />
+		<columnMapping
+			columnName="TOT_INC_IST_A1"
+			propertyName="tot_inc_ist_a1"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="true" />
+		<columnMapping
+			columnName="TOT_INC_AREE_A1"
+			propertyName="tot_inc_aree_a1"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="true" />
+		<columnMapping
+			columnName="TOT_INC_A1"
+			propertyName="tot_inc_a1"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="ds_dettaglio" />
+	<persistentProperty
+		name="tot_ent_ist_a1" />
+	<persistentProperty
+		name="tot_ent_aree_a1" />
+	<persistentProperty
+		name="tot_ent_a1" />
+	<persistentProperty
+		name="tot_inc_ist_a1" />
+	<persistentProperty
+		name="tot_inc_aree_a1" />
+	<persistentProperty
+		name="tot_inc_a1" />
+</SQLPersistentInfo>

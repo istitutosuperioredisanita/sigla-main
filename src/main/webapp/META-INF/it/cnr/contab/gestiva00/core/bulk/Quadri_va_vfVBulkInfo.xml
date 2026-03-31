@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<!-- ************************** FIELD PROPERTY ************************ -->
+
+	
+	<fieldProperty
+		name="importo"
+		property="importo"
+		maxLength="24"
+		inputSize="24"
+		inputType="ROTEXT"
+		formatName="it.cnr.contab.util.Importo2CifreFormat"
+		label="Tot. imp"/>
+	<fieldProperty
+		name="im_tot_iva"
+		property="im_tot_iva"
+		maxLength="24"
+		inputSize="24"
+		inputType="ROTEXT"
+		formatName="it.cnr.contab.util.Importo2CifreFormat"
+		label="Tot. iva"/>
+	<fieldProperty
+		name="im_totale"
+		property="im_totale"
+		maxLength="24"
+		inputSize="24"
+		inputType="ROTEXT"
+		formatName="it.cnr.contab.util.Importo2CifreFormat"
+		label="Totale"/>
+		
+			
+	<!-- ************************ FORM FIELD PROPERTY ******************** -->
+
+
+	<formFieldProperty name="importo" />
+	<formFieldProperty name="im_tot_iva" />
+	<formFieldProperty name="im_totale" />
+	
+	
+	<!-- ************************ FIND FIELD PROPERTY ******************** -->
+
+	<findFieldProperty name="importo" />
+	<findFieldProperty name="im_tot_iva" />
+	<findFieldProperty name="im_totale" />
+
+</bulkInfo>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputSize="10"
+		inputType="TEXT"
+		nullable="false"
+		enabledOnInsert = "true"
+		enabledOnEdit = "true"
+		enabledOnSearch = "true"
+		enabledOnFreeSearch = "true"
+		label="Esercizio" />
+	<fieldProperty
+		name="ti_gestione"
+		property="ti_gestione"
+		maxLength="1"
+		inputSize="1"
+		inputType="RADIOGROUP"
+		label="Tipo"
+		layout="HORIZONTAL"
+		keysProperty="ti_gestioneKeys"
+		nullable="false"
+		enabledOnSearch="true"
+		enabledOnEdit="false"
+		caseSensitiveSearch="false"/>
+	
+	<formFieldProperty name="esercizio" />
+	<formFieldProperty name="ti_gestione" />
+
+
+<printForm
+		name="/cnrconfigurazione/pdc/piano_dei_conti_fin.jasper">
+		<printFieldProperty 
+			name="esercizio"
+			parameterPosition="0"
+			parameterType="STRING"
+			paramNameJR="Esercizio"
+			paramTypeJR="java.lang.Integer" />
+		<printFieldProperty 
+			name="ti_gestione"
+			property="ti_gestione"
+			parameterPosition="4"
+			parameterType="STRING"
+			paramNameJR="Ti_gestione"
+			paramTypeJR="java.lang.String" />
+	</printForm>
+	
+</bulkInfo>

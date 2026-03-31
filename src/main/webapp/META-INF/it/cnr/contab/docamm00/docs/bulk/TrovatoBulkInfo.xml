@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="http://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="http://contab.cnr.it/schema/SIGLA http://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	
+	<fieldProperty
+		name="cd_cds"
+		property="cds.cd_unita_organizzativa"
+		label="Codice CdS"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="10"
+		/>
+	<fieldProperty
+		name="ds_cds"
+		property="cds.ds_unita_organizzativa"
+		inputSize="20"
+		inputType="ROTEXT" />
+
+	<fieldProperty
+		name="cd_uo"
+		property="uo.cd_unita_organizzativa"
+		label="Codice UO"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="10"
+		/>
+	<fieldProperty
+		name="ds_uo"
+		property="uo.ds_unita_organizzativa"
+		inputSize="20"
+		inputType="ROTEXT" />
+	<fieldProperty
+		name="pg_trovato"
+		property="pg_trovato"
+		label="Trovato"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="10"
+		/>
+	<fieldProperty
+		name="titolo"
+		property="titolo"
+		label="Titolo"
+		inputType="TEXT"
+		maxLength="10000"
+		inputSize="10000"
+		/>
+
+	<findFieldProperty 
+		name="titolo"
+		/>
+		
+	<formFieldProperty
+		name="pg_trovato"
+		/>
+	<formFieldProperty
+		name="titolo"
+		/>
+
+	<columnFieldProperty
+		name="pg_trovato"
+		/>
+	<columnFieldProperty
+		name="titolo"
+		/>
+
+</bulkInfo>

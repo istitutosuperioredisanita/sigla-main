@@ -1,0 +1,111 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="st_apertura_chiusura"
+		property="st_apertura_chiusura"
+		maxLength="1"
+		inputSize="1"
+		inputType="RADIOGROUP"
+		label="Stato"
+		keysProperty="statoKeys"
+		enabledOnSearch="true"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		maxLength="4"
+		inputSize="4"
+		inputType="TEXT"
+		label="Esercizio"
+		enabledOnSearch="true" />
+	<fieldProperty
+		name="ds_esercizio"
+		property="ds_esercizio"
+		maxLength="100"
+		rows="3"
+		cols="40"
+		inputType="TEXTAREA"
+		label="Descrizione"
+		enabledOnSearch="true"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="cds"
+		property="cds"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		label="Cds"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="cd_cds"
+		property="cds.cd_unita_organizzativa"
+		inputType="ROTEXT"
+		maxLength="30"
+		inputSize="8"
+		label="Cds"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="ds_cds"
+		property="cds.ds_unita_organizzativa"
+		inputType="ROTEXT"
+		label=""
+		inputSize="20"
+		enabledOnSearch="true"/>
+
+
+	<formFieldProperty
+		name="st_apertura_chiusura" 
+		readonlyProperty="ROSt_apertura_chiusura"
+			/>
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="ds_esercizio" />
+	<formFieldProperty
+		name="cds" />
+
+	<columnFieldProperty
+		name="st_apertura_chiusura" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="ds_esercizio" />
+	<columnFieldProperty
+		name="cd_cds" />
+	<columnFieldProperty
+		name="ds_cds" />
+
+	<findFieldProperty
+		name="st_apertura_chiusura"
+		inputType="SELECT"/>
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="ds_esercizio" />
+	<findFieldProperty
+		name="cd_cds" />
+
+</bulkInfo>

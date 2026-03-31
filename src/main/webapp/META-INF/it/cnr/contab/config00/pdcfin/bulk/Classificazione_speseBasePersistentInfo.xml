@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.pdcfin.bulk.Classificazione_speseBase"
+	keyClassName="it.cnr.contab.config00.pdcfin.bulk.Classificazione_speseKey"
+	homeClassName="it.cnr.contab.config00.pdcfin.bulk.Classificazione_speseHome" >
+	<defaultColumnMap
+		tableName="CLASSIFICAZIONE_SPESE" >
+		<columnMapping
+			columnName="DESCRIZIONE"
+			propertyName="descrizione"
+			sqlTypeName="VARCHAR"
+			columnSize="400"
+			nullable="false" />
+		<columnMapping
+			columnName="ESERCIZIO_PADRE"
+			propertyName="esercizio_padre"
+			sqlTypeName="DECIMAL"
+			columnSize="4"
+			nullable="true" />
+		<columnMapping
+			columnName="CODICE_CLA_S_PADRE"
+			propertyName="codice_cla_s_padre"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="true" />						
+		<columnMapping
+			columnName="FL_MASTRINO"
+			propertyName="fl_mastrino"
+			sqlTypeName="CHAR"
+            converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter"			
+			columnSize="1"
+			nullable="false" />			
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />			
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="false" />
+	</defaultColumnMap>
+	
+	<persistentProperty
+		name="descrizione" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="utuv" />	
+	<persistentProperty		
+		name="pg_ver_rec" />	
+	<persistentProperty
+		name="esercizio_padre" />
+	<persistentProperty
+		name="codice_cla_s_padre" />
+	<persistentProperty
+		name="fl_mastrino" />									
+</SQLPersistentInfo>

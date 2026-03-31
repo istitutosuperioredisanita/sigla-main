@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="ROTEXT"
+		inputSize="4"
+		maxLength="4"		
+		label="Esercizio" />
+	
+	<fieldProperty
+		name="tipo"
+		property="tipo"
+		keysProperty="tipoDBKeys" 
+		inputType="SELECT"
+		label="Tipo"
+		enabledOnSearch="true"
+		enabledOnEdit="false"
+		nullable="true" />
+
+	<fieldProperty
+		name="firma1"
+		property="firma1"
+		inputType="TEXT"
+		inputSize="50"
+		maxLength="130"
+		label="Prima Firma" />
+
+	<fieldProperty
+		name="firma2"
+		property="firma2"
+		inputType="TEXT"
+		inputSize="50"
+		maxLength="130"
+		label="Seconda Firma" />
+		
+	<fieldProperty
+		name="firma3"
+		property="firma3"
+		inputType="TEXT"
+		inputSize="50"
+		maxLength="130"
+		label="Terza Firma" />	
+	
+	<fieldProperty
+		name="firma4"
+		property="firma4"
+		inputType="TEXT"
+		inputSize="50"
+		maxLength="130"		
+		label="Quarta Firma" />		
+				
+	<formFieldProperty name="esercizio" />
+	<formFieldProperty name="tipo" />
+	<formFieldProperty name="firma1" />
+	<formFieldProperty name="firma2" />	
+	<formFieldProperty name="firma3" />		
+	<formFieldProperty name="firma4" />		
+	
+	<columnFieldProperty name="esercizio" />
+	<columnFieldProperty name="tipo" />
+	<columnFieldProperty name="firma1" />
+	<columnFieldProperty name="firma2" />	
+	<columnFieldProperty name="firma3" />		
+	<columnFieldProperty name="firma4" />
+	
+</bulkInfo>

@@ -1,0 +1,68 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.anagraf00.core.bulk.V_terzo_persona_fisicaBulk"
+	homeClassName="it.cnr.contab.anagraf00.core.bulk.V_terzo_persona_fisicaHome" >
+	<defaultColumnMap
+		tableName="V_TERZO_PERSONA_FISICA" >
+		<columnMapping
+			columnName="CODICE_FISCALE"
+			propertyName="codice_fiscale"
+			sqlTypeName="VARCHAR"
+			columnSize="20" />
+		<columnMapping
+			columnName="COGNOME"
+			propertyName="cognome"
+			sqlTypeName="VARCHAR"
+			columnSize="50" />
+		<columnMapping
+			columnName="DT_NASCITA"
+			propertyName="dt_nascita"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7" />
+		<columnMapping
+			columnName="NOME"
+			propertyName="nome"
+			sqlTypeName="VARCHAR"
+			columnSize="50" />
+		<columnMapping
+			columnName="TI_SESSO"
+			propertyName="ti_sesso"
+			sqlTypeName="CHAR"
+			columnSize="1" />
+	</defaultColumnMap>
+
+	<persistentProperty
+		name="codice_fiscale" />
+	<persistentProperty
+		name="cognome" />
+	<persistentProperty
+		name="dt_nascita" />
+	<persistentProperty
+		name="nome" />
+	<persistentProperty
+		name="ti_sesso" />
+
+	<fetchPolicy
+		name="default">
+		<exclude pattern="*" />
+		<include pattern="anagrafico"/>
+		<exclude pattern="anagrafico.*"/>		
+	</fetchPolicy>
+
+</SQLPersistentInfo>

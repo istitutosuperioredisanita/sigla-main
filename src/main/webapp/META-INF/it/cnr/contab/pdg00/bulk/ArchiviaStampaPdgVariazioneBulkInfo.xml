@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd" 
+		shortDescription="Predisposizione Variazioni PdG per Firma Digitale">
+
+	<fieldProperty
+		name="findpdg_variazioneForPrint"
+		property="pdg_variazioneForPrint"
+		inputType="SEARCHTOOL"
+		formName="searchtool_stampa"
+		nullable="false"
+		enabledOnInsert="true"
+        enabledOnEdit="false"
+        enabledOnSearch="true"	
+		readonlyProperty="pdg_variazioneForPrintEnabled"
+		completeOnSave="true"
+		label="Variazione"
+		/>
+
+	<fieldProperty
+		name="pg_variazione_pdg"
+		property="pg_variazione_pdg"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		nullable="false"
+        enabledOnInsert="false"
+        enabledOnEdit="false"
+        enabledOnSearch="true"		
+		label="Numero Variazione" />
+    <fieldProperty
+         name="centro_responsabilita"
+         property="centro_responsabilita"
+         inputType="SEARCHTOOL"
+         formName="searchtool"
+         enabledOnInsert="false"
+         enabledOnEdit="false"
+         enabledOnSearch="true"
+         label="CDR proponente" />		
+	<fieldProperty
+		name="cd_centro_responsabilita"
+		property="centro_responsabilita.cd_centro_responsabilita"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		nullable="false"
+		enabledOnFreeSearch="false"
+		label="CDR proponente" />
+
+	<fieldProperty
+		name="ds_variazione"
+		property="ds_variazione"
+		inputType="TEXTAREA"
+		cols="80"
+		rows="4"
+        enabledOnSearch="true"		
+		maxLength="1000"
+		nullable="false"
+		label="Descrizione" />
+	<fieldProperty
+		name="attivaFile"
+		property="pdg_variazioneForPrint"
+		inputType="BUTTON"
+		enabledOnSearch="false"
+		enabledOnInsert="false"
+		enabledOnView="true"
+		img="img/import24.gif"
+		buttonClass="btn-outline-primary btn-title w-100"
+		iconClass="fa fa-fw fa-cloud-download"
+		href="javascript:doScaricaFile()"
+		label="Apri File" />
+	<fieldProperty
+		name="ti_signed"
+		property="tiSigned"
+		inputType="RADIOGROUP"
+		layout="HORIZONTAL"
+		keysProperty="ti_signedKeys"
+		label="Visualizza" />		
+	<fieldProperty
+		name="ti_signedText"
+		property="tiSignedText"
+		enabledOnSearch="false"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		nullable="false"
+		inputSize="40"
+		inputType="TEXT" />		
+	<fieldProperty
+		name="dt_firma"
+		property="dt_firma"
+		inputType="TEXT"
+        enabledOnInsert="false"
+        enabledOnEdit="false"
+        enabledOnSearch="true"		
+		formatName="date_short"
+		inputSize="8"
+		label="Data firma" />	
+	<formFieldProperty name="findpdg_variazioneForPrint" />
+	
+	<formFieldProperty name="ds_variazione" /> 
+	<formFieldProperty name="attivaFile" />
+	<formFieldProperty name="ti_signed" />
+	<formFieldProperty name="ti_signedText" />
+	<formFieldProperty name="dt_firma" />	
+			
+	<columnFieldProperty
+		name="pg_variazione_pdg"/>
+	<columnFieldProperty
+		name="cd_centro_responsabilita"/>	
+	<columnFieldProperty
+		name="ds_variazione" />
+	<columnFieldProperty 
+		name="dt_firma" />		
+	<findFieldProperty
+		name="pg_variazione_pdg"/>
+	<findFieldProperty
+		name="cd_centro_responsabilita"/>	
+	<findFieldProperty
+		name="ds_variazione" />
+	
+</bulkInfo>

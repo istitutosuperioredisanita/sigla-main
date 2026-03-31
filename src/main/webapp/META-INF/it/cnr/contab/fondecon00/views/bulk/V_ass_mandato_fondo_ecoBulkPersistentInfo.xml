@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.fondecon00.views.bulk.V_ass_mandato_fondo_ecoBulk"
+	homeClassName="it.cnr.contab.fondecon00.views.bulk.V_ass_mandato_fondo_ecoHome" >
+	<defaultColumnMap
+		tableName="V_ASS_MANDATO_FONDO_ECO" >
+
+<!-- Fondo Economale -->
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="fondo.esercizio"
+			fetchOnly="true" />
+		<columnMapping
+			columnName="CD_CODICE_FONDO"
+			propertyName="fondo.cd_codice_fondo" />
+		<columnMapping
+			columnName="CD_UNITA_ORGANIZZATIVA"
+			propertyName="fondo.unita_organizzativa.cd_unita_organizzativa" />
+		<columnMapping
+			columnName="CD_CDS"
+			propertyName="fondo.cd_cds"
+			fetchOnly="true" />
+
+<!-- Mandato -->
+		<columnMapping
+			columnName="PG_MANDATO"
+			propertyName="mandato.pg_mandato" />
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="mandato.esercizio" />
+		<columnMapping
+			columnName="CD_CDS"
+			propertyName="mandato.cds.cd_unita_organizzativa"
+			 />
+
+	</defaultColumnMap>
+
+	<persistentProperty
+		name="fondo" />
+	<persistentProperty
+		name="mandato" />
+
+</SQLPersistentInfo>

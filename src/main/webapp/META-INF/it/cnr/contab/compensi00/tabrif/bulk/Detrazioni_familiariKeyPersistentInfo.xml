@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.compensi00.tabrif.bulk.Detrazioni_familiariKey" >
+	<defaultColumnMap
+		tableName="DETRAZIONI_FAMILIARI" >
+		<columnMapping
+			columnName="TI_PERSONA"
+			propertyName="ti_persona"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="IM_INFERIORE"
+			propertyName="im_inferiore"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="DT_INIZIO_VALIDITA"
+			propertyName="dt_inizio_validita"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="NUMERO"
+			propertyName="numero"
+			sqlTypeName="DECIMAL"
+			columnSize="3"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="ti_persona"
+		partOfOid="true" />
+	<persistentProperty
+		name="im_inferiore"
+		partOfOid="true" />
+	<persistentProperty
+		name="dt_inizio_validita"
+		partOfOid="true" />
+	<persistentProperty
+		name="numero"
+		partOfOid="true" />
+</SQLPersistentInfo>

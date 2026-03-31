@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.doccont00.core.bulk.V_mandato_terzoBulk"
+	homeClassName="it.cnr.contab.doccont00.core.bulk.V_mandato_terzoHome" >
+	<defaultColumnMap
+		tableName="V_MANDATO_TERZO" >
+		<columnMapping
+			columnName="CD_TERZO"
+			propertyName="cd_terzo"
+			sqlTypeName="DECIMAL"
+			columnSize="8"
+			nullable="false"/>
+		<columnMapping
+			columnName="CD_ANAG"
+			propertyName="cd_anag"
+			sqlTypeName="DECIMAL"
+			columnSize="8"
+			nullable="false"/>
+		<columnMapping
+			columnName="DENOMINAZIONE_SEDE"
+			propertyName="denominazione_sede"
+			sqlTypeName="VARCHAR"
+			columnSize="200"/>
+	</defaultColumnMap>
+	<persistentProperty
+		name="cd_terzo"/>		
+	<persistentProperty
+		name="cd_anag" />
+	<persistentProperty
+		name="denominazione_sede" />
+</SQLPersistentInfo>

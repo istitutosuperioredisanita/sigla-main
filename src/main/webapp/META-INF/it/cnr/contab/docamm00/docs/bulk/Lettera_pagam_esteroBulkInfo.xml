@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="cd_cds"
+		property="cd_cds"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="Cds" />
+	<fieldProperty
+		name="cd_unita_organizzativa"
+		property="cd_unita_organizzativa"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="UO" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="ROTEXT"
+		label="Esercizio" />
+	<fieldProperty
+		name="im_commissioni"
+		property="im_commissioni"
+		inputType="TEXT"
+		formatName="it.cnr.contab.util.EuroPositivoFormat"
+		nullable="false"
+		label="Commissioni" />
+	<fieldProperty
+		name="divisa"
+		property="divisa"
+		inputType="TEXT"
+		nullable="false"
+		label="Divisa"/>		
+	<fieldProperty
+		name="im_pagamento"
+		property="im_pagamento"
+		inputType="TEXT"
+		formatName="it.cnr.contab.util.EuroPositivoFormat"
+		enabledOnEdit="false"
+		enabledOnFreeSearch="true"
+		nullable="false"
+		label="Importo" />
+	<fieldProperty
+		name="pg_lettera"
+		property="pg_lettera"
+		inputType="TEXT"
+		label="N. lettera" />
+	<fieldProperty
+		name="dt_registrazione"
+		property="dt_registrazione"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="10"
+		formatName="date_short"
+		nullable="false"
+		label="Data registrazione" />
+	<fieldProperty
+		name="cd_sospeso"
+		property="sospeso.cd_sospeso_padre"
+		inputType="TEXT"
+		maxLength="24"
+		inputSize="10"
+		readonlyProperty="ROSospeso"
+		label="N. sospeso"
+		nullable="false"
+		enabledOnSearch="true"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="esercizio_sospeso"
+		property="sospeso.esercizio"
+		inputType="ROTEXT"
+		label="Esercizio sospeso" />
+	<fieldProperty
+		name="cd_cds_sospeso"
+		property="sospeso.cd_cds"
+		inputType="ROTEXT"
+		label="Cds sospeso" />
+	<fieldProperty
+		name="ti_entrata_spesa"
+		property="sospeso.ti_entrata_spesa"
+		keysProperty="tipo_sospesoKeys"
+		inputType="ROTEXT"
+		label="Tipo sospeso" />
+	<fieldProperty
+		name="sospeso"
+		property="sospeso"
+		inputType="SEARCHTOOL"
+		formName="searchtool"
+		readonlyProperty="ROSospesoSearchTool"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		completeOnSave="false"
+		label="Sospeso"/>
+	<fieldProperty
+		name="stato_trasmissione"
+		property="stato_trasmissione"
+		maxLength="1"
+		inputSize="1"
+		inputType="SELECT"
+		keysProperty="stato_trasmissioneKeys"
+		label="Stato trasmissione"
+		nullable="false"
+		enabledOnFreeSearch="false"
+		caseSensitiveSearch="false"/>
+	<fieldProperty
+		name="esercizio_distinta"
+		property="esercizio_distinta"
+		inputType="TEXT"
+		label="Es. Distinta" />
+	<fieldProperty
+		name="pg_distinta"
+		property="pg_distinta"
+		inputType="TEXT"
+		label="N. Distinta" />
+	<fieldProperty
+		name="dt_cancellazione"
+		property="dt_cancellazione"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="10"
+		formatName="date_short"
+		label="Data cancellazione" />
+	<fieldProperty
+		name="motivo_pag"
+		property="motivo_pag"
+		maxLength="250"
+		inputSize="100"
+		inputType="TEXT"
+		label="MOTIVO DEL PAGAMENTO"
+		nullable="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		caseSensitiveSearch="false"/>
+	<fieldProperty
+		name="istruzioni_speciali_1"
+		property="istruzioni_speciali_1"
+		inputType="TEXT"
+		maxLength="250"
+		inputSize="100"
+		label="Istruzioni Speciali - Primo" />
+	<fieldProperty
+		name="istruzioni_speciali_2"
+		property="istruzioni_speciali_2"
+		inputType="TEXT"
+		maxLength="250"
+		inputSize="100"
+		label="Istruzioni Speciali - Secondo" />
+	<fieldProperty
+		name="istruzioni_speciali_3"
+		property="istruzioni_speciali_3"
+		inputType="TEXT"
+		maxLength="250"
+		inputSize="100"
+		label="Istruzioni Speciali - Terzo" />
+
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="im_commissioni" />
+	<formFieldProperty
+		name="im_pagamento" />
+	<formFieldProperty
+		name="pg_lettera" />
+	<formFieldProperty
+		name="dt_registrazione" />
+	<formFieldProperty
+		name="cd_sospeso" />
+	<formFieldProperty
+		name="esercizio_sospeso" />
+	<formFieldProperty
+		name="cd_cds_sospeso" />
+	<formFieldProperty
+		name="ti_entrata_spesa" />
+	<formFieldProperty
+		name="sospeso" />
+	<formFieldProperty
+		name="stato_trasmissione" />
+	<formFieldProperty
+		name="motivo_pag" />
+	<formFieldProperty
+		name="istruzioni_speciali_1" />
+	<formFieldProperty
+		name="istruzioni_speciali_2" />
+	<formFieldProperty
+		name="istruzioni_speciali_3" />
+
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="im_commissioni" />
+	<columnFieldProperty
+		name="divisa" />		
+	<columnFieldProperty
+		name="im_pagamento" />
+	<columnFieldProperty
+		name="pg_lettera" />
+	<columnFieldProperty
+		name="dt_registrazione" />
+	<columnFieldProperty
+		name="cd_sospeso" />
+	<columnFieldProperty
+		name="esercizio_sospeso" />
+	<columnFieldProperty
+		name="cd_cds_sospeso" />
+	<columnFieldProperty
+		name="ti_entrata_spesa" />
+
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="cd_cds"/>
+	<findFieldProperty
+		name="cd_unita_organizzativa"/>					
+	<findFieldProperty
+		name="im_commissioni" />
+	<findFieldProperty
+		name="im_pagamento" />
+	<findFieldProperty
+		name="pg_lettera" />
+	<findFieldProperty
+		name="stato_trasmissione" />	
+	<findFieldProperty
+		name="dt_registrazione" />
+	<findFieldProperty
+		name="cd_sospeso" />
+	<findFieldProperty
+		name="esercizio_sospeso" />
+	<findFieldProperty
+		name="cd_cds_sospeso" />
+	<findFieldProperty
+		name="ti_entrata_spesa" />
+	<findFieldProperty
+		name="sospeso" />
+	<findFieldProperty
+		name="esercizio_distinta" />
+	<findFieldProperty
+		name="pg_distinta" />
+	<findFieldProperty
+		name="motivo_pag" />
+
+	<columnSet
+        name="firmaBase">
+		<columnFieldProperty
+			name="esercizio" />
+		<columnFieldProperty
+			name="cd_cds"/>
+		<columnFieldProperty
+			name="cd_unita_organizzativa"/>				
+		<columnFieldProperty
+			name="pg_lettera" />					
+		<columnFieldProperty
+			name="im_commissioni" />
+		<columnFieldProperty
+			name="divisa" />		
+		<columnFieldProperty
+			name="im_pagamento" />
+		<columnFieldProperty
+			name="dt_registrazione" />
+		<columnFieldProperty
+			name="dt_cancellazione" />	
+	</columnSet>	
+	<columnSet
+        name="firmaPredisposta">
+		<columnFieldProperty
+			name="esercizio" />
+		<columnFieldProperty
+			name="cd_cds"/>
+		<columnFieldProperty
+			name="cd_unita_organizzativa"/>				
+		<columnFieldProperty
+			name="pg_lettera" />		
+		<columnFieldProperty
+			name="im_commissioni" />
+		<columnFieldProperty
+			name="divisa" />		
+		<columnFieldProperty
+			name="im_pagamento" />
+		<columnFieldProperty
+			name="dt_registrazione" />
+		<columnFieldProperty
+			name="dt_cancellazione" />	
+		<columnFieldProperty
+			name="documento"
+			property="documento"
+			inputType="TEXT"
+			label="documento" />				
+	</columnSet>	
+	<columnSet
+        name="firmaEseguita">
+		<columnFieldProperty
+			name="esercizio" />
+		<columnFieldProperty
+			name="cd_cds"/>
+		<columnFieldProperty
+			name="cd_unita_organizzativa"/>				
+		<columnFieldProperty
+			name="pg_lettera" />		
+		<columnFieldProperty
+			name="im_commissioni" />
+		<columnFieldProperty
+			name="divisa" />				
+		<columnFieldProperty
+			name="im_pagamento" />
+		<columnFieldProperty
+			name="dt_registrazione" />
+		<columnFieldProperty
+			name="dt_cancellazione" />
+		<columnFieldProperty
+			name="documento"
+			property="documento"
+			inputType="TEXT"
+			label="Documento" />				
+		<columnFieldProperty
+			name="dt_firma"
+			property="dt_firma"
+			inputType="TEXT"
+			label="Data di Firma" />
+	</columnSet>
+	<columnSet
+        name="all">
+		<columnFieldProperty
+			name="stato_trasmissione" />	    		
+		<columnFieldProperty
+			name="esercizio" />
+		<columnFieldProperty
+			name="cd_cds"/>
+		<columnFieldProperty
+			name="cd_unita_organizzativa"/>				
+		<columnFieldProperty
+			name="pg_lettera" />		
+		<columnFieldProperty
+			name="im_commissioni" />
+		<columnFieldProperty
+			name="divisa" />				
+		<columnFieldProperty
+			name="im_pagamento" />
+		<columnFieldProperty
+			name="dt_registrazione" />
+		<columnFieldProperty
+			name="dt_cancellazione" />
+		<columnFieldProperty
+			name="dt_firma"
+			property="dt_firma"
+			inputType="TEXT"
+			label="Data di Firma" />		
+		<columnFieldProperty
+			name="esercizio_distinta" />
+		<columnFieldProperty
+			name="pg_distinta" />		
+		<columnFieldProperty
+			name="documento"
+			property="documento"
+			inputType="TEXT"
+			label="Documento" />				
+	</columnSet>		
+</bulkInfo>

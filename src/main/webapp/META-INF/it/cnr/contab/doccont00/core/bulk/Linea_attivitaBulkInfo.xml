@@ -1,0 +1,207 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="find_linea_attivita"
+		property="linea_att"
+		inputType="SEARCHTOOL"
+		CRUDBusinessProcessName="CRUDLinea_attivitaBP"
+		columnSet="prg_liv2"
+		enabledOnSearch="true" />
+	<fieldProperty
+		name="crea_linea_attivita"
+		property="linea_att"
+		inputType="CRUDTOOL"
+		CRUDBusinessProcessName="CRUDLinea_attivitaBP"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="cd_funzione"
+		property="linea_att.funzione.cd_funzione"
+		label="Funzione"
+		inputType="TEXT"
+		inputSize="2" />
+	<fieldProperty
+		name="cd_natura"
+		property="linea_att.natura.cd_natura"
+		label="Natura"
+		inputType="TEXT"
+		inputSize="2" />
+	<fieldProperty
+		name="cd_linea_attivita"
+		property="linea_att.cd_linea_attivita"
+		maxLength="10"
+		inputSize="5"
+		inputType="TEXT"
+		readonlyProperty="ROcd_linea_attivita"		
+		label="Codice GAE"
+		caseSensitiveSearch="false"
+		 />
+	<fieldProperty
+		name="cd_progetto"
+		property="linea_att.progetto.cd_progetto"
+		maxLength="30"
+		inputSize="5"
+		inputType="TEXT"
+		readonlyProperty="ROcd_linea_attivita"		
+		label="Modulo di Attivita'"
+		caseSensitiveSearch="false"
+		 />		 
+	<fieldProperty
+		name="cd_centro_responsabilita"
+		property="linea_att.centro_responsabilita.cd_centro_responsabilita"
+		maxLength="30"
+		inputSize="7"
+		inputType="TEXT"
+		readonlyProperty="ROcd_linea_attivita"
+		label="CdR"/>
+	<fieldProperty
+		name="ds_linea_attivita"
+		property="linea_att.denominazione"
+		maxLength="100"
+		inputSize="15"
+		inputType="TEXT"
+		label="Descrizione"
+		caseSensitiveSearch="false"
+		enabledOnSearch="true" />
+	<fieldProperty
+		name="prcImputazioneFin"
+		property="prcImputazioneFin"
+		label="%"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="5"
+		formatName = "it.cnr.contab.util.PercentFormat"
+		readonlyProperty="ROPrcImputazioneFin"
+		/>
+
+	<formFieldProperty
+		name="cd_linea_attivita"
+		/>
+	<formFieldProperty
+		name="cd_progetto"
+		/>		
+	<formFieldProperty
+		name="cd_centro_responsabilita"
+		/>
+	<formFieldProperty
+		name="prcImputazioneFin"
+		/>
+	<formFieldProperty
+		name="crea_linea_attivita"
+		/>
+		
+	<columnFieldProperty
+		name="cd_linea_attivita"
+		/>
+	<columnFieldProperty
+		name="cd_centro_responsabilita"
+		/>
+	<columnFieldProperty
+		name="ds_linea_attivita"
+		/>
+	<columnFieldProperty
+		name="cd_funzione"
+		/>
+	<columnFieldProperty
+		name="cd_natura"
+		/>
+	<columnFieldProperty
+		name="prcImputazioneFin"
+		/>
+
+	<columnSet
+		name="latt">
+		<columnFieldProperty
+			name="find_linea_attivita"
+			/>
+		<columnFieldProperty
+			name="crea_linea_attivita"
+			/>
+		<columnFieldProperty
+			name="cd_progetto"
+			enabledOnEdit="true"
+			enabledOnInsert="true"			
+			/>			
+		<columnFieldProperty
+			name="cd_linea_attivita"
+			enabledOnEdit="true"
+			enabledOnInsert="true"			
+			/>
+		<columnFieldProperty
+			name="cd_centro_responsabilita"
+			enabledOnEdit="true"
+			enabledOnInsert="true"						
+			/>
+		<columnFieldProperty
+			name="ds_linea_attivita"
+			enabledOnEdit="false"
+			/>
+		<columnFieldProperty
+			name="prcImputazioneFin"
+			headerStyle="text-align: center"
+			columnStyle="text-align: right"
+			enabledOnEdit="true"
+			enabledOnInsert="true"			
+			/>		
+		<columnFieldProperty
+			name="cd_funzione"
+			enabledOnEdit="false"
+			/>
+		<columnFieldProperty
+			name="cd_natura"
+			enabledOnEdit="false"
+			/>	
+	</columnSet>
+
+	<columnSet
+		name="lattNuovoPdg">
+		<columnFieldProperty
+			name="find_linea_attivita"	/>
+		<columnFieldProperty
+			name="cd_centro_responsabilita"
+			enabledOnEdit="true"
+			enabledOnInsert="true" />
+		<columnFieldProperty
+			name="cd_progetto"
+			enabledOnEdit="true"
+			enabledOnInsert="true"
+			label="Progetto" />			
+		<columnFieldProperty
+			name="cd_linea_attivita"
+			enabledOnEdit="true"
+			enabledOnInsert="true" />
+		<columnFieldProperty
+			name="ds_linea_attivita"
+			enabledOnEdit="false" />
+		<columnFieldProperty
+			name="prcImputazioneFin"
+			headerStyle="text-align: center"
+			columnStyle="text-align: right"
+			enabledOnEdit="true"
+			enabledOnInsert="true" />		
+		<columnFieldProperty
+			name="cd_natura"
+			enabledOnEdit="false"
+			/>	
+	</columnSet>		
+</bulkInfo>

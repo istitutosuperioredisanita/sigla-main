@@ -1,0 +1,371 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="find_unita_padre"
+		property="unita_padre"
+		inputType="SEARCHTOOL" 
+		formName="searchtool"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="cd_unita_organizzativa"
+		property="unita_padre.cd_unita_organizzativa"
+		readonlyProperty="ROUnita_padre"
+		label="Codice UO"
+		inputType="TEXT"
+		maxLength="30"
+		inputSize="6"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		/>
+	<fieldProperty
+		name="ds_unita_padre"
+		property="unita_padre.ds_unita_organizzativa"
+		readonlyProperty="ROUnita_padre"
+		label=""
+		inputSize="30"
+		inputType="ROTEXT" 
+		/>
+	<fieldProperty
+		name="crea_unita_padre"
+		property="unita_padre"
+		inputType="CRUDTOOL" 
+		CRUDBusinessProcessName="CRUDConfigUnitaOrgBP"
+		/>
+	<fieldProperty
+		name="find_responsabile"
+		property="responsabile"
+		inputType="SEARCHTOOL" 
+		formName="searchtool"
+		CRUDBusinessProcessName="CRUDAnagraficaPersonaBP"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="cd_responsabile"
+		property="responsabile.cd_terzo"
+		readonlyProperty="ROResponsabile"
+		label="Responsabile"
+		inputType="TEXT"
+		maxLength="8"
+		inputSize="6"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="ds_responsabile"
+		property="ds_responsabile"
+		readonlyProperty="ROResponsabile"
+		label=""
+		inputSize="30"
+		inputType="ROTEXT" 	
+		/>
+	<fieldProperty
+		name="crea_responsabile"
+		property="responsabile"
+		inputType="CRUDTOOL"
+		CRUDBusinessProcessName="CRUDAnagraficaPersonaBP"
+		/>
+	<fieldProperty
+		name="cd_cdr_afferenza"
+		property="cd_cdr_afferenza"
+		label="CDR Afferenza"
+		inputType="ROTEXT"
+		inputSize="10"
+		maxLength="30"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="cd_centro_responsabilita"
+		property="cd_centro_responsabilita"
+		label="Codice completo CDR"
+		inputType="ROTEXT"
+		inputSize="10"
+		maxLength="30"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="searchtool_cd_centro_responsabilita"
+		property="cd_centro_responsabilita"
+		label="Codice completo CDR"
+		inputType="TEXT"
+		inputSize="6"
+		maxLength="30"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="cd_proprio_cdr"
+		property="cd_proprio_cdr"
+		label="Codice proprio CDR"
+		inputType="TEXT"
+		inputSize="6"
+		maxLength="30"
+		enabledOnSearch="true"
+		/>
+
+	<fieldProperty
+		name="ds_cdr"
+		property="ds_cdr"
+		label="Descrizione"
+		inputType="TEXTAREA"
+		inputCssClass="w-100"
+		cols="70"
+		rows="5"
+		inputSize="250"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="searchtool_ds_cdr"
+		property="ds_cdr"
+		label="Descrizione"
+		inputType="TEXT"
+		inputSize="30"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="esercizio_inizio"
+		property="esercizio_inizio"
+		label="Esercizio di creazione"
+		inputType="TEXT"
+		maxLength="4"
+		inputSize="6"
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true" 
+		/>
+	<fieldProperty
+		name="indirizzo"
+		property="indirizzo"
+		label="Indirizzo"
+		inputType="TEXTAREA"
+		inputCssClass="w-100"
+		maxLength="200"
+		inputSize="100"
+		rows="3"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="livello"
+		property="livello"
+		label="Livello"
+		inputType="ROTEXT"
+		maxLength="2"
+		inputSize="2"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="esercizio_fine"
+		property="esercizio_fine"
+		label="Esercizio di terminazione"
+		inputType="TEXT"
+		maxLength="4"
+		inputSize="4"
+		enabledOnSearch="true"
+		/>
+
+	<fieldProperty
+		name="cd_cdr_ro"
+		property="cd_centro_responsabilita"
+		label="Centro di Responsabilit&#224;"
+		inputCssClass=" w-10 "
+		inputType="ROTEXT"
+		inputSize="10"
+		maxLength="30"
+		enabledOnSearch="true"
+		/>
+	<fieldProperty
+		name="ds_cdr_ro"
+		property="ds_cdr"
+		inputType="ROTEXT"
+		inputSize="70"
+		maxLength="30"
+		enabledOnSearch="true"
+		/>
+
+	<columnFieldProperty
+		name="cd_centro_responsabilita"
+		/>
+	<columnFieldProperty
+		name="ds_cdr"
+		/>
+	<columnFieldProperty
+		name="esercizio_inizio"
+		/>
+	<columnFieldProperty
+		name="cd_cdr_afferenza"
+		/>
+	<columnFieldProperty
+		name="cd_responsabile"
+		/>
+	<columnFieldProperty
+		name="indirizzo"
+		/>
+	<columnFieldProperty
+		name="livello"
+		/>
+	<columnFieldProperty
+		name="esercizio_fine"
+		/>
+
+	<columnSet
+		name="cdr">
+		<columnFieldProperty
+			name="cd_centro_responsabilita" />
+		<columnFieldProperty
+			name="ds_cdr"
+			/>
+	</columnSet>
+
+	<columnSet
+		name="scrivania">
+		<columnFieldProperty
+			name="cd_centro_responsabilita" />
+		<columnFieldProperty
+			name="ds_cdr"
+			/>
+	</columnSet>
+
+	<columnSet name="restService" >
+		<columnFieldProperty name="cd_centro_responsabilita"/>
+		<columnFieldProperty name="ds_cdr"/>
+		<columnFieldProperty name="cd_unita_organizzativa"/>
+		<columnFieldProperty name="cd_responsabile"/>
+	</columnSet>
+
+	<form
+		name="searchtool" >
+		<formFieldProperty
+			name="searchtool_cd_centro_responsabilita" 
+			inputSize="10"
+			inputCssClass="w-20 "/>		    
+		<formFieldProperty
+			name="searchtool_ds_cdr"
+			inputSize="30" />
+	</form>
+	
+	<form
+		name="searchtool_login" >
+		<formFieldProperty
+			name="searchtool_cd_centro_responsabilita" 
+			inputSize="10"/>		    
+		<formFieldProperty
+			name="searchtool_ds_cdr"
+			inputType="ROTEXT"
+			enabledOnSearch="false"
+			inputSize="76" />
+	</form>
+
+	<formFieldProperty
+		name="searchtool_cd_centro_responsabilita" />
+	<formFieldProperty
+		name="searchtool_ds_cdr" />
+		
+	<formFieldProperty
+		name="cd_cdr_afferenza"
+		/>
+	<formFieldProperty
+		name="find_unita_padre"
+		/>
+	<formFieldProperty
+		name="crea_unita_padre"
+		/>
+	<formFieldProperty
+		name="ds_unita_padre"
+		/>
+	<formFieldProperty
+		name="find_responsabile"
+		/>
+	<formFieldProperty
+		name="crea_responsabile"
+		/>
+	<formFieldProperty
+		name="ds_responsabile"
+		/>
+	<formFieldProperty
+		name="cd_centro_responsabilita"
+		/>
+	<formFieldProperty
+		name="cd_proprio_cdr"
+		/>
+	<formFieldProperty
+		name="cd_responsabile"
+		/>
+	<formFieldProperty
+		name="cd_unita_organizzativa"
+		/>
+	<formFieldProperty
+		name="ds_cdr"
+		/>
+	<formFieldProperty
+		name="esercizio_inizio"
+		/>
+	<formFieldProperty
+		name="indirizzo"
+		/>
+	<formFieldProperty
+		name="livello"
+		/>
+	<formFieldProperty
+		name="esercizio_fine"
+		/>
+	<formFieldProperty
+		name="cd_cdr_ro"
+		/>
+	<formFieldProperty
+		name="ds_cdr_ro"
+		/>
+
+	<findFieldProperty
+		name="cd_cdr_afferenza"
+		inputType="TEXT"
+		/>
+	<findFieldProperty
+		name="cd_centro_responsabilita"
+		inputType="TEXT"
+		/>
+	<findFieldProperty
+		name="cd_proprio_cdr"
+		/>
+	<findFieldProperty
+		name="cd_responsabile"
+		/>
+	<findFieldProperty
+		name="cd_unita_organizzativa"
+		/>
+	<findFieldProperty
+		name="ds_cdr"
+		/>
+	<findFieldProperty
+		name="esercizio_inizio"
+		/>
+	<findFieldProperty
+		name="indirizzo"
+		/>
+	<findFieldProperty
+		name="livello"
+		inputType="TEXT"
+		/>
+	<findFieldProperty
+		name="esercizio_fine"
+		/>
+
+
+</bulkInfo>

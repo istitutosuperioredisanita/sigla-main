@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.doccont00.core.bulk.MandatoAccreditamento_siopeBulk"
+	homeClassName="it.cnr.contab.doccont00.core.bulk.MandatoAccreditamento_siopeHome" >
+	<defaultColumnMap
+		tableName="MANDATO_SIOPE" >
+		<columnMapping
+			columnName="CD_CDS"
+			propertyName="mandatoAccreditamento_riga.mandatoAccreditamento.cds.cd_unita_organizzativa" />
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="mandatoAccreditamento_riga.mandatoAccreditamento.esercizio" />
+		<columnMapping
+			columnName="PG_MANDATO"
+			propertyName="mandatoAccreditamento_riga.mandatoAccreditamento.pg_mandato" />
+		<columnMapping
+			columnName="ESERCIZIO_OBBLIGAZIONE"
+			propertyName="mandatoAccreditamento_riga.impegno.esercizio" />
+		<columnMapping
+			columnName="ESERCIZIO_ORI_OBBLIGAZIONE"
+			propertyName="mandatoAccreditamento_riga.impegno.esercizio_originale" />
+		<columnMapping
+			columnName="PG_OBBLIGAZIONE"
+			propertyName="mandatoAccreditamento_riga.impegno.pg_obbligazione" />
+		<columnMapping
+			columnName="PG_OBBLIGAZIONE_SCADENZARIO"
+			propertyName="mandatoAccreditamento_riga.impegno.pg_obbligazione_scadenzario" />
+		<columnMapping
+			columnName="CD_CDS_DOC_AMM"
+			propertyName="mandatoAccreditamento_riga.cd_cds_doc_amm" />
+		<columnMapping
+			columnName="CD_UO_DOC_AMM"
+			propertyName="mandatoAccreditamento_riga.cd_uo_doc_amm" />
+		<columnMapping
+			columnName="ESERCIZIO_DOC_AMM"
+			propertyName="mandatoAccreditamento_riga.esercizio_doc_amm" />
+		<columnMapping
+			columnName="CD_TIPO_DOCUMENTO_AMM"
+			propertyName="mandatoAccreditamento_riga.cd_tipo_documento_amm" />
+		<columnMapping
+			columnName="PG_DOC_AMM"
+			propertyName="mandatoAccreditamento_riga.pg_doc_amm" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="mandatoAccreditamento_riga"
+		partOfOid="true" />
+</SQLPersistentInfo>

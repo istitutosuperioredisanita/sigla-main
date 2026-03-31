@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="cds"
+		property="cds"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		label="CdS" />
+	<fieldProperty
+		name="uo"
+		property="uo"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		label="Unità Organizzativa" />
+	<fieldProperty
+		name="esercizio"
+		property="esercizio"
+		inputType="TEXT"
+		inputSize="22"
+		maxLength="22"
+		label="Esercizio" />
+	<fieldProperty
+		name="esercizio_originale"
+		property="esercizio_originale"
+		inputType="TEXT"
+		inputSize="22"
+		maxLength="22"
+		label="Esercizio Origine" />
+	<fieldProperty
+		name="pg_obbl"
+		property="pg_obbl"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		label="Prog. Impegno" />
+	<fieldProperty
+		name="pg_obbl_scad"
+		property="pg_obbl_scad"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		label="Prog. Scadenzario" />	
+	<fieldProperty
+		name="voce_bilancio"
+		property="voce_bilancio"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		label="Voce di Bilancio" />	
+	<fieldProperty
+		name="data_scad"
+		property="data_scad"
+		inputType="TEXT"
+		formatName="date_short"
+		label="Data Scadenza" />
+	<fieldProperty
+		name="ds_obbl"
+		property="ds_obbl"
+		inputType="TEXT"
+		maxLength="300"
+		inputSize="50"
+		label="Descrizione"/>	
+	<fieldProperty
+		name="ds_scad"
+		property="ds_scad"
+		inputType="TEXT"
+		maxLength="300"
+		inputSize="50"
+		label="Desc. scadenza"/>	
+	<fieldProperty
+		name="im_scad"
+		property="im_scad"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"	
+		maxLength="16"
+		inputSize="16"
+		label="Importo Scadenza" />
+	<fieldProperty
+		name="im_ass_doc_amm"
+		property="im_ass_doc_amm"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"	
+		maxLength="16"
+		inputSize="16"
+		label="Importo Associato a Doc. Amm." />
+	<fieldProperty
+		name="imp_ass_doc_cont"
+		property="imp_ass_doc_cont"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"	
+		maxLength="16"
+		inputSize="16"
+		label="Importo Associato a Doc. Cont." />
+	<fieldProperty
+		name="creditore"
+		property="creditore"
+		inputType="TEXT"
+		maxLength="300"
+		inputSize="50"
+		label="Denominazione"/>
+	<fieldProperty
+		name="ds_elemento_voce"
+		property="ds_elemento_voce"
+		label="Descrizione Voce"
+		inputType="TEXT"
+		maxLength="300"
+		inputSize="60"
+		enabledOnSearch="true"/>
+	<fieldProperty
+		name="imp_ordine"
+		property="imp_ordine"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		maxLength="16"
+		inputSize="16"
+		label="Ordini associati" />
+	<fieldProperty
+		name="imp_evaso"
+		property="imp_evaso"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		maxLength="16"
+		inputSize="16"
+		label="Di cui evaso" />
+	<fieldProperty
+		name="imp_ass_fattura"
+		property="imp_ass_fattura"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		maxLength="16"
+		inputSize="16"
+		label="Di cui fatturato" />
+	<fieldProperty
+		name="imp_ass_doc_amm"
+		property="imp_ass_doc_amm"
+		inputType="TEXT"
+		formatName = "it.cnr.contab.util.EuroFormat"
+		maxLength="16"
+		inputSize="16"
+		label="Altri documenti amministrativi associati" />
+
+	<formFieldProperty
+		name="cds" />
+	<formFieldProperty
+		name="uo" />
+	<formFieldProperty
+		name="esercizio" />
+	<formFieldProperty
+		name="esercizio_originale" />
+	<formFieldProperty
+		name="pg_obbl" />
+	<formFieldProperty
+		name="pg_obbl_scad" />
+	<formFieldProperty
+		name="voce_bilancio" />
+	<formFieldProperty
+		name="data_scad" />
+	<formFieldProperty
+		name="ds_obbl" />	
+	<formFieldProperty
+		name="ds_scad" />
+	<formFieldProperty
+		name="im_scad" />
+	<formFieldProperty
+		name="im_ass_doc_amm" />
+	<formFieldProperty
+		name="imp_ass_doc_cont" />
+	<formFieldProperty
+		name="creditore" />
+	<formFieldProperty
+			name="ds_elemento_voce" />
+		
+	<findFieldProperty
+		name="cds" />
+	<findFieldProperty
+		name="uo" />
+	<findFieldProperty
+		name="esercizio" />
+	<findFieldProperty
+		name="esercizio_originale" />
+	<findFieldProperty
+		name="pg_obbl" />
+	<findFieldProperty
+		name="pg_obbl_scad" />
+	<findFieldProperty
+		name="voce_bilancio" />
+	<findFieldProperty
+		name="data_scad" />
+	<findFieldProperty
+		name="ds_obbl" />	
+	<findFieldProperty
+		name="ds_scad" />
+	<findFieldProperty
+		name="im_scad" />
+	<findFieldProperty
+		name="im_ass_doc_amm" />
+	<findFieldProperty
+		name="imp_ass_doc_cont" />
+	<findFieldProperty
+		name="creditore" />
+		
+		
+	<columnFieldProperty
+		name="cds" />
+	<columnFieldProperty
+		name="uo" />
+	<columnFieldProperty
+		name="esercizio" />
+	<columnFieldProperty
+		name="esercizio_originale" />
+	<columnFieldProperty
+		name="pg_obbl" />
+	<columnFieldProperty
+		name="pg_obbl_scad" />
+	<columnFieldProperty
+		name="voce_bilancio" />
+	<columnFieldProperty
+		name="ds_elemento_voce"/>
+	<columnFieldProperty
+		name="data_scad" />
+	<columnFieldProperty
+		name="ds_obbl" />	
+	<columnFieldProperty
+		name="ds_scad" />
+	<columnFieldProperty
+		name="im_scad" />
+	<columnFieldProperty
+		name="im_ass_doc_amm" />
+	<columnFieldProperty
+		name="imp_ass_doc_cont" />
+	<columnFieldProperty
+		name="creditore" />
+
+	<columnSet name="anno_corrente">
+		<columnFieldProperty
+				name="cds" />
+		<columnFieldProperty
+				name="uo" />
+		<columnFieldProperty
+				name="esercizio" />
+		<columnFieldProperty
+				name="esercizio_originale" />
+		<columnFieldProperty
+				name="pg_obbl" />
+		<columnFieldProperty
+				name="pg_obbl_scad" />
+		<columnFieldProperty
+				name="voce_bilancio" />
+		<columnFieldProperty
+				name="ds_elemento_voce"/>
+		<columnFieldProperty
+				name="data_scad" />
+		<columnFieldProperty
+				name="ds_obbl" />
+		<columnFieldProperty
+				name="ds_scad" />
+		<columnFieldProperty
+				name="im_scad" />
+		<columnFieldProperty
+				name="imp_ordine" />
+		<columnFieldProperty
+				name="imp_evaso" />
+		<columnFieldProperty
+				name="imp_ass_fattura" />
+		<columnFieldProperty
+				name="imp_ass_doc_amm" />
+		<columnFieldProperty
+				name="im_ass_doc_amm"
+				label="Totale documenti amministrativi associati"/>
+		<columnFieldProperty
+				name="imp_ass_doc_cont" />
+		<columnFieldProperty
+				name="creditore" />
+	</columnSet>
+
+	<freeSearchSet name="anno_corrente">
+		<findFieldProperty
+				name="cds" />
+		<findFieldProperty
+				name="uo" />
+		<findFieldProperty
+				name="esercizio" />
+		<findFieldProperty
+				name="esercizio_originale" />
+		<findFieldProperty
+				name="pg_obbl" />
+		<findFieldProperty
+				name="pg_obbl_scad" />
+		<findFieldProperty
+				name="voce_bilancio" />
+		<findFieldProperty
+				name="data_scad" />
+		<findFieldProperty
+				name="ds_obbl" />
+		<findFieldProperty
+				name="ds_scad" />
+		<findFieldProperty
+				name="im_scad" />
+		<findFieldProperty
+				name="imp_ordine" />
+		<findFieldProperty
+				name="imp_evaso" />
+		<findFieldProperty
+				name="imp_ass_fattura" />
+		<findFieldProperty
+				name="imp_ass_doc_amm" />
+		<findFieldProperty
+				name="im_ass_doc_amm"
+				label="Totale documenti amministrativi associati"/>
+		<findFieldProperty
+				name="imp_ass_doc_cont" />
+		<findFieldProperty
+				name="creditore" />
+	</freeSearchSet>
+</bulkInfo>

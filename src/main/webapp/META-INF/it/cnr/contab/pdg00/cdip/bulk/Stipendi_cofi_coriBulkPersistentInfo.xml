@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriBulk"
+	homeClassName="it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofi_coriHome" >
+	<defaultColumnMap
+		tableName="STIPENDI_COFI_CORI" >
+		<columnMapping
+			columnName="ESERCIZIO"
+			propertyName="stipendi_cofi.esercizio" />
+		<columnMapping
+			columnName="MESE"
+			propertyName="stipendi_cofi.mese"/>	
+	</defaultColumnMap>
+
+	<persistentProperty
+		name="stipendi_cofi"
+		partOfOid="true" />
+	<columnMap
+			name="V_STIPENDI_COFI_CORI_CONTRIBUTO_RITENUTA"
+			tableName="STIPENDI_COFI_CORI"
+			extends="default">
+		<columnMapping
+			columnName="TIPO_CONTRIBUTO_RITENUTA.DS_CONTRIBUTO_RITENUTA"
+			propertyName="ds_contributo_ritenuta"
+			sqlTypeName="VARCHAR"
+			columnSize="100"/>
+		<columnMapping
+			columnName="TIPO_CONTRIBUTO_RITENUTA.CD_CLASSIFICAZIONE_CORI"
+			propertyName="cd_classificazione_cori"
+			sqlTypeName="VARCHAR"
+			columnSize="2"/>
+	</columnMap>
+	<persistentProperty
+		name="ds_contributo_ritenuta"/>
+	<persistentProperty
+		name="cd_classificazione_cori" />
+
+</SQLPersistentInfo>

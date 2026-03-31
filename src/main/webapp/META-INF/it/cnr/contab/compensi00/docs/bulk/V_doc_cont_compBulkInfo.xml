@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="cd_cds_compenso"
+		property="cd_cds_compenso"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="CDS compenso"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="cd_uo_compenso"
+		property="cd_uo_compenso"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="UO compenso"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="esercizio_compenso"
+		property="esercizio_compenso"
+		inputType="TEXT"
+		label="Esercizio Compenso" />
+	<fieldProperty
+		name="pg_compenso"
+		property="pg_compenso"
+		inputType="TEXT"
+		label="Progr. compenso" />
+
+	<fieldProperty
+		name="cd_cds_doc_cont"
+		property="cd_cds_doc_cont"
+		maxLength="30"
+		inputSize="30"
+		inputType="TEXT"
+		label="CDS"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="esercizio_doc_cont"
+		property="esercizio_doc_cont"
+		inputType="TEXT"
+		label="Esercizio" />
+	<fieldProperty
+		name="pg_doc_cont"
+		property="pg_doc_cont"
+		inputType="TEXT"
+		label="Progressivo" />
+	<fieldProperty
+		name="ds_doc_cont"
+		property="ds_doc_cont"
+		inputType="TEXT"
+		label="Descrizione" />
+	<fieldProperty
+		name="tipo_doc_cont"
+		property="tipo_doc_cont"
+		maxLength="1"
+		inputSize="1"
+		inputType="TEXT"
+		label="Tipo documento"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="tipoDocCont"
+		property="tipoDocCont"
+		maxLength="1"
+		inputSize="1"
+		inputType="TEXT"
+		label="Tipo documento"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="principale"
+		property="principale"
+		maxLength="1"
+		inputSize="1"
+		inputType="TEXT"
+		label="Principale"
+		caseSensitiveSearch="false" />
+
+	<formFieldProperty name="cd_cds_compenso" />
+	<formFieldProperty name="cd_uo_compenso" />
+	<formFieldProperty name="esercizio_compenso" />
+	<formFieldProperty name="pg_compenso" />
+	<formFieldProperty name="cd_cds_doc_cont" />
+	<formFieldProperty name="esercizio_doc_cont" />
+	<formFieldProperty name="pg_doc_cont" />
+	<formFieldProperty name="ds_doc_cont" />
+	<formFieldProperty name="tipo_doc_cont" />
+	<formFieldProperty name="tipoDocCont" />
+	<formFieldProperty name="principale" />
+
+	<columnFieldProperty name="tipoDocCont" />
+	<columnFieldProperty name="pg_doc_cont" />
+	<columnFieldProperty name="ds_doc_cont" />
+	<columnFieldProperty name="cd_cds_doc_cont" />
+	<columnFieldProperty name="esercizio_doc_cont" />
+
+</bulkInfo>

@@ -1,0 +1,83 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<fieldProperty
+		name="cd_cap"
+		property="cd_cap"
+		maxLength="5"
+		inputSize="10"
+		inputType="TEXT"
+		nullable="false"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="CAP" />
+/* *************** ****** *************** */
+/* *************** COMUNE *************** */
+/* *************** ****** *************** */
+	<fieldProperty
+		name="pg_comune"
+		property="pg_comune"
+		readonlyProperty="ROComune"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="10"
+		nullable="false"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Codice" />
+	<fieldProperty
+		name="ds_comune"
+		property="comune.ds_comune"
+		readonlyProperty="ROComune"
+		inputSize="70"
+		inputType="TEXT"
+		nullable="false"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		enabledOnFreeSearch="false"
+		label="Descrizione" />
+	<fieldProperty
+		name="find_comune"
+		property="comune"
+		inputType="SEARCHTOOL"
+		enabledOnInsert="true"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		label="Comune/Citt&#224;" />
+
+	<formFieldProperty name="cd_cap" />
+	<formFieldProperty name="pg_comune" />
+	<formFieldProperty name="ds_comune" />
+	<formFieldProperty name="find_comune" />
+
+	<columnFieldProperty name="cd_cap" />
+	<columnFieldProperty name="ds_comune" />
+
+	<findFieldProperty name="cd_cap" />
+	<findFieldProperty name="pg_comune" />
+
+</bulkInfo>

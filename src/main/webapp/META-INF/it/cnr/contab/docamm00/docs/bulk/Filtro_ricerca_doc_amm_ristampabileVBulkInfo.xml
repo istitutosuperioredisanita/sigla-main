@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<!-- ************************ FIELD PROPERTY ************************* -->
+	<fieldProperty
+		name="clauseRadioGroup"
+		property="clause"
+		keysProperty="clauses"
+		inputType="RADIOGROUP"
+		layout = "HORIZONTAL"	
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		label="Clausole"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="da_protocollo_iva"
+		property="da_protocollo_iva"
+		maxLength="10"
+		inputSize="10"
+		inputType="TEXT"
+		readonlyProperty="ROProtocolli"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		label="Da nr. protocollo"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="a_protocollo_iva"
+		property="a_protocollo_iva"
+		maxLength="10"
+		inputSize="10"
+		inputType="TEXT"
+		readonlyProperty="ROProtocolli"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		label="a"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="da_protocollo_iva_generale"
+		property="da_protocollo_iva_generale"
+		maxLength="10"
+		inputSize="10"
+		inputType="TEXT"
+		readonlyProperty="ROProtocolliGenerale"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		label="Da nr. protocollo generale"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="a_protocollo_iva_generale"
+		property="a_protocollo_iva_generale"
+		maxLength="10"
+		inputSize="10"
+		inputType="TEXT"
+		readonlyProperty="ROProtocolliGenerale"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		label="a"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="dt_da_stampa"
+		property="dt_da_stampa"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="10"
+		formatName="date_short"
+		nullable="false"
+		readonlyProperty="RODate"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		label="Data stampa da" />
+	<fieldProperty
+		name="dt_a_stampa"
+		property="dt_a_stampa"
+		inputType="TEXT"
+		maxLength="10"
+		inputSize="10"
+		formatName="date_short"
+		nullable="false"
+		readonlyProperty="RODate"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		label="a" />
+	<fieldProperty
+		name="tipo_sezionale"
+		property="tipo_sezionale"
+		printProperty="cd_ds_tipo_sezionale"
+		optionsProperty="sezionali"
+		maxLength="30"
+		inputSize="30"
+		inputType="SELECT"
+		nullable="true"
+		readonlyProperty="ROTipo_sezionale"
+		enabledOnInsert="false"
+		enabledOnEdit="false"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		label="Sezionale"/>
+	<!-- ************************ FORM FIELD PROPERTY ******************** -->
+	<formFieldProperty name="clauseRadioGroup" />
+	<formFieldProperty name="tipo_sezionale" />
+	<formFieldProperty name="da_protocollo_iva" />
+	<formFieldProperty name="a_protocollo_iva" />
+	<formFieldProperty name="da_protocollo_iva_generale" />
+	<formFieldProperty name="a_protocollo_iva_generale" />
+	<formFieldProperty name="dt_da_stampa" />
+	<formFieldProperty name="dt_a_stampa" />
+
+	<!-- ************************ FIND FIELD PROPERTY ******************** -->
+	<findFieldProperty name="clauseRadioGroup" />
+	<findFieldProperty name="tipo_sezionale" />
+	<findFieldProperty name="da_protocollo_iva" />
+	<findFieldProperty name="a_protocollo_iva" />
+	<formFieldProperty name="da_protocollo_iva_generale" />
+	<formFieldProperty name="a_protocollo_iva_generale" />
+	<findFieldProperty name="dt_da_stampa" />
+	<findFieldProperty name="dt_a_stampa" />
+	
+</bulkInfo>

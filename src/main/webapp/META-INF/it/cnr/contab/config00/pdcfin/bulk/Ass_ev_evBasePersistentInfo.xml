@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.config00.pdcfin.bulk.Ass_ev_evBase"
+	keyClassName="it.cnr.contab.config00.pdcfin.bulk.Ass_ev_evKey"
+	homeClassName="it.cnr.contab.config00.pdcfin.bulk.Ass_ev_evHome" >
+	<defaultColumnMap
+		tableName="ASS_EV_EV" >
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="TI_ELEMENTO_VOCE_COLL"
+			propertyName="ti_elemento_voce_coll"
+			sqlTypeName="CHAR"
+			columnSize="1" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="TI_ELEMENTO_VOCE"
+			propertyName="ti_elemento_voce"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="pg_ver_rec" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="ti_elemento_voce_coll" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="ti_elemento_voce" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="utuv" />
+</SQLPersistentInfo>

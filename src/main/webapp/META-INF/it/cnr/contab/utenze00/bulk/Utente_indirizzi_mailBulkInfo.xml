@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+	<fieldProperty
+		name="cd_utente"
+		property="cd_utente"
+		inputType="TEXT"
+		inputSize="20"
+		maxLength="20"
+		label="Codice dell'utente" />
+	<fieldProperty
+		name="indirizzo_mail"
+		property="indirizzo_mail"
+		inputType="TEXT"
+		maxLength="100"
+		nullable="false"
+		label="Indirizzo E-Mail" />
+	<fieldProperty
+		name="fl_err_appr_var_bil_cnr_res"
+		property="fl_err_appr_var_bil_cnr_res"
+		readonlyProperty="cdrEnte"
+		inputType="CHECKBOX"
+		nullable="false"
+		label="Invia errore di mancata approvazione Variazioni al Bilancio dell'Ente generate da Variazioni agli Stanziamenti Residui" />
+	<fieldProperty
+		name="flEsitoNegFattElettr"
+		property="flEsitoNegFattElettr"
+		inputType="CHECKBOX"
+		nullable="false"
+		label="Comunicazione dell'esito negativo della Fatturazione Elettronica Attiva" />
+	<fieldProperty
+		name="flEsitoPosFattElettr"
+		property="flEsitoPosFattElettr"
+		inputType="CHECKBOX"
+		nullable="false"
+		label="Comunicazione degli esiti positivi della Fatturazione Elettronica Attiva" />
+	<fieldProperty
+		name="fl_com_app_var_stanz_res"
+		property="fl_com_app_var_stanz_res"
+		inputType="CHECKBOX"
+		nullable="false"
+		label="Comunica avvenuta approvazione Variazioni Residui" />
+	<fieldProperty
+		name="fl_err_appr_var_bil_cnr_comp"
+		property="fl_err_appr_var_bil_cnr_comp"
+		readonlyProperty="cdrEnte"
+		inputType="CHECKBOX"
+		nullable="false"
+		label="Invia errore di mancata approvazione Variazioni al Bilancio dell'Ente" />
+	<fieldProperty
+		name="fl_com_app_var_stanz_comp"
+		property="fl_com_app_var_stanz_comp"
+		inputType="CHECKBOX"
+		nullable="false"
+		label="Comunica avvenuta approvazione Variazioni Competenza" />
+	
+	<fieldProperty
+		name="flFepNotificaRicezione"
+		property="flFepNotificaRicezione"
+		inputType="CHECKBOX"
+		nullable="false"
+		label="Comunica ricezione Fattura Elettronica Passiva" />
+	
+	<formFieldProperty
+		name="cd_utente" />
+	<formFieldProperty
+		name="indirizzo_mail" />
+	<formFieldProperty
+		name="fl_err_appr_var_bil_cnr_res" />
+	<formFieldProperty
+		name="fl_com_app_var_stanz_res" />
+	<formFieldProperty
+		name="flEsitoPosFattElettr" />
+	<formFieldProperty
+		name="flEsitoNegFattElettr" />
+	<formFieldProperty
+		name="fl_err_appr_var_bil_cnr_comp" />
+	<formFieldProperty
+		name="fl_com_app_var_stanz_comp" />
+	<formFieldProperty
+		name="flFepNotificaRicezione" />
+			
+	<columnFieldProperty
+		name="indirizzo_mail" />
+	<columnFieldProperty
+		name="fl_err_appr_var_bil_cnr_res"
+		label="Invia errore di mancata approvazione Variazioni al Bilancio dell'Ente"
+		headerLabel="Variazioni Residui" />
+	<columnFieldProperty
+		name="fl_com_app_var_stanz_res"
+		label="Comunica avvenuta approvazione"
+		headerLabel="Variazioni Residui" />
+	<columnFieldProperty
+		name="fl_err_appr_var_bil_cnr_comp"
+		label="Invia errore di mancata approvazione Variazioni al Bilancio dell'Ente"
+		headerLabel="Variazioni Competenza" />
+	<columnFieldProperty
+		name="fl_com_app_var_stanz_comp"
+		label="Comunica avvenuta approvazione"
+		headerLabel="Variazioni Competenza" />
+	<columnFieldProperty
+		name="flEsitoPosFattElettr"
+		label="Comunica esiti positivi fattura attiva"
+		headerLabel="Fatturazione Elettronica" />
+	<columnFieldProperty
+		name="flEsitoNegFattElettr"
+		label="Comunica esiti negativi fattura attiva"
+		headerLabel="Fatturazione Elettronica" />
+	<columnFieldProperty
+		name="flFepNotificaRicezione"
+		label="Comunica ricezione fattura passiva"
+		headerLabel="Fatturazione Elettronica" />
+	
+	<findFieldProperty
+		name="cd_utente" />
+	<findFieldProperty
+		name="indirizzo_mail" />
+	<findFieldProperty
+		name="fl_err_appr_var_bil_cnr_res" />
+	<findFieldProperty
+		name="fl_com_app_var_stanz_res" />
+	<findFieldProperty
+		name="flEsitoPosFattElettr" />
+	<findFieldProperty
+		name="flEsitoNegFattElettr" />
+	<findFieldProperty
+		name="fl_err_appr_var_bil_cnr_comp" />
+	<findFieldProperty
+		name="fl_com_app_var_stanz_comp" />
+	<findFieldProperty
+		name="flFepNotificaRicezione" />
+		
+</bulkInfo>

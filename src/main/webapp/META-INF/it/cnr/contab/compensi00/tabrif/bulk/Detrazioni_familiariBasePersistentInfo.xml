@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.compensi00.tabrif.bulk.Detrazioni_familiariBase"
+	keyClassName="it.cnr.contab.compensi00.tabrif.bulk.Detrazioni_familiariKey"
+	homeClassName="it.cnr.contab.compensi00.tabrif.bulk.Detrazioni_familiariHome" >
+	<defaultColumnMap
+		tableName="DETRAZIONI_FAMILIARI" >
+		<columnMapping
+			columnName="PG_VER_REC"
+			propertyName="pg_ver_rec"
+			sqlTypeName="DECIMAL"
+			columnSize="22"
+			nullable="false" />
+		<columnMapping
+			columnName="IM_DETRAZIONE_PRIMO_FIGLIO"
+			propertyName="im_detrazione_primo_figlio"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="false" />
+		<columnMapping
+			columnName="UTCR"
+			propertyName="utcr"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="DACR"
+			propertyName="dacr"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="DUVA"
+			propertyName="duva"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false" />
+		<columnMapping
+			columnName="DT_FINE_VALIDITA"
+			propertyName="dt_fine_validita"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7" />
+		<columnMapping
+			columnName="UTUV"
+			propertyName="utuv"
+			sqlTypeName="VARCHAR"
+			columnSize="20"
+			nullable="false" />
+		<columnMapping
+			columnName="IM_DETRAZIONE"
+			propertyName="im_detrazione"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="false" />
+		<columnMapping
+			columnName="IM_SUPERIORE"
+			propertyName="im_superiore"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="false" />
+		<columnMapping
+			columnName="IM_MAGGIORAZIONE"
+			propertyName="im_maggiorazione"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2" />	
+		<columnMapping
+			columnName="MOLTIPLICATORE"
+			propertyName="moltiplicatore"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2" />	
+		<columnMapping
+			columnName="NUMERATORE"
+			propertyName="numeratore"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2" />	
+		<columnMapping
+			columnName="DENOMINATORE"
+			propertyName="denominatore"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2" />				
+	</defaultColumnMap>
+	<persistentProperty
+		name="pg_ver_rec" />
+	<persistentProperty
+		name="im_detrazione_primo_figlio" />
+	<persistentProperty
+		name="utcr" />
+	<persistentProperty
+		name="dacr" />
+	<persistentProperty
+		name="duva" />
+	<persistentProperty
+		name="dt_fine_validita" />
+	<persistentProperty
+		name="utuv" />
+	<persistentProperty
+		name="im_detrazione" />
+	<persistentProperty
+		name="im_superiore" />
+	<persistentProperty
+		name="im_maggiorazione" />
+	<persistentProperty
+		name="moltiplicatore" />
+	<persistentProperty
+		name="numeratore" />
+	<persistentProperty
+		name="denominatore" />	
+</SQLPersistentInfo>

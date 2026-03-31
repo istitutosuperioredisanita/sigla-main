@@ -1,0 +1,50 @@
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bulkInfo
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://contab.cnr.it/schema/SIGLA" 
+		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+	<formFieldProperty
+		name="cd_cap"
+		label="Zip" />
+	
+	<columnSet name="comuneEstero">
+		<columnFieldProperty name="pg_comune" />
+		<columnFieldProperty name="ds_comune" />
+		<columnFieldProperty name="cd_comune" />
+		<columnFieldProperty
+			name="cd_cap"
+			label="Zip" />
+		<columnFieldProperty
+			name="ds_nazione"
+			label="Nazione" />
+	</columnSet>
+
+	<freeSearchSet name="comuneEsteroFreeSearchSet">
+		<findFieldProperty name="pg_comune" />
+		<findFieldProperty name="ds_comune" />
+		<findFieldProperty name="pg_nazione" />
+		<findFieldProperty
+			name="cd_cap"
+			label="Zip" />
+		<findFieldProperty name="cd_comune" />
+		<findFieldProperty name="dt_canc" />
+	</freeSearchSet>
+
+</bulkInfo>

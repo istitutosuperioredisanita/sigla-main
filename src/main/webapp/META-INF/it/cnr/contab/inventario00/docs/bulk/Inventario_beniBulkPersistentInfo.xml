@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2019  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk"
+	homeClassName="it.cnr.contab.inventario00.docs.bulk.Inventario_beniHome" >
+
+	<defaultColumnMap tableName="INVENTARIO_BENI" >	
+		<columnMapping
+			columnName="PG_INVENTARIO"
+			propertyName="inventario.pg_inventario" />
+		<columnMapping
+			columnName="CD_CATEGORIA_GRUPPO"
+			propertyName="categoria_Bene.cd_categoria_gruppo" />
+		<columnMapping
+			columnName="CD_ASSEGNATARIO"
+			propertyName="assegnatario.cd_terzo" />
+		<columnMapping
+			columnName="CD_UBICAZIONE"
+			propertyName="ubicazione.cd_ubicazione" />
+		<columnMapping
+			columnName="CD_CDS"
+			propertyName="ubicazione.cd_cds"  />
+		<columnMapping
+			columnName="CD_UNITA_ORGANIZZATIVA"
+			propertyName="ubicazione.cd_unita_organizzativa" />
+		<columnMapping
+			columnName="CD_CONDIZIONE_BENE"
+			propertyName="condizioneBene.cd_condizione_bene"/>
+		<columnMapping
+				columnName="ID_TRANSITO_BENI_ORDINI"
+				propertyName="transito_beni_ordini.id"/>
+
+		<addColumnMapping
+			propertyName="nuovo_bene_padre.inventario.pg_inventario" />
+		<addColumnMapping
+			propertyName="nuovo_bene_padre.nr_inventario" />
+		<addColumnMapping
+			propertyName="nuovo_bene_padre.progressivo" />	
+		<addColumnMapping
+			propertyName="nuova_categoria.cd_categoria_gruppo" />				
+					
+	</defaultColumnMap>
+	
+	<columnMap
+		name="V_INVENTARIO_BENI_APG"
+		extends="default"
+		tableName="V_INVENTARIO_BENI_APG">
+		<columnMapping
+			columnName="VARIAZIONE_MENO_INIZIALE"
+			propertyName="variazione_meno_iniziale"
+			sqlTypeName="DECIMAL"
+			columnSize="20"
+			columnScale="6"
+			nullable="false" />
+		<columnMapping
+			columnName="VALORE_ALIENAZIONE_APG"
+			propertyName="valore_alienazione_apg"
+			sqlTypeName="DECIMAL"
+			columnSize="20"
+			columnScale="6"
+			nullable="false" />
+		<columnMapping
+			columnName="FL_VISIBILE"
+			propertyName="fl_visibile"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			columnScale="1" />
+		<columnMapping
+			columnName="VARIAZIONE_PIU_INIZIALE"
+			propertyName="variazione_piu_iniziale"
+			sqlTypeName="DECIMAL"
+			columnSize="20"
+			columnScale="6"
+			nullable="false" />
+		<columnMapping
+			columnName="FL_TRASF_COME_PRINCIPALE"
+			propertyName="fl_trasf_come_principale"
+			sqlTypeName="CHAR"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter"
+			columnSize="1"
+			columnScale="1" />
+		<columnMapping
+			columnName="PG_INVENTARIO_PRINCIPALE"
+			propertyName="nuovo_bene_padre.inventario.pg_inventario"
+			sqlTypeName="DECIMAL"
+			columnSize="10" />
+		<columnMapping
+			columnName="NR_INVENTARIO_PRINCIPALE"
+			propertyName="nuovo_bene_padre.nr_inventario"
+			sqlTypeName="DECIMAL"
+			columnSize="10" />
+		<columnMapping
+			columnName="PROGRESSIVO_PRINCIPALE"
+			propertyName="nuovo_bene_padre.progressivo"
+			sqlTypeName="DECIMAL"
+			columnSize="10" />
+		<columnMapping
+			columnName="CD_CATEGORIA_GRUPPO_NEW"
+			propertyName="nuova_categoria.cd_categoria_gruppo"
+			sqlTypeName="CHAR"
+			columnSize="11"
+			columnScale="11" />	
+	</columnMap>
+
+	<columnMap
+		name="V_AMMORTAMENTO_BENI"
+		extends="default"
+		tableName="V_AMMORTAMENTO_BENI">		
+	</columnMap>
+	<columnMap
+		name="V_BENI_BUONI"
+		extends="default"
+		tableName="V_BENI_BUONI">		
+	</columnMap>
+	<columnMap
+			name="INVENTARIO_BENI_DETT"
+			tableName="INVENTARIO_BENI"
+			extends="default">
+		<columnMapping
+				columnName="TERZO.DENOMINAZIONE_SEDE"
+				propertyName="assegnatario.denominazione_sede"
+				sqlTypeName="VARCHAR"
+				columnSize="200"/>
+		<columnMapping
+				columnName="UBICAZIONE_BENE.DS_UBICAZIONE_BENE"
+				propertyName="ubicazione.ds_ubicazione_bene"
+				sqlTypeName="VARCHAR"
+				columnSize="200"/>
+	</columnMap>
+	
+	<persistentProperty
+		name="inventario"
+		partOfOid="true" />
+	<persistentProperty
+		name="categoria_Bene" />
+	<persistentProperty
+			name="transito_beni_ordini" />
+	<persistentProperty
+		name="assegnatario" />
+	<persistentProperty
+		name="ubicazione" />
+	<persistentProperty
+		name="condizioneBene" />
+	<persistentProperty
+		name="variazione_meno_iniziale" />
+	<persistentProperty
+		name="variazione_piu_iniziale" />
+	<persistentProperty
+		name="valore_alienazione_apg" />
+	<persistentProperty
+		name="fl_visibile" />
+	<persistentProperty
+		name="fl_trasf_come_principale" />
+	<persistentProperty
+		name="nuovo_bene_padre" />
+	<persistentProperty
+		name="nuova_categoria" />
+    <fetchPolicy
+		name="it.cnr.contab.inventario00.comp.Aggiornamento_inventarioComponent.findAssegnatarioCondizione">
+		<exclude pattern="*"/>
+		<include pattern="assegnatario"/>		
+		<include pattern="condizioneBene"/>
+	</fetchPolicy>
+	<fetchPolicy
+			name="default">
+		<exclude pattern="*" />
+		<include pattern="assegnatario"/>
+	</fetchPolicy>
+
+</SQLPersistentInfo>
