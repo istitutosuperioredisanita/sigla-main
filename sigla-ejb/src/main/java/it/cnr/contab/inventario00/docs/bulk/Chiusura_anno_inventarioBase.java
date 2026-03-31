@@ -41,8 +41,6 @@ public class Chiusura_anno_inventarioBase extends Chiusura_anno_inventarioKey im
 //    QUOTA_AMMORTAMENTO_ANNO_PREC DECIMAL(12,5) NOT NULL
 	private java.math.BigDecimal quotaAmmortamentoAnnoPrec;
 
-	private java.math.BigDecimal valoreNettoAnnoPrec;
- 
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CHIUSURA_ANNO_INVENTARIO
@@ -208,11 +206,4 @@ public class Chiusura_anno_inventarioBase extends Chiusura_anno_inventarioKey im
 		this.quotaAmmortamentoAnnoPrec=quotaAmmortamentoAnnoPrec;
 	}
 
-	public BigDecimal getValoreNettoAnnoPrec() {
-		return valoreNettoAnnoPrec;
-	}
-
-	public void setValoreNettoAnnoPrec(BigDecimal valoreNettoAnnoPrec) {
-		this.valoreNettoAnnoPrec = valoreNettoAnnoPrec;
-	}
 }

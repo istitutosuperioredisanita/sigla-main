@@ -25,7 +25,7 @@ public class Chiusura_anno_inventarioHome extends BulkHome {
 
 
 	public String insertChiusuraAnnoInventario(UserContext userContext)  {
-		return "INSERT INTO CHIUSURA_ANNO_INVENTARIO( \"PG_CHIUSURA\",\"ANNO\",\"TIPO_CHIUSURA\",\"CD_CATEGORIA_GRUPPO\",\"CD_TIPO_AMMORTAMENTO\" ,\"TI_AMMORTAMENTO\",\"ESERCIZIO_COMPETENZA\" ,\"VALORE_ANNO_PREC\" ,\"VALORE_INCREMENTO\" ,\"VALORE_DECREMENTO\" ,\"QUOTA_AMMORTAMENTO\" ,\"TOTALE_AMMORTAMENTO_ALIENATI\" ,\"QUOTA_AMMORTAMENTO_ANNO_PREC\" ,   \"VALORE_NETTO_ANNO_PREC\",\"DACR\" ,\"UTCR\" ,\"DUVA\" ,\"UTUV\" ,\"PG_VER_REC\" )"+
+		return "INSERT INTO CHIUSURA_ANNO_INVENTARIO( \"PG_CHIUSURA\",\"ANNO\",\"TIPO_CHIUSURA\",\"CD_CATEGORIA_GRUPPO\",\"CD_TIPO_AMMORTAMENTO\" ,\"TI_AMMORTAMENTO\",\"ESERCIZIO_COMPETENZA\" ,\"VALORE_ANNO_PREC\" ,\"VALORE_INCREMENTO\" ,\"VALORE_DECREMENTO\" ,\"QUOTA_AMMORTAMENTO\" ,\"TOTALE_AMMORTAMENTO_ALIENATI\" ,\"QUOTA_AMMORTAMENTO_ANNO_PREC\" ,\"DACR\" ,\"UTCR\" ,\"DUVA\" ,\"UTUV\" ,\"PG_VER_REC\" )"+
 				"select b.pg_chiusura, "+
 					"b.anno, "+
 					"b.TIPO_CHIUSURA, "+
@@ -39,7 +39,6 @@ public class Chiusura_anno_inventarioHome extends BulkHome {
 					"sum( b.QUOTA_AMMORTAMENTO)QUOTA_AMMORTAMENTO, "+
 					"sum (b.TOTALE_AMMORTAMENTO_ALIENATI) TOTALE_AMMORTAMENTO_ALIENATI, "+
 					"sum( b.QUOTA_AMMORTAMENTO_ANNO_PREC) QUOTA_AMMORTAMENTO_ANNO_PREC, "+
-					"sum( b.VALORE_NETTO_ANNO_PREC) VALORE_NETTO_ANNO_PREC, "+
 					"sysdate dacr, "+
 					"'"+ CNRUserContext.getUser(userContext)+	"' utcr, "+
 					"sysdate duva, "+
@@ -67,9 +66,8 @@ public class Chiusura_anno_inventarioHome extends BulkHome {
 						"end ) VALORE_DECREMENTO, "+
 						"sum( det.quota_ammortamento) QUOTA_AMMORTAMENTO, "+
 						"SUM(QUOTA_AMMO_BENE_ALIENATO )TOTALE_AMMORTAMENTO_ALIENATI, "+
-						"0 QUOTA_AMMORTAMENTO_ANNO_PREC, "+
-						"0 VALORE_NETTO_ANNO_PREC "+
-					"from V_INVENTARIO_BENE_DET det "+
+						"0 QUOTA_AMMORTAMENTO_ANNO_PREC "+
+				    "from V_INVENTARIO_BENE_DET det "+
 						"inner join ass_tipo_amm_cat_grup_inv a on det.cd_categoria_gruppo=a.cd_categoria_gruppo  and a.esercizio_competenza=? "+ //6 ANNO_AMMORTAMENTO
 						"inner join tipo_ammortamento am  on am.cd_tipo_ammortamento=DECODE( det.fl_migrato,'Y',det.piano_amm_bene_migrato, a.cd_tipo_ammortamento) "+
 					"where (( det.esercizio_carico_bene=? and  det.tiporecord='VALORE') "+ //7 ANNO_AMMORTAMENTO
@@ -89,8 +87,7 @@ public class Chiusura_anno_inventarioHome extends BulkHome {
 						"sum(0) VALORE_DECREMENTO, "+
 						"sum(0) QUOTA_AMMORTAMENTO, "+
 						"sum(0) TOTALE_AMMORTAMENTO_ALIENATI, "+
-						"SUM(det.quota_ammortamento_anno_prec+det.quota_ammortamento-det.TOTALE_AMMORTAMENTO_ALIENATI)  QUOTA_AMMORTAMENTO_ANNO_PREC, "+
-						"SUM( VALORE_NETTO_ANNO_PREC)- sum( valore_decremento - totale_ammortamento_alienati) VALORE_NETTO_ANNO_PREC "+
+						"SUM(det.quota_ammortamento_anno_prec+det.quota_ammortamento-det.TOTALE_AMMORTAMENTO_ALIENATI)  QUOTA_AMMORTAMENTO_ANNO_PREC "+
 					"from chiusura_anno_inventario det "+
 					"where anno=? "+ // 15 ANNO_AMMORTAMENTO - 1
 					"group by ?,'?','I',  det.cd_categoria_gruppo,det.cd_tipo_ammortamento,  det.ti_ammortamento) b "+// 16 PG_CHIUSURA, 17 ANNO_AMMORTAMENTO

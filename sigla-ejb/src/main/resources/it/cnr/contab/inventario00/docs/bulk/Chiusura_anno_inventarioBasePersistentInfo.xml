@@ -78,13 +78,6 @@
 			columnScale="5"
 			nullable="false" />
 		<columnMapping
-				columnName="VALORE_NETTO_ANNO_PREC"
-				propertyName="valoreNettoAnnoPrec"
-				sqlTypeName="DECIMAL"
-				columnSize="12"
-				columnScale="5"
-				nullable="false" />
-		<columnMapping
 			columnName="DACR"
 			propertyName="dacr"
 			sqlTypeName="TIMESTAMP"
@@ -137,8 +130,6 @@
 		name="totaleAmmortamentoAlienati" />
 	<persistentProperty
 		name="quotaAmmortamentoAnnoPrec" />
-	<persistentProperty
-			name="valoreNettoAnnoPrec" />
 	<persistentProperty
 		name="dacr" />
 	<persistentProperty
