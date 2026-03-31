@@ -6333,13 +6333,13 @@ public class DistintaCassiereComponent extends
         }
 
         if (documentiGenericiRighePagoPa.size()>0) {
-            avvisoPagoPA.setNumeroAvviso(documentiGenericiRighePagoPa.keySet().stream().findFirst().get());
-            avvisoPagoPA.setCodiceIdentificativoEnte(documentiGenericiRighePagoPa.values().stream().findFirst().get().keySet().stream().findFirst().get());
+            avvisoPagoPA.setNumeroAvviso(Long.parseLong(documentiGenericiRighePagoPa.keySet().stream().findFirst().get()));
+            avvisoPagoPA.setCodiceIdentificativoEnte(Long.parseLong(documentiGenericiRighePagoPa.values().stream().findFirst().get().keySet().stream().findFirst().get()));
             return avvisoPagoPA;
         };
         if (fatturePassiveRighePagoPa.size()>0) {
-            avvisoPagoPA.setNumeroAvviso(fatturePassiveRighePagoPa.keySet().stream().findFirst().get());
-            avvisoPagoPA.setCodiceIdentificativoEnte(fatturePassiveRighePagoPa.values().stream().findFirst().get().keySet().stream().findFirst().get());
+            avvisoPagoPA.setNumeroAvviso(Long.parseLong(fatturePassiveRighePagoPa.keySet().stream().findFirst().get()));
+            avvisoPagoPA.setCodiceIdentificativoEnte(Long.parseLong(fatturePassiveRighePagoPa.values().stream().findFirst().get().keySet().stream().findFirst().get()));
             return avvisoPagoPA;
         };
         throw new ApplicationMessageFormatException("Il mandato n. {0} non possiede un riferimento PAGOPA!",bulk.getPg_documento_cont());
