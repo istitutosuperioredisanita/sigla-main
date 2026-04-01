@@ -264,6 +264,10 @@ public class Movimento_cogeHome extends BulkHome {
 			sql.closeParenthesis();
 		sql.closeParenthesis();
 		sql.openParenthesis(FindClause.AND);
+			sql.openParenthesis(FindClause.OR);
+				sql.addClause(FindClause.AND, "dt_da_competenza_coge", SQLBuilder.ISNULL, null);
+				sql.addClause(FindClause.OR, "dt_a_competenza_coge", SQLBuilder.ISNULL, null);
+			sql.closeParenthesis();
 			/** ANNO IN CORSO (SOLA COMPETENZA) **/
 			sql.openParenthesis(FindClause.OR);
 				sql.addBetweenClause(FindClause.AND, "dt_da_competenza_coge",
@@ -338,6 +342,10 @@ public class Movimento_cogeHome extends BulkHome {
 				sql.addBetweenClause(FindClause.OR, "dt_da_competenza_coge",
 						DateServices.getFirstDayOfYear(CNRUserContext.getEsercizio(userContext)),
 						DateServices.getLastDayOfYear(CNRUserContext.getEsercizio(userContext)));
+			sql.closeParenthesis();
+			sql.openParenthesis(FindClause.OR);
+				sql.addClause(FindClause.AND, "dt_da_competenza_coge", SQLBuilder.ISNULL, null);
+				sql.addClause(FindClause.OR, "dt_a_competenza_coge", SQLBuilder.ISNULL, null);
 			sql.closeParenthesis();
 			sql.openParenthesis(FindClause.OR);
 				sql.addClause(FindClause.AND, "dt_a_competenza_coge", SQLBuilder.ISNULL, null);
