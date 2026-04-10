@@ -27,9 +27,12 @@ public class Stipendi_cofiBulk extends Stipendi_cofiBase {
 	public static final String STATO_LIQUIDATO = "P";
 	public static final String STATO_NON_LIQUIDATO = "I";
 
+	public static final String STATO_ANNULLATO = "A";
+
 	static {
 		statoKeys.put(STATO_LIQUIDATO,"Liquidato");
 		statoKeys.put(STATO_NON_LIQUIDATO,"Non liquidato");
+		statoKeys.put(STATO_ANNULLATO,"Annullato");
 	}
 
 	public static final Map meseKeys = MeseBulk.meseKeys;
@@ -57,6 +60,9 @@ public class Stipendi_cofiBulk extends Stipendi_cofiBase {
 
 	public boolean isLiquidato() {
 		return Stipendi_cofiBulk.STATO_LIQUIDATO.equals(this.getStato());
+	}
+	public boolean isAnnualto() {
+		return Stipendi_cofiBulk.STATO_ANNULLATO.equals(this.getStato());
 	}
 
 	public boolean isNonLiquidato() {
