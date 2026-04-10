@@ -2191,6 +2191,8 @@ public boolean isCostiDipendenteRipartiti (UserContext userContext, String cd_un
 
 			if (stipendiCofiBulk.isLiquidato())
 				throw new ApplicationException("Flusso Stipendiale già liquidato.");
+			if (stipendiCofiBulk.isAnnualto())
+				throw new ApplicationException("Flusso Stipendiale annullato.");
 
 			String cdrPersonale = Optional.ofNullable(((Configurazione_cnrHome)getHome(userContext,Configurazione_cnrBulk.class)).getCdrPersonale(aEsercizio))
 					.orElseThrow(() -> new ComponentException("Non è possibile individuare il codice CDR del Personale nell'anno "+aEsercizio+"."));
