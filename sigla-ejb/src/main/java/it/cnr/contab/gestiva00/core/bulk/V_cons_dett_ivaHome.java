@@ -9,6 +9,7 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.persistency.sql.SimpleFindClause;
 
 import java.sql.Connection;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -23,72 +24,118 @@ public class V_cons_dett_ivaHome extends BulkHome {
         super(V_cons_dett_ivaBulk.class, conn, persistentCache);
     }
 
-    public SQLBuilder selectByClause(UserContext usercontext, CompoundFindClause compoundfindclause) throws PersistencyException {
+    @Override
+    public SQLBuilder selectByClause(UserContext userContext, CompoundFindClause compoundFindClause) throws PersistencyException {
         try {
-            // Uso il costruttore corretto per SQLBuilder
-            SQLBuilder sql = super.selectByClause(usercontext, compoundfindclause);
+            final SQLBuilder sql = super.selectByClause(userContext, null);
+            final List<SimpleFindClause> clauses = new ArrayList<>();
+            if (compoundFindClause != null) estraiClausole(compoundFindClause, clauses);
 
-            if (compoundfindclause != null) {
-                // Estraggo tutti i valori di cdTipoSezionale
-                List<String> cdTipoSezionali = new ArrayList<>();
-                Enumeration<?> clauses = compoundfindclause.getClauses();
-                while (clauses.hasMoreElements()) {
-                    SimpleFindClause clause = (SimpleFindClause) clauses.nextElement();
-                    cdTipoSezionali.add(clause.getValue().toString());
+            Integer esercizio = null;
+            final List<String> tipiSezionali = new ArrayList<>();
+
+            // Estrazione parametri principali dai filtri
+            for (SimpleFindClause clause : clauses) {
+                if (clause.getPropertyName() == null || clause.getValue() == null) continue;
+                String property = clause.getPropertyName().trim().toLowerCase();
+                if ("esercizio".equals(property) && clause.getOperator() == SQLBuilder.EQUALS) {
+                    esercizio = Integer.valueOf(clause.getValue().toString().trim());
+                } else if ("cd_tipo_sezionale".equals(property) && clause.getOperator() == SQLBuilder.EQUALS) {
+                    tipiSezionali.add(clause.getValue().toString().trim());
                 }
-
-                // Costruisco la query SELECT con il join a TIPO_SEZIONALE
-                StringBuilder selectClause = new StringBuilder("SELECT V_CONS_REG_IVA.ESERCIZIO, " +
-                        "SUBSTR(V_CONS_REG_IVA.DATA_REGISTRAZIONE, 6, 2) AS MESE, " +
-                        "V_CONS_REG_IVA.CD_TIPO_SEZIONALE");
-
-                // Aggiungo le colonne in base ai valori di cdTipoSezionale
-                if (cdTipoSezionali.contains("a/com") || cdTipoSezionali.contains("v/com")) {
-                    selectClause.append(", SUM(DECODE(V_CONS_REG_IVA.SP, 'N', V_CONS_REG_IVA.IVA_D, 0)) AS SP_N, " +
-                            "SUM(DECODE(V_CONS_REG_IVA.SP, 'Y', V_CONS_REG_IVA.IVA_D, 0)) AS SP_Y, " +
-                            "SUM(V_CONS_REG_IVA.IVA_D) AS TOT_IVA");
-                } else {
-                    selectClause.append(", 0 AS SP_N, 0 AS SP_Y, SUM(V_CONS_REG_IVA.IVA_D) AS TOT_IVA");
-                }
-
-                sql.setHeader(selectClause.toString());
-
-                // Aggiungo la tabella TIPO_SEZIONALE per il JOIN
-                sql.addTableToHeader("TIPO_SEZIONALE");
-
-                // Aggiungo la condizione di JOIN
-                sql.addSQLJoin("V_CONS_REG_IVA.CD_TIPO_SEZIONALE", "TIPO_SEZIONALE.CD_TIPO_SEZIONALE");
-
-                // Aggiungo le condizioni di filtro
-                sql.addSQLClause("AND", "V_CONS_REG_IVA.ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(usercontext));
-
-                // Aggiungo le condizioni per tutti i cdTipoSezionali
-                if (!cdTipoSezionali.isEmpty()) {
-                    StringBuilder tipoSezionaleClause = new StringBuilder();
-
-                    // Gestisci il primo valore
-                    tipoSezionaleClause.append("V_CONS_REG_IVA.CD_TIPO_SEZIONALE = '").append(cdTipoSezionali.get(0)).append("'");
-
-                    // Se c'è un secondo valore, aggiungo la condizione
-                    if (cdTipoSezionali.size() > 1) {
-                        tipoSezionaleClause.append(" OR V_CONS_REG_IVA.CD_TIPO_SEZIONALE = '").append(cdTipoSezionali.get(1)).append("'");
-                    }
-
-                    sql.addSQLClause("AND", tipoSezionaleClause.toString());
-                }
-
-                // Aggiungo GROUP BY
-                sql.addSQLGroupBy("V_CONS_REG_IVA.ESERCIZIO");
-                sql.addSQLGroupBy("SUBSTR(V_CONS_REG_IVA.DATA_REGISTRAZIONE, 6, 2)");
-                sql.addSQLGroupBy("V_CONS_REG_IVA.CD_TIPO_SEZIONALE");
-
-                // Aggiungo ORDER BY
-                sql.addOrderBy("SUBSTR(V_CONS_REG_IVA.DATA_REGISTRAZIONE, 6, 2)");
-                sql.addOrderBy("V_CONS_REG_IVA.CD_TIPO_SEZIONALE");
             }
+
+            if (esercizio == null) esercizio = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext);
+
+            boolean hasSplitPayment = tipiSezionali.stream().anyMatch(t -> "a/com".equalsIgnoreCase(t) || "v/com".equalsIgnoreCase(t));
+
+            // Costruzione query interna aggregata
+            StringBuilder inner = new StringBuilder();
+            inner.append("SELECT V_CONS_REG_IVA.ESERCIZIO, SUBSTR(V_CONS_REG_IVA.DATA_REGISTRAZIONE, 6, 2) AS MESE, V_CONS_REG_IVA.CD_TIPO_SEZIONALE, ");
+
+            if (hasSplitPayment) {
+                inner.append("SUM(DECODE(V_CONS_REG_IVA.SP, 'N', V_CONS_REG_IVA.IVA_D, 0)) AS SP_N, SUM(DECODE(V_CONS_REG_IVA.SP, 'Y', V_CONS_REG_IVA.IVA_D, 0)) AS SP_Y, ");
+            } else {
+                inner.append("0 AS SP_N, 0 AS SP_Y, ");
+            }
+
+            inner.append("SUM(V_CONS_REG_IVA.IVA_D) AS TOT_IVA FROM V_CONS_REG_IVA, TIPO_SEZIONALE ")
+                    .append("WHERE V_CONS_REG_IVA.CD_TIPO_SEZIONALE = TIPO_SEZIONALE.CD_TIPO_SEZIONALE ")
+                    .append("AND V_CONS_REG_IVA.ESERCIZIO = ").append(esercizio).append(" ");
+
+            if (!tipiSezionali.isEmpty()) {
+                if (tipiSezionali.size() == 1) {
+                    inner.append("AND V_CONS_REG_IVA.CD_TIPO_SEZIONALE = '").append(tipiSezionali.get(0).replace("'", "''")).append("' ");
+                } else {
+                    inner.append("AND V_CONS_REG_IVA.CD_TIPO_SEZIONALE IN (");
+                    for (int i = 0; i < tipiSezionali.size(); i++) {
+                        inner.append(i > 0 ? ", '" : "'").append(tipiSezionali.get(i).replace("'", "''")).append("'");
+                    }
+                    inner.append(") ");
+                }
+            }
+
+            inner.append("GROUP BY V_CONS_REG_IVA.ESERCIZIO, SUBSTR(V_CONS_REG_IVA.DATA_REGISTRAZIONE, 6, 2), V_CONS_REG_IVA.CD_TIPO_SEZIONALE");
+
+            sql.setHeader("SELECT *");
+            sql.setFromClause(new StringBuffer("(\n" + inner + "\n) X"));
+
+            boolean firstOuterClause = true;
+            for (SimpleFindClause clause : clauses) {
+                if (clause.getPropertyName() == null) continue;
+                String property = clause.getPropertyName().trim().toLowerCase();
+                int op = clause.getOperator();
+                Object val = clause.getValue();
+
+                if ("esercizio".equals(property) && op == SQLBuilder.EQUALS) continue;
+                if ("cd_tipo_sezionale".equals(property) && op == SQLBuilder.EQUALS) continue;
+
+                String logica = (clause.getLogicalOperator() == null || clause.getLogicalOperator().isBlank()) ? "AND" : clause.getLogicalOperator().trim().toUpperCase();
+                if (firstOuterClause) {
+                    logica = "AND";
+                    firstOuterClause = false;
+                }
+
+                String field = switch (property) {
+                    case "esercizio" -> "X.ESERCIZIO";
+                    case "mese" -> "X.MESE";
+                    case "cd_tipo_sezionale" -> "X.CD_TIPO_SEZIONALE";
+                    case "sp_n" -> "X.SP_N";
+                    case "sp_y" -> "X.SP_Y";
+                    case "tot_iva" -> "X.TOT_IVA";
+                    default -> null;
+                };
+
+                if (field == null) continue;
+                if (op == SQLBuilder.ISNULL || op == SQLBuilder.ISNOTNULL) {
+                    sql.addSQLClause(logica, field, op, null);
+                    continue;
+                }
+                if (val == null) continue;
+
+                if ("mese".equals(property) || "cd_tipo_sezionale".equals(property)) {
+                    sql.addSQLClause(logica, field, op, val.toString().trim(), Types.VARCHAR, 0, null, false, false);
+                } else if (op == SQLBuilder.CONTAINS || op == SQLBuilder.LIKE || op == SQLBuilder.LIKE_FILTER || op == SQLBuilder.STARTSWITH || op == SQLBuilder.ENDSWITH) {
+                    sql.addSQLClause(logica, "TO_CHAR(" + field + ")", op, val.toString().trim(), Types.VARCHAR, 0, null, false, false);
+                } else {
+                    sql.addSQLClause(logica, field, op, val, Types.NUMERIC, 0, null, true, false);
+                }
+            }
+
+            sql.addOrderBy("X.ESERCIZIO");
+            sql.addOrderBy("X.MESE");
+            sql.addOrderBy("X.CD_TIPO_SEZIONALE");
             return sql;
         } catch (Throwable t) {
             throw new PersistencyException(t);
+        }
+    }
+
+    private void estraiClausole(CompoundFindClause compound, List<SimpleFindClause> result) {
+        for (Enumeration<?> e = compound.getClauses(); e.hasMoreElements(); ) {
+            Object clause = e.nextElement();
+            if (clause instanceof SimpleFindClause simple) result.add(simple);
+            else if (clause instanceof CompoundFindClause nested) estraiClausole(nested, result);
         }
     }
 }
