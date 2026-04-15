@@ -90,10 +90,10 @@ public GestConfCNRBP() {
         this.esercizioAperto = esercizioAperto;
     }
 
-    public boolean controllaEsercizioAperto(UserContext userContext) throws BusinessProcessException, ComponentException, RemoteException {
+    public boolean controllaEsercizioAperto(UserContext userContext,Integer esercizio) throws BusinessProcessException, ComponentException, RemoteException {
 
         EsercizioComponentSession esercizio_component = (EsercizioComponentSession)this.createComponentSession("CNRCONFIG00_EJB_EsercizioComponentSession", EsercizioComponentSession.class);
-        setEsercizioAperto(esercizio_component.isEsercizioAperto(userContext));
+        setEsercizioAperto(esercizio_component.isEsercizioAperto(userContext,esercizio));
         return isEsercizioAperto();
     }
 

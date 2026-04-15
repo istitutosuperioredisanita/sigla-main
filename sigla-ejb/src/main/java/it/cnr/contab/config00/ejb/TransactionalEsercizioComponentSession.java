@@ -107,7 +107,27 @@ try {
 		}
 	}
 }
-public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getEsercizio( UserContext param0 ) throws ComponentException, RemoteException {
+
+	@Override
+	public boolean isEsercizioAperto(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException {
+		try {
+
+			return ((Boolean)invoke("isEsercizioAperto",new Object[] {
+					userContext,esercizio})).booleanValue();
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	public it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getEsercizio( UserContext param0 ) throws ComponentException, RemoteException {
 	try {
 		return (it.cnr.contab.config00.esercizio.bulk.EsercizioBulk)invoke("getEsercizio",new Object[] {
 			param0 });

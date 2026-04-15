@@ -688,6 +688,14 @@ public class EsercizioComponent extends it.cnr.jada.comp.CRUDComponent implement
             throw handleException(ex);
         }
     }
+    public boolean isEsercizioAperto(UserContext userContext,Integer aEs) throws ComponentException {
+        try {
+            EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
+            return home.isEsercizioAperto(aEs, it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext));
+        } catch (PersistencyException ex) {
+            throw handleException(ex);
+        }
+    }
 
     /**
      * Estrae il bulk dell'esercizio dell'esercizio di scrivania del cds di scrivania

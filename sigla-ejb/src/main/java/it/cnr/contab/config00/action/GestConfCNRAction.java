@@ -44,7 +44,7 @@ public class GestConfCNRAction extends CRUDAction {
                         bp.setEsercizioAperto(true);
                     } else {
                         try {
-                            isEsercizioAperto = bp.controllaEsercizioAperto(actioncontext.getUserContext());
+                            isEsercizioAperto = bp.controllaEsercizioAperto(actioncontext.getUserContext(),configurazione_cnrBulk.getEsercizio());
                         } catch (BusinessProcessException e) {
                             throw new RuntimeException(e);
                         } catch (ComponentException e) {
