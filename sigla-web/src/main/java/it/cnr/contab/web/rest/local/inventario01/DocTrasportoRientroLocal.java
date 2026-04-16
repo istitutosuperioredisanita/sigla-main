@@ -1,23 +1,17 @@
 package it.cnr.contab.web.rest.local.inventario01;
 
-import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.web.rest.config.SIGLARoles;
 import it.cnr.contab.web.rest.config.SIGLASecurityContext;
+import it.cnr.contab.web.rest.model.DocTRWSResponse;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Local;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -47,9 +41,10 @@ public interface DocTrasportoRientroLocal {
     @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
     @APIResponse(
             responseCode = "201",
+            description = "Esito salvataggio documento",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Doc_trasporto_rientroBulk.class)
+                    schema = @Schema(implementation = DocTRWSResponse.class)
             )
     )
     Response saveDocTR(
@@ -61,8 +56,8 @@ public interface DocTrasportoRientroLocal {
     @Path("/cerca")
     @RolesAllowed(SIGLARoles.DOC_T_R)
     @Operation(
-            summary = "Cerca documenti di Trasporto o Rientro",
-            description = "Restituisce i documenti che contengono il bene specificato"
+            summary = "Cerca un documento di Trasporto o Rientro",
+            description = "Restituisce i campi chiave del documento associato al bene specificato"
     )
     @SecurityRequirement(name = "BASIC")
     @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
@@ -71,16 +66,17 @@ public interface DocTrasportoRientroLocal {
     @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
     @APIResponse(
             responseCode = "200",
+            description = "Esito ricerca documento",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(
-                            type = SchemaType.ARRAY,
-                            implementation = Doc_trasporto_rientroBulk.class
-                    )
+                    schema = @Schema(implementation = DocTRWSResponse.class)
             )
     )
     Response cercaDocTrasportoRientro(
             @Context HttpServletRequest request,
-            @Valid @BeanParam Doc_trasporto_rientroBulk filtro
+            @QueryParam("tiDocumento") String tiDocumento,
+            @QueryParam("stato") String stato,
+            @QueryParam("esercizio") Integer esercizio,
+            @QueryParam("nrInventario") Long nrInventario
     ) throws Exception;
 }

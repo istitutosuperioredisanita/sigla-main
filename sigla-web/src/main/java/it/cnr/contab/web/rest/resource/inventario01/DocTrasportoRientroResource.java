@@ -11,6 +11,7 @@ import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.inventario01.DocTrasportoRientroLocal;
 import it.cnr.contab.web.rest.model.AttachmentDocTrasportoRientro;
+import it.cnr.contab.web.rest.model.DocTRWSResponse;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.SimpleBulkList;
 import jakarta.ejb.EJB;
@@ -92,59 +93,81 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
 
         bulk.setDoc_trasporto_rientro_dettColl(new SimpleBulkList<>(dettagli));
 
-        Doc_trasporto_rientroBulk docSalvato;
         try {
-            docSalvato = componenteDocTR.saveDocFromWS(ctx, bulk);
+            Doc_trasporto_rientroBulk docSalvato = componenteDocTR.saveDocFromWS(ctx, bulk);
+
+            if (!allegati.isEmpty()) {
+                archiviaAllegati(ctx, docSalvato, allegati);
+            }
+
+            String message = "";
+            if (Doc_trasporto_rientroBulk.TRASPORTO.equals(docSalvato.getTiDocumento())) {
+                message = "Documento di Trasporto salvato con successo";
+            } else if (Doc_trasporto_rientroBulk.RIENTRO.equals(docSalvato.getTiDocumento())) {
+                message = "Documento di Rientro salvato con successo";
+            }
+
+            return Response.status(Response.Status.CREATED)
+                    .entity(DocTRWSResponse.of(true, message, docSalvato))
+                    .build();
+
         } catch (Exception e) {
-            log.error("Errore durante saveDocFromWS", e);
-            throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+            log.error("Errore durante saveDocTR", e);
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, e, "Documento non salvato");
         }
-
-        if (!allegati.isEmpty()) {
-            archiviaAllegati(ctx, docSalvato, allegati);
-        }
-
-        return Response.status(Response.Status.CREATED).entity(docSalvato).build();
     }
 
     /**
-     * Ricerca documenti di Trasporto o Rientro associati ad un bene inventariale.
+     * Ricerca documento di Trasporto o Rientro associato ad un bene inventariale.
      *
      * @param request richiesta HTTP
-     * @param filtro  filtro di ricerca
-     * @return lista dei documenti trovati
+     * @return documento trovato
      * @throws Exception errore durante la ricerca
      */
     @Override
-    public Response cercaDocTrasportoRientro(HttpServletRequest request,
-                                             Doc_trasporto_rientroBulk filtro) throws Exception {
+    public Response cercaDocTrasportoRientro(@Context HttpServletRequest request,
+                                             String tiDocumento,
+                                             String stato,
+                                             Integer esercizio,
+                                             Long nrInventario) throws Exception {
 
         CNRUserContext ctx = (CNRUserContext) securityContext.getUserPrincipal();
-        Integer esercizio = filtro.getEsercizio() != null ? filtro.getEsercizio() : ctx.getEsercizio();
+
+        if (nrInventario == null) {
+            throw new RestException(Response.Status.BAD_REQUEST, "nrInventario obbligatorio");
+        }
+
+        Integer esercizioEffettivo = esercizio != null ? esercizio : ctx.getEsercizio();
 
         try {
             Doc_trasporto_rientroBulk trovato = componenteDocTR.cercaDocumentoPerBene(
                     ctx,
-                    filtro.getTiDocumento(),
-                    filtro.getStato(),
-                    filtro.getBene() != null ? filtro.getBene().getNr_inventario() : null,
-                    esercizio
+                    tiDocumento,
+                    stato,
+                    nrInventario,
+                    esercizioEffettivo
             );
 
             if (trovato == null) {
-                return Response.ok(Collections.emptyList()).build();
+                return Response.ok(
+                        DocTRWSResponse.messageOnly(false, "Documento non trovato")
+                ).build();
             }
 
-            try {
-                componenteDocTR.getDetailsFor(ctx, trovato);
-            } catch (Exception ignored) {
+            String message = "";
+            if (Doc_trasporto_rientroBulk.TRASPORTO.equals(trovato.getTiDocumento())) {
+                message = "Documento di Trasporto trovato";
+            } else if (Doc_trasporto_rientroBulk.RIENTRO.equals(trovato.getTiDocumento())) {
+                message = "Documento di Rientro trovato";
             }
 
-            return Response.ok(Collections.singletonList(trovato)).build();
+            return Response.ok(
+                    DocTRWSResponse.of(true, message, trovato)
+            ).build();
 
         } catch (Exception e) {
             log.error("Errore durante cercaDocTrasportoRientro", e);
-            throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, e, "Errore durante la ricerca del documento");
         }
     }
 
@@ -716,4 +739,25 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
             );
         }
     }
+
+    private String extractErrorMessage(Throwable t, String defaultMessage) {
+        Throwable current = t;
+        String message = defaultMessage;
+
+        while (current != null) {
+            if (current.getMessage() != null && !current.getMessage().isBlank()) {
+                message = current.getMessage();
+            }
+            current = current.getCause();
+        }
+
+        return message;
+    }
+
+    private Response buildErrorResponse(Response.Status status, Throwable t, String defaultMessage) {
+        return Response.status(status)
+                .entity(DocTRWSResponse.messageOnly(false, extractErrorMessage(t, defaultMessage)))
+                .build();
+    }
+
 }
