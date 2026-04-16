@@ -32,7 +32,7 @@ it.cnr.contab.config00.esercizio.bulk.EsercizioBulk cambiaStatoConBulk(it.cnr.ja
 boolean isEsercizioChiuso(it.cnr.jada.UserContext userContext)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.contab.config00.esercizio.bulk.EsercizioBulk getLastEsercizioOpen(it.cnr.jada.UserContext userContext ) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 boolean isEsercizioAperto(it.cnr.jada.UserContext userContext)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-boolean isEsercizioAperto(it.cnr.jada.UserContext userContext,Integer esercizio)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+boolean isEsercizioAperto(it.cnr.jada.UserContext userContext,Integer esercizio,String cdCds)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 EsercizioBulk getEsercizio( UserContext userContext ) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 boolean isEsercizioSpecificoChiusoPerAlmenoUnCds(UserContext userContext,Integer esercizio) throws ComponentException, RemoteException;
 }

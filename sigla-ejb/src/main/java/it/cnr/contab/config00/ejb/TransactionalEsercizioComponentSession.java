@@ -109,11 +109,11 @@ try {
 }
 
 	@Override
-	public boolean isEsercizioAperto(UserContext userContext, Integer esercizio) throws ComponentException, RemoteException {
+	public boolean isEsercizioAperto(UserContext userContext, Integer esercizio,String cdCds) throws ComponentException, RemoteException {
 		try {
 
 			return ((Boolean)invoke("isEsercizioAperto",new Object[] {
-					userContext,esercizio})).booleanValue();
+					userContext,esercizio,cdCds})).booleanValue();
 		} catch(java.rmi.RemoteException e) {
 			throw e;
 		} catch(java.lang.reflect.InvocationTargetException e) {

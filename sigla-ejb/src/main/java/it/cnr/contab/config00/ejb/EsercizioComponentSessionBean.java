@@ -123,10 +123,10 @@ public boolean isEsercizioAperto(it.cnr.jada.UserContext param0) throws it.cnr.j
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
-	public boolean isEsercizioAperto(it.cnr.jada.UserContext param0,Integer param1) throws it.cnr.jada.comp.ComponentException, EJBException{
+	public boolean isEsercizioAperto(it.cnr.jada.UserContext param0,Integer param1,String param2) throws it.cnr.jada.comp.ComponentException, EJBException{
 		pre_component_invocation(param0,componentObj);
 		try {
-			boolean result = ((EsercizioComponent)componentObj).isEsercizioAperto(param0,param1);
+			boolean result = ((EsercizioComponent)componentObj).isEsercizioAperto(param0,param1,param2);
 			component_invocation_succes(param0,componentObj);
 			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
