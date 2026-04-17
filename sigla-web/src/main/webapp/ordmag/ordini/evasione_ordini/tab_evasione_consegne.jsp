@@ -73,7 +73,6 @@ it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk"%>
 							</tr>
 						</table>
 					</td>
-					<td ><% bp.getConsegne().writeFormField(out, "fl_onere"); %></td>
 				 </tr>
 				 <tr>
 			        <td><% bp.getConsegne().writeFormLabel(out,"notaRigaEstesa");%></td>

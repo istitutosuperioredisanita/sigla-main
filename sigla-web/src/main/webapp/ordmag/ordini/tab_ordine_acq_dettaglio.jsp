@@ -16,7 +16,8 @@
 <div class="Group p-2 mb-2">
 
     <div class="form-row">
-        <div class="col-md-6"><% bp.getRighe().writeFormField(out, "findBeneServizio", Boolean.FALSE);%></div>
+        <div class="col-md-2"><% bp.getRighe().writeFormField(out, "flagOnereRiga", Boolean.FALSE);%></div>
+        <div class="col-md-4"><% bp.getRighe().writeFormField(out, "findBeneServizio", Boolean.FALSE);%></div>
         <div class="col-md-4"><% bp.getRighe().writeFormField(out, "findUnitaMisura", Boolean.FALSE);%></div>
         <div class="col-md-2">
             <% bp.getRighe().writeFormLabel(out,"coefConv");%>
@@ -36,9 +37,7 @@
         <div class="col-md-2"><% bp.getRighe().writeFormField(out, "sconto3", Boolean.FALSE);%></div>
     </div>
     <div class="form-row">
-        <div class="col-md-10"><% bp.getRighe().writeFormField(out, "notaRiga", Boolean.FALSE);%></div>
-        <div class="col-md-2">  <% bp.getRighe().writeFormField(out, "flagOnereRiga"); %></div>
-
+        <div class="col-md-12"><% bp.getRighe().writeFormField(out, "notaRiga", Boolean.FALSE);%></div>
     </div>
     <% if (riga != null && riga.getDettaglioContratto() != null) { %>
         <div class="card border-info mt-2">
