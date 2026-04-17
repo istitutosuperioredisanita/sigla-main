@@ -45,6 +45,7 @@ public class CalcolaImportiMagComponent extends CRUDComponent {
         }
         importoIva = importoIva.add(ivaDetraibile);
         ImportoOrdine importoOrdine = new ImportoOrdine();
+        importoOrdine.setIvaCommerciale(parametri.getIvaCommerciale());
         importoOrdine.setImponibile(Utility.round6Decimali(imponibile));
         importoOrdine.setImportoIva(Utility.round6Decimali(importoIva));
         importoOrdine.setImportoIvaInd(Utility.round6Decimali(ivaNonDetraibile));

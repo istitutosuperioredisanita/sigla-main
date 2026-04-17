@@ -268,8 +268,8 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 
 		try {
 			ImportoOrdine importo =  recuperoPrezzoUnitario(userContext, consegna);
-			BigDecimal prezzoUnitario = importo.getPrezzoCompIva();
-			BigDecimal prezzoIvaUnitario = importo.getTotaleIva();
+			BigDecimal prezzoUnitario = importo.getPrezzo();
+			BigDecimal prezzoIvaUnitario = importo.getIva();
 
 			//Rapporto il prezzo unitario al Coefficiente di Conversione usato nell'evasione se diverso da quello indicato sulla riga
 			if (!movimentoMag.getCoeffConv().equals(consegna.getOrdineAcqRiga().getCoefConv())) {
@@ -456,11 +456,11 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		movimentoMag.setOrdineAcqConsegnaUt(consegna);
 
         {
-			BigDecimal prezzoUnitarioOrdine = importoCns.getPrezzoCompIva();
-			BigDecimal prezzoIvaUnitarioOrdine = importoCns.getTotaleIva();
+			BigDecimal prezzoUnitarioOrdine = importoCns.getPrezzo();
+			BigDecimal prezzoIvaUnitarioOrdine = importoCns.getIva();
 
-			BigDecimal prezzoUnitarioOrdineRettificato = importoRet.getPrezzoCompIva();
-			BigDecimal prezzoUnitarioIvaOrdineRettificato = importoRet.getTotaleIva();
+			BigDecimal prezzoUnitarioOrdineRettificato = importoRet.getPrezzo();
+			BigDecimal prezzoUnitarioIvaOrdineRettificato = importoRet.getIva();
 
 			BigDecimal diffOrdineRettificato = prezzoUnitarioOrdineRettificato.subtract(prezzoUnitarioOrdine);
 			BigDecimal diffIvaOrdineRettificato = prezzoUnitarioIvaOrdineRettificato.subtract(prezzoIvaUnitarioOrdine);
@@ -649,8 +649,8 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 
 			ImportoOrdine importi = calcoloImportoPerMagazzino(parametri);
 
-			riga.setPrezzoUnitario(importi.getPrezzoCompIva());
-			riga.setImpIva(importi.getTotaleIva());
+			riga.setPrezzoUnitario(importi.getPrezzo());
+			riga.setImpIva(importi.getIva());
 
 		}
 	}
@@ -1063,6 +1063,7 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		} catch (PersistencyException e) {
 			handleException(e);
 		}
+		parametri.setIvaCommerciale(ordine.isCommerciale());
 		parametri.setCambio(ordine.getCambio());
     	parametri.setDivisa(ordine.getDivisa());
     	parametri.setDivisaRisultato(getEuro(userContext));

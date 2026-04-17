@@ -17,17 +17,19 @@
 
 package it.cnr.contab.ordmag.ordini.dto;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class ParametriCalcoloImportoOrdine implements Cloneable, Serializable{
 	private static final long serialVersionUID = 672612150974377581L;
 	
 	BigDecimal percProrata;
 	BigDecimal prezzo;
+
+	Boolean isIvaCommerciale = Boolean.FALSE;
 
 	public BigDecimal getImponibileErratoPerNotaCredito() {
 		return imponibileErratoPerNotaCredito;
@@ -207,5 +209,13 @@ public class ParametriCalcoloImportoOrdine implements Cloneable, Serializable{
 		} catch (CloneNotSupportedException e) {
 			throw new it.cnr.jada.DetailedRuntimeException(e);
 		}
+	}
+
+	public Boolean getIvaCommerciale() {
+		return isIvaCommerciale;
+	}
+
+	public void setIvaCommerciale(Boolean ivaCommerciale) {
+		isIvaCommerciale = ivaCommerciale;
 	}
 }

@@ -17,10 +17,10 @@
 
 package it.cnr.contab.ordmag.ordini.dto;
 
+import it.cnr.contab.util.Utility;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import it.cnr.contab.util.Utility;
 
 public class ImportoOrdine implements Serializable {
     BigDecimal imponibile;
@@ -31,6 +31,8 @@ public class ImportoOrdine implements Serializable {
 	BigDecimal importoIvaPerNotaCredito;
 	BigDecimal importoIvaDetraibilePerNotaCredito;
 	BigDecimal importoIvaIndPerNotaCredito;
+
+	boolean isIvaCommerciale = Boolean.FALSE;
 
 	public BigDecimal getImponibilePerNotaCredito() {
 		return imponibilePerNotaCredito;
@@ -102,12 +104,32 @@ public class ImportoOrdine implements Serializable {
 		this.importoIvaDetraibile = importoIvaDetraibile;
 	}
 
-	public BigDecimal getPrezzoCompIva() {
+	private BigDecimal getPrezzoCompIva() {
 		return this.getImponibile().add(Utility.nvl(this.getImportoIvaInd()).add(Utility.nvl(this.getArrAliIva())));
 	}
 
-	public BigDecimal getTotaleIva() {
+	public boolean isIvaCommerciale() {
+		return isIvaCommerciale;
+	}
+
+	public void setIvaCommerciale(boolean ivaCommerciale) {
+		isIvaCommerciale = ivaCommerciale;
+	}
+
+	private BigDecimal getTotaleIva() {
 		return (Utility.nvl(this.getImportoIvaInd()).add(Utility.nvl(this.getArrAliIva())));
 	}
+
+	public BigDecimal getPrezzo(){
+		if ( isIvaCommerciale())
+			return getImponibile();
+		return getPrezzoCompIva();
+	}
+	public BigDecimal getIva(){
+		if ( isIvaCommerciale())
+			return BigDecimal.ZERO;
+		return getTotaleIva();
+	}
+
 
 }

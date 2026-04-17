@@ -157,6 +157,7 @@ public class OrdineAcqComponent
         parametriTestata.setDivisa(ordine.getDivisa());
         parametriTestata.setDivisaRisultato(getEuro(userContext));
         parametriTestata.setPercProrata(ordine.getPercProrata());
+        parametriTestata.setIvaCommerciale(ordine.isCommerciale());
         ordine.setImImponibile(BigDecimal.ZERO);
         ordine.setImIva(BigDecimal.ZERO);
         ordine.setImIvaD(BigDecimal.ZERO);
@@ -168,6 +169,7 @@ public class OrdineAcqComponent
             if (riga.getCoefConv() == null || riga.getPrezzoUnitario() == null || riga.getVoceIva() == null || riga.getVoceIva().getCd_voce_iva() == null)
                 throw new ApplicationException("Campi di dettaglio ordine necessari per il calcolo dell'importo non valorizzati.");
             ParametriCalcoloImportoOrdine parametriRiga = (ParametriCalcoloImportoOrdine) parametriTestata.clone();
+            parametriRiga.setIvaCommerciale(ordine.isCommerciale());
             parametriRiga.setCoefacq(riga.getCoefConv());
             parametriRiga.setPrezzo(riga.getPrezzoUnitario());
             parametriRiga.setSconto1(riga.getSconto1());
@@ -192,7 +194,7 @@ public class OrdineAcqComponent
             for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
                 if (!cons.isConsegna0()) {
                     ParametriCalcoloImportoOrdine parametriCons = (ParametriCalcoloImportoOrdine) parametriRiga.clone();
-
+                    parametriCons.setIvaCommerciale(ordine.isCommerciale());
                     if (cons.getQuantita() == null)
                         throw new ApplicationException("Campi di consegna ordine necessari per il calcolo dell'importo non valorizzati.");
 
@@ -261,6 +263,7 @@ public class OrdineAcqComponent
             throw new ComponentException(e);
         }
         ParametriCalcoloImportoOrdine parametri = new ParametriCalcoloImportoOrdine();
+        parametri.setIvaCommerciale(ordine.isCommerciale());
         parametri.setCambio(ordine.getCambio());
         parametri.setDivisa(ordine.getDivisa());
         parametri.setDivisaRisultato(getEuro(userContext));
