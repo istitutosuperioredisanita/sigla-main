@@ -20,6 +20,9 @@
         <div class="col-md-2">
             <% bp.getRighe().writeFormLabel(out,"coefConv");%>
             <% bp.getRighe().writeFormInput(out,null,"coefConv",riga!=null&&riga.isROCoefConv(),null,""); %>
+
+        </div>
+         <div class="col-md-2">
             <% bp.getRighe().writeFormField(out, "flagOnereRiga"); %></div>
         </div>
     </div>
