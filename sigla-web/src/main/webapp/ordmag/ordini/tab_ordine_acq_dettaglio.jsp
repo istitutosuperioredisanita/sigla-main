@@ -20,6 +20,7 @@
         <div class="col-md-2">
             <% bp.getRighe().writeFormLabel(out,"coefConv");%>
             <% bp.getRighe().writeFormInput(out,null,"coefConv",riga!=null&&riga.isROCoefConv(),null,""); %>
+            <% bp.getRighe().writeFormField(out, "flagOnereRiga"); %></div>
         </div>
     </div>
     <div class="form-row">
@@ -57,9 +58,7 @@
 </div>
 <div class="h3 text-primary mb-1">Consegna</div>
 <div class="Group card border-primary p-2 mb-2">
-    <div class="form-row">
-        <div class="col-md-4"><% bp.getRighe().writeFormField(out, "flagOnereRiga"); %></div>
-    </div>
+
     <div class="form-row">
         <div class="col-md-2 h-100"><% bp.getRighe().writeFormField(out, "tipoConsegna"); %></div>
         <div class="col-md-3"><% bp.getRighe().writeFormField(out, "dtPrevConsegna"); %></div>
