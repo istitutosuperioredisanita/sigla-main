@@ -14,18 +14,19 @@
 	String collapseIconClass = bp.isDettaglioContrattoCollapse() ? "fa-angle-down" : "fa-angle-up";
 %>
 <div class="Group p-2 mb-2">
+     <div class="form-row">
+            <div class="col-md-12">  <% bp.getRighe().writeFormField(out, "flagOnereRiga"); %></div>
+     </div>
     <div class="form-row">
-        <div class="col-md-4"><% bp.getRighe().writeFormField(out, "findBeneServizio", Boolean.FALSE);%></div>
+        <div class="col-md-6"><% bp.getRighe().writeFormField(out, "findBeneServizio", Boolean.FALSE);%></div>
         <div class="col-md-4"><% bp.getRighe().writeFormField(out, "findUnitaMisura", Boolean.FALSE);%></div>
         <div class="col-md-2">
             <% bp.getRighe().writeFormLabel(out,"coefConv");%>
             <% bp.getRighe().writeFormInput(out,null,"coefConv",riga!=null&&riga.isROCoefConv(),null,""); %>
 
         </div>
-         <div class="col-md-2">
-            <% bp.getRighe().writeFormField(out, "flagOnereRiga"); %></div>
-        </div>
     </div>
+
     <div class="form-row">
         <div class="col-md-12"><% bp.getRighe().writeFormField(out, "voce_iva", Boolean.FALSE);%></div>
     </div>
