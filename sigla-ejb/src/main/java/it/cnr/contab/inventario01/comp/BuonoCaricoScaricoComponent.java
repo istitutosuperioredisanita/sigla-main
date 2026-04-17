@@ -293,6 +293,22 @@ try{
 					 dettaglio.setBene(inv);
 					 dettaglio.setFl_bene_accessorio(inv.isBeneAccessorio());
 					 dettaglio.CalcolaTotaleBene();
+					 if(buonoC.isByOrdini()){
+						 Transito_beni_ordiniHome homeTransito = (Transito_beni_ordiniHome) getHome(aUC, Transito_beni_ordiniBulk.class);
+						 Transito_beni_ordiniBulk transito_beni_ordiniBulk = new Transito_beni_ordiniBulk();
+						 transito_beni_ordiniBulk.setId(inv.getId_transito_beni_ordini());
+						 try {
+							 transito_beni_ordiniBulk = (Transito_beni_ordiniBulk)homeTransito.findByPrimaryKey(transito_beni_ordiniBulk);
+
+							 if (transito_beni_ordiniBulk != null){
+								 getHomeCache(aUC).fetchAll(aUC);
+								 dettaglio.setFlagOnereConsOrdine(transito_beni_ordiniBulk.getFlOnereConsegnaOrd());
+							 }
+						 } catch (PersistencyException e) {
+							 throw new ComponentException(e);
+						 }
+
+					 }
 				 }
   				 getHomeCache(aUC).fetchAll(aUC,dettHome);
 			 }
@@ -2150,11 +2166,11 @@ if (!associa_Bulk.isPerAumentoValore()){
 				if(buonoS.getTipoMovimento()!=null && buonoS.getTipoMovimento().getFl_vendita().booleanValue()){
 					new_bene_apg.setVariazione_meno(bene.getValoreBene());
 					new_bene_apg.setValore_alienazione(bene.getValoreBene(true));
-					new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+					new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 				}
 				else{	
 					new_bene_apg.setVariazione_meno(new java.math.BigDecimal(0));
-					new_bene_apg.setFl_totalmente_scaricato(new Boolean(false));
+					new_bene_apg.setFl_totalmente_scaricato(Boolean.FALSE);
 				}
 				new_bene_apg.setTi_documento(buonoS.getTi_documento());
 				new_bene_apg.setPg_buono_c_s(buonoS.getPg_buono_c_s());
@@ -3060,10 +3076,10 @@ public Buono_carico_scaricoBulk scaricaBeniAccessoriFor(UserContext userContext,
 					bene_apg.setVariazione_meno(inv.getValoreBene());
 				}
 				if((buonoS instanceof Trasferimento_inventarioBulk) && (((Trasferimento_inventarioBulk)buonoS).isFl_cambio_categoria()))
-					bene_apg.setFl_visibile(new Boolean(true));
+					bene_apg.setFl_visibile(Boolean.TRUE);
 				else
-					bene_apg.setFl_visibile(new Boolean(false));
-				bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+					bene_apg.setFl_visibile(Boolean.FALSE);
+				bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 				bene_apg.setLocal_transaction_id(buonoS.getLocal_transactionID());
 				bene_apg.setPg_inventario(inv.getPg_inventario());
 				bene_apg.setNr_inventario(inv.getNr_inventario());
@@ -3099,8 +3115,8 @@ public Buono_carico_scaricoBulk scaricaBeniAccessoriFor(UserContext userContext,
 						bene_apg.setVariazione_meno(bene.getVariazione_meno());
 					else
 						bene_apg.setVariazione_meno(inv.getValoreBene());
-					bene_apg.setFl_visibile(new Boolean(false));
-					bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+					bene_apg.setFl_visibile(Boolean.FALSE);
+					bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 					bene_apg.setEsercizio(riga_fattura.getEsercizio());
 					bene_apg.setCd_cds(riga_fattura.getCd_cds());
 					bene_apg.setCd_unita_organizzativa(riga_fattura.getCd_unita_organizzativa());
@@ -3947,7 +3963,7 @@ public void associaTuttiBeni(UserContext userContext,Ass_inv_bene_fatturaBulk as
 				new_bene_apg.setDt_validita_variazione(associaBulk.getTest_buono().getData_registrazione());
 				new_bene_apg.setLocal_transaction_id(associaBulk.getLocal_transactionID());
 				new_bene_apg.setValore_alienazione(bene.getValoreBene());
-				new_bene_apg.setFl_totalmente_scaricato(new Boolean(false));
+				new_bene_apg.setFl_totalmente_scaricato(Boolean.FALSE);
 				new_bene_apg.setTi_documento(associaBulk.getTi_documento());
 				new_bene_apg.setPg_buono_c_s(associaBulk.getPg_buono_c_s());
 				new_bene_apg.setToBeCreated();	
@@ -4185,7 +4201,7 @@ public void associaTuttiBeni(UserContext userContext,Ass_inv_bene_fatturaBulk as
 				new_bene_apg.setDt_validita_variazione(associaBulk.getTest_buono().getData_registrazione());
 				new_bene_apg.setLocal_transaction_id(associaBulk.getLocal_transactionID());
 				new_bene_apg.setValore_alienazione(bene.getValoreBene());
-				new_bene_apg.setFl_totalmente_scaricato(new Boolean(false));
+				new_bene_apg.setFl_totalmente_scaricato(Boolean.FALSE);
 				new_bene_apg.setTi_documento(associaBulk.getTi_documento());
 				new_bene_apg.setPg_buono_c_s(associaBulk.getPg_buono_c_s());
 				new_bene_apg.setToBeCreated();	
@@ -4510,10 +4526,10 @@ public void associaTuttiBeni(UserContext userContext,Ass_inv_bene_fatturaBulk as
 						new_bene_apg.setDt_validita_variazione(bene.getDt_validita_variazione());
 						new_bene_apg.setLocal_transaction_id(buonoS.getLocal_transactionID());
 						new_bene_apg.setValore_alienazione(bene.getValoreBene());
-						new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+						new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 						new_bene_apg.setVariazione_meno(bene.getValoreBene());
-						new_bene_apg.setFl_visibile(new Boolean(true));
-						new_bene_apg.setFl_trasf_come_principale(new Boolean(false));
+						new_bene_apg.setFl_visibile(Boolean.TRUE);
+						new_bene_apg.setFl_trasf_come_principale(Boolean.FALSE);
 						new_bene_apg.setTi_documento(buonoS.getTi_documento());
 						new_bene_apg.setPg_buono_c_s(buonoS.getPg_buono_c_s());
 						new_bene_apg.setToBeCreated();	
@@ -4681,8 +4697,8 @@ public void modificaBeniScaricatiPerAssocia(UserContext userContext,Buono_carico
 						new_bene_apg.setProgressivo_riga(riga_fattura.getProgressivo_riga());
 						new_bene_apg.setVariazione_meno(bene.getValoreBene());
 						new_bene_apg.setValore_alienazione(bene.getValoreBene(true));
-						new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
-						new_bene_apg.setFl_visibile(new Boolean(true));
+						new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
+						new_bene_apg.setFl_visibile(Boolean.TRUE);
 						new_bene_apg.setTi_documento(buonoS.getTi_documento());
 						new_bene_apg.setPg_buono_c_s(buonoS.getPg_buono_c_s());
 						new_bene_apg.setToBeCreated();	
@@ -4753,7 +4769,7 @@ public void modificaBeniScaricatiPerAssocia(UserContext userContext,Buono_carico
 						new_bene_apg.setProgressivo_riga(nota.getProgressivo_riga());
 						new_bene_apg.setVariazione_meno(new java.math.BigDecimal(0));
 						new_bene_apg.setFl_totalmente_scaricato(bene.getFl_totalmente_scaricato());
-						new_bene_apg.setFl_visibile(new Boolean(true));
+						new_bene_apg.setFl_visibile(Boolean.TRUE);
 						new_bene_apg.setTi_documento(buonoS.getTi_documento());
 						new_bene_apg.setPg_buono_c_s(buonoS.getPg_buono_c_s());
 						new_bene_apg.setToBeCreated();	
@@ -4824,8 +4840,8 @@ public void modificaBeniScaricatiPerAssocia(UserContext userContext,Buono_carico
 						new_bene_apg.setProgressivo_riga(riga.getProgressivo_riga());
 						new_bene_apg.setVariazione_meno(bene.getValoreBene());
 						new_bene_apg.setValore_alienazione(bene.getValoreBene(true));
-						new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
-						new_bene_apg.setFl_visibile(new Boolean(true));					
+						new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
+						new_bene_apg.setFl_visibile(Boolean.TRUE);
 						/*new_bene_apg.setVariazione_meno(new java.math.BigDecimal(0));
 						new_bene_apg.setFl_totalmente_scaricato(bene.getFl_totalmente_scaricato());
 						new_bene_apg.setFl_visibile(new Boolean(true));*/
@@ -4903,8 +4919,8 @@ private void scaricaBeniAccessori(
 					bene_apg.setCd_unita_organizzativa(riga_fattura.getCd_unita_organizzativa());
 					bene_apg.setPg_fattura(riga_fattura.getPg_fattura_attiva());
 					bene_apg.setProgressivo_riga(riga_fattura.getProgressivo_riga());
-					bene_apg.setFl_visibile(new Boolean(false));
-					bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+					bene_apg.setFl_visibile(Boolean.FALSE);
+					bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 					bene_apg.setLocal_transaction_id(buonoS.getLocal_transactionID());
 					bene_apg.setPg_inventario(inv.getPg_inventario());
 					bene_apg.setNr_inventario(inv.getNr_inventario());
@@ -5021,7 +5037,7 @@ try {
 				new_bene_apg.setProgressivo(bene.getProgressivo());
 				new_bene_apg.setDt_validita_variazione(bene.getDt_validita_variazione());
 				new_bene_apg.setLocal_transaction_id(buonoS.getLocal_transactionID());
-				new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+				new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 				new_bene_apg.setTi_documento(buonoS.getTi_documento());
 				new_bene_apg.setPg_buono_c_s(buonoS.getPg_buono_c_s());
 				if (bene.getProgressivo()!=0){
@@ -5103,7 +5119,7 @@ try {
 					new_bene_apg.setPg_buono_c_s(buonoS.getPg_buono_c_s());
 					if (bene.getProgressivo()!=0 && bene.isTotalmenteScaricato()){
 						new_bene_apg.setFl_visibile(false);
-						new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+						new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 						new_bene_apg.setVariazione_meno(bene.getValoreBene());
 					}
 					else{
@@ -5163,12 +5179,12 @@ try {
 					new_bene_apg.setProgressivo(bene.getProgressivo());
 					new_bene_apg.setDt_validita_variazione(bene.getDt_validita_variazione());
 					new_bene_apg.setLocal_transaction_id(buonoS.getLocal_transactionID());
-					new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+					new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 					new_bene_apg.setTi_documento(buonoS.getTi_documento());
 					new_bene_apg.setPg_buono_c_s(buonoS.getPg_buono_c_s());
 					if (bene.getProgressivo()!=0 && bene.isTotalmenteScaricato()){
 						new_bene_apg.setFl_visibile(false);
-						new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+						new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 						new_bene_apg.setVariazione_meno(bene.getValoreBene());
 					}
 					else{
@@ -5246,12 +5262,12 @@ private void scaricaTuttiBeniPerTrasferimento(UserContext userContext,Buono_cari
 			new_bene_apg.setDt_validita_variazione(bene.getDt_validita_variazione());
 			new_bene_apg.setLocal_transaction_id(buonoS.getLocal_transactionID());
 			new_bene_apg.setVariazione_meno(bene.getValoreBene());
-			new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
-			new_bene_apg.setFl_trasf_come_principale(new Boolean(false));
+			new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
+			new_bene_apg.setFl_trasf_come_principale(Boolean.FALSE);
 			if (new_bene_apg.getProgressivo().compareTo(Long.valueOf("0"))==0)
-				new_bene_apg.setFl_visibile(new Boolean(true));
+				new_bene_apg.setFl_visibile(Boolean.TRUE);
 			else
-				new_bene_apg.setFl_visibile(new Boolean(false));
+				new_bene_apg.setFl_visibile(Boolean.FALSE);
 			new_bene_apg.setTi_documento(buonoS.getTi_documento());
 			new_bene_apg.setPg_buono_c_s(buonoS.getPg_buono_c_s());
 			new_bene_apg.setToBeCreated();	
@@ -7602,7 +7618,7 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 				List beni = homebeni.fetchAll(sql);
 				Inventario_beniBulk bene;
 				for(Iterator i=beni.iterator();i.hasNext();){
-					accesorio_presente=new Boolean(false);
+					accesorio_presente=Boolean.FALSE;
 					Inventario_beni_apgBulk new_bene_apg = (Inventario_beni_apgBulk)i.next();
 					bene =(Inventario_beniBulk)getHome(userContext,Inventario_beniBulk.class).findByPrimaryKey(new Inventario_beniBulk(new_bene_apg.getNr_inventario(),new_bene_apg.getPg_inventario(),new_bene_apg.getProgressivo()));
 					
@@ -7618,7 +7634,7 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 						notExistsQuery.addSQLClause("AND","INVENTARIO_BENI_APG.LOCAL_TRANSACTION_ID",SQLBuilder.EQUALS,buonoS.getLocal_transactionID());
 						List acc = homebeni.fetchAll(notExistsQuery);
 						if (acc != null && acc.size()>0){
-							accesorio_presente=new Boolean(true);
+							accesorio_presente=Boolean.TRUE;
 						}
 					}
 					if(!accesorio_presente){
@@ -7626,11 +7642,11 @@ public RemoteIterator cercaBeniAssociabili(UserContext userContext,Ass_inv_bene_
 						if(buonoS.getTipoMovimento()!=null && buonoS.getTipoMovimento().getFl_vendita().booleanValue()){
 							new_bene_apg.setVariazione_meno(bene.getValoreBene());
 							new_bene_apg.setValore_alienazione(bene.getValoreBene(true));
-							new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+							new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 						}
 						else{	
 							new_bene_apg.setVariazione_meno(bene.getValoreBene());
-							new_bene_apg.setFl_totalmente_scaricato(new Boolean(true));
+							new_bene_apg.setFl_totalmente_scaricato(Boolean.TRUE);
 						}
 						new_bene_apg.setTi_documento(buonoS.getTi_documento());
 						new_bene_apg.setPg_buono_c_s(buonoS.getPg_buono_c_s());

@@ -30,6 +30,14 @@
 	        </table>
 	        <table>
 	            <tr>
+	                <td>
+                         <% bp.getController().writeFormLabel(out,"flOnereConsegnaOrd"); %>
+                    </td>
+                    <td>
+                        <% bp.getController().writeFormInput(out,null,"flOnereConsegnaOrd"); %>
+                    </td>
+                 </tr>
+	            <tr>
                     <td>
                         <% bp.getController().writeFormLabel(out,"cd_barre"); %>
                     </td>
@@ -58,12 +66,7 @@
                     <td>
                         <% bp.getController().writeFormInput(out,null,"ti_istituzionale_commerciale"); %>
                     </td>
-                    <td>
-                        <% bp.getController().writeFormLabel(out,"flOnereConsegnaOrd"); %>
-                    </td>
-                    <td>
-                        <% bp.getController().writeFormInput(out,null,"flOnereConsegnaOrd"); %>
-                    </td>
+
 		        </tr>
 	        </table>
 	
