@@ -5948,7 +5948,7 @@ public class DocumentoGenericoComponent
     }
 
     public boolean existARowToBeInventoried(UserContext context, Documento_genericoBulk documento) throws ComponentException {
-        if (!documento.isGenericoAttivo() &&  documento.getStato_liquidazione().equalsIgnoreCase(IDocumentoAmministrativoBulk.LIQ) && documento.getDocumento_generico_dettColl() != null) {
+        if ( documento.getDocumento_generico_dettColl() != null) {
             Iterator dettagli = documento.getDocumento_generico_dettColl().iterator();
             while (dettagli.hasNext()) {
                 Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) dettagli.next();
