@@ -225,6 +225,9 @@ public class Documento_generico_rigaHome extends BulkHome {
                                    .stream().map(Ass_ev_voceepBulk::getVoce_ep)
                                    .findAny().orElse(null);
                         }
+                    }else {
+                        Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+                        return configHome.getContoDocumentoNonLiquidabile(docRiga);
                     }
                 } else { //PASSIVO
                     if (Optional.ofNullable(docgen.getCausaleContabile()).flatMap(el->Optional.ofNullable(el.getCdCausale()))
@@ -287,7 +290,18 @@ public class Documento_generico_rigaHome extends BulkHome {
                 Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache().getHome(Fattura_passivaBulk.class);
                 Documento_genericoBulk docgen = (Documento_genericoBulk) fatpasHome.loadIfNeededObject(docRiga.getDocumento_generico());
                 if (Optional.ofNullable(docgen).map(Documento_genericoBulk::getTipoDocumentoEnum).map(TipoDocumentoEnum::isGenericoEntrata).orElse(Boolean.FALSE)) {
-                    if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isPresent()) {
+                    if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isEmpty()) {
+                        Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+                        WorkpackageBulk gaeDocumentoNonLiquidabile = configHome.getGaeDocumentoNonLiquidabile(userContext, docRiga.getFather());
+                        Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
+                        myRigaEco.setProgressivo_riga_eco(1L);
+                        myRigaEco.setVoce_analitica(voceAnaliticaDef);
+                        myRigaEco.setLinea_attivita(gaeDocumentoNonLiquidabile);
+                        myRigaEco.setDocumento_generico_rigaBulk(docRiga);
+                        myRigaEco.setImporto(docRiga.getImCostoEco());
+                        myRigaEco.setToBeCreated();
+                        result.add(myRigaEco);
+                    }else  if (Optional.ofNullable(docRiga.getAccertamento_scadenziario()).isPresent()) {
                         Accertamento_scadenzarioBulk accertScad = (Accertamento_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getAccertamento_scadenziario());
 
                         if (Optional.ofNullable(accertScad).isPresent()) {
@@ -331,7 +345,19 @@ public class Documento_generico_rigaHome extends BulkHome {
                         }
                     }
                 } else { //GENERICO PASSIVO
-                    if (Optional.ofNullable(docRiga.getObbligazione_scadenziario()).isPresent()) {
+                    if (Optional.ofNullable(docRiga.getScadenzaDocumentoContabile()).isEmpty()) {
+                            Configurazione_cnrHome configHome = (Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+                            WorkpackageBulk gaeDocumentoNonLiquidabile = configHome.getGaeDocumentoNonLiquidabile(userContext, docRiga.getFather());
+                            Documento_generico_riga_ecoBulk myRigaEco = new Documento_generico_riga_ecoBulk();
+                            myRigaEco.setProgressivo_riga_eco(1L);
+                            myRigaEco.setVoce_analitica(voceAnaliticaDef);
+                            myRigaEco.setLinea_attivita(gaeDocumentoNonLiquidabile);
+                            myRigaEco.setDocumento_generico_rigaBulk(docRiga);
+                            myRigaEco.setImporto(docRiga.getImCostoEco());
+                            myRigaEco.setToBeCreated();
+                            result.add(myRigaEco);
+
+                    }else if (Optional.ofNullable(docRiga.getObbligazione_scadenziario()).isPresent()) {
                         Obbligazione_scadenzarioBulk obbligScad = (Obbligazione_scadenzarioBulk) fatpasHome.loadIfNeededObject(docRiga.getObbligazione_scadenziario());
 
                         if (Optional.ofNullable(obbligScad).isPresent()) {

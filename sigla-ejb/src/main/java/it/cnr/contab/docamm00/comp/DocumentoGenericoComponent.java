@@ -5948,7 +5948,7 @@ public class DocumentoGenericoComponent
     }
 
     public boolean existARowToBeInventoried(UserContext context, Documento_genericoBulk documento) throws ComponentException {
-        if (documento.getDocumento_generico_dettColl() != null) {
+        if (!documento.isGenericoAttivo() &&  documento.getStato_liquidazione().equalsIgnoreCase(IDocumentoAmministrativoBulk.LIQ) && documento.getDocumento_generico_dettColl() != null) {
             Iterator dettagli = documento.getDocumento_generico_dettColl().iterator();
             while (dettagli.hasNext()) {
                 Documento_generico_rigaBulk riga = (Documento_generico_rigaBulk) dettagli.next();
@@ -6342,6 +6342,7 @@ public class DocumentoGenericoComponent
                 .stream()
                 .filter(documentoGenericoRigaBulk -> documentoGenericoRigaBulk.getModalita_pagamento()!=null && documentoGenericoRigaBulk.getModalita_pagamento().isPAGOPA()).
                 collect(Collectors.toList());
+
                 if (!documentoGenericoRighePAGOPA.isEmpty()) {
                     for ( Documento_generico_rigaBulk riga:documentoGenericoRighePAGOPA){
                         if (!Optional.ofNullable(riga.getCodice_identificativo_ente_pagopa()).isPresent()) {
@@ -6349,9 +6350,14 @@ public class DocumentoGenericoComponent
                         }
                         if (!Optional.ofNullable(riga.getNumero_avviso_pagopa()).isPresent()) {
                             throw new ApplicationMessageFormatException("Sulla riga {0}, con modalità di pagamento PAGOPA, bisogna valorizzare il Numero dell''avviso!", riga.getDs_riga());
+                        }
+                        if ( documentoGenericoRighePAGOPA.stream()
+                                .collect(Collectors.groupingBy(o-> o.getCodice_identificativo_ente_pagopa().concat("-").concat(o.getNumero_avviso_pagopa()))).size()>1)
+                            throw new ApplicationException("Il Documento possiede più di un riferimento PAGOPA!");
+
                     }
-                }
-        }
+                 }
+
     }
 
     /**

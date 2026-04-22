@@ -153,8 +153,8 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		STATO.put(STATO_ANNULLATO, "Annullato");
 
 		flagEnteKeys= new it.cnr.jada.util.OrderedHashtable();
-		flagEnteKeys.put(new Boolean(false), "N");
-		flagEnteKeys.put(new Boolean(true), "Y");
+		flagEnteKeys.put(Boolean.FALSE, "N");
+		flagEnteKeys.put(Boolean.TRUE, "Y");
 
 		entrate_speseKeys= new it.cnr.jada.util.OrderedHashtable();
 		entrate_speseKeys.put(String.valueOf(ENTRATE), "ENTRATE");
@@ -2073,6 +2073,7 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public boolean isDocumentoInContoAnticipo() {
 		return TipoContoDocAttivoEnum.ANT.value().equals(this.getCd_tipo_conto_ep());
 	}
+
 
 	public CausaleContabileBulk getCausaleContabile() {
 		return causaleContabile;
