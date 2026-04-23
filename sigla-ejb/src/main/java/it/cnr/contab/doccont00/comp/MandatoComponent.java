@@ -76,11 +76,11 @@ import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.Config;
 import it.cnr.jada.util.SendMail;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -1828,13 +1828,14 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
                 if (((MandatoIBulk) mandato).getImReversaleDiIncassoIVA().compareTo(new BigDecimal(0)) > 0 && !Optional.ofNullable(mandatoAnnPerSostituzione).isPresent()) {
                     creaReversaleDiIncassoIVA(userContext, (MandatoIBulk) mandato);
                 }
-            }
-            /* MANDATO NON DI ACCREDITAMENTO END */
-            /**
-             * Verifica CIG su fatture
-             */
-            if (bulk instanceof MandatoIBulk) {
-                verificaCIGSUFatture(userContext, (MandatoIBulk) bulk);
+                /* MANDATO NON DI ACCREDITAMENTO END */
+                /**
+                 * Verifica CIG su fatture
+                 */
+                if (bulk instanceof MandatoIBulk) {
+                    verificaCIGSUFatture(userContext, mandato);
+                   verificaCodiciPagoPA(userContext, mandato);
+                }
             }
             return bulk;
         } catch (Exception e) {
@@ -4645,12 +4646,16 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
                 } else {
                     mandato = (MandatoBulk) super.modificaConBulk(userContext, bulk);
                 }
+                if (bulk instanceof MandatoIBulk) {
+                    verificaCodiciPagoPA(userContext,mandato);
+                }
             }
             /**
              * Verifica CIG su fatture
              */
             if (bulk instanceof MandatoIBulk) {
                 verificaCIGSUFatture(userContext, (MandatoIBulk) bulk);
+
             }
             return mandato;
         } catch (Exception e) {
@@ -5345,6 +5350,58 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
         }
     }
 
+    private void verificaCodiciPagoPA(UserContext userContext, MandatoBulk mandatoBulk) throws ComponentException, IntrospectionException, PersistencyException, SQLException {
+            MandatoIHome mandatoHome = Optional.ofNullable(getHome(userContext, MandatoIBulk.class))
+                    .filter(MandatoIHome.class::isInstance)
+                    .map(MandatoIHome.class::cast)
+                    .orElseThrow(() -> new ComponentException("Home del mandato non trovata!"));
+
+            final Map< String , Map<String,List<Fattura_passiva_rigaBulk>> > fatturePassiveRighePagoPa=
+                    Optional.ofNullable(mandatoHome.findFatturaPassivaRiga(userContext, mandatoBulk)).
+                            get().stream().filter(s-> s.getNumero_avviso_pagopa()!=null).
+                            filter(s-> !s.getNumero_avviso_pagopa().isEmpty()).
+                            filter(s-> s.getCodice_identificativo_ente_pagopa()!=null).
+                            filter(s-> !s.getCodice_identificativo_ente_pagopa().isEmpty()).
+                            filter(Fattura_passiva_rigaIBulk.class::isInstance)
+                            .map(Fattura_passiva_rigaIBulk.class::cast).
+                            collect(Collectors.groupingBy(Fattura_passiva_rigaBulk::getNumero_avviso_pagopa,
+                                    Collectors.groupingBy(Fattura_passiva_rigaBulk::getCodice_identificativo_ente_pagopa)));
+
+            final Map< String , Map<String,List<Documento_generico_rigaBulk>> >  documentiGenericiRighePagoPa=
+                    Optional.ofNullable(mandatoHome.findDocumentoGenericoRiga(userContext, mandatoBulk)).
+                            get().
+                            stream().filter(s-> s.getNumero_avviso_pagopa()!=null).
+                            filter(s-> !s.getNumero_avviso_pagopa().isEmpty()).
+                            filter(s-> s.getCodice_identificativo_ente_pagopa()!=null).
+                            filter(s-> !s.getCodice_identificativo_ente_pagopa().isEmpty()).
+                            filter(Documento_generico_rigaBulk.class::isInstance)
+                            .map(Documento_generico_rigaBulk.class::cast).
+                            collect(Collectors.groupingBy(Documento_generico_rigaBulk::getNumero_avviso_pagopa,
+                                    Collectors.groupingBy(Documento_generico_rigaBulk::getCodice_identificativo_ente_pagopa)));
+            if ( documentiGenericiRighePagoPa.isEmpty() && fatturePassiveRighePagoPa.isEmpty())
+                return;
+
+            if (documentiGenericiRighePagoPa.isEmpty() && fatturePassiveRighePagoPa.isEmpty()) {
+                new ApplicationMessageFormatException("Il mandato n. {0} non possiede un riferimento PAGOPA!",mandatoBulk.getPg_mandato());
+            }
+            if ( documentiGenericiRighePagoPa.size()>1 ||fatturePassiveRighePagoPa.size()>1){
+                throw new ApplicationMessageFormatException("Il mandato possiede più di un riferimento PAGOPA!");
+            }
+            if ( ( !documentiGenericiRighePagoPa.isEmpty() && documentiGenericiRighePagoPa.values().stream().findFirst().get().keySet().size()>1) ||
+                    ( !fatturePassiveRighePagoPa.isEmpty() &&  fatturePassiveRighePagoPa.values().stream().findFirst().get().keySet().size()>1)){
+                throw new ApplicationMessageFormatException("Il mandato possiede più di un Codice Identificativo Ente PAGOPA!");
+            }
+            if ( documentiGenericiRighePagoPa.size()==1 && fatturePassiveRighePagoPa.size()==1
+                    && (!documentiGenericiRighePagoPa.keySet().stream().findFirst().get().equalsIgnoreCase(fatturePassiveRighePagoPa.keySet().stream().findFirst().get()))){
+                throw new ApplicationMessageFormatException("Il mandato possiede più di un riferimento PAGOPA!");
+            }
+
+            if ( documentiGenericiRighePagoPa.size()==1 && fatturePassiveRighePagoPa.size()==1
+                    && (!fatturePassiveRighePagoPa.values().stream().findFirst().get().keySet().stream().findFirst().get().
+                    equalsIgnoreCase(documentiGenericiRighePagoPa.values().stream().findFirst().get().keySet().stream().findFirst().get()))){
+                throw new ApplicationMessageFormatException("Il mandato possiede più di un Codice Identificativo Ente PAGOPA!");
+            }
+    }
     private void verificaCIGSUFatture(UserContext userContext, MandatoBulk mandatoBulk) throws ComponentException, IntrospectionException, PersistencyException {
         MandatoIHome mandatoHome = Optional.ofNullable(getHome(userContext, MandatoIBulk.class))
                 .filter(MandatoIHome.class::isInstance)
@@ -6695,6 +6752,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
                 if ( siope!=null && siope.size()>numMaxVociBilancio)
                     throw new ApplicationException("Le voci di Bilancio sono maggiori di quelle previste. Max:"+numMaxVociBilancio);
             }
+
         }
     }
 }

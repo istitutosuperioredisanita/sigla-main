@@ -336,7 +336,7 @@ public class MandatoIHome extends MandatoHome {
         return home.fetchAll(sql);
     }
 
-    public List<Documento_generico_rigaBulk> findDocumentoGenericoRiga(UserContext userContext, V_mandato_reversaleBulk vMandatoReversaleBulk) throws IntrospectionException, PersistencyException, java.sql.SQLException {
+    private List<Documento_generico_rigaBulk> findDocumentoGenericoRiga(UserContext userContext, MandatoKey mandatoKey) throws IntrospectionException, PersistencyException, java.sql.SQLException {
         PersistentHome home = getHomeCache().getHome(Documento_generico_rigaBulk.class);
         SQLBuilder sql = home.createSQLBuilder();
         sql.setDistinctClause(true);
@@ -347,13 +347,28 @@ public class MandatoIHome extends MandatoHome {
         sql.addSQLJoin("DOCUMENTO_GENERICO_RIGA.PG_DOCUMENTO_GENERICO", "MANDATO_RIGA.PG_DOC_AMM");
         sql.addSQLJoin("DOCUMENTO_GENERICO_RIGA.CD_TIPO_DOCUMENTO_AMM", "MANDATO_RIGA.CD_TIPO_DOCUMENTO_AMM");
 
-        sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.CD_CDS",SQLBuilder.EQUALS, vMandatoReversaleBulk.getCd_cds());
-        sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.ESERCIZIO",SQLBuilder.EQUALS, vMandatoReversaleBulk.getEsercizio());
-        sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.PG_MANDATO",SQLBuilder.EQUALS, vMandatoReversaleBulk.getPg_documento_cont());
+        sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.CD_CDS",SQLBuilder.EQUALS, mandatoKey.getCd_cds());
+        sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.ESERCIZIO",SQLBuilder.EQUALS, mandatoKey.getEsercizio());
+        sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.PG_MANDATO",SQLBuilder.EQUALS, mandatoKey.getPg_mandato());
+
 
         return home.fetchAll(sql);
     }
+
+    public List<Documento_generico_rigaBulk> findDocumentoGenericoRiga(UserContext userContext, V_mandato_reversaleBulk vMandatoReversaleBulk) throws IntrospectionException, PersistencyException, java.sql.SQLException {
+
+        return findDocumentoGenericoRiga( userContext,new MandatoKey(vMandatoReversaleBulk.getCd_cds(),vMandatoReversaleBulk.getEsercizio(),vMandatoReversaleBulk.getPg_documento_cont()));
+    }
+    public List<Documento_generico_rigaBulk> findDocumentoGenericoRiga(UserContext userContext, MandatoBulk mandatoBulk) throws IntrospectionException, PersistencyException, java.sql.SQLException {
+
+        return findDocumentoGenericoRiga( userContext,new MandatoKey(mandatoBulk.getCd_cds(),mandatoBulk.getEsercizio(),mandatoBulk.getPg_mandato()));
+    }
+    public List<Fattura_passiva_rigaIBulk> findFatturaPassivaRiga(UserContext userContext, MandatoBulk mandato) throws IntrospectionException, PersistencyException, java.sql.SQLException {
+        return findFatturaPassivaRiga( userContext, new MandatoKey(mandato.getCd_cds(),mandato.getEsercizio(),mandato.getPg_mandato()));
+    }
+
     public List<Fattura_passiva_rigaIBulk> findFatturaPassivaRiga(UserContext userContext, V_mandato_reversaleBulk vMandatoReversaleBulk) throws IntrospectionException, PersistencyException, java.sql.SQLException {
+        /*
         PersistentHome home = getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
         SQLBuilder sql = home.createSQLBuilder();
         sql.setDistinctClause(true);
@@ -366,6 +381,27 @@ public class MandatoIHome extends MandatoHome {
         sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.CD_CDS",SQLBuilder.EQUALS, vMandatoReversaleBulk.getCd_cds());
         sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.ESERCIZIO",SQLBuilder.EQUALS, vMandatoReversaleBulk.getEsercizio());
         sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.PG_MANDATO",SQLBuilder.EQUALS, vMandatoReversaleBulk.getPg_documento_cont());
+
+        return home.fetchAll(sql);
+
+         */
+
+        return findFatturaPassivaRiga( userContext,new MandatoKey(vMandatoReversaleBulk.getCd_cds(),vMandatoReversaleBulk.getEsercizio(),vMandatoReversaleBulk.getPg_documento_cont()));
+    }
+
+    private List<Fattura_passiva_rigaIBulk> findFatturaPassivaRiga(UserContext userContext, MandatoKey mandatoKey) throws IntrospectionException, PersistencyException, java.sql.SQLException {
+        PersistentHome home = getHomeCache().getHome(Fattura_passiva_rigaIBulk.class);
+        SQLBuilder sql = home.createSQLBuilder();
+        sql.setDistinctClause(true);
+        sql.addTableToHeader("MANDATO_RIGA");
+        sql.addSQLJoin("FATTURA_PASSIVA_RIGA.ESERCIZIO", "MANDATO_RIGA.ESERCIZIO_DOC_AMM");
+        sql.addSQLJoin("FATTURA_PASSIVA_RIGA.CD_CDS", "MANDATO_RIGA.CD_CDS_DOC_AMM");
+        sql.addSQLJoin("FATTURA_PASSIVA_RIGA.CD_UNITA_ORGANIZZATIVA", "MANDATO_RIGA.CD_UO_DOC_AMM");
+        sql.addSQLJoin("FATTURA_PASSIVA_RIGA.PG_FATTURA_PASSIVA", "MANDATO_RIGA.PG_DOC_AMM");
+
+        sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.CD_CDS",SQLBuilder.EQUALS, mandatoKey.getCd_cds());
+        sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.ESERCIZIO",SQLBuilder.EQUALS, mandatoKey.getEsercizio());
+        sql.addSQLClause(FindClause.AND, "MANDATO_RIGA.PG_MANDATO",SQLBuilder.EQUALS, mandatoKey.getPg_mandato());
 
         return home.fetchAll(sql);
     }
