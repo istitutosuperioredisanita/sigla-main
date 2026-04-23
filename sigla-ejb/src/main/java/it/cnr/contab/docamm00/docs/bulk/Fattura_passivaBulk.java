@@ -3513,11 +3513,14 @@ public abstract class Fattura_passivaBulk
     public boolean isGestione_doc_ele() {
         if (this.getDt_registrazione() != null && this.getDataInizioFatturaElettronica() != null) {
             if ((this.getDt_registrazione().compareTo(this.getDataInizioFatturaElettronica()) < 0))
-                return false;
+                return Boolean.FALSE;
             else
-                return true;
+                return Boolean.TRUE;
         }
-        return true;  //non dovrebbe mai verificarsi
+        //non dovrebbe mai verificarsi
+        if( this.getDataInizioFatturaElettronica()!=null)
+            return Boolean.TRUE;
+        return Boolean.FALSE;
     }
 
     public boolean isElettronica() {
