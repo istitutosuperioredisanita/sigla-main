@@ -132,16 +132,16 @@ public abstract class Fattura_attivaBulk extends Fattura_attivaBase
         TMOTIVOEMISSIONE.put(TARIFFARIO, "Tariffario");
 
         intra_ueKeys = new OrderedHashtable();
-        intra_ueKeys.put(new Boolean(false), "N");
-        intra_ueKeys.put(new Boolean(true), "Y");
+        intra_ueKeys.put(Boolean.FALSE, "N");
+        intra_ueKeys.put(Boolean.TRUE, "Y");
 
         san_marinoKeys = new OrderedHashtable();
-        san_marinoKeys.put(new Boolean(false), "N");
-        san_marinoKeys.put(new Boolean(true), "Y");
+        san_marinoKeys.put(Boolean.FALSE, "N");
+        san_marinoKeys.put(Boolean.TRUE, "Y");
 
         extra_ueKeys = new OrderedHashtable();
-        extra_ueKeys.put(new Boolean(false), "N");
-        extra_ueKeys.put(new Boolean(true), "Y");
+        extra_ueKeys.put(Boolean.FALSE, "N");
+        extra_ueKeys.put(Boolean.TRUE, "Y");
 
         STATO = new it.cnr.jada.util.OrderedHashtable();
         STATO.put(STATO_INIZIALE, "Iniziale");
