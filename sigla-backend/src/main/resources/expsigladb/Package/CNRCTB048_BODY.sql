@@ -703,7 +703,8 @@
                               and   a.cd_cds    = aDocAmmRiga.cd_cds
                               and   a.cd_unita_organizzativa = aDocAmmRiga.cd_unita_organizzativa
                               and   a.pg_fattura_passiva = aDocAmmRiga.pg_documento_amm
-                              and   a.progressivo_riga = aDocAmmRiga.pg_riga) Loop
+                              and   a.progressivo_riga = aDocAmmRiga.pg_riga
+                              AND   a.attiva = 'Y') Loop
                 update ordine_acq_consegna
                 set cd_cds_obbl = aObbScadNext.cd_cds,
                     esercizio_obbl = aObbScadNext.esercizio,

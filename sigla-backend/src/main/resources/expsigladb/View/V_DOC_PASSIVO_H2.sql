@@ -119,6 +119,7 @@
         AND fo.esercizio = b.esercizio
         AND fo.pg_fattura_passiva = b.pg_fattura_passiva
         AND fo.progressivo_riga = b.progressivo_riga
+      	AND fo.attiva = 'Y'
       )
    UNION ALL
    SELECT a.cd_cds, a.cd_unita_organizzativa, a.esercizio, 'FATTURA_A', 'FATTURA_A',
@@ -325,6 +326,7 @@
                    and ESERCIZIO = b.ESERCIZIO
                    and PG_FATTURA_PASSIVA = b.PG_FATTURA_PASSIVA
                    and PROGRESSIVO_RIGA = b.PROGRESSIVO_RIGA
+                   AND ATTIVA = 'Y'
           ),
           a.pg_fattura_passiva, 'GEN' cd_numeratore, a.pg_ver_rec, a.cd_cds_origine,
           a.cd_uo_origine, a.ti_fattura, b.stato_cofi,
@@ -395,7 +397,7 @@
       					AND c.esercizio = a.esercizio_lettera AND c.pg_lettera = a.pg_lettera
 	 LEFT JOIN fattura_ordine fa ON fa.cd_cds = b.cd_cds AND fa.cd_unita_organizzativa = b.cd_unita_organizzativa
 				        AND fa.esercizio = b.esercizio AND fa.pg_fattura_passiva = b.pg_fattura_passiva
-					    AND fa.progressivo_riga = b.progressivo_riga
+					    AND fa.progressivo_riga = b.progressivo_riga and fa.attiva = 'Y'
 	 LEFT JOIN banca d ON d.cd_terzo = b.cd_terzo AND d.pg_banca = b.pg_banca
 	 LEFT JOIN tipo_sezionale t ON t.cd_tipo_sezionale = a.cd_tipo_sezionale
     WHERE b.dt_cancellazione IS NULL;

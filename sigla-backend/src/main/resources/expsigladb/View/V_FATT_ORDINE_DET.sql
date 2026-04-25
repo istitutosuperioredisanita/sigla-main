@@ -34,6 +34,7 @@ and  fo.numero=er.numero_ordine
 and fo.riga=er.riga_ordine
 and fo.consegna=er.consegna
 and er.stato='INS'
+and fo.attiva = 'Y'
 left outer join evasione_ordine e
 on e.CD_CDS=er.CD_CDS
 and e.CD_MAGAZZINO=er.CD_MAGAZZINO

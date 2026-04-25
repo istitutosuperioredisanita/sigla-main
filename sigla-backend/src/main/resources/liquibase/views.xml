@@ -662,6 +662,9 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_ASS_INCARICO_ATTIVITA_REPLIM">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_ASS_INCARICO_ATTIVITA_REPLIM.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_BUONO_CARICO_INV">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_BUONO_CARICO_INV.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="sigla" runOnChange="true" id="create-view-V_ASS_INV_BENE_FATTURA">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_ASS_INV_BENE_FATTURA.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
@@ -3135,6 +3138,9 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_FATT_ORDINE_DET_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_FATT_ORDINE_DET.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_BUONO_CARICO_INV_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_BUONO_CARICO_INV.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="sigla" runOnChange="true" id="create-view-V_ASS_INV_BENE_FATTURA_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_ASS_INV_BENE_FATTURA.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
@@ -3225,11 +3231,7 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_INDICATORE_PAGAMENTI_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_CONS_INDICATORE_PAGAMENTI_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
-    <changeSet author="sigla" runOnChange="true" id="create-view-V_BUONO_CARICO_INV">
-        <sqlFile dbms="oracle" path="../expsigladb/View/V_BUONO_CARICO_INV.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-v-documenti_da_contabilizzare">
+        <sqlFile dbms="oracle,h2" path="../expsigladb/View/V_DOCUMENTI_DA_CONTABILIZZARE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
-    <changeSet author="sigla" runOnChange="true" id="create-view-V_BUONO_CARICO_INV_H2">
-        <sqlFile dbms="h2" path="../expsigladb/View/V_BUONO_CARICO_INV.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
-    </changeSet>
-
 </databaseChangeLog>

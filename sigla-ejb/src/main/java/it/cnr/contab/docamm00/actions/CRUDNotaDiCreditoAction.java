@@ -1712,7 +1712,6 @@ public class CRUDNotaDiCreditoAction extends CRUDFatturaPassivaAction {
      */
 
     public Forward doSelezionaRighe(ActionContext context) {
-
         try {
             it.cnr.jada.action.HookForward caller = (it.cnr.jada.action.HookForward) context.getCaller();
             Fattura_passiva_IBulk fatturaPassiva = (Fattura_passiva_IBulk) caller.getParameter("focusedElement");

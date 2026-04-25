@@ -14,6 +14,7 @@
 	Fattura_passivaBulk fatturaPassiva = (Fattura_passivaBulk)bp.getModel();
  	FatturaOrdineBulk fatturaOrdine = (FatturaOrdineBulk)bp.getFatturaOrdiniController().getModel();
 	String collapseIconClass = bp.getFatturaOrdiniController().isRettificheCollapse() ? "fa-angle-down" : "fa-angle-up";
+	boolean rigaEnabled = fatturaOrdine!=null && fatturaOrdine.getAttiva();
 %>
 <% bp.getCrudDocEleAcquistoColl().writeHTMLTable(pageContext,"default",false,false,false,"100%","10vh"); %>
 <% bp.getCrudDocEleAcquistoColl().closeHTMLTable(pageContext);%>
@@ -38,45 +39,63 @@
             <div>
                 <div class="form-row">
                     <div class="form-group col-md-3">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "voceIva", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "voceIva"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "voceIva",!rigaEnabled,null,null); %>
                     </div>
                     <div class="form-group col-md-3">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "prezzoUnitarioRett", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "prezzoUnitarioRett"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "prezzoUnitarioRett",!rigaEnabled,null,null); %>
                     </div>
                     <div class="form-group col-md-2">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "sconto1Rett", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "sconto1Rett"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "sconto1Rett",!rigaEnabled,null,null); %>
                     </div>
                     <div class="form-group col-md-2">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "sconto2Rett", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "sconto2Rett"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "sconto2Rett",!rigaEnabled,null,null); %>
                     </div>
                     <div class="form-group col-md-2">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "sconto3Rett", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "sconto3Rett"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "sconto3Rett",!rigaEnabled,null,null); %>
                     </div>
                 </div>
                 <div class="form-row pt-2">
                     <div class="form-group col-md-3">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "imImponibile", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "imImponibile"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "imImponibile",!rigaEnabled,null,null); %>
                     </div>
                     <div class="form-group col-md-3">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "imImponibileRettificato", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "imImponibileRettificato"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "imImponibileRettificato",!rigaEnabled,null,null); %>
                     </div>
                     <div class="form-group col-md-3">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "imIva", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "imIva"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "imIva",!rigaEnabled,null,null); %>
                     </div>
                     <div class="form-group col-md-3">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "imIvaRettificata", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "imIvaRettificata"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "imIvaRettificata",!rigaEnabled,null,null); %>
                     </div>
                 </div>
                 <div class="form-row pt-2">
                     <div class="form-group col-md-6">
-                        <% bp.getFatturaOrdiniController().writeFormField(out, "imponibileErrato", Boolean.FALSE); %>
+                        <% bp.getFatturaOrdiniController().writeFormLabel(out, "imponibileErrato"); %>
+                        <% bp.getFatturaOrdiniController().writeFormInput(out, null, "imponibileErrato",!rigaEnabled,null,null); %>
                     </div>
                     <div class="form-group col-md-6 h-100">
                         <% if (fatturaOrdine != null && fatturaOrdine.isRigaAttesaNotaCredito()) { %>
-                            <% bp.getFatturaOrdiniController().writeFormField(out, "operazioneImpegnoNotaCredito", Boolean.FALSE); %>
+                            <% bp.getFatturaOrdiniController().writeFormLabel(out, "operazioneImpegnoNotaCredito"); %>
+                            <% bp.getFatturaOrdiniController().writeFormInput(out, null, "operazioneImpegnoNotaCredito",!rigaEnabled,null,null); %>
                         <%}%>
                     </div>
                 </div>
+                <% if (!rigaEnabled) { %>
+                <div class="form-group col-md-6 h-100">
+                    <label class="col-form-label text-danger">
+                        RIGA ANNULLATA!
+                    </label>
+                </div>
+                <% } %>
             </div>
         </div>
         <% } %>

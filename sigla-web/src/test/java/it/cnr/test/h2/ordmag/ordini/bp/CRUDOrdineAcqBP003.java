@@ -175,9 +175,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di creazione eseguita
-        
         Assertions.assertEquals(AlertMessage.CREAZIONE_ESEGUITA.value(), handleTextAlert(browser));
-
 
         String pgOrdineCreated = getGrapheneElement("main.numero").getAttribute("value");
         sharedResource.setVal01(pgOrdineCreated);
@@ -190,9 +188,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di salvataggio eseguito
-        
         Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
-
 
         //modifico lo stato portandolo ‘Definitivo’
         select.selectByValue("DEF");
@@ -201,9 +197,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
 
         //Restituisce messaggio di assenza obbligazione
-        
         Assertions.assertEquals("Sulla consegna 2025/"+CD_NUMERATORE+"/"+pgOrdineCreated+"/1/1 non è indicata l'obbligazione", handleTextAlert(browser));
-
 
         //Ritorno sulla tab delle righe ordine
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -237,9 +231,7 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         //Salvo l'ordine
         doClickButton("doSalva()");
 
-        
         Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
-
     }
 
     /**
@@ -297,7 +289,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
         
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
-
     }
 
     /**
@@ -329,7 +320,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doCerca()");
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
 
         //Vado sul dettaglio analitico a livello di Ordine
         doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
@@ -402,7 +392,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("submitForm('doVisualizzaAnalitica');");
 
         //Restituisce messaggio di "Scrittura Analitica non presente!"
-        
         Assertions.assertEquals("Scrittura Analitica non presente!", handleTextAlert(browser));
 
         doClickButton("doChiudiForm()");
@@ -428,7 +417,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
-
         Assertions.assertEquals("Inserito", getGrapheneElement("main.stato").getAttribute("value"));
 
         String pgOrdineCreated = sharedResource.getVal01();
@@ -452,7 +440,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
         
         Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
-
 
         //Il transito del bene deve acquisita stato "Completo"
         Assertions.assertEquals("Completo", getGrapheneElement("main.stato").getAttribute("value"));
@@ -526,7 +513,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_NO_RECORD.value(), handleTextAlert(browser));
 
-
         doClickButton("doChiudiForm()");
     }
 
@@ -585,7 +571,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
         
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
-
     }
 
     /**
@@ -604,7 +589,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doCerca()");
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
 
         Assertions.assertEquals("Inserito", getGrapheneElement("main.stato").getAttribute("value"));
 
@@ -629,7 +613,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSalva()");
         
         Assertions.assertEquals(AlertMessage.SALVATAGGIO_ESEGUITO.value(), handleTextAlert(browser));
-
 
         //Il transito del bene deve acquisita stato "Completo"
         Assertions.assertEquals("Completo", getGrapheneElement("main.stato").getAttribute("value"));
@@ -750,7 +733,6 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doCerca()");
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
 
         //Clicco sul pulsante ‘Compila fattura’;
         doClickButton("submitForm('doCompilaFattura')");
@@ -940,5 +922,4 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
 
         doClickButton("doChiudiForm()");
     }
-
 }

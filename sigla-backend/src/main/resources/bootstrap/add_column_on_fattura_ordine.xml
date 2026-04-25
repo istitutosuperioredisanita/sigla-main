@@ -21,7 +21,12 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-v-documenti_da_contabilizzare">
-        <sqlFile dbms="oracle,h2" path="../expsigladb/View/V_DOCUMENTI_DA_CONTABILIZZARE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+
+    <changeSet author="raffaele.pagano" id="add_column_attiva_to_fattura_ordine">
+        <addColumn tableName="FATTURA_ORDINE">
+            <column name="attiva" type="CHAR(1)" defaultValue="Y" remarks="Flag di riga attiva - Dominio: S = Sì; N = No;">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

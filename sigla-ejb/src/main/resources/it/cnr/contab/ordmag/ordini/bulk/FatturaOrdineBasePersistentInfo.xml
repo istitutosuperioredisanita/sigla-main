@@ -191,6 +191,13 @@
 				columnSize="15"
 				columnScale="2"
 				nullable="true" />
+		<columnMapping
+				columnName="ATTIVA"
+				propertyName="attiva"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="cdVoceIvaRett" />
@@ -244,5 +251,6 @@
 			name="imImponibileRettificato" />
 	<persistentProperty
 			name="imIvaRettificata" />
-
+	<persistentProperty
+			name="attiva" />
 </SQLPersistentInfo>
