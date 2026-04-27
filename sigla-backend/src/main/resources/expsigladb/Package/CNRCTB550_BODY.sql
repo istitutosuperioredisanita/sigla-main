@@ -5135,7 +5135,7 @@ BEGIN
 
    IF aRecCompenso.stato_cofi = 'A' THEN
       IBMERR001.RAISE_ERR_GENERICO
-         ('Il compenso selezionato risulta essere gi�tato annullato in data ' ||
+         ('Il compenso selezionato risulta essere già stato annullato in data ' ||
           TO_CHAR(aRecCompenso.dt_cancellazione,'DD/MM/YYYY'));
    END IF;
 
