@@ -9672,6 +9672,13 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             for (FatturaOrdineBulk fatturaOrdineToBeDeleted : righeFatturaOrdineToBeDeleted) {
                 OrdineAcqConsegnaBulk ordineAcqConsegna = (OrdineAcqConsegnaBulk) findByPrimaryKey(userContext, fatturaOrdineToBeDeleted.getOrdineAcqConsegna());
                 ordineAcqConsegna.setStatoFatt(OrdineAcqConsegnaBulk.STATO_FATT_NON_ASSOCIATA);
+
+                EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
+                Integer esercizioScritture = fatturaOrdineToBeDeleted.getEsercizio();
+                //Se l'esercizio economico non è aperto esco senza modificvare nulla
+                if (!home.isEsercizioAperto(esercizioScritture, fatturaOrdineToBeDeleted.getFatturaPassivaRiga().getCd_cds()))
+                    return;
+
                 boolean annullaRiscontroAValore = Boolean.TRUE;
                 boolean isImportoRettificato = fatturaOrdineToBeDeleted.isImponibileRettificato() || fatturaOrdineToBeDeleted.isIvaRettificata();
 
@@ -9740,26 +9747,27 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
                 ordineAcqConsegna.setToBeUpdated();
                 makeBulkPersistent(userContext, ordineAcqConsegna);
 
-                //Cerco la prima nota creata sulla consegna e la metto in stato annullata
-                Scrittura_partita_doppiaHome scrHome = (Scrittura_partita_doppiaHome)getHome(userContext, Scrittura_partita_doppiaBulk.class);
-                List<Scrittura_partita_doppiaBulk> scrList = scrHome.findByDocumentoCoge(ordineAcqConsegna);
-                for (Scrittura_partita_doppiaBulk scrBulk : scrList) {
-                    if (scrBulk.isScritturaAttiva() && OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(scrBulk.getOrigine_scrittura())) {
-                        if (annullaRiscontroAValore)
+                if (annullaRiscontroAValore) {
+                    //Cerco la prima nota creata sulla consegna e la metto in stato annullata
+                    Scrittura_partita_doppiaHome scrHome = (Scrittura_partita_doppiaHome) getHome(userContext, Scrittura_partita_doppiaBulk.class);
+                    List<Scrittura_partita_doppiaBulk> scrList = scrHome.findByDocumentoCoge(ordineAcqConsegna);
+                    for (Scrittura_partita_doppiaBulk scrBulk : scrList) {
+                        if (scrBulk.isScritturaAttiva() && OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(scrBulk.getOrigine_scrittura())) {
                             scrBulk.setAttiva("N");
-                        scrBulk.setToBeUpdated();
-                        makeBulkPersistent(userContext, scrBulk);
+                            scrBulk.setToBeUpdated();
+                            makeBulkPersistent(userContext, scrBulk);
+                        }
                     }
-                }
 
-                //Cerco la prima nota creata sulla consegna e la metto in stato annullata
-                Scrittura_analiticaHome anaHome = (Scrittura_analiticaHome)getHome(userContext, Scrittura_analiticaBulk.class);
-                List<Scrittura_analiticaBulk> anaList = anaHome.findByDocumentoCoge(ordineAcqConsegna);
-                for (Scrittura_analiticaBulk anaBulk : anaList) {
-                    if (anaBulk.isScritturaAttiva() && OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(anaBulk.getOrigine_scrittura())) {
-                        anaBulk.setAttiva("N");
-                        anaBulk.setToBeUpdated();
-                        makeBulkPersistent(userContext, anaBulk);
+                    //Cerco la prima nota creata sulla consegna e la metto in stato annullata
+                    Scrittura_analiticaHome anaHome = (Scrittura_analiticaHome) getHome(userContext, Scrittura_analiticaBulk.class);
+                    List<Scrittura_analiticaBulk> anaList = anaHome.findByDocumentoCoge(ordineAcqConsegna);
+                    for (Scrittura_analiticaBulk anaBulk : anaList) {
+                        if (anaBulk.isScritturaAttiva() && OrigineScritturaEnum.RISCONTRO_A_VALORE.name().equals(anaBulk.getOrigine_scrittura())) {
+                            anaBulk.setAttiva("N");
+                            anaBulk.setToBeUpdated();
+                            makeBulkPersistent(userContext, anaBulk);
+                        }
                     }
                 }
             }
