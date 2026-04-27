@@ -10,7 +10,8 @@ import org.junit.platform.suite.api.Suite;
         CRUDOrdineAcqBP001.class,
         CRUDOrdineAcqBP002.class,
         CRUDOrdineAcqBP003.class,
-        CRUDOrdineAcqBP004.class
+        CRUDOrdineAcqBP004.class,
+        CRUDOrdineAcqBP005.class
 })
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 public class CRUDOrdineAcqBP001SuiteTest { }

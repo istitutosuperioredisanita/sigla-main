@@ -1517,7 +1517,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																			}
 
 																			final List<FatturaOrdineBulk> listaFatturaOrdiniCollRiga = listaFatturaNotaOrdini.stream()
-																					.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(((Nota_di_credito_rigaBulk)rigaDettFin.getRigaDocamm()).getRiga_fattura_associata())).collect(Collectors.toList());
+																					.filter(el->el.getFatturaPassivaRiga().equalsByPrimaryKey(rigaDettFin.getRigaPartita())).collect(Collectors.toList());
 
 																			if (listaFatturaOrdiniCollRiga.isEmpty()) {
 																				DettaglioFinanziario rigaDettFinCollegata = this.convertToRigaDettFin(userContext, rigaDettFin.getRigaPartita());
@@ -1553,11 +1553,13 @@ public class ProposeScritturaComponent extends CRUDComponent {
 																				} else
 																					aContoContropartita = this.findContoContropartita(userContext, fatturaOrdineBulk.getOrdineAcqConsegna().getContoBulk());
 
-																				testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, fatturaOrdineBulk, rigaDettFin.getImImponibile());
+																				Voce_epBulk contoFatturaDaRicevere = findContoFattureDaRicevere(userContext, docamm.getEsercizio());
+
+																				testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, contoFatturaDaRicevere, rigaDettFin.getImImponibile());
 																				testataPrimaNota.openDettaglioPatrimonialePartita(userContext, docamm, partita, aContoContropartita, rigaDettFin.getImImponibile(), aCdTerzo);
 
 																				if (registraIvaACosto) {
-																					testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, fatturaOrdineBulk, rigaDettFin.getImImposta());
+																					testataPrimaNota.openDettaglioCostoRicavo(userContext, docamm, rigaDettFin, partita, contoFatturaDaRicevere, rigaDettFin.getImImposta());
 																					mapPatrimonialeIva.add(new DettaglioScrittura(aContoContropartita, partita, rigaDettFin.getImImposta()));
 																				}
 																			}

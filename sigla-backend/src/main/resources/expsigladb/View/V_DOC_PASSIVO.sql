@@ -239,6 +239,7 @@
         AND fo.esercizio = b.esercizio
         AND fo.pg_fattura_passiva = b.pg_fattura_passiva
         AND fo.progressivo_riga = b.progressivo_riga
+      	AND fo.attiva = 'Y'
       )
       AND c.cd_cds(+) = a.cd_cds
       AND c.cd_unita_organizzativa(+) = a.cd_unita_organizzativa
@@ -462,6 +463,7 @@
                    and ESERCIZIO = b.ESERCIZIO
                    and PG_FATTURA_PASSIVA = b.PG_FATTURA_PASSIVA
                    and PROGRESSIVO_RIGA = b.PROGRESSIVO_RIGA
+                   AND attiva = 'Y'
           ),
           a.pg_fattura_passiva, 'GEN' cd_numeratore, a.pg_ver_rec, a.cd_cds_origine,
           a.cd_uo_origine, a.ti_fattura, b.stato_cofi,
@@ -541,6 +543,7 @@
       AND b.esercizio = fa.esercizio
       AND b.pg_fattura_passiva = fa.pg_fattura_passiva
       AND b.progressivo_riga = fa.progressivo_riga
+      AND fa.attiva = 'Y'
       AND b.dt_cancellazione IS NULL
       AND c.cd_cds(+) = a.cd_cds
       AND c.cd_unita_organizzativa(+) = a.cd_unita_organizzativa

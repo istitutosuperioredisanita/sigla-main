@@ -1904,7 +1904,6 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
 
     public Pair<FatturaOrdineBulk, OrdineAcqConsegnaBulk> associaOrdineFattura(ActionContext context, EvasioneOrdineRigaBulk evasioneOrdineRigaBulk) throws BusinessProcessException {
         OrdineAcqConsegnaBulk ordineAcqConsegna = evasioneOrdineRigaBulk.getOrdineAcqConsegna();
-        Fattura_passivaBulk fattura = (Fattura_passivaBulk) getModel();
         FatturaOrdineBulk fatturaOrdineBulk = new FatturaOrdineBulk();
         fatturaOrdineBulk.setOrdineAcqConsegna(ordineAcqConsegna);
         ordineAcqConsegna.setFatturaOrdineBulk(fatturaOrdineBulk);
@@ -1915,6 +1914,7 @@ public abstract class CRUDFatturaPassivaBP extends AllegatiCRUDBP<AllegatoFattur
         fatturaOrdineBulk.setImIvaD(ordineAcqConsegna.getImIvaD());
         fatturaOrdineBulk.setImIvaNd(ordineAcqConsegna.getImIvaNd());
         fatturaOrdineBulk.setImTotaleConsegna(ordineAcqConsegna.getImTotaleConsegna());
+        fatturaOrdineBulk.setAttiva(Boolean.TRUE);
         fatturaOrdineBulk.setStatoAss("TOT");
 
         ordineAcqConsegna.setStatoFatt(OrdineAcqConsegnaBulk.STATO_FATT_ASSOCIATA_TOTALMENTE);

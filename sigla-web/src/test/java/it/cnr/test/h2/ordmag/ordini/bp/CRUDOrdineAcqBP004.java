@@ -179,7 +179,6 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
-
         //Vado sul dettaglio analitico a livello di Ordine
         doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
         doSelectTableRow("main.Dati Analitici",0);

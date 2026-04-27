@@ -56,9 +56,12 @@ public class FatturaOrdineBase extends FatturaOrdineKey implements Keyed {
 //    IM_IVA_D DECIMAL(15,2) NOT NULL
 	private java.math.BigDecimal imIvaD;
 
-
 	private java.math.BigDecimal imIvaRettificata;
+
 	private java.math.BigDecimal imImponibileRettificato;
+
+	// FL_ATTIVA CHAR(1) NOT NULL
+	private java.lang.Boolean attiva;
 
 	public String getCdCdsObblNc() {
 		return cdCdsObblNc;
@@ -335,5 +338,13 @@ public class FatturaOrdineBase extends FatturaOrdineKey implements Keyed {
 
 	public void setImImponibileRettificato(BigDecimal imImponibileRettificato) {
 		this.imImponibileRettificato = imImponibileRettificato;
+	}
+
+	public Boolean getAttiva() {
+		return attiva;
+	}
+
+	public void setAttiva(Boolean attiva) {
+		this.attiva = attiva;
 	}
 }

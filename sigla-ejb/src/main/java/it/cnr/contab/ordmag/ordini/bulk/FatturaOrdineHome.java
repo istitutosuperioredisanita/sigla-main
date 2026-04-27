@@ -22,6 +22,7 @@
 package it.cnr.contab.ordmag.ordini.bulk;
 
 import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
@@ -59,11 +60,12 @@ public class FatturaOrdineHome extends BulkHome {
 		sql.addSQLClause(FindClause.AND, "NUMERO", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getNumero());
 		sql.addSQLClause(FindClause.AND, "RIGA", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getRiga());
 		sql.addSQLClause(FindClause.AND, "CONSEGNA", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getConsegna());
+		sql.addSQLClause(FindClause.AND, "ATTIVA", SQLBuilder.EQUALS, Boolean.TRUE);
 
-		if(fetchAll(sql).size() == 0){
+		List result = fetchAll(sql);
+		if (result.isEmpty())
 			return null;
-		}
-		return (FatturaOrdineBulk) fetchAll(sql).get(0);
+		return (FatturaOrdineBulk) result.getFirst();
 	}
 
     public List<FatturaOrdineBulk> findByFattura(Fattura_passivaBulk fattura_passiva) throws PersistencyException {
@@ -76,6 +78,25 @@ public class FatturaOrdineHome extends BulkHome {
         sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, fattura_passiva.getCd_unita_organizzativa());
         sqlBuilder.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, fattura_passiva.getEsercizio());
         sqlBuilder.addSQLClause(FindClause.AND, "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fattura_passiva.getPg_fattura_passiva());
+		sqlBuilder.addSQLClause(FindClause.AND, "ATTIVA", SQLBuilder.EQUALS, Boolean.TRUE);
         return fatturaOrdineHome.fetchAll(sqlBuilder);
     }
+
+	public FatturaOrdineBulk findByFatturaRiga(Fattura_passiva_rigaBulk fattura_passiva_riga) throws PersistencyException {
+		final FatturaOrdineHome fatturaOrdineHome = Optional.ofNullable(getHomeCache().getHome(FatturaOrdineBulk.class, fattura_passiva_riga.getFattura_passiva().getCd_tipo_doc()))
+				.filter(FatturaOrdineHome.class::isInstance)
+				.map(FatturaOrdineHome.class::cast)
+				.orElseThrow(() -> new PersistenceException("Home di FatturaOrdineBulk non trovata!"));
+		SQLBuilder sqlBuilder = fatturaOrdineHome.createSQLBuilder();
+		sqlBuilder.addSQLClause(FindClause.AND, "CD_CDS", SQLBuilder.EQUALS, fattura_passiva_riga.getCd_cds());
+		sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, fattura_passiva_riga.getCd_unita_organizzativa());
+		sqlBuilder.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, fattura_passiva_riga.getEsercizio());
+		sqlBuilder.addSQLClause(FindClause.AND, "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fattura_passiva_riga.getPg_fattura_passiva());
+		sqlBuilder.addSQLClause(FindClause.AND, "PROGRESSIVO_RIGA", SQLBuilder.EQUALS, fattura_passiva_riga.getProgressivo_riga());
+		sqlBuilder.addSQLClause(FindClause.AND, "ATTIVA", SQLBuilder.EQUALS, Boolean.TRUE);
+		List result = fetchAll(sqlBuilder);
+		if (result.isEmpty())
+			return null;
+		return (FatturaOrdineBulk) result.getFirst();
+	}
 }

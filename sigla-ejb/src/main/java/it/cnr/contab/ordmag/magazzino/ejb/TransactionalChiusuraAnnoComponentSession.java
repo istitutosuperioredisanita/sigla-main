@@ -19,18 +19,11 @@ package it.cnr.contab.ordmag.magazzino.ejb;
 
 import it.cnr.contab.ordmag.magazzino.bulk.*;
 import it.cnr.contab.ordmag.magazzino.dto.ValoriLottoPerAnno;
-import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
-import it.cnr.contab.ordmag.ordini.bulk.FatturaOrdineBulk;
-import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
-import it.cnr.contab.ordmag.ordini.dto.ImportoOrdine;
-import it.cnr.contab.ordmag.ordini.dto.ParametriCalcoloImportoOrdine;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.util.RemoteIterator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;

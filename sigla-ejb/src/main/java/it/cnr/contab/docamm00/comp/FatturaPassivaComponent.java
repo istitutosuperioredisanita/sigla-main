@@ -909,15 +909,26 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
     }
 
     private void aggiornaRigheFatturaPassivaDiOrigine(UserContext aUC, Nota_di_creditoBulk ndc) throws ComponentException {
-
         for (Iterator i = ndc.getFattura_passiva_dettColl().iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaIBulk rigaFP = ((Nota_di_credito_rigaBulk) i.next()).getRiga_fattura_origine();
             basicAggiornaRigheFatturaPassivaDiOrigine(aUC, rigaFP);
+            //Elimino eventuali fatture/Ordini presenti
+            try {
+                FatturaOrdineBulk fatturaOrdiniOld = ((FatturaOrdineHome)getHome(aUC, FatturaOrdineBulk.class)).findByFatturaRiga(rigaFP);
+                if (fatturaOrdiniOld!=null) {
+                    fatturaOrdiniOld.setAttiva(Boolean.FALSE);
+                    fatturaOrdiniOld.setToBeUpdated();
+                    makeBulkPersistent(aUC, fatturaOrdiniOld);
+                    //Serve per eliminare scritture prime note di riscontri poi annullati
+                    gestisciEliminaRiscontroValore(aUC, Collections.singletonList(fatturaOrdiniOld), Collections.EMPTY_LIST);
+                }
+            } catch (PersistencyException e) {
+                throw handleException(e);
+            }
         }
     }
 
     private void aggiornaRigheFatturaPassivaDiOrigine(UserContext aUC, Nota_di_debitoBulk ndd) throws ComponentException {
-
         for (Iterator i = ndd.getFattura_passiva_dettColl().iterator(); i.hasNext(); ) {
             Fattura_passiva_rigaIBulk rigaFP = ((Nota_di_debito_rigaBulk) i.next()).getRiga_fattura_origine();
             basicAggiornaRigheFatturaPassivaDiOrigine(aUC, rigaFP);
@@ -1891,26 +1902,13 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
 
         Fattura_passiva_rigaIHome home = (Fattura_passiva_rigaIHome) getHome(context, Fattura_passiva_rigaIBulk.class);
         it.cnr.jada.persistency.sql.SQLBuilder sql = home.createSQLBuilder();
-        sql.addClause("AND", "pg_fattura_passiva", SQLBuilder.EQUALS, fatturaPassiva.getPg_fattura_passiva());
-        sql.addClause("AND", "cd_cds", SQLBuilder.EQUALS, fatturaPassiva.getCd_cds_origine());
-        sql.addClause("AND", "esercizio", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
-        sql.addClause("AND", "cd_unita_organizzativa", SQLBuilder.EQUALS, fatturaPassiva.getCd_uo_origine());
-        sql.addClause("AND", "stato_cofi", SQLBuilder.NOT_EQUALS, Fattura_passiva_IBulk.STATO_ANNULLATO);
+        sql.addClause(FindClause.AND, "pg_fattura_passiva", SQLBuilder.EQUALS, fatturaPassiva.getPg_fattura_passiva());
+        sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, fatturaPassiva.getCd_cds_origine());
+        sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
+        sql.addClause(FindClause.AND, "cd_unita_organizzativa", SQLBuilder.EQUALS, fatturaPassiva.getCd_uo_origine());
+        sql.addClause(FindClause.AND, "stato_cofi", SQLBuilder.NOT_EQUALS, Fattura_passiva_IBulk.STATO_ANNULLATO);
         //Escludo le riportate
-        //sql.addSQLClause("AND", "ESERCIZIO_OBBLIGAZIONE", sql.EQUALS, fatturaPassiva.getEsercizio());
-        //Escludo le righe legate ad ordine
-        final FatturaOrdineHome fatturaOrdineHome = Optional.ofNullable(getHome(context, FatturaOrdineBulk.class, fatturaPassiva.getCd_tipo_doc()))
-                .filter(FatturaOrdineHome.class::isInstance)
-                .map(FatturaOrdineHome.class::cast)
-                .orElseThrow(() -> new ComponentException("Home di FatturaOrdineBulk non trovata!"));
-        SQLBuilder sqlBuilder = fatturaOrdineHome.createSQLBuilder();
-        sqlBuilder.addSQLClause(FindClause.AND, "CD_CDS", SQLBuilder.EQUALS, fatturaPassiva.getCd_cds());
-        sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, fatturaPassiva.getCd_unita_organizzativa());
-        sqlBuilder.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
-        sqlBuilder.addSQLClause(FindClause.AND, "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fatturaPassiva.getPg_fattura_passiva());
-        sqlBuilder.addSQLJoin( "FATTURA_ORDINE.PROGRESSIVO_RIGA", "FATTURA_PASSIVA_RIGA.PROGRESSIVO_RIGA");
-
-        sql.addSQLNotExistsClause(FindClause.AND, sqlBuilder);
+        //sql.addSQLClause(FindClause.AND, "ESERCIZIO_OBBLIGAZIONE", SQLBuilder.EQUALS, fatturaPassiva.getEsercizio());
         try {
             return iterator(
                     context,
