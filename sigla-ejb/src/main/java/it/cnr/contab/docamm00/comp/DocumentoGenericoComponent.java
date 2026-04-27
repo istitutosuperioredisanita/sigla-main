@@ -194,7 +194,7 @@ public class DocumentoGenericoComponent
                         } else {
                             ((Vector) accTemporanei.get(scadenza.getAccertamento())).add(scadenza);
                         }
-                    } else if (!documento.isToBeCreated() && OggettoBulk.NORMAL == scadenza.getCrudStatus()) {
+                    } else if (!documento.isToBeCreated() &&  OggettoBulk.NORMAL == scadenza.getCrudStatus()) {
                         PrimaryKeyHashtable accerts = getDocumentiContabiliNonTemporanei(userContext, documento.getAccertamentiHash().keys());
                         if (!accerts.containsKey(scadenza.getAccertamento()))
                             aggiornaSaldi(userContext, documento, scadenza.getAccertamento(), status);
@@ -749,7 +749,7 @@ public class DocumentoGenericoComponent
             // eliminiamo eventuali righe cancellate
             for (java.util.Iterator iterator = documento.getDettagliCancellati().iterator(); iterator.hasNext(); ) {
                 Documento_generico_rigaBulk dett = (Documento_generico_rigaBulk) iterator.next();
-                if (dett.equalsByPrimaryKey(scadenza))
+                if (Optional.ofNullable(dett.getAccertamento_scadenziario()).isPresent() && dett.getAccertamento_scadenziario().equalsByPrimaryKey(scadenza))
                     impTotaleDettagli = impTotaleDettagli.subtract(dett.getIm_riga());
             }
 
@@ -773,9 +773,8 @@ public class DocumentoGenericoComponent
 		} catch (it.cnr.jada.persistency.PersistencyException e) {
 			throw handleException(documento, e);
 		}
-		*/
+        */
         }
-
         return impTotaleDettagli;
     }
 
@@ -867,8 +866,15 @@ public class DocumentoGenericoComponent
                             } catch (it.cnr.jada.persistency.PersistencyException e) {
                                 throw handleException(rigaSelected, e);
                             }
+                            if ( rigaSelected.isDocumentoStorno())
+                                importo = importo.add( rigaSelected.getIm_riga().negate()).subtract(oldRiga.getIm_riga());
+                            else if (Documento_generico_rigaBulk.STATO_CONTABILIZZATO.equalsIgnoreCase(oldRiga.getStato_cofi() )) {
+                                if ( oldRiga.getIm_riga().compareTo(rigaSelected.getIm_riga())!=0)
+                                    importo = importo.add(rigaSelected.getIm_riga()).subtract(oldRiga.getIm_riga());
+                            }else
+                                importo = importo.add(rigaSelected.getIm_riga());
 
-                            importo = importo.add(rigaSelected.isDocumentoStorno()? rigaSelected.getIm_riga().negate() : rigaSelected.getIm_riga()).subtract(oldRiga.getIm_riga());
+                            //importo = importo.add(rigaSelected.isDocumentoStorno()? rigaSelected.getIm_riga().negate() : rigaSelected.getIm_riga()).subtract(oldRiga.getIm_riga());
                         }
                     }
                     if (rigaSelected.isDocumentoStorno()) {
@@ -3395,7 +3401,7 @@ public class DocumentoGenericoComponent
                 if (generico.getTi_entrate_spese() == Documento_genericoBulk.SPESE && riga.getObbligazione_scadenziario() != null && riga.getObbligazione_scadenziario().getObbligazione() != null &&
                         riga.getObbligazione_scadenziario().getObbligazione().getElemento_voce() != null &&
                         riga.getObbligazione_scadenziario().getObbligazione().getElemento_voce().getFl_inv_beni_patr().booleanValue()) {
-                    riga.setInventariato(true);
+
                     riga.setInventariato(ha_beniColl(userContext, riga).booleanValue());
                 } else {
                     if (riga.getAccertamento_scadenziario() != null && riga.getAccertamento_scadenziario().getAccertamento() != null &&
@@ -3406,8 +3412,7 @@ public class DocumentoGenericoComponent
                                 riga.getAccertamento_scadenziario().getAccertamento().getEsercizio(),
                                 riga.getAccertamento_scadenziario().getAccertamento().getTi_appartenenza(),
                                 riga.getAccertamento_scadenziario().getAccertamento().getTi_gestione()));
-                        if (elem_voce.getFl_inv_beni_patr().booleanValue())
-                            riga.setInventariato(true);
+
                         riga.setInventariato(ha_beniColl(userContext, riga).booleanValue());
                     }
                 }
@@ -5948,6 +5953,10 @@ public class DocumentoGenericoComponent
     }
 
     public boolean existARowToBeInventoried(UserContext context, Documento_genericoBulk documento) throws ComponentException {
+        //per i documenti generici di spese e di entrata faccio il controllo se sono liquidabili
+        if (( Documento_genericoBulk.GENERICO_S.equalsIgnoreCase(documento.getCd_tipo_documento_amm()) && !(Documento_genericoBulk.LIQ.equalsIgnoreCase(documento.getStato_liquidazione())))
+        ||( Documento_genericoBulk.GENERICO_E.equalsIgnoreCase(documento.getCd_tipo_documento_amm()) && ( documento.hasDettagliNonContabilizzati())) )
+            return Boolean.FALSE;
         if ( documento.getDocumento_generico_dettColl() != null) {
             Iterator dettagli = documento.getDocumento_generico_dettColl().iterator();
             while (dettagli.hasNext()) {

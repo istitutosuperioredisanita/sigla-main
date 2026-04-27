@@ -1279,11 +1279,11 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public Documento_generico_rigaBulk removeFromDocumento_generico_dettColl( int indiceDiLinea )
 	{
 		Documento_generico_rigaBulk element = (Documento_generico_rigaBulk)documento_generico_dettColl.get(indiceDiLinea);
-		addToDettagliCancellati(element);
 		if (element != null && getTi_entrate_spese()==ENTRATE && element.getAccertamento_scadenziario() != null)
 			removeFromDocumento_generico_accertamentiHash(element);
 		if (element != null && getTi_entrate_spese()==SPESE && element.getObbligazione_scadenziario() != null)
 			removeFromDocumento_generico_obbligazioniHash(element);
+		addToDettagliCancellati(element);
 
 
 
