@@ -26,6 +26,7 @@ import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.CHARToBooleanConverter;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
@@ -78,7 +79,8 @@ public class FatturaOrdineHome extends BulkHome {
         sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, fattura_passiva.getCd_unita_organizzativa());
         sqlBuilder.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, fattura_passiva.getEsercizio());
         sqlBuilder.addSQLClause(FindClause.AND, "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fattura_passiva.getPg_fattura_passiva());
-		sqlBuilder.addSQLClause(FindClause.AND, "ATTIVA", SQLBuilder.EQUALS, Boolean.TRUE);
+		sqlBuilder.addSQLClause(FindClause.AND,"ATTIVA",SQLBuilder.EQUALS,Boolean.TRUE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true, false);
+
         return fatturaOrdineHome.fetchAll(sqlBuilder);
     }
 
@@ -93,7 +95,8 @@ public class FatturaOrdineHome extends BulkHome {
 		sqlBuilder.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, fattura_passiva_riga.getEsercizio());
 		sqlBuilder.addSQLClause(FindClause.AND, "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fattura_passiva_riga.getPg_fattura_passiva());
 		sqlBuilder.addSQLClause(FindClause.AND, "PROGRESSIVO_RIGA", SQLBuilder.EQUALS, fattura_passiva_riga.getProgressivo_riga());
-		sqlBuilder.addSQLClause(FindClause.AND, "ATTIVA", SQLBuilder.EQUALS, Boolean.TRUE);
+		sqlBuilder.addSQLClause(FindClause.AND,"ATTIVA",SQLBuilder.EQUALS,Boolean.TRUE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true, false);
+		sqlBuilder.addSQLClause(FindClause.AND,"ATTIVA",SQLBuilder.EQUALS,Boolean.TRUE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true, false);
 		List result = fetchAll(sqlBuilder);
 		if (result.isEmpty())
 			return null;
