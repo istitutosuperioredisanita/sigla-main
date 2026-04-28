@@ -96,7 +96,6 @@ public class FatturaOrdineHome extends BulkHome {
 		sqlBuilder.addSQLClause(FindClause.AND, "PG_FATTURA_PASSIVA", SQLBuilder.EQUALS, fattura_passiva_riga.getPg_fattura_passiva());
 		sqlBuilder.addSQLClause(FindClause.AND, "PROGRESSIVO_RIGA", SQLBuilder.EQUALS, fattura_passiva_riga.getProgressivo_riga());
 		sqlBuilder.addSQLClause(FindClause.AND,"ATTIVA",SQLBuilder.EQUALS,Boolean.TRUE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true, false);
-		sqlBuilder.addSQLClause(FindClause.AND,"ATTIVA",SQLBuilder.EQUALS,Boolean.TRUE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true, false);
 		List result = fetchAll(sqlBuilder);
 		if (result.isEmpty())
 			return null;
