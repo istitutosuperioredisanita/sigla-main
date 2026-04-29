@@ -17,15 +17,11 @@
 
 package it.cnr.contab.coepcoan00.ejb;
 
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
-import it.cnr.contab.coepcoan00.core.bulk.V_documenti_da_contabilizzareBulk;
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-
 import jakarta.ejb.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -38,4 +34,7 @@ public interface ScritturaPartitaDoppiaFromDocumentoComponentSession extends it.
     void removeScrittura(UserContext userContext, Scrittura_partita_doppiaBulk scrittura) throws ComponentException, PersistencyException, java.rmi.RemoteException;
     List<V_documenti_da_contabilizzareBulk> getAllDocumentiCogeDaContabilizzare(UserContext param0, Integer param1, String param2) throws it.cnr.jada.comp.ComponentException, PersistencyException, java.rmi.RemoteException;
     IDocumentoCogeBulk caricaScrittura(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk) throws it.cnr.jada.comp.ComponentException, PersistencyException, java.rmi.RemoteException;
+    void removeScrittureAndAnalitica(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, OrigineScritturaEnum scritturaOrigine, Boolean logical) throws ComponentException, PersistencyException,RemoteException;
+    void removeScritture(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk,OrigineScritturaEnum scritturaOrigine,Boolean logical) throws ComponentException, PersistencyException ,RemoteException ;
+    void removeScrittureAnalitiche(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk,OrigineScritturaEnum scritturaOrigine,Boolean logical) throws ComponentException, PersistencyException,RemoteException;
 }

@@ -18,15 +18,11 @@
 package it.cnr.contab.coepcoan00.ejb;
 
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
-import it.cnr.contab.coepcoan00.core.bulk.V_documenti_da_contabilizzareBulk;
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
@@ -153,4 +149,61 @@ public class ScritturaPartitaDoppiaFromDocumentoComponentSessionBean extends it.
             throw uncaughtError(param0, componentObj, e);
         }
     }
+
+	@Override
+	public void removeScrittureAndAnalitica(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, OrigineScritturaEnum scritturaOrigine, Boolean logical) throws ComponentException, PersistencyException{
+		pre_component_invocation(userContext, componentObj);
+		try {
+			((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).removeScrittureAndAnalitica(userContext, documentoCogeBulk,scritturaOrigine,logical);
+			component_invocation_succes(userContext, componentObj);
+		} catch (it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext, componentObj);
+			throw e;
+		} catch (it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext, componentObj);
+			throw e;
+		} catch (RuntimeException e) {
+			throw uncaughtRuntimeException(userContext, componentObj, e);
+		} catch (Error e) {
+			throw uncaughtError(userContext, componentObj, e);
+		}
+	}
+
+	@Override
+	public void removeScritture(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, OrigineScritturaEnum scritturaOrigine, Boolean logical) throws ComponentException, PersistencyException {
+		pre_component_invocation(userContext, componentObj);
+		try {
+			((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).removeScritture(userContext, documentoCogeBulk,scritturaOrigine,logical);
+			component_invocation_succes(userContext, componentObj);
+		} catch (it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext, componentObj);
+			throw e;
+		} catch (it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext, componentObj);
+			throw e;
+		} catch (RuntimeException e) {
+			throw uncaughtRuntimeException(userContext, componentObj, e);
+		} catch (Error e) {
+			throw uncaughtError(userContext, componentObj, e);
+		}
+	}
+
+	@Override
+	public void removeScrittureAnalitiche(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, OrigineScritturaEnum scritturaOrigine, Boolean logical) throws ComponentException, PersistencyException, RemoteException {
+		pre_component_invocation(userContext, componentObj);
+		try {
+			((ScritturaPartitaDoppiaFromDocumentoComponent) componentObj).removeScrittureAnalitiche(userContext, documentoCogeBulk,scritturaOrigine,logical);
+			component_invocation_succes(userContext, componentObj);
+		} catch (it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext, componentObj);
+			throw e;
+		} catch (it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext, componentObj);
+			throw e;
+		} catch (RuntimeException e) {
+			throw uncaughtRuntimeException(userContext, componentObj, e);
+		} catch (Error e) {
+			throw uncaughtError(userContext, componentObj, e);
+		}
+	}
 }

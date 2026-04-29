@@ -17,6 +17,7 @@
 
 package it.cnr.contab.docamm00.docs.bulk;
 
+import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.DivisaHome;
@@ -26,10 +27,10 @@ import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
@@ -219,5 +220,21 @@ public class Fattura_passivaHome extends BulkHome {
         if (isInScrivania)
             return IDocumentoAmministrativoBulk.getStatoRiportoInScrivania(aEs,aEsScr,aEsDocCont,ripParzRip);
         return IDocumentoAmministrativoBulk.getStatoRiporto(aEs,aEsScr,aEsDocCont,ripParzRip);
+    }
+    public Fattura_passiva_IBulk findFattura(CompensoBulk compenso) throws ComponentException, PersistencyException {
+
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "CDS_COMPENSO",sql.EQUALS,compenso.getCd_cds());
+        sql.addSQLClause("AND", "UO_COMPENSO",sql.EQUALS,compenso.getCd_unita_organizzativa());
+        sql.addSQLClause("AND", "ESERCIZIO_COMPENSO",sql.EQUALS,compenso.getEsercizio());
+        sql.addSQLClause("AND", "PG_COMPENSO",sql.EQUALS,compenso.getPg_compenso());
+
+        List l =fetchAll(sql);
+        if ( l.isEmpty())
+            throw new ApplicationException("Non è stata recuperata la Fattura legata al Compenso ");
+        if ( l.size()>1)
+            throw new ApplicationException("Sono stata recuperate più Fattura legata al Compenso ");
+        return (Fattura_passiva_IBulk) l.get(0);
+
     }
 }

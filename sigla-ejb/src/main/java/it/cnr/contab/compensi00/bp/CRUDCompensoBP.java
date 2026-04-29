@@ -57,7 +57,6 @@ import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.jsp.PageContext;
 
-import jakarta.servlet.jsp.PageContext;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Optional;
@@ -1002,7 +1001,7 @@ public class CRUDCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP impleme
                 !isInputReadonly() &&
                 !isSearching() &&
                 !isInserting() &&
-                !compenso.isDaFatturaPassiva();
+                ( !compenso.isDaFatturaPassiva() ||(compenso.isDaFatturaPassiva( )&& ( !compenso.isPagato()) ));
 
         //	Chiusura : se carico un compenso con esercizio precedente a quello solare :
         //	- esercizio scrivania != anno solare e obbligazione riportata --> disabilito

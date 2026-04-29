@@ -19,13 +19,17 @@ package it.cnr.contab.coepcoan00.comp;
 
 import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
+import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
+import it.cnr.contab.config00.esercizio.bulk.EsercizioHome;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
 import it.cnr.contab.doccont00.core.bulk.ReversaleIBulk;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.missioni00.docs.bulk.RimborsoBulk;
-import it.cnr.contab.ordmag.ordini.bulk.*;
+import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
+import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaHome;
+import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.DetailedRuntimeException;
@@ -45,6 +49,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent {
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(ScritturaPartitaDoppiaFromDocumentoComponent.class);
@@ -308,8 +313,51 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
         }
     }
 
-    public void removeScrittura(UserContext userContext, Scrittura_partita_doppiaBulk scrittura) throws ComponentException {
+    public void removeScrittureAndAnalitica(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk,OrigineScritturaEnum scritturaOrigine,Boolean logical) throws ComponentException, PersistencyException {
+            removeScrittureAnalitiche(userContext,documentoCogeBulk,scritturaOrigine,logical);
+            removeScritture(userContext,documentoCogeBulk,scritturaOrigine,logical);
+    }
+    public void removeScritture(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk,OrigineScritturaEnum scritturaOrigine,Boolean logical) throws ComponentException, PersistencyException {
+
+        //Cerco la prima nota creata sulla consegna e la metto in stato annullata
+        Scrittura_partita_doppiaHome scrHome = (Scrittura_partita_doppiaHome) getHome(userContext, Scrittura_partita_doppiaBulk.class);
+        List<Scrittura_partita_doppiaBulk> scrList = scrHome.findByDocumentoCoge(documentoCogeBulk);
+        if ( Optional.ofNullable(scritturaOrigine).isPresent())
+            scrList = scrList.stream().filter(el->scritturaOrigine.name().equalsIgnoreCase(el.getOrigine_scrittura())).collect(Collectors.toList());
+        for (Scrittura_partita_doppiaBulk scrBulk : scrList) {
+            if ( logical) {
+                scrBulk.setAttiva("N");
+                scrBulk.setToBeUpdated();
+                makeBulkPersistent(userContext, scrBulk);
+            }else
+                removeScrittura(userContext,scrBulk);
+        }
+
+
+    }
+    public void removeScrittureAnalitiche(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk,OrigineScritturaEnum scritturaOrigine,Boolean logical) throws ComponentException, PersistencyException {
+
+        //Cerco la prima nota creata sulla consegna e la metto in stato annullata
+        Scrittura_analiticaHome anaHome = (Scrittura_analiticaHome) getHome(userContext, Scrittura_analiticaBulk.class);
+        List<Scrittura_analiticaBulk> anaList = anaHome.findByDocumentoCoge(documentoCogeBulk);
+        if ( Optional.ofNullable(scritturaOrigine).isPresent())
+            anaList = anaList.stream().filter(el->scritturaOrigine.name().equalsIgnoreCase(el.getOrigine_scrittura())).collect(Collectors.toList());
+
+        for (Scrittura_analiticaBulk anaBulk : anaList) {
+            if ( logical) {
+                anaBulk.setAttiva("N");
+                anaBulk.setToBeUpdated();
+                makeBulkPersistent(userContext, anaBulk);
+            }else
+                removeScritturaAnalitica(userContext,anaBulk);
+        }
+    }
+    public void removeScrittura(UserContext userContext, Scrittura_partita_doppiaBulk scrittura) throws ComponentException{
         try {
+            EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
+            if (!home.isEsercizioAperto(scrittura.getEsercizio(), scrittura.getCd_cds()))
+                throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non generabile/modificabile. L'esercizio contabile " + scrittura.getEsercizio() +
+                        " per il cds " + scrittura.getCd_cds() + " risulta essere non aperto.");
             if (scrittura.getMovimentiDareColl().isEmpty())
                 scrittura.setMovimentiDareColl(new BulkList<>(((Scrittura_partita_doppiaHome) getHome(userContext, scrittura.getClass()))
                         .findMovimentiDareColl(userContext, scrittura, false)));
@@ -327,13 +375,17 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
             });
             scrittura.setToBeDeleted();
             super.deleteBulk(userContext, scrittura);
-        } catch (PersistencyException e) {
+        } catch (PersistencyException | ScritturaPartitaDoppiaNotEnabledException e) {
             throw handleException(scrittura, e);
         }
     }
 
     public void removeScritturaAnalitica(UserContext userContext, Scrittura_analiticaBulk scrittura) throws ComponentException {
         try {
+            EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
+            if (!home.isEsercizioAperto(scrittura.getEsercizio(), scrittura.getCd_cds()))
+                throw new ScritturaPartitaDoppiaNotEnabledException("Scrittura Economica non generabile/modificabile. L'esercizio contabile " + scrittura.getEsercizio() +
+                        " per il cds " + scrittura.getCd_cds() + " risulta essere non aperto.");
             if (scrittura.getMovimentiColl().isEmpty())
                 scrittura.setMovimentiColl( new BulkList<>( ((Scrittura_analiticaHome) getHome( userContext, scrittura.getClass())).findMovimentiColl( userContext, scrittura )));
             scrittura.getMovimentiColl().forEach(movcoan -> {
@@ -346,7 +398,7 @@ public class ScritturaPartitaDoppiaFromDocumentoComponent extends CRUDComponent 
             });
             scrittura.setToBeDeleted();
             super.deleteBulk(userContext, scrittura);
-        } catch (PersistencyException e) {
+        } catch (PersistencyException | ScritturaPartitaDoppiaNotEnabledException e) {
             throw handleException(scrittura, e);
         }
     }

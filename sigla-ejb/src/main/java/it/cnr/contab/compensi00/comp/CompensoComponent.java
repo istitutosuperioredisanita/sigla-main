@@ -17,65 +17,12 @@
 
 package it.cnr.contab.compensi00.comp;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoHome;
-import it.cnr.contab.anagraf00.core.bulk.Anagrafico_terzoBulk;
-import it.cnr.contab.anagraf00.core.bulk.Ass_rapp_impiegoBulk;
-import it.cnr.contab.anagraf00.core.bulk.Ass_rapp_impiegoHome;
-import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
-import it.cnr.contab.anagraf00.core.bulk.BancaHome;
-import it.cnr.contab.anagraf00.core.bulk.RapportoBulk;
-import it.cnr.contab.anagraf00.core.bulk.RapportoHome;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
-import it.cnr.contab.anagraf00.tabrif.bulk.Codici_rapporti_inpsBulk;
-import it.cnr.contab.anagraf00.tabrif.bulk.Codici_rapporti_inpsHome;
-import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
-import it.cnr.contab.anagraf00.tabrif.bulk.Tipo_rapportoBulk;
-import it.cnr.contab.anagraf00.tabrif.bulk.Tipo_rapportoHome;
-import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
-import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
-import it.cnr.contab.anagraf00.tabter.bulk.NazioneHome;
-import it.cnr.contab.anagraf00.tabter.bulk.RegioneBulk;
-import it.cnr.contab.anagraf00.tabter.bulk.RegioneHome;
+import it.cnr.contab.anagraf00.core.bulk.*;
+import it.cnr.contab.anagraf00.tabrif.bulk.*;
+import it.cnr.contab.anagraf00.tabter.bulk.*;
 import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponent;
-import it.cnr.contab.compensi00.docs.bulk.BonusBulk;
-import it.cnr.contab.compensi00.docs.bulk.BonusHome;
-import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
-import it.cnr.contab.compensi00.docs.bulk.CompensoHome;
-import it.cnr.contab.compensi00.docs.bulk.ConguaglioBulk;
-import it.cnr.contab.compensi00.docs.bulk.ConguaglioHome;
-import it.cnr.contab.compensi00.docs.bulk.Contributo_ritenutaBulk;
-import it.cnr.contab.compensi00.docs.bulk.Contributo_ritenutaHome;
-import it.cnr.contab.compensi00.docs.bulk.Estrazione770Bulk;
-import it.cnr.contab.compensi00.docs.bulk.EstrazioneCUDBulk;
-import it.cnr.contab.compensi00.docs.bulk.EstrazioneCUDVBulk;
-import it.cnr.contab.compensi00.docs.bulk.EstrazioneINPSBulk;
-import it.cnr.contab.compensi00.docs.bulk.EstrazioneINPSMensileBulk;
-import it.cnr.contab.compensi00.docs.bulk.MinicarrieraBulk;
-import it.cnr.contab.compensi00.docs.bulk.Minicarriera_rataBulk;
-import it.cnr.contab.compensi00.docs.bulk.Minicarriera_rataHome;
-import it.cnr.contab.compensi00.docs.bulk.StampaCertificazioneVBulk;
-import it.cnr.contab.compensi00.docs.bulk.StampaCompensiBulk;
-import it.cnr.contab.compensi00.docs.bulk.StampaPartitarioCompensiVBulk;
-import it.cnr.contab.compensi00.docs.bulk.StampaRiepilogoCompensiVBulk;
-import it.cnr.contab.compensi00.docs.bulk.VCompensoSIPBulk;
-import it.cnr.contab.compensi00.docs.bulk.VCompensoSIPHome;
-import it.cnr.contab.compensi00.docs.bulk.V_doc_cont_compBulk;
-import it.cnr.contab.compensi00.docs.bulk.V_doc_cont_compHome;
-import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
-import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoHome;
-import it.cnr.contab.compensi00.tabrif.bulk.Acconto_classific_coriBulk;
-import it.cnr.contab.compensi00.tabrif.bulk.Acconto_classific_coriHome;
-import it.cnr.contab.compensi00.tabrif.bulk.Filtro_trattamentoBulk;
-import it.cnr.contab.compensi00.tabrif.bulk.Quadri_770Bulk;
-import it.cnr.contab.compensi00.tabrif.bulk.Quadri_770Home;
-import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoBulk;
-import it.cnr.contab.compensi00.tabrif.bulk.Tipo_trattamentoHome;
-import it.cnr.contab.compensi00.tabrif.bulk.Tipologia_rischioBulk;
-import it.cnr.contab.compensi00.tabrif.bulk.Tipologia_rischioHome;
-import it.cnr.contab.compensi00.tabrif.bulk.V_tipo_trattamento_tipo_coriBulk;
-import it.cnr.contab.compensi00.tabrif.bulk.V_tipo_trattamento_tipo_coriHome;
+import it.cnr.contab.compensi00.docs.bulk.*;
+import it.cnr.contab.compensi00.tabrif.bulk.*;
 import it.cnr.contab.config00.bulk.CigBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -86,11 +33,7 @@ import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.config00.ejb.Parametri_cnrComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
-import it.cnr.contab.config00.sto.bulk.CdsBulk;
-import it.cnr.contab.config00.sto.bulk.CdsHome;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.docamm00.client.RicercaTrovato;
 import it.cnr.contab.docamm00.docs.bulk.*;
 import it.cnr.contab.docamm00.ejb.NumerazioneTempDocAmmComponentSession;
@@ -99,22 +42,7 @@ import it.cnr.contab.docamm00.ejb.RiportoDocAmmComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Voce_ivaHome;
 import it.cnr.contab.doccont00.comp.DocumentoContabileComponentSession;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
-import it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk;
-import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
-import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileHome;
-import it.cnr.contab.doccont00.core.bulk.MandatoIBulk;
-import it.cnr.contab.doccont00.core.bulk.Mandato_rigaBulk;
-import it.cnr.contab.doccont00.core.bulk.Mandato_rigaIBulk;
-import it.cnr.contab.doccont00.core.bulk.Numerazione_doc_contBulk;
-import it.cnr.contab.doccont00.core.bulk.Numerazione_doc_contHome;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneHome;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneResBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scad_voceBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioHome;
-import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.AccertamentoAbstractComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.incarichi00.bulk.Ass_incarico_uoBulk;
@@ -135,12 +63,7 @@ import it.cnr.jada.comp.FatturaNonTrovataException;
 import it.cnr.jada.comp.IPrintMgr;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.Query;
-import it.cnr.jada.persistency.sql.SQLBuilder;
-import it.cnr.jada.persistency.sql.SQLExceptionHandler;
+import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 
 import java.io.FileNotFoundException;
@@ -150,17 +73,8 @@ import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Insert the type's description here. Creation date: (21/02/2002 16.13.52)
@@ -1666,6 +1580,70 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 		}
 	}
 
+
+
+	private void eliminaCompenso(UserContext userContext,CompensoBulk compenso, int tipoOperazione) throws ComponentException, PersistencyException, ParseException, RemoteException {
+
+		if ( compenso.CANCELLAZIONE_FISICA==tipoOperazione) {
+			this.removeScrittureAndAnalitica(userContext, compenso, null, Boolean.FALSE);
+			super.eliminaConBulk(userContext, compenso);
+		}else if (compenso.CANCELLAZIONE_LOGICA==tipoOperazione) {
+			this.removeScrittureAndAnalitica(userContext, compenso, null, Boolean.TRUE);
+			// ************
+			// Se l'esercizio di scrivania e' diverso da quello solare
+			// inizializzo la data di cancellazione al 31/12/esercizio
+			// missione
+			java.sql.Timestamp tsOdierno = ((CompensoHome) getHome(
+					userContext, compenso)).getServerDate();
+			java.util.GregorianCalendar tsOdiernoGregorian = (java.util.GregorianCalendar) java.util.GregorianCalendar
+					.getInstance();
+			tsOdiernoGregorian.setTime(tsOdierno);
+			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+					"dd/MM/yyyy");
+
+			if (tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR) != it.cnr.contab.utenze00.bp.CNRUserContext
+					.getEsercizio(userContext).intValue())
+				compenso.setDt_cancellazione(new java.sql.Timestamp(sdf
+						.parse(
+								"31/12/"
+										+ compenso.getEsercizio()
+										.intValue()).getTime()));
+			else {
+				String currentDate = Integer.toString(tsOdiernoGregorian
+						.get(java.util.GregorianCalendar.DAY_OF_MONTH))
+						+ "/"
+						+ Integer.toString(tsOdiernoGregorian
+						.get(java.util.GregorianCalendar.MONTH))
+						+ "/"
+						+ Integer.toString(tsOdiernoGregorian
+						.get(java.util.GregorianCalendar.YEAR));
+				compenso.setDt_cancellazione(new java.sql.Timestamp(sdf
+						.parse(currentDate).getTime()));
+			}
+			// ************
+
+			compenso.setStato_cofi(CompensoBulk.STATO_ANNULLATO);
+			if (compenso.CONTABILIZZATO_COAN.equals(compenso
+					.getStato_coan()))
+				compenso.setStato_coan(compenso.DA_RICONTABILIZZARE_COAN);
+			if (compenso.CONTABILIZZATO_COGE.equals(compenso
+					.getStato_coge()))
+				compenso.setStato_coge(compenso.DA_RICONTABILIZZARE_COGE);
+			updateBulk(userContext, compenso);
+		}
+		if ( compenso.isDaFatturaPassiva()){
+			//elimina riferimenti del compnenso dalla fattura passiva
+			Fattura_passivaHome homeFp = (Fattura_passivaHome) getHome(userContext, Fattura_passiva_IBulk.class);
+			Fattura_passivaBulk fatturaPassiva = homeFp.findFattura(compenso);
+
+			fatturaPassiva =( Fattura_passivaBulk) Utility.createFatturaPassivaComponentSession().inizializzaBulkPerModifica(userContext,fatturaPassiva);
+			fatturaPassiva.setCompenso(null);
+			fatturaPassiva.setFl_fattura_compenso(Boolean.FALSE);
+			fatturaPassiva.setStato_liquidazione(Fattura_passivaBulk.NOLIQ);
+			fatturaPassiva = ( Fattura_passivaBulk) Utility.createFatturaPassivaComponentSession().modificaConBulk(userContext,fatturaPassiva);
+		}
+
+	}
 	/**
 	 * Viene richiesta l'eliminazione del Compenso
 	 * 
@@ -1732,52 +1710,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			if (scadenzaAssociata != null)
 				compenso.addToDocumentiContabiliCancellati(scadenzaAssociata);
 			gestisciObbligazioniScollegate(userContext, compenso, null);
-
-			if (risp == compenso.CANCELLAZIONE_FISICA)
-				super.eliminaConBulk(userContext, compenso);
-			else if (risp == compenso.CANCELLAZIONE_LOGICA) {
-				// ************
-				// Se l'esercizio di scrivania e' diverso da quello solare
-				// inizializzo la data di cancellazione al 31/12/esercizio
-				// missione
-				java.sql.Timestamp tsOdierno = ((CompensoHome) getHome(
-						userContext, compenso)).getServerDate();
-				java.util.GregorianCalendar tsOdiernoGregorian = (java.util.GregorianCalendar) java.util.GregorianCalendar
-						.getInstance();
-				tsOdiernoGregorian.setTime(tsOdierno);
-				java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
-						"dd/MM/yyyy");
-
-				if (tsOdiernoGregorian.get(java.util.GregorianCalendar.YEAR) != it.cnr.contab.utenze00.bp.CNRUserContext
-						.getEsercizio(userContext).intValue())
-					compenso.setDt_cancellazione(new java.sql.Timestamp(sdf
-							.parse(
-									"31/12/"
-											+ compenso.getEsercizio()
-													.intValue()).getTime()));
-				else {
-					String currentDate = Integer.toString(tsOdiernoGregorian
-							.get(java.util.GregorianCalendar.DAY_OF_MONTH))
-							+ "/"
-							+ Integer.toString(tsOdiernoGregorian
-									.get(java.util.GregorianCalendar.MONTH))
-							+ "/"
-							+ Integer.toString(tsOdiernoGregorian
-									.get(java.util.GregorianCalendar.YEAR));
-					compenso.setDt_cancellazione(new java.sql.Timestamp(sdf
-							.parse(currentDate).getTime()));
-				}
-				// ************
-
-				compenso.setStato_cofi(CompensoBulk.STATO_ANNULLATO);
-				if (compenso.CONTABILIZZATO_COAN.equals(compenso
-						.getStato_coan()))
-					compenso.setStato_coan(compenso.DA_RICONTABILIZZARE_COAN);
-				if (compenso.CONTABILIZZATO_COGE.equals(compenso
-						.getStato_coge()))
-					compenso.setStato_coge(compenso.DA_RICONTABILIZZARE_COGE);
-				updateBulk(userContext, compenso);
-			}
+			eliminaCompenso(userContext,compenso,risp);
 			if (pgTmp != null)
 				eliminaCompensoTemporaneo(userContext, compenso, pgTmp);
 
@@ -1800,6 +1733,8 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			throw handleException(bulk, ex);
 		} catch (java.text.ParseException e) {
 			throw handleException(bulk, e);
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -2114,7 +2049,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			filtro.setTipoAnagrafico(compenso.getTi_anagrafico());
 			filtro.setDataValidita(compenso.getDt_registrazione());
 			filtro.setFlSenzaCalcoli(compenso.getFl_senza_calcoli());
-			filtro.setFlDefaultCongualio(new Boolean(compenso.isDaConguaglio()));
+			filtro.setFlDefaultCongualio(Boolean.valueOf(compenso.isDaConguaglio()));
 			filtro.setTiIstituzionaleCommerciale(compenso.getTi_istituz_commerc());
 
 			filtro.setFlBonus(compenso.isDaBonus());
@@ -2171,9 +2106,9 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				data_da.setTime(compenso.getDt_da_competenza_coge());
 				if (data_da.get(GregorianCalendar.YEAR) == (compenso
 						.getEsercizio() - 1))
-					filtro.setFlAnnoPrec(new Boolean(true));
+					filtro.setFlAnnoPrec(Boolean.TRUE);
 				else
-					filtro.setFlAnnoPrec(new Boolean(false));
+					filtro.setFlAnnoPrec(Boolean.TRUE);
 			}
 			if (compenso.getDt_da_competenza_coge() != null
 					&& compenso.getDt_a_competenza_coge() != null) {
@@ -2209,10 +2144,9 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 							&& !(Integer.valueOf(data_da
 									.get(GregorianCalendar.YEAR)).compareTo(a
 									.getAnno_fine_agevolazioni().intValue()) > 0)) {
-						filtro.setFlAgevolazioniCervelli(new Boolean(a
-								.getFl_cervellone()));
+						filtro.setFlAgevolazioniCervelli(Boolean.valueOf(a.getFl_cervellone()));
 					} else
-						filtro.setFlAgevolazioniCervelli(new Boolean(false));
+						filtro.setFlAgevolazioniCervelli(Boolean.FALSE);
 				} else
 				// solo per i congualgli dei cervelli gestisco anche le date a
 				// cavallo
@@ -2224,10 +2158,9 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 						&& !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR))
 								.compareTo(a.getAnno_fine_agevolazioni()
 										.intValue()) > 0)) {
-					filtro.setFlAgevolazioniCervelli(new Boolean(a
-							.getFl_cervellone()));
+					filtro.setFlAgevolazioniCervelli(Boolean.valueOf(a.getFl_cervellone()));
 				} else
-					filtro.setFlAgevolazioniCervelli(new Boolean(false));
+					filtro.setFlAgevolazioniCervelli(Boolean.FALSE);
 			}
 			if (filtro.getCdTipoRapporto() != null && getTipoRapportoProf(userContext).getCd_tipo_rapporto() != null
 					&& filtro.getCdTipoRapporto().equals(getTipoRapportoProf(userContext).getCd_tipo_rapporto())) 
@@ -3368,10 +3301,8 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			filtro.setDataValidita(compenso.getDt_registrazione());
 			filtro.setFlSenzaCalcoli(compenso.getFl_senza_calcoli());
 			filtro
-					.setFlDefaultCongualio(new Boolean(compenso
-							.isDaConguaglio()));
-			filtro.setTiIstituzionaleCommerciale(compenso
-					.getTi_istituz_commerc());
+					.setFlDefaultCongualio(Boolean.valueOf(compenso.isDaConguaglio()));
+			filtro.setTiIstituzionaleCommerciale(compenso.getTi_istituz_commerc());
 
 			filtro.setFlBonus(compenso.isDaBonus());
 			filtro.setFlSplitPayment(compenso.getFl_split_payment()); 
@@ -3427,9 +3358,9 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				data_da.setTime(compenso.getDt_da_competenza_coge());
 				if (data_da.get(GregorianCalendar.YEAR) == (compenso
 						.getEsercizio() - 1))
-					filtro.setFlAnnoPrec(new Boolean(true));
+					filtro.setFlAnnoPrec(Boolean.TRUE);
 				else
-					filtro.setFlAnnoPrec(new Boolean(false));
+					filtro.setFlAnnoPrec(Boolean.FALSE);
 
 			}
 			if (compenso.getDt_da_competenza_coge() != null
@@ -3462,10 +3393,9 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 							&& !(Integer.valueOf(data_da
 									.get(GregorianCalendar.YEAR)).compareTo(a
 									.getAnno_fine_agevolazioni().intValue()) > 0)) {
-						filtro.setFlAgevolazioniCervelli(new Boolean(a
-								.getFl_cervellone()));
+						filtro.setFlAgevolazioniCervelli(Boolean.valueOf(a.getFl_cervellone()));
 					} else
-						filtro.setFlAgevolazioniCervelli(new Boolean(false));
+						filtro.setFlAgevolazioniCervelli(Boolean.FALSE);
 				} else
 				// solo per i congualgli dei cervelli gestisco anche le date a
 				// cavallo
@@ -3477,10 +3407,9 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 						&& !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR))
 								.compareTo(a.getAnno_fine_agevolazioni()
 										.intValue()) > 0)) {
-					filtro.setFlAgevolazioniCervelli(new Boolean(a
-							.getFl_cervellone()));
+					filtro.setFlAgevolazioniCervelli(Boolean.valueOf(a.getFl_cervellone()));
 				} else
-					filtro.setFlAgevolazioniCervelli(new Boolean(false));
+					filtro.setFlAgevolazioniCervelli(Boolean.FALSE);
 			}
 			
 			if (filtro.getCdTipoRapporto() != null && getTipoRapportoProf(userContext).getCd_tipo_rapporto() != null
@@ -3714,7 +3643,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 			filtro.setDataValidita(compenso.getDt_registrazione());
 			filtro.setFlSenzaCalcoli(compenso.getFl_senza_calcoli());
 			filtro
-					.setFlDefaultCongualio(new Boolean(compenso
+					.setFlDefaultCongualio(Boolean.valueOf(compenso
 							.isDaConguaglio()));
 			filtro.setTiIstituzionaleCommerciale(compenso
 					.getTi_istituz_commerc());
@@ -3772,9 +3701,9 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 				data_da.setTime(compenso.getDt_da_competenza_coge());
 				if (data_da.get(GregorianCalendar.YEAR) == (compenso
 						.getEsercizio() - 1))
-					filtro.setFlAnnoPrec(new Boolean(true));
+					filtro.setFlAnnoPrec(Boolean.TRUE);
 				else
-					filtro.setFlAnnoPrec(new Boolean(false));
+					filtro.setFlAnnoPrec(Boolean.FALSE);
 
 			}
 			if (compenso.getDt_da_competenza_coge() != null
@@ -3806,10 +3735,9 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 							&& !(Integer.valueOf(data_da
 									.get(GregorianCalendar.YEAR)).compareTo(a
 									.getAnno_fine_agevolazioni().intValue()) > 0)) {
-						filtro.setFlAgevolazioniCervelli(new Boolean(a
-								.getFl_cervellone()));
+						filtro.setFlAgevolazioniCervelli(Boolean.valueOf(a.getFl_cervellone()));
 					} else
-						filtro.setFlAgevolazioniCervelli(new Boolean(false));
+						filtro.setFlAgevolazioniCervelli(Boolean.FALSE);
 				} else
 				// solo per i congualgli dei cervelli gestisco anche le date a
 				// cavallo
@@ -3821,10 +3749,9 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 						&& !(Integer.valueOf(data_da.get(GregorianCalendar.YEAR))
 								.compareTo(a.getAnno_fine_agevolazioni()
 										.intValue()) > 0)) {
-					filtro.setFlAgevolazioniCervelli(new Boolean(a
-							.getFl_cervellone()));
+					filtro.setFlAgevolazioniCervelli(Boolean.valueOf(a.getFl_cervellone()));
 				} else
-					filtro.setFlAgevolazioniCervelli(new Boolean(false));
+					filtro.setFlAgevolazioniCervelli(Boolean.FALSE);
 			}
 			
 			if (filtro.getCdTipoRapporto() != null && getTipoRapportoProf(userContext).getCd_tipo_rapporto() != null
@@ -6111,7 +6038,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 					SQLBuilder.EQUALS,
 					((it.cnr.contab.utenze00.bp.CNRUserContext) userContext)
 							.getCd_cds());
-			sql.addClause("AND", "FL_CDS", sql.EQUALS, new Boolean(true));
+			sql.addClause("AND", "FL_CDS", sql.EQUALS, Boolean.TRUE);
 		}
 		return sql;
 	}

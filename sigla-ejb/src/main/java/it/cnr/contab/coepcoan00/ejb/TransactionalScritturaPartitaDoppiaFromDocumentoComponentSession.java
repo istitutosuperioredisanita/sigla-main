@@ -17,13 +17,11 @@
 
 package it.cnr.contab.coepcoan00.ejb;
 
-import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
-import it.cnr.contab.coepcoan00.core.bulk.ResultScrittureContabili;
-import it.cnr.contab.coepcoan00.core.bulk.Scrittura_partita_doppiaBulk;
-import it.cnr.contab.coepcoan00.core.bulk.V_documenti_da_contabilizzareBulk;
+import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineRigaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -404,6 +402,69 @@ public class TransactionalScritturaPartitaDoppiaFromDocumentoComponentSession ex
             return (IDocumentoCogeBulk)invoke("caricaScrittura", new Object[]{
                     param0,
                     param1});
+        } catch (RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public void removeScrittureAndAnalitica(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, OrigineScritturaEnum scritturaOrigine, Boolean logical) throws ComponentException, PersistencyException,RemoteException {
+        try {
+            invoke("removeScrittureAndAnalitica", new Object[]{
+                    userContext,
+                    documentoCogeBulk,
+                    scritturaOrigine,
+                    logical });
+        } catch (RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public void removeScritture(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, OrigineScritturaEnum scritturaOrigine, Boolean logical) throws ComponentException, PersistencyException ,RemoteException{
+        try {
+            invoke("removeScritture", new Object[]{
+                    userContext,
+                    documentoCogeBulk,
+                    scritturaOrigine,
+                    logical });
+        } catch (RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public void removeScrittureAnalitiche(UserContext userContext, IDocumentoCogeBulk documentoCogeBulk, OrigineScritturaEnum scritturaOrigine, Boolean logical) throws ComponentException, PersistencyException ,RemoteException{
+        try {
+            invoke("removeScrittureAnalitiche", new Object[]{
+                    userContext,
+                    documentoCogeBulk,
+                    scritturaOrigine,
+                    logical });
         } catch (RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {
