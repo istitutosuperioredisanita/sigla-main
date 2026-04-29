@@ -61,7 +61,7 @@ public class FatturaOrdineHome extends BulkHome {
 		sql.addSQLClause(FindClause.AND, "NUMERO", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getNumero());
 		sql.addSQLClause(FindClause.AND, "RIGA", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getRiga());
 		sql.addSQLClause(FindClause.AND, "CONSEGNA", SQLBuilder.EQUALS, ordineAcqConsegnaBulk.getConsegna());
-		sql.addSQLClause(FindClause.AND, "ATTIVA", SQLBuilder.EQUALS, Boolean.TRUE);
+		sql.addSQLClause(FindClause.AND,"ATTIVA",SQLBuilder.EQUALS,Boolean.TRUE,java.sql.Types.VARCHAR,0,new CHARToBooleanConverter(),true, false);
 
 		List result = fetchAll(sql);
 		if (result.isEmpty())
