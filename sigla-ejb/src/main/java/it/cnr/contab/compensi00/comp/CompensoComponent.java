@@ -1613,7 +1613,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 						.get(java.util.GregorianCalendar.DAY_OF_MONTH))
 						+ "/"
 						+ Integer.toString(tsOdiernoGregorian
-						.get(java.util.GregorianCalendar.MONTH))
+						.get(java.util.GregorianCalendar.MONTH)+1)
 						+ "/"
 						+ Integer.toString(tsOdiernoGregorian
 						.get(java.util.GregorianCalendar.YEAR));
