@@ -504,6 +504,9 @@
 	<formFieldProperty
 		name="codiceAooIpa" />
 
+	<formFieldProperty
+			name="sigla_int_ente" />
+
 	<findFieldProperty
 		name="cd_area_ricerca2"
 		/>
