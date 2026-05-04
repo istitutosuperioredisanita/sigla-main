@@ -76,8 +76,8 @@
 		<td><% bp.getController().writeFormInput( out, "codiceAooIpa2"); %></td>
 	</tr>
 	<tr>
-    		<td><% bp.getController().writeFormLabel( out, "sigla_int_ente"); %></td>
-    		<td><% bp.getController().writeFormInput( out, "sigla_int_ente"); %></td>
-    	</tr>
+    	<td><% bp.getController().writeFormLabel( out, "sigla_int_ente"); %></td>
+    	<td><% bp.getController().writeFormInput( out, "sigla_int_ente"); %></td>
+    </tr>
 	</table>
 </body>
