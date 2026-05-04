@@ -72,8 +72,12 @@
 		<td><% bp.getController().writeFormInput( out, "id_funzione_pubblica"); %></td>
 	</tr>
 	<tr>
-		<td><% bp.getController().writeFormLabel( out, "codiceaooipa"); %></td>
-		<td><% bp.getController().writeFormInput( out, "codiceaooipa"); %></td>
+		<td><% bp.getController().writeFormLabel( out, "codiceAooIpa2"); %></td>
+		<td><% bp.getController().writeFormInput( out, "codiceAooIpa2"); %></td>
 	</tr>
+	<tr>
+    		<td><% bp.getController().writeFormLabel( out, "sigla_int_ente"); %></td>
+    		<td><% bp.getController().writeFormInput( out, "sigla_int_ente"); %></td>
+    	</tr>
 	</table>
 </body>
