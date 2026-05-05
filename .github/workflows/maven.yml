@@ -1,7 +1,7 @@
 name: Publish package
 on:
   push:
-    branches: [master, sviluppo, analitica-wildfly-bootable-jar,analitica-wildfly-bootable-svil-jar, test-build-happysign]
+    branches: [master, sviluppo, analitica-wildfly-bootable-jar,analitica-wildfly-bootable-svil-jar]
     paths-ignore:
       - 'docs/**'
 
@@ -28,9 +28,9 @@ jobs:
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PACKAGES_READ_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
+
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}"  | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Build Docker image
         run: |
