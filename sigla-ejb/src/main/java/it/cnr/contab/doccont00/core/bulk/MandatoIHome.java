@@ -26,6 +26,7 @@ import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -205,6 +206,7 @@ public class MandatoIHome extends MandatoHome {
         }
         sql.addSQLClause("AND", "fl_selezione", sql.EQUALS, "Y");
         sql.addClause("AND", "stato_cofi", sql.EQUALS, Documento_genericoBulk.STATO_CONTABILIZZATO);
+        sql.addClause("AND", "im_associato_doc_contabile", sql.EQUALS, BigDecimal.ZERO);
 
 /*
 	sql.openParenthesis( "AND");
