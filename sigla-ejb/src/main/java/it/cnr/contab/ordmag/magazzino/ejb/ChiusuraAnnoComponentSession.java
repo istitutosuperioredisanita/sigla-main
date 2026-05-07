@@ -29,6 +29,7 @@ import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.RemoteIterator;
 
@@ -63,6 +64,7 @@ public interface ChiusuraAnnoComponentSession extends it.cnr.jada.ejb.CRUDCompon
    boolean isJobChiusuraInventarioComplete(UserContext userContext, Integer esercizio) throws RemoteException, ComponentException;
    void eliminaDatiChiusuraInventario(UserContext userContext,Integer esercizio,String tipoChiusura) throws RemoteException, ComponentException;
    ChiusuraAnnoBulk findByPrimaryKey(UserContext userContext,ChiusuraAnnoBulk chiusuraAnno) throws ComponentException, PersistencyException, RemoteException;
+   public void aggiornaInventarioApPerEsercizio(UserContext aUC, Integer esercizio,boolean chiusura) throws RemoteException, ComponentException, PersistencyException, IntrospectionException;
 
 
 }
