@@ -8,6 +8,11 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
 import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
+import it.cnr.contab.inventario01.service.DocTraspRientFirmatariService;
+import it.cnr.contab.inventario01.service.DocTraspRientHappySignService;
+import it.cnr.contab.reports.bulk.Print_spoolerBulk;
+import it.cnr.contab.reports.bulk.Report;
+import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -24,12 +29,10 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StoreService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.Serializable;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
@@ -673,30 +676,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             UserContext userContext,
             Doc_trasporto_rientroBulk docTR)
             throws ComponentException {
-        try {
-            if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(docTR.getStato())) {
-                throw new ApplicationException("Stato deve essere INSERITO per inviare alla firma.");
-            }
 
-            docTR.setStato(Doc_trasporto_rientroBulk.STATO_INVIATO);
-            docTR.setStatoFlusso("INV");
-
-            if (docTR.getIdFlussoHappysign() == null || docTR.getIdFlussoHappysign().isEmpty()) {
-                throw new ApplicationException("ID flusso HappySign non impostato");
-            }
-
-            if (docTR.getDataInvioFirma() == null) {
-                docTR.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
-            }
-
-            docTR.setToBeUpdated();
-            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, docTR);
-
-        } catch (ApplicationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ComponentException("Errore predisposizione firma: " + e.getMessage(), e);
-        }
+        return inviaDocumentoAllaFirma(userContext, docTR);
     }
 
     // =========================================================================
@@ -2933,5 +2914,136 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         } catch (PersistencyException pe) {
             throw handleException(pe);
         }
+    }
+
+
+    /*
+     * In DocTrasportoRientroComponent aggiungi questi import:
+     *
+     * import it.cnr.contab.inventario01.service.DocTraspRientFirmatariService;
+     * import it.cnr.contab.inventario01.service.DocTraspRientHappySignService;
+     * import org.apache.commons.io.IOUtils;
+     * import java.io.FileInputStream;
+     *
+     * Poi aggiungi questo metodo dentro la classe.
+     */
+
+    public Doc_trasporto_rientroBulk inviaDocumentoAllaFirma(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException {
+
+        try {
+            if (doc == null) {
+                throw new ApplicationException("Documento non presente");
+            }
+
+            if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(doc.getStato())) {
+                throw new ApplicationException(
+                        "Il documento deve essere in stato INSERITO per essere inviato in firma."
+                );
+            }
+
+            if (doc.getPgDocTrasportoRientro() == null) {
+                throw new ApplicationException("Documento non ancora salvato.");
+            }
+
+            caricaDettagliDocumento(userContext, doc);
+
+            if (doc.getDoc_trasporto_rientro_dettColl() == null
+                    || doc.getDoc_trasporto_rientro_dettColl().isEmpty()) {
+                throw new ApplicationException("Il documento deve contenere almeno un bene.");
+            }
+
+            validaDoc(userContext, doc, true);
+
+            DocTraspRientFirmatariService firmatariService =
+                    SpringUtil.getBean(
+                            "docTraspRientFirmatariService",
+                            DocTraspRientFirmatariService.class
+                    );
+
+            firmatariService.popolaFirmatari(doc, (CNRUserContext) userContext);
+
+            File pdfFile = stampaDocumentoTrasportoRientroPerFirma(userContext, doc);
+
+            byte[] pdfBytes;
+            try (FileInputStream fis = new FileInputStream(pdfFile)) {
+                pdfBytes = IOUtils.toByteArray(fis);
+            }
+
+            DocTraspRientHappySignService happySignService =
+                    SpringUtil.getBean(
+                            "docTraspRientHappySignService",
+                            DocTraspRientHappySignService.class
+                    );
+
+            String uuidHappysign =
+                    happySignService.inviaDocumentoAdHappySign(doc, pdfBytes);
+
+            if (uuidHappysign == null || uuidHappysign.trim().isEmpty()) {
+                throw new ApplicationException("HappySign non ha restituito UUID documento.");
+            }
+
+            doc.setIdFlussoHappysign(uuidHappysign);
+            doc.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
+            doc.setStato(Doc_trasporto_rientroBulk.STATO_INVIATO);
+            doc.setStatoFlusso("INV");
+            doc.setToBeUpdated();
+
+            return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, doc);
+
+        } catch (ApplicationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ComponentException(
+                    "Errore invio documento a HappySign: " + e.getMessage(),
+                    e
+            );
+        }
+    }
+
+    private File stampaDocumentoTrasportoRientroPerFirma(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc) throws Exception {
+
+        String nomeFile =
+                "DocTrasportoRientro_"
+                        + doc.getEsercizio()
+                        + "_"
+                        + doc.getTiDocumento()
+                        + "_"
+                        + doc.getPgDocTrasportoRientro()
+                        + ".pdf";
+
+        File dir = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        File output = new File(dir, nomeFile);
+
+        Print_spoolerBulk print = new Print_spoolerBulk();
+        print.setFlEmail(false);
+        print.setReport("/cnrdocamm/docamm/doc_trasporto_rientro.jasper");
+        print.setNomeFile(nomeFile);
+        print.setUtcr(userContext.getUser());
+        print.setPgStampa(UUID.randomUUID().getLeastSignificantBits());
+
+        print.addParam("esercizio", doc.getEsercizio(), Integer.class);
+        print.addParam("pg_inventario", doc.getPgInventario(), Long.class);
+        print.addParam("ti_documento", doc.getTiDocumento(), String.class);
+        print.addParam("pg_doc_trasporto_rientro", doc.getPgDocTrasportoRientro(), Long.class);
+        print.addParam("DIR_IMAGE", "", String.class);
+
+        Report report =
+                SpringUtil.getBean("printService", PrintService.class)
+                        .executeReport(userContext, print);
+
+        try (FileOutputStream fos = new FileOutputStream(output)) {
+            fos.write(report.getBytes());
+        }
+
+        return output;
     }
 }

@@ -901,11 +901,12 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
         return !isGestioneInvioInFirmaAttiva()
                 || getModel() == null
-                || isDocumentoAnnullato() || isDocumentoInviatoInFirma()
+                || isDocumentoAnnullato()
+                || isDocumentoInviatoInFirma()
                 || (status != OggettoBulk.NORMAL && status != OggettoBulk.TO_BE_UPDATED)
                 || doc == null
                 || doc.getStato() == null
-                || !STATO_INSERITO.equals(doc.getStato());
+                || !Doc_trasporto_rientroBulk.STATO_INSERITO.equals(doc.getStato());
     }
 
     /**
@@ -1052,11 +1053,21 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      */
     public void inviaAllaFirma(ActionContext context) throws BusinessProcessException {
         validaStatoPerFirma();
+
         try {
-            Doc_trasporto_rientroBulk doc = getComp().changeStatoInInviato(context.getUserContext(), getDoc());
+            Doc_trasporto_rientroBulk doc =
+                    getComp().inviaDocumentoAllaFirma(
+                            context.getUserContext(),
+                            getDoc()
+                    );
+
             setModel(context, doc);
             setStatus(VIEW);
-            setMessage("Documento inviato in Firma");
+            commitUserTransaction();
+
+            setMessage("Documento inviato alla firma con successo. UUID HappySign: "
+                    + doc.getIdFlussoHappysign());
+
         } catch (ComponentException | RemoteException e) {
             rollbackUserTransaction();
             throw handleException(e);

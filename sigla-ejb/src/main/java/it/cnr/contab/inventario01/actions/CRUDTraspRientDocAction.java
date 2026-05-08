@@ -340,37 +340,29 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         bp.resetOperazione(isEliminazione);
     }
 
-    /**
-     * Esegue la procedura di invio del documento al servizio di firma HappySign.
+    /*
+     * In CRUDTraspRientDocAction sostituisci solo il metodo doInviaInFirma con questo.
+     * Poi elimina dalla action gli import non più usati:
+     *
+     * DocTraspRientFirmatariService
+     * DocTraspRientHappySignService
+     * SpringUtil
+     * CNRUserContext
+     * IOUtils
+     * File
+     * FileInputStream
+     * Timestamp
      */
+
     public Forward doInviaInFirma(ActionContext context) {
         try {
+            fillModel(context);
+
             CRUDTraspRientInventarioBP bp = getBP(context);
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
-            validaDocumentoPerFirma(doc);
+            bp.inviaAllaFirma(context);
 
-            DocTraspRientFirmatariService firmatariService = SpringUtil.getBean("docTraspRientFirmatariService", DocTraspRientFirmatariService.class);
-            firmatariService.popolaFirmatari(doc, (CNRUserContext) context.getUserContext());
-
-            File pdfFile = bp.stampaDocTrasportoRientro(context.getUserContext(), doc);
-            byte[] pdfBytes;
-            try (FileInputStream fis = new FileInputStream(pdfFile)) {
-                pdfBytes = IOUtils.toByteArray(fis);
-            }
-
-            salvaStampaSuCMIS(context, doc, pdfFile, false);
-
-            DocTraspRientHappySignService happySignService = SpringUtil.getBean("docTraspRientHappySignService", DocTraspRientHappySignService.class);
-            String uuidHappysign = null;//happySignService.inviaDocumentoAdHappySign(doc, pdfBytes);
-
-            doc.setIdFlussoHappysign(uuidHappysign);
-            doc.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
-            doc = getComponentSession(bp).changeStatoInInviato(context.getUserContext(), doc);
-
-            bp.setModel(context, doc);
-            bp.setStatus(VIEW);
-            bp.setMessage("Documento inviato alla firma con successo. UUID HappySign: " + uuidHappysign);
             return context.findDefaultForward();
+
         } catch (Throwable e) {
             return handleException(context, e);
         }

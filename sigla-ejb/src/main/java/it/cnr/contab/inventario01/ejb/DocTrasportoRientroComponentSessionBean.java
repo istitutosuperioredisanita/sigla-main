@@ -802,4 +802,32 @@ public class DocTrasportoRientroComponentSessionBean
             throw uncaughtError(userContext, componentObj, e);
         }
     }
+
+    @Override
+    public Doc_trasporto_rientroBulk inviaDocumentoAllaFirma(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            Doc_trasporto_rientroBulk result =
+                    ((DocTrasportoRientroComponent) componentObj)
+                            .inviaDocumentoAllaFirma(userContext, doc);
+
+            component_invocation_succes(userContext, componentObj);
+            return result;
+
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
 }

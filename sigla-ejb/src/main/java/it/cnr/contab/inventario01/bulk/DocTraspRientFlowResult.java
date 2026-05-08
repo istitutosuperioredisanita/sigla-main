@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2020  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package it.cnr.contab.inventario01.bulk;
 
 import java.io.Serializable;
@@ -23,49 +6,44 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Classe che rappresenta il risultato del flusso di firma per i documenti di trasporto/rientro
- * Gestisce gli stati e i tipi di operazione sui documenti
+ * Classe che rappresenta il risultato del flusso di firma per i documenti di trasporto/rientro.
  */
 public class DocTraspRientFlowResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // Tipi di flusso
-    public final static String TIPO_FLUSSO_TRASPORTO = "trasporto";
-    public final static String TIPO_FLUSSO_RIENTRO = "rientro";
+    public static final String TIPO_FLUSSO_TRASPORTO = "trasporto";
+    public static final String TIPO_FLUSSO_RIENTRO = "rientro";
 
-    // Esiti flusso
-    public final static String ESITO_FLUSSO_FIRMATO = "FIRMATO";
-    public final static String ESITO_FLUSSO_RIFIUTATO = "RIFIUTATO";
+    public static final String ESITO_FLUSSO_FIRMATO = "FIRMATO";
+    public static final String ESITO_FLUSSO_RIFIUTATO = "RIFIUTATO";
 
-    // Mappatura stato flusso -> stato documento
-    public final static Map<String, String> STATO_FLUSSO_DOCUMENTI;
-    public final static Map<String, String> TIPO_FLUSSO_DOCUMENTO;
+    public static final Map<String, String> STATO_FLUSSO_DOCUMENTI;
+    public static final Map<String, String> TIPO_FLUSSO_DOCUMENTO;
 
     static {
-        Map<String, String> aMap = new HashMap<String, String>();
-        aMap.put(ESITO_FLUSSO_FIRMATO, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-        aMap.put(ESITO_FLUSSO_RIFIUTATO, Doc_trasporto_rientroBulk.STATO_INSERITO);
-        STATO_FLUSSO_DOCUMENTI = Collections.unmodifiableMap(aMap);
+        Map<String, String> map = new HashMap<>();
+        map.put(ESITO_FLUSSO_FIRMATO, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+        map.put(ESITO_FLUSSO_RIFIUTATO, Doc_trasporto_rientroBulk.STATO_INSERITO);
+        STATO_FLUSSO_DOCUMENTI = Collections.unmodifiableMap(map);
     }
 
     static {
-        Map<String, String> aMap = new HashMap<String, String>();
-        //TODO da decommentare
-        aMap.put(TIPO_FLUSSO_TRASPORTO, Doc_trasporto_rientro_respintoBulk.OPERAZIONE_RIENTRO);
-        aMap.put(TIPO_FLUSSO_RIENTRO, Doc_trasporto_rientro_respintoBulk.OPERAZIONE_RIENTRO);
-        TIPO_FLUSSO_DOCUMENTO = Collections.unmodifiableMap(aMap);
+        Map<String, String> map = new HashMap<>();
+        map.put(TIPO_FLUSSO_TRASPORTO, Doc_trasporto_rientroBulk.TRASPORTO);
+        map.put(TIPO_FLUSSO_RIENTRO, Doc_trasporto_rientroBulk.RIENTRO);
+        TIPO_FLUSSO_DOCUMENTO = Collections.unmodifiableMap(map);
     }
 
-    private String processInstanceId;      // UUID HappySign
-    private String tipoDocumento;          // T o R
-    private Long idDocumento;              // Chiave composta come stringa
+    private String processInstanceId;
+    private String tipoDocumento;
+    private Long idDocumento;
     private Integer esercizio;
     private Long pgInventario;
     private Long pgDocTrasportoRientro;
-    private String stato;                  // Esito (FIRMATO/RIFIUTATO)
-    private String commento;               // Motivo rifiuto
-    private String user;                   // Utente che ha eseguito l'azione
+    private String stato;
+    private String commento;
+    private String user;
 
     public DocTraspRientFlowResult() {
     }
@@ -144,7 +122,7 @@ public class DocTraspRientFlowResult implements Serializable {
 
     @Override
     public String toString() {
-        return "DocTrasportoRientroFlowResult{" +
+        return "DocTraspRientFlowResult{" +
                 "processInstanceId='" + processInstanceId + '\'' +
                 ", tipoDocumento='" + tipoDocumento + '\'' +
                 ", esercizio=" + esercizio +

@@ -248,4 +248,10 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
      */
     void archiviaAllegatiDocTR(UserContext userContext, Doc_trasporto_rientroBulk doc) throws ComponentException, RemoteException;
 
+
+    /** Invia realmente il documento a HappySign e aggiorna stato/UUID */
+    Doc_trasporto_rientroBulk inviaDocumentoAllaFirma(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException;
 }

@@ -463,14 +463,28 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     // FIRMA / FLUSSO HAPPYSIGN
     // =========================================================================
 
-    public boolean isFirmabile()            { return isInviatoInFirma() && !isDefinitivoCompletamente(); }
-    public boolean isDefinitivoCompletamente() { return "FIR".equals(getStatoFlusso()) || isDefinitivo(); }
-    public boolean hasFlussoFirmaAttivo()   { return getIdFlussoHappysign() != null && !isDefinitivoCompletamente(); }
-    public int getNumeroFirmatariRichiesti(){ return isRitiroIncaricato() ? 3 : 2; }
+    public boolean isFirmabile() {
+        return isInviatoInFirma() && !isDefinitivoCompletamente();
+    }
+
+    public boolean isDefinitivoCompletamente() {
+        return "FIR".equals(getStatoFlusso()) || isDefinitivo();
+    }
+
+    public boolean hasFlussoFirmaAttivo() {
+        return getIdFlussoHappysign() != null && !isDefinitivoCompletamente();
+    }
+
+    public int getNumeroFirmatariRichiesti() {
+        return isRitiroIncaricato() ? 3 : 2;
+    }
 
     public void inizializzaPerInvioFirma() {
+        setStato(STATO_INVIATO);
         setStatoFlusso("INV");
         setDataInvioFirma(new java.sql.Timestamp(System.currentTimeMillis()));
+        setDataFirma(null);
+        setNoteRifiuto(null);
     }
 
     public void aggiornaDopoFirmaCompletata() {
@@ -500,13 +514,21 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     public boolean isInviabileAllaFirma() {
         return isInviatoInFirma()
                 && getIdFlussoHappysign() == null
-                && getConsegnatario() != null
                 && getCdTerzoResponsabile() != null
-                && hasDettagli();
+                && hasDettagli()
+                && (
+                isRitiroVettore()
+                        || (isRitiroIncaricato() && getCdTerzoIncaricato() != null)
+        );
     }
 
-    public boolean isRifiutatoInFirma()  { return "RIF".equals(getStatoFlusso()); }
-    public boolean isInviatoAlFlusso()   { return "INV".equals(getStatoFlusso()) && getIdFlussoHappysign() != null; }
+    public boolean isRifiutatoInFirma() {
+        return "RIF".equals(getStatoFlusso());
+    }
+
+    public boolean isInviatoAlFlusso() {
+        return "INV".equals(getStatoFlusso()) && getIdFlussoHappysign() != null;
+    }
 
     // =========================================================================
     // VALIDAZIONE
