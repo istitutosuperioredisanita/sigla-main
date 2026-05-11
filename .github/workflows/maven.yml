@@ -20,8 +20,7 @@ jobs:
           cache: 'maven'
       - name: Publish package
         run: |
-          #SKIP_TESTS="-DskipTests"
-          SKIP_TESTS=""
+          SKIP_TESTS="-DskipTests"        
           if [ "${{ github.ref_name }}" == "master" ]; then
             SKIP_TESTS=""
           fi
