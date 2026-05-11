@@ -92,7 +92,7 @@ TI_APPARTENENZA,TI_GESTIONE,CD_ELEMENTO_VOCE,CD_PROPRIO_ELEMENTO,TI_ELEMENTO_VOC
 "D","S","10011","10011","C","Y","N","Spese per risarcimento danni","N","J","N","N","NULL","14","N","N","507","N","N","N","N","N","N",0,"N","N","N","N","N","SYSTEM","SYSTEM","1","N"
 "D","S","10012","10012","C","Y","N","Spese per indennizzi","N","J","N","N","NULL","14","N","N","510","N","N","N","N","N","N",0,"N","N","N","N","N","SYSTEM","SYSTEM","1","N"
 "D","S","10013","10013","C","Y","N","Oneri da contenzioso","N","J","N","N","NULL","14","N","N","513","N","N","N","N","N","N",0,"N","N","N","N","N","SYSTEM","SYSTEM","1","N"
-"D","S","11001","11001","C","Y","Y","Arretrati per anni precedenti corrisposti al personale a tempo indeterminato","N","B","Y","N","NULL","02","N","N","1","N","N","N","N","N","N","N",0,"N","N","N","N","N","SYSTEM","SYSTEM","1","N"
+"D","S","11001","11001","C","Y","Y","Arretrati per anni precedenti corrisposti al personale a tempo indeterminato","N","B","Y","N","NULL","02","N","N","1","N","N","N","N","N","N",0,"N","N","N","N","N","SYSTEM","SYSTEM","1","N"
 "D","S","11002","11002","C","Y","Y","Stipendi ed assegni fissi per il personale a tempo indeterminato","N","B","Y","N","NULL","02","N","N","3","N","N","N","N","N","N",0,"N","N","N","N","N","SYSTEM","SYSTEM","1","N"
 "D","S","11003","11003","C","Y","Y","Straordinario per il personale a tempo indeterminato","N","B","Y","N","NULL","02","N","N","5","N","N","N","N","N","N",0,"N","N","N","N","N","SYSTEM","SYSTEM","1","N"
 "D","S","11004","11004","C","Y","Y","Indennita' ed altri compensi, esclusi i rimborsi spesa per missione, corrisposti al personale a tempo indeterminato","N","B","Y","N","NULL","02","N","N","7","N","N","N","N","N","N",0,"N","N","N","N","N","SYSTEM","SYSTEM","1","N"
