@@ -1207,7 +1207,7 @@
         <dropSequence sequenceName="cnrseq00_movimenti_mag"/>
         <createSequence sequenceName="cnrseq00_movimenti_mag" startValue="2"/>
     </changeSet>
-    <changeSet author="test" id="sql-attivazione-economica">
+    <changeSet author="test" id="sql-update-fl_missioni_presidenza">
         <sql>
             update elemento_voce
             set FL_MISSIONI_PRESIDENZA='N';
