@@ -2,7 +2,7 @@
 FROM eclipse-temurin:21-jdk-alpine
 LABEL maintainer="Marco Spasiano <marco.spasiano@cnr.it>"
 
-COPY sigla-web/target/sigla-bootable.jar /opt/sigla-bootable.jar
+COPY target/sigla-bootable.jar /opt/sigla-bootable.jar
 
 ENV ESERCIZIO=2024
 ENV JBOSS_BIND_ADDRESS=0.0.0.0

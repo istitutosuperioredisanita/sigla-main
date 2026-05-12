@@ -94,9 +94,9 @@ Per avviare l'applicazione SIGLA in locale, bisogna prima compilare i sorgenti s
 ```
 mvn clean package -DskipTests
 ```
-Successivamente si può avviare l'applicazione con H2 in memoria avendo anche cura di cambiare la password di admin nello script [management-admin-user.cli](sigla-web/src/main/scripts/management-admin-user.cli#L8)
+Successivamente si può avviare l'applicazione con H2 in memoria avendo anche cura di cambiare la password di admin nello script [management-admin-user.cli](src/main/scripts/management-admin-user.cli#L8)
 ```
-java -jar sigla-web/target/sigla-bootable.jar --properties=sigla-web/src/main/resources/application-h2.properties --cli-script=sigla-web/src/main/scripts/management-admin-user.cli
+java -jar target/sigla-bootable.jar --properties=src/main/resources/application-h2.properties --cli-script=src/main/scripts/management-admin-user.cli
 ```
 
 # 🐳 Startup Docker
@@ -112,14 +112,14 @@ docker run -p 8080:8080 -e SIGLA_DB_DRIVER=h2 -e SIGLA_DB_URL=jdbc:h2:mem:siglad
 ```
 git clone git@github.com:istitutosuperioredisanita/sigla-main.git
 cd sigla-main
-docker run -d --name sigla-oracle -v $PWD/sigla-backend/initdb-oracle:/opt/oracle/scripts/startup/ container-registry.oracle.com/database/express:21.3.0-xe
+docker run -d --name sigla-oracle -v $PWD/initdb-oracle:/opt/oracle/scripts/startup/ container-registry.oracle.com/database/express:21.3.0-xe
 docker run -p 8080:8080 --link sigla-oracle:db -e LC_ALL="it_IT.UTF-8" -e LANG="it_IT.UTF-8" -e LANGUAGE="it_IT:it" -e SIGLA_DB_DRIVER=oracle -e SIGLA_DB_URL="jdbc:oracle:thin:@db:1521/XEPDB1" -e SIGLA_DB_USER=SIGLA -e SIGLA_DB_PASSWORD=siglapw -ti ghcr.io/istitutosuperioredisanita/sigla-main
 ```
 #### _Per avviare una istanza di SIGLA con postgres locale_
 ```
 git clone git@github.com:istitutosuperioredisanita/sigla-main.git
 cd sigla-main
-docker run --name sigla-postgres -v $PWD/sigla-backend/init-user-postgres-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh -e POSTGRES_PASSWORD=mysecretpassword -d postgres:9.6
+docker run --name sigla-postgres -v $PWD/init-user-postgres-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh -e POSTGRES_PASSWORD=mysecretpassword -d postgres:9.6
 docker run -p 8080:8080 --link sigla-postgres:db -e LC_ALL="it_IT.UTF-8" -e LANG="it_IT.UTF-8" -e LANGUAGE="it_IT:it" -e SIGLA_DB_DRIVER=postgresql -e SIGLA_DB_URL="jdbc:postgresql://db:5432/sigladb?schema=public" -e SIGLA_DB_USER=SIGLA -e SIGLA_DB_PASSWORD=mysecretpassword -ti ghcr.io/istitutosuperioredisanita/sigla-main
 ```
 

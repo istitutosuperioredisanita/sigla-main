@@ -1,7 +1,7 @@
 name: Publish package
 on:
   push:
-    branches: [master, sviluppo, analitica-wildfly-bootable-jar,analitica-wildfly-bootable-svil-jar]
+    branches: [master, sviluppo, analitica-wildfly-bootable-jar]
     paths-ignore:
       - 'docs/**'
 
@@ -20,11 +20,11 @@ jobs:
           cache: 'maven'
       - name: Publish package
         run: |
-          SKIP_TESTS="-DskipTests"        
+          SKIP_TESTS="-DskipTests"
           if [ "${{ github.ref_name }}" == "master" ]; then
             SKIP_TESTS=""
           fi
-          mvn clean deploy $SKIP_TESTS -s .m2/settings.xml -PAZURE --batch-mode --errors --fail-at-end --show-version
+          mvn clean deploy $SKIP_TESTS -s .m2/settings.xml -PAZURE,PROD --batch-mode --errors --fail-at-end --show-version
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
 
           # Push del tag specifico del branch
           docker push $IMAGE_ID:${{ github.ref_name }}
-  
+          
           # Se il branch è master, facciamo il push anche di 'latest'
           if [ "${{ github.ref_name }}" == "master" ]; then
             docker push $IMAGE_ID:latest
