@@ -8,37 +8,29 @@ import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.bulk.Stampa_doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
-import it.cnr.contab.inventario01.service.DocTraspRientFirmatariService;
-import it.cnr.contab.inventario01.service.DocTraspRientHappySignService;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
-import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
-import it.cnr.jada.bulk.*;
+import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.SimpleBulkList;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
-import it.cnr.jada.util.action.CondizioneSempliceBulk;
 import it.cnr.jada.util.action.OptionBP;
 import it.cnr.jada.util.action.RicercaLiberaBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Objects;
-
-import static it.cnr.jada.util.action.FormController.VIEW;
 
 /**
  * Action astratta per la gestione del flusso di Trasporto e Rientro Beni.
@@ -48,11 +40,17 @@ import static it.cnr.jada.util.action.FormController.VIEW;
 public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CRUDAction {
 
     protected abstract CRUDTraspRientInventarioBP getBP(ActionContext context);
+
     protected abstract RemoteIterator getListaBeni(ActionContext context, CRUDTraspRientInventarioBP bp, Doc_trasporto_rientroBulk doc, SimpleBulkList selezionati, CompoundFindClause clauses) throws Exception;
+
     protected abstract String getSelezionaMethod();
+
     protected abstract String getBringBackMethod();
+
     protected abstract String getMessageNoResults();
+
     protected abstract String getDataLabel();
+
     protected abstract String getTabTestataName();
 
     /**
@@ -340,20 +338,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         bp.resetOperazione(isEliminazione);
     }
 
-    /*
-     * In CRUDTraspRientDocAction sostituisci solo il metodo doInviaInFirma con questo.
-     * Poi elimina dalla action gli import non più usati:
-     *
-     * DocTraspRientFirmatariService
-     * DocTraspRientHappySignService
-     * SpringUtil
-     * CNRUserContext
-     * IOUtils
-     * File
-     * FileInputStream
-     * Timestamp
-     */
-
     public Forward doInviaInFirma(ActionContext context) {
         try {
             fillModel(context);
@@ -380,11 +364,14 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     private void validaDocumentoPerFirma(Doc_trasporto_rientroBulk doc) throws ValidationException {
         if (doc == null) throw new ValidationException("Documento non presente");
         if (doc.isAnnullato()) throw new ValidationException("Impossibile inviare alla firma un documento annullato");
-        if (!doc.isInserito()) throw new ValidationException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
-        if (doc.getDoc_trasporto_rientro_dettColl() == null || doc.getDoc_trasporto_rientro_dettColl().isEmpty()) throw new ValidationException("Il documento deve contenere almeno un bene");
+        if (!doc.isInserito())
+            throw new ValidationException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
+        if (doc.getDoc_trasporto_rientro_dettColl() == null || doc.getDoc_trasporto_rientro_dettColl().isEmpty())
+            throw new ValidationException("Il documento deve contenere almeno un bene");
         if (doc.getTipoMovimento() == null) throw new ValidationException("Tipo movimento non specificato");
         if (doc.getDataRegistrazione() == null) throw new ValidationException("Data registrazione non specificata");
-        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty()) throw new ValidationException("Descrizione documento non specificata");
+        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty())
+            throw new ValidationException("Descrizione documento non specificata");
     }
 
     /**
@@ -457,9 +444,12 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
      * Valida i dati obbligatori della testata prima di operazioni sui dettagli.
      */
     protected void validaTestataDocumento(Doc_trasporto_rientroBulk doc) throws ValidationException {
-        if (doc.getTipoMovimento() == null) throw new ValidationException("Attenzione: specificare un tipo di movimento nella testata.");
-        if (doc.getDataRegistrazione() == null) throw new ValidationException("Attenzione: specificare la " + getDataLabel() + ".");
-        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty()) throw new ValidationException("Attenzione: indicare una Descrizione per il Documento.");
+        if (doc.getTipoMovimento() == null)
+            throw new ValidationException("Attenzione: specificare un tipo di movimento nella testata.");
+        if (doc.getDataRegistrazione() == null)
+            throw new ValidationException("Attenzione: specificare la " + getDataLabel() + ".");
+        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty())
+            throw new ValidationException("Attenzione: indicare una Descrizione per il Documento.");
     }
 
     /**

@@ -5,11 +5,14 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoHome;
 import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaHome;
-import it.cnr.contab.inventario00.docs.bulk.*;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
+import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRHome;
+import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rBulk;
+import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rHome;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
-import it.cnr.contab.inventario01.service.DocTraspRientFirmatariService;
-import it.cnr.contab.inventario01.service.DocTraspRientHappySignService;
+import it.cnr.contab.inventario01.service.HappysignDocService;
+import it.cnr.contab.inventario01.service.HappysignDocServiceFactory;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
@@ -29,7 +32,6 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StoreService;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
@@ -1152,7 +1154,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    /** Wrapper per selezionare dettagli rientro per modifica. */
+    /**
+     * Wrapper per selezionare dettagli rientro per modifica.
+     */
     public RemoteIterator selectEditDettagliRientro(
             UserContext userContext, Doc_trasporto_rientroBulk doc,
             Class bulkClass, CompoundFindClause filters) throws ComponentException {
@@ -1412,7 +1416,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    /** Wrapper per modificare beni rientrati con accessori. */
+    /**
+     * Wrapper per modificare beni rientrati con accessori.
+     */
     public void modificaBeniRientratiConAccessori(
             UserContext userContext, Doc_trasporto_rientroBulk doc,
             OggettoBulk[] beni, BitSet oldSelection, BitSet newSelection)
@@ -1666,21 +1672,27 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     // CERCA BENI UNIFICATO / FILTRI (InventarioDocTRBulk)
     // =========================================================================
 
-    /** Wrapper beni trasportabili. */
+    /**
+     * Wrapper beni trasportabili.
+     */
     public RemoteIterator cercaBeniTrasportabili(
             UserContext userContext, Doc_trasporto_rientroBulk doc,
             SimpleBulkList beniEsclusi, CompoundFindClause clauses) throws ComponentException {
         return cercaBeniUnificato(userContext, doc, beniEsclusi, clauses, true);
     }
 
-    /** Wrapper beni da far rientrare. */
+    /**
+     * Wrapper beni da far rientrare.
+     */
     public RemoteIterator cercaBeniDaFarRientrare(
             UserContext userContext, Doc_trasporto_rientroBulk doc,
             SimpleBulkList beniEsclusi, CompoundFindClause clauses) throws ComponentException {
         return cercaBeniUnificato(userContext, doc, beniEsclusi, clauses, false);
     }
 
-    /** Wrapper lista beni da far rientrare. */
+    /**
+     * Wrapper lista beni da far rientrare.
+     */
     public RemoteIterator getListaBeniDaFarRientrare(
             UserContext userContext, Doc_trasporto_rientroBulk doc,
             SimpleBulkList beniEsclusi, CompoundFindClause clauses) throws ComponentException {
@@ -2917,17 +2929,11 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
 
-    /*
-     * In DocTrasportoRientroComponent aggiungi questi import:
-     *
-     * import it.cnr.contab.inventario01.service.DocTraspRientFirmatariService;
-     * import it.cnr.contab.inventario01.service.DocTraspRientHappySignService;
-     * import org.apache.commons.io.IOUtils;
-     * import java.io.FileInputStream;
-     *
-     * Poi aggiungi questo metodo dentro la classe.
+    /**
+     * Invia il documento Trasporto/Rientro al flusso HappySign.
+     * Valida lo stato del documento, genera il PDF Jasper in memoria,
+     * invoca HappySign e salva sul documento UUID, stato e dati di invio.
      */
-
     public Doc_trasporto_rientroBulk inviaDocumentoAllaFirma(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc)
@@ -2957,38 +2963,23 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             validaDoc(userContext, doc, true);
 
-            DocTraspRientFirmatariService firmatariService =
-                    SpringUtil.getBean(
-                            "docTraspRientFirmatariService",
-                            DocTraspRientFirmatariService.class
-                    );
+            byte[] pdfBytes = generaPdfDocTrasportoRientro(userContext, doc);
 
-            firmatariService.popolaFirmatari(doc, (CNRUserContext) userContext);
-
-            File pdfFile = stampaDocumentoTrasportoRientroPerFirma(userContext, doc);
-
-            byte[] pdfBytes;
-            try (FileInputStream fis = new FileInputStream(pdfFile)) {
-                pdfBytes = IOUtils.toByteArray(fis);
-            }
-
-            DocTraspRientHappySignService happySignService =
-                    SpringUtil.getBean(
-                            "docTraspRientHappySignService",
-                            DocTraspRientHappySignService.class
-                    );
+            HappysignDocService happySignService = HappysignDocServiceFactory.get();
 
             String uuidHappysign =
-                    happySignService.inviaDocumentoAdHappySign(doc, pdfBytes);
+                    happySignService.inviaDocumentoAdHappySign(
+                            doc,
+                            pdfBytes,
+                            (CNRUserContext) userContext
+                    );
 
             if (uuidHappysign == null || uuidHappysign.trim().isEmpty()) {
                 throw new ApplicationException("HappySign non ha restituito UUID documento.");
             }
 
             doc.setIdFlussoHappysign(uuidHappysign);
-            doc.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
-            doc.setStato(Doc_trasporto_rientroBulk.STATO_INVIATO);
-            doc.setStatoFlusso("INV");
+            doc.inizializzaPerInvioFirma();
             doc.setToBeUpdated();
 
             return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, doc);
@@ -3003,47 +2994,200 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
-    private File stampaDocumentoTrasportoRientroPerFirma(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc) throws Exception {
 
-        String nomeFile =
-                "DocTrasportoRientro_"
-                        + doc.getEsercizio()
-                        + "_"
-                        + doc.getTiDocumento()
-                        + "_"
-                        + doc.getPgDocTrasportoRientro()
-                        + ".pdf";
+    /**
+     * Crea l’allegato firmato partendo dal PDF ricevuto da HappySign.
+     * Sceglie automaticamente il tipo allegato corretto tra Trasporto e Rientro
+     * e imposta aspect, nome file, content type e file temporaneo.
+     */
+    private AllegatoGenericoBulk creaAllegatoFirmatoDaPdf(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfFirmato)
+            throws Exception {
+
+        String nomeFile = generaNomeFilePdfFirmato(doc);
+        File fileFirmato = creaFileTemporaneoPdfFirmato(nomeFile, pdfFirmato);
+
+        AllegatoDocTraspRientroBulk allegato;
+
+        if (doc.isTrasporto()) {
+            AllegatoDocumentoTrasportoBulk allegatoTrasporto =
+                    new AllegatoDocumentoTrasportoBulk();
+
+            allegatoTrasporto.setAspectName(
+                    AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO
+            );
+
+            allegato = allegatoTrasporto;
+
+        } else if (doc.isRientro()) {
+            AllegatoDocumentoRientroBulk allegatoRientro =
+                    new AllegatoDocumentoRientroBulk();
+
+            allegatoRientro.setAspectName(
+                    AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO
+            );
+
+            allegato = allegatoRientro;
+
+        } else {
+            throw new ApplicationException("Tipo documento Trasporto/Rientro non riconosciuto.");
+        }
+
+        allegato.setNome(nomeFile);
+        allegato.setContentType("application/pdf");
+        allegato.setFile(fileFirmato);
+        allegato.setUtenteSIGLA(userContext.getUser());
+        allegato.setToBeCreated();
+
+        return allegato;
+    }
+
+    /**
+     * Scrive su file temporaneo il PDF firmato ricevuto da HappySign.
+     * Il file viene usato solo per permettere al sistema allegati/CMIS
+     * di archiviare il contenuto come allegato documentale.
+     */
+    private File creaFileTemporaneoPdfFirmato(
+            String nomeFile,
+            byte[] pdfFirmato)
+            throws Exception {
 
         File dir = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/");
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        File output = new File(dir, nomeFile);
+        File file = new File(dir, nomeFile);
 
-        Print_spoolerBulk print = new Print_spoolerBulk();
-        print.setFlEmail(false);
-        print.setReport("/cnrdocamm/docamm/doc_trasporto_rientro.jasper");
-        print.setNomeFile(nomeFile);
-        print.setUtcr(userContext.getUser());
-        print.setPgStampa(UUID.randomUUID().getLeastSignificantBits());
-
-        print.addParam("esercizio", doc.getEsercizio(), Integer.class);
-        print.addParam("pg_inventario", doc.getPgInventario(), Long.class);
-        print.addParam("ti_documento", doc.getTiDocumento(), String.class);
-        print.addParam("pg_doc_trasporto_rientro", doc.getPgDocTrasportoRientro(), Long.class);
-        print.addParam("DIR_IMAGE", "", String.class);
-
-        Report report =
-                SpringUtil.getBean("printService", PrintService.class)
-                        .executeReport(userContext, print);
-
-        try (FileOutputStream fos = new FileOutputStream(output)) {
-            fos.write(report.getBytes());
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(pdfFirmato);
         }
 
-        return output;
+        file.deleteOnExit();
+
+        return file;
     }
+
+    private String generaNomeFilePdfFirmato(Doc_trasporto_rientroBulk doc) {
+        return "DocTrasportoRientro_FIRMATO_"
+                + doc.getEsercizio()
+                + "_"
+                + doc.getTiDocumento()
+                + "_"
+                + doc.getPgInventario()
+                + "_"
+                + doc.getPgDocTrasportoRientro()
+                + ".pdf";
+    }
+
+
+    /**
+     * Genera il PDF del documento Trasporto/Rientro usando il report Jasper
+     * /cnrdocamm/docamm/doc_trasporto_rientro.jasper.
+     *
+     * Il report JRXML richiede questi parametri:
+     * - esercizio                  java.lang.Integer
+     * - pg_inventario              java.lang.Long
+     * - ti_documento               java.lang.String
+     * - pg_doc_trasporto_rientro   java.lang.Long
+     * - DIR_IMAGE                  java.lang.String
+     *
+     * Restituisce i byte del PDF, pronti per essere inviati ad HappySign.
+     */
+    private byte[] generaPdfDocTrasportoRientro(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException {
+
+        try {
+            if (userContext == null) {
+                throw new ApplicationException("UserContext non disponibile per la generazione del PDF.");
+            }
+
+            if (doc == null) {
+                throw new ApplicationException("Documento non disponibile per la generazione del PDF.");
+            }
+
+            if (doc.getEsercizio() == null) {
+                throw new ApplicationException("Esercizio non valorizzato per la generazione del PDF.");
+            }
+
+            if (doc.getPgInventario() == null) {
+                throw new ApplicationException("Progressivo inventario non valorizzato per la generazione del PDF.");
+            }
+
+            if (doc.getTiDocumento() == null || doc.getTiDocumento().trim().isEmpty()) {
+                throw new ApplicationException("Tipo documento non valorizzato per la generazione del PDF.");
+            }
+
+            if (doc.getPgDocTrasportoRientro() == null) {
+                throw new ApplicationException("Progressivo documento non valorizzato per la generazione del PDF.");
+            }
+
+            Print_spoolerBulk print = new Print_spoolerBulk();
+            print.setPgStampa(UUID.randomUUID().getLeastSignificantBits());
+            print.setFlEmail(false);
+            print.setReport("/cnrdocamm/docamm/doc_trasporto_rientro.jasper");
+            print.setNomeFile(generaNomeFilePdfDocTrasportoRientro(doc));
+            print.setUtcr(userContext.getUser());
+
+            print.addParam("esercizio", doc.getEsercizio(), Integer.class);
+            print.addParam("pg_inventario", doc.getPgInventario(), Long.class);
+            print.addParam("ti_documento", doc.getTiDocumento(), String.class);
+            print.addParam("pg_doc_trasporto_rientro", doc.getPgDocTrasportoRientro(), Long.class);
+            print.addParam("DIR_IMAGE", "", String.class);
+
+            Report report = SpringUtil
+                    .getBean("printService", PrintService.class)
+                    .executeReport(userContext, print);
+
+            if (report == null) {
+                throw new ApplicationException("Il servizio di stampa non ha restituito alcun report.");
+            }
+
+            byte[] pdfBytes = report.getBytes();
+
+            if (pdfBytes == null || pdfBytes.length == 0) {
+                try (InputStream inputStream = report.getInputStream()) {
+                    if (inputStream != null) {
+                        pdfBytes = inputStream.readAllBytes();
+                    }
+                }
+            }
+
+            if (pdfBytes == null || pdfBytes.length == 0) {
+                throw new ApplicationException("Generazione PDF documento Trasporto/Rientro non riuscita: PDF vuoto.");
+            }
+
+            return pdfBytes;
+
+        } catch (ApplicationException e) {
+            throw new ComponentException(e.getMessage(), e);
+
+        } catch (IOException e) {
+            throw new ComponentException("Errore nella lettura del PDF generato: " + e.getMessage(), e);
+
+        } catch (Exception e) {
+            throw new ComponentException("Errore generazione PDF documento Trasporto/Rientro: " + e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * Nome file coerente e leggibile per il PDF generato.
+     */
+    private String generaNomeFilePdfDocTrasportoRientro(Doc_trasporto_rientroBulk doc) {
+        return "DocTrasportoRientro_"
+                + doc.getEsercizio()
+                + "_"
+                + doc.getTiDocumento()
+                + "_"
+                + doc.getPgInventario()
+                + "_"
+                + doc.getPgDocTrasportoRientro()
+                + ".pdf";
+    }
+
 }

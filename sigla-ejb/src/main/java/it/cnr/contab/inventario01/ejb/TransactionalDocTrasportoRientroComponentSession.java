@@ -977,10 +977,8 @@ public class TransactionalDocTrasportoRientroComponentSession
         try {
             return (Doc_trasporto_rientroBulk) invoke(
                     "inviaDocumentoAllaFirma",
-                    new Object[]{
-                            userContext,
-                            doc
-                    });
+                    new Object[]{userContext, doc}
+            );
 
         } catch (java.rmi.RemoteException e) {
             throw e;

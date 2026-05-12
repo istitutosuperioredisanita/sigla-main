@@ -459,26 +459,53 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         return primo.getEsercizioRif() + "/" + primo.getTiDocumentoRif() + "/" + primo.getPgDocTrasportoRientroRif();
     }
 
-    // =========================================================================
-    // FIRMA / FLUSSO HAPPYSIGN
-    // =========================================================================
 
-    public boolean isFirmabile() {
-        return isInviatoInFirma() && !isDefinitivoCompletamente();
+    // =========================================================================
+// FIRMA / FLUSSO HAPPYSIGN
+// =========================================================================
+
+    /**
+     * Indica se il documento può essere inviato a HappySign.
+     *
+     * Il documento è inviabile se:
+     * - è in stato INS
+     * - non ha già un flusso HappySign
+     * - ha un responsabile
+     * - ha almeno un dettaglio
+     * - ha dati coerenti in base al tipo ritiro
+     */
+    public boolean isInviabileAllaFirma() {
+        return isInserito()
+                && getIdFlussoHappysign() == null
+                && getCdTerzoResponsabile() != null
+                && hasDettagli()
+                && (
+                isRitiroVettore()
+                        || isSmartworking()
+                        || (isRitiroIncaricato() && getCdTerzoIncaricato() != null)
+        );
     }
 
-    public boolean isDefinitivoCompletamente() {
-        return "FIR".equals(getStatoFlusso()) || isDefinitivo();
+    /**
+     * Indica se il documento è stato inviato ad HappySign ed è in attesa di esito.
+     */
+    public boolean isInAttesaDiFirma() {
+        return isInviatoInFirma()
+                && getIdFlussoHappysign() != null
+                && !isDefinitivoCompletamente();
     }
 
+    /**
+     * Indica se esiste un flusso HappySign ancora attivo.
+     */
     public boolean hasFlussoFirmaAttivo() {
-        return getIdFlussoHappysign() != null && !isDefinitivoCompletamente();
+        return getIdFlussoHappysign() != null
+                && !isDefinitivoCompletamente();
     }
 
-    public int getNumeroFirmatariRichiesti() {
-        return isRitiroIncaricato() ? 3 : 2;
-    }
-
+    /**
+     * Prepara il documento dopo l'invio corretto ad HappySign.
+     */
     public void inizializzaPerInvioFirma() {
         setStato(STATO_INVIATO);
         setStatoFlusso("INV");
@@ -487,6 +514,9 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         setNoteRifiuto(null);
     }
 
+    /**
+     * Aggiorna il documento dopo firma completata.
+     */
     public void aggiornaDopoFirmaCompletata() {
         setStato(STATO_DEFINITIVO);
         setStatoFlusso("FIR");
@@ -494,6 +524,9 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         setNoteRifiuto(null);
     }
 
+    /**
+     * Aggiorna il documento dopo rifiuto firma.
+     */
     public void aggiornaDopoRifiutoFirma(String motivoRifiuto) {
         setStato(STATO_INSERITO);
         setStatoFlusso("RIF");
@@ -503,6 +536,9 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         setDataFirma(null);
     }
 
+    /**
+     * Reset completo dei dati di firma.
+     */
     public void resetFlussoFirma() {
         setIdFlussoHappysign(null);
         setStatoFlusso(null);
@@ -511,24 +547,28 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         setNoteRifiuto(null);
     }
 
-    public boolean isInviabileAllaFirma() {
-        return isInviatoInFirma()
-                && getIdFlussoHappysign() == null
-                && getCdTerzoResponsabile() != null
-                && hasDettagli()
-                && (
-                isRitiroVettore()
-                        || (isRitiroIncaricato() && getCdTerzoIncaricato() != null)
-        );
-    }
-
+    /**
+     * Indica se il documento è stato rifiutato da HappySign.
+     */
     public boolean isRifiutatoInFirma() {
         return "RIF".equals(getStatoFlusso());
     }
 
+    /**
+     * Indica se il documento è stato realmente inviato al flusso HappySign.
+     */
     public boolean isInviatoAlFlusso() {
-        return "INV".equals(getStatoFlusso()) && getIdFlussoHappysign() != null;
+        return "INV".equals(getStatoFlusso())
+                && getIdFlussoHappysign() != null;
     }
+
+    /**
+     * Indica se il documento è completamente definitivo.
+     */
+    public boolean isDefinitivoCompletamente() {
+        return "FIR".equals(getStatoFlusso()) || isDefinitivo();
+    }
+
 
     // =========================================================================
     // VALIDAZIONE

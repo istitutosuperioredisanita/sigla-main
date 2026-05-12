@@ -45,7 +45,6 @@
             enabledOnEdit="false"
             label="Numero Documento" />
 
-
     <!-- ============================================ -->
     <!-- CAMPI BASE -->
     <!-- ============================================ -->
@@ -72,7 +71,6 @@
             nullable="false"
             formatName="date_short"
             label="Data Documento"/>
-
 
     <fieldProperty
             name="stato"
@@ -112,7 +110,6 @@
     <!-- CAMPI BULK -->
     <!-- ============================================ -->
 
-    <!-- Tipo Movimento -->
     <fieldProperty
             name="tipoMovimento"
             property="tipoMovimento"
@@ -126,7 +123,6 @@
             label="Tipo Movimento"
             command="doSelezionaTipoMovimento"/>
 
-    <!-- Tipo Ritiro -->
     <fieldProperty
             name="tipoRitiro"
             property="tipoRitiro"
@@ -140,6 +136,7 @@
     <!-- ============================================ -->
     <!-- INCARICATO RITIRO - tramite VIEW DIPENDENTI -->
     <!-- ============================================ -->
+
     <fieldProperty
             name="findTerzoIncRitiro"
             property="terzoIncRitiro"
@@ -164,8 +161,6 @@
             inputType="ROTEXT"
             inputSize="50"
             label="Nominativo Incaricato" />
-
-
 
     <!-- ============================================ -->
     <!-- ASSEGNATARIO SMARTWORKING - tramite VIEW DIPENDENTI -->
@@ -213,7 +208,6 @@
     <!-- CONSEGNATARIO, UO, DELEGATO (readonly) -->
     <!-- ============================================ -->
 
-    <!-- Consegnatario -->
     <fieldProperty
             name="cdConsegnatario"
             property="consegnatario.cd_terzo"
@@ -230,7 +224,6 @@
             inputSize="50"
             label="Nome Consegnatario" />
 
-    <!-- UO Consegnataria -->
     <fieldProperty
             name="cdUoConsegnataria"
             property="uo_consegnataria.cd_unita_organizzativa"
@@ -247,7 +240,6 @@
             inputSize="50"
             label="Descrizione UO Consegnataria" />
 
-    <!-- Delegato -->
     <fieldProperty
             name="cdDelegato"
             property="delegato.cd_terzo"
@@ -273,6 +265,63 @@
             enabledOnInsert="false"
             enabledOnEdit="false"
             label="Numero Documento" />
+
+    <!-- ============================================ -->
+    <!-- CAMPI HAPPYSIGN / FIRMA -->
+    <!-- ============================================ -->
+
+    <fieldProperty
+            name="idFlussoHappysign"
+            property="idFlussoHappysign"
+            inputType="ROTEXT"
+            maxLength="100"
+            inputSize="50"
+            label="Id flusso HappySign" />
+
+    <fieldProperty
+            name="statoFlusso"
+            property="statoFlusso"
+            inputType="ROTEXT"
+            maxLength="3"
+            inputSize="3"
+            label="Stato flusso firma" />
+
+    <fieldProperty
+            name="dataInvioFirma"
+            property="dataInvioFirma"
+            inputType="ROTEXT"
+            maxLength="10"
+            inputSize="10"
+            formatName="date_short"
+            label="Data invio firma" />
+
+    <fieldProperty
+            name="dataFirma"
+            property="dataFirma"
+            inputType="ROTEXT"
+            maxLength="10"
+            inputSize="10"
+            formatName="date_short"
+            label="Data firma" />
+
+    <fieldProperty
+            name="noteRifiuto"
+            property="noteRifiuto"
+            inputType="TEXTAREA"
+            cols="75"
+            rows="3"
+            maxLength="4000"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
+            label="Note rifiuto firma" />
+
+    <fieldProperty
+            name="cdTerzoResponsabile"
+            property="cdTerzoResponsabile"
+            inputType="ROTEXT"
+            maxLength="8"
+            inputSize="8"
+            label="Cod. responsabile firma" />
 
     <!-- ============================================ -->
     <!-- FORM FIELD PROPERTIES -->
@@ -308,6 +357,12 @@
     <formFieldProperty name="cognomeDelegato" />
     <formFieldProperty name="pgDocTrasportoRientroVisualizzato" />
 
+    <formFieldProperty name="idFlussoHappysign" />
+    <formFieldProperty name="statoFlusso" />
+    <formFieldProperty name="dataInvioFirma" />
+    <formFieldProperty name="dataFirma" />
+    <formFieldProperty name="noteRifiuto" />
+    <formFieldProperty name="cdTerzoResponsabile" />
 
     <!-- ============================================ -->
     <!-- COLONNE DEFAULT -->
@@ -320,6 +375,8 @@
     <columnFieldProperty name="dsDocTrasportoRientro" />
     <columnFieldProperty name="destinazione" />
     <columnFieldProperty name="stato" />
+    <columnFieldProperty name="statoFlusso" />
+    <columnFieldProperty name="dataInvioFirma" />
 
     <!-- ============================================ -->
     <!-- CAMPI DI RICERCA -->
@@ -332,6 +389,8 @@
     <findFieldProperty name="dsDocTrasportoRientro" />
     <findFieldProperty name="destinazione" />
     <findFieldProperty name="nominativoVettore" />
+    <findFieldProperty name="idFlussoHappysign" />
+    <findFieldProperty name="statoFlusso" />
 
     <!-- ============================================ -->
     <!-- COLUMN SETS -->
@@ -345,6 +404,8 @@
         <columnFieldProperty name="dsDocTrasportoRientro" />
         <columnFieldProperty name="destinazione" />
         <columnFieldProperty name="stato" />
+        <columnFieldProperty name="statoFlusso" />
+        <columnFieldProperty name="dataInvioFirma" />
     </columnSet>
 
     <columnSet name="R">
@@ -355,6 +416,8 @@
         <columnFieldProperty name="dsDocTrasportoRientro" />
         <columnFieldProperty name="destinazione" />
         <columnFieldProperty name="stato" />
+        <columnFieldProperty name="statoFlusso" />
+        <columnFieldProperty name="dataInvioFirma" />
     </columnSet>
 
     <!-- ============================================ -->
@@ -367,6 +430,8 @@
         <findFieldProperty name="dsDocTrasportoRientro" />
         <findFieldProperty name="pgDocTrasportoRientro" />
         <findFieldProperty name="destinazione" />
+        <findFieldProperty name="idFlussoHappysign" />
+        <findFieldProperty name="statoFlusso" />
     </freeSearchSet>
 
     <freeSearchSet name="R">
@@ -375,6 +440,8 @@
         <findFieldProperty name="dsDocTrasportoRientro" />
         <findFieldProperty name="pgDocTrasportoRientro" />
         <findFieldProperty name="destinazione" />
+        <findFieldProperty name="idFlussoHappysign" />
+        <findFieldProperty name="statoFlusso" />
     </freeSearchSet>
 
 </bulkInfo>

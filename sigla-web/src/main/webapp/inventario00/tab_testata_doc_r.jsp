@@ -124,21 +124,67 @@ function doStampaDocTraspRient() {
 
     <!-- ==================== NOMINATIVO VETTORE ==================== -->
     <% if (bp.isNominativoVettoreVisible()) { %>
-        <tr>
-            <td><% bp.getController().writeFormLabel(out,"nominativoVettore"); %></td>
-            <td colspan="3">
-                <% bp.getController().writeFormInput(out, null, "nominativoVettore",
-                    false, null, null); %>
-            </td>
-        </tr>
+      <tr>
+        <td><% bp.getController().writeFormLabel(out,"nominativoVettore"); %></td>
+        <td colspan="3">
+          <% bp.getController().writeFormInput(out, null, "nominativoVettore", false, null, null); %>
+        </td>
+      </tr>
     <% } %>
 
     <!-- ==================== NOTE ==================== -->
     <% if (bp.isNoteAbilitate()) { %>
+      <tr>
+        <td valign="top"><% bp.getController().writeFormLabel(out,"note"); %></td>
+        <td colspan="3"><% bp.getController().writeFormInput(out,"note"); %></td>
+      </tr>
+    <% } %>
+
+    <!-- ==================== HAPPYSIGN / FIRMA ==================== -->
+    <% if (!bp.isInserting()) { %>
+      <tr>
+        <td colspan="4" style="border-top: 2px solid #003d7a; padding-top: 15px;"></td>
+      </tr>
+
+      <tr>
+        <td><% bp.getController().writeFormLabel(out,"idFlussoHappysign"); %></td>
+        <td colspan="3">
+          <% bp.getController().writeFormInput(out, null, "idFlussoHappysign", true, null, null); %>
+        </td>
+      </tr>
+
+      <tr>
+        <td><% bp.getController().writeFormLabel(out,"statoFlusso"); %></td>
+        <td>
+          <% bp.getController().writeFormInput(out, null, "statoFlusso", true, null, null); %>
+        </td>
+
+        <td><% bp.getController().writeFormLabel(out,"cdTerzoResponsabile"); %></td>
+        <td>
+          <% bp.getController().writeFormInput(out, null, "cdTerzoResponsabile", true, null, null); %>
+        </td>
+      </tr>
+
+      <tr>
+        <td><% bp.getController().writeFormLabel(out,"dataInvioFirma"); %></td>
+        <td>
+          <% bp.getController().writeFormInput(out, null, "dataInvioFirma", true, null, null); %>
+        </td>
+
+        <td><% bp.getController().writeFormLabel(out,"dataFirma"); %></td>
+        <td>
+          <% bp.getController().writeFormInput(out, null, "dataFirma", true, null, null); %>
+        </td>
+      </tr>
+
+      <% if (doc != null && doc.isRifiutatoInFirma()) { %>
         <tr>
-            <td valign="top"><% bp.getController().writeFormLabel(out,"note"); %></td>
-            <td colspan="3"><% bp.getController().writeFormInput(out,"note"); %></td>
+          <td valign="top"><% bp.getController().writeFormLabel(out,"noteRifiuto"); %></td>
+          <td colspan="3">
+            <% bp.getController().writeFormInput(out, null, "noteRifiuto", true, null, null); %>
+          </td>
         </tr>
+      <% } %>
     <% } %>
 
   </table>

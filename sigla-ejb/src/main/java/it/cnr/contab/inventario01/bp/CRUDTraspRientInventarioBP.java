@@ -506,7 +506,10 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      * Verifica se documento è in stato non modificabile
      */
     public boolean isDocumentoNonModificabile() {
-        return isDocumentoAnnullato() || isDocumentoInviatoInFirma() || isDocumentoDefinitivo();
+        return isDocumentoAnnullato()
+                || isDocumentoInviatoInFirma()
+                || isDocumentoDefinitivo()
+                || (getDoc() != null && getDoc().hasFlussoFirmaAttivo());
     }
 
     @Override
@@ -901,12 +904,9 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
         return !isGestioneInvioInFirmaAttiva()
                 || getModel() == null
-                || isDocumentoAnnullato()
-                || isDocumentoInviatoInFirma()
-                || (status != OggettoBulk.NORMAL && status != OggettoBulk.TO_BE_UPDATED)
                 || doc == null
-                || doc.getStato() == null
-                || !Doc_trasporto_rientroBulk.STATO_INSERITO.equals(doc.getStato());
+                || (status != OggettoBulk.NORMAL && status != OggettoBulk.TO_BE_UPDATED)
+                || !doc.isInviabileAllaFirma();
     }
 
     /**
@@ -1048,8 +1048,9 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
     }
 
+
     /**
-     * Invia documento in firma digitale
+     * Invia documento in firma digitale.
      */
     public void inviaAllaFirma(ActionContext context) throws BusinessProcessException {
         validaStatoPerFirma();
@@ -1074,6 +1075,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
     }
 
+
     /**
      * Annulla documento (stato ANNULLATO)
      */
@@ -1097,17 +1099,28 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     }
 
     /**
-     * Valida stato documento prima dell'invio in firma
+     * Valida stato documento prima dell'invio in firma.
      */
     private void validaStatoPerFirma() throws BusinessProcessException {
-        if (isDocumentoAnnullato()) {
+        Doc_trasporto_rientroBulk doc = getDoc();
+
+        if (doc == null) {
+            throw new BusinessProcessException("Documento non presente");
+        }
+
+        if (doc.isAnnullato()) {
             throw new BusinessProcessException("Impossibile inviare in firma un documento annullato");
         }
-        if (!getDoc().isInserito()) {
+
+        if (!doc.isInserito()) {
             throw new BusinessProcessException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
         }
-    }
 
+        if (!doc.isInviabileAllaFirma()) {
+            throw new BusinessProcessException("Documento non completo per l'invio in firma");
+        }
+    }
+    
     @Override
     public void clearSelection(ActionContext context) throws BusinessProcessException {
         try {

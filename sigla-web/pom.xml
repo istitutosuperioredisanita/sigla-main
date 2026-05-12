@@ -647,12 +647,24 @@
 
     </dependencies>
     <profiles>
+
         <profile>
             <id>all-test</id>
             <properties>
                 <test.exclude.package />
             </properties>
         </profile>
+        <profile>
+            <id>iss</id>
+            <dependencies>
+                <dependency>
+                    <groupId>it.iss.si</groupId>
+                    <artifactId>happysign-client</artifactId>
+                    <version>${version.happysign}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
         <profile>
             <id>CMIS</id>
             <dependencies>
@@ -672,6 +684,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
+
         <profile>
             <id>AZURE</id>
             <dependencies>
@@ -682,6 +695,7 @@
                 </dependency>
             </dependencies>
         </profile>
+
         <profile>
             <id>S3</id>
             <dependencies>
@@ -692,5 +706,6 @@
                 </dependency>
             </dependencies>
         </profile>
+
     </profiles>
 </project>

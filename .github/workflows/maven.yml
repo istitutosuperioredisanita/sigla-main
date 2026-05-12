@@ -28,8 +28,9 @@ jobs:
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}"  | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Build Docker image
         run: |
@@ -49,7 +50,7 @@ jobs:
 
           # Push del tag specifico del branch
           docker push $IMAGE_ID:${{ github.ref_name }}
-  
+          
           # Se il branch è master, facciamo il push anche di 'latest'
           if [ "${{ github.ref_name }}" == "master" ]; then
             docker push $IMAGE_ID:latest

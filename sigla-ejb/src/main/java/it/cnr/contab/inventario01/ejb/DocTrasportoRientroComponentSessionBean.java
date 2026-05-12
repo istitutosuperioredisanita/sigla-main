@@ -821,7 +821,7 @@ public class DocTrasportoRientroComponentSessionBean
         } catch (it.cnr.jada.comp.NoRollbackException e) {
             component_invocation_succes(userContext, componentObj);
             throw e;
-        } catch (it.cnr.jada.comp.ComponentException e) {
+        } catch (ComponentException e) {
             component_invocation_failure(userContext, componentObj);
             throw e;
         } catch (RuntimeException e) {
