@@ -63,11 +63,6 @@
             <version>${version.sigla-ws.client}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>it.iss.si</groupId>
-            <artifactId>happysign-client</artifactId>
-            <version>${version.happysign}</version>
-        </dependency>
         <!-- JAXB Plugins Runtime -->
         <dependency>
             <groupId>org.jvnet.jaxb</groupId>
