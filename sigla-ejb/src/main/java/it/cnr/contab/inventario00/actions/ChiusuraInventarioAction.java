@@ -24,6 +24,7 @@ import it.cnr.contab.inventario00.docs.bulk.Ammortamento_bene_invBulk;
 import it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBulk;
 import it.cnr.contab.inventario00.ejb.AmmortamentoBeneComponentSession;
 import it.cnr.contab.inventario00.ejb.AsyncAmmortamentoBeneComponentSession;
+import it.cnr.contab.inventario00.ejb.InventarioApChComponentSession;
 import it.cnr.contab.inventario00.ejb.V_AmmortamentoBeniDetComponentSession;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.ordmag.magazzino.bp.StampaChiusuraMagazzinoBP;
@@ -44,6 +45,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.action.OptionBP;
 
@@ -219,13 +221,13 @@ public class ChiusuraInventarioAction extends ParametricPrintAction {
 				ammortamentoBeneComponent.cancellaAmmortamentiEsercizio(context.getUserContext(), model.getAnno());
 
 				chiusuraAnnoComponent.eliminaDatiChiusuraInventario(context.getUserContext(), model.getAnno(),ChiusuraAnnoBulk.TIPO_CHIUSURA_INVENTARIO);
-
+				chiusuraAnnoComponent.aggiornaInventarioApPerEsercizio(context.getUserContext(),model.getAnno(),false);
 				chiusuraInventarioBP.setChiusuraAnno(null);
 
-			} catch ( ComponentException e) {
+			} catch ( ComponentException | IntrospectionException e) {
 				chiusuraInventarioBP.setErrorMessage(e.getMessage());
 			}
-		}
+        }
 		return context.findDefaultForward();
 	}
 
@@ -248,12 +250,14 @@ public class ChiusuraInventarioAction extends ParametricPrintAction {
 				chiusuraAnnoBulk.setDataCalcolo(it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp());
 				chiusuraAnnoBulk.setCrudStatus(OggettoBulk.TO_BE_UPDATED);
 				chiusuraAnnoComponent.modificaConBulk(context.getUserContext(), chiusuraAnnoBulk);
+
+				chiusuraAnnoComponent.aggiornaInventarioApPerEsercizio(context.getUserContext(),chiusuraAnnoBulk.getAnno(),true);
 				chiusuraInventarioBP.setChiusuraAnno(chiusuraAnnoBulk);
 
-			} catch ( ComponentException e) {
+			} catch ( ComponentException | IntrospectionException e) {
 				chiusuraInventarioBP.setErrorMessage(e.getMessage());
 			}
-		}
+        }
 		return context.findDefaultForward();
 	}
 

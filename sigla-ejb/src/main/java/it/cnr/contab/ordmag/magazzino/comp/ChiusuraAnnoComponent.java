@@ -22,6 +22,8 @@ import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioBulk;
 import it.cnr.contab.inventario00.docs.bulk.Chiusura_anno_inventarioHome;
+import it.cnr.contab.inventario00.tabrif.bulk.Inventario_ap_chBulk;
+import it.cnr.contab.inventario00.tabrif.bulk.Inventario_ap_chHome;
 import it.cnr.contab.logs.bulk.Batch_log_tstaBulk;
 import it.cnr.contab.ordmag.anag00.MagazzinoBulk;
 import it.cnr.contab.ordmag.anag00.RaggrMagazzinoBulk;
@@ -30,6 +32,7 @@ import it.cnr.contab.ordmag.magazzino.bulk.*;
 import it.cnr.contab.ordmag.magazzino.dto.ValoriChiusuraCatGrVoceEP;
 import it.cnr.contab.ordmag.magazzino.dto.ValoriLottoPerAnno;
 import it.cnr.contab.ordmag.magazzino.ejb.MovimentiMagComponentSession;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
@@ -39,6 +42,7 @@ import it.cnr.jada.comp.CRUDComponent;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.comp.IPrintMgr;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 
@@ -548,5 +552,32 @@ public class ChiusuraAnnoComponent extends CRUDComponent implements ICRUDMgr, IP
 	public ChiusuraAnnoBulk findByPrimaryKey(UserContext userContext,ChiusuraAnnoBulk chiusuraAnno) throws ComponentException, PersistencyException {
 		ChiusuraAnnoHome homeChiusuraAnno = (ChiusuraAnnoHome) getHome(userContext, ChiusuraAnnoBulk.class);
 		return (ChiusuraAnnoBulk)homeChiusuraAnno.findByPrimaryKey(chiusuraAnno);
+	}
+	public void aggiornaInventarioApPerEsercizio(UserContext aUC,Integer esercizio,boolean chiusura) throws ComponentException, IntrospectionException, PersistencyException, ParseException {
+		Inventario_ap_chHome invApChHome = (Inventario_ap_chHome)getHome(aUC, Inventario_ap_chBulk.class);
+		List<Inventario_ap_chBulk> invList = invApChHome.findAllPerAnno(esercizio);
+
+		if(!invList.isEmpty()){
+			for(Inventario_ap_chBulk inv : invList){
+				if(chiusura && inv.isOpen()){
+					inv.setStato(Inventario_ap_chBulk.CLOSE);
+					inv.setDataChiusura(it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp());
+					inv.setToBeUpdated();
+					super.modificaConBulk(aUC,inv);
+				}
+				else if(!chiusura && inv.isClose()){
+					inv.setStato(Inventario_ap_chBulk.OPEN);
+					java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+					try {
+						inv.setDataChiusura(new java.sql.Timestamp(sdf.parse("31/12/2100").getTime()));
+					} catch (ParseException e) {
+						throw handleException(e);
+					}
+					inv.setToBeUpdated();
+					super.modificaConBulk(aUC,inv);
+				}
+			}
+		}
+
 	}
 }

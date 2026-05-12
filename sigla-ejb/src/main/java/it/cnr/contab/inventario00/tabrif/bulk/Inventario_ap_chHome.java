@@ -66,6 +66,13 @@ public java.util.List findStoriaApChFor(Id_inventarioBulk inv, Integer esercizio
 
 	return fetchAll(sql);
 }
+	public java.util.List findAllPerAnno( Integer esercizio) throws IntrospectionException, PersistencyException {
+
+		SQLBuilder sql = createSQLBuilder();
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,esercizio);
+
+		return fetchAll(sql);
+	}
 /**
  * Insert the method's description here.
  * Creation date: (06/12/2001 14.42.23)

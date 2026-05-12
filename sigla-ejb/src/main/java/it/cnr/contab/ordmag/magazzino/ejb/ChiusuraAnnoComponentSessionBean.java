@@ -17,6 +17,7 @@
 
 package it.cnr.contab.ordmag.magazzino.ejb;
 
+import it.cnr.contab.inventario00.comp.InventarioApChComponent;
 import it.cnr.contab.ordmag.magazzino.bulk.*;
 import it.cnr.contab.ordmag.magazzino.comp.ChiusuraAnnoComponent;
 import it.cnr.contab.ordmag.magazzino.dto.ValoriLottoPerAnno;
@@ -25,6 +26,7 @@ import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 
 import jakarta.annotation.PostConstruct;
@@ -294,5 +296,19 @@ public class ChiusuraAnnoComponentSessionBean extends it.cnr.jada.ejb.CRUDCompon
 		}
 	}
 
+	@Override
+	public void aggiornaInventarioApPerEsercizio(UserContext param0, Integer param1,boolean param2) throws RemoteException, ComponentException, PersistencyException, IntrospectionException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((ChiusuraAnnoComponent)componentObj).aggiornaInventarioApPerEsercizio(param0,param1,param2);
+			component_invocation_succes(param0,componentObj);
 
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		} catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

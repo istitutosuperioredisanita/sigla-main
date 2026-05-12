@@ -2,6 +2,7 @@ package it.cnr.test.contab.rest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.cnr.test.h2.utenze.action.ActionDeployments;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 
 
 
-public class RestServiceDocTRTest {
+public class RestServiceDocTRTest  extends ActionDeployments {
 
     private static final String BASE_URL  = "http://localhost:8080";
     private static final String ENDPOINT  = "/SIGLA/restapi/docTrasportoRientro";
@@ -293,10 +294,10 @@ public class RestServiceDocTRTest {
     private int post(Map<String, Object> body) throws Exception {
         String json = mapper.writeValueAsString(body);
 
-        URL url = new URL(BASE_URL + ENDPOINT
-                + "?cdCds=" + CD_CDS
-                + "&cdUo="  + CD_UO
-                + "&esercizio=" + ESERCIZIO);
+        URL url = new URL(deploymentURL.toString().concat( ENDPOINT)
+                .concat("?cdCds=" ).concat(CD_CDS)
+                .concat("&cdUo=" ).concat(CD_UO)
+                .concat("&esercizio=").concat(String.valueOf(ESERCIZIO)));
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");

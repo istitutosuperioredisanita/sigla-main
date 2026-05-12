@@ -23,6 +23,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -359,6 +360,25 @@ public class TransactionalChiusuraAnnoComponentSession extends it.cnr.jada.ejb.T
             }
         }
     }
-
-
+    @Override
+    public void aggiornaInventarioApPerEsercizio(UserContext param0, Integer param1,boolean param2) throws RemoteException, ComponentException, PersistencyException, IntrospectionException {
+        try {
+            invoke("aggiornaInventarioApPerEsercizio", new Object[]{
+                    param0, param1,param2});
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (it.cnr.jada.persistency.PersistencyException ex) {
+                throw ex;
+            } catch (it.cnr.jada.persistency.IntrospectionException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
 }
