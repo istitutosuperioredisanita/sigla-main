@@ -39,7 +39,7 @@
         <version.sdi.fatturapa>1.0.2</version.sdi.fatturapa>
         <version.sigla-ws.client>1.0.2</version.sigla-ws.client>
         <spring.version>7.0.2</spring.version>
-        <jada.version>8.0.8</jada.version>
+            <jada.version>8.0.9</jada.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.directory>target</project.build.directory>
         <sigla.build.number>DEV</sigla.build.number>

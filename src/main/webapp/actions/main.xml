@@ -85,9 +85,9 @@
 	                 className="it.cnr.jada.util.action.OptionBP">
 		<forward name="default" path="/util/form_option.jsp" />
 	</businessProcess>
-	<businessProcess name="ResetBulkInfos"
-	                 className="it.cnr.jada.util.action.ResetBulkInfos">
-		<forward name="default" path="/util/ok.jsp" />
+	<businessProcess
+			name="ResetBulkInfos"
+			className="it.cnr.jada.util.action.ResetBulkInfos">
 	</businessProcess>
 	<businessProcess name="root"
 	                 className="it.cnr.contab.utenze00.bp.LoginBP">
