@@ -262,7 +262,7 @@
                     <release>${java.version}</release>
                     <useIncrementalCompilation>true</useIncrementalCompilation>
                     <staleMillis>0</staleMillis>
-                    <fork>true</fork>
+                    <fork>false</fork>
                 </configuration>
             </plugin>
         </plugins>
