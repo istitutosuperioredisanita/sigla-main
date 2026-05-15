@@ -216,6 +216,14 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
             riga.setTipoConsegnaDefault(null);
             riga.setVoceIva(null);
             riga.setDettaglioContratto(null);
+            riga.setFlagOnereRiga(false);
+
+            if(!riga.getRigheConsegnaColl().isEmpty()){
+                for(OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()){
+                    cons.setFlOnere(false);
+                }
+            }
+
             return context.findDefaultForward();
 
         } catch (Exception e) {
