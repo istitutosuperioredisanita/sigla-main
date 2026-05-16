@@ -25,6 +25,7 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Optional;
@@ -221,10 +222,24 @@ public class CRUDOrdineAcqBP001 extends ActionDeployments {
 
         doClickButton("doSalva()");
         String textAlert = handleTextAlert(browser);
+        Assertions.assertEquals("Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).", textAlert);
+
+        File file = new File("src/test/resources/contratto.pdf");
+        doClickButton("doTab('tab','tabAllegati')");
+        doClickButton("doAddToCRUD(main.ArchivioAllegati)");
+        Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
+        select.selectByValue("P:sigla_evasione_attachment:ddt");
+        getGrapheneElement("main.ArchivioAllegati.descrizione").writeIntoElement("TEST");
+        getGrapheneElement("main.ArchivioAllegati.file").sendKeys(file.getAbsolutePath());
+        getTableRowElement("main.ArchivioAllegati", 0).click();
+        doClickButton("doTab('tab','tabEvasioneConsegne')");
+
+        doClickButton("doSalva()");
+        textAlert = handleTextAlert(browser);
         Assertions.assertEquals("Per la consegna " + keyRowElement2 + " è necessario indicare se bisogna solo sdoppiare la riga o anche evaderla forzatamente", textAlert);
 
         rowElement2.click();
-        Select select = new Select(getGrapheneElement("main.ConsegneDaEvadere.operazioneQuantitaEvasaMinore"));
+        select = new Select(getGrapheneElement("main.ConsegneDaEvadere.operazioneQuantitaEvasaMinore"));
         select.selectByValue("C");
 
         doClickButton("doSalva()");
@@ -319,7 +334,7 @@ public class CRUDOrdineAcqBP001 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement("2");
 
         doClickButton("doCerca()");
-        
+
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
 

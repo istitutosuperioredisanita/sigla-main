@@ -27,6 +27,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 import org.wildfly.common.Assert;
 
+import java.io.File;
 import java.util.Optional;
 
 /**
@@ -313,7 +314,20 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        
+        String textAlert = handleTextAlert(browser);
+        Assertions.assertEquals("Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).", textAlert);
+
+        File file = new File("src/test/resources/contratto.pdf");
+        doClickButton("doTab('tab','tabAllegati')");
+        doClickButton("doAddToCRUD(main.ArchivioAllegati)");
+        Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
+        select.selectByValue("P:sigla_evasione_attachment:ddt");
+        getGrapheneElement("main.ArchivioAllegati.descrizione").writeIntoElement("TEST");
+        getGrapheneElement("main.ArchivioAllegati.file").sendKeys(file.getAbsolutePath());
+        getTableRowElement("main.ArchivioAllegati", 0).click();
+        doClickButton("doTab('tab','tabEvasioneConsegne')");
+
+        doClickButton("doSalva()");
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
     }
 
@@ -594,7 +608,20 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        
+        String textAlert = handleTextAlert(browser);
+        Assertions.assertEquals("Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).", textAlert);
+
+        File file = new File("src/test/resources/contratto.pdf");
+        doClickButton("doTab('tab','tabAllegati')");
+        doClickButton("doAddToCRUD(main.ArchivioAllegati)");
+        Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
+        select.selectByValue("P:sigla_evasione_attachment:ddt");
+        getGrapheneElement("main.ArchivioAllegati.descrizione").writeIntoElement("TEST");
+        getGrapheneElement("main.ArchivioAllegati.file").sendKeys(file.getAbsolutePath());
+        getTableRowElement("main.ArchivioAllegati", 0).click();
+        doClickButton("doTab('tab','tabEvasioneConsegne')");
+
+        doClickButton("doSalva()");
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
 
         doClickButton("doChiudiForm()");
@@ -781,10 +808,10 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
             Assertions.fail("Riga consegna 2 non individuata");
 
         //Verifico che la riga consegna n. 1 sia in stato ‘EVASA’ e la consegna n. 2 ancora in stato INSERITA. Entrambe ‘Non Associate’.
-        Assertions.assertEquals("Evasa", getTableColumnElement(rowElement1,14).getText());
-        Assertions.assertEquals("Inserita", getTableColumnElement(rowElement2,14).getText());
-        Assertions.assertEquals("Non Associata", getTableColumnElement(rowElement1,15).getText());
-        Assertions.assertEquals("Non Associata", getTableColumnElement(rowElement2,15).getText());
+        Assertions.assertEquals("Evasa", getTableColumnElement(rowElement1,15).getText());
+        Assertions.assertEquals("Inserita", getTableColumnElement(rowElement2,15).getText());
+        Assertions.assertEquals("Non Associata", getTableColumnElement(rowElement1,16).getText());
+        Assertions.assertEquals("Non Associata", getTableColumnElement(rowElement2,16).getText());
 
         //Seleziono la consegna 1 EVASA
         rowElement1.click();
@@ -867,7 +894,21 @@ public class CRUDOrdineAcqBP002 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        
+        String textAlert = handleTextAlert(browser);
+        Assertions.assertEquals("Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).", textAlert);
+
+        File file = new File("src/test/resources/contratto.pdf");
+        doClickButton("doTab('tab','tabAllegati')");
+        doClickButton("doAddToCRUD(main.ArchivioAllegati)");
+        Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
+        select.selectByValue("P:sigla_evasione_attachment:ddt");
+        getGrapheneElement("main.ArchivioAllegati.descrizione").writeIntoElement("TEST");
+        getGrapheneElement("main.ArchivioAllegati.file").sendKeys(file.getAbsolutePath());
+        getTableRowElement("main.ArchivioAllegati", 0).click();
+        doClickButton("doTab('tab','tabEvasioneConsegne')");
+
+        doClickButton("doSalva()");
+
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
 
 
