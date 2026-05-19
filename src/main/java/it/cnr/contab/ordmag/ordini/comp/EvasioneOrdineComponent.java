@@ -216,6 +216,7 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 
 					//Ricarico la consegna dal DB per verificare che non sia stata già evasa
 					OrdineAcqConsegnaBulk consegnaDB = (OrdineAcqConsegnaBulk) findByPrimaryKey(userContext, consegnaSelected);
+					getHomeCache(userContext).fetchAll(userContext);
 					if (consegnaDB.isStatoConsegnaEvasa())
 						throw new DetailedRuntimeException("La consegna " + consegnaDB.getConsegnaOrdineString() + " è stata già evasa");
 

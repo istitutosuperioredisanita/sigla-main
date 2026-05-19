@@ -1,7 +1,7 @@
 name: Publish package
 on:
   push:
-    branches: [master, sviluppo, analitica-wildfly-bootable-jar]
+    branches: [master, sviluppo, analitica-wildfly-bootable-jar, bootable-single-project]
     paths-ignore:
       - 'docs/**'
 
@@ -21,7 +21,7 @@ jobs:
       - name: Publish package
         run: |
           SKIP_TESTS="-DskipTests"
-          if [ "${{ github.ref_name }}" == "master" ]; then
+          if [ "${{ github.ref_name }}" == "master" ] || [ "${{ github.ref_name }}" == "bootable-single-project" ]; then
             SKIP_TESTS=""
           fi
           mvn clean deploy $SKIP_TESTS -s .m2/settings.xml -PAZURE,PROD --batch-mode --errors --fail-at-end --show-version

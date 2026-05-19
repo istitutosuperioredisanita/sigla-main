@@ -1203,6 +1203,26 @@
         <dropDefaultValue tableName="movimenti_mag" columnName="duva"/>
     </changeSet>
 
+    <changeSet author="test" id="create-tipo-trasporto-rientro">
+        <addDefaultValue tableName="tipo_trasporto_rientro" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="tipo_trasporto_rientro" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="test/csv/tipo_trasporto_rientro.csv" tableName="tipo_trasporto_rientro"/>
+
+        <dropDefaultValue tableName="tipo_trasporto_rientro" columnName="dacr"/>
+        <dropDefaultValue tableName="tipo_trasporto_rientro" columnName="duva"/>
+    </changeSet>
+
+    <changeSet author="test" id="create-inventario-beni">
+        <addDefaultValue tableName="inventario_beni" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="inventario_beni" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="test/csv/inventario_beni.csv" tableName="inventario_beni"/>
+
+        <dropDefaultValue tableName="inventario_beni" columnName="dacr"/>
+        <dropDefaultValue tableName="inventario_beni" columnName="duva"/>
+    </changeSet>
+
     <changeSet author="test" id="recreate-sequence">
         <dropSequence sequenceName="cnrseq00_movimenti_mag"/>
         <createSequence sequenceName="cnrseq00_movimenti_mag" startValue="2"/>

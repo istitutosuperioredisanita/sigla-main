@@ -29,6 +29,17 @@
             --disable-dev-shm-usage,
             --disable-extensions,
             --disable-software-rasterizer,
+            --disable-background-networking,
+            --disable-default-apps,
+            --disable-sync,
+            --disable-translate,
+            --disable-web-resources,
+            --no-first-run,
+            --safebrowsing-disable-auto-update,
+            --disable-background-timer-throttling,
+            --disable-renderer-backgrounding,
+            --disable-backgrounding-occluded-windows,
+            --blink-settings=imagesEnabled=false,
             --window-size=1920,1080
         </property>
     </extension>
@@ -40,7 +51,7 @@
             <!-- JVM arguments -->
             <property name="javaVmArguments">
                 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787
-                -Xmx2g
+                -Xms512m -Xmx3g -XX:+UseG1GC -XX:MaxGCPauseMillis=200
                 -Djava.security.egd=file:/dev/./urandom
                 -Duser.language=it
                 -Duser.country=IT

@@ -25,6 +25,8 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
+import java.io.File;
+
 /**
  * Test di:
  * 1) evasione riga consegna ordine creato in anno precedente
@@ -128,8 +130,8 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         GrapheneElement rowElement=null;
         for (int riga = 0; riga < 10; riga++) {
             try {
-                if (getTableColumnElement("main.ConsegneDaEvadere", riga, 1).getText().equals(keyRowElement))
-                    rowElement = getTableRowElement("main.ConsegneDaEvadere", riga);
+                if (getTableColumnElementFast("main.ConsegneDaEvadere", riga, 1).getText().equals(keyRowElement))
+                    rowElement = getTableRowElementFast("main.ConsegneDaEvadere", riga);
             } catch (RuntimeException ignored) {
             }
         }
@@ -142,7 +144,21 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        
+        String textAlert = handleTextAlert(browser);
+        Assertions.assertEquals("Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).", textAlert);
+
+        File file = new File("src/test/resources/contratto.pdf");
+        doClickButton("doTab('tab','tabAllegati')");
+        doClickButton("doAddToCRUD(main.ArchivioAllegati)");
+        Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
+        select.selectByValue("P:sigla_evasione_attachment:ddt");
+        getGrapheneElement("main.ArchivioAllegati.descrizione").writeIntoElement("TEST");
+        getGrapheneElement("main.ArchivioAllegati.file").sendKeys(file.getAbsolutePath());
+        getTableRowElement("main.ArchivioAllegati", 0).click();
+        doClickButton("doTab('tab','tabEvasioneConsegne')");
+
+        doClickButton("doSalva()");
+
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
 
     }
@@ -176,7 +192,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement("1");
 
         doClickButton("doCerca()");
-        
+
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
         //Vado sul dettaglio analitico a livello di Ordine
@@ -195,7 +211,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals(" ", getTableColumnElement("main.Dati Analitici",1,4).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.Dati Analitici",1,5).getText());
 
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Dati Analitici",2),"Cannot find Element <tr> with tableName main.Dati Analitici and numberRow: 2");
+        assertTableRowAbsent("main.Dati Analitici",2);
 
         //Vado sul dettaglio a livello riga Ordine
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -214,7 +230,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
         Assertions.assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.Righe.Dati Coge/Coan",0,4).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",1),"Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 1");
+        assertTableRowAbsent("main.Righe.Dati Coge/Coan",1);
 
         //Vado sulla tab ‘consegne’
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");
@@ -247,13 +263,13 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("doTab('tab','tabDare')");
         Assertions.assertEquals("C13024", getTableColumnElement("main.MovimentiDare",0,1).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.MovimentiDare",0,5).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiDare",1),"Cannot find Element <tr> with tableName main.MovimentiDare and numberRow: 1");
+        assertTableRowAbsent("main.MovimentiDare",1);
 
         //Nella sezione ‘Avere’ è presente correttamente il conto fatture da ricevere: P00047.
         doClickButton("doTab('tab','tabAvere')");
         Assertions.assertEquals("P00047", getTableColumnElement("main.MovimentiAvere",0,1).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.MovimentiAvere",0,5).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiAvere",1),"Cannot find Element <tr> with tableName main.MovimentiAvere and numberRow: 1");
+        assertTableRowAbsent("main.MovimentiAvere",1);
 
         doClickButton("doChiudiForm()");
         doClickButton("submitForm('doVisualizzaAnalitica');");
@@ -268,7 +284,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("000.000.000", getTableColumnElement("main.Movimenti",0,3).getText());
         Assertions.assertEquals("PTEST001", getTableColumnElement("main.Movimenti",0,4).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.Movimenti",0,5).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti",1),"Cannot find Element <tr> with tableName main.Movimenti and numberRow: 1");
+        assertTableRowAbsent("main.Movimenti",1);
 
         doClickButton("doChiudiForm()");
     }
@@ -361,8 +377,8 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         GrapheneElement rowElement=null;
         for (int riga = 0; riga < 10; riga++) {
             try {
-                if (getTableColumnElement("main.ConsegneDaEvadere", riga, 1).getText().equals(keyRowElement))
-                    rowElement = getTableRowElement("main.ConsegneDaEvadere", riga);
+                if (getTableColumnElementFast("main.ConsegneDaEvadere", riga, 1).getText().equals(keyRowElement))
+                    rowElement = getTableRowElementFast("main.ConsegneDaEvadere", riga);
             } catch (RuntimeException ignored) {
             }
         }
@@ -375,7 +391,21 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
 
         //Salvo
         doClickButton("doSalva()");
-        
+        String textAlert = handleTextAlert(browser);
+        Assertions.assertEquals("Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).", textAlert);
+
+        File file = new File("src/test/resources/contratto.pdf");
+        doClickButton("doTab('tab','tabAllegati')");
+        doClickButton("doAddToCRUD(main.ArchivioAllegati)");
+        Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
+        select.selectByValue("P:sigla_evasione_attachment:ddt");
+        getGrapheneElement("main.ArchivioAllegati.descrizione").writeIntoElement("TEST");
+        getGrapheneElement("main.ArchivioAllegati.file").sendKeys(file.getAbsolutePath());
+        getTableRowElement("main.ArchivioAllegati", 0).click();
+        doClickButton("doTab('tab','tabEvasioneConsegne')");
+
+        doClickButton("doSalva()");
+
         Assertions.assertEquals(AlertMessage.OPERAZIONE_EFFETTUATA.value(), handleTextAlert(browser));
 
     }
@@ -406,7 +436,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement("1");
 
         doClickButton("doCerca()");
-        
+
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
         //Vado sul dettaglio analitico a livello di Ordine
@@ -425,7 +455,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals(" ", getTableColumnElement("main.Dati Analitici",1,4).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.Dati Analitici",1,5).getText());
 
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Dati Analitici",2),"Cannot find Element <tr> with tableName main.Dati Analitici and numberRow: 2");
+        assertTableRowAbsent("main.Dati Analitici",2);
 
         //Vado sul dettaglio a livello riga Ordine
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -444,7 +474,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
         Assertions.assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.Righe.Dati Coge/Coan",0,4).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",1),"Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 1");
+        assertTableRowAbsent("main.Righe.Dati Coge/Coan",1);
 
         //Vado sulla tab ‘consegne’
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");
@@ -454,8 +484,8 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         GrapheneElement rowElement1 = null, rowElement2 = null;
         for (int riga = 0; riga < 10; riga++) {
             try {
-                if (getTableColumnElement("main.Righe.Consegne", riga, 1).getText().equals("1"))
-                    rowElement1 = getTableRowElement("main.Righe.Consegne", riga);
+                if (getTableColumnElementFast("main.Righe.Consegne", riga, 1).getText().equals("1"))
+                    rowElement1 = getTableRowElementFast("main.Righe.Consegne", riga);
                 else if (getTableColumnElement("main.Righe.Consegne", riga, 1).getText().equals("2"))
                     rowElement2 = getTableRowElement("main.Righe.Consegne", riga);
             } catch (RuntimeException ignored) {
@@ -495,7 +525,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         select.selectByValue("");
 
         doClickButton("doCerca()");
-        
+
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
 
@@ -555,7 +585,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("P00047", getTableColumnElement("main.Movimenti Dare",0,1).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.Movimenti Dare",0,5).getText());
 
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti Dare",1),"Cannot find Element <tr> with tableName 'main.Movimenti Dare' and numberRow: 1");
+        assertTableRowAbsent("main.Movimenti Dare",1);
 
         Assertions.assertEquals("P13024", getTableColumnElement("main.Movimenti Avere",0,1).getText());
         Assertions.assertEquals("100,00", getTableColumnElement("main.Movimenti Avere",0,5).getText());
@@ -563,11 +593,11 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("P71012I", getTableColumnElement("main.Movimenti Avere",1,1).getText());
         Assertions.assertEquals("22,00", getTableColumnElement("main.Movimenti Avere",1,5).getText());
 
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",2),"Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 2");
+        assertTableRowAbsent("main.Movimenti Avere",2);
 
         //Vado sulla tab analitica
         doClickButton("doTab('tab','tabAnalitica')");
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",0),"Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 0");
+        assertTableRowAbsent("main.Movimenti Analitici",0);
 
         doClickButton("doChiudiForm()");
     }
@@ -590,7 +620,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         select.selectByValue("");
 
         doClickButton("doCerca()");
-        
+
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
 
@@ -650,7 +680,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("P00047", getTableColumnElement("main.Movimenti Dare",0,1).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.Movimenti Dare",0,5).getText());
 
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti Dare",1),"Cannot find Element <tr> with tableName 'main.Movimenti Dare' and numberRow: 1");
+        assertTableRowAbsent("main.Movimenti Dare",1);
 
         Assertions.assertEquals("P13024", getTableColumnElement("main.Movimenti Avere",0,1).getText());
         Assertions.assertEquals("100,00", getTableColumnElement("main.Movimenti Avere",0,5).getText());
@@ -658,11 +688,11 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("P71012I", getTableColumnElement("main.Movimenti Avere",1,1).getText());
         Assertions.assertEquals("22,00", getTableColumnElement("main.Movimenti Avere",1,5).getText());
 
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti Avere",2),"Cannot find Element <tr> with tableName 'main.Movimenti Avere' and numberRow: 2");
+        assertTableRowAbsent("main.Movimenti Avere",2);
 
         //Vado sulla tab analitica
         doClickButton("doTab('tab','tabAnalitica')");
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti Analitici",0),"Cannot find Element <tr> with tableName 'main.Movimenti Analitici' and numberRow: 0");
+        assertTableRowAbsent("main.Movimenti Analitici",0);
 
         doClickButton("doChiudiForm()");
     }
@@ -695,7 +725,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         getGrapheneElement("main.numero").writeIntoElement("1");
 
         doClickButton("doCerca()");
-        
+
         Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
 
         //Vado sul dettaglio analitico a livello di Ordine
@@ -708,7 +738,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("PTEST001", getTableColumnElement("main.Dati Analitici",0,4).getText());
         Assertions.assertEquals("244,00", getTableColumnElement("main.Dati Analitici",0,5).getText());
 
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Dati Analitici",1),"Cannot find Element <tr> with tableName main.Dati Analitici and numberRow: 1");
+        assertTableRowAbsent("main.Dati Analitici",1);
 
         //Vado sul dettaglio a livello riga Ordine
         doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
@@ -727,7 +757,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
         Assertions.assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
         Assertions.assertEquals("244,00", getTableColumnElement("main.Righe.Dati Coge/Coan",0,4).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Righe.Dati Coge/Coan",1),"Cannot find Element <tr> with tableName main.Righe.Dati Coge/Coan and numberRow: 1");
+        assertTableRowAbsent("main.Righe.Dati Coge/Coan",1);
 
         //Vado sulla tab ‘consegne’
         doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");
@@ -737,8 +767,8 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         GrapheneElement rowElement1 = null, rowElement2 = null;
         for (int riga = 0; riga < 10; riga++) {
             try {
-                if (getTableColumnElement("main.Righe.Consegne", riga, 1).getText().equals("1"))
-                    rowElement1 = getTableRowElement("main.Righe.Consegne", riga);
+                if (getTableColumnElementFast("main.Righe.Consegne", riga, 1).getText().equals("1"))
+                    rowElement1 = getTableRowElementFast("main.Righe.Consegne", riga);
                 else if (getTableColumnElement("main.Righe.Consegne", riga, 1).getText().equals("2"))
                     rowElement2 = getTableRowElement("main.Righe.Consegne", riga);
             } catch (RuntimeException ignored) {
@@ -787,12 +817,12 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("doTab('tab','tabDare')");
         Assertions.assertEquals("C13024", getTableColumnElement("main.MovimentiDare",0,1).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.MovimentiDare",0,5).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiDare",1),"Cannot find Element <tr> with tableName main.MovimentiDare and numberRow: 1");
+        assertTableRowAbsent("main.MovimentiDare",1);
 
         doClickButton("doTab('tab','tabAvere')");
         Assertions.assertEquals("P00047", getTableColumnElement("main.MovimentiAvere",0,1).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.MovimentiAvere",0,5).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiAvere",1),"Cannot find Element <tr> with tableName main.MovimentiAvere and numberRow: 1");
+        assertTableRowAbsent("main.MovimentiAvere",1);
 
         doClickButton("doChiudiForm()");
 
@@ -809,17 +839,17 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("doTab('tab','tabDare')");
         Assertions.assertEquals("C13024", getTableColumnElement("main.MovimentiDare",0,1).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.MovimentiDare",0,5).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiDare",1),"Cannot find Element <tr> with tableName main.MovimentiDare and numberRow: 1");
+        assertTableRowAbsent("main.MovimentiDare",1);
 
         doClickButton("doTab('tab','tabAvere')");
         Assertions.assertEquals("P00047", getTableColumnElement("main.MovimentiAvere",0,1).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.MovimentiAvere",0,5).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.MovimentiAvere",1),"Cannot find Element <tr> with tableName main.MovimentiAvere and numberRow: 1");
+        assertTableRowAbsent("main.MovimentiAvere",1);
 
         doClickButton("doChiudiForm()");
 
         doClickButton("submitForm('doVisualizzaEconomica');");
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("mainTable",2),"Cannot find Element <tr> with tableName 'mainTable' and numberRow: 2");
+        assertTableRowAbsent("mainTable",2);
 
         doClickButton("doChiudiForm()");
 
@@ -838,7 +868,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("000.000.000", getTableColumnElement("main.Movimenti",0,3).getText());
         Assertions.assertEquals("PTEST001", getTableColumnElement("main.Movimenti",0,4).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.Movimenti",0,5).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti",1),"Cannot find Element <tr> with tableName main.Movimenti and numberRow: 1");
+        assertTableRowAbsent("main.Movimenti",1);
 
         doClickButton("doChiudiForm()");
 
@@ -856,7 +886,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("000.000.000", getTableColumnElement("main.Movimenti",0,3).getText());
         Assertions.assertEquals("PTEST001", getTableColumnElement("main.Movimenti",0,4).getText());
         Assertions.assertEquals("122,00", getTableColumnElement("main.Movimenti",0,5).getText());
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("main.Movimenti",1),"Cannot find Element <tr> with tableName main.Movimenti and numberRow: 1");
+        assertTableRowAbsent("main.Movimenti",1);
 
         doClickButton("doChiudiForm()");
         doClickButton("submitForm('doVisualizzaMovimento');");
@@ -864,7 +894,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         Assertions.assertEquals("C01", getTableColumnElement("mainTable",0,3).getText());
         Assertions.assertEquals("122", getTableColumnElement("mainTable",0,9).getText());
 
-        Assertions.assertThrows(RuntimeException.class, ()->getTableRowElement("mainTable",1),"Cannot find Element <tr> with tableName 'mainTable' and numberRow: 1");
+        assertTableRowAbsent("mainTable",1);
 
         doClickButton("doChiudiForm()");
     }
