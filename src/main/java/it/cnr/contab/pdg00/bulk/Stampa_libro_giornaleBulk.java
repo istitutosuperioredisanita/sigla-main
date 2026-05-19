@@ -17,7 +17,6 @@
 
 package it.cnr.contab.pdg00.bulk;
 
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.enumeration.TipoIVA;
 
 
@@ -215,8 +214,8 @@ public class Stampa_libro_giornaleBulk extends it.cnr.jada.bulk.OggettoBulk {
 	 * @return java.sql.Timestamp
 	 */
 	private java.sql.Timestamp getHighDate() {
-			
-		return java.sql.Timestamp.valueOf(getEsercizio()+"-12-31 00:00:00.0");
+
+		return java.sql.Timestamp.valueOf(getEsercizio()+1+"-12-31 00:00:00.0");
 	}
 	/**
 	 * Insert the method's description here.
