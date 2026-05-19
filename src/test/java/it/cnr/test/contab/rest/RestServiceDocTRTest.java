@@ -17,7 +17,6 @@ import java.util.Map;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RestServiceDocTRTest  extends ActionDeployments {
 
-    private static final String BASE_URL  = "http://localhost:8080";
     private static final String ENDPOINT  = "/restapi/docTrasportoRientro";
     private static final String CD_CDS    = "000";
     private static final String CD_UO     = "000.000";
