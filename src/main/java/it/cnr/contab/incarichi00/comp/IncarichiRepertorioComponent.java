@@ -1056,7 +1056,12 @@ public class IncarichiRepertorioComponent extends CRUDComponent {
                 throw new ApplicationException("L'incarico e' stato cancellato");
             if (Optional.ofNullable(idPerla).isPresent())
                 incarico.setIdPerla(idPerla.intValue());
-            incarico.setAnomalia_perla(anomaliaPerla);
+            incarico.setAnomalia_perla(Optional.ofNullable(anomaliaPerla).filter(e->e.length()>1000).
+                    map(el -> el.substring(0,1000))
+                    .orElseGet(() -> {
+                        return anomaliaPerla;
+                    }));
+           // incarico.setAnomalia_perla(anomaliaPerla);
             incarico.setToBeUpdated();
             updateBulk(aUC, incarico);
         } catch (Exception e) {
