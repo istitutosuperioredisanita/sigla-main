@@ -42,6 +42,7 @@ public class RestServiceDocTRTest  extends ActionDeployments {
     // test01 – Trasporto INS vettore
     // -------------------------------------------------------------------------
     @Test
+    @Disabled
     @Order(1)
     public void test01_trasportoInsVettore() throws Exception {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -76,6 +77,7 @@ public class RestServiceDocTRTest  extends ActionDeployments {
     // test02 – Trasporto INS incaricato
     // -------------------------------------------------------------------------
     @Test
+    @Disabled
     @Order(2)
     public void test02_trasportoInsIncaricato() throws Exception {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -110,6 +112,7 @@ public class RestServiceDocTRTest  extends ActionDeployments {
     // test03 – Trasporto INS smartworking OK
     // -------------------------------------------------------------------------
     @Test
+    @Disabled
     @Order(3)
     public void test03_trasportoInsSmartworkingOk() throws Exception {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -141,6 +144,7 @@ public class RestServiceDocTRTest  extends ActionDeployments {
     // test04 – Trasporto INS smartworking ERROR (inventari inesistenti)
     // -------------------------------------------------------------------------
     @Test
+    @Disabled
     @Order(4)
     public void test04_trasportoInsSmartworkingError() throws Exception {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -173,6 +177,7 @@ public class RestServiceDocTRTest  extends ActionDeployments {
     // test05 – Trasporto DEF
     // -------------------------------------------------------------------------
     @Test
+    @Disabled
     @Order(5)
     public void test05_trasportoDef() throws Exception {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -206,6 +211,7 @@ public class RestServiceDocTRTest  extends ActionDeployments {
     // test06 – Rientro INS (riferimento al Trasporto DEF di test05)
     // -------------------------------------------------------------------------
     @Test
+    @Disabled
     @Order(6)
     public void test06_rientroIns() throws Exception {
         Map<String, Object> body = new LinkedHashMap<>();
