@@ -101,11 +101,18 @@ public class FatturaElettronicaPassivaComponent extends it.cnr.jada.comp.CRUDCom
 					getHome(usercontext, DocumentoEleAcquistoBulk.class).find(new DocumentoEleAcquistoBulk(documentoEleTestata))));
 			documentoEleTestata.setDocEleDdtColl(new BulkList<DocumentoEleDdtBulk>(
 					getHome(usercontext, DocumentoEleDdtBulk.class).find(new DocumentoEleDdtBulk(documentoEleTestata))));
-			if ((documentoEleTestata.getDocEleTributiColl()!=null && !documentoEleTestata.getDocEleTributiColl().isEmpty()) 
-					||(documentoEleTestata.getDocumentoEleTrasmissione().getRegimefiscale()!= null && 
+			if ((documentoEleTestata.getDocEleTributiColl()!=null && !documentoEleTestata.getDocEleTributiColl().isEmpty())
+					||(documentoEleTestata.getDocumentoEleTrasmissione().getRegimefiscale()!= null &&
 					(documentoEleTestata.getDocumentoEleTrasmissione().getRegimefiscale().equals(RegimeFiscaleType.RF_02.name()) ||
 							documentoEleTestata.getDocumentoEleTrasmissione().getRegimefiscale().equals(RegimeFiscaleType.RF_19.name())))){
-				documentoEleTestata.setAttivoSplitPaymentProf(Utility.createFatturaPassivaComponentSession().isAttivoSplitPaymentProf(usercontext, documentoEleTestata.getDataDocumento()));
+				if (Optional.ofNullable(documentoEleTestata.getDocumentoEleTrasmissione())
+						.flatMap(el->Optional.ofNullable(el.getPrestatoreAnag()))
+						.map(AnagraficoBulk::isPersonaFisica)
+						.orElse(Boolean.FALSE)) {
+					documentoEleTestata.setAttivoSplitPaymentProf(Utility.createFatturaPassivaComponentSession().isAttivoSplitPaymentProf(usercontext, documentoEleTestata.getDataDocumento()));
+				} else {
+					documentoEleTestata.setAttivoSplitPaymentProf(Boolean.TRUE);
+				}
 			}
 			documentoEleTestata.setCompilaFatturaVariazione(Utility.createFatturaPassivaComponentSession().isCompilaFatturaVaziazione(usercontext,documentoEleTestata));
 			DocumentoEleTestataBulk nota = new DocumentoEleTestataBulk();
