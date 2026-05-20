@@ -17,14 +17,16 @@
 
 package it.cnr.contab.ordmag.magazzino.action;
 
-import it.cnr.contab.docamm00.bp.DocumentiAmministrativiFatturazioneElettronicaBP;
-import it.cnr.contab.ordmag.magazzino.bulk.BollaScaricoMagBulk;
-import it.cnr.contab.reports.bp.OfflineReportPrintBP;
-import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
+
+import it.cnr.contab.ordmag.ordini.bp.CRUDEvasioneOrdineBP;
+import it.cnr.contab.ordmag.ordini.bulk.EvasioneOrdineBulk;
+
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
+import it.cnr.jada.action.HookForward;
 import it.cnr.jada.util.action.SelezionatoreListaAction;
+
 
 public class ListaBolleScaricoGenerateAction extends SelezionatoreListaAction {
 		/**
@@ -39,6 +41,19 @@ public class ListaBolleScaricoGenerateAction extends SelezionatoreListaAction {
 				return null;
 			}
 
+	public Forward doCloseForm(ActionContext actioncontext)
+			throws BusinessProcessException {
+		Forward appoForward = super.doCloseForm(actioncontext);
+		if (actioncontext.getBusinessProcess() instanceof CRUDEvasioneOrdineBP){
+			actioncontext.closeBusinessProcess();
+			HookForward hookforward = (HookForward) actioncontext.findForward("close");
+			if (hookforward != null)
+				return hookforward;
+		}
+
+		return appoForward;
+
+		}
 
 
 }
