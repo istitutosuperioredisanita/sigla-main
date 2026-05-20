@@ -96,6 +96,8 @@ public class Inventario_beniBase extends Inventario_beniKey implements Keyed {
 	private java.sql.Timestamp dt_dismesso;
 	private java.lang.String causale_dismissione;
 
+	private Boolean fl_onere=false;
+
 	public Long getId_transito_beni_ordini() {
 		return id_transito_beni_ordini;
 	}
@@ -457,5 +459,13 @@ public void setSeriale(java.lang.String seriale) {
 
 	public void setFl_bene_in_ist(Boolean fl_bene_in_ist) {
 		this.fl_bene_in_ist = fl_bene_in_ist;
+	}
+
+	public Boolean getFl_onere() {
+		return fl_onere;
+	}
+
+	public void setFl_onere(Boolean fl_onere) {
+		this.fl_onere = fl_onere;
 	}
 }

@@ -30,14 +30,7 @@
             <td>
                 <% bp.getController().writeFormInput(out,"id_bene_origine"); %>
             </td>
-             <% if (bene != null && bene.isDaOrdini()){ %>
-                <td>
-                     <% bp.getController().writeFormLabel(out,"flOnereOrdine"); %>
-                </td>
-                <td>
-                    <% bp.getController().writeFormInput(out,"flOnereOrdine"); %>
-                </td>
-             <%}%>
+
           </tr>
           <tr>
             <td>
@@ -67,6 +60,17 @@
                 <% bp.getController().writeFormInput(out,"num_buono"); %>
             </td>
           </tr>
+          <% if (bene != null && bene.isDaOrdini()){ %>
+            <tr>
+                  <td>
+                       <% bp.getController().writeFormLabel(out,"fl_onere"); %>
+                  </td>
+                  <td>
+                      <% bp.getController().writeFormInput(out,"fl_onere"); %>
+                  </td>
+            </tr>
+           <%}%>
+
           <tr>
             <td>
                 <% bp.getController().writeFormLabel(out,"ds_bene"); %>

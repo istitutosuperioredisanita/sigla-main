@@ -601,7 +601,7 @@
 			inputSize="20"
 			label="Ordine"  />
 	<fieldProperty
-			name="flOnereOrdine"
+			name="fl_onere"
 			property="transito_beni_ordini.movimentiMag.lottoMag.ordineAcqConsegna.flOnere"
 			inputType="CHECKBOX"
 			enabledOnInsert="false"
@@ -748,7 +748,7 @@
 	<formFieldProperty
 			name="estremiOrdine" />
 	<formFieldProperty
-			name="flOnereOrdine" />
+			name="fl_onere" />
 
 
 	<columnFieldProperty
