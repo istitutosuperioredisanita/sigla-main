@@ -42,6 +42,8 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.HomeCache;
+import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
 
@@ -215,8 +217,11 @@ public class EvasioneOrdineComponent extends it.cnr.jada.comp.CRUDComponent impl
 					}
 
 					//Ricarico la consegna dal DB per verificare che non sia stata già evasa
-					OrdineAcqConsegnaBulk consegnaDB = (OrdineAcqConsegnaBulk) findByPrimaryKey(userContext, consegnaSelected);
-					consegnaDB.setOrdineAcqRiga(consegnaSelected.getOrdineAcqRiga());
+					HomeCache tempHomeCache = getTempHomeCache(userContext);
+					PersistentHome tempHome = tempHomeCache.getHome(OrdineAcqConsegnaBulk.class, null, "it.cnr.contab.ordmag.ordini.comp.EvasioneOrdineComponent.cercaOrdini");
+					OrdineAcqConsegnaBulk consegnaDB = (OrdineAcqConsegnaBulk) tempHome.findByPrimaryKey(userContext, consegnaSelected);
+					tempHomeCache.fetchAll(userContext);
+
 					if (consegnaDB.isStatoConsegnaEvasa())
 						throw new DetailedRuntimeException("La consegna " + consegnaDB.getConsegnaOrdineString() + " è stata già evasa");
 
