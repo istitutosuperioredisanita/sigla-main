@@ -41,6 +41,7 @@
 		<sonar.skip>true</sonar.skip>
 		<java.version>21</java.version>
         <version.happysign>2.0-SNAPSHOT</version.happysign>
+        <version.ace.iss>2.0-SNAPSHOT</version.ace.iss>
         <siopeplus.version>2.0.5</siopeplus.version>
 		<version.sdi.fatturapa>1.0.2</version.sdi.fatturapa>
 		<version.sigla-ws.client>1.0.2</version.sigla-ws.client>

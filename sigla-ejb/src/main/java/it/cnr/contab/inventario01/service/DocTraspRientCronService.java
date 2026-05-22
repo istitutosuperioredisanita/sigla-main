@@ -2,13 +2,14 @@ package it.cnr.contab.inventario01.service;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.dto.StatoHappySignDto;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.utenze00.bp.WSUserContext;
 import it.cnr.jada.UserContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
+import jakarta.annotation.PostConstruct;
+import java.util.Calendar;
 import java.util.List;
 
 public class DocTraspRientCronService {
@@ -16,156 +17,231 @@ public class DocTraspRientCronService {
     private static final Logger log =
             LoggerFactory.getLogger(DocTraspRientCronService.class);
 
+    private static final int RETRY_MAX = 3;
+    private static final int BATCH_SIZE = 50;
+
     @Autowired
     private DocTraspRientFlowService flowService;
 
     @Autowired
     private HappysignDocService happySignDocService;
 
-    @Autowired(required = false)
-    private DocTraspRientCMISService cmisService;
+    private UserContext userContext;
 
-    @Value("${doc.trasp.rient.happysign.timer.enabled:false}")
-    private boolean timerEnabled;
-
-    @Value("${doc.trasp.rient.happysign.timer.user:JOB_HAPPYSIGN}")
-    private String timerUser;
-
-    @Value("${doc.trasp.rient.happysign.timer.esercizio:2026}")
-    private Integer timerEsercizio;
-
-    @Value("${doc.trasp.rient.happysign.timer.cds:999}")
-    private String timerCds;
-
-    @Value("${doc.trasp.rient.happysign.timer.uo:999.000}")
-    private String timerUo;
-
-    @Value("${doc.trasp.rient.happysign.timer.cdr:999.000.000}")
-    private String timerCdr;
-
-    public void executeVerificaFirmeHappySign() {
-        if (!timerEnabled) {
-            log.debug("Timer HappySign Doc T/R disabilitato");
-            return;
-        }
-
-        try {
-            UserContext userContext = creaUserContextJob();
-
-            log.info(
-                    "Avvio verifica firme HappySign Doc T/R - user={}, esercizio={}, cds={}, uo={}, cdr={}",
-                    userContext.getUser(),
-                    CNRUserContext.getEsercizio(userContext),
-                    CNRUserContext.getCd_cds(userContext),
-                    CNRUserContext.getCd_unita_organizzativa(userContext),
-                    CNRUserContext.getCd_cdr(userContext)
-            );
-
-            verificaFirmeDocumentiTrasportoRientro(userContext);
-
-            log.info("Fine verifica firme HappySign Doc T/R");
-
-        } catch (Exception e) {
-            log.error("Errore timer Spring HappySign documenti Trasporto/Rientro", e);
-        }
-    }
-
-    private UserContext creaUserContextJob() {
-        return new CNRUserContext(
-                timerUser,
-                timerUser,
-                timerEsercizio,
-                timerCds,
-                timerUo,
-                timerCdr
+    @PostConstruct
+    public void init() {
+        userContext = new WSUserContext(
+                "JOB_HAPPYSIGN",
+                null,
+                Calendar.getInstance().get(Calendar.YEAR),
+                null,
+                null,
+                null
         );
     }
 
-    public void verificaFirmeDocumentiTrasportoRientro(UserContext userContext) {
-        List<Doc_trasporto_rientroBulk> documenti =
-                flowService.getDocumentiPredispostiAllaFirma(userContext);
+    /**
+     * Metodo principale del job schedulato.
+     * Recupera tutti i documenti da verificare su HappySign e avvia l’elaborazione a batch,
+     * gestendo log iniziale/finale e eventuali errori globali.
+     */
+    public void executeVerificaFirmeHappySign() {
 
-        log.info("Documenti T/R da verificare su HappySign: {}", documenti.size());
+        long start = System.currentTimeMillis();
 
-        for (Doc_trasporto_rientroBulk doc : documenti) {
-            try {
-                verificaDocumento(userContext, doc);
-            } catch (Exception e) {
-                log.error(
-                        "Errore verifica stato HappySign documento T/R: esercizio={}, inventario={}, tipo={}, pg={}",
-                        doc.getEsercizio(),
-                        doc.getPgInventario(),
-                        doc.getTiDocumento(),
-                        doc.getPgDocTrasportoRientro(),
-                        e
-                );
+        try {
+            log.info("START HappySign T/R - user={}, esercizio={}",
+                    userContext.getUser(),
+                    Calendar.getInstance().get(Calendar.YEAR));
+
+            List<Doc_trasporto_rientroBulk> documenti =
+                    flowService.getDocumentiPredispostiAllaFirma(userContext);
+
+            if (documenti == null || documenti.isEmpty()) {
+                log.info("Nessun documento da verificare");
+                return;
+            }
+
+            log.info("Documenti trovati: {}", documenti.size());
+
+            processaBatch(documenti);
+
+        } catch (Exception e) {
+            log.error("Errore globale job HappySign T/R", e);
+        }
+
+        long end = System.currentTimeMillis();
+        log.info("END HappySign T/R - durata={} ms", (end - start));
+    }
+
+    /**
+     * Divide i documenti in blocchi (batch) per evitare sovraccarico su sistema e servizi esterni.
+     * Ogni batch viene processato sequenzialmente, mantenendo il controllo su memoria e performance.
+     */
+    private void processaBatch(List<Doc_trasporto_rientroBulk> documenti) {
+
+        int totale = documenti.size();
+
+        for (int i = 0; i < totale; i += BATCH_SIZE) {
+
+            int end = Math.min(i + BATCH_SIZE, totale);
+            List<Doc_trasporto_rientroBulk> batch = documenti.subList(i, end);
+
+            log.info("Processing batch {}-{}", i, end);
+
+            for (Doc_trasporto_rientroBulk doc : batch) {
+                processaDocumentoConRetry(doc);
             }
         }
     }
 
-    private void verificaDocumento(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
-            throws Exception {
+    /**
+     * Gestisce il retry automatico per ogni documento.
+     * In caso di errore transient (es. timeout HappySign), riprova fino a RETRY_MAX volte prima di fallire definitivamente.
+     */
+    private void processaDocumentoConRetry(Doc_trasporto_rientroBulk doc) {
 
-        if (doc.getIdFlussoHappysign() == null
-                || doc.getIdFlussoHappysign().trim().isEmpty()) {
-            return;
-        }
+        int tentativi = 0;
 
-        StatoHappySignDto stato =
-                happySignDocService.getStatoFlusso(
-                        doc.getIdFlussoHappysign()
+        while (tentativi < RETRY_MAX) {
+            try {
+                verificaDocumento(doc);
+                return;
+
+            } catch (Exception e) {
+                tentativi++;
+
+                log.warn(
+                        "Retry {} per documento pg={} errore={}",
+                        tentativi,
+                        safePg(doc),
+                        e.getMessage()
                 );
 
-        if (stato == null || stato.isInviato()) {
+                if (tentativi >= RETRY_MAX) {
+                    log.error(
+                            "Errore definitivo documento pg={}",
+                            safePg(doc),
+                            e
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Controlla lo stato del documento su HappySign e instrada verso le azioni corrette:
+     * firmato → aggiornamento documento,
+     * rifiutato → gestione rifiuto,
+     * inviato → in attesa.
+     */
+    private void verificaDocumento(Doc_trasporto_rientroBulk doc) throws Exception {
+
+        if (doc == null) {
             return;
         }
 
+        String uuid = doc.getIdFlussoHappysign();
+
+        if (uuid == null || uuid.trim().isEmpty()) {
+            return;
+        }
+
+        StatoHappySignDto stato = safeCallStato(uuid);
+
+        if (stato == null || stato.getStato() == null) {
+            log.warn("Stato nullo per UUID={}", uuid);
+            return;
+        }
+
+        log.info(
+                "Doc pg={} stato={} uuid={}",
+                doc.getPgDocTrasportoRientro(),
+                stato.getStato(),
+                uuid
+        );
+
         if (stato.isFirmato()) {
-            salvaPdfFirmatoSePossibile(userContext, doc);
-            flowService.aggiornaDocumentoFirmato(userContext, doc);
+            gestisciFirmato(doc, uuid);
             return;
         }
 
         if (stato.isRifiutato()) {
-            flowService.aggiornaDocumentoRifiutato(
-                    userContext,
-                    doc,
-                    stato.getMotivoRifiuto()
-            );
+            gestisciRifiuto(doc, stato);
+            return;
+        }
+
+        if (stato.isInviato()) {
+            log.debug("Doc pg={} in attesa firma", safePg(doc));
         }
     }
 
-    private void salvaPdfFirmatoSePossibile(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
-            throws Exception {
-
-        if (cmisService == null) {
-            log.warn(
-                    "DocTraspRientCMISService non disponibile: salto salvataggio PDF firmato su CMIS"
-            );
-            return;
+    /**
+     * Wrapper sicuro per chiamata stato HappySign.
+     * Permette di centralizzare logging e gestione errori per eventuali problemi di integrazione esterna.
+     */
+    private StatoHappySignDto safeCallStato(String uuid) throws Exception {
+        try {
+            return happySignDocService.getStatoFlusso(uuid);
+        } catch (Exception e) {
+            log.error("Errore chiamata stato HappySign uuid={}", uuid, e);
+            throw e;
         }
+    }
 
-        byte[] pdfFirmato =
-                happySignDocService.getDocumentoFirmato(
-                        doc.getIdFlussoHappysign()
-                );
+    /**
+     * Gestisce il caso documento firmato.
+     * Scarica il PDF firmato e aggiorna il sistema interno tramite flowService.
+     */
+    private void gestisciFirmato(Doc_trasporto_rientroBulk doc, String uuid) throws Exception {
 
-        if (pdfFirmato == null || pdfFirmato.length == 0) {
-            log.warn(
-                    "PDF firmato non disponibile per uuid HappySign {}",
-                    doc.getIdFlussoHappysign()
-            );
-            return;
-        }
+        byte[] pdf = safeCallDocumento(uuid);
 
-        cmisService.salvaStampaDocumentoFirmatoSuCMIS(
-                pdfFirmato,
+        flowService.aggiornaDocumentoFirmato(
+                userContext,
                 doc,
-                userContext
+                pdf
         );
+
+        log.info("Documento pg={} aggiornato come FIRMATO", safePg(doc));
+    }
+
+    /**
+     * Wrapper sicuro per download documento firmato da HappySign.
+     * Consente logging centralizzato in caso di errore o indisponibilità del servizio.
+     */
+    private byte[] safeCallDocumento(String uuid) throws Exception {
+        try {
+            return happySignDocService.getDocumentoFirmato(uuid);
+        } catch (Exception e) {
+            log.error("Errore download PDF uuid={}", uuid, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Gestisce il caso di rifiuto firma.
+     * Aggiorna il documento con il motivo restituito da HappySign per tracciamento e audit.
+     */
+    private void gestisciRifiuto(Doc_trasporto_rientroBulk doc, StatoHappySignDto stato) {
+
+        flowService.aggiornaDocumentoRifiutato(
+                userContext,
+                doc,
+                stato.getMotivoRifiuto()
+        );
+
+        log.info("Documento pg={} RIFIUTATO motivo={}",
+                safePg(doc),
+                stato.getMotivoRifiuto()
+        );
+    }
+
+    /**
+     * Metodo di utilità per log safe.
+     * Evita NullPointerException quando il documento è nullo durante il logging.
+     */
+    private Object safePg(Doc_trasporto_rientroBulk doc) {
+        return doc != null ? doc.getPgDocTrasportoRientro() : "null";
     }
 }

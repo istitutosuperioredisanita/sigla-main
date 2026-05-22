@@ -17,11 +17,14 @@ import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.CRUDDetailComponent;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -29,15 +32,22 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.util.EmptyRemoteIterator;
 import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.ejb.EJBCommonServices;
+import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageException;
+import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,10 +68,14 @@ import static it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk.*;
  * <p>
  * UNICA FONTE DI VALIDAZIONE E BUSINESS LOGIC per i documenti di trasporto/rientro.
  */
-public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailComponent
+public class DocTrasportoRientroComponent extends CRUDDetailComponent
         implements Cloneable, Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final org.slf4j.Logger log =
+            org.slf4j.LoggerFactory.getLogger(DocTrasportoRientroComponent.class);
+
 
     @Autowired
     private StoreService storeService;
@@ -316,7 +330,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         try {
             caricaRelazioni(userContext, doc);
         } catch (PersistencyException | IntrospectionException e) {
-            System.out.println("Errore caricamento relazioni per ricerca: " + e.getMessage());
+            log.warn("Errore caricamento relazioni per ricerca: " + e.getMessage());
         }
 
         return doc;
@@ -345,7 +359,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         try {
             caricaRelazioni(userContext, doc);
         } catch (PersistencyException | IntrospectionException e) {
-            System.out.println("Errore caricamento relazioni per ricerca libera: " + e.getMessage());
+            log.warn("Errore caricamento relazioni per ricerca libera: " + e.getMessage());
         }
 
         return doc;
@@ -449,12 +463,12 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             return docT;
 
         } catch (PersistencyException e) {
-            e.printStackTrace(System.err);
+            log.error(System.err.toString());
             throw handleException(e);
         } catch (ApplicationException e) {
             throw e;
         } catch (Throwable e) {
-            e.printStackTrace(System.err);
+            log.error(System.err.toString());
             throw handleException(e);
         }
     }
@@ -490,10 +504,22 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         try {
             Doc_trasporto_rientro_dettHome dettHome =
                     (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(aUC, docT);
-            docT.setDoc_trasporto_rientro_dettColl(new BulkList(dettHome.getDetailsFor(docT)));
+
+            docT.setDoc_trasporto_rientro_dettColl(
+                    new BulkList(dettHome.getDetailsFor(docT))
+            );
 
             caricaDettagliDocumento(aUC, docT);
-            validaDoc(aUC, docT, true);
+
+            if (docT.isFirmatoDaCompletare()) {
+                if (docT.getDoc_trasporto_rientro_dettColl() == null
+                        || docT.getDoc_trasporto_rientro_dettColl().isEmpty()) {
+                    throw new ApplicationException("Attenzione: è necessario specificare almeno un bene.");
+                }
+            } else {
+                validaDoc(aUC, docT, true);
+            }
+
             validaAllegatiComp(docT);
 
             if (isProgressivoTemporaneo(docT)) {
@@ -524,7 +550,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      * riallinea dati e ricostruisce correttamente la struttura del bulk.
      */
     private Doc_trasporto_rientroBulk gestisciProgressivoTemporaneo(
-            UserContext aUC, Doc_trasporto_rientroBulk docT)
+            UserContext aUC,
+            Doc_trasporto_rientroBulk docT)
             throws PersistencyException, ComponentException, IntrospectionException {
 
         Numeratore_doc_t_rHome numHome =
@@ -538,15 +565,42 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 aUC.getUser()
         );
 
-        Doc_trasporto_rientroHome home = (Doc_trasporto_rientroHome) getHome(aUC, docT);
+        Doc_trasporto_rientroHome home =
+                (Doc_trasporto_rientroHome) getHome(aUC, docT);
+
+        /*
+         * Converte il documento temporaneo in documento definitivo.
+         * Dopo questa chiamata il vecchio progressivo negativo non deve più
+         * essere usato per ricaricare il documento.
+         */
         home.confirmDocTrasportoRientroTemporaneo(aUC, docT, nuovoPgDoc);
 
         docT.setPgDocTrasportoRientro(nuovoPgDoc);
-        docT.setArchivioAllegati(new BulkList<>());
+        docT.setStato(STATO_INSERITO);
         docT.setToBeUpdated();
 
-        docT = (Doc_trasporto_rientroBulk) inizializzaBulkPerModifica(aUC, docT);
+        /*
+         * Ricarica i dettagli usando il nuovo progressivo definitivo.
+         * NON chiamare inizializzaBulkPerModifica sul vecchio bulk negativo.
+         */
+        Doc_trasporto_rientro_dettHome dettHome =
+                (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(aUC, docT);
+
+        docT.setDoc_trasporto_rientro_dettColl(
+                new BulkList(dettHome.getDetailsFor(docT))
+        );
+
+        /*
+         * Manteniamo la collection allegati corrente, perché in questa fase
+         * il documento è solo salvato in INSERITO, non definitivo.
+         */
+        if (docT.getArchivioAllegati() == null) {
+            docT.setArchivioAllegati(new BulkList<>());
+        }
+
         preparaEAggiornaRiferimentiInversi(aUC, docT);
+
+        docT.setCrudStatus(OggettoBulk.NORMAL);
 
         return docT;
     }
@@ -592,6 +646,22 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             UserContext userContext,
             Doc_trasporto_rientroBulk docTR) throws ComponentException {
         try {
+            if (docTR == null) {
+                throw new ApplicationException("Documento non presente.");
+            }
+
+            if (docTR.isAnnullato()) {
+                throw new ApplicationException("Impossibile rendere definitivo un documento annullato.");
+            }
+
+            if (docTR.isDefinitivo()) {
+                throw new ApplicationException("Il documento è già definitivo.");
+            }
+
+            if (docTR.isInAttesaDiFirma()) {
+                throw new ApplicationException("Il documento è ancora in attesa di firma HappySign.");
+            }
+
             if (!hasAllegatoFirmato(docTR)) {
                 throw new ApplicationException(
                         "È obbligatorio allegare il documento firmato prima di rendere definitivo il documento.");
@@ -634,7 +704,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             boolean beneInIstituto = docTR instanceof DocumentoRientroBulk;
             aggiornaStatoBeni(userContext, docTR, beneInIstituto);
 
-            docTR.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+            docTR.setStato(STATO_DEFINITIVO);
             docTR.setToBeUpdated();
             preparaEAggiornaRiferimentiInversi(userContext, docTR);
 
@@ -714,7 +784,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             aggiornaStatoBeni(userContext, doc, beneInIstituto);
 
-            doc.setStato(Doc_trasporto_rientroBulk.STATO_ANNULLATO);
+            doc.setStato(STATO_ANNULLATO);
             doc.setToBeUpdated();
 
             return (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, doc);
@@ -728,9 +798,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     }
 
     private void validaAnnullamento(Doc_trasporto_rientroBulk doc) throws ApplicationException {
-        if (Doc_trasporto_rientroBulk.STATO_ANNULLATO.equals(doc.getStato()))
+        if (STATO_ANNULLATO.equals(doc.getStato()))
             throw new ApplicationException("Il documento è già annullato");
-        if (Doc_trasporto_rientroBulk.STATO_INVIATO.equals(doc.getStato()))
+        if (STATO_INVIATO.equals(doc.getStato()))
             throw new ApplicationException("Impossibile annullare un documento inviato in firma");
     }
 
@@ -818,14 +888,29 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     // =========================================================================
 
     /**
-     * Restituisce la Home appropriata per i dettagli in base al tipo di documento.
+     * Restituisce la Home appropriata per i dettagli in base a TI_DOCUMENTO,
+     * non in base alla classe concreta Java.
      */
-    private BulkHome getHomeDocumentoTrasportoRientroDett(UserContext aUC, OggettoBulk bulk)
+    private BulkHome getHomeDocumentoTrasportoRientroDett(UserContext userContext, OggettoBulk bulk)
             throws ComponentException {
-        if (bulk instanceof DocumentoTrasportoBulk)
-            return getHome(aUC, DocumentoTrasportoDettBulk.class);
-        else
-            return getHome(aUC, DocumentoRientroDettBulk.class);
+
+        if (!(bulk instanceof Doc_trasporto_rientroBulk)) {
+            throw new ComponentException("Bulk non valido per documento Trasporto/Rientro.");
+        }
+
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
+
+        if (TRASPORTO.equals(doc.getTiDocumento())) {
+            return getHome(userContext, DocumentoTrasportoDettBulk.class);
+        }
+
+        if (RIENTRO.equals(doc.getTiDocumento())) {
+            return getHome(userContext, DocumentoRientroDettBulk.class);
+        }
+
+        throw new ComponentException(
+                "Tipo documento Trasporto/Rientro non riconosciuto: " + doc.getTiDocumento()
+        );
     }
 
     /**
@@ -876,7 +961,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException, RemoteException {
         try {
             TerzoComponentSession sess = (TerzoComponentSession)
-                    it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+                    EJBCommonServices.createEJB(
                             "CNRANAGRAF00_EJB_TerzoComponentSession",
                             TerzoComponentSession.class);
             return sess.findTerziDipendentiByClause(userContext, terzo, clause);
@@ -896,7 +981,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException, RemoteException {
         try {
             TerzoComponentSession sess = (TerzoComponentSession)
-                    it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+                    EJBCommonServices.createEJB(
                             "CNRANAGRAF00_EJB_TerzoComponentSession",
                             TerzoComponentSession.class);
             return sess.findTerziDipendentiByClause(userContext, terzo, clause);
@@ -960,10 +1045,18 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
     // =========================================================================
 
     private String getAspectFirmato(Doc_trasporto_rientroBulk doc) {
-        if (doc instanceof DocumentoTrasportoBulk)
+        if (doc == null || doc.getTiDocumento() == null) {
+            return null;
+        }
+
+        if (TRASPORTO.equals(doc.getTiDocumento())) {
             return AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
-        if (doc instanceof DocumentoRientroBulk)
+        }
+
+        if (RIENTRO.equals(doc.getTiDocumento())) {
             return AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
+        }
+
         return null;
     }
 
@@ -1042,7 +1135,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     .count();
 
             if (countFirmati > 1) {
-                String tipo = doc instanceof DocumentoTrasportoBulk
+                String tipo = TRASPORTO.equals(doc.getTiDocumento())
                         ? "Documento di Trasporto FIRMATO"
                         : "Documento di Rientro FIRMATO";
                 throw new ApplicationException(
@@ -1053,74 +1146,140 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
     /**
      * Gestisce archiviazione, aggiornamento e cancellazione degli allegati T/R su CMIS.
+     *
+     * IMPORTANTE:
+     * Non usare cast a DocumentoTrasportoBulk / DocumentoRientroBulk.
+     * In alcuni flussi il bulk può arrivare con classe concreta non coerente,
+     * ma tiDocumento corretto.
      */
     public void archiviaAllegatiDocTR(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws ApplicationException {
 
-        List<String> storePathList = doc.isTrasporto()
-                ? ((DocumentoTrasportoBulk) doc).getStorePath()
-                : ((DocumentoRientroBulk) doc).getStorePath();
+        String storePath = getStorePathDocTrasportoRientro(doc);
 
-        if (storePathList == null || storePathList.isEmpty())
-            throw new ApplicationException(
-                    "StorePath non calcolabile per il documento PG=" + doc.getPgDocTrasportoRientro());
+        if (doc.getArchivioAllegati() == null) {
+            return;
+        }
 
-        String storePath = storePathList.get(0);
-        if (doc.getArchivioAllegati() == null) return;
-
-        if (storeService == null)
+        if (storeService == null) {
             storeService = SpringUtil.getBean("storeService", StoreService.class);
+        }
 
         for (AllegatoGenericoBulk allegatoGen : doc.getArchivioAllegati()) {
-            if (!(allegatoGen instanceof AllegatoDocTraspRientroBulk)) continue;
-            AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) allegatoGen;
+            if (!(allegatoGen instanceof AllegatoDocTraspRientroBulk)) {
+                continue;
+            }
+
+            AllegatoDocTraspRientroBulk allegato =
+                    (AllegatoDocTraspRientroBulk) allegatoGen;
 
             if (allegato.isToBeCreated()) {
                 File file = Optional.ofNullable(allegato.getFile())
                         .orElseThrow(() -> new ApplicationException(
-                                "File non presente per allegato: " + allegato.getNome()));
-                try {
+                                "File non presente per allegato: " + allegato.getNome()
+                        ));
+
+                try (FileInputStream fis = new FileInputStream(file)) {
                     allegato.complete(userContext);
+
                     storeService.storeSimpleDocument(
-                            allegato, new FileInputStream(file),
-                            allegato.getContentType(), allegato.getNome(), storePath);
+                            allegato,
+                            fis,
+                            allegato.getContentType(),
+                            allegato.getNome(),
+                            storePath
+                    );
+
                     allegato.setCrudStatus(OggettoBulk.NORMAL);
+
                 } catch (FileNotFoundException e) {
-                    throw new ApplicationException("File non trovato: " + allegato.getNome(), e);
+                    throw new ApplicationException(
+                            "File non trovato: " + allegato.getNome(),
+                            e
+                    );
+
                 } catch (StorageException e) {
-                    if (e.getType().equals(StorageException.Type.CONSTRAINT_VIOLATED))
-                        throw new ApplicationException("File già presente: " + allegato.getNome());
-                    throw new ApplicationException("Errore storage per: " + allegato.getNome(), e);
+                    if (StorageException.Type.CONSTRAINT_VIOLATED.equals(e.getType())) {
+                        throw new ApplicationException(
+                                "File già presente: " + allegato.getNome()
+                        );
+                    }
+
+                    throw new ApplicationException(
+                            "Errore storage per: " + allegato.getNome(),
+                            e
+                    );
+
+                } catch (Exception e) {
+                    throw new ApplicationException(
+                            "Errore archiviazione allegato: " + allegato.getNome(),
+                            e
+                    );
                 }
+
             } else if (allegato.isToBeUpdated()) {
                 try {
-                    if (allegato.getFile() != null)
-                        storeService.updateStream(allegato.getStorageKey(),
-                                new FileInputStream(allegato.getFile()), allegato.getContentType());
+                    if (allegato.getFile() != null) {
+                        try (FileInputStream fis = new FileInputStream(allegato.getFile())) {
+                            storeService.updateStream(
+                                    allegato.getStorageKey(),
+                                    fis,
+                                    allegato.getContentType()
+                            );
+                        }
+                    }
+
                     allegato.complete(userContext);
-                    storeService.updateProperties(allegato,
-                            storeService.getStorageObjectBykey(allegato.getStorageKey()));
+
+                    storeService.updateProperties(
+                            allegato,
+                            storeService.getStorageObjectBykey(allegato.getStorageKey())
+                    );
+
                     allegato.setCrudStatus(OggettoBulk.NORMAL);
+
                 } catch (FileNotFoundException e) {
-                    throw new ApplicationException("File non trovato: " + allegato.getNome(), e);
+                    throw new ApplicationException(
+                            "File non trovato: " + allegato.getNome(),
+                            e
+                    );
+
                 } catch (StorageException e) {
-                    if (e.getType().equals(StorageException.Type.CONSTRAINT_VIOLATED))
-                        throw new ApplicationException("File già presente: " + allegato.getNome());
-                    throw new ApplicationException("Errore storage per: " + allegato.getNome(), e);
+                    if (StorageException.Type.CONSTRAINT_VIOLATED.equals(e.getType())) {
+                        throw new ApplicationException(
+                                "File già presente: " + allegato.getNome()
+                        );
+                    }
+
+                    throw new ApplicationException(
+                            "Errore storage per: " + allegato.getNome(),
+                            e
+                    );
+
+                } catch (Exception e) {
+                    throw new ApplicationException(
+                            "Errore aggiornamento allegato: " + allegato.getNome(),
+                            e
+                    );
                 }
             }
         }
 
         for (Iterator<AllegatoDocTraspRientroBulk> it =
              doc.getArchivioAllegati().deleteIterator(); it.hasNext(); ) {
+
             AllegatoDocTraspRientroBulk allegato = it.next();
+
             if (allegato.isToBeDeleted()) {
-                Optional.ofNullable(allegato.getStorageKey())
-                        .ifPresent(key -> storeService.delete(key));
+                if (allegato.getStorageKey() != null) {
+                    storeService.delete(allegato.getStorageKey());
+                }
+
                 allegato.setCrudStatus(OggettoBulk.NORMAL);
             }
         }
     }
+
 
     // =========================================================================
     // SELEZIONE / ITERATORI BENI (InventarioDocTRBulk)
@@ -1136,7 +1295,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             CompoundFindClause clauses) throws ComponentException {
 
         if (docTR == null || docTR.getPgDocTrasportoRientro() == null)
-            return new it.cnr.jada.util.EmptyRemoteIterator();
+            return new EmptyRemoteIterator();
 
         SQLBuilder sql = getHome(userContext,
                 (docTR.isRientro() ? DocumentoRientroDettBulk.class : DocumentoTrasportoDettBulk.class))
@@ -1239,7 +1398,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Class bulkClass) throws ComponentException {
 
         if (docT.getPgDocTrasportoRientro() == null)
-            return new it.cnr.jada.util.EmptyRemoteIterator();
+            return new EmptyRemoteIterator();
 
         try {
             SQLBuilder sql = getHome(userContext, InventarioDocTRBulk.class).createSQLBuilder();
@@ -1338,13 +1497,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             dett.setPg_doc_trasporto_rientro(docT.getPgDocTrasportoRientro());
 
                             // Assegnatario da TerzoBulk
-                            if (docT.isSmartworking() && docT.getTerzoSmartworking() != null) {
-                                dett.setCdTerzoAssegnatario(docT.getTerzoSmartworking().getCd_terzo());
-                            } else if (docT.getFlIncaricato() && docT.getTerzoIncRitiro() != null) {
-                                dett.setCdTerzoAssegnatario(docT.getTerzoIncRitiro().getCd_terzo());
-                            } else if (bene.getCd_assegnatario() != null) {
-                                dett.setCdTerzoAssegnatario(bene.getCd_assegnatario());
-                            }
+                            dett.setCdTerzoAssegnatario(
+                                    calcolaCdTerzoAssegnatario(docT, bene)
+                            );
 
                             Doc_trasporto_rientro_dettBulk dettRientroOrig =
                                     trovaDettaglioOriginale(userContext, bene, docT.getPgInventario(), RIENTRO);
@@ -1366,13 +1521,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             dett.setPg_doc_trasporto_rientro(docT.getPgDocTrasportoRientro());
 
                             // Assegnatario da TerzoBulk
-                            if (docT.isSmartworking() && docT.getTerzoSmartworking() != null) {
-                                dett.setCdTerzoAssegnatario(docT.getTerzoSmartworking().getCd_terzo());
-                            } else if (docT.getFlIncaricato() && docT.getTerzoIncRitiro() != null) {
-                                dett.setCdTerzoAssegnatario(docT.getTerzoIncRitiro().getCd_terzo());
-                            } else if (bene.getCd_assegnatario() != null) {
-                                dett.setCdTerzoAssegnatario(bene.getCd_assegnatario());
-                            }
+                            dett.setCdTerzoAssegnatario(
+                                    calcolaCdTerzoAssegnatario(docT, bene)
+                            );
 
                             Doc_trasporto_rientro_dettBulk dettTrasportoOrig =
                                     trovaDettaglioOriginale(userContext, bene, docT.getPgInventario(), TRASPORTO);
@@ -1470,9 +1621,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             sql.addSQLClause("AND", "d.TI_DOCUMENTO",
                     SQLBuilder.EQUALS, tipoDocumentoDaCercare);
             sql.addSQLClause("AND", "d.STATO",
-                    SQLBuilder.EQUALS, Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
+                    SQLBuilder.EQUALS, STATO_DEFINITIVO);
             sql.addSQLClause("AND", "d.STATO",
-                    SQLBuilder.NOT_EQUALS, Doc_trasporto_rientroBulk.STATO_ANNULLATO);
+                    SQLBuilder.NOT_EQUALS, STATO_ANNULLATO);
             sql.addOrderBy("d.DATA_REGISTRAZIONE DESC");
 
             List risultati = dettHome.fetchAll(sql);
@@ -1606,7 +1757,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     SQLBuilder.EQUALS, dettaglioTrasportoAccessorio.getPg_doc_trasporto_rientro());
             sql.addSQLClause("AND", "dr.TI_DOCUMENTO", SQLBuilder.EQUALS, RIENTRO);
             sql.addSQLClause("AND", "dr.STATO",
-                    SQLBuilder.NOT_EQUALS, Doc_trasporto_rientroBulk.STATO_ANNULLATO);
+                    SQLBuilder.NOT_EQUALS, STATO_ANNULLATO);
 
             List risultati = dettHome.fetchAll(sql);
             return risultati != null && !risultati.isEmpty();
@@ -1722,6 +1873,19 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 applicaFiltriRientro(sql, doc);
             }
 
+            /*
+             * I beni già presenti in altri documenti T/R aperti
+             * non devono comparire nella lista di selezione.
+             *
+             * Stati esclusi:
+             * - INS: documento inserito/non definitivo
+             * - INV: documento inviato in firma
+             *
+             * Il documento corrente viene escluso dal controllo, così in modifica
+             * i suoi beni già associati non bloccano la logica interna.
+             */
+            escludiBeniInDocumentiAperti(sql, doc);
+
             if (beniEsclusi != null && !beniEsclusi.isEmpty()) {
                 escludiBeniGiaSelezionati(sql, doc, beniEsclusi);
             }
@@ -1820,6 +1984,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         sql.addSQLClause("AND", notExistsClause.toString());
     }
 
+
     private void escludiBeniGiaSelezionati(
             SQLBuilder sql, Doc_trasporto_rientroBulk doc, SimpleBulkList beni_da_escludere) {
 
@@ -1844,6 +2009,61 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                             exclusionList + ")");
         }
     }
+
+    /**
+     * Esclude dalla lista i beni già presenti in altri documenti T/R aperti.
+     *
+     * Stati bloccanti:
+     * - INS
+     * - INV
+     *
+     * Il documento corrente viene escluso solo se ha PG positivo.
+     */
+    private void escludiBeniInDocumentiAperti(
+            SQLBuilder sql,
+            Doc_trasporto_rientroBulk doc) {
+
+        StringBuilder clause = new StringBuilder();
+
+        clause.append("NOT EXISTS (");
+        clause.append("SELECT 1 ");
+        clause.append("FROM DOC_TRASPORTO_RIENTRO_DETT dett_x, DOC_TRASPORTO_RIENTRO doc_x ");
+        clause.append("WHERE dett_x.PG_INVENTARIO = doc_x.PG_INVENTARIO ");
+        clause.append("AND dett_x.TI_DOCUMENTO = doc_x.TI_DOCUMENTO ");
+        clause.append("AND dett_x.ESERCIZIO = doc_x.ESERCIZIO ");
+        clause.append("AND dett_x.PG_DOC_TRASPORTO_RIENTRO = doc_x.PG_DOC_TRASPORTO_RIENTRO ");
+
+        clause.append("AND dett_x.PG_INVENTARIO = INVENTARIO_BENI.PG_INVENTARIO ");
+        clause.append("AND dett_x.NR_INVENTARIO = INVENTARIO_BENI.NR_INVENTARIO ");
+        clause.append("AND dett_x.PROGRESSIVO = INVENTARIO_BENI.PROGRESSIVO ");
+
+        clause.append("AND doc_x.STATO IN ('")
+                .append(STATO_INSERITO)
+                .append("','")
+                .append(STATO_INVIATO)
+                .append("') ");
+
+        if (doc != null
+                && doc.getPgInventario() != null
+                && doc.getTiDocumento() != null
+                && doc.getEsercizio() != null
+                && doc.getPgDocTrasportoRientro() != null
+                && doc.getPgDocTrasportoRientro().longValue() > 0L) {
+
+            clause.append("AND NOT (");
+            clause.append("dett_x.PG_INVENTARIO = ").append(doc.getPgInventario()).append(" ");
+            clause.append("AND dett_x.TI_DOCUMENTO = '").append(doc.getTiDocumento()).append("' ");
+            clause.append("AND dett_x.ESERCIZIO = ").append(doc.getEsercizio()).append(" ");
+            clause.append("AND dett_x.PG_DOC_TRASPORTO_RIENTRO = ")
+                    .append(doc.getPgDocTrasportoRientro()).append(" ");
+            clause.append(") ");
+        }
+
+        clause.append(")");
+
+        sql.addSQLClause("AND", clause.toString());
+    }
+
 
     // =========================================================================
     // ELIMINA DETTAGLI
@@ -1976,18 +2196,18 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             pstmt.setLong(4, doc.getPgDocTrasportoRientro());
 
             int recordEliminati = pstmt.executeUpdate();
-            System.out.println("Eliminati " + recordEliminati +
+            log.warn("Eliminati " + recordEliminati +
                     " dettagli (principale + accessori) dal documento " +
                     doc.getPgDocTrasportoRientro());
 
-        } catch (java.sql.SQLException e) {
+        } catch (SQLException e) {
             throw new ComponentException(
                     "Errore eliminazione principale + accessori dai dettagli: " + e.getMessage(), e);
         } finally {
             try {
                 if (pstmt != null) pstmt.close();
-            } catch (java.sql.SQLException e) {
-                System.out.println("Errore chiusura statement: " + e);
+            } catch (SQLException e) {
+                log.warn("Errore chiusura statement: " + e);
             }
         }
     }
@@ -2048,22 +2268,25 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      * Seleziona e inserisce tutti i beni senza limite.
      */
     public void selezionaTuttiBeni(
-            UserContext userContext, Doc_trasporto_rientroBulk doc, CompoundFindClause clauses)
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            CompoundFindClause clauses)
             throws ComponentException {
 
         try {
-            boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
             List<InventarioDocTRBulk> beniFiltrati =
-                    caricaBeniPerInserimento(userContext, doc, clauses, isTrasporto);
+                    caricaBeniPerInserimento(userContext, doc, clauses, TRASPORTO.equals(doc.getTiDocumento()));
 
             if (beniFiltrati.isEmpty()) {
-                System.out.println("Nessun bene da inserire");
+                log.warn("Nessun bene da inserire");
                 return;
             }
 
-            System.out.println("Caricati " + beniFiltrati.size() + " beni, inizio creazione dettagli...");
+            log.warn("Caricati " + beniFiltrati.size() + " beni, inizio creazione dettagli...");
+
             inserisciBeniComeDettagli(userContext, doc, beniFiltrati);
-            System.out.println("Creazione completata: inseriti " + beniFiltrati.size() + " dettagli");
+
+            log.warn("Creazione completata: inseriti " + beniFiltrati.size() + " dettagli");
 
         } catch (Exception e) {
             throw handleException(e);
@@ -2077,19 +2300,28 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             CompoundFindClause clauses,
-            boolean isTrasporto)
+            boolean ignoredIsTrasporto)
             throws ComponentException {
 
         try {
             InventarioDocTRHome invHome =
                     (InventarioDocTRHome) getHome(userContext, InventarioDocTRBulk.class);
+
             SQLBuilder sql = invHome.findBeniUnificato(userContext, doc, clauses);
+
+            boolean isTrasporto = TRASPORTO.equals(doc.getTiDocumento());
 
             if (isTrasporto) {
                 applicaFiltriTrasporto(sql, doc, userContext);
-            } else {
+            } else if (RIENTRO.equals(doc.getTiDocumento())) {
                 applicaFiltriRientro(sql, doc);
+            } else {
+                throw new ApplicationException(
+                        "Tipo documento Trasporto/Rientro non riconosciuto: " + doc.getTiDocumento()
+                );
             }
+
+            escludiBeniInDocumentiAperti(sql, doc);
 
             Doc_trasporto_rientro_dettHome dettHome =
                     (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(userContext, doc);
@@ -2108,6 +2340,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                     SQLBuilder.EQUALS, doc.getEsercizio());
             sqlEsclusiDett.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_DOC_TRASPORTO_RIENTRO",
                     SQLBuilder.EQUALS, doc.getPgDocTrasportoRientro());
+
             sqlEsclusiDett.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
                     SQLBuilder.EQUALS, "INVENTARIO_BENI.PG_INVENTARIO");
             sqlEsclusiDett.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO",
@@ -2120,6 +2353,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             List risultati = invHome.fetchAll(sql);
             return risultati != null ? risultati : Collections.emptyList();
+
+        } catch (ApplicationException e) {
+            throw handleException(e);
 
         } catch (Exception e) {
             throw handleException(e);
@@ -2137,13 +2373,15 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throws ComponentException {
 
         Integer cdTerzoAssegnatario = null;
+
         if (doc.isSmartworking() && doc.getTerzoSmartworking() != null) {
             cdTerzoAssegnatario = doc.getTerzoSmartworking().getCd_terzo();
         } else if (doc.getFlIncaricato() && doc.getTerzoIncRitiro() != null) {
             cdTerzoAssegnatario = doc.getTerzoIncRitiro().getCd_terzo();
         }
 
-        boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
+        boolean isTrasporto = TRASPORTO.equals(doc.getTiDocumento());
+
         int totalInserted = 0;
 
         for (InventarioDocTRBulk bene : beniFiltrati) {
@@ -2160,14 +2398,17 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             }
 
             dett.setToBeCreated();
+
             super.creaConBulk(userContext, dett);
+
             totalInserted++;
 
             if (totalInserted % 100 == 0) {
-                System.out.println("Inseriti " + totalInserted + " / " + beniFiltrati.size() + " beni...");
+                log.warn("Inseriti " + totalInserted + " / " + beniFiltrati.size() + " beni...");
             }
         }
     }
+
 
     // =========================================================================
     // VALIDA BENI NON IN ALTRI DOCUMENTI (InventarioDocTRBulk)
@@ -2182,10 +2423,19 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             List<InventarioDocTRBulk> beniDaValidare)
             throws ComponentException {
 
-        if (beniDaValidare == null || beniDaValidare.isEmpty()) return;
+        if (beniDaValidare == null || beniDaValidare.isEmpty()) {
+            return;
+        }
 
         try {
-            boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
+            boolean isTrasporto = TRASPORTO.equals(doc.getTiDocumento());
+
+            if (!isTrasporto && !RIENTRO.equals(doc.getTiDocumento())) {
+                throw new ApplicationException(
+                        "Tipo documento Trasporto/Rientro non riconosciuto: " + doc.getTiDocumento()
+                );
+            }
+
             String tipoDocDaVerificare = isTrasporto ? TRASPORTO : RIENTRO;
             String tipoDocLabel = isTrasporto ? "TRASPORTO" : "RIENTRO";
 
@@ -2203,16 +2453,26 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Doc_trasporto_rientro_dettHome dettHome =
                     (Doc_trasporto_rientro_dettHome) getHomeDocumentoTrasportoRientroDett(userContext, doc);
 
-            // Controllo 1a: beni in altri INSERITI
-            SQLBuilder sql1a = buildSqlBeniInAltriDoc(dettHome, doc, tipoDocDaVerificare, inClauseBeni, false);
-            sql1a.addSQLClause("AND", "t.STATO", SQLBuilder.NOT_EQUALS, STATO_ANNULLATO);
-            sql1a.addSQLClause("AND", "t.STATO", SQLBuilder.NOT_EQUALS, STATO_DEFINITIVO);
+            // Controllo 1a: beni in altri documenti aperti INS o INV
+            SQLBuilder sql1a = buildSqlBeniInAltriDoc(
+                    dettHome,
+                    doc,
+                    tipoDocDaVerificare,
+                    inClauseBeni,
+                    false
+            );
 
-            List beniInAltriInseriti = dettHome.fetchAll(sql1a);
-            if (beniInAltriInseriti != null && !beniInAltriInseriti.isEmpty()) {
+            sql1a.addSQLClause("AND",
+                    "t.STATO IN ('" + STATO_INSERITO + "','" + STATO_INVIATO + "')");
+
+            List beniInAltriAperti = dettHome.fetchAll(sql1a);
+
+            if (beniInAltriAperti != null && !beniInAltriAperti.isEmpty()) {
                 throw new ApplicationException(
                         "Impossibile procedere: alcuni beni sono già presenti in un altro documento di "
-                                + tipoDocLabel + " in stato INSERITO.");
+                                + tipoDocLabel +
+                                " in stato INSERITO o INVIATO IN FIRMA."
+                );
             }
 
             // Controllo 1b: beni in altri DEFINITIVI
@@ -2316,7 +2576,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             boolean ignorato) {
 
         SQLBuilder sql = dettHome.createSQLBuilder();
+
         sql.addTableToHeader("DOC_TRASPORTO_RIENTRO t");
+
         sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO", "t.PG_INVENTARIO");
         sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.TI_DOCUMENTO", "t.TI_DOCUMENTO");
         sql.addSQLJoin("DOC_TRASPORTO_RIENTRO_DETT.ESERCIZIO", "t.ESERCIZIO");
@@ -2324,20 +2586,29 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO_DETT.PG_INVENTARIO",
                 SQLBuilder.EQUALS, doc.getPgInventario());
-        sql.addSQLClause("AND", "t.TI_DOCUMENTO", SQLBuilder.EQUALS, tipoDocDaVerificare);
 
-        if (doc.getPgDocTrasportoRientro() != null && doc.getPgDocTrasportoRientro() > 0) {
-            sql.openParenthesis(FindClause.AND);
-            sql.addSQLClause(FindClause.AND, "t.PG_DOC_TRASPORTO_RIENTRO",
-                    SQLBuilder.NOT_EQUALS, doc.getPgDocTrasportoRientro());
-            sql.addSQLClause(FindClause.OR, "t.ESERCIZIO",
-                    SQLBuilder.NOT_EQUALS, doc.getEsercizio());
-            sql.closeParenthesis();
+        sql.addSQLClause("AND", "t.TI_DOCUMENTO",
+                SQLBuilder.EQUALS, tipoDocDaVerificare);
+
+        /*
+         * Escludo il documento corrente solo se ha PG definitivo positivo.
+         */
+        if (doc.getPgDocTrasportoRientro() != null
+                && doc.getPgDocTrasportoRientro().longValue() > 0L) {
+
+            sql.addSQLClause("AND",
+                    "NOT (" +
+                            "t.PG_INVENTARIO = " + doc.getPgInventario() + " " +
+                            "AND t.TI_DOCUMENTO = '" + doc.getTiDocumento() + "' " +
+                            "AND t.ESERCIZIO = " + doc.getEsercizio() + " " +
+                            "AND t.PG_DOC_TRASPORTO_RIENTRO = " + doc.getPgDocTrasportoRientro() +
+                            ")");
         }
 
         sql.addSQLClause("AND",
                 "(DOC_TRASPORTO_RIENTRO_DETT.NR_INVENTARIO, DOC_TRASPORTO_RIENTRO_DETT.PROGRESSIVO) IN ("
                         + inClauseBeni + ")");
+
         return sql;
     }
 
@@ -2397,9 +2668,9 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         LoggableStatement cs = null;
         try {
             cs = new LoggableStatement(getConnection(userContext),
-                    "{ ? = call " + it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
+                    "{ ? = call " + EJBCommonServices.getDefaultSchema() +
                             "CNRCTB200.isChiusuraCoepDef(?,?)}", false, this.getClass());
-            cs.registerOutParameter(1, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(1, Types.VARCHAR);
             cs.setObject(2, CNRUserContext.getEsercizio(userContext));
             cs.setObject(3, CNRUserContext.getCd_cds(userContext));
             cs.executeQuery();
@@ -2412,7 +2683,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             if (!inventarioHome.isAperto(inventario, CNRUserContext.getEsercizio(userContext)))
                 return true;
 
-        } catch (java.sql.SQLException ex) {
+        } catch (SQLException ex) {
             throw handleException(ex);
         } catch (PersistencyException e) {
             throw handleException(e);
@@ -2421,7 +2692,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         } finally {
             try {
                 if (cs != null) cs.close();
-            } catch (java.sql.SQLException e) {
+            } catch (SQLException e) {
                 throw handleException(e);
             }
         }
@@ -2432,25 +2703,55 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      * Recupera i documenti in stato INVIATO predisposti alla firma.
      */
     public List getDocumentiPredispostiAllaFirma(UserContext userContext) throws ComponentException {
+        List documenti = new ArrayList();
+
+        documenti.addAll(getDocumentiPredispostiAllaFirmaPerTipo(
+                userContext,
+                DocumentoTrasportoBulk.class
+        ));
+
+        documenti.addAll(getDocumentiPredispostiAllaFirmaPerTipo(
+                userContext,
+                DocumentoRientroBulk.class
+        ));
+
+        return documenti;
+    }
+
+    private List getDocumentiPredispostiAllaFirmaPerTipo(
+            UserContext userContext,
+            Class bulkClass)
+            throws ComponentException {
+
         try {
             Doc_trasporto_rientroHome home =
-                    (Doc_trasporto_rientroHome) getHome(userContext, Doc_trasporto_rientroBulk.class);
+                    (Doc_trasporto_rientroHome) getHome(userContext, bulkClass);
 
             SQLBuilder sql = home.createSQLBuilder();
+
             sql.addSQLClause("AND", "STATO", SQLBuilder.EQUALS, STATO_INVIATO);
             sql.addSQLClause("AND", "STATO_FLUSSO", SQLBuilder.EQUALS, "INV");
             sql.addSQLClause("AND", "ID_FLUSSO_HAPPYSIGN", SQLBuilder.ISNOTNULL, null);
+
+            /*
+             * Il cron deve lavorare solo documenti con PG definitivo.
+             */
+            sql.addSQLClause("AND", "PG_DOC_TRASPORTO_RIENTRO", SQLBuilder.GREATER, 0L);
+
             sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.LESS_EQUALS,
                     CNRUserContext.getEsercizio(userContext));
+
             sql.addOrderBy("DATA_INVIO_FIRMA ASC");
 
-            List documenti = home.fetchAll(sql);
-            return documenti != null ? documenti : Collections.emptyList();
+            List result = home.fetchAll(sql);
+
+            return result != null ? result : Collections.emptyList();
 
         } catch (PersistencyException e) {
             throw handleException(e);
         }
     }
+
 
     // =========================================================================
     // STAMPA
@@ -2931,8 +3232,13 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
     /**
      * Invia il documento Trasporto/Rientro al flusso HappySign.
-     * Valida lo stato del documento, genera il PDF Jasper in memoria,
-     * invoca HappySign e salva sul documento UUID, stato e dati di invio.
+     *
+     * Flusso corretto:
+     * 1. valida il documento;
+     * 2. genera il PDF Jasper;
+     * 3. salva nel documentale il PDF originale da inviare in firma;
+     * 4. invia ad HappySign lo stesso identico PDF;
+     * 5. aggiorna UUID, stato flusso e stato documento.
      */
     public Doc_trasporto_rientroBulk inviaDocumentoAllaFirma(
             UserContext userContext,
@@ -2944,7 +3250,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 throw new ApplicationException("Documento non presente");
             }
 
-            if (!Doc_trasporto_rientroBulk.STATO_INSERITO.equals(doc.getStato())) {
+            if (!STATO_INSERITO.equals(doc.getStato())) {
                 throw new ApplicationException(
                         "Il documento deve essere in stato INSERITO per essere inviato in firma."
                 );
@@ -2965,12 +3271,24 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
             byte[] pdfBytes = generaPdfDocTrasportoRientro(userContext, doc);
 
+            validaPdfGenerato(
+                    pdfBytes,
+                    "PDF documento Trasporto/Rientro da inviare a HappySign"
+            );
+
+            String nomeFileDaFirmare = generaNomeFilePdfDaFirmare(doc);
+
             HappysignDocService happySignService = HappysignDocServiceFactory.get();
 
+            /*
+             * PRIMA HappySign.
+             * Se questa chiamata fallisce, non viene salvato nulla su Azure.
+             */
             String uuidHappysign =
                     happySignService.inviaDocumentoAdHappySign(
                             doc,
                             pdfBytes,
+                            nomeFileDaFirmare,
                             (CNRUserContext) userContext
                     );
 
@@ -2978,7 +3296,18 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 throw new ApplicationException("HappySign non ha restituito UUID documento.");
             }
 
-            doc.setIdFlussoHappysign(uuidHappysign);
+            /*
+             * DOPO Azure.
+             * Il file tecnico _DAFIRMARE viene creato solo se HappySign ha accettato il flusso.
+             */
+            salvaPdfDaFirmareSuAzure(
+                    userContext,
+                    doc,
+                    pdfBytes,
+                    nomeFileDaFirmare
+            );
+
+            doc.setIdFlussoHappysign(uuidHappysign.trim());
             doc.inizializzaPerInvioFirma();
             doc.setToBeUpdated();
 
@@ -2986,6 +3315,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
 
         } catch (ApplicationException e) {
             throw e;
+
         } catch (Exception e) {
             throw new ComponentException(
                     "Errore invio documento a HappySign: " + e.getMessage(),
@@ -2994,92 +3324,38 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
         }
     }
 
+    private String generaNomeFilePdfDaFirmare(Doc_trasporto_rientroBulk doc) {
+        String prefisso = "";
 
-    /**
-     * Crea l’allegato firmato partendo dal PDF ricevuto da HappySign.
-     * Sceglie automaticamente il tipo allegato corretto tra Trasporto e Rientro
-     * e imposta aspect, nome file, content type e file temporaneo.
-     */
-    private AllegatoGenericoBulk creaAllegatoFirmatoDaPdf(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc,
-            byte[] pdfFirmato)
-            throws Exception {
-
-        String nomeFile = generaNomeFilePdfFirmato(doc);
-        File fileFirmato = creaFileTemporaneoPdfFirmato(nomeFile, pdfFirmato);
-
-        AllegatoDocTraspRientroBulk allegato;
-
-        if (doc.isTrasporto()) {
-            AllegatoDocumentoTrasportoBulk allegatoTrasporto =
-                    new AllegatoDocumentoTrasportoBulk();
-
-            allegatoTrasporto.setAspectName(
-                    AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO
-            );
-
-            allegato = allegatoTrasporto;
-
-        } else if (doc.isRientro()) {
-            AllegatoDocumentoRientroBulk allegatoRientro =
-                    new AllegatoDocumentoRientroBulk();
-
-            allegatoRientro.setAspectName(
-                    AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO
-            );
-
-            allegato = allegatoRientro;
-
-        } else {
-            throw new ApplicationException("Tipo documento Trasporto/Rientro non riconosciuto.");
+        if (TRASPORTO.equals(doc.getTiDocumento())) {
+            prefisso = "DocTrasporto";
+        } else if (RIENTRO.equals(doc.getTiDocumento())) {
+            prefisso = "DocRientro";
         }
 
-        allegato.setNome(nomeFile);
-        allegato.setContentType("application/pdf");
-        allegato.setFile(fileFirmato);
-        allegato.setUtenteSIGLA(userContext.getUser());
-        allegato.setToBeCreated();
-
-        return allegato;
-    }
-
-    /**
-     * Scrive su file temporaneo il PDF firmato ricevuto da HappySign.
-     * Il file viene usato solo per permettere al sistema allegati/CMIS
-     * di archiviare il contenuto come allegato documentale.
-     */
-    private File creaFileTemporaneoPdfFirmato(
-            String nomeFile,
-            byte[] pdfFirmato)
-            throws Exception {
-
-        File dir = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        File file = new File(dir, nomeFile);
-
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(pdfFirmato);
-        }
-
-        file.deleteOnExit();
-
-        return file;
+        return prefisso
+                + "_"
+                + doc.getEsercizio()
+                + "_"
+                + doc.getPgDocTrasportoRientro()
+                + "_DAFIRMARE.pdf";
     }
 
     private String generaNomeFilePdfFirmato(Doc_trasporto_rientroBulk doc) {
-        return "DocTrasportoRientro_FIRMATO_"
+        String prefisso = "";
+
+        if (TRASPORTO.equals(doc.getTiDocumento())) {
+            prefisso = "DocTrasporto";
+        } else if (RIENTRO.equals(doc.getTiDocumento())) {
+            prefisso = "DocRientro";
+        }
+
+        return prefisso
+                + "_"
                 + doc.getEsercizio()
                 + "_"
-                + doc.getTiDocumento()
-                + "_"
-                + doc.getPgInventario()
-                + "_"
                 + doc.getPgDocTrasportoRientro()
-                + ".pdf";
+                + "_FIRMATO.pdf";
     }
 
 
@@ -3087,14 +3363,8 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
      * Genera il PDF del documento Trasporto/Rientro usando il report Jasper
      * /cnrdocamm/docamm/doc_trasporto_rientro.jasper.
      *
-     * Il report JRXML richiede questi parametri:
-     * - esercizio                  java.lang.Integer
-     * - pg_inventario              java.lang.Long
-     * - ti_documento               java.lang.String
-     * - pg_doc_trasporto_rientro   java.lang.Long
-     * - DIR_IMAGE                  java.lang.String
-     *
-     * Restituisce i byte del PDF, pronti per essere inviati ad HappySign.
+     * Restituisce i byte del PDF, pronti per essere salvati nel documentale
+     * e inviati ad HappySign.
      */
     private byte[] generaPdfDocTrasportoRientro(
             UserContext userContext,
@@ -3130,7 +3400,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             print.setPgStampa(UUID.randomUUID().getLeastSignificantBits());
             print.setFlEmail(false);
             print.setReport("/cnrdocamm/docamm/doc_trasporto_rientro.jasper");
-            print.setNomeFile(generaNomeFilePdfDocTrasportoRientro(doc));
+            print.setNomeFile(generaNomeFilePdfDaFirmare(doc));
             print.setUtcr(userContext.getUser());
 
             print.addParam("esercizio", doc.getEsercizio(), Integer.class);
@@ -3157,9 +3427,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
                 }
             }
 
-            if (pdfBytes == null || pdfBytes.length == 0) {
-                throw new ApplicationException("Generazione PDF documento Trasporto/Rientro non riuscita: PDF vuoto.");
-            }
+            validaPdfGenerato(pdfBytes, "PDF documento Trasporto/Rientro generato da Jasper");
 
             return pdfBytes;
 
@@ -3167,27 +3435,560 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             throw new ComponentException(e.getMessage(), e);
 
         } catch (IOException e) {
-            throw new ComponentException("Errore nella lettura del PDF generato: " + e.getMessage(), e);
+            throw new ComponentException(
+                    "Errore nella lettura del PDF generato: " + e.getMessage(),
+                    e
+            );
 
         } catch (Exception e) {
-            throw new ComponentException("Errore generazione PDF documento Trasporto/Rientro: " + e.getMessage(), e);
+            throw new ComponentException(
+                    "Errore generazione PDF documento Trasporto/Rientro: " + e.getMessage(),
+                    e
+            );
         }
     }
 
 
+    private void salvaPdfDaFirmareSuAzure(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfBytes,
+            String nomeFile)
+            throws Exception {
+
+        validaPdfGenerato(pdfBytes, "PDF da firmare");
+
+        String storePath = getStorePathDocTrasportoRientro(doc);
+
+        if (storeService == null) {
+            storeService = SpringUtil.getBean("storeService", StoreService.class);
+        }
+
+        File fileDaFirmare = creaFileTemporaneoPdf(nomeFile, pdfBytes);
+
+        AllegatoDocTraspRientroBulk allegatoTecnicoDaFirmare =
+                creaAllegatoDocTraspRientroPerTipo(doc, false);
+
+        allegatoTecnicoDaFirmare.setNome(nomeFile);
+        allegatoTecnicoDaFirmare.setDescrizione(generaDescrizioneAllegatoDaFirmare(doc));
+        allegatoTecnicoDaFirmare.setContentType("application/pdf");
+        allegatoTecnicoDaFirmare.setFile(fileDaFirmare);
+        allegatoTecnicoDaFirmare.setUtenteSIGLA(userContext.getUser());
+        allegatoTecnicoDaFirmare.setToBeCreated();
+
+        try (FileInputStream fis = new FileInputStream(fileDaFirmare)) {
+            storeService.storeSimpleDocument(
+                    allegatoTecnicoDaFirmare,
+                    fis,
+                    "application/pdf",
+                    nomeFile,
+                    storePath
+            );
+
+            allegatoTecnicoDaFirmare.setCrudStatus(OggettoBulk.NORMAL);
+
+        } catch (StorageException e) {
+            if (StorageException.Type.CONSTRAINT_VIOLATED.equals(e.getType())) {
+                throw new ApplicationException(
+                        "Esiste già su Azure un documento da firmare con nome: " + nomeFile
+                );
+            }
+
+            throw e;
+        }
+    }
+
     /**
-     * Nome file coerente e leggibile per il PDF generato.
+     * Scrive un array di byte PDF su un file temporaneo.
+     *
+     * Il file temporaneo serve solo perché il sistema allegati/CMIS
+     * lavora su File/InputStream.
      */
-    private String generaNomeFilePdfDocTrasportoRientro(Doc_trasporto_rientroBulk doc) {
-        return "DocTrasportoRientro_"
+    private File creaFileTemporaneoPdf(String nomeFile, byte[] pdfBytes)
+            throws Exception {
+
+        validaPdfGenerato(pdfBytes, "PDF temporaneo " + nomeFile);
+
+        File dir = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/");
+
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        File file = new File(dir, nomeFile);
+
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(pdfBytes);
+        }
+
+        file.deleteOnExit();
+
+        return file;
+    }
+
+
+    /**
+     * Valida che i byte rappresentino un PDF non vuoto.
+     */
+    private void validaPdfGenerato(byte[] pdfBytes, String descrizione)
+            throws ApplicationException {
+
+        if (pdfBytes == null || pdfBytes.length == 0) {
+            throw new ApplicationException(descrizione + " non disponibile o vuoto.");
+        }
+
+        if (pdfBytes.length < 5) {
+            throw new ApplicationException(descrizione + " non valido.");
+        }
+
+        String header = new String(pdfBytes, 0, Math.min(pdfBytes.length, 5));
+
+        if (!header.startsWith("%PDF")) {
+            throw new ApplicationException(descrizione + " non è un PDF valido.");
+        }
+    }
+
+    /**
+     * Restituisce una piccola anteprima testuale dei byte,
+     * utile quando il print server restituisce HTML/JSON invece di PDF.
+     */
+    private String previewBytes(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return "";
+        }
+
+        return new String(
+                bytes,
+                0,
+                Math.min(bytes.length, 500),
+                StandardCharsets.UTF_8
+        )
+                .replace('\n', ' ')
+                .replace('\r', ' ');
+    }
+
+
+    private AllegatoGenericoBulk creaAllegatoFirmatoDaPdf(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfFirmato)
+            throws Exception {
+
+        if (doc == null) {
+            throw new ApplicationException(
+                    "Documento non disponibile per creare l'allegato firmato."
+            );
+        }
+
+        validaPdfGenerato(pdfFirmato, "PDF firmato");
+
+        String nomeFile = generaNomeFilePdfFirmato(doc);
+        File fileFirmato = creaFileTemporaneoPdf(nomeFile, pdfFirmato);
+
+        AllegatoDocTraspRientroBulk allegato =
+                creaAllegatoDocTraspRientroPerTipo(doc, true);
+
+        allegato.setNome(nomeFile);
+        allegato.setDescrizione(generaDescrizioneAllegatoFirmato(doc));
+        allegato.setContentType("application/pdf");
+        allegato.setFile(fileFirmato);
+        allegato.setUtenteSIGLA(userContext.getUser());
+        allegato.setToBeCreated();
+
+        return allegato;
+    }
+
+
+    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmatoDaHappySign(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfFirmato)
+            throws ComponentException {
+
+        try {
+            if (doc == null) {
+                throw new ApplicationException("Documento non presente.");
+            }
+
+            if (doc.isAnnullato()) {
+                throw new ApplicationException("Documento annullato: impossibile aggiornare la firma.");
+            }
+
+            if (doc.isDefinitivo()) {
+                throw new ApplicationException("Documento già definitivo.");
+            }
+
+            if (doc.getIdFlussoHappysign() == null
+                    || doc.getIdFlussoHappysign().trim().isEmpty()) {
+                throw new ApplicationException("Documento privo di UUID HappySign.");
+            }
+
+            if (!TRASPORTO.equals(doc.getTiDocumento())
+                    && !RIENTRO.equals(doc.getTiDocumento())) {
+                throw new ApplicationException(
+                        "Tipo documento Trasporto/Rientro non riconosciuto: " + doc.getTiDocumento()
+                );
+            }
+
+            validaPdfGenerato(pdfFirmato, "PDF firmato ricevuto da HappySign");
+
+            /*
+             * Ricarico i dettagli dal DB usando tiDocumento.
+             * Non devo fidarmi della classe concreta del bulk arrivato dal cron.
+             */
+            caricaDettagliDocumento(userContext, doc);
+
+            if (doc.getArchivioAllegati() == null) {
+                doc.setArchivioAllegati(new BulkList<>());
+            }
+
+            /*
+             * Se per errore il documento tecnico DAFIRMARE è entrato nella collection,
+             * lo elimino solo dalla collection in memoria.
+             */
+            rimuoviAllegatiTecniciDaFirmareDallaCollection(doc);
+
+            /*
+             * Su Azure sostituisco il PDF tecnico DAFIRMARE con il PDF FIRMATO.
+             * Questo file resta tecnico su Azure e NON è la riga allegato utente.
+             */
+            sostituisciPdfDaFirmareConFirmatoSuAzure(
+                    userContext,
+                    doc,
+                    pdfFirmato
+            );
+
+            /*
+             * Questo invece è l'allegato vero, visibile nel tab Allegati SIGLA.
+             */
+            AllegatoGenericoBulk allegatoFirmato =
+                    creaAllegatoFirmatoDaPdf(userContext, doc, pdfFirmato);
+
+            doc.addToArchivioAllegati(allegatoFirmato);
+
+            /*
+             * Dopo firma:
+             * - STATO resta INV;
+             * - STATO_FLUSSO diventa FIR;
+             * - DATA_FIRMA valorizzata;
+             * - tab Allegati sbloccabile lato BP/UI.
+             */
+            doc.aggiornaDopoFirmaCompletata();
+            doc.setToBeUpdated();
+
+            Doc_trasporto_rientroBulk docAggiornato =
+                    (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, doc);
+
+            if (docAggiornato.getArchivioAllegati() == null
+                    || docAggiornato.getArchivioAllegati().isEmpty()) {
+                docAggiornato.setArchivioAllegati(doc.getArchivioAllegati());
+            }
+
+            archiviaAllegatiDocTR(userContext, docAggiornato);
+
+            docAggiornato.setCrudStatus(OggettoBulk.NORMAL);
+
+            return docAggiornato;
+
+        } catch (ApplicationException e) {
+            throw new ComponentException(e.getMessage(), e);
+
+        } catch (Exception e) {
+            throw new ComponentException(
+                    "Errore aggiornamento documento firmato HappySign: " + e.getMessage(),
+                    e
+            );
+        }
+    }
+
+
+    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutatoDaHappySign(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            String motivoRifiuto)
+            throws ComponentException {
+
+        try {
+            if (doc == null) {
+                throw new ApplicationException("Documento non presente.");
+            }
+
+            if (doc.isAnnullato()) {
+                throw new ApplicationException("Documento annullato: impossibile aggiornare il rifiuto firma.");
+            }
+
+            if (doc.isDefinitivo()) {
+                throw new ApplicationException("Documento già definitivo: impossibile aggiornare il rifiuto firma.");
+            }
+
+            if (doc.getIdFlussoHappysign() == null
+                    || doc.getIdFlussoHappysign().trim().isEmpty()) {
+                throw new ApplicationException("Documento privo di UUID HappySign.");
+            }
+
+            if (!TRASPORTO.equals(doc.getTiDocumento())
+                    && !RIENTRO.equals(doc.getTiDocumento())) {
+                throw new ApplicationException(
+                        "Tipo documento Trasporto/Rientro non riconosciuto: " + doc.getTiDocumento()
+                );
+            }
+
+            caricaDettagliDocumento(userContext, doc);
+
+            if (doc.getArchivioAllegati() == null) {
+                doc.setArchivioAllegati(new BulkList<>());
+            }
+
+            rimuoviAllegatiTecniciDaFirmareDallaCollection(doc);
+
+            doc.aggiornaDopoRifiutoFirma(motivoRifiuto);
+            doc.setToBeUpdated();
+
+            Doc_trasporto_rientroBulk docAggiornato =
+                    (Doc_trasporto_rientroBulk) super.modificaConBulk(userContext, doc);
+
+            docAggiornato.setCrudStatus(OggettoBulk.NORMAL);
+
+            return docAggiornato;
+
+        } catch (ApplicationException e) {
+            throw new ComponentException(e.getMessage(), e);
+
+        } catch (Exception e) {
+            throw new ComponentException(
+                    "Errore aggiornamento documento rifiutato HappySign: " + e.getMessage(),
+                    e
+            );
+        }
+    }
+
+
+    private void rimuoviAllegatiTecniciDaFirmareDallaCollection(Doc_trasporto_rientroBulk doc) {
+        if (doc == null || doc.getArchivioAllegati() == null) {
+            return;
+        }
+
+        String nomeDaFirmare = generaNomeFilePdfDaFirmare(doc);
+
+        for (Iterator<AllegatoGenericoBulk> it = doc.getArchivioAllegati().iterator(); it.hasNext(); ) {
+            AllegatoGenericoBulk allegato = it.next();
+
+            if (allegato == null || allegato.getNome() == null) {
+                continue;
+            }
+
+            String nome = allegato.getNome();
+
+            if (nomeDaFirmare.equalsIgnoreCase(nome)
+                    || nome.toUpperCase().contains("_DAFIRMARE")
+                    || nome.toUpperCase().contains("_DA_FIRMARE")
+                    || nome.toUpperCase().contains("_DA_FIRMA")) {
+                it.remove();
+            }
+        }
+    }
+
+    private void sostituisciPdfDaFirmareConFirmatoSuAzure(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfFirmato)
+            throws Exception {
+
+        validaPdfGenerato(pdfFirmato, "PDF firmato ricevuto da HappySign");
+
+        String storePath = getStorePathDocTrasportoRientro(doc);
+
+        if (storeService == null) {
+            storeService = SpringUtil.getBean("storeService", StoreService.class);
+        }
+
+        String nomeDaFirmare = generaNomeFilePdfDaFirmare(doc);
+        String nomeFirmato = generaNomeFilePdfFirmato(doc);
+
+        File fileFirmato = creaFileTemporaneoPdf(nomeFirmato, pdfFirmato);
+
+        /*
+         * Cancello il file tecnico DAFIRMARE da Azure.
+         * Questo file non deve comparire tra gli allegati SIGLA.
+         */
+        try {
+            StorageObject storageObjectDaFirmare =
+                    storeService.getStorageObjectByPath(
+                            storePath + StorageDriver.SUFFIX + nomeDaFirmare
+                    );
+
+            if (storageObjectDaFirmare != null) {
+                storeService.delete(storageObjectDaFirmare.getKey());
+            }
+
+        } catch (Exception e) {
+            /*
+             * Se non lo trovo, non blocco.
+             * Può essere già stato cancellato o può avere nome storico.
+             */
+        }
+
+        AllegatoDocTraspRientroBulk allegatoTecnicoFirmato =
+                creaAllegatoDocTraspRientroPerTipo(doc, false);
+
+        allegatoTecnicoFirmato.setNome(nomeFirmato);
+        allegatoTecnicoFirmato.setDescrizione(generaDescrizioneAllegatoFirmato(doc));
+        allegatoTecnicoFirmato.setContentType("application/pdf");
+        allegatoTecnicoFirmato.setFile(fileFirmato);
+        allegatoTecnicoFirmato.setUtenteSIGLA(userContext.getUser());
+        allegatoTecnicoFirmato.setToBeCreated();
+
+        try (FileInputStream fis = new FileInputStream(fileFirmato)) {
+            storeService.storeSimpleDocument(
+                    allegatoTecnicoFirmato,
+                    fis,
+                    "application/pdf",
+                    nomeFirmato,
+                    storePath
+            );
+
+            allegatoTecnicoFirmato.setCrudStatus(OggettoBulk.NORMAL);
+
+        } catch (StorageException e) {
+            if (StorageException.Type.CONSTRAINT_VIOLATED.equals(e.getType())) {
+                /*
+                 * Se esiste già, non faccio fallire il cron.
+                 * Il documento firmato è già stato archiviato tecnicamente.
+                 */
+                return;
+            }
+
+            throw e;
+        }
+    }
+
+
+    private String getStorePathDocTrasportoRientro(Doc_trasporto_rientroBulk doc)
+            throws ApplicationException {
+
+        if (doc == null) {
+            throw new ApplicationException("Documento non disponibile per calcolare lo storage path.");
+        }
+
+        if (doc.getEsercizio() == null || doc.getPgDocTrasportoRientro() == null) {
+            throw new ApplicationException(
+                    "Documento non ancora salvato: impossibile generare lo storage path."
+            );
+        }
+
+        String folder = "";
+        String descrizioneFolder = "";
+
+        if (TRASPORTO.equals(doc.getTiDocumento())) {
+            folder = "Doc. Trasporto";
+            descrizioneFolder = "Documento Trasporto ";
+        } else if (RIENTRO.equals(doc.getTiDocumento())) {
+            folder = "Doc. Rientro";
+            descrizioneFolder = "Documento Rientro ";
+        }
+
+        return Arrays.asList(
+                SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+                folder,
+                String.valueOf(doc.getEsercizio()),
+                descrizioneFolder
+                        + doc.getEsercizio()
+                        + Utility.lpad(doc.getPgDocTrasportoRientro().toString(), 10, '0')
+        ).stream().collect(Collectors.joining(StorageDriver.SUFFIX));
+    }
+
+    private String generaDescrizioneAllegatoFirmato(Doc_trasporto_rientroBulk doc) {
+        if (doc == null) {
+            return "Documento firmato";
+        }
+
+        String tipoDocumento = "";
+
+        if (TRASPORTO.equals(doc.getTiDocumento())) {
+            tipoDocumento = "Documento di Trasporto firmato";
+        } else if (RIENTRO.equals(doc.getTiDocumento())) {
+            tipoDocumento = "Documento di Rientro firmato";
+        }
+
+        return tipoDocumento
+                + " - Esercizio "
                 + doc.getEsercizio()
-                + "_"
-                + doc.getTiDocumento()
-                + "_"
-                + doc.getPgInventario()
-                + "_"
-                + doc.getPgDocTrasportoRientro()
-                + ".pdf";
+                + " - Progressivo "
+                + doc.getPgDocTrasportoRientro();
+    }
+
+    private String generaDescrizioneAllegatoDaFirmare(Doc_trasporto_rientroBulk doc) {
+        if (doc == null) {
+            return "Documento da firmare";
+        }
+
+        String tipoDocumento = "";
+
+        if (TRASPORTO.equals(doc.getTiDocumento())) {
+            tipoDocumento = "Documento di Trasporto da firmare";
+        } else if (RIENTRO.equals(doc.getTiDocumento())) {
+            tipoDocumento = "Documento di Rientro da firmare";
+        }
+
+        return tipoDocumento
+                + " - Esercizio "
+                + doc.getEsercizio()
+                + " - Progressivo "
+                + doc.getPgDocTrasportoRientro();
+    }
+
+    private AllegatoDocTraspRientroBulk creaAllegatoDocTraspRientroPerTipo(
+            Doc_trasporto_rientroBulk doc,
+            boolean firmato)
+            throws ApplicationException {
+
+        if (doc == null || doc.getTiDocumento() == null) {
+            throw new ApplicationException("Tipo documento non disponibile per creare allegato.");
+        }
+
+        if (Doc_trasporto_rientroBulk.TRASPORTO.equals(doc.getTiDocumento())) {
+            AllegatoDocumentoTrasportoBulk allegato = new AllegatoDocumentoTrasportoBulk();
+
+            allegato.setAspectName(
+                    firmato
+                            ? AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO
+                            : AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO
+            );
+
+            return allegato;
+        }
+
+        if (Doc_trasporto_rientroBulk.RIENTRO.equals(doc.getTiDocumento())) {
+            AllegatoDocumentoRientroBulk allegato = new AllegatoDocumentoRientroBulk();
+
+            allegato.setAspectName(
+                    firmato
+                            ? AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO
+                            : AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO
+            );
+
+            return allegato;
+        }
+
+        throw new ApplicationException(
+                "Tipo documento Trasporto/Rientro non riconosciuto: " + doc.getTiDocumento()
+        );
+    }
+    private Integer calcolaCdTerzoAssegnatario(
+            Doc_trasporto_rientroBulk doc,
+            InventarioDocTRBulk bene) {
+
+        if (doc.isSmartworking()
+                && doc.getTerzoSmartworking() != null) {
+            return doc.getTerzoSmartworking().getCd_terzo();
+        }
+
+        if (Boolean.TRUE.equals(doc.getFlIncaricato())
+                && doc.getTerzoIncRitiro() != null) {
+            return doc.getTerzoIncRitiro().getCd_terzo();
+        }
+
+        return bene.getCd_assegnatario();
     }
 
 }

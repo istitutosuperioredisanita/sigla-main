@@ -662,6 +662,11 @@
                     <artifactId>happysign-client</artifactId>
                     <version>${version.happysign}</version>
                 </dependency>
+                <dependency>
+                    <groupId>it.iss.si</groupId>
+                    <artifactId>ace-iss-client</artifactId>
+                    <version>${version.ace.iss}</version>
+                </dependency>
             </dependencies>
         </profile>
 

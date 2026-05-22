@@ -27,17 +27,17 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 
 	public abstract void setAspectName(String aspectName);
 
-	@StorageProperty(name="cmis:secondaryObjectTypeIds")
-	public List<String> getAspect() {
-		List<String> results = new ArrayList<String>();
-		results.add("P:cm:titled");
+    @StorageProperty(name = "cmis:secondaryObjectTypeIds")
+    public List<String> getAspect() {
+        List<String> results = new ArrayList<>();
+        results.add("P:cm:titled");
 
-		if (getAspectName() != null && !getAspectName().isEmpty()) {
-			results.add(getAspectName());
-		}
+        if (getAspectName() != null && !getAspectName().trim().isEmpty()) {
+            results.add(getAspectName().trim());
+        }
 
-		return results;
-	}
+        return results;
+    }
 
 
 	@Override
@@ -87,6 +87,18 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 		return !this.isToBeCreated();
 	}
 
+    public boolean isDescrizioneReadonly() {
+        return false;
+    }
+
+    public boolean isAspectNameReadonly() {
+        return isAllegatoEsistente();
+    }
+
+    public boolean isFileReadonly() {
+        return isAllegatoEsistente();
+    }
+
 	@Override
 	public void validate() throws ValidationException {
 
@@ -116,4 +128,5 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 
 		super.validate();
 	}
+
 }

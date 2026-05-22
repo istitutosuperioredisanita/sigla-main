@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package it.cnr.contab.inventario01.service;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
@@ -23,11 +7,6 @@ import it.cnr.jada.comp.ComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Implementazione NoOp di HappySign.
- *
- * Viene usata quando happysign-client non è presente nel classpath.
- */
 public class HappysignDocServiceNoOp implements HappysignDocService {
 
     private static final Logger log =
@@ -40,16 +19,16 @@ public class HappysignDocServiceNoOp implements HappysignDocService {
     public String inviaDocumentoAdHappySign(
             Doc_trasporto_rientroBulk doc,
             byte[] pdfBytes,
+            String nomeFile,
             CNRUserContext userContext)
             throws ComponentException {
 
         log.warn(
-                "{} Invio documento ignorato. Documento T/R: esercizio={}, inventario={}, tipo={}, pg={}",
+                "{} Invio documento ignorato. Documento T/R: {}, nomeFile={}, pdfBytes={}",
                 MSG_DISABLED,
-                doc != null ? doc.getEsercizio() : null,
-                doc != null ? doc.getPgInventario() : null,
-                doc != null ? doc.getTiDocumento() : null,
-                doc != null ? doc.getPgDocTrasportoRientro() : null
+                descriviDoc(doc),
+                nomeFile,
+                pdfBytes != null ? pdfBytes.length : null
         );
 
         throw new ComponentException(
@@ -67,5 +46,22 @@ public class HappysignDocServiceNoOp implements HappysignDocService {
     public byte[] getDocumentoFirmato(String uuid) {
         log.warn("{} Download documento firmato ignorato. uuid={}", MSG_DISABLED, uuid);
         return null;
+    }
+
+    private String descriviDoc(Doc_trasporto_rientroBulk doc) {
+        if (doc == null) {
+            return "null";
+        }
+
+        return String.format(
+                "esercizio=%s, inventario=%s, tipo=%s, pg=%s, stato=%s, statoFlusso=%s, uuid=%s",
+                doc.getEsercizio(),
+                doc.getPgInventario(),
+                doc.getTiDocumento(),
+                doc.getPgDocTrasportoRientro(),
+                doc.getStato(),
+                doc.getStatoFlusso(),
+                doc.getIdFlussoHappysign()
+        );
     }
 }

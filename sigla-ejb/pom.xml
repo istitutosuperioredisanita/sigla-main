@@ -63,11 +63,6 @@
             <version>${version.sigla-ws.client}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>it.iss.si</groupId>
-            <artifactId>happysign-client</artifactId>
-            <version>${version.happysign}</version>
-        </dependency>
         <!-- JAXB Plugins Runtime -->
         <dependency>
             <groupId>org.jvnet.jaxb</groupId>
@@ -394,6 +389,18 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>${version.junit}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>it.iss.si</groupId>
+            <artifactId>ace-iss-client</artifactId>
+            <version>2.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>it.iss.si</groupId>
+            <artifactId>happysign-client</artifactId>
+            <version>2.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

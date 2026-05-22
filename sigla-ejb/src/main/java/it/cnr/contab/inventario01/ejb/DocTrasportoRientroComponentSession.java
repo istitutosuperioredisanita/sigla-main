@@ -256,4 +256,24 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             UserContext userContext,
             Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException;
+
+    /**
+     * Aggiorna il documento dopo firma HappySign:
+     * - riceve il PDF firmato;
+     * - crea l'allegato firmato;
+     * - aggiorna stato flusso e data firma;
+     * - archivia il firmato nel documentale.
+     */
+    Doc_trasporto_rientroBulk aggiornaDocumentoFirmatoDaHappySign(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfFirmato)
+            throws ComponentException, RemoteException;
+
+
+    Doc_trasporto_rientroBulk aggiornaDocumentoRifiutatoDaHappySign(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            String motivoRifiuto)
+            throws ComponentException, RemoteException;
 }

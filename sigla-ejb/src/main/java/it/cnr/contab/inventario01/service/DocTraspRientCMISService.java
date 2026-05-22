@@ -171,19 +171,12 @@ public class DocTraspRientCMISService extends StoreService {
         }
     }
 
+
     /**
-     * Salva il PDF firmato su CMIS:
-     * <ul>
-     *   <li>Se esiste già un documento firmato → aggiorna stream e proprietà.</li>
-     *   <li>Altrimenti → crea un nuovo documento firmato nella cartella.</li>
-     * </ul>
-     *
-     * @param pdfFirmato  byte[] del PDF firmato da HappySign
-     * @param doc         documento di riferimento
-     * @param userContext contesto utente corrente
-     * @return {@link StorageObject} del documento salvato
-     * @throws IllegalArgumentException se {@code pdfFirmato} è nullo o vuoto
+     * Salva o aggiorna il PDF firmato su CMIS.
+     * Se esiste già aggiorna, altrimenti crea nuovo documento con metadati.
      */
+
     public StorageObject salvaStampaDocumentoFirmatoSuCMIS(
             byte[] pdfFirmato,
             Doc_trasporto_rientroBulk doc,
@@ -211,13 +204,10 @@ public class DocTraspRientCMISService extends StoreService {
         return creaDocumentoFirmato(pdfFirmato, doc, userContext);
     }
 
+
     /**
-     * Calcola il path CMIS del documento, gestendo la logica
-     * old-path (documenti ante 2024) vs new-path.
-     *
-     * @param doc       documento di trasporto/rientro
-     * @param uoContext unità organizzativa dell'utente
-     * @return path CMIS della cartella del documento
+     * Calcola il path CMIS del documento.
+     * Gestisce retrocompatibilità tra struttura storage vecchia e nuova.
      */
     public String getStorePath(
             Doc_trasporto_rientroBulk doc,
@@ -346,23 +336,48 @@ public class DocTraspRientCMISService extends StoreService {
         return createFolderIfNotPresent(path, folderName, props);
     }
 
+
+    /**
+     * Crea il documento firmato su CMIS.
+     * Inizializza metadati, tipo documento e collega alla cartella corretta.
+     */
     private StorageObject creaDocumentoFirmato(
             byte[] pdfFirmato,
             Doc_trasporto_rientroBulk doc,
             UserContext userContext)
             throws Exception {
 
-        String path = getStorePath(
-                doc,
-                CNRUserContext.getCd_unita_organizzativa(userContext)
-        );
+        if (doc == null) {
+            throw new IllegalArgumentException("Documento T/R non valorizzato");
+        }
+
+        if (pdfFirmato == null || pdfFirmato.length == 0) {
+            throw new IllegalArgumentException("PDF firmato non presente o vuoto");
+        }
+
+        if (storageDriver == null) {
+            throw new IllegalStateException("StorageDriver non inizializzato");
+        }
+
+        String uoContext = CNRUserContext.getCd_unita_organizzativa(userContext);
+        if (uoContext == null || uoContext.trim().isEmpty()) {
+            throw new IllegalArgumentException("Unità organizzativa non valorizzata nel UserContext");
+        }
+
+        String path = getStorePath(doc, uoContext);
 
         StorageObject parent = getStorageObjectByPath(path, true, true);
+
+        if (parent == null) {
+            throw new ApplicationException(
+                    "Cartella CMIS non trovata o non creata per il documento T/R. Path=" + path
+            );
+        }
 
         return storageDriver.createDocument(
                 new ByteArrayInputStream(pdfFirmato),
                 "application/pdf",
-                propsNuovoDocumentoFirmato(doc),
+                propsNuovoDocumentoFirmato(doc, userContext),
                 parent,
                 path,
                 false
@@ -373,19 +388,32 @@ public class DocTraspRientCMISService extends StoreService {
     // Metodi privati — proprietà CMIS
     // -----------------------------------------------------------------------
 
-    private Map<String, Object> propsNuovoDocumentoFirmato(Doc_trasporto_rientroBulk doc) {
+    private Map<String, Object> propsNuovoDocumentoFirmato(
+            Doc_trasporto_rientroBulk doc,
+            UserContext userContext) {
 
         Map<String, Object> props = propsFirma();
 
         props.put(StoragePropertyNames.OBJECT_TYPE_ID.value(), objectType(doc));
         props.put(StoragePropertyNames.NAME.value(), nomeFileFirmato(doc));
+
         props.put(
                 StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(),
                 Arrays.asList(
                         "P:cm:titled",
+                        "P:sigla_commons_aspect:utente_applicativo_sigla",
                         aspectFirmato(doc),
                         ASPECT_STATO_STAMPA
-                ));
+                )
+        );
+
+        props.put("cm:title", nomeFileFirmato(doc));
+        props.put("cm:description", "Documento Trasporto/Rientro firmato digitalmente");
+
+        props.put(
+                "sigla_commons_aspect:utente_applicativo",
+                CNRUserContext.getUser(userContext)
+        );
 
         return props;
     }
@@ -403,15 +431,39 @@ public class DocTraspRientCMISService extends StoreService {
     // -----------------------------------------------------------------------
 
     private static String aspectFirmato(Doc_trasporto_rientroBulk doc) {
-        return doc.isTrasporto()
-                ? AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO
-                : AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
+        if (doc == null) {
+            throw new IllegalArgumentException("Documento T/R non valorizzato");
+        }
+
+        if (doc.isTrasporto()) {
+            return AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
+        }
+
+        if (doc.isRientro()) {
+            return AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
+        }
+
+        throw new IllegalArgumentException(
+                "Tipo documento T/R non riconosciuto: " + doc.getTiDocumento()
+        );
     }
 
     private static String objectType(Doc_trasporto_rientroBulk doc) {
-        return doc.isTrasporto()
-                ? "D:sigla_doctrasporto_attachment:document"
-                : "D:sigla_docrientro_attachment:document";
+        if (doc == null) {
+            throw new IllegalArgumentException("Documento T/R non valorizzato");
+        }
+
+        if (doc.isTrasporto()) {
+            return "D:sigla_doctrasporto_attachment:document";
+        }
+
+        if (doc.isRientro()) {
+            return "D:sigla_docrientro_attachment:document";
+        }
+
+        throw new IllegalArgumentException(
+                "Tipo documento T/R non riconosciuto: " + doc.getTiDocumento()
+        );
     }
 
     private static String nomeFileFirmato(Doc_trasporto_rientroBulk doc) {

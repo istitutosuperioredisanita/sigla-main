@@ -18,9 +18,12 @@
                 <value>classpath*:META-INF/spring/*.properties</value>
                 <value>classpath*:repository.properties</value>
                 <value>classpath*:application.properties</value>
+<!--                &lt;!&ndash; AGGIUNTO: caricato per ultimo, sovrascrive tutto &ndash;&gt;-->
+<!--                <value>classpath:application-iss.properties</value>-->
             </list>
         </property>
-        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="ignoreResourceNotFound" value="true"/>
         <property name="systemPropertiesMode" value="2"/>
     </bean>
 
@@ -39,69 +42,56 @@
         </property>
     </bean>
 
-    <context:component-scan base-package="it.cnr.contab.config, it.cnr.contab.spring, it.cnr.contab.service, it.cnr.si" />
+    <context:component-scan base-package="it.cnr.contab.config, it.cnr.contab.spring, it.cnr.contab.service, it.cnr.si"/>
 
     <!-- ========================================================= -->
-    <!-- Documenti Trasporto/Rientro - servizi comuni              -->
-    <!-- ========================================================= -->
-
-    <bean id="docTraspRientFlowService"
-          class="it.cnr.contab.inventario01.service.DocTraspRientFlowService" />
-
-    <bean id="docTraspRientCronService"
-          class="it.cnr.contab.inventario01.service.DocTraspRientCronService" />
-
-    <!--
-        Implementazione HappySign comune.
-        Non importa classi it.iss.si.* a compile-time: usa reflection e funziona anche senza profilo iss.
-    -->
-    <bean id="docTraspRientHappySignService"
-          class="it.cnr.contab.inventario01.service.DocTraspRientHappySignService" />
-
-    <!-- ========================================================= -->
-    <!-- Import contesti esistenti                                 -->
+    <!-- Import contesti esistenti                                  -->
     <!-- ========================================================= -->
 
     <import resource="classpath*:it/cnr/contab/storage/service/storage-service-context.xml"/>
     <import resource="classpath*:it/cnr/contab/service/sdi-client-service-context.xml"/>
 
+    <!-- ========================================================= -->
+    <!-- Bean applicativi generali                                  -->
+    <!-- ========================================================= -->
+
     <bean id="trovatoProperties" class="it.cnr.contab.docamm00.client.TrovatoProperties">
-        <property name="trovatoTargetEndpoint" value="${TrovatoTargetEndpoint}" />
-        <property name="trovatoSiglaRestClientUser" value="${TrovatoSiglaRestClientUser}" />
-        <property name="trovatoSiglaRestClientPassword" value="${TrovatoSiglaRestClientPassword}" />
+        <property name="trovatoTargetEndpoint" value="${TrovatoTargetEndpoint}"/>
+        <property name="trovatoSiglaRestClientUser" value="${TrovatoSiglaRestClientUser}"/>
+        <property name="trovatoSiglaRestClientPassword" value="${TrovatoSiglaRestClientPassword}"/>
     </bean>
 
     <bean id="helpdeskProperties" class="it.cnr.contab.utenze00.service.HelpdeskProperties">
-        <property name="helpdeskTargetEndpoint" value="${HelpdeskTargetEndpoint}" />
-        <property name="helpdeskSiglaRestClientUser" value="${HelpdeskSiglaRestClientUser}" />
-        <property name="helpdeskSiglaRestClientPassword" value="${HelpdeskSiglaRestClientPassword}" />
+        <property name="helpdeskTargetEndpoint" value="${HelpdeskTargetEndpoint}"/>
+        <property name="helpdeskSiglaRestClientUser" value="${HelpdeskSiglaRestClientUser}"/>
+        <property name="helpdeskSiglaRestClientPassword" value="${HelpdeskSiglaRestClientPassword}"/>
     </bean>
 
     <bean id="digitalPreservationProperties" class="it.cnr.contab.dp.DigitalPreservationProperties">
-        <property name="digitalPreservationCodAmm" value="${DigitalPreservationCodAmm}" />
-        <property name="digitalPreservationCodRegFA" value="${DigitalPreservationCodRegFA}" />
-        <property name="digitalPreservationCodRegFP" value="${DigitalPreservationCodRegFP}" />
+        <property name="digitalPreservationCodAmm" value="${DigitalPreservationCodAmm}"/>
+        <property name="digitalPreservationCodRegFA" value="${DigitalPreservationCodRegFA}"/>
+        <property name="digitalPreservationCodRegFP" value="${DigitalPreservationCodRegFP}"/>
     </bean>
 
     <bean id="gson" class="com.google.gson.Gson"/>
 
     <bean id="testJsonDataSource"
-          class="it.cnr.contab.reports.service.dataSource.TestJsonDataSource" />
+          class="it.cnr.contab.reports.service.dataSource.TestJsonDataSource"/>
 
     <bean id="StampaInventarioJsonDataSource"
-          class="it.cnr.contab.reports.service.dataSource.StampaInventarioJsonDataSource" />
+          class="it.cnr.contab.reports.service.dataSource.StampaInventarioJsonDataSource"/>
 
     <bean id="StampaConsumiJsonDataSource"
-          class="it.cnr.contab.reports.service.dataSource.StampaConsumiJsonDataSource" />
+          class="it.cnr.contab.reports.service.dataSource.StampaConsumiJsonDataSource"/>
 
     <bean id="StampaPartitarioMagJsonDataSource"
-          class="it.cnr.contab.reports.service.dataSource.StampaPartitarioMagJsonDataSource" />
+          class="it.cnr.contab.reports.service.dataSource.StampaPartitarioMagJsonDataSource"/>
 
     <util:map id="mapPrintDsOfflineImplemented" map-class="java.util.HashMap">
-        <entry key="/ordmag/iss/TestJsonDs.jasper" value-ref="testJsonDataSource" />
-        <entry key="/ordmag/stampa_inventario.jasper" value-ref="StampaInventarioJsonDataSource" />
-        <entry key="/ordmag/stampa_consumi.jasper" value-ref="StampaConsumiJsonDataSource" />
-        <entry key="/ordmag/partitario_magazzino.jasper" value-ref="StampaPartitarioMagJsonDataSource"/>
+        <entry key="/ordmag/iss/TestJsonDs.jasper"          value-ref="testJsonDataSource"/>
+        <entry key="/ordmag/stampa_inventario.jasper"       value-ref="StampaInventarioJsonDataSource"/>
+        <entry key="/ordmag/stampa_consumi.jasper"          value-ref="StampaConsumiJsonDataSource"/>
+        <entry key="/ordmag/partitario_magazzino.jasper"    value-ref="StampaPartitarioMagJsonDataSource"/>
     </util:map>
 
     <bean id="printService" class="it.cnr.contab.reports.service.PrintService">
@@ -113,7 +103,6 @@
         <property name="fatturazioneElettronicaClient" ref="fatturazioneElettronicaClient"/>
         <property name="pecScanDisable" value="${pec.scan.disable}"/>
         <property name="pecHostName" value="${pec.host.name}"/>
-
         <property name="pecURLName" value="${pec.url.name}"/>
         <property name="pecHostAddress" value="${pec.host.address}"/>
         <property name="pecHostAddressReturn" value="${pec.host.address.return}"/>
@@ -122,20 +111,17 @@
         <property name="pecSDISubjectRiceviFattureTerm" value="${pec.sdi.subject.ricevi.fatture.term}"/>
         <property name="pecScanFolderName" value="${pec.scan.folder.name}"/>
         <property name="pecScanReceiptFolderName" value="${pec.scan.receipt.folder.name}"/>
-
         <property name="pecSDISubjectFatturaAttivaRicevutaConsegnaTerm" value="${pec.sdi.subject.fatturaAttiva.notifica.ricevutaConsegna.term}"/>
         <property name="pecSDISubjectFatturaAttivaNotificaScartoTerm" value="${pec.sdi.subject.fatturaAttiva.notifica.scarto.term}"/>
         <property name="pecSDISubjectFatturaAttivaMancataConsegnaTerm" value="${pec.sdi.subject.fatturaAttiva.notifica.mancataConsegna.term}"/>
         <property name="pecSDISubjectNotificaEsitoTerm" value="${pec.sdi.subject.notifica.esito.term}"/>
         <property name="pecSDISubjectNotificaRifiutoTerm" value="${pec.sdi.subject.notifica.rifiuto.term}"/>
-
         <property name="pecSDISubjectFatturaAttivaDecorrenzaTerminiTerm" value="${pec.sdi.subject.fatturaAttiva.notifica.decorrenzaTermini.term}"/>
         <property name="pecSDISubjectFatturaAttivaAttestazioneTrasmissioneFatturaTerm" value="${pec.sdi.subject.fatturaAttiva.notifica.attestazioneTrasmissioneFattura.term}"/>
         <property name="pecSDISubjectFatturaAttivaInvioTerm" value="${pec.sdi.subject.fatturaAttiva.invio.term}"/>
         <property name="pecSDISubjectMancataConsegnaPecTerm" value="${pec.sdi.subject.fatturaAttiva.mancataConsegna.term}"/>
         <property name="pecSDISubjectNotificaPecTerm" value="${pec.sdi.subject.notificaPec.term}"/>
         <property name="pecSDISubjectFatturaPassivaNotificaScartoEsitoTerm" value="${pec.sdi.subject.fatturaPassiva.notifica.scartoEsito.term}"/>
-
         <property name="pecMailConf" ref="props-pec-mail"/>
         <property name="emailSDIInAttachement" value="${pec.sdi.email.sdi.attachment}"/>
     </bean>
@@ -154,48 +140,94 @@
         <property name="props" ref="props-aruba"/>
     </bean>
 
-    <!-- scheduler -->
-    <task:scheduled-tasks scheduler="siglaScheduler">
+    <!-- ========================================================= -->
+    <!-- Scheduler generale                                         -->
+    <!-- ========================================================= -->
 
-        <task:scheduled ref="docTraspRientCronService"
-                        method="executeVerificaFirmeHappySign"
-                        cron="${doc.trasp.rient.happysign.timer.cron.expression}" />
+    <task:scheduler id="siglaScheduler" pool-size="10"/>
+
+    <task:scheduled-tasks scheduler="siglaScheduler">
 
         <task:scheduled ref="fatturaPassivaElettronicaService"
                         method="allineaNotificheExecute"
-                        cron="${allinea.notifiche.cron.expression}" />
+                        cron="${allinea.notifiche.cron.expression}"/>
 
         <task:scheduled ref="fatturaPassivaElettronicaService"
                         method="execute"
-                        cron="${pec.cron.expression}" />
+                        cron="${pec.cron.expression}"/>
 
         <task:scheduled ref="documentiContabiliService"
                         method="executeMessaggiSiopeplus"
-                        cron="${siopeplus.cron.expression}" />
+                        cron="${siopeplus.cron.expression}"/>
 
         <task:scheduled ref="pdgVariazioniService"
                         method="executeDeletePECMessage"
-                        cron="${pec.cron.expression}" />
+                        cron="${pec.cron.expression}"/>
 
         <task:scheduled ref="utilService"
                         method="executeAggiornaGECO"
-                        cron="${aggiorna.geco.cron.expression}" />
+                        cron="${aggiorna.geco.cron.expression}"/>
 
         <task:scheduled ref="utilService"
                         method="executeDeleteMessaggi"
-                        cron="${delete.messaggi.cron.expression}" />
+                        cron="${delete.messaggi.cron.expression}"/>
 
         <task:scheduled ref="printService"
                         method="executeReportWithJsonDataSource"
-                        cron="${print.jsondatasource.cron.expression}" />
+                        cron="${print.jsondatasource.cron.expression}"/>
 
     </task:scheduled-tasks>
-
-    <task:scheduler id="siglaScheduler" pool-size="10"/>
 
     <task:executor id="siglaTaskExecutor" pool-size="5"/>
 
     <task:annotation-driven executor="siglaTaskExecutor" scheduler="siglaScheduler"/>
-    <!-- / scheduler -->
+
+    <beans profile="iss">
+
+
+        <bean id="authenticationOnlyErrorDecoder"
+              class="feign.codec.ErrorDecoder$Default"/>
+
+        <bean id="reauthenticateRetryer"
+              class="feign.Retryer$Default"/>
+
+        <!-- 1. Prima AuthService (nessuna dipendenza) -->
+        <bean id="authService"
+              class="it.iss.si.service.AuthService"/>
+
+        <!-- 2. Poi TokenRequestInterceptor (dipende da AuthService) -->
+        <bean id="tokenRequestInterceptor"
+              class="it.iss.si.service.intercpetor.TokenRequestInterceptor"/>
+
+        <!-- 3. Poi gli altri -->
+        <bean id="happySignService"
+              class="it.iss.si.service.HappySignService"/>
+
+        <bean id="aceService"
+              class="it.iss.si.service.AceService"/>
+
+        <bean id="docTraspRientAceEmailLookupService"
+              class="it.cnr.contab.inventario01.service.DocTraspRientAceEmailLookupService">
+            <constructor-arg ref="aceService"/>
+        </bean>
+
+        <bean id="docTraspRientFlowService"
+              class="it.cnr.contab.inventario01.service.DocTraspRientFlowService"/>
+
+        <bean id="docTraspRientHappySignService"
+              class="it.cnr.contab.inventario01.service.DocTraspRientHappySignService">
+            <constructor-arg ref="happySignService"/>
+        </bean>
+
+        <bean id="docTraspRientCronService"
+              class="it.cnr.contab.inventario01.service.DocTraspRientCronService"/>
+
+        <task:scheduled-tasks scheduler="siglaScheduler">
+            <task:scheduled ref="docTraspRientCronService"
+                            method="executeVerificaFirmeHappySign"
+                            cron="${doc.trasp.rient.happysign.timer.cron.expression}"/>
+        </task:scheduled-tasks>
+
+    </beans>
 
 </beans>

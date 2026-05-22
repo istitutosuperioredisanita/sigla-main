@@ -830,4 +830,78 @@ public class DocTrasportoRientroComponentSessionBean
             throw uncaughtError(userContext, componentObj, e);
         }
     }
+
+    @Override
+    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmatoDaHappySign(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfFirmato)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+
+        try {
+            Doc_trasporto_rientroBulk result =
+                    ((DocTrasportoRientroComponent) componentObj)
+                            .aggiornaDocumentoFirmatoDaHappySign(
+                                    userContext,
+                                    doc,
+                                    pdfFirmato
+                            );
+
+            component_invocation_succes(userContext, componentObj);
+            return result;
+
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    @Override
+    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutatoDaHappySign(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            String motivoRifiuto)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+
+        try {
+            Doc_trasporto_rientroBulk result =
+                    ((DocTrasportoRientroComponent) componentObj)
+                            .aggiornaDocumentoRifiutatoDaHappySign(
+                                    userContext,
+                                    doc,
+                                    motivoRifiuto
+                            );
+
+            component_invocation_succes(userContext, componentObj);
+            return result;
+
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
 }
