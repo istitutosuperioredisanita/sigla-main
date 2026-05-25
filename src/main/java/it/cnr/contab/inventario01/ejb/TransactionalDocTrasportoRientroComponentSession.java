@@ -265,7 +265,7 @@ public class TransactionalDocTrasportoRientroComponentSession
             throws ComponentException, RemoteException {
 
         try {
-            return (Doc_trasporto_rientroBulk) invoke("predisponiAllaFirma", new Object[]{
+            return (Doc_trasporto_rientroBulk) invoke("changeStatoInInviato", new Object[]{
                     userContext,
                     doc
             });
@@ -964,6 +964,99 @@ public class TransactionalDocTrasportoRientroComponentSession
 
             } catch (Throwable ex) {
                 throw new java.rmi.RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Doc_trasporto_rientroBulk inviaDocumentoAllaFirma(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
+        try {
+            return (Doc_trasporto_rientroBulk) invoke(
+                    "inviaDocumentoAllaFirma",
+                    new Object[]{userContext, doc}
+            );
+
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmatoDaHappySign(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfFirmato)
+            throws ComponentException, RemoteException {
+
+        try {
+            return (Doc_trasporto_rientroBulk) invoke(
+                    "aggiornaDocumentoFirmatoDaHappySign",
+                    new Object[]{
+                            userContext,
+                            doc,
+                            pdfFirmato
+                    }
+            );
+
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+
+            } catch (ComponentException ex) {
+                throw ex;
+
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+
+    @Override
+    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutatoDaHappySign(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            String motivoRifiuto)
+            throws ComponentException, RemoteException {
+
+        try {
+            return (Doc_trasporto_rientroBulk) invoke(
+                    "aggiornaDocumentoRifiutatoDaHappySign",
+                    new Object[]{
+                            userContext,
+                            doc,
+                            motivoRifiuto
+                    }
+            );
+
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+
+            } catch (ComponentException ex) {
+                throw ex;
+
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
             }
         }
     }

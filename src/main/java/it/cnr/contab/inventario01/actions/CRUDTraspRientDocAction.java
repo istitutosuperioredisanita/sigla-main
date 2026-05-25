@@ -8,37 +8,29 @@ import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.bulk.Stampa_doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
-import it.cnr.contab.inventario01.service.DocTraspRientFirmatariService;
-import it.cnr.contab.inventario01.service.DocTraspRientHappySignService;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
-import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
-import it.cnr.jada.bulk.*;
+import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.bulk.SimpleBulkList;
+import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.RemoteIterator;
-import it.cnr.jada.util.action.CondizioneSempliceBulk;
 import it.cnr.jada.util.action.OptionBP;
 import it.cnr.jada.util.action.RicercaLiberaBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Objects;
-
-import static it.cnr.jada.util.action.FormController.VIEW;
 
 /**
  * Action astratta per la gestione del flusso di Trasporto e Rientro Beni.
@@ -48,11 +40,17 @@ import static it.cnr.jada.util.action.FormController.VIEW;
 public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CRUDAction {
 
     protected abstract CRUDTraspRientInventarioBP getBP(ActionContext context);
+
     protected abstract RemoteIterator getListaBeni(ActionContext context, CRUDTraspRientInventarioBP bp, Doc_trasporto_rientroBulk doc, SimpleBulkList selezionati, CompoundFindClause clauses) throws Exception;
+
     protected abstract String getSelezionaMethod();
+
     protected abstract String getBringBackMethod();
+
     protected abstract String getMessageNoResults();
+
     protected abstract String getDataLabel();
+
     protected abstract String getTabTestataName();
 
     /**
@@ -83,42 +81,72 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     public Forward doTab(ActionContext context, String tabName, String pageName) {
         try {
             fillModel(context);
+
             CRUDTraspRientInventarioBP bp = getBP(context);
             Doc_trasporto_rientroBulk doc = bp.getDoc();
 
             if (pageName != null && pageName.contains("Allegati")) {
-                boolean puoAccedere = false;
-                if (doc != null && doc.getCrudStatus() != OggettoBulk.TO_BE_CREATED && doc.getDoc_trasporto_rientro_dettColl() != null && !doc.getDoc_trasporto_rientro_dettColl().isEmpty()) {
-                    for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
-                        Doc_trasporto_rientro_dettBulk dett = (Doc_trasporto_rientro_dettBulk) obj;
-                        if (dett.getCrudStatus() == OggettoBulk.NORMAL) {
-                            puoAccedere = true;
-                            break;
-                        }
-                    }
-                }
-                if (!puoAccedere) {
-                    bp.setMessage("Impossibile accedere agli allegati: salvare il documento con almeno un bene.");
+
+                if (doc == null) {
+                    bp.setMessage("Documento non disponibile.");
                     return context.findDefaultForward();
+                }
+
+                /*
+                 * Il tab Allegati deve essere accessibile:
+                 * - dopo firma HappySign: STATO = INS, STATO_FLUSSO = FIR, DATA_FIRMA valorizzata
+                 * - oppure se il documento è definitivo
+                 */
+                if (!doc.isDefinitivo() && !bp.isDocumentoFirmatoDaCompletare()) {
+                    bp.setMessage("Il tab Allegati sarà disponibile solo dopo la firma del documento.");
+                    return context.findDefaultForward();
+                }
+
+                /*
+                 * CASO DOCUMENTO FIRMATO MA NON DEFINITIVO.
+                 *
+                 * Qui bisogna forzare davvero la modalità EDIT,
+                 * altrimenti il controller standard degli allegati lascia disabilitati
+                 * i pulsanti di aggiunta/eliminazione.
+                 */
+                if (bp.isDocumentoFirmatoDaCompletare()) {
+                    bp.setStatus(CRUDTraspRientInventarioBP.EDIT);
+
+                    if (doc.getCrudStatus() == OggettoBulk.NORMAL) {
+                        doc.setToBeUpdated();
+                    }
+
+                    bp.setModel(context, doc);
                 }
             }
 
             if (doc != null && doc.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
                 if (pageName != null && pageName.contains("Dettaglio")) {
                     bp.validaDatiPerDettagli();
-                    doc = (Doc_trasporto_rientroBulk) getComponentSession(bp).creaConBulk(context.getUserContext(), doc);
+
+                    doc = (Doc_trasporto_rientroBulk)
+                            getComponentSession(bp).creaConBulk(
+                                    context.getUserContext(),
+                                    doc
+                            );
+
                     bp.setModel(context, doc);
+
                     if (doc.getDoc_trasporto_rientro_dettColl() == null) {
                         doc.setDoc_trasporto_rientro_dettColl(new SimpleBulkList());
                     }
+
                     doc.setCrudStatus(OggettoBulk.TO_BE_UPDATED);
                 }
             }
+
             return super.doTab(context, tabName, pageName);
+
         } catch (Throwable e) {
             return handleException(context, e);
         }
     }
+
 
     /**
      * Posiziona l'utente sul tab testata durante la creazione di un nuovo documento.
@@ -137,8 +165,8 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         try {
             fillModel(context);
             CRUDTraspRientInventarioBP bp = getBP(context);
-            if (bp.isDocumentoNonModificabile()) {
-                bp.setMessage("Impossibile modificare un documento " + bp.getDoc().getStato());
+            if (bp.isTestataEDettagliBloccati()) {
+                bp.setMessage("Impossibile modificare i beni di un documento " + bp.getDoc().getStato());
                 return context.findDefaultForward();
             }
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
@@ -197,7 +225,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             Integer index = (Integer) caller.getParameter("index");
 
             if (opt == OptionBP.CANCEL_BUTTON) {
-                bp.getDettBeniController().reset(context);
+                bp.getDettBeniController().resync(context);
                 bp.setMessage(isEliminazione ? "Eliminazione annullata." : "Operazione annullata.");
                 bp.resetOperazione(isEliminazione);
                 return context.findDefaultForward();
@@ -209,7 +237,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 bp.elaboraBeneCorrente(context, isEliminazione, false);
             }
 
-            if (!isEliminazione) bp.getDettBeniController().reset(context);
+            if (!isEliminazione) bp.getDettBeniController().resync(context);
 
             int nextIndex = index + 1;
             if (nextIndex < beniDaElaborare.size()) {
@@ -229,26 +257,46 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     public Forward doRemoveFromCRUDMain_DettBeniController(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
-            if (bp.isDocumentoNonModificabile()) {
-                bp.setMessage("Impossibile modificare un documento " + bp.getDoc().getStato());
+
+            if (bp.isTestataEDettagliBloccati()) {
+                bp.setMessage("Impossibile modificare i beni di un documento " + bp.getDoc().getStato());
                 return context.findDefaultForward();
             }
-            bp.getDettBeniController().remove(context);
-            if (bp.getPendingDelete() == null) return context.findDefaultForward();
 
-            if (!bp.getPendingDelete().getPrincipaliSenza().isEmpty()) {
-                OggettoBulk[] beniDaEliminare = bp.getPendingDelete().getPrincipaliSenza().toArray(new OggettoBulk[0]);
-                bp.eliminaBeniDaDettagli(context, beniDaEliminare);
-                bp.getDettBeniController().reset(context);
+            bp.getDettBeniController().remove(context);
+
+            if (bp.getPendingDelete() == null) {
+                return context.findDefaultForward();
+            }
+
+            List<InventarioDocTRBulk> beniDaEliminareSubito = new ArrayList<>();
+            beniDaEliminareSubito.addAll(bp.getPendingDelete().getPrincipaliSenza());
+            beniDaEliminareSubito.addAll(bp.getPendingDelete().getAccessori());
+
+            if (!beniDaEliminareSubito.isEmpty()) {
+                bp.eliminaBeniDaDettagli(
+                        context,
+                        beniDaEliminareSubito.toArray(new OggettoBulk[0])
+                );
+                bp.getDettBeniController().resync(context);
             }
 
             if (!bp.getPendingDelete().getPrincipaliConAccessori().isEmpty()) {
-                List<InventarioDocTRBulk> beniConAccessori = new ArrayList<>(bp.getPendingDelete().getPrincipaliConAccessori().keySet());
-                return apriFlussoRicorsivoGenerico(context, bp, true, beniConAccessori, 0);
+                List<InventarioDocTRBulk> beniConAccessori =
+                        new ArrayList<>(bp.getPendingDelete().getPrincipaliConAccessori().keySet());
+
+                return apriFlussoRicorsivoGenerico(
+                        context,
+                        bp,
+                        true,
+                        beniConAccessori,
+                        0
+                );
             }
 
             bp.resetOperazione(true);
             return context.findDefaultForward();
+
         } catch (Throwable e) {
             return handleException(context, e);
         }
@@ -266,7 +314,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             List<InventarioDocTRBulk> beniConAccessoriDaConfermare = new ArrayList<>(bp.getPendingAdd().getPrincipaliConAccessori().keySet());
             if (beniConAccessoriDaConfermare.isEmpty()) {
-                bp.getDettBeniController().reset(context);
+                bp.getDettBeniController().resync(context);
                 bp.setMessage("Aggiunta beni completata con successo");
                 bp.resetOperazione(false);
                 return context.findDefaultForward();
@@ -334,66 +382,47 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     /**
      * Conclude il flusso di aggiunta o eliminazione resettando il Business Process.
      */
-    private void finalizeFlusso(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, boolean ultimaRispostaSI) throws ComponentException, RemoteException {
-        bp.getDettBeniController().reset(context);
+    private void finalizeFlusso(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, boolean ultimaRispostaSI) throws ComponentException, RemoteException, BusinessProcessException {
+        bp.getDettBeniController().resync(context);
         bp.setMessage(isEliminazione ? "Eliminazione completata." : "Aggiunta beni completata con successo");
         bp.resetOperazione(isEliminazione);
     }
 
-    /**
-     * Esegue la procedura di invio del documento al servizio di firma HappySign.
-     */
     public Forward doInviaInFirma(ActionContext context) {
         try {
+            fillModel(context);
+
             CRUDTraspRientInventarioBP bp = getBP(context);
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
-            validaDocumentoPerFirma(doc);
+            bp.inviaAllaFirma(context);
 
-            DocTraspRientFirmatariService firmatariService = SpringUtil.getBean("docTraspRientFirmatariService", DocTraspRientFirmatariService.class);
-            firmatariService.popolaFirmatari(doc, (CNRUserContext) context.getUserContext());
-
-            File pdfFile = bp.stampaDocTrasportoRientro(context.getUserContext(), doc);
-            byte[] pdfBytes;
-            try (FileInputStream fis = new FileInputStream(pdfFile)) {
-                pdfBytes = IOUtils.toByteArray(fis);
-            }
-
-            salvaStampaSuCMIS(context, doc, pdfFile, false);
-
-            DocTraspRientHappySignService happySignService = SpringUtil.getBean("docTraspRientHappySignService", DocTraspRientHappySignService.class);
-            String uuidHappysign = null;//happySignService.inviaDocumentoAdHappySign(doc, pdfBytes);
-
-            doc.setIdFlussoHappysign(uuidHappysign);
-            doc.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
-            doc = getComponentSession(bp).changeStatoInInviato(context.getUserContext(), doc);
-
-            bp.setModel(context, doc);
-            bp.setStatus(VIEW);
-            bp.setMessage("Documento inviato alla firma con successo. UUID HappySign: " + uuidHappysign);
             return context.findDefaultForward();
+
         } catch (Throwable e) {
             return handleException(context, e);
         }
     }
 
-    /**
-     * Placeholder per il salvataggio del documento su storage CMIS.
-     */
-    private void salvaStampaSuCMIS(ActionContext context, Doc_trasporto_rientroBulk doc, File pdfFile, boolean isFirmato) throws Exception {
-    }
-
-    /**
-     * Verifica la completezza dei dati prima di consentire l'invio alla firma.
-     */
-    private void validaDocumentoPerFirma(Doc_trasporto_rientroBulk doc) throws ValidationException {
-        if (doc == null) throw new ValidationException("Documento non presente");
-        if (doc.isAnnullato()) throw new ValidationException("Impossibile inviare alla firma un documento annullato");
-        if (!doc.isInserito()) throw new ValidationException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
-        if (doc.getDoc_trasporto_rientro_dettColl() == null || doc.getDoc_trasporto_rientro_dettColl().isEmpty()) throw new ValidationException("Il documento deve contenere almeno un bene");
-        if (doc.getTipoMovimento() == null) throw new ValidationException("Tipo movimento non specificato");
-        if (doc.getDataRegistrazione() == null) throw new ValidationException("Data registrazione non specificata");
-        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty()) throw new ValidationException("Descrizione documento non specificata");
-    }
+//    /**
+//     * Placeholder per il salvataggio del documento su storage CMIS.
+//     */
+//    private void salvaStampaSuCMIS(ActionContext context, Doc_trasporto_rientroBulk doc, File pdfFile, boolean isFirmato) throws Exception {
+//    }
+//
+//    /**
+//     * Verifica la completezza dei dati prima di consentire l'invio alla firma.
+//     */
+//    private void validaDocumentoPerFirma(Doc_trasporto_rientroBulk doc) throws ValidationException {
+//        if (doc == null) throw new ValidationException("Documento non presente");
+//        if (doc.isAnnullato()) throw new ValidationException("Impossibile inviare alla firma un documento annullato");
+//        if (!doc.isInserito())
+//            throw new ValidationException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
+//        if (doc.getDoc_trasporto_rientro_dettColl() == null || doc.getDoc_trasporto_rientro_dettColl().isEmpty())
+//            throw new ValidationException("Il documento deve contenere almeno un bene");
+//        if (doc.getTipoMovimento() == null) throw new ValidationException("Tipo movimento non specificato");
+//        if (doc.getDataRegistrazione() == null) throw new ValidationException("Data registrazione non specificata");
+//        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty())
+//            throw new ValidationException("Descrizione documento non specificata");
+//    }
 
     /**
      * Esegue l'annullamento del documento se non ancora inviato alla firma o già annullato.
@@ -402,18 +431,29 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     public Forward doElimina(ActionContext context) throws RemoteException {
         try {
             fillModel(context);
+
             CRUDTraspRientInventarioBP bp = getBP(context);
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
+
+            if (doc == null) {
+                bp.setMessage("Documento non presente.");
+                return context.findDefaultForward();
+            }
+
             if (doc.isAnnullato()) {
                 bp.setMessage("Il documento è già stato annullato.");
                 return context.findDefaultForward();
             }
-            if (doc.isInviatoInFirma()) {
-                bp.setMessage("Impossibile annullare un documento già inviato in firma.");
+
+            if (doc.isInviatoInFirma() || doc.getDataFirma() != null) {
+                bp.setMessage("Impossibile annullare un documento inviato o firmato da HappySign.");
                 return context.findDefaultForward();
             }
+
             bp.annullaDoc(context);
+
             return context.findDefaultForward();
+
         } catch (Throwable e) {
             return handleException(context, e);
         }
@@ -465,9 +505,12 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
      * Valida i dati obbligatori della testata prima di operazioni sui dettagli.
      */
     protected void validaTestataDocumento(Doc_trasporto_rientroBulk doc) throws ValidationException {
-        if (doc.getTipoMovimento() == null) throw new ValidationException("Attenzione: specificare un tipo di movimento nella testata.");
-        if (doc.getDataRegistrazione() == null) throw new ValidationException("Attenzione: specificare la " + getDataLabel() + ".");
-        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty()) throw new ValidationException("Attenzione: indicare una Descrizione per il Documento.");
+        if (doc.getTipoMovimento() == null)
+            throw new ValidationException("Attenzione: specificare un tipo di movimento nella testata.");
+        if (doc.getDataRegistrazione() == null)
+            throw new ValidationException("Attenzione: specificare la " + getDataLabel() + ".");
+        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty())
+            throw new ValidationException("Attenzione: indicare una Descrizione per il Documento.");
     }
 
     /**
@@ -483,8 +526,9 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             Stampa_doc_trasporto_rientroBulk stampa = (Stampa_doc_trasporto_rientroBulk) ppbp.createNewBulk(context);
 
             if (docTrasporto != null && docTrasporto.getPgDocTrasportoRientro() != null) {
-                stampa.setPgInizio(new Integer(docTrasporto.getPgDocTrasportoRientro().intValue()));
-                stampa.setPgFine(new Integer(docTrasporto.getPgDocTrasportoRientro().intValue()));
+                Integer pgDoc = docTrasporto.getPgDocTrasportoRientro().intValue();
+                stampa.setPgInizio(pgDoc);
+                stampa.setPgFine(pgDoc);
             }
             ppbp.setModel(context, stampa);
 
@@ -502,16 +546,15 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             fillModel(context);
             CRUDTraspRientInventarioBP bp = getBP(context);
 
-            // Imposta il flag per evitare il reload degli allegati durante il save
             bp.setSkipAllegatiReload(true);
+
             try {
                 bp.salvaDefinitivo(context);
-                bp.setMessage("Documento salvato definitivamente con successo.");
                 return context.findDefaultForward();
             } finally {
-                // Resetta sempre il flag dopo il salvataggio
                 bp.setSkipAllegatiReload(false);
             }
+
         } catch (Throwable ex) {
             return handleException(context, ex);
         }
@@ -526,15 +569,15 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             fillModel(context);
             CRUDTraspRientInventarioBP bp = getBP(context);
 
-            // Imposta il flag per evitare il reload degli allegati durante il save
             bp.setSkipAllegatiReload(true);
+
             try {
                 bp.save(context);
                 return context.findDefaultForward();
             } finally {
-                // Resetta sempre il flag dopo il salvataggio
                 bp.setSkipAllegatiReload(false);
             }
+
         } catch (Throwable e) {
             return handleException(context, e);
         }

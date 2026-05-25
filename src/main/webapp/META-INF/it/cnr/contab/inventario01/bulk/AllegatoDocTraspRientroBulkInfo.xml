@@ -1,25 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU Affero General Public License as
-  ~     published by the Free Software Foundation, either version 3 of the
-  ~     License, or (at your option) any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU Affero General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU Affero General Public License
-  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-  -->
-
 <bulkInfo
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="https://contab.cnr.it/schema/SIGLA"
         xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
+
+    <!--
+        aspectName: abilitato in inserimento, readonly su allegati già salvati
+        tramite readonlyProperty="allegatoEsistente".
+        enabledOnEdit="true" è necessario perché il BP è sempre in EDIT:
+        senza di esso JADA disabilita il campo su tutte le righe, anche le nuove.
+    -->
     <fieldProperty
             name="aspectName"
             property="aspectName"
@@ -30,8 +20,13 @@
             nullable="false"
             enabledOnInsert="true"
             enabledOnEdit="true"
+            readonlyProperty="allegatoEsistente"
             label="Tipologia"/>
 
+    <!--
+        descrizione: sempre editabile, sia su allegati nuovi sia esistenti.
+        Nessun readonlyProperty.
+    -->
     <fieldProperty
             name="descrizione"
             property="descrizione"
@@ -43,7 +38,6 @@
             enabledOnInsert="true"
             enabledOnEdit="true"
             caseSensitiveSearch="false"
-            readonlyProperty="allegatoEsistente"
             label="Descrizione"/>
 
     <fieldProperty
@@ -64,9 +58,18 @@
             label="Data"/>
 
     <form name="default">
+        <!--
+            aspectName: nessun override qui.
+            Il comportamento è già definito nel fieldProperty sopra:
+            - enabledOnEdit="true"  → JADA non lo blocca globalmente
+            - readonlyProperty      → readonly solo se allegatoEsistente=true
+        -->
         <formFieldProperty name="aspectName"/>
         <formFieldProperty name="nome"/>
-        <formFieldProperty name="descrizione"/>
+        <formFieldProperty
+                name="descrizione"
+                enabledOnInsert="true"
+                enabledOnEdit="true"/>
         <formFieldProperty name="file"/>
         <formFieldProperty name="attivaFile"/>
     </form>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+ * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as
@@ -14,284 +14,319 @@
  *     You should have received a copy of the GNU Affero General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.cnr.contab.inventario01.service;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.DetailedRuntimeException;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
- * Service per la gestione del flusso di firma dei documenti di Trasporto/Rientro
- * Gestisce l'aggiornamento degli stati in base ai risultati di HappySign
+ * Gestisce le transizioni di stato dei documenti T/R
+ * nel flusso firma HappySign.
  */
-@Service
-public class DocTraspRientFlowService {
+public class DocTraspRientFlowService implements InitializingBean {
 
-    private static final Logger log = LoggerFactory.getLogger(DocTraspRientFlowService.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(DocTraspRientFlowService.class);
 
-    // Nomi JNDI dei component session
     private static final String DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION =
             "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession";
 
-    @Autowired
-    private DocTraspRientRespintoService docTRRespService;
+    private static final String MOTIVO_RIFIUTO_DEFAULT =
+            "Respinta da firma su HappySign";
 
-    @Context
-    SecurityContext securityContext;
+    private DocTrasportoRientroComponentSession docTrasportoRientroComponentSession;
+
+    private DocTrasportoRientroComponentSession creaComponentSession() {
+        return Optional.ofNullable(
+                        EJBCommonServices.createEJB(
+                                DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION
+                        )
+                )
+                .filter(DocTrasportoRientroComponentSession.class::isInstance)
+                .map(DocTrasportoRientroComponentSession.class::cast)
+                .orElseThrow(() -> new DetailedRuntimeException(
+                        "cannot find ejb "
+                                + DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION
+                ));
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.docTrasportoRientroComponentSession = creaComponentSession();
+
+        log.info("EJB inizializzato: {}",
+                DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION);
+    }
+
+    public DocTrasportoRientroComponentSession
+    getDocTrasportoRientroComponentSession() {
+
+        return docTrasportoRientroComponentSession;
+    }
+
+    public void setDocTrasportoRientroComponentSession(
+            DocTrasportoRientroComponentSession docTrasportoRientroComponentSession) {
+
+        this.docTrasportoRientroComponentSession =
+                docTrasportoRientroComponentSession;
+    }
+
+    private DocTrasportoRientroComponentSession getComponent() {
+        if (docTrasportoRientroComponentSession == null) {
+            this.docTrasportoRientroComponentSession = creaComponentSession();
+        }
+
+        return docTrasportoRientroComponentSession;
+    }
+
 
     /**
-     * Recupera i documenti predisposti alla firma
-     * Stato = INVIATO con statoFlusso = INV e idFlussoHappysign valorizzato
+     * Recupera documenti predisposti alla firma.
+     * Effettua deduplicazione per UUID HappySign e gestisce errori backend.
      */
-    public List<Doc_trasporto_rientroBulk> getDocumentiPredispostiAllaFirma() {
+    public List<Doc_trasporto_rientroBulk>
+    getDocumentiPredispostiAllaFirma(UserContext userContext) {
+
         try {
-            CNRUserContext userContext = getUserContext();
 
-            // Crea il component session
-            DocTrasportoRientroComponentSession component = (DocTrasportoRientroComponentSession)
-                    EJBCommonServices.createEJB(
-                            DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION,
-                            DocTrasportoRientroComponentSession.class
-                    );
-
-            // Recupera i documenti tramite il component
             List<Doc_trasporto_rientroBulk> documenti =
-                    component.getDocumentiPredispostiAllaFirma(userContext);
+                    getComponent().getDocumentiPredispostiAllaFirma(userContext);
 
-            log.debug("Recuperati {} documenti predisposti alla firma",
-                    documenti != null ? documenti.size() : 0);
+            if (documenti == null || documenti.isEmpty()) {
 
-            return documenti != null ? documenti : Collections.emptyList();
+                log.info("Nessun documento predisposto alla firma");
+                return Collections.emptyList();
+            }
+
+            List<Doc_trasporto_rientroBulk> distintiPerUuid =
+                    filtraDocumentiDistintiPerUuidHappySign(documenti);
+
+            if (documenti.size() != distintiPerUuid.size()) {
+
+                log.warn(
+                        "Documenti predisposti: {}, distinti per UUID: {}",
+                        documenti.size(),
+                        distintiPerUuid.size()
+                );
+
+            } else {
+
+                log.info(
+                        "Documenti predisposti distinti: {}",
+                        distintiPerUuid.size()
+                );
+            }
+
+            return distintiPerUuid;
 
         } catch (ComponentException | RemoteException e) {
-            log.error("Errore nel recupero documenti predisposti alla firma", e);
+
+            log.error("Errore recupero documenti predisposti", e);
+            return Collections.emptyList();
+
+        } catch (RuntimeException e) {
+
+            log.error("Errore runtime recupero documenti predisposti", e);
             return Collections.emptyList();
         }
     }
 
+
     /**
-     * Aggiorna il documento dopo la firma su HappySign
+     * Aggiorna il documento come firmato delegando al componente EJB.
+     * La logica completa (stato, allegati, validazione) è centralizzata lato component.
      */
-    public void aggiornaDocumentoFirmato(Doc_trasporto_rientroBulk documento) {
+    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmato(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfFirmato) {
+
         try {
-            CNRUserContext userContext = getUserContext();
-
-            log.info("Aggiornamento documento firmato - Esercizio: {}, Inventario: {}, Tipo: {}, Progressivo: {}",
-                    documento.getEsercizio(),
-                    documento.getPgInventario(),
-                    documento.getTiDocumento(),
-                    documento.getPgDocTrasportoRientro());
-
-            // Crea il component session
-            DocTrasportoRientroComponentSession component = (DocTrasportoRientroComponentSession)
-                    EJBCommonServices.createEJB(
-                            DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION,
-                            DocTrasportoRientroComponentSession.class
-                    );
-
-            // Aggiorna lo stato del documento
-            documento.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
-            documento.setStatoFlusso("FIR");
-            documento.setDataFirma(new Timestamp(System.currentTimeMillis()));
-            documento.setNoteRifiuto(null);
-
-            // Salva tramite component
-            component.modificaConBulk(userContext, documento);
-
-            log.info("Documento aggiornato con successo a stato FIRMATO");
+            return getComponent().aggiornaDocumentoFirmatoDaHappySign(
+                    userContext,
+                    doc,
+                    pdfFirmato
+            );
 
         } catch (ComponentException | RemoteException e) {
-            log.error("Errore durante l'aggiornamento del documento firmato", e);
+            throw new RuntimeException("Errore aggiornamento documento firmato", e);
+
+        } catch (RuntimeException e) {
+            throw e;
+
+        } catch (Exception e) {
             throw new RuntimeException("Errore aggiornamento documento firmato", e);
         }
     }
 
     /**
-     * Aggiorna il documento quando rifiutato su HappySign
+     * Aggiorna il documento come rifiutato.
      */
-    public void aggiornaDocumentoRifiutato(Doc_trasporto_rientroBulk documento, String motivoRifiuto) {
+    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutato(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            String motivoRifiuto) {
+
         try {
-            CNRUserContext userContext = getUserContext();
+            String motivoNormalizzato = normalizzaMotivoRifiuto(motivoRifiuto);
 
-            log.info("Aggiornamento documento rifiutato - Esercizio: {}, Inventario: {}, Tipo: {}, Progressivo: {}",
-                    documento.getEsercizio(),
-                    documento.getPgInventario(),
-                    documento.getTiDocumento(),
-                    documento.getPgDocTrasportoRientro());
-
-            // Tronca il motivo se troppo lungo
-            String motivoTroncato = motivoRifiuto;
-            if (motivoRifiuto != null && motivoRifiuto.length() > 2000) {
-                motivoTroncato = motivoRifiuto.substring(0, 2000);
-                log.warn("Motivo rifiuto troncato da {} a 2000 caratteri", motivoRifiuto.length());
-            }
-
-            // Inserisci record nella tabella dei respinti
-            docTRRespService.inserisciDocumentoRespinto(documento, motivoTroncato);
-
-            // Crea il component session
-            DocTrasportoRientroComponentSession component = (DocTrasportoRientroComponentSession)
-                    EJBCommonServices.createEJB(
-                            DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION,
-                            DocTrasportoRientroComponentSession.class
-                    );
-
-            // Aggiorna lo stato del documento
-            documento.setStato(Doc_trasporto_rientroBulk.STATO_INSERITO);
-            documento.setStatoFlusso("RIF");
-            documento.setNoteRifiuto(motivoTroncato);
-            documento.setIdFlussoHappysign(null);
-            documento.setDataInvioFirma(null);
-            documento.setDataFirma(null);
-
-            // Salva tramite component
-            component.modificaConBulk(userContext, documento);
-
-            log.info("Documento aggiornato con successo a stato INSERITO (rifiutato)");
+            return getComponent().aggiornaDocumentoRifiutatoDaHappySign(
+                    userContext,
+                    doc,
+                    motivoNormalizzato
+            );
 
         } catch (ComponentException | RemoteException e) {
-            log.error("Errore durante l'aggiornamento del documento rifiutato", e);
+            throw new RuntimeException("Errore aggiornamento documento rifiutato", e);
+
+        } catch (RuntimeException e) {
+            throw e;
+
+        } catch (Exception e) {
             throw new RuntimeException("Errore aggiornamento documento rifiutato", e);
         }
     }
 
     /**
-     * Recupera un documento dalla chiave primaria
+     * Normalizza il motivo rifiuto prima del salvataggio.
+     *
+     * Evita di salvare valori tecnici come:
+     * OK, REFUSED, SIGNED, TOSIGN, ecc.
+     */
+    private String normalizzaMotivoRifiuto(String motivoRifiuto) {
 
-    public Doc_trasporto_rientroBulk recuperaDocumento(
-            Long pgInventario,
-            String tiDocumento,
-            Integer esercizio,
-            Long pgDocTrasportoRientro) throws ComponentException {
+        String motivo = motivoRifiuto;
 
-        try {
-            CNRUserContext userContext = getUserContext();
+        if (motivo == null || motivo.trim().isEmpty()) {
+            motivo = MOTIVO_RIFIUTO_DEFAULT;
+        }
 
-            // Crea il component session
-            DocTrasportoRientroComponentSession component = (DocTrasportoRientroComponentSession)
-                    EJBCommonServices.createEJB(
-                            DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION,
-                            DocTrasportoRientroComponentSession.class
-                    );
+        motivo = motivo.trim();
 
-            // Crea il bulk con la chiave
-            Doc_trasporto_rientroBulk documento = new Doc_trasporto_rientroBulk(
-                    pgInventario,
-                    tiDocumento,
-                    esercizio,
-                    pgDocTrasportoRientro
-            );
+        if (isValoreTecnicoNonMotivo(motivo)) {
+            motivo = MOTIVO_RIFIUTO_DEFAULT;
+        }
 
-            // Recupera il documento completo
-            documento = (Doc_trasporto_rientroBulk)
-                    component.inizializzaBulkPerModifica(userContext, documento);
+        if (motivo.length() > 4000) {
+            motivo = motivo.substring(0, 4000);
+        }
 
-            if (documento == null) {
-                throw new ComponentException(
-                        "Documento non trovato: " + esercizio + "/" + tiDocumento + "/" + pgDocTrasportoRientro
+        return motivo;
+    }
+
+    private boolean isValoreTecnicoNonMotivo(String valore) {
+        if (valore == null) {
+            return true;
+        }
+
+        String v = valore.trim();
+
+        return "OK".equalsIgnoreCase(v)
+                || "REFUSED".equalsIgnoreCase(v)
+                || "CANCELED".equalsIgnoreCase(v)
+                || "SIGNED".equalsIgnoreCase(v)
+                || "TOSIGN".equalsIgnoreCase(v)
+                || "SUCCESS".equalsIgnoreCase(v)
+                || "200".equalsIgnoreCase(v);
+    }
+
+
+    /**
+     * Deduplica documenti usando UUID HappySign come chiave.
+     * Mantiene anche documenti senza UUID per evitare perdita informazione.
+     */
+    private List<Doc_trasporto_rientroBulk>
+    filtraDocumentiDistintiPerUuidHappySign(
+            List<Doc_trasporto_rientroBulk> documenti) {
+
+        if (documenti == null || documenti.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Map<String, Doc_trasporto_rientroBulk> perUuid =
+                new LinkedHashMap<>();
+
+        List<Doc_trasporto_rientroBulk> senzaUuid =
+                new ArrayList<>();
+
+        for (Doc_trasporto_rientroBulk doc : documenti) {
+
+            if (doc == null) {
+                continue;
+            }
+
+            String uuid = doc.getIdFlussoHappysign();
+
+            if (uuid == null || uuid.trim().isEmpty()) {
+
+                log.warn(
+                        "Documento senza UUID HappySign: {}",
+                        descriviDoc(doc)
                 );
+
+                senzaUuid.add(doc);
+
+                continue;
             }
 
-            return documento;
+            String uuidNormalizzato = uuid.trim();
 
-        } catch (ComponentException | RemoteException e) {
-            log.error("Errore nel recupero documento", e);
-            throw new ComponentException("Errore nel recupero documento: " + e.getMessage(), e);
-        }
-    }
-     */
+            if (perUuid.containsKey(uuidNormalizzato)) {
 
-    /**
-     * Salva un documento (inserimento o modifica)
-     */
-    public Doc_trasporto_rientroBulk salvaDocumento(Doc_trasporto_rientroBulk documento)
-            throws ComponentException {
+                Doc_trasporto_rientroBulk giaPresente =
+                        perUuid.get(uuidNormalizzato);
 
-        try {
-            CNRUserContext userContext = getUserContext();
+                log.warn(
+                        "UUID duplicato {} -> tenuto {}, scartato {}",
+                        uuidNormalizzato,
+                        descriviDoc(giaPresente),
+                        descriviDoc(doc)
+                );
 
-            // Crea il component session
-            DocTrasportoRientroComponentSession component = (DocTrasportoRientroComponentSession)
-                    EJBCommonServices.createEJB(
-                            DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION,
-                            DocTrasportoRientroComponentSession.class
-                    );
-
-            // Salva (il component capisce se è insert o update)
-            if (documento.isTemporaneo()) {
-                // Nuovo documento
-                documento = (Doc_trasporto_rientroBulk)
-                        component.creaConBulk(userContext, documento);
-                log.info("Documento inserito con progressivo: {}",
-                        documento.getPgDocTrasportoRientro());
             } else {
-                // Documento esistente
-                documento = (Doc_trasporto_rientroBulk)
-                        component.modificaConBulk(userContext, documento);
-                log.info("Documento aggiornato: {}",
-                        documento.getPgDocTrasportoRientro());
+
+                perUuid.put(uuidNormalizzato, doc);
             }
-
-            return documento;
-
-        } catch (ComponentException | RemoteException e) {
-            log.error("Errore nel salvataggio documento", e);
-            throw new ComponentException("Errore nel salvataggio documento: " + e.getMessage(), e);
         }
+
+        List<Doc_trasporto_rientroBulk> result =
+                new ArrayList<>(perUuid.values());
+
+        result.addAll(senzaUuid);
+
+        return result;
     }
 
-    /**
-     * Elimina un documento
-     */
-    public void eliminaDocumento(Doc_trasporto_rientroBulk documento)
-            throws ComponentException {
+    private String descriviDoc(
+            Doc_trasporto_rientroBulk doc) {
 
-        try {
-            CNRUserContext userContext = getUserContext();
-
-            // Crea il component session
-            DocTrasportoRientroComponentSession component = (DocTrasportoRientroComponentSession)
-                    EJBCommonServices.createEJB(
-                            DOC_TRASPORTO_RIENTRO_COMPONENT_SESSION,
-                            DocTrasportoRientroComponentSession.class
-                    );
-
-            // Elimina
-            component.eliminaConBulk(userContext, documento);
-
-            log.info("Documento eliminato: {}/{}/{}/{}",
-                    documento.getEsercizio(),
-                    documento.getPgInventario(),
-                    documento.getTiDocumento(),
-                    documento.getPgDocTrasportoRientro());
-
-        } catch (ComponentException | RemoteException e) {
-            log.error("Errore nell'eliminazione documento", e);
-            throw new ComponentException("Errore nell'eliminazione documento: " + e.getMessage(), e);
+        if (doc == null) {
+            return "null";
         }
-    }
 
-    /**
-     * Ottiene il CNRUserContext dal SecurityContext
-     */
-    private CNRUserContext getUserContext() {
-        if (securityContext != null && securityContext.getUserPrincipal() instanceof CNRUserContext) {
-            return (CNRUserContext) securityContext.getUserPrincipal();
-        }
-        throw new IllegalStateException("CNRUserContext non disponibile nel SecurityContext");
+        return String.format(
+                "[es=%s, inv=%s, tipo=%s, pg=%s, uuid=%s]",
+                doc.getEsercizio(),
+                doc.getPgInventario(),
+                doc.getTiDocumento(),
+                doc.getPgDocTrasportoRientro(),
+                doc.getIdFlussoHappysign()
+        );
     }
 }

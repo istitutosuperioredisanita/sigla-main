@@ -5,10 +5,10 @@ import it.cnr.jada.util.OrderedHashtable;
 public class AllegatoDocumentoRientroBulk extends AllegatoDocTraspRientroBulk {
 	private static final long serialVersionUID = 1L;
 
-	public static OrderedHashtable aspectNamesKeys = new OrderedHashtable();
+    public static final OrderedHashtable aspectNamesKeys = new OrderedHashtable();
 
-	public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO = "P:sigla_doctrientro_attachment:altro";
-	public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO = "P:sigla_docrientro_attachment:docrientro_firmato";
+    public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO = "P:sigla_docrientro_attachment:altro";
+    public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO = "P:sigla_docrientro_attachment:docrientro_firmato";
 
 	static {
 		aspectNamesKeys.put(P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO,"Altro");

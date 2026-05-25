@@ -1,346 +1,414 @@
-/*
- * Copyright (C) 2020  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package it.cnr.contab.inventario01.service;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.dto.StatoHappySignDto;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
-
+import it.iss.si.dto.happysign.base.EnumEsitoFlowDocumentStatus;
+import it.iss.si.dto.happysign.base.File;
+import it.iss.si.dto.happysign.base.SignersDocumentDetails;
+import it.iss.si.dto.happysign.request.GetStatusRequest;
+import it.iss.si.dto.happysign.response.GetDocumentDetailResponse;
+import it.iss.si.dto.happysign.response.GetDocumentResponse;
+import it.iss.si.dto.happysign.response.GetStatusResponse;
+import it.iss.si.service.HappySignService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
-import java.text.Normalizer;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- * Service per l'invio dei documenti a HappySign per la firma digitale
- *
- * FIRMATARI OBBLIGATORI (minimo 2):
- * 1. Consegnatario (sempre)
- * 2. Responsabile struttura (sempre)
- * 3. Dipendente incaricato (solo se ritiro INCARICATO)
- */
-@Service
-public class DocTraspRientHappySignService {
-/*
-    private static final Logger log = LoggerFactory.getLogger(DocTraspRientHappySignService.class);
+public class DocTraspRientHappySignService implements HappysignDocService {
 
-    @Value("${flows.templateFirme.1firma:#{null}}")
-    private String happysignTemplate;
+    private static final Logger log =
+            LoggerFactory.getLogger(DocTraspRientHappySignService.class);
 
-    @Autowired(required = false)
-    private HappySignService happySignService;
+    private final HappySignService happySignService;
 
+    @Value("${flows.templateFirme.1Firma:#{null}}")
+    private String template1Firma;
+
+    @Value("${flows.templateFirme.2Firme:#{null}}")
+    private String template2Firme;
+
+    @Value("${flows.templateFirme.3Firme:#{null}}")
+    private String template3Firme;
+
+    @Value("${flows.templateFirme.4Firme:#{null}}")
+    private String template4Firme;
+
+    @Value("${flows.templateFirme.5Firme:#{null}}")
+    private String template5Firme;
+
+    @Value("${doc.trasp.rient.happysign.test.enabled:false}")
+    private boolean testEnabled;
+
+    @Value("${doc.trasp.rient.happysign.test.signer:#{null}}")
+    private String testSigner;
+
+    public DocTraspRientHappySignService(HappySignService happySignService) {
+        this.happySignService = happySignService;
+    }
+
+    @Override
     public String inviaDocumentoAdHappySign(
-            Doc_trasporto_rientroBulk documento,
-            byte[] pdfBytes) throws ComponentException {
-
-        log.info("Invio documento a HappySign - Doc: {}/{}/{}/{}",
-                documento.getEsercizio(),
-                documento.getPgInventario(),
-                documento.getTiDocumento(),
-                documento.getPgDocTrasportoRientro());
+            Doc_trasporto_rientroBulk doc,
+            byte[] pdfBytes,
+            String nomeFile,
+            CNRUserContext userContext)
+            throws ComponentException {
 
         try {
-            validaFirmatari(documento);
+            if (doc == null) {
+                throw new ApplicationException("Documento T/R non presente.");
+            }
 
-            // Prepara PDF
-            it.iss.si.dto.happysign.base.File pdfFile = new it.iss.si.dto.happysign.base.File();
-            pdfFile.setFilename(costruisciNomeDocumento(documento));
-            pdfFile.setPdf(pdfBytes);
+            validaPdf(pdfBytes, "PDF da inviare a HappySign");
 
-            // Crea lista firmatari
-            List<Signer> signers = creaListaFirmatari(documento);
+            if (nomeFile == null || nomeFile.trim().isEmpty()) {
+                throw new ApplicationException("Nome file HappySign non valorizzato.");
+            }
 
-            // ✅ Estrai email con stream
-            List<String> emailFirmatari = signers.stream()
-                    .map(Signer::getEmail)
-                    .collect(Collectors.toList());
+            List<String> firmatari = getFirmatari(doc);
 
-            log.info("Invio a HappySign - Template: {}, Firmatari: {}",
-                    happysignTemplate, emailFirmatari);
+            if (firmatari == null || firmatari.isEmpty()) {
+                throw new ApplicationException("Nessun firmatario trovato per il documento T/R.");
+            }
 
-            // ✅ Invia con lista email
+            String templateName = getTemplate(firmatari.size());
+
+            if (templateName == null || templateName.trim().isEmpty()) {
+                throw new ApplicationException(
+                        "Template HappySign non configurato per "
+                                + firmatari.size()
+                                + " firmatari."
+                );
+            }
+
+            File fileToSign = creaFileHappySign(nomeFile, pdfBytes);
+            List<String> approvers = new ArrayList<>();
+
+            log.info(
+                    "Invio documento T/R a HappySign: doc={}, nomeFile={}, template={}, firmatari={}, testEnabled={}",
+                    descriviDoc(doc),
+                    nomeFile,
+                    templateName,
+                    firmatari,
+                    testEnabled
+            );
+
             String uuid = happySignService.startFlowToSignSingleDocument(
-                    happysignTemplate,
-                    emailFirmatari,      // List<String>
-                    new ArrayList<>(),   // Approvatori (vuoto)
-                    pdfFile
+                    templateName,
+                    firmatari,
+                    approvers,
+                    fileToSign
             );
 
             if (uuid == null || uuid.trim().isEmpty()) {
-                throw new ComponentException("UUID non ricevuto da HappySign");
+                throw new ApplicationException("HappySign non ha restituito UUID.");
             }
 
-            log.info("Documento inviato con successo - UUID: {}", uuid);
-            return uuid;
+            return uuid.trim();
+
+        } catch (ApplicationException e) {
+            throw new ComponentException(e.getMessage(), e);
 
         } catch (ComponentException e) {
-            log.error("Errore invio documento a HappySign", e);
             throw e;
+
         } catch (Exception e) {
-            log.error("Errore imprevisto invio documento a HappySign", e);
-            throw new ComponentException("Errore invio a HappySign: " + e.getMessage(), e);
-        }
-    }
-   //Valida che ci siano tutti i firmatari necessari
-
-    private void validaFirmatari(Doc_trasporto_rientroBulk documento) throws ComponentException {
-
-        // ==================== VERIFICA CONSEGNATARIO ====================
-        if (documento.getConsegnatario() == null) {
-            throw new ComponentException("Consegnatario non presente nel documento");
-        }
-
-        if (documento.getConsegnatario().getCd_terzo() == null) {
-            throw new ComponentException("Codice terzo consegnatario non valorizzato");
-        }
-
-        AnagraficoBulk anagConsegnatario = documento.getConsegnatario().getAnagrafico();
-        if (anagConsegnatario == null) {
-            throw new ComponentException("Anagrafica consegnatario non disponibile");
-        }
-
-        validaDatiAnagrafica(anagConsegnatario, "Consegnatario");
-
-        // ==================== VERIFICA RESPONSABILE ====================
-        if (documento.getCdTerzoResponsabile() == null) {
-            throw new ComponentException("Responsabile struttura non configurato");
-        }
-
-        if (documento.getPersonaFisicaResponsabile() == null) {
-            throw new ComponentException("Dati persona fisica responsabile non disponibili");
-        }
-
-        AnagraficoBulk anagResponsabile = documento.getPersonaFisicaResponsabile().getAnagrafico();
-        if (anagResponsabile == null) {
-            throw new ComponentException("Anagrafica responsabile non disponibile");
-        }
-
-        validaDatiAnagrafica(anagResponsabile, "Responsabile");
-
-        // ==================== VERIFICA INCARICATO (se necessario) ====================
-        if (documento.isRitiroIncaricato()) {
-            if (documento.getTerzoIncRitiro() == null) {
-                throw new ComponentException("Dipendente incaricato non presente nel documento");
-            }
-
-            if (documento.getTerzoIncRitiro().getCd_terzo() == null) {
-                throw new ComponentException("Codice terzo dipendente incaricato non valorizzato");
-            }
-
-            AnagraficoBulk anagIncaricato = documento.getTerzoIncRitiro().getAnagrafico();
-            if (anagIncaricato == null) {
-                throw new ComponentException("Anagrafica dipendente incaricato non disponibile");
-            }
-
-            validaDatiAnagrafica(anagIncaricato, "Dipendente incaricato");
+            throw new ComponentException(
+                    "Errore invio documento a HappySign: " + e.getMessage(),
+                    e
+            );
         }
     }
 
-    // Valida i dati anagrafici necessari per la firma
-
-    private void validaDatiAnagrafica(AnagraficoBulk anagrafica, String ruolo) throws ComponentException {
-        if (anagrafica.getNome() == null || anagrafica.getNome().trim().isEmpty()) {
-            throw new ComponentException("Nome non disponibile per " + ruolo);
+    @Override
+    public StatoHappySignDto getStatoFlusso(String uuid) throws Exception {
+        if (uuid == null || uuid.trim().isEmpty()) {
+            throw new ApplicationException("UUID HappySign non valorizzato.");
         }
 
-        if (anagrafica.getCognome() == null || anagrafica.getCognome().trim().isEmpty()) {
-            throw new ComponentException("Cognome non disponibile per " + ruolo);
+        GetDocumentDetailResponse response =
+                happySignService.getDocumentDetails(uuid.trim());
+
+        if (response == null) {
+            throw new ApplicationException("HappySign non ha restituito il dettaglio documento.");
         }
 
-        if (anagrafica.getCodice_fiscale() == null || anagrafica.getCodice_fiscale().trim().isEmpty()) {
-            throw new ComponentException("Codice fiscale non disponibile per " + ruolo);
+        if (response.getStatus() != null && response.getStatus() != 0) {
+            throw new ApplicationException(
+                    "Errore dettaglio documento HappySign: "
+                            + firstNotBlank(response.getReason(), response.getDocreason())
+            );
         }
+
+        EnumEsitoFlowDocumentStatus statoHappySign =
+                EnumEsitoFlowDocumentStatus.esitoForDocStatus(response.getDocstatus());
+
+        if (statoHappySign == null) {
+            throw new ApplicationException(
+                    "Stato HappySign non riconosciuto: " + response.getDocstatus()
+            );
+        }
+
+        String statoNormalizzato = normalizzaStato(statoHappySign);
+
+        String motivoRifiuto = null;
+
+        if (StatoHappySignDto.STATO_RIFIUTATO.equals(statoNormalizzato)) {
+            motivoRifiuto = firstNotBlank(
+                    estraiMotivoRifiutoDaSigners(response.getSigners()),
+                    response.getCancelnote(),
+                    response.getDocreason(),
+                    response.getReason()
+            );
+        }
+
+        return new StatoHappySignDto(
+                statoNormalizzato,
+                motivoRifiuto
+        );
     }
 
-    //Crea la lista dei firmatari per HappySign
-         private List<Signer> creaListaFirmatari(Doc_trasporto_rientroBulk documento) throws ComponentException {
-        List<Signer> signers = new ArrayList<>();
-        int ordine = 1;
+    private String normalizzaStato(EnumEsitoFlowDocumentStatus statoHappySign)
+            throws ApplicationException {
 
-        // ==================== 1. CONSEGNATARIO ====================
-        AnagraficoBulk anagConsegnatario = documento.getConsegnatario().getAnagrafico();
+        if (statoHappySign == null) {
+            throw new ApplicationException("HappySign non ha restituito lo stato del flusso.");
+        }
 
-        String emailConsegnatario = costruisciEmail(
-                anagConsegnatario.getNome(),
-                anagConsegnatario.getCognome()
-        );
+        return switch (statoHappySign) {
+            case TOSIGN -> StatoHappySignDto.STATO_INVIATO;
+            case SIGNED -> StatoHappySignDto.STATO_FIRMATO;
+            case REFUSED, CANCELED, SEGNAD_AND_CANCELED -> StatoHappySignDto.STATO_RIFIUTATO;
+        };
+    }
 
-        Signer signerConsegnatario = creaSigner(
-                anagConsegnatario.getNome(),
-                anagConsegnatario.getCognome(),
-                emailConsegnatario,
-                anagConsegnatario.getCodice_fiscale(),
-                ordine++
-        );
-        signers.add(signerConsegnatario);
+    private String estraiMotivoRifiutoDaSigners(SignersDocumentDetails[] signers) {
+        if (signers == null || signers.length == 0) {
+            return null;
+        }
 
-        log.debug("Firmatario #{}: Consegnatario - {} {} ({})",
-                ordine - 1,
-                signerConsegnatario.getSurname(),
-                signerConsegnatario.getName(),
-                emailConsegnatario);
+        for (SignersDocumentDetails signer : signers) {
+            if (signer == null) {
+                continue;
+            }
 
-        // ==================== 2. RESPONSABILE STRUTTURA ====================
-        AnagraficoBulk anagResponsabile = documento.getPersonaFisicaResponsabile().getAnagrafico();
+            String note = signer.getNote();
 
-        String emailResponsabile = costruisciEmail(
-                anagResponsabile.getNome(),
-                anagResponsabile.getCognome()
-        );
+            if (note != null && !note.trim().isEmpty()) {
+                return note.trim();
+            }
+        }
 
-        Signer signerResponsabile = creaSigner(
-                anagResponsabile.getNome(),
-                anagResponsabile.getCognome(),
-                emailResponsabile,
-                anagResponsabile.getCodice_fiscale(),
-                ordine++
-        );
-        signers.add(signerResponsabile);
+        return null;
+    }
 
-        log.debug("Firmatario #{}: Responsabile - {} {} ({})",
-                ordine - 1,
-                signerResponsabile.getSurname(),
-                signerResponsabile.getName(),
-                emailResponsabile);
+    private String firstNotBlank(String... values) {
+        if (values == null) {
+            return null;
+        }
 
-        // ==================== 3. DIPENDENTE INCARICATO (opzionale) ====================
-        if (documento.isRitiroIncaricato()) {
-            AnagraficoBulk anagIncaricato = documento.getTerzoIncRitiro().getAnagrafico();
+        for (String value : values) {
+            if (value != null && !value.trim().isEmpty()) {
+                return value.trim();
+            }
+        }
 
-            String emailIncaricato = costruisciEmail(
-                    anagIncaricato.getNome(),
-                    anagIncaricato.getCognome()
+        return null;
+    }
+
+
+    private String firstNotBlank(String first, String second) {
+        if (first != null && !first.trim().isEmpty()) {
+            return first.trim();
+        }
+
+        if (second != null && !second.trim().isEmpty()) {
+            return second.trim();
+        }
+
+        return null;
+    }
+
+    @Override
+    public byte[] getDocumentoFirmato(String uuid) throws Exception {
+        if (uuid == null || uuid.trim().isEmpty()) {
+            throw new ApplicationException("UUID HappySign non valorizzato.");
+        }
+
+        GetDocumentResponse response = happySignService.getDocument(uuid.trim());
+
+        if (response == null) {
+            throw new ApplicationException("HappySign non ha restituito il documento firmato.");
+        }
+
+        if (response.getStatus() != null && response.getStatus() != 0) {
+            throw new ApplicationException(
+                    "Errore download documento da HappySign: " + response.getReason()
+            );
+        }
+
+        byte[] pdfFirmato = response.getDocument();
+
+        validaPdf(pdfFirmato, "PDF firmato ricevuto da HappySign");
+
+        return pdfFirmato;
+    }
+
+    private File creaFileHappySign(String nomeFile, byte[] pdfBytes)
+            throws ApplicationException {
+
+        if (nomeFile == null || nomeFile.trim().isEmpty()) {
+            throw new ApplicationException("Nome file HappySign non valorizzato.");
+        }
+
+        validaPdf(pdfBytes, "PDF HappySign");
+
+        File fileToSign = new File();
+        fileToSign.setFilename(nomeFile);
+        fileToSign.setPdf(pdfBytes);
+
+        return fileToSign;
+    }
+
+    private List<String> getFirmatari(Doc_trasporto_rientroBulk doc)
+            throws ApplicationException, ComponentException {
+
+        if (doc == null) {
+            throw new ApplicationException("Documento T/R non presente.");
+        }
+
+        if (testEnabled) {
+            List<String> firmatariRealiDaAce = getFirmatariRealiDaAce(doc);
+
+            log.warn(
+                    "Modalità TEST HappySign attiva. Firmatari REALI recuperati da ACE che firmerebbero in produzione: {}",
+                    firmatariRealiDaAce
             );
 
-            Signer signerIncaricato = creaSigner(
-                    anagIncaricato.getNome(),
-                    anagIncaricato.getCognome(),
-                    emailIncaricato,
-                    anagIncaricato.getCodice_fiscale(),
-                    ordine++
+            log.warn(
+                    "Modalità TEST HappySign attiva. Firmatari inviati realmente a HappySign: [{}, {}]",
+                    testSigner,
+                    testSigner
             );
-            signers.add(signerIncaricato);
 
-            log.debug("Firmatario #{}: Dipendente incaricato - {} {} ({})",
-                    ordine - 1,
-                    signerIncaricato.getSurname(),
-                    signerIncaricato.getName(),
-                    emailIncaricato);
+            return getFirmatariTest();
         }
 
-        return signers;
+        return getFirmatariRealiDaAce(doc);
     }
 
-    //
-    // Costruisce l'email nel formato nome.cognome@iss.it
-    //* Tutto in minuscolo, rimuove spazi e caratteri speciali
-    // *
-    // * @param nome Nome della persona
-    // * @param cognome Cognome della persona
-    // * @return Email nel formato nome.cognome@iss.it
-    //
-    private String costruisciEmail(String nome, String cognome) throws ComponentException {
-        if (nome == null || nome.trim().isEmpty()) {
-            throw new ComponentException("Nome non disponibile per costruire l'email");
-        }
-        if (cognome == null || cognome.trim().isEmpty()) {
-            throw new ComponentException("Cognome non disponibile per costruire l'email");
+    private List<String> getFirmatariRealiDaAce(Doc_trasporto_rientroBulk doc)
+            throws ApplicationException, ComponentException {
+
+        LinkedHashSet<String> firmatari = new LinkedHashSet<>();
+
+        addEmail(firmatari, doc.getTerzoRespDip(), "Responsabile struttura");
+        addEmail(firmatari, doc.getConsegnatario(), "Consegnatario");
+
+        if (doc.isRitiroIncaricato()
+                && doc.getTerzoIncRitiro() != null) {
+            addEmail(firmatari, doc.getTerzoIncRitiro(), "Incaricato al ritiro");
         }
 
-        // Pulisce e normalizza nome e cognome
-        String nomePulito = pulisciStringa(nome);
-        String cognomePulito = pulisciStringa(cognome);
-
-        // Costruisce l'email
-        String email = nomePulito + "." + cognomePulito + "@iss.it";
-
-        log.debug("Email costruita: {} (da: {} {})", email, nome, cognome);
-
-        return email;
+        return new ArrayList<>(firmatari);
     }
 
-    //
-    // Pulisce una stringa per l'uso nell'email usando normalizzazione Unicode
-    //
-    private String pulisciStringa(String stringa) {
-        if (stringa == null || stringa.trim().isEmpty()) {
-            return "";
+    private void addEmail(
+            LinkedHashSet<String> firmatari,
+            TerzoBulk terzo,
+            String ruolo)
+            throws ApplicationException, ComponentException {
+
+        if (terzo == null) {
+            throw new ApplicationException("Firmatario non valorizzato: " + ruolo);
         }
 
-        // Converte in minuscolo
-        String risultato = stringa.toLowerCase().trim();
+        String email = AceEmailLookupServiceFactory
+                .get()
+                .getEmailByTerzo(terzo);
 
-        // Rimuove spazi e trattini
-        risultato = risultato.replace(" ", "").replace("-", "");
-
-        // Normalizza caratteri Unicode (rimuove accenti)
-        risultato = Normalizer.normalize(risultato, Normalizer.Form.NFD);
-        risultato = risultato.replaceAll("\\p{M}", ""); // Rimuove i segni diacritici
-
-        // Rimuove tutti i caratteri non alfanumerici
-        risultato = risultato.replaceAll("[^a-z0-9]", "");
-
-        return risultato;
-    }
-
-    // Crea un oggetto Signer per HappySign
-
-    private Signer creaSigner(String nome, String cognome, String email,
-                              String codiceFiscale, int ordine) {
-        Signer signer = new Signer();
-        signer.setName(nome);
-        signer.setSurname(cognome);
-        signer.setEmail(email);
-        signer.setTaxcode(codiceFiscale);
-        signer.setOrder(ordine);
-        return signer;
-    }
-
-    // Costruisce il nome del documento per HappySign
-
-    private String costruisciNomeDocumento(Doc_trasporto_rientroBulk documento) {
-        StringBuilder nome = new StringBuilder();
-
-        // Tipo documento
-        if (Doc_trasporto_rientroBulk.TRASPORTO.equals(documento.getTiDocumento())) {
-            nome.append("Trasporto");
-        } else {
-            nome.append("Rientro");
+        if (email == null || email.trim().isEmpty()) {
+            throw new ApplicationException(
+                    "Email non trovata tramite ACE per il firmatario: " + ruolo
+            );
         }
 
-        // Dati identificativi
-        nome.append("_");
-        nome.append(documento.getEsercizio());
-        nome.append("_");
-        nome.append(documento.getPgInventario());
-        nome.append("_");
-        nome.append(documento.getPgDocTrasportoRientro());
-        nome.append(".pdf");
+        log.info(
+                "Firmatario reale recuperato da ACE: ruolo={}, terzo={}, email={}",
+                ruolo,
+                terzo.getCd_terzo(),
+                email
+        );
 
-        return nome.toString();
+        firmatari.add(email.trim().toLowerCase());
     }
-    */
+
+    private List<String> getFirmatariTest()
+            throws ApplicationException {
+
+        if (testSigner == null || testSigner.trim().isEmpty()) {
+            throw new ApplicationException(
+                    "Modalità test HappySign attiva ma testSigner non configurato."
+            );
+        }
+
+        List<String> firmatari = new ArrayList<>();
+
+        firmatari.add(testSigner.trim().toLowerCase());
+        firmatari.add(testSigner.trim().toLowerCase());
+
+        return firmatari;
+    }
+
+    private String getTemplate(int numeroFirmatari) {
+        return switch (numeroFirmatari) {
+            case 1 -> template1Firma;
+            case 2 -> template2Firme;
+            case 3 -> template3Firme;
+            case 4 -> template4Firme;
+            case 5 -> template5Firme;
+            default -> null;
+        };
+    }
+
+
+    private void validaPdf(byte[] pdfBytes, String label) throws ApplicationException {
+        if (pdfBytes == null || pdfBytes.length == 0) {
+            throw new ApplicationException(label + " vuoto.");
+        }
+
+        if (pdfBytes.length < 5) {
+            throw new ApplicationException(label + " non valido.");
+        }
+
+        String header = new String(pdfBytes, 0, 5);
+
+        if (!header.startsWith("%PDF")) {
+            throw new ApplicationException(label + " non valido: non inizia con %PDF.");
+        }
+    }
+
+    private String descriviDoc(Doc_trasporto_rientroBulk doc) {
+        if (doc == null) {
+            return "null";
+        }
+
+        return "esercizio=" + doc.getEsercizio()
+                + ", inventario=" + doc.getPgInventario()
+                + ", tipo=" + doc.getTiDocumento()
+                + ", pg=" + doc.getPgDocTrasportoRientro()
+                + ", stato=" + doc.getStato()
+                + ", statoFlusso=" + doc.getStatoFlusso()
+                + ", uuid=" + doc.getIdFlussoHappysign();
+    }
+
 }
-

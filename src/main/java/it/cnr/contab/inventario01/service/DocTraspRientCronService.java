@@ -1,272 +1,247 @@
 package it.cnr.contab.inventario01.service;
 
-import org.springframework.stereotype.Service;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.dto.StatoHappySignDto;
+import it.cnr.contab.utenze00.bp.WSUserContext;
+import it.cnr.jada.UserContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import jakarta.annotation.PostConstruct;
+import java.util.Calendar;
+import java.util.List;
 
-/**
- * Service per la verifica schedulata delle firme digitali
- * dei documenti di trasporto/rientro su HappySign
- */
-
-
-@Service
 public class DocTraspRientCronService {
-/*
-    private static final Logger log = LoggerFactory.getLogger(DocTraspRientCronService.class);
 
-    @Autowired(required = false)
-    private it.iss.si.service.HappySignService happySignService;
+    private static final Logger log =
+            LoggerFactory.getLogger(DocTraspRientCronService.class);
 
-   // @Autowired
-    //private DocTraspRientCMISService docTrasportoRientroCMISService;
+    private static final int RETRY_MAX = 3;
+    private static final int BATCH_SIZE = 50;
 
     @Autowired
-    private DocTraspRientFlowService docTraspRientFlowService;
+    private DocTraspRientFlowService flowService;
 
-    @Context
-    SecurityContext securityContext;
+    @Autowired
+    private HappysignDocService happySignDocService;
 
-    //Metodo principale chiamato dallo scheduler
-         @Transactional(propagation = Propagation.REQUIRED)
-    public void verificaFirmeDocumentiTrasportoRientro() {
+    private UserContext userContext;
+
+    @PostConstruct
+    public void init() {
+        userContext = new WSUserContext(
+                "JOB_HAPPYSIGN",
+                null,
+                Calendar.getInstance().get(Calendar.YEAR),
+                null,
+                null,
+                null
+        );
+    }
+
+    /**
+     * Metodo principale del job schedulato.
+     * Recupera tutti i documenti da verificare su HappySign e avvia l’elaborazione a batch,
+     * gestendo log iniziale/finale e eventuali errori globali.
+     */
+    public void executeVerificaFirmeHappySign() {
+
+        long start = System.currentTimeMillis();
+
         try {
-            log.info("Inizio verifica documenti trasporto/rientro su HappySign");
+            log.info("START HappySign T/R - user={}, esercizio={}",
+                    userContext.getUser(),
+                    Calendar.getInstance().get(Calendar.YEAR));
 
-            List<Doc_trasporto_rientroBulk> listaDocumenti =new ArrayList<>();
-                    //docTraspRientFlowService.getDocumentiPredispostiAllaFirma();
+            List<Doc_trasporto_rientroBulk> documenti =
+                    flowService.getDocumentiPredispostiAllaFirma(userContext);
 
-            if (listaDocumenti == null || listaDocumenti.isEmpty()) {
+            if (documenti == null || documenti.isEmpty()) {
                 log.info("Nessun documento da verificare");
                 return;
             }
 
-            log.info("Trovati {} documenti da verificare", listaDocumenti.size());
+            log.info("Documenti trovati: {}", documenti.size());
 
-            int firmati = 0;
-            int rifiutati = 0;
-            int inAttesa = 0;
-            int cancellati = 0;
-            int errori = 0;
+            processaBatch(documenti);
 
-            for (Doc_trasporto_rientroBulk documento : listaDocumenti) {
-                try {
-                    EnumEsitoFlowDocumentStatus esito = processaDocumentoHappySign(documento);
+        } catch (Exception e) {
+            log.error("Errore globale job HappySign T/R", e);
+        }
 
-                    if (esito == null) {
-                        errori++;
-                        continue;
-                    }
+        long end = System.currentTimeMillis();
+        log.info("END HappySign T/R - durata={} ms", (end - start));
+    }
 
-                    switch (esito) {
-                        case SIGNED:
-                            firmati++;
-                            break;
-                        case REFUSED:
-                            rifiutati++;
-                            break;
-                        case TOSIGN:
-                            inAttesa++;
-                            break;
-                        case CANCELED:
-                        case SEGNAD_AND_CANCELED:
-                            cancellati++;
-                            break;
-                        default:
-                            errori++;
-                    }
+    /**
+     * Divide i documenti in blocchi (batch) per evitare sovraccarico su sistema e servizi esterni.
+     * Ogni batch viene processato sequenzialmente, mantenendo il controllo su memoria e performance.
+     */
+    private void processaBatch(List<Doc_trasporto_rientroBulk> documenti) {
 
-                } catch (Exception e) {
-                    errori++;
-                    log.error("Errore elaborazione doc {}/{}/{}/{}",
-                            documento.getEsercizio(),
-                            documento.getPgInventario(),
-                            documento.getTiDocumento(),
-                            documento.getPgDocTrasportoRientro(), e);
+        int totale = documenti.size();
+
+        for (int i = 0; i < totale; i += BATCH_SIZE) {
+
+            int end = Math.min(i + BATCH_SIZE, totale);
+            List<Doc_trasporto_rientroBulk> batch = documenti.subList(i, end);
+
+            log.info("Processing batch {}-{}", i, end);
+
+            for (Doc_trasporto_rientroBulk doc : batch) {
+                processaDocumentoConRetry(doc);
+            }
+        }
+    }
+
+    /**
+     * Gestisce il retry automatico per ogni documento.
+     * In caso di errore transient (es. timeout HappySign), riprova fino a RETRY_MAX volte prima di fallire definitivamente.
+     */
+    private void processaDocumentoConRetry(Doc_trasporto_rientroBulk doc) {
+
+        int tentativi = 0;
+
+        while (tentativi < RETRY_MAX) {
+            try {
+                verificaDocumento(doc);
+                return;
+
+            } catch (Exception e) {
+                tentativi++;
+
+                log.warn(
+                        "Retry {} per documento pg={} errore={}",
+                        tentativi,
+                        safePg(doc),
+                        e.getMessage()
+                );
+
+                if (tentativi >= RETRY_MAX) {
+                    log.error(
+                            "Errore definitivo documento pg={}",
+                            safePg(doc),
+                            e
+                    );
                 }
             }
-
-            log.info("Verifica completata - Firmati: {}, Rifiutati: {}, In attesa: {}, Cancellati: {}, Errori: {}",
-                    firmati, rifiutati, inAttesa, cancellati, errori);
-
-        } catch (Exception e) {
-            log.error("Errore critico durante verifica firme", e);
         }
     }
 
-   //Processa un singolo documento verificandone lo stato su HappySign
+    /**
+     * Controlla lo stato del documento su HappySign e instrada verso le azioni corrette:
+     * firmato → aggiornamento documento,
+     * rifiutato → gestione rifiuto,
+     * inviato → in attesa.
+     */
+    private void verificaDocumento(Doc_trasporto_rientroBulk doc) throws Exception {
 
-    private EnumEsitoFlowDocumentStatus processaDocumentoHappySign(Doc_trasporto_rientroBulk documento) throws Exception {
-
-        if (documento.getIdFlussoHappysign() == null || documento.getIdFlussoHappysign().isEmpty()) {
-            log.warn("Documento {} senza idFlusso - skip", documento.getPgDocTrasportoRientro());
-            return null;
+        if (doc == null) {
+            return;
         }
 
-        GetStatusRequest getStatusRequest = new GetStatusRequest();
-        getStatusRequest.setUuid(documento.getIdFlussoHappysign());
+        String uuid = doc.getIdFlussoHappysign();
 
-        EnumEsitoFlowDocumentStatus statusResponse = happySignService.getDocumentStatus(getStatusRequest.getUuid());
-
-        if (statusResponse == null || statusResponse.docstatus() == null) {
-            log.error("Risposta nulla da HappySign per doc {}", documento.getIdFlussoHappysign());
-            return null;
+        if (uuid == null || uuid.trim().isEmpty()) {
+            return;
         }
 
-        Integer docStatus = statusResponse.docstatus();
-        EnumEsitoFlowDocumentStatus esito = EnumEsitoFlowDocumentStatus.esitoForDocStatus(docStatus);
+        StatoHappySignDto stato = safeCallStato(uuid);
 
-        log.debug("Documento {} - stato HappySign: {} ({})",
-                documento.getIdFlussoHappysign(), esito, docStatus);
-
-        if (esito == null) {
-            log.warn("Stato sconosciuto {} per doc {}", docStatus, documento.getIdFlussoHappysign());
-            return null;
+        if (stato == null || stato.getStato() == null) {
+            log.warn("Stato nullo per UUID={}", uuid);
+            return;
         }
 
-        switch (esito) {
-            case SIGNED:
-                gestioneDocumentoFirmato(documento);
-                break;
+        log.info(
+                "Doc pg={} stato={} uuid={}",
+                doc.getPgDocTrasportoRientro(),
+                stato.getStato(),
+                uuid
+        );
 
-            case REFUSED:
-                gestioneDocumentoRifiutato(documento);
-                break;
-
-            case TOSIGN:
-                log.debug("Documento {} in attesa di firma", documento.getPgDocTrasportoRientro());
-                break;
-
-            case CANCELED:
-            case SEGNAD_AND_CANCELED:
-                log.info("Documento {} annullato su HappySign", documento.getPgDocTrasportoRientro());
-                docTraspRientFlowService.aggiornaDocumentoRifiutato(documento, "Documento annullato dal flusso firma");
-                break;
-
-            default:
-                log.warn("Stato non gestito per doc {}", documento.getIdFlussoHappysign());
+        if (stato.isFirmato()) {
+            gestisciFirmato(doc, uuid);
+            return;
         }
 
-        return esito;
+        if (stato.isRifiutato()) {
+            gestisciRifiuto(doc, stato);
+            return;
+        }
+
+        if (stato.isInviato()) {
+            log.debug("Doc pg={} in attesa firma", safePg(doc));
+        }
     }
 
-    //Gestisce un documento firmato su HappySign
-
-    private void gestioneDocumentoFirmato(Doc_trasporto_rientroBulk documento) throws Exception {
-
-        log.info("Documento FIRMATO - {}/{}/{}/{}",
-                documento.getEsercizio(),
-                documento.getPgInventario(),
-                documento.getTiDocumento(),
-                documento.getPgDocTrasportoRientro());
-
+    /**
+     * Wrapper sicuro per chiamata stato HappySign.
+     * Permette di centralizzare logging e gestione errori per eventuali problemi di integrazione esterna.
+     */
+    private StatoHappySignDto safeCallStato(String uuid) throws Exception {
         try {
-            GetDocumentRequest getDocumentRequest = new GetDocumentRequest();
-            getDocumentRequest.setUuid(documento.getIdFlussoHappysign());
-
-            GetDocumentResponse getDocumentResponse = happySignService.getDocument(getDocumentRequest.getUuid());
-
-            if (getDocumentResponse == null || getDocumentResponse.getDocument() == null) {
-                throw new Exception("PDF firmato non disponibile da HappySign");
-            }
-
-            CNRUserContext systemUserContext = getUserContext();
-
-            //StorageObject so = docTrasportoRientroCMISService.salvaStampaDocumentoFirmatoSuCMIS(
-            //        getDocumentResponse.getDocument(),
-             //       documento,
-               //     systemUserContext);
-
-            //log.info("PDF firmato salvato su CMIS - Key: {}", so.getKey());
-
-            //docTraspRientFlowService.aggiornaDocumentoFirmato(documento);
-
-            //log.info("Documento {} aggiornato a stato FIRMATO", documento.getPgDocTrasportoRientro());
-
-
-
+            return happySignDocService.getStatoFlusso(uuid);
         } catch (Exception e) {
-            log.error("Errore salvataggio documento firmato", e);
+            log.error("Errore chiamata stato HappySign uuid={}", uuid, e);
             throw e;
         }
     }
 
-    //Gestisce un documento rifiutato su HappySign
+    /**
+     * Gestisce il caso documento firmato.
+     * Scarica il PDF firmato e aggiorna il sistema interno tramite flowService.
+     */
+    private void gestisciFirmato(Doc_trasporto_rientroBulk doc, String uuid) throws Exception {
 
-    private void gestioneDocumentoRifiutato(Doc_trasporto_rientroBulk documento) throws Exception {
+        byte[] pdf = safeCallDocumento(uuid);
 
-        log.info("Documento RIFIUTATO - {}/{}/{}/{}",
-                documento.getEsercizio(),
-                documento.getPgInventario(),
-                documento.getTiDocumento(),
-                documento.getPgDocTrasportoRientro());
+        flowService.aggiornaDocumentoFirmato(
+                userContext,
+                doc,
+                pdf
+        );
 
+        log.info("Documento pg={} aggiornato come FIRMATO", safePg(doc));
+    }
+
+    /**
+     * Wrapper sicuro per download documento firmato da HappySign.
+     * Consente logging centralizzato in caso di errore o indisponibilità del servizio.
+     */
+    private byte[] safeCallDocumento(String uuid) throws Exception {
         try {
-            GetDocumentDetailsRequest getDetailsRequest = new GetDocumentDetailsRequest();
-            getDetailsRequest.setUuid(documento.getIdFlussoHappysign());
-
-            GetDocumentDetailResponse documentDetails = happySignService.getDocumentDetails(getDetailsRequest.getUuid());
-
-            String motivoRifiuto = estraiMotivoRifiuto(documentDetails);
-
-            log.info("Motivo rifiuto: {}", motivoRifiuto);
-
-            docTraspRientFlowService.aggiornaDocumentoRifiutato(documento, motivoRifiuto);
-
-            log.info("Documento {} aggiornato a stato ANNULLATO", documento.getPgDocTrasportoRientro());
-
+            return happySignDocService.getDocumentoFirmato(uuid);
         } catch (Exception e) {
-            log.error("Errore gestione documento rifiutato", e);
+            log.error("Errore download PDF uuid={}", uuid, e);
             throw e;
         }
     }
 
-    //Estrae il motivo del rifiuto dai dettagli del documento HappySign
-        private String estraiMotivoRifiuto(GetDocumentDetailResponse documentDetails) {
-        if (documentDetails == null) {
-            return "Documento rifiutato durante la firma digitale";
-        }
+    /**
+     * Gestisce il caso di rifiuto firma.
+     * Aggiorna il documento con il motivo restituito da HappySign per tracciamento e audit.
+     */
+    private void gestisciRifiuto(Doc_trasporto_rientroBulk doc, StatoHappySignDto stato) {
 
-        StringBuilder motivo = new StringBuilder("Firma rifiutata");
+        flowService.aggiornaDocumentoRifiutato(
+                userContext,
+                doc,
+                stato.getMotivoRifiuto()
+        );
 
-        if (documentDetails.getDocreason() != null && !documentDetails.getDocreason().isEmpty()) {
-            motivo.append(" - ").append(documentDetails.getDocreason());
-        }
-
-        if (documentDetails.getSigners() != null && documentDetails.getSigners().length > 0) {
-            for (it.iss.si.dto.happysign.base.SignersDocumentDetails signer : documentDetails.getSigners()) {
-                if ("REFUSE".equalsIgnoreCase(signer.getOperation()) ||
-                        "REJECT".equalsIgnoreCase(signer.getOperation())) {
-
-                    motivo.append(" - Rifiutato da: ")
-                            .append(Optional.ofNullable(signer.getPerformedby()).orElse("N/D"));
-
-                    if (signer.getNote() != null && !signer.getNote().isEmpty()) {
-                        motivo.append(" - Motivo: ").append(signer.getNote());
-                    }
-
-                    if (signer.getPerformedon() != null) {
-                        motivo.append(" - Data: ").append(signer.getPerformedon());
-                    }
-                }
-            }
-        }
-
-        if (documentDetails.getCancelnote() != null && !documentDetails.getCancelnote().isEmpty()) {
-            motivo.append(" - Note: ").append(documentDetails.getCancelnote());
-        }
-
-        return motivo.toString();
+        log.info("Documento pg={} RIFIUTATO motivo={}",
+                safePg(doc),
+                stato.getMotivoRifiuto()
+        );
     }
 
-    //Ottiene il CNRUserContext dal SecurityContext
-
-    private CNRUserContext getUserContext() {
-        if (securityContext != null && securityContext.getUserPrincipal() instanceof CNRUserContext) {
-            return (CNRUserContext) securityContext.getUserPrincipal();
-        }
-
-        log.warn("SecurityContext non disponibile, uso CNRUserContext vuoto");
-        return new CNRUserContext();
+    /**
+     * Metodo di utilità per log safe.
+     * Evita NullPointerException quando il documento è nullo durante il logging.
+     */
+    private Object safePg(Doc_trasporto_rientroBulk doc) {
+        return doc != null ? doc.getPgDocTrasportoRientro() : "null";
     }
-    */
 }

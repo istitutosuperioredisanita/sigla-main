@@ -6,10 +6,22 @@
             it.cnr.contab.inventario01.bulk.*,
             it.cnr.contab.inventario01.bp.*,
             it.cnr.jada.comp.ApplicationException"
-    %>
+%>
 
 <%
-    CRUDTrasportoBeniInvBP bp = (CRUDTrasportoBeniInvBP)BusinessProcess.getBusinessProcess(request);
+    CRUDTrasportoBeniInvBP bp =
+        (CRUDTrasportoBeniInvBP) BusinessProcess.getBusinessProcess(request);
+
+    /*
+     * NON usare bp.isEditable() qui.
+     *
+     * Dopo firma HappySign, bp.isEditable() può essere true
+     * per permettere il salvataggio/gestione degli allegati.
+     *
+     * I dettagli beni invece devono restare modificabili solo
+     * quando il documento è realmente modificabile lato dettagli.
+     */
+    boolean dettagliModificabili = bp.isDettagliModificabili();
 %>
 
 <div class="Group">
@@ -19,9 +31,9 @@
           <% bp.getDettBeniController().writeHTMLTable(
                 pageContext,
                 "righeTrasporto",
-                bp.isEditable(),
+                dettagliModificabili,
                 false,
-                bp.isEditable(),
+                dettagliModificabili,
                 null,
                 "100px",
                 true); %>
@@ -31,35 +43,54 @@
 
     <table>
       <tr>
-        <td><% bp.getDettBeniController().writeFormLabel(out,"codiceCompleto"); %></td>
-        <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,"codiceCompleto"); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out, "codiceCompleto"); %></td>
+        <td colspan="2">
+            <% bp.getDettBeniController().writeFormInput(out, "codiceCompleto"); %>
+        </td>
       </tr>
+
       <tr>
-        <td><% bp.getDettBeniController().writeFormLabel(out,"ds_bene"); %></td>
-        <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,null,"ds_bene",true,null,null); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out, "ds_bene"); %></td>
+        <td colspan="2">
+            <% bp.getDettBeniController().writeFormInput(out, null, "ds_bene", true, null, null); %>
+        </td>
       </tr>
+
       <tr>
-        <td><% bp.getDettBeniController().writeFormLabel(out,"ti_istituzionale_commerciale"); %></td>
-        <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,null,"ti_istituzionale_commerciale",true,null,null); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out, "ti_istituzionale_commerciale"); %></td>
+        <td colspan="2">
+            <% bp.getDettBeniController().writeFormInput(out, null, "ti_istituzionale_commerciale", true, null, null); %>
+        </td>
       </tr>
+
       <tr>
-        <td><% bp.getDettBeniController().writeFormLabel(out,"find_categoria_bene"); %></td>
-        <td colspan="2"><% bp.getDettBeniController().writeFormInput(out,null,"find_categoria_bene",true,null,null); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out, "find_categoria_bene"); %></td>
+        <td colspan="2">
+            <% bp.getDettBeniController().writeFormInput(out, null, "find_categoria_bene", true, null, null); %>
+        </td>
       </tr>
     </table>
 
     <table>
       <tr>
-        <td><% bp.getDettBeniController().writeFormLabel(out,"find_assegnatario"); %></td>
-        <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"find_assegnatario",true,null,null); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out, "find_assegnatario"); %></td>
+        <td colspan="3">
+            <% bp.getDettBeniController().writeFormInput(out, null, "find_assegnatario", true, null, null); %>
+        </td>
       </tr>
+
       <tr>
-        <td><% bp.getDettBeniController().writeFormLabel(out,"find_ubicazione"); %></td>
-        <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"find_ubicazione",true,null,null); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out, "find_ubicazione"); %></td>
+        <td colspan="3">
+            <% bp.getDettBeniController().writeFormInput(out, null, "find_ubicazione", true, null, null); %>
+        </td>
       </tr>
+
       <tr>
-        <td><% bp.getDettBeniController().writeFormLabel(out,"ds_condizione_bene"); %></td>
-        <td colspan="3"><% bp.getDettBeniController().writeFormInput(out,null,"ds_condizione_bene",true,null,null); %></td>
+        <td><% bp.getDettBeniController().writeFormLabel(out, "ds_condizione_bene"); %></td>
+        <td colspan="3">
+            <% bp.getDettBeniController().writeFormInput(out, null, "ds_condizione_bene", true, null, null); %>
+        </td>
       </tr>
     </table>
 </div>
