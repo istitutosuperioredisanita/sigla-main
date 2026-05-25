@@ -39,7 +39,7 @@
         <version.sdi.fatturapa>1.0.2</version.sdi.fatturapa>
         <version.sigla-ws.client>1.0.2</version.sigla-ws.client>
         <spring.version>7.0.2</spring.version>
-            <jada.version>8.0.9</jada.version>
+        <jada.version>8.0.9</jada.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.directory>target</project.build.directory>
         <sigla.build.number>DEV</sigla.build.number>
@@ -51,8 +51,8 @@
         <commons-io.version>2.7</commons-io.version>
         <git.changelog.maven.plugin.version>1.61</git.changelog.maven.plugin.version>
 
-        <version.wildfly>32.0.0.Final</version.wildfly>
-        <version.wildfly.maven.plugin>5.1.5.Final</version.wildfly.maven.plugin>
+        <version.wildfly>38.0.0.Final</version.wildfly>
+        <version.wildfly.maven.plugin>6.0.0.Final</version.wildfly.maven.plugin>
         <version.wildfly.datasources.galleon.pack>6.0.0.Final</version.wildfly.datasources.galleon.pack>
         <bootable.jar>false</bootable.jar>
 
@@ -62,6 +62,22 @@
 
         <version.arquillian-graphene>3.0.0-alpha.4</version.arquillian-graphene>
         <test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
+
+        <!-- Default per sviluppo locale H2 -->
+        <sigla.db.driver>h2</sigla.db.driver>
+        <sigla.db.url>jdbc:h2:mem:sigladb</sigla.db.url>
+        <sigla.db.user>sa</sigla.db.user>
+        <sigla.db.password>sa</sigla.db.password>
+        <sigla.db.min-pool-size>10</sigla.db.min-pool-size>
+        <sigla.db.max-pool-size>250</sigla.db.max-pool-size>
+        <spring.profiles.active>default</spring.profiles.active>
+        <sigla.mail.smtp_host>smtp.amministrazione.cnr.it</sigla.mail.smtp_host>
+        <sigla.mail.port>25</sigla.mail.port>
+        <sigla.mail.from>sigla@cnr.it</sigla.mail.from>
+        <sigla.ldap.url>ldap://localhost:389</sigla.ldap.url>
+
+        <liquibase.bootstrap.esercizio>2026</liquibase.bootstrap.esercizio>
+        <cors.allow-origin>http://localhost:9000</cors.allow-origin>
     </properties>
 
     <!-- Repository necessari per le dipendenze WildFly/JBoss -->
@@ -225,10 +241,24 @@
                         <java-opt>-Xmx2g</java-opt>
                         <java-opt>-Xms1g</java-opt>
                         <java-opt>-XX:MaxMetaspaceSize=512m</java-opt>
-                        <java-opt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787</java-opt>
+                        <java-opt>-Djboss.modules.system.pkgs=org.jboss.byteman</java-opt>
                         <java-opt>-Dcors.allow-origin=${cors.allow-origin}</java-opt>
                     </java-opts>
+                    <serverArgs>
+                        <serverArg>-Dsigla.db.driver=${sigla.db.driver}</serverArg>
+                        <serverArg>-Dsigla.db.url=${sigla.db.url}</serverArg>
+                        <serverArg>-Dsigla.db.user=${sigla.db.user}</serverArg>
+                        <serverArg>-Dsigla.db.password=${sigla.db.password}</serverArg>
+                        <serverArg>-Dsigla.db.min-pool-size=${sigla.db.min-pool-size}</serverArg>
+                        <serverArg>-Dsigla.db.max-pool-size=${sigla.db.max-pool-size}</serverArg>
+                        <serverArg>-Dsigla.mail.smtp_host=${sigla.mail.smtp_host}</serverArg>
+                        <serverArg>-Dsigla.mail.port=${sigla.mail.port}</serverArg>
+                        <serverArg>-Dsigla.mail.from=${sigla.mail.from}</serverArg>
+                        <serverArg>-Dsigla.ldap.url=${sigla.ldap.url}</serverArg>
 
+                        <serverArg>-Dspring.profiles.active=${spring.profiles.active}</serverArg>
+                        <serverArg>-Dliquibase.bootstrap.esercizio=${liquibase.bootstrap.esercizio}</serverArg>
+                    </serverArgs>
                     <!-- Produce un bootable JAR eseguibile con: java -jar target/sigla-bootable.jar -->
                     <!-- nella 5.x bootable-jar diventa bootableJar (camelCase) -->
                     <bootableJar>${bootable.jar}</bootableJar>
