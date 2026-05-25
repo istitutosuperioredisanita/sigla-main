@@ -2043,13 +2043,8 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
                 .append(STATO_INVIATO)
                 .append("') ");
 
-        if (doc != null
-                && doc.getPgInventario() != null
-                && doc.getTiDocumento() != null
-                && doc.getEsercizio() != null
-                && doc.getPgDocTrasportoRientro() != null
-                && doc.getPgDocTrasportoRientro().longValue() > 0L) {
 
+        if (doc != null && doc.hasChiaveDocumentoCompleta()) {
             clause.append("AND NOT (");
             clause.append("dett_x.PG_INVENTARIO = ").append(doc.getPgInventario()).append(" ");
             clause.append("AND dett_x.TI_DOCUMENTO = '").append(doc.getTiDocumento()).append("' ");
@@ -2593,9 +2588,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
         /*
          * Escludo il documento corrente solo se ha PG definitivo positivo.
          */
-        if (doc.getPgDocTrasportoRientro() != null
-                && doc.getPgDocTrasportoRientro().longValue() > 0L) {
-
+        if (doc != null && doc.hasChiaveDocumentoCompleta()) {
             sql.addSQLClause("AND",
                     "NOT (" +
                             "t.PG_INVENTARIO = " + doc.getPgInventario() + " " +

@@ -531,6 +531,13 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         return RIENTRO.equals(getTiDocumento());
     }
 
+    public boolean hasChiaveDocumentoCompleta() {
+        return getPgInventario() != null
+                && getTiDocumento() != null
+                && getEsercizio() != null
+                && getPgDocTrasportoRientro() != null;
+    }
+
     public boolean hasDettagli() {
         return doc_trasporto_rientro_dettColl != null
                 && !doc_trasporto_rientro_dettColl.isEmpty();

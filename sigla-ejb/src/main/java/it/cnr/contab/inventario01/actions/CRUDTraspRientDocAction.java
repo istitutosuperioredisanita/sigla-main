@@ -225,7 +225,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             Integer index = (Integer) caller.getParameter("index");
 
             if (opt == OptionBP.CANCEL_BUTTON) {
-                bp.getDettBeniController().reset(context);
+                bp.getDettBeniController().resync(context);
                 bp.setMessage(isEliminazione ? "Eliminazione annullata." : "Operazione annullata.");
                 bp.resetOperazione(isEliminazione);
                 return context.findDefaultForward();
@@ -237,7 +237,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 bp.elaboraBeneCorrente(context, isEliminazione, false);
             }
 
-            if (!isEliminazione) bp.getDettBeniController().reset(context);
+            if (!isEliminazione) bp.getDettBeniController().resync(context);
 
             int nextIndex = index + 1;
             if (nextIndex < beniDaElaborare.size()) {
@@ -257,26 +257,46 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     public Forward doRemoveFromCRUDMain_DettBeniController(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
+
             if (bp.isTestataEDettagliBloccati()) {
                 bp.setMessage("Impossibile modificare i beni di un documento " + bp.getDoc().getStato());
                 return context.findDefaultForward();
             }
-            bp.getDettBeniController().remove(context);
-            if (bp.getPendingDelete() == null) return context.findDefaultForward();
 
-            if (!bp.getPendingDelete().getPrincipaliSenza().isEmpty()) {
-                OggettoBulk[] beniDaEliminare = bp.getPendingDelete().getPrincipaliSenza().toArray(new OggettoBulk[0]);
-                bp.eliminaBeniDaDettagli(context, beniDaEliminare);
-                bp.getDettBeniController().reset(context);
+            bp.getDettBeniController().remove(context);
+
+            if (bp.getPendingDelete() == null) {
+                return context.findDefaultForward();
+            }
+
+            List<InventarioDocTRBulk> beniDaEliminareSubito = new ArrayList<>();
+            beniDaEliminareSubito.addAll(bp.getPendingDelete().getPrincipaliSenza());
+            beniDaEliminareSubito.addAll(bp.getPendingDelete().getAccessori());
+
+            if (!beniDaEliminareSubito.isEmpty()) {
+                bp.eliminaBeniDaDettagli(
+                        context,
+                        beniDaEliminareSubito.toArray(new OggettoBulk[0])
+                );
+                bp.getDettBeniController().resync(context);
             }
 
             if (!bp.getPendingDelete().getPrincipaliConAccessori().isEmpty()) {
-                List<InventarioDocTRBulk> beniConAccessori = new ArrayList<>(bp.getPendingDelete().getPrincipaliConAccessori().keySet());
-                return apriFlussoRicorsivoGenerico(context, bp, true, beniConAccessori, 0);
+                List<InventarioDocTRBulk> beniConAccessori =
+                        new ArrayList<>(bp.getPendingDelete().getPrincipaliConAccessori().keySet());
+
+                return apriFlussoRicorsivoGenerico(
+                        context,
+                        bp,
+                        true,
+                        beniConAccessori,
+                        0
+                );
             }
 
             bp.resetOperazione(true);
             return context.findDefaultForward();
+
         } catch (Throwable e) {
             return handleException(context, e);
         }
@@ -294,7 +314,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             List<InventarioDocTRBulk> beniConAccessoriDaConfermare = new ArrayList<>(bp.getPendingAdd().getPrincipaliConAccessori().keySet());
             if (beniConAccessoriDaConfermare.isEmpty()) {
-                bp.getDettBeniController().reset(context);
+                bp.getDettBeniController().resync(context);
                 bp.setMessage("Aggiunta beni completata con successo");
                 bp.resetOperazione(false);
                 return context.findDefaultForward();
@@ -362,8 +382,8 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
     /**
      * Conclude il flusso di aggiunta o eliminazione resettando il Business Process.
      */
-    private void finalizeFlusso(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, boolean ultimaRispostaSI) throws ComponentException, RemoteException {
-        bp.getDettBeniController().reset(context);
+    private void finalizeFlusso(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, boolean ultimaRispostaSI) throws ComponentException, RemoteException, BusinessProcessException {
+        bp.getDettBeniController().resync(context);
         bp.setMessage(isEliminazione ? "Eliminazione completata." : "Aggiunta beni completata con successo");
         bp.resetOperazione(isEliminazione);
     }
@@ -506,8 +526,9 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             Stampa_doc_trasporto_rientroBulk stampa = (Stampa_doc_trasporto_rientroBulk) ppbp.createNewBulk(context);
 
             if (docTrasporto != null && docTrasporto.getPgDocTrasportoRientro() != null) {
-                stampa.setPgInizio(new Integer(docTrasporto.getPgDocTrasportoRientro().intValue()));
-                stampa.setPgFine(new Integer(docTrasporto.getPgDocTrasportoRientro().intValue()));
+                Integer pgDoc = docTrasporto.getPgDocTrasportoRientro().intValue();
+                stampa.setPgInizio(pgDoc);
+                stampa.setPgFine(pgDoc);
             }
             ppbp.setModel(context, stampa);
 
