@@ -63,21 +63,7 @@
         <version.arquillian-graphene>3.0.0-alpha.4</version.arquillian-graphene>
         <test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
 
-        <!-- Default per sviluppo locale H2 -->
-        <sigla.db.driver>h2</sigla.db.driver>
-        <sigla.db.url>jdbc:h2:mem:sigladb</sigla.db.url>
-        <sigla.db.user>sa</sigla.db.user>
-        <sigla.db.password>sa</sigla.db.password>
-        <sigla.db.min-pool-size>10</sigla.db.min-pool-size>
-        <sigla.db.max-pool-size>250</sigla.db.max-pool-size>
-        <spring.profiles.active>default</spring.profiles.active>
-        <sigla.mail.smtp_host>smtp.amministrazione.cnr.it</sigla.mail.smtp_host>
-        <sigla.mail.port>25</sigla.mail.port>
-        <sigla.mail.from>sigla@cnr.it</sigla.mail.from>
-        <sigla.ldap.url>ldap://localhost:389</sigla.ldap.url>
 
-        <liquibase.bootstrap.esercizio>2026</liquibase.bootstrap.esercizio>
-        <cors.allow-origin>http://localhost:9000</cors.allow-origin>
     </properties>
 
     <!-- Repository necessari per le dipendenze WildFly/JBoss -->
@@ -190,6 +176,7 @@
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <version>${version.wildfly.maven.plugin}</version>
                 <configuration>
+
                     <feature-packs>
                         <feature-pack>
                             <location>wildfly@maven(org.jboss.universe:community-universe)#${version.wildfly}</location>
@@ -240,25 +227,11 @@
                     <java-opts>
                         <java-opt>-Xmx2g</java-opt>
                         <java-opt>-Xms1g</java-opt>
-                        <java-opt>-XX:MaxMetaspaceSize=512m</java-opt>
+                        <java-opt>-XX:MaxMetaspaceSize=1024m</java-opt>
                         <java-opt>-Djboss.modules.system.pkgs=org.jboss.byteman</java-opt>
                         <java-opt>-Dcors.allow-origin=${cors.allow-origin}</java-opt>
                     </java-opts>
-                    <serverArgs>
-                        <serverArg>-Dsigla.db.driver=${sigla.db.driver}</serverArg>
-                        <serverArg>-Dsigla.db.url=${sigla.db.url}</serverArg>
-                        <serverArg>-Dsigla.db.user=${sigla.db.user}</serverArg>
-                        <serverArg>-Dsigla.db.password=${sigla.db.password}</serverArg>
-                        <serverArg>-Dsigla.db.min-pool-size=${sigla.db.min-pool-size}</serverArg>
-                        <serverArg>-Dsigla.db.max-pool-size=${sigla.db.max-pool-size}</serverArg>
-                        <serverArg>-Dsigla.mail.smtp_host=${sigla.mail.smtp_host}</serverArg>
-                        <serverArg>-Dsigla.mail.port=${sigla.mail.port}</serverArg>
-                        <serverArg>-Dsigla.mail.from=${sigla.mail.from}</serverArg>
-                        <serverArg>-Dsigla.ldap.url=${sigla.ldap.url}</serverArg>
 
-                        <serverArg>-Dspring.profiles.active=${spring.profiles.active}</serverArg>
-                        <serverArg>-Dliquibase.bootstrap.esercizio=${liquibase.bootstrap.esercizio}</serverArg>
-                    </serverArgs>
                     <!-- Produce un bootable JAR eseguibile con: java -jar target/sigla-bootable.jar -->
                     <!-- nella 5.x bootable-jar diventa bootableJar (camelCase) -->
                     <bootableJar>${bootable.jar}</bootableJar>
