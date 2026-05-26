@@ -23,8 +23,8 @@
 	<fieldProperty
 		name="cd_ti_prestazione"
 		property="cd_ti_prestazione"
-		maxLength="1"
-		inputSize="1"
+		maxLength="5"
+		inputSize="5"
 		inputType="TEXT"
 		nullable="false"
 		enabledOnInsert="true"
