@@ -266,6 +266,7 @@
                     <useIncrementalCompilation>true</useIncrementalCompilation>
                     <staleMillis>0</staleMillis>
                     <fork>false</fork>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
         </plugins>
