@@ -629,13 +629,11 @@ public OggettoBulk modificaConBulk (UserContext userContext,OggettoBulk bulk) th
 			var movimento_cogeHome = (Movimento_cogeHome)getHome(userContext, Movimento_cogeBulk.class);
 			var homeGruppoEP = getHome(userContext, GruppoEPBulk.class);
 			var sqlGruppoEP = homeGruppoEP.createSQLBuilder();
-			sqlGruppoEP.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, AssociazioneContoGruppoBulk.PianoGruppi.CE.name());
 			sqlGruppoEP.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, cdTipoBilancio);
 			List<GruppoEPBulk> gruppoEPBulks = homeGruppoEP.fetchAll(sqlGruppoEP);
 			for(GruppoEPBulk gruppoEPBulk : gruppoEPBulks) {
 				if (gruppoEPBulk.getFlMastrino()) {
 					SQLBuilder sqlAssContoGruppo = associazioneContoGruppoHome.createSQLBuilder();
-					sqlAssContoGruppo.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, AssociazioneContoGruppoBulk.PianoGruppi.CE.name());
 					sqlAssContoGruppo.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
 					sqlAssContoGruppo.addClause(FindClause.AND, "cdGruppoEp", SQLBuilder.EQUALS, gruppoEPBulk.getCdGruppoEp());
 					sqlAssContoGruppo.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, cdTipoBilancio);
@@ -661,6 +659,7 @@ public OggettoBulk modificaConBulk (UserContext userContext,OggettoBulk bulk) th
 								voceEP.getCd_voce_ep()
 						);
 						bil.setSezione(acg.getSezione());
+						bil.setCdPianoGruppi(acg.getCdPianoGruppi());
 						Optional.ofNullable(super.findByPrimaryKey(userContext, bil))
 								.map(BilRiclassificatoBulk.class::cast)
 								.map(persistent -> {

@@ -94,8 +94,25 @@ public class CRUDElaboraBilRiclassificatoBP extends SelezionatoreSearchBP {
     public void aggiornaImportoFinale(ActionContext actioncontext) throws BusinessProcessException{
         CRUDComponentSession crudComponentSession = EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession", CRUDComponentSession.class);
         BilRiclassificatoBulk bilRiclassificatoBulk = (BilRiclassificatoBulk)getFocusedElement(actioncontext);
+        BigDecimal importoFinale = bilRiclassificatoBulk.getImportoFinale();
         try {
+            bilRiclassificatoBulk = (BilRiclassificatoBulk) crudComponentSession.inizializzaBulkPerModifica(actioncontext.getUserContext(), bilRiclassificatoBulk);
+            bilRiclassificatoBulk.setImportoFinale(importoFinale);
             bilRiclassificatoBulk.setRettifica(Optional.ofNullable(bilRiclassificatoBulk.getImportoFinale()).orElseThrow(() -> new ApplicationException("Valorizzare l'importo!")).subtract(bilRiclassificatoBulk.getSaldoConto()));
+            bilRiclassificatoBulk.setToBeUpdated();
+            crudComponentSession.modificaConBulk(actioncontext.getUserContext(), bilRiclassificatoBulk);
+        } catch (ComponentException|RemoteException e) {
+            throw handleException(e);
+        }
+    }
+
+    public void aggiornaNote(ActionContext actioncontext) throws BusinessProcessException{
+        CRUDComponentSession crudComponentSession = EJBCommonServices.createEJB("JADAEJB_CRUDComponentSession", CRUDComponentSession.class);
+        BilRiclassificatoBulk bilRiclassificatoBulk = (BilRiclassificatoBulk)getFocusedElement(actioncontext);
+        String note = bilRiclassificatoBulk.getNote();
+        try {
+            bilRiclassificatoBulk = (BilRiclassificatoBulk) crudComponentSession.inizializzaBulkPerModifica(actioncontext.getUserContext(), bilRiclassificatoBulk);
+            bilRiclassificatoBulk.setNote(note);
             bilRiclassificatoBulk.setToBeUpdated();
             crudComponentSession.modificaConBulk(actioncontext.getUserContext(), bilRiclassificatoBulk);
         } catch (ComponentException|RemoteException e) {
