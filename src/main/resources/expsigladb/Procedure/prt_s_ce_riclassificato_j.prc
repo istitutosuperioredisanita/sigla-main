@@ -127,16 +127,8 @@ BEGIN
       AND  CD_CHIAVE_PRIMARIA    = 'VOCEEP_SPECIALE'
       AND  CD_CHIAVE_SECONDARIA  = 'CONTO_ECONOMICO';
 
-    -- -------------------------------------------------------------------------
-    -- 3. Normalizzazione tipo bilancio (IRES → CIVILISTICO)
-    -- -------------------------------------------------------------------------
     v_i := 0;
-
-    IF p_cd_tipo_bilancio = 'IRES' THEN
-        v_tipo_bilancio := 'CIVILISTICO';
-    ELSE
-        v_tipo_bilancio := p_cd_tipo_bilancio;
-    END IF;
+    v_tipo_bilancio := p_cd_tipo_bilancio;
 
     -- =========================================================================
     -- 4. Loop principale sullo schema di riclassificazione

@@ -33,10 +33,10 @@ public class PDCEconPatrComponentSessionBean extends it.cnr.jada.ejb.CRUDCompone
 }
 
 	@Override
-	public void generaBilancioIRES(UserContext param0) throws ComponentException, RemoteException {
+	public void generaBilancio(UserContext param0, String param1) throws ComponentException, RemoteException {
 		pre_component_invocation(param0,componentObj);
 		try {
-			((PDCEconPatrComponent)componentObj).generaBilancioIRES(param0);
+			((PDCEconPatrComponent)componentObj).generaBilancio(param0,param1);
 			component_invocation_succes(param0,componentObj);
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
 			component_invocation_succes(param0,componentObj);
