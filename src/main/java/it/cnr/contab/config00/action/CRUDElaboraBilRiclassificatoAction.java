@@ -44,6 +44,19 @@ public class CRUDElaboraBilRiclassificatoAction extends SelezionatoreListaAction
         return actioncontext.findDefaultForward();
     }
 
+    public Forward doOnChangeNote(ActionContext actioncontext){
+        CRUDElaboraBilRiclassificatoBP bp = (CRUDElaboraBilRiclassificatoBP)actioncontext.getBusinessProcess();
+        try {
+            bp.fillModels(actioncontext);
+            bp.aggiornaNote(actioncontext);
+        } catch (FillException e) {
+            bp.setMessage(e.getMessage());
+        } catch (BusinessProcessException e) {
+            return handleException(actioncontext, e);
+        }
+        return actioncontext.findDefaultForward();
+    }
+
     public Forward doRefresh(ActionContext actioncontext) throws RemoteException {
         try {
             CRUDElaboraBilRiclassificatoBP bp = (CRUDElaboraBilRiclassificatoBP) actioncontext.getBusinessProcess();
