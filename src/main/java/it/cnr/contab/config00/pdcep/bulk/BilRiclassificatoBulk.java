@@ -7,6 +7,7 @@ package it.cnr.contab.config00.pdcep.bulk;
 import it.cnr.contab.coepcoan00.core.bulk.Sezione;
 
 import java.util.Dictionary;
+import java.util.List;
 
 public class BilRiclassificatoBulk extends BilRiclassificatoBase {
 	public static Dictionary<String, String> tiSezioneKeys = Sezione.KEYS();
@@ -14,6 +15,10 @@ public class BilRiclassificatoBulk extends BilRiclassificatoBase {
 	 * [VOCE_EP ]
 	 **/
 	private ContoBulk voceEp =  new ContoBulk();
+
+	private List<TipoBilancioBulk> tipoBilanci;
+
+	private TipoBilancioBulk tipo_bilancio;
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: BIL_RICLASSIFICATO
@@ -68,5 +73,21 @@ public class BilRiclassificatoBulk extends BilRiclassificatoBase {
 	 **/
 	public void setCdVoceEp(String cdVoceEp)  {
 		this.getVoceEp().setCd_voce_ep(cdVoceEp);
+	}
+
+	public List<TipoBilancioBulk> getTipoBilanci() {
+		return tipoBilanci;
+	}
+
+	public void setTipoBilanci(List<TipoBilancioBulk> tipoBilanci) {
+		this.tipoBilanci = tipoBilanci;
+	}
+
+	public TipoBilancioBulk getTipo_bilancio() {
+		return tipo_bilancio;
+	}
+
+	public void setTipo_bilancio(TipoBilancioBulk tipo_bilancio) {
+		this.tipo_bilancio = tipo_bilancio;
 	}
 }

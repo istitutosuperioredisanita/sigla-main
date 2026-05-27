@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bulkInfo>
+<bulkInfo shortDescription="Bilancio Riclassificato">
 	<fieldProperty
 		name="esercizio"
 		property="esercizio"
@@ -91,6 +91,19 @@
 		command="doOnChangeImportoFinale"
 		nullable="false"
 		label="Importo finale" />
+	<fieldProperty
+		name="tipo_bilancio"
+		property="tipo_bilancio"
+		inputType="SELECT"
+		printProperty="dsTipoBilancio"
+		optionsProperty="tipoBilanci"
+		maxLength="40"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		command="doCambiaTipoBilancio"
+		nullable="false"
+		label="Tipo bilancio" />
+
 	<form
 		name="searchtool">
 		<formFieldProperty
@@ -112,6 +125,9 @@
 		name="rettifica" />
 	<formFieldProperty
 		name="importoFinale" />
+	<formFieldProperty
+		name="tipo_bilancio" />
+
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty

@@ -2289,15 +2289,9 @@ private void inizializzaBulkPerStampa(UserContext userContext, Stampa_vpg_bilanc
 	try{
 		String cd_cds_scrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(userContext);
 		stampa.setTipoBilanci(getHome(userContext, TipoBilancioBulk.class).findAll(userContext));
-		if (stampa instanceof Stampa_vpg_conto_econom_riclassVBulk) {
-			TipoBilancioBulk ires = new TipoBilancioBulk(TipoBilancioEnum.IRES.name());
-			ires.setDsTipoBilancio("Bilancio " + TipoBilancioEnum.IRES.name());
-			stampa.getTipoBilanci().add(ires);
-		}
 		CdsHome cdsHome = (CdsHome)getHome(userContext, CdsBulk.class);
 		CdsBulk cds = (CdsBulk)cdsHome.findByPrimaryKey(new CdsBulk(cd_cds_scrivania));
 		Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHome( userContext, Unita_organizzativa_enteBulk.class).findAll().get(0);
-		
 		if (!cds.getCd_unita_organizzativa().equals(ente.getCd_unita_padre())){
 			stampa.setCdsForPrint(cds);
 			stampa.setCdsForPrintEnabled(false);
