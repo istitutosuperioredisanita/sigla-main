@@ -262,10 +262,10 @@ public class TransactionalPDCEconPatrComponentSession extends it.cnr.jada.ejb.Tr
     }
 
     @Override
-    public void generaBilancioIRES(UserContext param0) throws ComponentException, RemoteException {
+    public void generaBilancio(UserContext param0, String param1, String param2) throws ComponentException, RemoteException {
         try {
-            invoke("generaBilancioIRES", new Object[]{
-                    param0
+            invoke("generaBilancio", new Object[]{
+                    param0, param1, param2
             });
         } catch (java.rmi.RemoteException e) {
             throw e;

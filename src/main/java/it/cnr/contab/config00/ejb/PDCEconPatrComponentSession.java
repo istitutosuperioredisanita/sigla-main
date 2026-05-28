@@ -22,5 +22,5 @@ import jakarta.ejb.Remote;
 
 @Remote
 public interface PDCEconPatrComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
-    void generaBilancioIRES(UserContext userContext) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+    void generaBilancio(UserContext userContext, String cdTipoBilancio, String cdPianoGruppi) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }
