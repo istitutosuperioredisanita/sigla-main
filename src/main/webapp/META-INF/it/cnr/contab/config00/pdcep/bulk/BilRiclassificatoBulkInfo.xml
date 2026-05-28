@@ -100,7 +100,6 @@
 		maxLength="40"
 		enabledOnEdit="true"
 		enabledOnSearch="true"
-		command="doCambiaTipoBilancio"
 		nullable="false"
 		label="Tipo bilancio" />
 	<fieldProperty
@@ -108,10 +107,10 @@
 		property="cdPianoGruppi"
 		inputType="SELECT"
 		keysProperty="ti_pianoGruppiKeys"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
 		inputSize="5"
 		maxLength="5"
-		enabledOnSearch="true"
 		label="Piano Gruppi" />
 	<fieldProperty
 		name="note"
@@ -146,9 +145,13 @@
 	<formFieldProperty
 		name="importoFinale" />
 	<formFieldProperty
-		name="tipo_bilancio" />
+		name="tipo_bilancio"
+		command="doFiltra"
+	/>
 	<formFieldProperty
-		name="cdPianoGruppi" />
+		name="cdPianoGruppi"
+		command="doFiltra"
+	/>
 	<formFieldProperty
 		name="note" />
 

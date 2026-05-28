@@ -31,6 +31,12 @@
                 <div class="pl-2 d-inline-block">
                     <% bp.writeFormInput(out,"tipo_bilancio"); %>
                 </div>
+                <div class="pl-4 d-inline-block">
+                    <% bp.writeFormLabel(out,"cdPianoGruppi"); %>
+                    <div class="pl-2 d-inline-block">
+                        <% bp.writeFormInput(out,"cdPianoGruppi"); %>
+                    </div>
+                </div>
 			</fieldset>
 		</td>
 	</tr>
