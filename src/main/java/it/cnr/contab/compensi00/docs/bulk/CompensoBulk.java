@@ -3375,11 +3375,11 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
     public BigDecimal getImCostoEco() {
         BigDecimal result = this.getIm_lordo_percipiente();
 
-        //Aggiungo rivalsa
+        //Aggiungo rivalsa e Irap
         result = result.add(this.getContributi().stream()
                         .filter(el->el.getAmmontare().compareTo(BigDecimal.ZERO)!=0)
-                        .filter(el->el.isContributoEnte() || el.isTipoContributoIva())
-                        .filter(Contributo_ritenutaBulk::isTipoContributoRivalsa)
+                        .filter(el->el.isContributoEnte() )
+                        .filter(el-> el.isTipoContributoRivalsa() || el.isTipoContributoIrap())
                         .map(Contributo_ritenutaBulk::getAmmontare)
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
@@ -3387,8 +3387,6 @@ public class CompensoBulk extends CompensoBase implements IDefferUpdateSaldi, ID
         if (this.isIstituzionale()) {
             result = result.add(this.getContributi().stream()
                     .filter(el -> el.getAmmontare().compareTo(BigDecimal.ZERO) != 0)
-                    .filter(el -> el.isContributoEnte() || el.isTipoContributoIva())
-                    .filter(el -> !el.isTipoContributoRivalsa())
                     .filter(Contributo_ritenutaBulk::isTipoContributoIva)
                     .filter(Contributo_ritenutaBulk::isContributoEnte)
                     .map(Contributo_ritenutaBulk::getAmmontare)
