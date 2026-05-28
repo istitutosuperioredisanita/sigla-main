@@ -83,7 +83,7 @@ public class CRUDElaboraBilRiclassificatoBP extends SelezionatoreSearchBP {
     public void elaboraBilancio(ActionContext actioncontext) throws BusinessProcessException {
         PDCEconPatrComponentSession pdcEconPatrComponentSession = (PDCEconPatrComponentSession) EJBCommonServices.createEJB("CNRCONFIG00_EJB_PDCEconPatrComponentSession");
         try {
-            pdcEconPatrComponentSession.generaBilancio(actioncontext.getUserContext(), ((BilRiclassificatoBulk)getModel()).getTipo_bilancio().getCdTipoBilancio());
+            pdcEconPatrComponentSession.generaBilancio(actioncontext.getUserContext(), ((BilRiclassificatoBulk)getModel()).getTipo_bilancio().getCdTipoBilancio(), ((BilRiclassificatoBulk)getModel()).getCdPianoGruppi());
             refresh(actioncontext);
             setMessage(FormBP.INFO_MESSAGE, "Operazione effettuata");
         } catch (ComponentException|RemoteException e) {
@@ -142,6 +142,7 @@ public class CRUDElaboraBilRiclassificatoBP extends SelezionatoreSearchBP {
     public RemoteIterator search(ActionContext actioncontext, CompoundFindClause compoundfindclause, OggettoBulk oggettobulk) throws BusinessProcessException {
         compoundfindclause = Optional.ofNullable(compoundfindclause).orElseGet(CompoundFindClause::new);
         compoundfindclause.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, ((BilRiclassificatoBulk)getModel()).getTipo_bilancio().getCdTipoBilancio());
+        compoundfindclause.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, ((BilRiclassificatoBulk)getModel()).getCdPianoGruppi());
         return super.search(actioncontext, compoundfindclause, oggettobulk);
     }
 }

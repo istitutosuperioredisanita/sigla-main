@@ -80,7 +80,7 @@ public class CRUDElaboraBilRiclassificatoAction extends SelezionatoreListaAction
     }
 
 
-    public Forward doCambiaTipoBilancio(ActionContext actioncontext) {
+    public Forward doFiltra(ActionContext actioncontext) {
         CRUDElaboraBilRiclassificatoBP bp = (CRUDElaboraBilRiclassificatoBP) actioncontext.getBusinessProcess();
         try {
             fillModel(actioncontext);
