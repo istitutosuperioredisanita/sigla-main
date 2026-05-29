@@ -268,4 +268,10 @@ public class Contributo_ritenutaBulk extends Contributo_ritenutaBase {
 		return Optional.ofNullable(this.getFl_versamento())
 				.orElse(Boolean.TRUE);
 	}
+
+	public boolean isTipoContributoIrap() {
+		return Optional.ofNullable(this.getTipoContributoRitenuta())
+				.map(Tipo_contributo_ritenutaBulk::getClassificazioneCori)
+				.filter(Classificazione_coriBulk::isTipoIrap).isPresent();
+	}
 }
