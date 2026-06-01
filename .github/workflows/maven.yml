@@ -1,56 +1,65 @@
 name: Publish package
+
 on:
   push:
-    branches: [master, sviluppo, analitica-wildfly-bootable-jar, bootable-single-project, b-single-p-firmaDocTR]
+    branches:
+      - master
+      - sviluppo
+      - analitica-wildfly-bootable-jar
+      - bootable-single-project
+      - b-single-p-firmaDocTR
     paths-ignore:
       - 'docs/**'
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
+
       - name: Publish package
         run: |
           SKIP_TESTS="-DskipTests"
-          if [ "${{ github.ref_name }}" == "master" ] || [ "${{ github.ref_name }}" == "bootable-single-project" ]; then
+
+          if [ "${{ github.ref_name }}" = "master" ] || [ "${{ github.ref_name }}" = "bootable-single-project" ]; then
             SKIP_TESTS=""
           fi
-          mvn clean deploy $SKIP_TESTS -s .m2/settings.xml -PAZURE,PROD --batch-mode --errors --fail-at-end --show-version
+
+          mvn clean deploy $SKIP_TESTS -s .m2/settings.xml -PAZURE,PROD,iss --batch-mode --errors --fail-at-end --show-version
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Build Docker image
         run: |
-          # Definiamo il nome base dell'immagine per comodità
           IMAGE_ID=ghcr.io/${{ github.repository }}
-          
-          # Tagghiamo sempre con il nome del branch (es. master o sviluppo)
+
           docker build -t $IMAGE_ID:${{ github.ref_name }} .
-          
-          # Se il branch è master, aggiungiamo anche il tag 'latest'
-          if [ "${{ github.ref_name }}" == "master" ]; then
+
+          if [ "${{ github.ref_name }}" = "master" ]; then
             docker tag $IMAGE_ID:${{ github.ref_name }} $IMAGE_ID:latest
           fi
+
       - name: Push Docker image
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository }}
 
-          # Push del tag specifico del branch
           docker push $IMAGE_ID:${{ github.ref_name }}
-          
-          # Se il branch è master, facciamo il push anche di 'latest'
-          if [ "${{ github.ref_name }}" == "master" ]; then
+
+          if [ "${{ github.ref_name }}" = "master" ]; then
             docker push $IMAGE_ID:latest
           fi
