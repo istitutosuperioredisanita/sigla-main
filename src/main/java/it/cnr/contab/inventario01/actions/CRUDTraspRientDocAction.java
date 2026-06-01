@@ -94,7 +94,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
                 /*
                  * Il tab Allegati deve essere accessibile:
-                 * - dopo firma HappySign: STATO = INS, STATO_FLUSSO = FIR, DATA_FIRMA valorizzata
+                 * - dopo firma: STATO = INS, STATO_FLUSSO = FIR, DATA_FIRMA valorizzata
                  * - oppure se il documento è definitivo
                  */
                 if (!doc.isDefinitivo() && !bp.isDocumentoFirmatoDaCompletare()) {
@@ -402,27 +402,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-//    /**
-//     * Placeholder per il salvataggio del documento su storage CMIS.
-//     */
-//    private void salvaStampaSuCMIS(ActionContext context, Doc_trasporto_rientroBulk doc, File pdfFile, boolean isFirmato) throws Exception {
-//    }
-//
-//    /**
-//     * Verifica la completezza dei dati prima di consentire l'invio alla firma.
-//     */
-//    private void validaDocumentoPerFirma(Doc_trasporto_rientroBulk doc) throws ValidationException {
-//        if (doc == null) throw new ValidationException("Documento non presente");
-//        if (doc.isAnnullato()) throw new ValidationException("Impossibile inviare alla firma un documento annullato");
-//        if (!doc.isInserito())
-//            throw new ValidationException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
-//        if (doc.getDoc_trasporto_rientro_dettColl() == null || doc.getDoc_trasporto_rientro_dettColl().isEmpty())
-//            throw new ValidationException("Il documento deve contenere almeno un bene");
-//        if (doc.getTipoMovimento() == null) throw new ValidationException("Tipo movimento non specificato");
-//        if (doc.getDataRegistrazione() == null) throw new ValidationException("Data registrazione non specificata");
-//        if (doc.getDsDocTrasportoRientro() == null || doc.getDsDocTrasportoRientro().trim().isEmpty())
-//            throw new ValidationException("Descrizione documento non specificata");
-//    }
 
     /**
      * Esegue l'annullamento del documento se non ancora inviato alla firma o già annullato.
@@ -446,7 +425,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             }
 
             if (doc.isInviatoInFirma() || doc.getDataFirma() != null) {
-                bp.setMessage("Impossibile annullare un documento inviato o firmato da HappySign.");
+                bp.setMessage("Impossibile annullare un documento inviato o firmato.");
                 return context.findDefaultForward();
             }
 

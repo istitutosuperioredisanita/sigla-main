@@ -10,7 +10,6 @@ import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
 import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
 import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -63,11 +62,11 @@ import static it.cnr.jada.bulk.OggettoBulk.isNullOrEmpty;
  * - testata e dettagli;
  * - selezione beni/accessori;
  * - allegati;
- * - invio e completamento firma HappySign;
+ * - invio e completamento firma;
  * - salvataggio definitivo;
  * - stampa documento.
  *
- * Regola fondamentale HappySign:
+ * Regola fondamentale:
  * dopo firma il documento può risultare "editable" solo per permettere
  * la gestione degli allegati, ma testata e dettagli devono restare bloccati.
  */
@@ -918,8 +917,8 @@ public abstract class CRUDTraspRientInventarioBP<
 
             commitUserTransaction();
 
-            setMessage("Documento inviato alla firma con successo. UUID HappySign: "
-                    + docFirmabile.getIdFlussoHappysign());
+            setMessage("Documento inviato alla firma con successo. UUID: "
+                    + docFirmabile.getUuidFlussoAutorizzativo());
 
         } catch (ComponentException | RemoteException e) {
             rollbackUserTransaction();
@@ -2099,7 +2098,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
         if (doc.isInAttesaDiFirma()) {
             throw new BusinessProcessException(
-                    "Documento in attesa di firma HappySign: allegati non modificabili."
+                    "Documento in attesa di firma: allegati non modificabili."
             );
         }
 
@@ -2170,13 +2169,13 @@ public abstract class CRUDTraspRientInventarioBP<
 
         if (doc.getDataFirma() == null) {
             throw new BusinessProcessException(
-                    "Documento non ancora firmato da HappySign: impossibile salvare definitivo."
+                    "Documento non ancora firmato: impossibile salvare definitivo."
             );
         }
 
         if (doc.isInAttesaDiFirma()) {
             throw new BusinessProcessException(
-                    "Documento ancora in attesa di firma HappySign."
+                    "Documento ancora in attesa di firma."
             );
         }
     }

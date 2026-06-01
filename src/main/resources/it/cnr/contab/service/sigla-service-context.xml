@@ -18,8 +18,6 @@
                 <value>classpath*:META-INF/spring/*.properties</value>
                 <value>classpath*:repository.properties</value>
                 <value>classpath*:application.properties</value>
-<!--                &lt;!&ndash; AGGIUNTO: caricato per ultimo, sovrascrive tutto &ndash;&gt;-->
-<!--                <value>classpath:application-iss.properties</value>-->
             </list>
         </property>
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
@@ -42,7 +40,7 @@
         </property>
     </bean>
 
-    <context:component-scan base-package="it.cnr.contab.config, it.cnr.contab.spring, it.cnr.contab.service, it.cnr.si"/>
+    <context:component-scan base-package="it.cnr.contab.config, it.cnr.contab.spring, it.cnr.contab.service, it.cnr.si, it.iss.si.workflow.service"/>
 
     <!-- ========================================================= -->
     <!-- Import contesti esistenti                                  -->
@@ -181,53 +179,5 @@
     <task:executor id="siglaTaskExecutor" pool-size="5"/>
 
     <task:annotation-driven executor="siglaTaskExecutor" scheduler="siglaScheduler"/>
-
-    <beans profile="iss">
-
-
-        <bean id="authenticationOnlyErrorDecoder"
-              class="feign.codec.ErrorDecoder$Default"/>
-
-        <bean id="reauthenticateRetryer"
-              class="feign.Retryer$Default"/>
-
-        <!-- 1. Prima AuthService (nessuna dipendenza) -->
-        <bean id="authService"
-              class="it.iss.si.service.AuthService"/>
-
-        <!-- 2. Poi TokenRequestInterceptor (dipende da AuthService) -->
-        <bean id="tokenRequestInterceptor"
-              class="it.iss.si.service.intercpetor.TokenRequestInterceptor"/>
-
-        <!-- 3. Poi gli altri -->
-        <bean id="happySignService"
-              class="it.iss.si.service.HappySignService"/>
-
-        <bean id="aceService"
-              class="it.iss.si.service.AceService"/>
-
-        <bean id="docTraspRientAceEmailLookupService"
-              class="it.cnr.contab.inventario01.service.DocTraspRientAceEmailLookupService">
-            <constructor-arg ref="aceService"/>
-        </bean>
-
-        <bean id="docTraspRientFlowService"
-              class="it.cnr.contab.inventario01.service.DocTraspRientFlowService"/>
-
-        <bean id="docTraspRientHappySignService"
-              class="it.cnr.contab.inventario01.service.DocTraspRientHappySignService">
-            <constructor-arg ref="happySignService"/>
-        </bean>
-
-        <bean id="docTraspRientCronService"
-              class="it.cnr.contab.inventario01.service.DocTraspRientCronService"/>
-
-        <task:scheduled-tasks scheduler="siglaScheduler">
-            <task:scheduled ref="docTraspRientCronService"
-                            method="executeVerificaFirmeHappySign"
-                            cron="${doc.trasp.rient.happysign.timer.cron.expression}"/>
-        </task:scheduled-tasks>
-
-    </beans>
 
 </beans>

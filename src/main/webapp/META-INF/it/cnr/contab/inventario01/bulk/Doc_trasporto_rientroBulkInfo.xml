@@ -267,16 +267,16 @@
             label="Numero Documento" />
 
     <!-- ============================================ -->
-    <!-- CAMPI HAPPYSIGN / FIRMA -->
+    <!-- CAMPI FIRMA -->
     <!-- ============================================ -->
 
     <fieldProperty
-            name="idFlussoHappysign"
-            property="idFlussoHappysign"
+            name="uuidFlussoAutorizzativo"
+            property="uuidFlussoAutorizzativo"
             inputType="ROTEXT"
             maxLength="100"
             inputSize="50"
-            label="Id flusso HappySign" />
+            label="Uuid flusso firma" />
 
     <fieldProperty
             name="statoFlusso"
@@ -357,7 +357,7 @@
     <formFieldProperty name="cognomeDelegato" />
     <formFieldProperty name="pgDocTrasportoRientroVisualizzato" />
 
-    <formFieldProperty name="idFlussoHappysign" />
+    <formFieldProperty name="uuidFlussoAutorizzativo" />
     <formFieldProperty name="statoFlusso" />
     <formFieldProperty name="dataInvioFirma" />
     <formFieldProperty name="dataFirma" />
@@ -389,7 +389,7 @@
     <findFieldProperty name="dsDocTrasportoRientro" />
     <findFieldProperty name="destinazione" />
     <findFieldProperty name="nominativoVettore" />
-    <findFieldProperty name="idFlussoHappysign" />
+    <findFieldProperty name="uuidFlussoAutorizzativo" />
     <findFieldProperty name="statoFlusso" />
 
     <!-- ============================================ -->
@@ -430,7 +430,7 @@
         <findFieldProperty name="dsDocTrasportoRientro" />
         <findFieldProperty name="pgDocTrasportoRientro" />
         <findFieldProperty name="destinazione" />
-        <findFieldProperty name="idFlussoHappysign" />
+        <findFieldProperty name="uuidFlussoAutorizzativo" />
         <findFieldProperty name="statoFlusso" />
     </freeSearchSet>
 
@@ -440,7 +440,7 @@
         <findFieldProperty name="dsDocTrasportoRientro" />
         <findFieldProperty name="pgDocTrasportoRientro" />
         <findFieldProperty name="destinazione" />
-        <findFieldProperty name="idFlussoHappysign" />
+        <findFieldProperty name="uuidFlussoAutorizzativo" />
         <findFieldProperty name="statoFlusso" />
     </freeSearchSet>
 

@@ -1,17 +1,25 @@
 package it.cnr.contab.inventario01.service;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
-import it.cnr.contab.inventario01.dto.StatoHappySignDto;
 import it.cnr.contab.utenze00.bp.WSUserContext;
 import it.cnr.jada.UserContext;
+import it.iss.si.workflow.service.SignatureFlowService;
+import it.iss.si.workflow.service.SignatureFlowState;
+import it.iss.si.workflow.service.SignatureFlowStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
 import java.util.Calendar;
 import java.util.List;
 
+@Service
+@Profile("iss")
 public class DocTraspRientCronService {
 
     private static final Logger log =
@@ -24,14 +32,14 @@ public class DocTraspRientCronService {
     private DocTraspRientFlowService flowService;
 
     @Autowired
-    private HappysignDocService happySignDocService;
+    private SignatureFlowService signatureFlowService;
 
     private UserContext userContext;
 
     @PostConstruct
     public void init() {
         userContext = new WSUserContext(
-                "JOB_HAPPYSIGN",
+                "HAPPYSIGN",
                 null,
                 Calendar.getInstance().get(Calendar.YEAR),
                 null,
@@ -45,6 +53,9 @@ public class DocTraspRientCronService {
      * Recupera tutti i documenti da verificare su HappySign e avvia l’elaborazione a batch,
      * gestendo log iniziale/finale e eventuali errori globali.
      */
+    @Scheduled(
+            cron = "${doc.trasp.rient.happysign.timer.cron.expression}",
+            scheduler = "siglaScheduler")
     public void executeVerificaFirmeHappySign() {
 
         long start = System.currentTimeMillis();
@@ -97,7 +108,8 @@ public class DocTraspRientCronService {
 
     /**
      * Gestisce il retry automatico per ogni documento.
-     * In caso di errore transient (es. timeout HappySign), riprova fino a RETRY_MAX volte prima di fallire definitivamente.
+     * In caso di errore transient, ad esempio timeout HappySign, riprova fino a RETRY_MAX volte
+     * prima di fallire definitivamente.
      */
     private void processaDocumentoConRetry(Doc_trasporto_rientroBulk doc) {
 
@@ -131,9 +143,9 @@ public class DocTraspRientCronService {
 
     /**
      * Controlla lo stato del documento su HappySign e instrada verso le azioni corrette:
-     * firmato → aggiornamento documento,
-     * rifiutato → gestione rifiuto,
-     * inviato → in attesa.
+     * firmato -> aggiornamento documento,
+     * rifiutato -> gestione rifiuto,
+     * inviato -> in attesa.
      */
     private void verificaDocumento(Doc_trasporto_rientroBulk doc) throws Exception {
 
@@ -141,15 +153,15 @@ public class DocTraspRientCronService {
             return;
         }
 
-        String uuid = doc.getIdFlussoHappysign();
+        String uuid = doc.getUuidFlussoAutorizzativo();
 
         if (uuid == null || uuid.trim().isEmpty()) {
             return;
         }
 
-        StatoHappySignDto stato = safeCallStato(uuid);
+        SignatureFlowStatus stato = signatureFlowService.getSignatureFlowStatus(uuid);
 
-        if (stato == null || stato.getStato() == null) {
+        if (stato == null || stato.state() == null) {
             log.warn("Stato nullo per UUID={}", uuid);
             return;
         }
@@ -157,85 +169,45 @@ public class DocTraspRientCronService {
         log.info(
                 "Doc pg={} stato={} uuid={}",
                 doc.getPgDocTrasportoRientro(),
-                stato.getStato(),
+                stato.state(),
                 uuid
         );
 
-        if (stato.isFirmato()) {
-            gestisciFirmato(doc, uuid);
+        if (SignatureFlowState.FIRMATO.equals(stato.state())) {
+            byte[] pdf = signatureFlowService.getSignedDocument(uuid);
+
+            flowService.aggiornaDocumentoFirmato(
+                    userContext,
+                    doc,
+                    pdf
+            );
+
+            log.info("Documento pg={} aggiornato come FIRMATO", safePg(doc));
             return;
         }
 
-        if (stato.isRifiutato()) {
-            gestisciRifiuto(doc, stato);
+        if (SignatureFlowState.RIFIUTATO.equals(stato.state())
+                || SignatureFlowState.ANNULLATO.equals(stato.state())) {
+
+            flowService.aggiornaDocumentoRifiutato(
+                    userContext,
+                    doc,
+                    stato.message()
+            );
+
+            log.info(
+                    "Documento pg={} RIFIUTATO/ANNULLATO motivo={}",
+                    safePg(doc),
+                    stato.message()
+            );
             return;
         }
 
-        if (stato.isInviato()) {
+        if (SignatureFlowState.INVIATO.equals(stato.state())) {
             log.debug("Doc pg={} in attesa firma", safePg(doc));
         }
     }
 
-    /**
-     * Wrapper sicuro per chiamata stato HappySign.
-     * Permette di centralizzare logging e gestione errori per eventuali problemi di integrazione esterna.
-     */
-    private StatoHappySignDto safeCallStato(String uuid) throws Exception {
-        try {
-            return happySignDocService.getStatoFlusso(uuid);
-        } catch (Exception e) {
-            log.error("Errore chiamata stato HappySign uuid={}", uuid, e);
-            throw e;
-        }
-    }
-
-    /**
-     * Gestisce il caso documento firmato.
-     * Scarica il PDF firmato e aggiorna il sistema interno tramite flowService.
-     */
-    private void gestisciFirmato(Doc_trasporto_rientroBulk doc, String uuid) throws Exception {
-
-        byte[] pdf = safeCallDocumento(uuid);
-
-        flowService.aggiornaDocumentoFirmato(
-                userContext,
-                doc,
-                pdf
-        );
-
-        log.info("Documento pg={} aggiornato come FIRMATO", safePg(doc));
-    }
-
-    /**
-     * Wrapper sicuro per download documento firmato da HappySign.
-     * Consente logging centralizzato in caso di errore o indisponibilità del servizio.
-     */
-    private byte[] safeCallDocumento(String uuid) throws Exception {
-        try {
-            return happySignDocService.getDocumentoFirmato(uuid);
-        } catch (Exception e) {
-            log.error("Errore download PDF uuid={}", uuid, e);
-            throw e;
-        }
-    }
-
-    /**
-     * Gestisce il caso di rifiuto firma.
-     * Aggiorna il documento con il motivo restituito da HappySign per tracciamento e audit.
-     */
-    private void gestisciRifiuto(Doc_trasporto_rientroBulk doc, StatoHappySignDto stato) {
-
-        flowService.aggiornaDocumentoRifiutato(
-                userContext,
-                doc,
-                stato.getMotivoRifiuto()
-        );
-
-        log.info("Documento pg={} RIFIUTATO motivo={}",
-                safePg(doc),
-                stato.getMotivoRifiuto()
-        );
-    }
 
     /**
      * Metodo di utilità per log safe.

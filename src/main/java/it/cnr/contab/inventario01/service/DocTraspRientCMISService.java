@@ -46,19 +46,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Servizio CMIS per la gestione degli allegati dei documenti di
- * trasporto/rientro inventario.
+ * Servizio CMIS per la gestione degli allegati dei documenti di trasporto/rientro inventario.
  *
- * <p>Gestisce il salvataggio, il recupero e l'aggiornamento dei PDF
- * firmati sullo storage documentale (Alfresco/CMIS).</p>
+ * <p>Gestisce il salvataggio, il recupero e l'aggiornamento dei PDF firmati sullo storage
+ * documentale (Alfresco/CMIS).</p>
  *
  * <p>Non ha dipendenze da {@code happysign-client}.</p>
  */
 public class DocTraspRientCMISService extends StoreService {
-
-    // -----------------------------------------------------------------------
-    // Costanti
-    // -----------------------------------------------------------------------
 
     private static final String ROOT = "Documenti Trasporto/Rientro";
 
@@ -76,21 +71,13 @@ public class DocTraspRientCMISService extends StoreService {
     private static final String PROP_DATA_FIRMA =
             "doc_trasporto_rientro:data_firma";
 
-    // -----------------------------------------------------------------------
-    // Dipendenze
-    // -----------------------------------------------------------------------
-
     @Autowired
     private StorageDriver storageDriver;
-
-    // -----------------------------------------------------------------------
-    // API pubblica
-    // -----------------------------------------------------------------------
 
     /**
      * Restituisce tutti i file presenti nella cartella CMIS del documento.
      *
-     * @param doc         documento di trasporto/rientro
+     * @param doc documento di trasporto/rientro
      * @param userContext contesto utente corrente
      * @return lista di {@link StorageObject}; mai {@code null}
      */
@@ -109,8 +96,7 @@ public class DocTraspRientCMISService extends StoreService {
     }
 
     /**
-     * Restituisce il documento di stampa firmato (StorageObject) se presente,
-     * altrimenti {@code null}.
+     * Restituisce il documento di stampa firmato se presente, altrimenti {@code null}.
      */
     public StorageObject getStorageObjectStampaDoc(
             Doc_trasporto_rientroBulk doc,
@@ -127,7 +113,7 @@ public class DocTraspRientCMISService extends StoreService {
     }
 
     /**
-     * Controlla se esiste già una stampa valida (stato = "VAL") del documento.
+     * Controlla se esiste già una stampa valida del documento.
      *
      * @return {@code true} se il documento firmato esiste ed è in stato valido
      */
@@ -171,12 +157,11 @@ public class DocTraspRientCMISService extends StoreService {
         }
     }
 
-
     /**
      * Salva o aggiorna il PDF firmato su CMIS.
-     * Se esiste già aggiorna, altrimenti crea nuovo documento con metadati.
+     *
+     * <p>Se esiste già aggiorna, altrimenti crea un nuovo documento con metadati.</p>
      */
-
     public StorageObject salvaStampaDocumentoFirmatoSuCMIS(
             byte[] pdfFirmato,
             Doc_trasporto_rientroBulk doc,
@@ -204,10 +189,10 @@ public class DocTraspRientCMISService extends StoreService {
         return creaDocumentoFirmato(pdfFirmato, doc, userContext);
     }
 
-
     /**
      * Calcola il path CMIS del documento.
-     * Gestisce retrocompatibilità tra struttura storage vecchia e nuova.
+     *
+     * <p>Gestisce retrocompatibilità tra struttura storage vecchia e nuova.</p>
      */
     public String getStorePath(
             Doc_trasporto_rientroBulk doc,
@@ -225,10 +210,6 @@ public class DocTraspRientCMISService extends StoreService {
 
         return getStorePathNew(doc, uoContext);
     }
-
-    // -----------------------------------------------------------------------
-    // Metodi privati — path
-    // -----------------------------------------------------------------------
 
     private String getStorePathNew(
             Doc_trasporto_rientroBulk doc,
@@ -260,7 +241,8 @@ public class DocTraspRientCMISService extends StoreService {
 
         if (!doc.isRitiroIncaricato() && !doc.isRitiroVettore()) {
             throw new BusinessProcessException(
-                    "Tipo ritiro non valido: deve essere INCARICATO o VETTORE.");
+                    "Tipo ritiro non valido: deve essere INCARICATO o VETTORE."
+            );
         }
 
         String basePath = join(
@@ -300,10 +282,6 @@ public class DocTraspRientCMISService extends StoreService {
         return oldPath;
     }
 
-    // -----------------------------------------------------------------------
-    // Metodi privati — creazione cartella / documento
-    // -----------------------------------------------------------------------
-
     private String createFolderDocIfNotPresent(
             String path,
             Doc_trasporto_rientroBulk doc)
@@ -311,15 +289,17 @@ public class DocTraspRientCMISService extends StoreService {
 
         String folderName = sanitizeFolderName(doc.constructCMISNomeFile());
 
-        Map<String, Object> props = new HashMap<>();
+        Map<String, Object> props = new HashMap<String, Object>();
 
         props.put(StoragePropertyNames.OBJECT_TYPE_ID.value(), "F:doc_trasporto_rientro:main");
         props.put(StoragePropertyNames.NAME.value(), folderName);
         props.put("doc_trasporto_rientro:esercizio", doc.getEsercizio());
         props.put("doc_trasporto_rientro:pg_inventario", doc.getPgInventario());
         props.put("doc_trasporto_rientro:ti_documento", doc.getTiDocumento());
-        props.put("doc_trasporto_rientro:pg_doc_trasporto_rientro",
-                doc.getPgDocTrasportoRientro());
+        props.put(
+                "doc_trasporto_rientro:pg_doc_trasporto_rientro",
+                doc.getPgDocTrasportoRientro()
+        );
 
         if (doc.getDsDocTrasportoRientro() != null) {
             props.put("doc_trasporto_rientro:oggetto", doc.getDsDocTrasportoRientro());
@@ -327,19 +307,21 @@ public class DocTraspRientCMISService extends StoreService {
 
         props.put("sigla_commons_aspect:utente_applicativo", doc.getUtuv());
 
-        props.put(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(),
+        props.put(
+                StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value(),
                 Arrays.asList(
                         "P:cm:titled",
                         "P:sigla_commons_aspect:utente_applicativo_sigla"
-                ));
+                )
+        );
 
         return createFolderIfNotPresent(path, folderName, props);
     }
 
-
     /**
      * Crea il documento firmato su CMIS.
-     * Inizializza metadati, tipo documento e collega alla cartella corretta.
+     *
+     * <p>Inizializza metadati, tipo documento e collega alla cartella corretta.</p>
      */
     private StorageObject creaDocumentoFirmato(
             byte[] pdfFirmato,
@@ -384,10 +366,6 @@ public class DocTraspRientCMISService extends StoreService {
         );
     }
 
-    // -----------------------------------------------------------------------
-    // Metodi privati — proprietà CMIS
-    // -----------------------------------------------------------------------
-
     private Map<String, Object> propsNuovoDocumentoFirmato(
             Doc_trasporto_rientroBulk doc,
             UserContext userContext) {
@@ -419,16 +397,12 @@ public class DocTraspRientCMISService extends StoreService {
     }
 
     private Map<String, Object> propsFirma() {
-        Map<String, Object> props = new HashMap<>();
+        Map<String, Object> props = new HashMap<String, Object>();
         props.put(PROP_STATO, STATO_VALIDO);
         props.put(PROP_FIRMATO, Boolean.TRUE);
         props.put(PROP_DATA_FIRMA, new Date());
         return props;
     }
-
-    // -----------------------------------------------------------------------
-    // Metodi privati — utility statici
-    // -----------------------------------------------------------------------
 
     private static String aspectFirmato(Doc_trasporto_rientroBulk doc) {
         if (doc == null) {

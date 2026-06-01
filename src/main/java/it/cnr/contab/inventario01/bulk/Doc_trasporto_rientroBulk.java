@@ -197,6 +197,10 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public void setTerzoIncRitiro(TerzoBulk terzoIncRitiro) {
         this.terzoIncRitiro = terzoIncRitiro;
+
+        setCdTerzoIncaricato(
+                terzoIncRitiro == null ? null : terzoIncRitiro.getCd_terzo()
+        );
     }
 
     @Override
@@ -221,6 +225,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public void setTerzoRespDip(TerzoBulk terzoRespDip) {
         this.terzoRespDip = terzoRespDip;
+
         setCdTerzoResponsabile(
                 terzoRespDip == null ? null : terzoRespDip.getCd_terzo()
         );
@@ -580,7 +585,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public boolean isInviabileAllaFirma() {
         return isInserito()
-                && getIdFlussoHappysign() == null
+                && getUuidFlussoAutorizzativo() == null
                 && getCdTerzoResponsabile() != null
                 && hasDettagli()
                 && (
@@ -609,13 +614,13 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         setStato(STATO_INSERITO);
         setStatoFlusso(STATO_FLUSSO_RIFIUTATO);
         setNoteRifiuto(motivoRifiuto);
-        setIdFlussoHappysign(null);
+        setUuidFlussoAutorizzativo(null);
         setDataInvioFirma(null);
         setDataFirma(null);
     }
 
     public void resetFlussoFirma() {
-        setIdFlussoHappysign(null);
+        setUuidFlussoAutorizzativo(null);
         setStatoFlusso(null);
         setDataInvioFirma(null);
         setDataFirma(null);
@@ -628,14 +633,14 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public boolean isInAttesaDiFirma() {
         return isInviatoInFirma()
-                && getIdFlussoHappysign() != null
+                && getUuidFlussoAutorizzativo() != null
                 && STATO_FLUSSO_INVIATO.equals(getStatoFlusso())
                 && getDataFirma() == null;
     }
 
     public boolean isFirmatoDaCompletare() {
         return isInserito()
-                && getIdFlussoHappysign() != null
+                && getUuidFlussoAutorizzativo() != null
                 && STATO_FLUSSO_FIRMATO.equals(getStatoFlusso())
                 && getDataFirma() != null
                 && !isDefinitivo()

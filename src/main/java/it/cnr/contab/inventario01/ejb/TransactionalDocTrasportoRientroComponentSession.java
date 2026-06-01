@@ -995,7 +995,7 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
     @Override
-    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmatoDaHappySign(
+    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmato(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             byte[] pdfFirmato)
@@ -1003,7 +1003,7 @@ public class TransactionalDocTrasportoRientroComponentSession
 
         try {
             return (Doc_trasporto_rientroBulk) invoke(
-                    "aggiornaDocumentoFirmatoDaHappySign",
+                    "aggiornaDocumentoFirmato",
                     new Object[]{
                             userContext,
                             doc,
@@ -1029,7 +1029,7 @@ public class TransactionalDocTrasportoRientroComponentSession
 
 
     @Override
-    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutatoDaHappySign(
+    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutato(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             String motivoRifiuto)
@@ -1037,7 +1037,7 @@ public class TransactionalDocTrasportoRientroComponentSession
 
         try {
             return (Doc_trasporto_rientroBulk) invoke(
-                    "aggiornaDocumentoRifiutatoDaHappySign",
+                    "aggiornaDocumentoRifiutato",
                     new Object[]{
                             userContext,
                             doc,

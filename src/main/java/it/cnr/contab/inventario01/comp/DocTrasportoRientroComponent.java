@@ -11,8 +11,6 @@ import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rBulk;
 import it.cnr.contab.inventario00.docs.bulk.Numeratore_doc_t_rHome;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
-import it.cnr.contab.inventario01.service.HappysignDocService;
-import it.cnr.contab.inventario01.service.HappysignDocServiceFactory;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Report;
 import it.cnr.contab.reports.service.PrintService;
@@ -39,6 +37,9 @@ import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
+import it.iss.si.workflow.service.SignatureFlowRequest;
+import it.iss.si.workflow.service.SignatureFlowService;
+import it.iss.si.workflow.service.SignatureFlowStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
@@ -79,6 +80,9 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
     @Autowired
     private StoreService storeService;
+
+    @Autowired(required = false)
+    private SignatureFlowService signatureFlowService;
 
     public DocTrasportoRientroComponent() {
     }
@@ -144,7 +148,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
             doc.setFlIncaricato(Boolean.FALSE);
             doc.setFlVettore(Boolean.FALSE);
 
-            doc.setIdFlussoHappysign(null);
+            doc.setUuidFlussoAutorizzativo(null);
             doc.setStatoFlusso(null);
             doc.setDataInvioFirma(null);
             doc.setDataFirma(null);
@@ -659,7 +663,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
             }
 
             if (docTR.isInAttesaDiFirma()) {
-                throw new ApplicationException("Il documento è ancora in attesa di firma HappySign.");
+                throw new ApplicationException("Il documento è ancora in attesa di firma.");
             }
 
             if (!hasAllegatoFirmato(docTR)) {
@@ -2724,7 +2728,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
             sql.addSQLClause("AND", "STATO", SQLBuilder.EQUALS, STATO_INVIATO);
             sql.addSQLClause("AND", "STATO_FLUSSO", SQLBuilder.EQUALS, "INV");
-            sql.addSQLClause("AND", "ID_FLUSSO_HAPPYSIGN", SQLBuilder.ISNOTNULL, null);
+            sql.addSQLClause("AND", "UUID_FLUSSO_AUTORIZZATIVO", SQLBuilder.ISNOTNULL, null);
 
             /*
              * Il cron deve lavorare solo documenti con PG definitivo.
@@ -3224,13 +3228,13 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
 
     /**
-     * Invia il documento Trasporto/Rientro al flusso HappySign.
+     * Invia il documento Trasporto/Rientro al flusso.
      *
      * Flusso corretto:
      * 1. valida il documento;
      * 2. genera il PDF Jasper;
      * 3. salva nel documentale il PDF originale da inviare in firma;
-     * 4. invia ad HappySign lo stesso identico PDF;
+     * 4. invia in firma lo stesso identico PDF;
      * 5. aggiorna UUID, stato flusso e stato documento.
      */
     public Doc_trasporto_rientroBulk inviaDocumentoAllaFirma(
@@ -3266,41 +3270,39 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
             validaPdfGenerato(
                     pdfBytes,
-                    "PDF documento Trasporto/Rientro da inviare a HappySign"
+                    "PDF documento Trasporto/Rientro da inviare in firma"
             );
 
             String nomeFileDaFirmare = generaNomeFilePdfDaFirmare(doc);
 
-            HappysignDocService happySignService = HappysignDocServiceFactory.get();
+            SignatureFlowService service = getSignatureFlowService();
 
-            /*
-             * PRIMA HappySign.
-             * Se questa chiamata fallisce, non viene salvato nulla su Azure.
-             */
-            String uuidHappysign =
-                    happySignService.inviaDocumentoAdHappySign(
-                            doc,
-                            pdfBytes,
-                            nomeFileDaFirmare,
-                            (CNRUserContext) userContext
-                    );
+            SignatureFlowRequest request = new SignatureFlowRequest(
+                    pdfBytes,
+                    nomeFileDaFirmare,
+                    "application/pdf",
+                    getCodiciFiscaliFirmatari(doc),
+                    "Firma documento Trasporto/Rientro",
+                    generaDescrizioneAllegatoDaFirmare(doc)
+            );
 
-            if (uuidHappysign == null || uuidHappysign.trim().isEmpty()) {
-                throw new ApplicationException("HappySign non ha restituito UUID documento.");
+            SignatureFlowStatus status = service.startSignatureFlow(request);
+
+            String uuidFlussoAut = status.flowId();
+
+            if (uuidFlussoAut == null || uuidFlussoAut.trim().isEmpty()) {
+                throw new ApplicationException("Il flusso autorizzativo non ha restituito UUID documento.");
             }
 
-            /*
-             * DOPO Azure.
-             * Il file tecnico _DAFIRMARE viene creato solo se HappySign ha accettato il flusso.
-             */
-            salvaPdfDaFirmareSuAzure(
+            // Il file tecnico _DAFIRMARE viene creato solo se viene accettato il flusso autorizzativo.
+            salvaPdfDaFirmareSuDocumentale(
                     userContext,
                     doc,
                     pdfBytes,
                     nomeFileDaFirmare
             );
 
-            doc.setIdFlussoHappysign(uuidHappysign.trim());
+            doc.setUuidFlussoAutorizzativo(uuidFlussoAut.trim());
             doc.inizializzaPerInvioFirma();
             doc.setToBeUpdated();
 
@@ -3311,10 +3313,89 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
         } catch (Exception e) {
             throw new ComponentException(
-                    "Errore invio documento a HappySign: " + e.getMessage(),
+                    "Errore invio documento in firma: " + e.getMessage(),
                     e
             );
         }
+    }
+
+    private SignatureFlowService getSignatureFlowService() throws ApplicationException {
+        if (signatureFlowService != null) {
+            return signatureFlowService;
+        }
+
+        try {
+            signatureFlowService = SpringUtil.getBean(
+                    "signatureFlowService",
+                    SignatureFlowService.class
+            );
+
+            if (signatureFlowService == null) {
+                throw new ApplicationException(
+                        "Bean signatureFlowService non trovato nel contesto Spring."
+                );
+            }
+
+            return signatureFlowService;
+
+        } catch (ApplicationException e) {
+            throw e;
+
+        } catch (Exception e) {
+            throw new ApplicationException(
+                    "Workflow firma digitale non disponibile!");
+        }
+    }
+
+    private List<String> getCodiciFiscaliFirmatari(Doc_trasporto_rientroBulk doc)
+            throws ApplicationException {
+
+        Set<String> codiciFiscali = new LinkedHashSet<>();
+
+        aggiungiCodiceFiscaleFirmatario(
+                codiciFiscali,
+                doc.getTerzoRespDip(),
+                "responsabile"
+        );
+
+        aggiungiCodiceFiscaleFirmatario(
+                codiciFiscali,
+                doc.getTerzoIncRitiro(),
+                "incaricato ritiro"
+        );
+
+        if (codiciFiscali.isEmpty()) {
+            throw new ApplicationException(
+                    "Nessun codice fiscale firmatario trovato per il documento Trasporto/Rientro."
+            );
+        }
+
+        return new ArrayList<>(codiciFiscali);
+    }
+
+    private void aggiungiCodiceFiscaleFirmatario(
+            Set<String> codiciFiscali,
+            TerzoBulk terzo,
+            String ruolo)
+            throws ApplicationException {
+
+        if (terzo == null) {
+            log.warn("Terzo {} non valorizzato per documento T/R", ruolo);
+            return;
+        }
+
+        String codiceFiscale = terzo.getCodice_fiscale_anagrafico();
+
+        if (codiceFiscale == null || codiceFiscale.trim().isEmpty()) {
+            throw new ApplicationException(
+                    "Codice fiscale non valorizzato per il firmatario "
+                            + ruolo
+                            + " terzo="
+                            + terzo.getCd_terzo()
+            );
+        }
+
+        codiciFiscali.add(codiceFiscale.trim().toUpperCase());
     }
 
     private String generaNomeFilePdfDaFirmare(Doc_trasporto_rientroBulk doc) {
@@ -3357,7 +3438,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
      * /cnrdocamm/docamm/doc_trasporto_rientro.jasper.
      *
      * Restituisce i byte del PDF, pronti per essere salvati nel documentale
-     * e inviati ad HappySign.
+     * e inviati in firma.
      */
     private byte[] generaPdfDocTrasportoRientro(
             UserContext userContext,
@@ -3442,7 +3523,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
     }
 
 
-    private void salvaPdfDaFirmareSuAzure(
+    private void salvaPdfDaFirmareSuDocumentale(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             byte[] pdfBytes,
@@ -3483,7 +3564,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
         } catch (StorageException e) {
             if (StorageException.Type.CONSTRAINT_VIOLATED.equals(e.getType())) {
                 throw new ApplicationException(
-                        "Esiste già su Azure un documento da firmare con nome: " + nomeFile
+                        "Esiste già sul documentale un documento da firmare con nome: " + nomeFile
                 );
             }
 
@@ -3592,7 +3673,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
     }
 
 
-    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmatoDaHappySign(
+    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmato(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             byte[] pdfFirmato)
@@ -3611,9 +3692,9 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
                 throw new ApplicationException("Documento già definitivo.");
             }
 
-            if (doc.getIdFlussoHappysign() == null
-                    || doc.getIdFlussoHappysign().trim().isEmpty()) {
-                throw new ApplicationException("Documento privo di UUID HappySign.");
+            if (doc.getUuidFlussoAutorizzativo() == null
+                    || doc.getUuidFlussoAutorizzativo().trim().isEmpty()) {
+                throw new ApplicationException("Documento privo di UUID.");
             }
 
             if (!TRASPORTO.equals(doc.getTiDocumento())
@@ -3623,7 +3704,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
                 );
             }
 
-            validaPdfGenerato(pdfFirmato, "PDF firmato ricevuto da HappySign");
+            validaPdfGenerato(pdfFirmato, "PDF firmato ricevuto");
 
             /*
              * Ricarico i dettagli dal DB usando tiDocumento.
@@ -3642,10 +3723,9 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
             rimuoviAllegatiTecniciDaFirmareDallaCollection(doc);
 
             /*
-             * Su Azure sostituisco il PDF tecnico DAFIRMARE con il PDF FIRMATO.
-             * Questo file resta tecnico su Azure e NON è la riga allegato utente.
+             * Sul documentale sostituisco il PDF tecnico DAFIRMARE con il PDF FIRMATO.
              */
-            sostituisciPdfDaFirmareConFirmatoSuAzure(
+            switchPdfDaFirmareConFirmatoSuDoc(
                     userContext,
                     doc,
                     pdfFirmato
@@ -3688,14 +3768,14 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
         } catch (Exception e) {
             throw new ComponentException(
-                    "Errore aggiornamento documento firmato HappySign: " + e.getMessage(),
+                    "Errore aggiornamento documento firmato: " + e.getMessage(),
                     e
             );
         }
     }
 
 
-    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutatoDaHappySign(
+    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutato(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             String motivoRifiuto)
@@ -3714,9 +3794,9 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
                 throw new ApplicationException("Documento già definitivo: impossibile aggiornare il rifiuto firma.");
             }
 
-            if (doc.getIdFlussoHappysign() == null
-                    || doc.getIdFlussoHappysign().trim().isEmpty()) {
-                throw new ApplicationException("Documento privo di UUID HappySign.");
+            if (doc.getUuidFlussoAutorizzativo() == null
+                    || doc.getUuidFlussoAutorizzativo().trim().isEmpty()) {
+                throw new ApplicationException("Documento privo di UUID.");
             }
 
             if (!TRASPORTO.equals(doc.getTiDocumento())
@@ -3749,7 +3829,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
         } catch (Exception e) {
             throw new ComponentException(
-                    "Errore aggiornamento documento rifiutato HappySign: " + e.getMessage(),
+                    "Errore aggiornamento documento rifiutato: " + e.getMessage(),
                     e
             );
         }
@@ -3781,13 +3861,13 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
         }
     }
 
-    private void sostituisciPdfDaFirmareConFirmatoSuAzure(
+    private void switchPdfDaFirmareConFirmatoSuDoc(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             byte[] pdfFirmato)
             throws Exception {
 
-        validaPdfGenerato(pdfFirmato, "PDF firmato ricevuto da HappySign");
+        validaPdfGenerato(pdfFirmato, "PDF firmato ricevuto");
 
         String storePath = getStorePathDocTrasportoRientro(doc);
 
@@ -3801,7 +3881,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
         File fileFirmato = creaFileTemporaneoPdf(nomeFirmato, pdfFirmato);
 
         /*
-         * Cancello il file tecnico DAFIRMARE da Azure.
+         * Cancello il file tecnico DAFIRMARE dal documentale.
          * Questo file non deve comparire tra gli allegati SIGLA.
          */
         try {

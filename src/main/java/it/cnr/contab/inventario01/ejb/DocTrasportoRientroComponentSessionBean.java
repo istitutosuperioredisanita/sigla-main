@@ -17,7 +17,6 @@
 
 package it.cnr.contab.inventario01.ejb;
 
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.comp.DocTrasportoRientroComponent;
@@ -33,7 +32,7 @@ import it.cnr.jada.util.RemoteIterator;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.rmi.RemoteException;
 import java.util.BitSet;
 import java.util.List;
@@ -832,7 +831,7 @@ public class DocTrasportoRientroComponentSessionBean
     }
 
     @Override
-    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmatoDaHappySign(
+    public Doc_trasporto_rientroBulk aggiornaDocumentoFirmato(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             byte[] pdfFirmato)
@@ -843,7 +842,7 @@ public class DocTrasportoRientroComponentSessionBean
         try {
             Doc_trasporto_rientroBulk result =
                     ((DocTrasportoRientroComponent) componentObj)
-                            .aggiornaDocumentoFirmatoDaHappySign(
+                            .aggiornaDocumentoFirmato(
                                     userContext,
                                     doc,
                                     pdfFirmato
@@ -869,7 +868,7 @@ public class DocTrasportoRientroComponentSessionBean
     }
 
     @Override
-    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutatoDaHappySign(
+    public Doc_trasporto_rientroBulk aggiornaDocumentoRifiutato(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc,
             String motivoRifiuto)
@@ -880,7 +879,7 @@ public class DocTrasportoRientroComponentSessionBean
         try {
             Doc_trasporto_rientroBulk result =
                     ((DocTrasportoRientroComponent) componentObj)
-                            .aggiornaDocumentoRifiutatoDaHappySign(
+                            .aggiornaDocumentoRifiutato(
                                     userContext,
                                     doc,
                                     motivoRifiuto
