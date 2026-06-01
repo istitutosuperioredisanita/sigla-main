@@ -7,7 +7,6 @@
         - sviluppo
         - analitica-wildfly-bootable-jar
         - bootable-single-project
-        - b-single-p-firmaDocTR
       paths-ignore:
         - 'docs/**'
 
