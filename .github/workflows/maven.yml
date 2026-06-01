@@ -1,65 +1,72 @@
-name: Publish package
+  name: Publish package
 
-on:
-  push:
-    branches:
-      - master
-      - sviluppo
-      - analitica-wildfly-bootable-jar
-      - bootable-single-project
-      - b-single-p-firmaDocTR
-    paths-ignore:
-      - 'docs/**'
+  on:
+    push:
+      branches:
+        - master
+        - sviluppo
+        - analitica-wildfly-bootable-jar
+        - bootable-single-project
+        - b-single-p-firmaDocTR
+      paths-ignore:
+        - 'docs/**'
 
-jobs:
-  publish:
-    runs-on: ubuntu-latest
+  jobs:
+    publish:
+      runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      packages: write
+      permissions:
+        contents: read
+        packages: write
 
-    steps:
-      - uses: actions/checkout@v4
+      steps:
+        - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
+        - uses: actions/setup-java@v4
+          with:
+            java-version: '21'
+            distribution: 'temurin'
+            cache: 'maven'
 
-      - name: Publish package
-        run: |
-          SKIP_TESTS="-DskipTests"
+        - name: Check active Maven profiles
+          run: |
+            mvn help:active-profiles -s .m2/settings.xml -PAZURE,PROD,iss
+          env:
+            GITHUB_USERNAME: ${{ github.actor }}
+            GITHUB_TOKEN: ${{ secrets.ISS_PAT }}
 
-          if [ "${{ github.ref_name }}" = "master" ] || [ "${{ github.ref_name }}" = "bootable-single-project" ]; then
-            SKIP_TESTS=""
-          fi
+        - name: Publish package
+          run: |
+            SKIP_TESTS="-DskipTests"
+            
+            if [ "${{ github.ref_name }}" = "master" ] || [ "${{ github.ref_name }}" = "bootable-single-project" ]; then
+              SKIP_TESTS=""
+            fi
+            
+            mvn clean deploy $SKIP_TESTS -s .m2/settings.xml -PAZURE,PROD,iss --batch-mode --errors --fail-at-end --show-version
+          env:
+            GITHUB_USERNAME: ${{ github.actor }}
+            GITHUB_TOKEN: ${{ secrets.ISS_PAT }}
 
-          mvn clean deploy $SKIP_TESTS -s .m2/settings.xml -PAZURE,PROD,iss --batch-mode --errors --fail-at-end --show-version
-        env:
-          GITHUB_USERNAME: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: Log in to GitHub Container Registry
+          run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-      - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+        - name: Build Docker image
+          run: |
+            IMAGE_ID=ghcr.io/${{ github.repository }}
+            
+            docker build -t $IMAGE_ID:${{ github.ref_name }} .
+            
+            if [ "${{ github.ref_name }}" = "master" ]; then
+              docker tag $IMAGE_ID:${{ github.ref_name }} $IMAGE_ID:latest
+            fi
 
-      - name: Build Docker image
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository }}
-
-          docker build -t $IMAGE_ID:${{ github.ref_name }} .
-
-          if [ "${{ github.ref_name }}" = "master" ]; then
-            docker tag $IMAGE_ID:${{ github.ref_name }} $IMAGE_ID:latest
-          fi
-
-      - name: Push Docker image
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository }}
-
-          docker push $IMAGE_ID:${{ github.ref_name }}
-
-          if [ "${{ github.ref_name }}" = "master" ]; then
-            docker push $IMAGE_ID:latest
-          fi
+        - name: Push Docker image
+          run: |
+            IMAGE_ID=ghcr.io/${{ github.repository }}
+            
+            docker push $IMAGE_ID:${{ github.ref_name }}
+            
+            if [ "${{ github.ref_name }}" = "master" ]; then
+              docker push $IMAGE_ID:latest
+            fi
