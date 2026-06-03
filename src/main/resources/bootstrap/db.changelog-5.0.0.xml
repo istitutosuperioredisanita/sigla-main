@@ -6305,7 +6305,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accesso_stampa_accertamenti_pluriennali_voci.xml"/>
 
     <!-- Autore : Massimiliano Di Gregorio - Nuova voce di menu per consultazione configurazione CNR-->
-    <include file="bootstrap/add_accesso_cons_configurazione_cnr.xml"/>
+    <include file="bootstrap/"/>
     <!-- Autore : Stefano Lucattini - Nuova voce di menu per la gestione della tabella configurazione CNR-->
     <include file="bootstrap/add_accesso_gestione_configurazione_cnr.xml"/>
     <!-- Autore : Valentina Tomada - Modifica colonna TI_FUNZIONE di ASS_BP_ACCESSO x la gestione della tabella configurazione CNR-->
@@ -6338,4 +6338,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_column_fl_onere_access_inventario_beni.xml"/>
     <!-- Autore : Ciro Salvio -Gestione Tipo Prestazione Compensi" -->
     <include file="bootstrap/add_accesso_Tipo_prest_compenso.xml"/>
+    <!-- Autore : Valentina Tomada -Configurazione CNR - gestione apertura GAE su Progetti in stato INIZIALE -->
+    <include file="bootstrap/add_configurazione_cnr_progetto_ini_apertura_gae.xml"/>
+
 </databaseChangeLog>
