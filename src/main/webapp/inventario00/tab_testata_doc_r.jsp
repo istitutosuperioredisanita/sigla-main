@@ -147,9 +147,9 @@ function doStampaDocTraspRient() {
       </tr>
 
       <tr>
-        <td><% bp.getController().writeFormLabel(out,"idFlussoAutorizzativo"); %></td>
+        <td><% bp.getController().writeFormLabel(out,"uuidFlussoAutorizzativo"); %></td>
         <td colspan="3">
-          <% bp.getController().writeFormInput(out, null, "idFlussoAutorizzativo", true, null, null); %>
+          <% bp.getController().writeFormInput(out, null, "uuidFlussoAutorizzativo", true, null, null); %>
         </td>
       </tr>
 
