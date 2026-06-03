@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="cdTrattamento"
+		property="cdTrattamento"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice tipo trattamento" />
+	<fieldProperty
+		name="cdTiCompenso"
+		property="cdTiCompenso"
+		inputType="TEXT"
+		inputSize="5"
+		maxLength="5"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Codice" />
+	<fieldProperty
+		name="dtInizioValidita"
+		property="dtInizioValidita"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="false"
+		enabledOnSearch="false"
+		nullable="false"
+		label="Data inizio validita" />
+	<fieldProperty
+		name="dsTiCompenso"
+		property="dsTiCompenso"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="100"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Descrizione" />
+	<fieldProperty
+		name="flRegistraFattura"
+		property="flRegistraFattura"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Indicatore di compenso abilitato ad essere associato ad una fattura." />
+	<fieldProperty
+		name="flDiaria"
+		property="flDiaria"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Indicatore di tipologia di compenso utilizzabile nel calcolo della diaria delle missioni." />
+	<fieldProperty
+		name="dtFineValidita"
+		property="dtFineValidita"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="false"
+		nullable="false"
+		label="Data fine validita" />
+
+
+	<fieldProperty
+			name="tipo_trattamento"
+			property="tipo_trattamento"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			enabledOnSearch="true"
+			label="Tipo Trattamento" />
+
+	<formFieldProperty
+		name="cdTiCompenso" />
+	<formFieldProperty
+			name="dsTiCompenso" />
+	<formFieldProperty
+		name="dtInizioValidita" />
+	<formFieldProperty
+			name="dtFineValidita" />
+	<formFieldProperty
+			name="tipo_trattamento" />
+	<formFieldProperty
+		name="flRegistraFattura" />
+	<formFieldProperty
+		name="flDiaria" />
+
+
+	<findFieldProperty
+		name="cdTiCompenso" />
+	<findFieldProperty
+			name="dsTiCompenso" />
+	<findFieldProperty
+		name="dtInizioValidita" />
+	<findFieldProperty
+			name="dtFineValidita" />
+	<findFieldProperty
+			name="cdTrattamento" />
+	<findFieldProperty
+		name="flRegistraFattura" />
+	<findFieldProperty
+		name="flDiaria" />
+
+
+	<columnFieldProperty
+		name="cdTiCompenso" />
+	<columnFieldProperty
+			name="dsTiCompenso" />
+	<columnFieldProperty
+		name="dtInizioValidita" />
+	<columnFieldProperty
+			name="dtFineValidita" />
+	<columnFieldProperty
+			name="cdTrattamento" />
+	<columnFieldProperty
+		name="flRegistraFattura" />
+	<columnFieldProperty
+		name="flDiaria" />
+
+</bulkInfo>
