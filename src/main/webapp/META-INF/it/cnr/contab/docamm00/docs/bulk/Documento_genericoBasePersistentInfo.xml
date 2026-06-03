@@ -202,6 +202,13 @@
 			columnSize="1"
 			nullable="true"
 			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+				columnName="FL_TERZO_NO_ENT"
+				propertyName="fl_terzo_no_entita"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="true"
+				converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="dt_cancellazione" />
@@ -265,4 +272,6 @@
 		name="cd_causale_contabile" />
 	<persistentProperty
 		name="fl_storno" />
+	<persistentProperty
+		name="fl_terzo_no_entita" />
 </SQLPersistentInfo>

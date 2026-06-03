@@ -20,72 +20,98 @@ package it.cnr.contab.compensi00.bp;
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.compensi00.ejb.TipoCompensoComponentSession;
 import it.cnr.contab.compensi00.tabrif.bulk.Tipo_CompensoBulk;
+import it.cnr.contab.doccont00.core.bulk.Accertamento_modificaBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 
+import java.util.Optional;
+
 /**
  * Insert the type's description here.
  * Creation date: (08/03/2002 14.14.23)
+ *
  * @author: Roberto Fantino
  */
 public class CRUDTipoCompensoBP extends it.cnr.jada.util.action.SimpleCRUDBP {
-	private final it.cnr.jada.util.action.SimpleDetailCRUDController intervalliCRUDController = new it.cnr.jada.util.action.SimpleDetailCRUDController("intervalli", Tipo_CompensoBulk.class,"intervalli",this);
-/**
- * CRUDTipoTrattamentoBP constructor comment.
- */
-public CRUDTipoCompensoBP() {
-	super();
-	intervalliCRUDController.setEnabled(false);
-}
-/**
- * CRUDTipoTrattamentoBP constructor comment.
- * @param function java.lang.String
- */
-public CRUDTipoCompensoBP(String function) {
-	super(function);
-	intervalliCRUDController.setEnabled(false);
-}
-public void basicEdit(ActionContext context,OggettoBulk bulk,boolean doInitializeForEdit) throws BusinessProcessException {
+    private final it.cnr.jada.util.action.SimpleDetailCRUDController intervalliCRUDController = new it.cnr.jada.util.action.SimpleDetailCRUDController("intervalli", Tipo_CompensoBulk.class, "intervalli", this);
 
-	super.basicEdit(context, bulk, doInitializeForEdit);
+    /**
+     * CRUDTipoCompensoBP constructor comment.
+     */
+    public CRUDTipoCompensoBP() {
+        super();
+        intervalliCRUDController.setEnabled(false);
+    }
 
-	if (!isViewing()){
+    public boolean isDeleteButtonEnabled() {
 
-		Tipo_CompensoBulk tipoCompenso = (Tipo_CompensoBulk)bulk;
-		java.sql.Timestamp dataOdierna = CompensoBulk.getDataOdierna();
+        return Optional.ofNullable(getModel())
+                .map(Tipo_CompensoBulk.class::cast)
+                .filter(tpc -> Optional.ofNullable(tpc.getDtFineValidita()).isPresent())
+                .map(tpc -> {
+                    try {
+                        return (tpc.getDtFineValidita().compareTo(CompensoBulk.getDataOdierna()) > 0);
+                    } catch (BusinessProcessException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).orElse(super.isDeleteButtonEnabled());
+    }
 
-		if (tipoCompenso.getDtFineValidita().before(dataOdierna)){
-			setStatus(VIEW);		
-			setMessage("E' possibile modificare solo il record attivo!");
-		}else{
-			if (tipoCompenso.getDtFineValidita().equals(dataOdierna) && !isUltimoIntervallo(context, tipoCompenso)){
-				setStatus(VIEW);		
-				setMessage("E' possibile modificare solo l'ultimo intervallo!");
-			}
-		}
-	}
+    /**
+     * CRUDTipoCompensoBP constructor comment.
+     *
+     * @param function java.lang.String
+     */
+    public CRUDTipoCompensoBP(String function) {
+        super(function);
+        intervalliCRUDController.setEnabled(false);
+    }
 
-}
-/**
- * Insert the method's description here.
- * Creation date: (04/06/2002 14.28.08)
- * @return it.cnr.jada.util.action.SimpleDetailCRUDController
- */
-public it.cnr.jada.util.action.SimpleDetailCRUDController getIntervalliCRUDController() {
-	return intervalliCRUDController;
-}
-private boolean isUltimoIntervallo(ActionContext context,Tipo_CompensoBulk tipoCompenso) throws BusinessProcessException {
+    public void basicEdit(ActionContext context, OggettoBulk bulk, boolean doInitializeForEdit) throws BusinessProcessException {
 
-	try {
-		
-		TipoCompensoComponentSession session = (TipoCompensoComponentSession)createComponentSession();
-		return session.isUltimoIntervallo(context.getUserContext(), tipoCompenso);
-		
-	}catch(it.cnr.jada.comp.ComponentException ex){
-		throw handleException(ex);
-	}catch(java.rmi.RemoteException ex){
-		throw handleException(ex);
-	}
-}
+        super.basicEdit(context, bulk, doInitializeForEdit);
+
+        if (!isViewing()) {
+
+            Tipo_CompensoBulk tipoCompenso = (Tipo_CompensoBulk) bulk;
+            java.sql.Timestamp dataOdierna = CompensoBulk.getDataOdierna();
+
+            if (tipoCompenso.getDtFineValidita().before(dataOdierna)) {
+                setStatus(VIEW);
+                setMessage("E' possibile modificare solo il record attivo!");
+            } else {
+                if (tipoCompenso.getDtFineValidita().equals(dataOdierna) && !isUltimoIntervallo(context, tipoCompenso)) {
+                    setStatus(VIEW);
+                    setMessage("E' possibile modificare solo l'ultimo intervallo!");
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (04/06/2002 14.28.08)
+     *
+     * @return it.cnr.jada.util.action.SimpleDetailCRUDController
+     */
+    public it.cnr.jada.util.action.SimpleDetailCRUDController getIntervalliCRUDController() {
+        return intervalliCRUDController;
+    }
+
+    private boolean isUltimoIntervallo(ActionContext context, Tipo_CompensoBulk tipoCompenso) throws BusinessProcessException {
+
+        try {
+
+            TipoCompensoComponentSession session = (TipoCompensoComponentSession) createComponentSession();
+            return session.isUltimoIntervallo(context.getUserContext(), tipoCompenso);
+
+        } catch (it.cnr.jada.comp.ComponentException ex) {
+            throw handleException(ex);
+        } catch (java.rmi.RemoteException ex) {
+            throw handleException(ex);
+        }
+    }
+
 }

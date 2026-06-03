@@ -4,6 +4,9 @@
  */
 package it.cnr.contab.compensi00.tabrif.bulk;
 
+import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
+import it.cnr.jada.action.BusinessProcessException;
+
 import java.util.Optional;
 
 public class Tipo_CompensoBulk extends Tipo_CompensoBase {
@@ -58,5 +61,22 @@ public class Tipo_CompensoBulk extends Tipo_CompensoBase {
 	 **/
 	public Tipo_CompensoBulk(String cdTrattamento, String cdTiCompenso, java.sql.Timestamp dtInizioValidita) {
 		super(cdTrattamento, cdTiCompenso, dtInizioValidita);
+	}
+	public boolean isROCheck() {
+
+		return Optional.ofNullable(this.getDtFineValidita())
+						.map(el-> {
+                            try {
+                                return !(el.compareTo(CompensoBulk.getDataOdierna())>0);
+                            } catch (BusinessProcessException e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+						.orElse(Boolean.FALSE);
+	}
+	public boolean isROTipoTrattamento() {
+		if ( Optional.ofNullable(getDtInizioValidita()).isPresent())
+			return Boolean.FALSE;
+		return Boolean.TRUE;
 	}
 }

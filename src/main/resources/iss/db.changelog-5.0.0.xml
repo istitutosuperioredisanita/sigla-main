@@ -144,4 +144,10 @@
     <include file="iss/insert_doctr_ruolo_utente.xml"/>
     <!-- Autore : DAVIDE MIRRA - Assegnazione accessi al ruolo DOCTR_REST -->
     <include file="iss/insert_accessi_doctr_per_ruolo.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Aggiunto accesso per documento generico oneri ente -->
+    <include file="iss/add_accesso_doc_generico_oneri_ente.xml"/>
+    <!-- Autore : VALENTINA TOMADA - Aggiunta colonna in DOCUMENTO_GENERICO per indicare se l'entità del terzo era obbligatoriamente DIVERSI -->
+    <include file="iss/add_column_fl_no_entita_terzo_doc_gen.xml"/>
+
+
 </databaseChangeLog>

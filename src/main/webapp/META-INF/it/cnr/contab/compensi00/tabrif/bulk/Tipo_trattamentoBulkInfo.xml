@@ -276,8 +276,6 @@
 				name="cd_trattamento"/>
 		<formFieldProperty
 				name="ds_ti_trattamento"/>
-		<formFieldProperty
-				name="dt_inizio_validita" />
 	</form>
 			
 	<formFieldProperty

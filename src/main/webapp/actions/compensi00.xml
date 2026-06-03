@@ -196,7 +196,7 @@
             path="/CRUDTipoCompensoAction" actionClass="it.cnr.contab.compensi00.actions.CRUDTipoCompensoAction">
     </action>
     <businessProcess
-            name="CRUDTipoCompensoBP" className="it.cnr.jada.util.action.SimpleCRUDBP">
+            name="CRUDTipoCompensoBP" className="it.cnr.contab.compensi00.bp.CRUDTipoCompensoBP">
         <forward name="default" path="/util/form.jsp"/>
         <init-param name="bulkClassName" value="it.cnr.contab.compensi00.tabrif.bulk.Tipo_CompensoBulk"/>
         <init-param name="componentSessionName" value="CNRCOMPENSI00_EJB_TipoCompensoComponentSession"/>

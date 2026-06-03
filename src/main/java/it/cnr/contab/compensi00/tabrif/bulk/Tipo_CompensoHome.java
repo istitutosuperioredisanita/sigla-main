@@ -23,7 +23,7 @@ public class Tipo_CompensoHome extends BulkHome {
 
 		SQLBuilder sql = createSQLBuilder();
 		sql.addClause("AND", "cdTiCompenso",sql.EQUALS,tipoCompenso.getCdTiCompenso());
-		sql.addOrderBy("dtInizioValidita");
+		sql.addOrderBy("DT_INIZIO_VALIDITA");
 		return fetchAll(sql);
 	}
 	public 	void addClauseValidita(SQLBuilder sql, java.sql.Timestamp data){

@@ -2,7 +2,7 @@
 <bulkInfo>
 	<fieldProperty
 		name="cdTrattamento"
-		property="cdTrattamento"
+		property="tipo_trattamento.cd_trattamento"
 		inputType="TEXT"
 		inputSize="10"
 		maxLength="10"
@@ -25,9 +25,10 @@
 		property="dtInizioValidita"
 		inputType="TEXT"
 		formatName="date_short"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
 		enabledOnSearch="false"
 		nullable="false"
+		command="doOnDaIniValiditaChange"
 		label="Data inizio validita" />
 	<fieldProperty
 		name="dsTiCompenso"
@@ -43,15 +44,17 @@
 		name="flRegistraFattura"
 		property="flRegistraFattura"
 		inputType="CHECKBOX"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
+		readonlyProperty ="ROCheck"
 		nullable="false"
 		label="Indicatore di compenso abilitato ad essere associato ad una fattura." />
 	<fieldProperty
 		name="flDiaria"
 		property="flDiaria"
 		inputType="CHECKBOX"
-		enabledOnEdit="false"
+		enabledOnEdit="true"
 		nullable="false"
+		readonlyProperty ="ROCheck"
 		label="Indicatore di tipologia di compenso utilizzabile nel calcolo della diaria delle missioni." />
 	<fieldProperty
 		name="dtFineValidita"
@@ -59,7 +62,8 @@
 		inputType="TEXT"
 		formatName="date_short"
 		enabledOnEdit="false"
-		nullable="false"
+		nullable="true"
+		command="doOnDaFinValiditaChange"
 		label="Data fine validita" />
 
 
@@ -69,8 +73,9 @@
 			inputType="SEARCHTOOL"
 			formName="searchtool"
 			enabledOnInsert="true"
-			enabledOnEdit="true"
+			enabledOnEdit="false"
 			enabledOnSearch="true"
+			readonlyProperty="ROTipoTrattamento"
 			label="Tipo Trattamento" />
 
 	<formFieldProperty
