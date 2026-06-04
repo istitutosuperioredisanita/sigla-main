@@ -39,7 +39,7 @@
         <version.sdi.fatturapa>1.0.2</version.sdi.fatturapa>
         <version.sigla-ws.client>1.0.2</version.sigla-ws.client>
         <spring.version>7.0.2</spring.version>
-        <jada.version>8.0.9</jada.version>
+        <jada.version>8.0.10</jada.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.directory>target</project.build.directory>
         <sigla.build.number>DEV</sigla.build.number>
@@ -63,7 +63,7 @@
         <version.arquillian-graphene>3.0.0-alpha.4</version.arquillian-graphene>
         <test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
 
-
+        <cors.allow-origin>http://localhost:9000</cors.allow-origin>
     </properties>
 
     <!-- Repository necessari per le dipendenze WildFly/JBoss -->

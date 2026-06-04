@@ -139,6 +139,7 @@
                    DS_ASSOCIAZIONE, SEGNO, DUVA, UTUV, DACR, UTCR, PG_VER_REC, 'IRES'
             FROM CNR_ASS_CONTO_GRUPPO_EP
             WHERE CD_TIPO_BILANCIO = 'CIVILISTICO'
+            AND CD_PIANO_GRUPPI = 'CE'
         </sql>
     </changeSet>
     <changeSet id="insert_ires_cnr_gruppo_ep" author="marco.spasiano">
@@ -149,6 +150,26 @@
                    DS_GRUPPO_EP, SEGNO, FL_MASTRINO, DUVA, UTUV, DACR, UTCR, PG_VER_REC, CD_PIANO_PADRE, FORMULA, 'IRES'
             FROM CNR_GRUPPO_EP
             WHERE CD_TIPO_BILANCIO = 'CIVILISTICO'
+            AND CD_PIANO_GRUPPI = 'CE'
         </sql>
     </changeSet>
+    <changeSet id="add_note_table_bil_riclassificato" author="marco.spasiano">
+        <addColumn tableName="BIL_RICLASSIFICATO">
+            <column name="CD_PIANO_GRUPPI" remarks="Piano gruppi può assumere i valori ('SPATT', 'SPPAS', 'CE')" type="VARCHAR(5)"/>
+            <column name="NOTE" remarks="note" type="VARCHAR(2000)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="add_piano_gruppi_value_bil_riclassificato" author="marco.spasiano">
+        <sql>
+            UPDATE BIL_RICLASSIFICATO B set CD_PIANO_GRUPPI = (
+                SELECT CD_PIANO_GRUPPI FROM CNR_ASS_CONTO_GRUPPO_EP C
+                WHERE C.CD_TIPO_BILANCIO = B.CD_TIPO_BILANCIO
+                  AND C.ESERCIZIO = B.ESERCIZIO
+                  AND C.CD_VOCE_EP = B.CD_VOCE_EP
+                  AND C.SEZIONE = B.SEZIONE
+            )
+        </sql>
+    </changeSet>
+
+
 </databaseChangeLog>

@@ -1,8 +1,5 @@
 package it.cnr.contab.inventario01.bp;
 
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
-import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario01.bulk.*;
@@ -36,11 +33,9 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.SelectionListener;
-import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.si.spring.storage.StorageObject;
 import jakarta.servlet.http.HttpServletResponse;
-
 
 import java.io.*;
 import java.rmi.RemoteException;
@@ -56,7 +51,7 @@ import static it.cnr.jada.bulk.OggettoBulk.isNullOrEmpty;
  * Business Process per la gestione dei documenti di Trasporto e Rientro di beni inventariali.
  * <p>
  * Gestisce il ciclo di vita completo dei documenti (CRUD + workflow), l'associazione di beni
- * inventariali, la gestione degli allegati su documentale Azure e il flusso di firma digitale.
+ * inventariali, la gestione degli allegati sul\ documentale e il flusso di firma digitale.
  * <p>
  * Funzionalità principali:
  * - Creazione/modifica/eliminazione documenti trasporto/rientro

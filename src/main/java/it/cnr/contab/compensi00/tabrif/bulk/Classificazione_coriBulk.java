@@ -17,16 +17,11 @@
 
 package it.cnr.contab.compensi00.tabrif.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
-
 public class Classificazione_coriBulk extends Classificazione_coriBase {
 	public final static String TIPO_ADDIZIONALE_COMUNALE_ACCONTO = "C1";
 	public final static String TIPO_FISCALE = "FI";
 	public final static String TIPO_PREVIDENZIALE = "PR";
-	public final static String TIPO_IRAP = "IRAP";
+	public final static String TIPO_IRAP = "IP";
 	public final static String TIPO_ADDIZIONALE_REGIONALE = "R0";
 	public final static String TIPO_ADDIZIONALE_PROVINCIALE = "P0";
 	public final static String TIPO_ADDIZIONALE_COMUNALE = "C0";
@@ -51,5 +46,8 @@ public class Classificazione_coriBulk extends Classificazione_coriBase {
 
 	public boolean isTipoRivalsa() {
 		return Classificazione_coriBulk.TIPO_RIVALSA.equals(this.getCd_classificazione_cori());
+	}
+	public boolean isTipoIrap() {
+		return Classificazione_coriBulk.TIPO_IRAP.equals(this.getCd_classificazione_cori());
 	}
 }

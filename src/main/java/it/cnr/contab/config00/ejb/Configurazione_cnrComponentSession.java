@@ -163,4 +163,7 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
     Boolean isEnabledPartGiroInVarizione(UserContext userContext) throws ComponentException, RemoteException;
 
     void ribaltaProgetti(UserContext userContext, int esercizio) throws ComponentException, RemoteException;
+
+    Boolean isNoAperturaGaeSuProgettoInizialeEnable(UserContext param0) throws ComponentException, RemoteException;
+
 }

@@ -100,9 +100,28 @@
 		maxLength="40"
 		enabledOnEdit="true"
 		enabledOnSearch="true"
-		command="doCambiaTipoBilancio"
 		nullable="false"
 		label="Tipo bilancio" />
+	<fieldProperty
+		name="cdPianoGruppi"
+		property="cdPianoGruppi"
+		inputType="SELECT"
+		keysProperty="ti_pianoGruppiKeys"
+		enabledOnEdit="true"
+		enabledOnSearch="true"
+		inputSize="5"
+		maxLength="5"
+		label="Piano Gruppi" />
+	<fieldProperty
+		name="note"
+		property="note"
+		inputType="TEXT"
+		maxLength="2000"
+		enabledOnSearch="true"
+		enabledOnEdit="true"
+		enabledOnView="true"
+		command="doOnChangeNote"
+		label="Note" />
 
 	<form
 		name="searchtool">
@@ -126,7 +145,15 @@
 	<formFieldProperty
 		name="importoFinale" />
 	<formFieldProperty
-		name="tipo_bilancio" />
+		name="tipo_bilancio"
+		command="doFiltra"
+	/>
+	<formFieldProperty
+		name="cdPianoGruppi"
+		command="doFiltra"
+	/>
+	<formFieldProperty
+		name="note" />
 
 	<findFieldProperty
 		name="esercizio" />
@@ -134,6 +161,8 @@
 		name="cdUnitaOrganizzativa" />
 	<findFieldProperty
 		name="cdTipoBilancio" />
+	<findFieldProperty
+		name="cdPianoGruppi" />
 	<findFieldProperty
 		name="cdVoceEp" />
 	<findFieldProperty
@@ -144,12 +173,16 @@
 		name="rettifica" />
 	<findFieldProperty
 		name="importoFinale" />
+	<findFieldProperty
+		name="note" />
 	<columnFieldProperty
 		name="esercizio" />
 	<columnFieldProperty
 		name="cdUnitaOrganizzativa" />
 	<columnFieldProperty
 		name="cdTipoBilancio" />
+	<columnFieldProperty
+		name="cdPianoGruppi" />
 	<columnFieldProperty
 		name="cdVoceEp" />
 	<columnFieldProperty
@@ -161,7 +194,12 @@
 	<columnFieldProperty
 		name="rettifica" />
 	<columnFieldProperty
-		name="importoFinale" />
+		name="importoFinale"
+		columnStyle="width:20%; text-align: right"/>
+	<columnFieldProperty
+		columnStyle="width:20%;"
+		name="note" />
+
 	<columnFieldProperty
 			name="dacr"
 			property="dacr"

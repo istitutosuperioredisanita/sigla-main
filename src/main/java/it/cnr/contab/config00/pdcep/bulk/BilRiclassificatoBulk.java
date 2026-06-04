@@ -6,6 +6,7 @@ package it.cnr.contab.config00.pdcep.bulk;
 
 import it.cnr.contab.coepcoan00.core.bulk.Sezione;
 
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.List;
 
@@ -19,6 +20,13 @@ public class BilRiclassificatoBulk extends BilRiclassificatoBase {
 	private List<TipoBilancioBulk> tipoBilanci;
 
 	private TipoBilancioBulk tipo_bilancio;
+	public final static java.util.Dictionary ti_pianoGruppiKeys = new it.cnr.jada.util.OrderedHashtable();
+	static {
+		Arrays.stream(AssociazioneContoGruppoBulk.PianoGruppi.values()).forEach(pianoGruppi -> {
+			ti_pianoGruppiKeys.put(pianoGruppi.name(), pianoGruppi.label());
+		});
+	}
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: BIL_RICLASSIFICATO
