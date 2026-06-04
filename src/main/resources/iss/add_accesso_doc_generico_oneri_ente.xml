@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+
+    <changeSet id="add_accesso_doc_generico_oneri_ente" author="valentina.tomada">
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENPASONENTEM"/>
+            <column name="ti_accesso" type="CHAR(1)" value="D"/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Gestione documento generico passivo onere ente"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="AMMDOCGENPASONENTEM"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDGenericoPassOnereEnteBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value="M"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.AMM.DOCGEN.GENPAS.E"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="Onere Ente"/>
+            <column name="cd_accesso" type="STRING" value="AMMDOCGENPASONENTEM"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDGenericoPassOnereEnteBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="20"/>
+            <column name="fl_terminale" type="CHAR(1)" value="y"/>
+            <column name="livello" type="SMALLINT" value="4"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="E"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.AMM.DOCGEN.GENPAS"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

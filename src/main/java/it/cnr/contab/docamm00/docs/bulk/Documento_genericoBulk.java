@@ -137,6 +137,9 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 	public final static Dictionary STATO_LIQUIDAZIONE;
 	public final static Dictionary CAUSALE;
 
+	// ACCESSO DA ONERE-ENTE (doc passivo)
+	//private boolean gestioneOnereEnte;
+
 	public final static Dictionary ti_tipoContoDocAttivoEnumKeys = TipoContoDocAttivoEnum.ti_tipoContoDocAttivoEnumKeys;
 
 	static {
@@ -913,25 +916,31 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 
 		setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
 		setCd_cds(null); // ho aggiunto CD_CDS nelle findFieldProperties -> imposto a NULL per escluderlo dai filtri di ricerca
-		if (bp instanceof CRUDDocumentoGenericoPassivoBP && ((CRUDDocumentoGenericoPassivoBP)bp).isSpesaBP()){
-			setCd_unita_organizzativa(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa());
-			setStato_cofi(this.STATO_CONTABILIZZATO);
-			setCd_tipo_documento_amm(this.GENERICO_S);
-			setStato_pagamento_fondo_eco(FONDO_ECO);
+		if (bp instanceof CRUDDocumentoGenericoPassivoBP){
+			if(((CRUDDocumentoGenericoPassivoBP)bp).isSpesaBP()){
+				setCd_unita_organizzativa(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa());
+				setStato_cofi(this.STATO_CONTABILIZZATO);
+				setCd_tipo_documento_amm(this.GENERICO_S);
+				setStato_pagamento_fondo_eco(FONDO_ECO);
 
-			it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk uo = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
-			setCd_cds(uo.getCd_unita_padre());
-			setCd_cds_origine(uo.getCd_unita_padre());
-			if (it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_SAC.equalsIgnoreCase(uo.getCd_tipo_unita())){
-				setCd_unita_organizzativa(null);
-				setCd_uo_origine(null);
-			}else{
-				setCd_unita_organizzativa(uo.getCd_unita_organizzativa());
-				setCd_uo_origine(uo.getCd_unita_organizzativa());
+				it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk uo = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
+				setCd_cds(uo.getCd_unita_padre());
+				setCd_cds_origine(uo.getCd_unita_padre());
+				if (it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_SAC.equalsIgnoreCase(uo.getCd_tipo_unita())) {
+					setCd_unita_organizzativa(null);
+					setCd_uo_origine(null);
+				} else {
+					setCd_unita_organizzativa(uo.getCd_unita_organizzativa());
+					setCd_uo_origine(uo.getCd_unita_organizzativa());
+				}
+			}
+			if (bp.getMapping().getConfig().getInitParameter("NO_ENTITA_TERZO") != null) {
+				setFl_terzo_no_entita(true);
 			}
 		} else if (bp instanceof CRUDDocumentoGenericoAttivoBP){
 			setCd_uo_origine(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa());
 		}
+
 
 		return this;
 	}
@@ -964,20 +973,25 @@ public class Documento_genericoBulk extends Documento_genericoBase implements ID
 		it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk uo = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
 		if (uo.isUoEnte())
 			setCd_uo_origine(null);
-		if (bp instanceof CRUDDocumentoGenericoPassivoBP && ((CRUDDocumentoGenericoPassivoBP)bp).isSpesaBP()){
-			setStato_cofi(this.STATO_CONTABILIZZATO);
-			setTipo_documento(new Tipo_documento_ammBulk());
-			setCd_tipo_documento_amm(this.GENERICO_S);
-			setStato_pagamento_fondo_eco(FONDO_ECO);
-			setStato_liquidazione(LIQ);
-			setCd_cds(uo.getCd_unita_padre());
-			setCd_cds_origine(uo.getCd_unita_padre());
-			if (it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_SAC.equalsIgnoreCase(uo.getCd_tipo_unita())){
-				setCd_unita_organizzativa(null);
-				setCd_uo_origine(null);
-			}else{
-				setCd_unita_organizzativa(uo.getCd_unita_organizzativa());
-				setCd_uo_origine(uo.getCd_unita_organizzativa());
+		if (bp instanceof CRUDDocumentoGenericoPassivoBP){
+			if(((CRUDDocumentoGenericoPassivoBP)bp).isSpesaBP()){
+				setStato_cofi(this.STATO_CONTABILIZZATO);
+				setTipo_documento(new Tipo_documento_ammBulk());
+				setCd_tipo_documento_amm(this.GENERICO_S);
+				setStato_pagamento_fondo_eco(FONDO_ECO);
+				setStato_liquidazione(LIQ);
+				setCd_cds(uo.getCd_unita_padre());
+				setCd_cds_origine(uo.getCd_unita_padre());
+				if (it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_SAC.equalsIgnoreCase(uo.getCd_tipo_unita())) {
+					setCd_unita_organizzativa(null);
+					setCd_uo_origine(null);
+				} else {
+					setCd_unita_organizzativa(uo.getCd_unita_organizzativa());
+					setCd_uo_origine(uo.getCd_unita_organizzativa());
+				}
+			}
+			if (bp.getMapping().getConfig().getInitParameter("NO_ENTITA_TERZO") != null) {
+				setFl_terzo_no_entita(true);
 			}
 		}
 		return this;

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.compensi00.tabrif.bulk.Tipo_CompensoKey">
+	<defaultColumnMap
+		tableName="TIPO_COMPENSO">
+		<columnMapping
+			columnName="CD_TRATTAMENTO"
+			propertyName="cdTrattamento"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="CD_TI_COMPENSO"
+			propertyName="cdTiCompenso"
+			sqlTypeName="VARCHAR"
+			columnSize="5"
+			nullable="false"
+			primary="true" />
+		<columnMapping
+			columnName="DT_INIZIO_VALIDITA"
+			propertyName="dtInizioValidita"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="false"
+			primary="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdTrattamento"
+		partOfOid="true" />
+	<persistentProperty
+		name="cdTiCompenso"
+		partOfOid="true" />
+	<persistentProperty
+		name="dtInizioValidita"
+		partOfOid="true" />
+</SQLPersistentInfo>
