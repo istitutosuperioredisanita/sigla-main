@@ -403,4 +403,26 @@
 		<init-param name="defaultAction" value="ConsFlussiCassaAction" />
 		<init-param name="RENDICONTO" value="true"/>
 	</businessProcess>
+
+    <action
+            path="/CRUDAccrualMefAction"
+            actionClass="it.cnr.contab.pdg00.action.CRUDAccrualMefAction">
+    </action>
+
+    <businessProcess
+            name="CRUDAccrualMefBP"
+            className="it.cnr.contab.pdg00.bp.CRUDAccrualMefBP">
+
+        <forward name="default" path="/pdg00/accrual_mef.jsp"/>
+
+        <init-param name="bulkClassName"
+                    value="it.cnr.contab.pdg00.bulk.AccrualBulk"/>
+
+        <init-param name="componentSessionName"
+                    value="JADAEJB_CRUDComponentSession"/>
+
+        <init-param name="defaultAction"
+                    value="CRUDAccrualMefAction"/>
+
+    </businessProcess>
 </action-mappings>
