@@ -6342,5 +6342,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_accesso_Tipo_compenso.xml"/>
     <!-- Autore : Valentina Tomada -Configurazione CNR - gestione apertura GAE su Progetti in stato INIZIALE -->
     <include file="bootstrap/add_configurazione_cnr_progetto_ini_apertura_gae.xml"/>
+    <!-- Autore : Ciro Salvio -Modifica ordine menu Tipo  Compensi" -->
+    <include file="bootstrap/update_tipo_compenso_albero_main.xml"/>
 
 </databaseChangeLog>
