@@ -63,7 +63,7 @@
         <version.arquillian-graphene>3.0.0-alpha.4</version.arquillian-graphene>
         <test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
 
-
+        <cors.allow-origin>http://localhost:9000</cors.allow-origin>
     </properties>
 
     <!-- Repository necessari per le dipendenze WildFly/JBoss -->
