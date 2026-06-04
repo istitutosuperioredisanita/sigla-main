@@ -432,6 +432,13 @@
             <version>3.9</version>
         </dependency>
 
+                <!-- Workflow Service API: necessaria SEMPRE per compilare anche senza profilo iss -->
+                <dependency>
+                    <groupId>it.iss.si</groupId>
+                    <artifactId>workflow-service-commons</artifactId>
+                    <version>${workflow-service.version}</version>
+                </dependency>
+
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>

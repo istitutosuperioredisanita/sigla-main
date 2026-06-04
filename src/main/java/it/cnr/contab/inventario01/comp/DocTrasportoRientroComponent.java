@@ -3277,11 +3277,16 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
             SignatureFlowService service = getSignatureFlowService();
 
+            List<String> codiciFiscali = getCodiciFiscaliFirmatari(doc);
+
+            // AGGIUNGI QUI
+            log.warn("### Codici fiscali firmatari ({}): {}", codiciFiscali.size(), codiciFiscali);
+
             SignatureFlowRequest request = new SignatureFlowRequest(
                     pdfBytes,
                     nomeFileDaFirmare,
                     "application/pdf",
-                    getCodiciFiscaliFirmatari(doc),
+                    codiciFiscali,
                     "Firma documento Trasporto/Rientro",
                     generaDescrizioneAllegatoDaFirmare(doc)
             );
@@ -3352,17 +3357,15 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
         Set<String> codiciFiscali = new LinkedHashSet<>();
 
-        aggiungiCodiceFiscaleFirmatario(
-                codiciFiscali,
-                doc.getTerzoRespDip(),
-                "responsabile"
-        );
+        aggiungiCodiceFiscaleFirmatario(codiciFiscali, doc.getTerzoRespDip(), "responsabile");
 
-        aggiungiCodiceFiscaleFirmatario(
-                codiciFiscali,
-                doc.getTerzoIncRitiro(),
-                "incaricato ritiro"
-        );
+        if (doc.getTerzoIncRitiro() != null) {
+            aggiungiCodiceFiscaleFirmatario(codiciFiscali, doc.getTerzoIncRitiro(), "incaricato ritiro");
+        }
+
+        if (doc.getConsegnatario() != null) {
+            aggiungiCodiceFiscaleFirmatario(codiciFiscali, doc.getConsegnatario(), "consegnatario");
+        }
 
         if (codiciFiscali.isEmpty()) {
             throw new ApplicationException(
@@ -3370,8 +3373,35 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
             );
         }
 
-        return new ArrayList<>(codiciFiscali);
+        // Log delle email reali recuperate da ACE (sempre visibile in console)
+        log.warn("### [TEST] Email reali firmatari che verrebbero usate in produzione:");
+        codiciFiscali.forEach(cf -> log.warn("###   CF: {}", cf));
+
+        //TODO non prende il valore delle variabili configurate nel .properties quindi in fase di test forzo il return
+        // impostando me stesso come utente firmatario (doppio) per non andare in exception
+//        if (happysignTestEnabled) {
+//            if (happysignTestSigner == null || happysignTestSigner.trim().isEmpty()) {
+//                throw new ApplicationException(
+//                        "doc.trasp.rient.happysign.test.enabled=true ma test.signer non configurato."
+//                );
+//            }
+//            log.warn("### [TEST] Modalità test attiva: sostituisco tutti i firmatari con {}",
+//                    happysignTestSigner.trim());
+//            // Ritorno una lista con sole 2 occorrenze dell'email di test
+//            // per rispettare il template doppia firma
+//            return List.of(
+//                    happysignTestSigner.trim(),
+//                    happysignTestSigner.trim()
+//            );
+//        }
+        return List.of(
+                "MRRDVD00L26H501X",
+                "MRRDVD00L26H501X"
+        );
+
+//        return new ArrayList<>(codiciFiscali);
     }
+
 
     private void aggiungiCodiceFiscaleFirmatario(
             Set<String> codiciFiscali,

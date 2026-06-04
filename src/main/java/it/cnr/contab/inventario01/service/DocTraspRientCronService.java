@@ -16,7 +16,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Profile("iss")
@@ -50,12 +53,13 @@ public class DocTraspRientCronService {
 
     /**
      * Metodo principale del job schedulato.
-     * Recupera tutti i documenti da verificare su HappySign e avvia l’elaborazione a batch,
-     * gestendo log iniziale/finale e eventuali errori globali.
+     * Recupera tutti i documenti, filtra i duplicati basandosi sull'UUID per gestire
+     * le firme multiple a monte, logga i dati reali e avvia l’elaborazione a batch.
      */
-    @Scheduled(
-            cron = "${doc.trasp.rient.happysign.timer.cron.expression}",
-            scheduler = "siglaScheduler")
+//    //TODO non prende il valore della variabile nel.properties quindi glielo setto hardcode (ogni min)
+//    @Scheduled(
+//            cron = "0 * * * * *",
+//            scheduler = "siglaScheduler")
     public void executeVerificaFirmeHappySign() {
 
         long start = System.currentTimeMillis();
@@ -65,17 +69,30 @@ public class DocTraspRientCronService {
                     userContext.getUser(),
                     Calendar.getInstance().get(Calendar.YEAR));
 
-            List<Doc_trasporto_rientroBulk> documenti =
+            List<Doc_trasporto_rientroBulk> tuttiDocumenti =
                     flowService.getDocumentiPredispostiAllaFirma(userContext);
 
-            if (documenti == null || documenti.isEmpty()) {
+            if (tuttiDocumenti == null || tuttiDocumenti.isEmpty()) {
                 log.info("Nessun documento da verificare");
                 return;
             }
 
-            log.info("Documenti trovati: {}", documenti.size());
+            // Filtro a monte per tenere solo un record per ogni UUID (Risolve il conteggio dei duplicati)
+            Set<String> uuidVisti = new HashSet<>();
+            List<Doc_trasporto_rientroBulk> documentiUnici = tuttiDocumenti.stream()
+                    .filter(doc -> doc.getUuidFlussoAutorizzativo() != null && !doc.getUuidFlussoAutorizzativo().trim().isEmpty())
+                    .filter(doc -> uuidVisti.add(doc.getUuidFlussoAutorizzativo()))
+                    .collect(Collectors.toList());
 
-            processaBatch(documenti);
+            if (documentiUnici.isEmpty()) {
+                log.info("Nessun documento con UUID valido da verificare");
+                return;
+            }
+
+            // Ora stampa il numero reale e pulito (es: se erano 4 righe per 2 doc, stamperà 2)
+            log.info("Documenti trovati: {}", documentiUnici.size());
+
+            processaBatch(documentiUnici);
 
         } catch (Exception e) {
             log.error("Errore globale job HappySign T/R", e);
@@ -207,7 +224,6 @@ public class DocTraspRientCronService {
             log.debug("Doc pg={} in attesa firma", safePg(doc));
         }
     }
-
 
     /**
      * Metodo di utilità per log safe.

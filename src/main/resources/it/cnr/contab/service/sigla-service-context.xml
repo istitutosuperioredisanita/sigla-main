@@ -40,7 +40,15 @@
         </property>
     </bean>
 
-    <context:component-scan base-package="it.cnr.contab.config, it.cnr.contab.spring, it.cnr.contab.service, it.cnr.si, it.iss.si.workflow.service"/>
+    <context:component-scan base-package="
+    it.cnr.contab.config,
+    it.cnr.contab.spring,
+    it.cnr.contab.service,
+    it.cnr.si,
+    it.iss.si.workflow.service,
+    it.iss.si.workflow.service.happysign,
+    it.iss.si.service,
+    it.cnr.contab.inventario01.service"/>
 
     <!-- ========================================================= -->
     <!-- Import contesti esistenti                                  -->
@@ -180,4 +188,13 @@
 
     <task:annotation-driven executor="siglaTaskExecutor" scheduler="siglaScheduler"/>
 
+    <beans profile="iss">
+
+        <task:scheduled-tasks scheduler="siglaScheduler">
+            <task:scheduled ref="docTraspRientCronService"
+                            method="executeVerificaFirmeHappySign"
+                            cron="0 * * * * *"/>
+        </task:scheduled-tasks>
+
+    </beans>
 </beans>
