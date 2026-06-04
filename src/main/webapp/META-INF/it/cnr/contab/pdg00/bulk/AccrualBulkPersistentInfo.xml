@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.pdg00.bulk.AccrualBulk"
+	homeClassName="it.cnr.contab.pdg00.bulk.AccrualHome">
+	<defaultColumnMap
+		tableName="ACCRUAL">
+	</defaultColumnMap>
+</SQLPersistentInfo>
