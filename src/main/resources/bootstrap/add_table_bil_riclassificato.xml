@@ -139,6 +139,7 @@
                    DS_ASSOCIAZIONE, SEGNO, DUVA, UTUV, DACR, UTCR, PG_VER_REC, 'IRES'
             FROM CNR_ASS_CONTO_GRUPPO_EP
             WHERE CD_TIPO_BILANCIO = 'CIVILISTICO'
+            AND CD_PIANO_GRUPPI = 'CE'
         </sql>
     </changeSet>
     <changeSet id="insert_ires_cnr_gruppo_ep" author="marco.spasiano">
@@ -149,6 +150,7 @@
                    DS_GRUPPO_EP, SEGNO, FL_MASTRINO, DUVA, UTUV, DACR, UTCR, PG_VER_REC, CD_PIANO_PADRE, FORMULA, 'IRES'
             FROM CNR_GRUPPO_EP
             WHERE CD_TIPO_BILANCIO = 'CIVILISTICO'
+            AND CD_PIANO_GRUPPI = 'CE'
         </sql>
     </changeSet>
     <changeSet id="add_note_table_bil_riclassificato" author="marco.spasiano">
