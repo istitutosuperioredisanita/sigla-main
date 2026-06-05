@@ -9,7 +9,7 @@
     <changeSet author="davide.mirra" id="create_table_accrual">
         <createTable remarks="Tabella di gestione Contabilita Accrual - MEF" tableName="accrual">
 
-            <column name="esercizio" remarks="Esercizio di riferimento" type="INT">
+            <column name="esercizio" remarks="Esercizio di riferimento" type="SMALLINT">
                 <constraints nullable="false"/>
             </column>
 
@@ -17,9 +17,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="esito" remarks="Esito del flusso Accrual MEF" type="VARCHAR(10)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="esito" remarks="Esito del flusso Accrual MEF" type="VARCHAR(10)"/>
 
             <column name="dacr" remarks="Data di creazione del record" type="${date.type}">
                 <constraints nullable="false"/>
@@ -45,6 +43,6 @@
 
         <addPrimaryKey tableName="accrual"
                        constraintName="accrual_pkey"
-                       columnNames="esercizio,stato,esito"/>
+                       columnNames="esercizio"/>
     </changeSet>
 </databaseChangeLog>

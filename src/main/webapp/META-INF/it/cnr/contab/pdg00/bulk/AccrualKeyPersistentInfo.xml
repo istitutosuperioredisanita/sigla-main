@@ -7,31 +7,11 @@
 			columnName="ESERCIZIO"
 			propertyName="esercizio"
 			sqlTypeName="DECIMAL"
-			columnSize="38"
-			nullable="false"
-			primary="true" />
-		<columnMapping
-			columnName="STATO"
-			propertyName="stato"
-			sqlTypeName="VARCHAR"
-			columnSize="3"
-			nullable="false"
-			primary="true" />
-		<columnMapping
-			columnName="ESITO"
-			propertyName="esito"
-			sqlTypeName="VARCHAR"
-			columnSize="10"
+			columnSize="4"
 			nullable="false"
 			primary="true" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="esercizio"
-		partOfOid="true" />
-	<persistentProperty
-		name="stato"
-		partOfOid="true" />
-	<persistentProperty
-		name="esito"
 		partOfOid="true" />
 </SQLPersistentInfo>
