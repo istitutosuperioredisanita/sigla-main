@@ -24,22 +24,21 @@
             keysProperty="statoKeys"
             inputSize="3"
             maxLength="3"
-            enabledOnInsert="true"
-            enabledOnEdit="true"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
             enabledOnSearch="true"
             nullable="false"
             label="Stato" />
-
     <fieldProperty
             name="esito"
             property="esito"
             inputType="TEXT"
             inputSize="10"
             maxLength="10"
-            enabledOnInsert="true"
-            enabledOnEdit="true"
-            enabledOnSearch="true"
-            nullable="false"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
+            enabledOnSearch="false"
+            nullable="true"
             label="Esito" />
 
     <form name="searchtool">

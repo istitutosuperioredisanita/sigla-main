@@ -7,18 +7,16 @@ package it.cnr.contab.pdg00.bulk;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.si.spring.storage.StorageDriver;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, AllegatoStorePath {
@@ -36,7 +34,7 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
         STATO.put(STATO_INVIATO, "Inviato");
     }
 
-    private static final String ACCRUAL_FILEFOLDER = "'Contabilita' Accrual - MEF";
+    private static final String ACCRUAL_FILEFOLDER = "Accrual";
 
     private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<>();
 
@@ -44,14 +42,24 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
         super();
     }
 
-    public AccrualBulk(Long esercizio, String stato, String esito) {
+    public AccrualBulk(Integer esercizio, String stato, String esito) {
         super(esercizio, stato, esito);
     }
+    @Override
+    public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp, it.cnr.jada.action.ActionContext context) {
+
+        super.initializeForEdit(bp,context);
+        setEsercizio(CNRUserContext.getEsercizio(context.getUserContext()));
+        setStato(STATO_INSERITO);
+
+
+        return this;
+    }
+
 
     // =========================================================================
     // ALLEGATI
     // =========================================================================
-
     @Override
     public BulkList<AllegatoGenericoBulk> getArchivioAllegati() {
         return archivioAllegati;
@@ -87,19 +95,13 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
                 .map(String::valueOf)
                 .orElse("0");
 
-        String stato = Optional.ofNullable(this.getStato())
-                .map(this::normalizzaPerPath)
-                .orElse("ND");
 
-        String esito = Optional.ofNullable(this.getEsito())
-                .map(this::normalizzaPerPath)
-                .orElse("ND");
 
         return Collections.singletonList(Arrays.asList(
                 SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
                 ACCRUAL_FILEFOLDER,
                 esercizio,
-                "Accrual MEF " + esercizio + "_" + stato + "_" + esito
+                "Accrual MEF " + esercizio
         ).stream().collect(
                 Collectors.joining(StorageDriver.SUFFIX)
         ));
@@ -191,14 +193,6 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
     public void validate() throws ValidationException {
         if (getEsercizio() == null) {
             throw new ValidationException("Indicare l'Esercizio.");
-        }
-
-        if (getStato() == null || getStato().trim().isEmpty()) {
-            throw new ValidationException("Indicare lo Stato.");
-        }
-
-        if (getEsito() == null || getEsito().trim().isEmpty()) {
-            throw new ValidationException("Indicare l'Esito.");
         }
 
         super.validate();

@@ -6,11 +6,25 @@
 	<defaultColumnMap
 		tableName="ACCRUAL">
 		<columnMapping
-			columnName="DACR"
-			propertyName="dacr"
-			sqlTypeName="TIMESTAMP"
-			columnSize="7"
-			nullable="false" />
+				columnName="STATO"
+				propertyName="stato"
+				sqlTypeName="VARCHAR"
+				columnSize="3"
+				nullable="false"
+				primary="false" />
+		<columnMapping
+				columnName="ESITO"
+				propertyName="esito"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="true"
+				primary="false" />
+		<columnMapping
+				columnName="DACR"
+				propertyName="dacr"
+				sqlTypeName="TIMESTAMP"
+				columnSize="7"
+				nullable="false" />
 		<columnMapping
 			columnName="UTCR"
 			propertyName="utcr"
@@ -36,6 +50,10 @@
 			columnSize="38"
 			nullable="false" />
 	</defaultColumnMap>
+	<persistentProperty
+			name="stato" />
+	<persistentProperty
+			name="esito"/>
 	<persistentProperty
 		name="dacr" />
 	<persistentProperty
