@@ -1304,6 +1304,7 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
                     pages.put(i++, new String[]{"tabObbligazioniPluriennali", "Obbligazioni Pluriennali", "/doccont00/tab_obb_pluriennali.jsp"});
             }
         }
+        pages.put(i++, new String[]{"tabAllegati","Allegati","/util00/tab_allegati.jsp"});
 
 
         String[][] tabs = new String[i][3];
