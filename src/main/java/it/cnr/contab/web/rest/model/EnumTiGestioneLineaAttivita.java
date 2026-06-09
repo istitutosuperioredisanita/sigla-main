@@ -5,7 +5,7 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.jada.DetailedRuntimeException;
 
-@Schema(name = "Il tipo di gestione Spesa/Entrata o Entrambe")
+@Schema( name = "TipoGestioneSpesaEntrataOEntrambe", description = "Il tipo di gestione Spesa/Entrata o Entrambe")
 public enum EnumTiGestioneLineaAttivita {
     ENTRATA(WorkpackageBulk.TI_GESTIONE_ENTRATE),
     SPESA(WorkpackageBulk.TI_GESTIONE_SPESE),
