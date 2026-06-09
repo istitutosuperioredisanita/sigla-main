@@ -200,6 +200,9 @@ echo "Configurazione logging per debug..."
 /subsystem=logging/logger=org.jboss.as.server.deployment:add(level=ERROR)
 /subsystem=logging/logger=io.undertow:add(level=ERROR)
 
+/subsystem=logging/logger=liquibase:add(level=${logger.liquibase:INFO})
+/subsystem=logging/logger=org.jboss.as.ejb3:add(level=${logger.org.jboss.as.ejb3:INFO})
+
 # Configurazione Transaction Timeout
 /subsystem=transactions:write-attribute(name=default-timeout, value=3600)
 
