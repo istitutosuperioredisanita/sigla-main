@@ -10,7 +10,8 @@
 %>
 
 <%	CRUDFatturaPassivaIBP bp = (CRUDFatturaPassivaIBP)BusinessProcess.getBusinessProcess(request);
-	Fattura_passivaBulk fatturaPassiva = (Fattura_passivaBulk)bp.getModel(); %>
+	Fattura_passivaBulk fatturaPassiva = (Fattura_passivaBulk)bp.getModel();
+	%>
 
 <div class="Group card p-3" style="width:100%">
 	<table width="100%">

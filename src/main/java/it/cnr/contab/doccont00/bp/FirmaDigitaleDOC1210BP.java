@@ -228,6 +228,7 @@ public class FirmaDigitaleDOC1210BP extends AbstractFirmaDigitaleDocContBP {
 					fields.add(valorizzaField(pdAcroForm, "FINANZIAMENTO DIVISA ISS","", false));
 
 
+
 			for(int i=0;i<lettera.getDivisa().length();i++) {
 				char valoreDivisa = lettera.getDivisa().charAt(i);
 				fields.add(valorizzaField(pdAcroForm, "COD DIVISA BEN " + (i+1), String.valueOf(valoreDivisa), false));

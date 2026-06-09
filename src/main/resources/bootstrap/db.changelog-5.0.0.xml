@@ -6344,8 +6344,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_configurazione_cnr_progetto_ini_apertura_gae.xml"/>
     <!-- Autore : Ciro Salvio -Modifica ordine menu Tipo  Compensi" -->
     <include file="bootstrap/update_tipo_compenso_albero_main.xml"/>
-
-
     <!--
         Autore: davide.mirra
         Descrizione: Contabilita Accrual - MEF.
@@ -6355,5 +6353,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     -->
     <include file="bootstrap/create_table_accrual.xml"/>
     <include file="bootstrap/add_accesso_accrual.xml"/>
+    <!-- Autore : Valentina Tomada -LETTERA PAGAMENTO ESTERO - inserite nuove colonne per il nuovo documento di pagamento-->
+    <include file="bootstrap/add_column_lettera_pagam_estero.xml"/>
+
 
 </databaseChangeLog>

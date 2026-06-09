@@ -524,7 +524,7 @@
 		inputSize="300"
 		inputType="TEXTAREA"
 		cols="75"
-		rows="2"
+		rows="1"
 		label="Nominativo Beneficiario"
 		caseSensitiveSearch="false" />
 	<fieldProperty
@@ -547,7 +547,7 @@
 		inputSize="250"
 		inputType="TEXTAREA"
 		cols="75"
-		rows="2"
+		rows="1"
 		label="Indirizzo Beneficiario"
 		caseSensitiveSearch="false" />
 
@@ -569,8 +569,10 @@
 		readonlyProperty="ROStatoTrasmissioneLettera"
 		nullable="false"
 		maxLength="250"
-		inputSize="100"		
-		inputType="TEXT"
+		inputSize="250"
+		inputType="TEXTAREA"
+		cols="75"
+		rows="1"
 		label="Anagrafica Banca Beneficiario"
 		enabledOnSearch="true"
 		enabledOnFreeSearch="false"
@@ -677,6 +679,166 @@
 		maxLength="250"
 		inputSize="100"
 		label="Terzo" />
+
+	<fieldProperty
+			name="cod_divisa_accr"
+			property="lettera_pagamento_estero.cod_divisa_accr"
+			readonlyProperty="ROStatoTrasmissioneLettera"
+			inputType="SELECT"
+			keysProperty="ti_divisaKeys"
+			label="Divisa di Accredito"/>
+	<fieldProperty
+			name="cod_aba_routing"
+			property="lettera_pagamento_estero.cod_aba_routing"
+			inputType="TEXT"
+			maxLength="11"
+			inputSize="11"
+			label="ABA/Routing"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="banca_aba_routing"
+			property="lettera_pagamento_estero.banca_aba_routing"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="1"
+			label="Banca Beneficiaria ABA/Routing"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="cod_swift_tramite"
+			property="lettera_pagamento_estero.cod_swift_tramite"
+			inputType="TEXT"
+			maxLength="11"
+			inputSize="11"
+			label="SWIFT Banca Tramite"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="banca_tramite"
+			property="lettera_pagamento_estero.banca_tramite"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="1"
+			label="Banca Tramite"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="notice_agreed"
+			property="lettera_pagamento_estero.notice_agreed"
+			inputType="TEXT"
+			maxLength="6"
+			inputSize="6"
+			label="Notice/Agreed"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="purpose_pay"
+			property="lettera_pagamento_estero.purpose_pay"
+			inputType="TEXT"
+			maxLength="6"
+			inputSize="6"
+			label="Purpose of Payment"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="cod_lei_beneficiario"
+			property="lettera_pagamento_estero.cod_lei_beneficiario"
+			inputType="TEXT"
+			maxLength="50"
+			inputSize="50"
+			label="Codice LEI"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="civico_beneficiario"
+			property="lettera_pagamento_estero.civico_beneficiario"
+			inputType="TEXT"
+			maxLength="10"
+			inputSize="10"
+			label="Num Civico"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="cap_beneficiario"
+			property="lettera_pagamento_estero.cap_beneficiario"
+			inputType="TEXT"
+			maxLength="10"
+			inputSize="10"
+			label="Cod Postale/CAP"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="beneficiario_eff"
+			property="lettera_pagamento_estero.beneficiario_eff"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="1"
+			label="Nominativo Beneficiario Effettivo"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="cod_lei_ben_eff"
+			property="lettera_pagamento_estero.cod_lei_ben_eff"
+			inputType="TEXT"
+			maxLength="50"
+			inputSize="50"
+			label="Codice LEI"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="indirizzio_ben_eff"
+			property="lettera_pagamento_estero.indirizzio_ben_eff"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="1"
+			label="Indirizzo Beneficiario Effettivo"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="civico_ben_eff"
+			property="lettera_pagamento_estero.civico_ben_eff"
+			inputType="TEXT"
+			maxLength="10"
+			inputSize="10"
+			label="Num Civico" />
+	<fieldProperty
+			name="paese_ben_eff"
+			property="lettera_pagamento_estero.paese_ben_eff"
+			maxLength="100"
+			inputSize="100"
+			inputType="TEXT"
+			label="Paese Beneficiario Effettivo"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="cap_ben_eff"
+			property="lettera_pagamento_estero.cap_ben_eff"
+			inputType="TEXT"
+			maxLength="10"
+			inputSize="10"
+			label="Cod Postale/CAP"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="conto_commissioni"
+			property="lettera_pagamento_estero.conto_commissioni"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="2"
+			label="Filiale/categoria/conto delle commissioni"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
+	<fieldProperty
+			name="ordinante"
+			property="lettera_pagamento_estero.ordinante"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="2"
+			label="Nominativo Ordinante"/>
+	<fieldProperty
+			name="lettera_vers"
+			property="lettera_pagamento_estero.lettera_vers"
+			inputType="TEXT"
+			label="Versione lettera pagamento estero"
+			readonlyProperty="ROStatoTrasmissioneLettera"/>
 
 	<fieldProperty
 		name="valutaForSearch"
@@ -821,6 +983,45 @@
 		name="istruzioni_speciali_2" />
 	<formFieldProperty
 		name="istruzioni_speciali_3" />
+	<formFieldProperty
+		name="cod_divisa_accr" />
+	<formFieldProperty
+		name="cod_aba_routing" />
+	<formFieldProperty
+		name="banca_aba_routing" />
+	<formFieldProperty
+		name="cod_swift_tramite" />
+	<formFieldProperty
+		name="banca_tramite" />
+	<formFieldProperty
+		name="notice_agreed" />
+	<formFieldProperty
+		name="purpose_pay" />
+	<formFieldProperty
+		name="cod_lei_beneficiario" />
+	<formFieldProperty
+		name="civico_beneficiario" />
+	<formFieldProperty
+		name="cap_beneficiario" />
+	<formFieldProperty
+		name="beneficiario_eff" />
+	<formFieldProperty
+		name="cod_lei_ben_eff" />
+	<formFieldProperty
+		name="indirizzio_ben_eff" />
+	<formFieldProperty
+		name="civico_ben_eff" />
+	<formFieldProperty
+		name="paese_ben_eff" />
+	<formFieldProperty
+		name="cap_ben_eff" />
+	<formFieldProperty
+		name="conto_commissioni" />
+	<formFieldProperty
+		name="ordinante" />
+	<formFieldProperty
+		name="lettera_vers" />
+
 
 	<formFieldProperty 
 		name="ti_istituz_commerc"/>

@@ -46,6 +46,9 @@ import java.util.stream.Collectors;
 @StorageType(name="D:doccont:document")
 public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implements AllegatoParentBulk, StatoTrasmissione{
 
+	public static final Integer PRIMA_VERSIONE=1;
+	public static final Integer SECONDA_VERSIONE=2;
+
 	private it.cnr.contab.doccont00.core.bulk.SospesoBulk sospeso = null;
 	private java.util.Vector sospesiCancellati = null;
 	private boolean annoDiCompetenza = true;
@@ -148,6 +151,7 @@ public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implement
 		if (annoSolare != esercizioInScrivania)
 			date = new java.sql.Timestamp(new java.text.SimpleDateFormat("dd/MM/yyyy").parse("31/12/" + esercizioInScrivania).getTime());
 		setDt_registrazione(date);
+		setLettera_vers(SECONDA_VERSIONE);
 
 		setIm_commissioni(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
 		setIm_pagamento(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
