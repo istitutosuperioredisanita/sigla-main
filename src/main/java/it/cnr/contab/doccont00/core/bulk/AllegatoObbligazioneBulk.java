@@ -17,13 +17,51 @@
 
 package it.cnr.contab.doccont00.core.bulk;
 
+import it.cnr.contab.ordmag.ordini.service.OrdineAcqCMISService;
+import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.si.spring.storage.annotation.StorageProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AllegatoObbligazioneBulk extends AllegatoGenericoBulk {
 	private static final long serialVersionUID = 1L;
 
-	private Integer esercizioDiAppartenenza; 
+	public static OrderedHashtable aspectNamesKeys = new OrderedHashtable();
+
+	public static final String ASPECT_ALLEGATI_OBBLIGAZIONI= "P:obbligazioni_attachment:allegati";
+	public static final String ASPECT_ALLEGATI_APPROVAZIONE= "P:obbligazioni_attachment:approvazione";
+
+	static {
+		aspectNamesKeys.put(ASPECT_ALLEGATI_OBBLIGAZIONI,"Altro");
+		aspectNamesKeys.put(ASPECT_ALLEGATI_APPROVAZIONE,"Approvazione");
+	}
+
+	private Integer esercizioDiAppartenenza;
+	private String aspectName;
+
+	public String getAspectName() {
+		return aspectName;
+	}
+
+	public void setAspectName(String aspectName) {
+		this.aspectName = aspectName;
+	}
+
+	@StorageProperty(name = "cmis:secondaryObjectTypeIds")
+	public List<String> getAspect() {
+		List<String> results = new ArrayList<>();
+
+		results.add("P:cm:titled");
+
+		if (getAspectName() != null && !getAspectName().isEmpty()) {
+			results.add(getAspectName());
+		}
+
+		return results;
+	}
 
 	public AllegatoObbligazioneBulk() {
 		super();
@@ -35,6 +73,14 @@ public class AllegatoObbligazioneBulk extends AllegatoGenericoBulk {
 
 	public AllegatoObbligazioneBulk(String storageKey) {
 		super(storageKey);
+	}
+
+	public static OrderedHashtable getAspectNamesKeys() {
+		return aspectNamesKeys;
+	}
+
+	public static void setAspectNamesKeys(OrderedHashtable aspectNamesKeys) {
+		AllegatoObbligazioneBulk.aspectNamesKeys = aspectNamesKeys;
 	}
 
 	public void setEsercizioDiAppartenenza(Integer esercizioDiAppartenenza) {

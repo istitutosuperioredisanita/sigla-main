@@ -28,15 +28,8 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
     public static OrderedHashtable aspectNamesKeys = new OrderedHashtable();
 
     static {
-        aspectNamesKeys.put(
-                P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP,
-                "Accrual XBRL ZIP"
-        );
-
-        aspectNamesKeys.put(
-                P_SIGLA_ACCRUAL_ATTACHMENT_ALTRO,
-                "Altro"
-        );
+        aspectNamesKeys.put(P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP,"Accrual XBRL ZIP");
+        aspectNamesKeys.put(P_SIGLA_ACCRUAL_ATTACHMENT_ALTRO,"Altro");
     }
 
     private String aspectName;

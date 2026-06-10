@@ -50,16 +50,8 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     public String[][] getTabs() {
         return new String[][]{
-                {
-                        "tabModulo",
-                        "Modulo",
-                        "/pdg00/tab_accrual_mef_modulo.jsp"
-                },
-                {
-                        "tabAllegati",
-                        "Allegati",
-                        "/util00/tab_allegati.jsp"
-                }
+                {"tabModulo","Modulo","/pdg00/tab_accrual_mef_modulo.jsp"},
+                {"tabAllegati","Allegati","/util00/tab_allegati.jsp"}
         };
     }
 
@@ -74,11 +66,6 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     @Override
     protected String getStorePath(AccrualBulk accrual, boolean create)
             throws BusinessProcessException {
-
-        if (accrual == null) {
-            throw new BusinessProcessException("Modulo Accrual MEF non presente");
-        }
-
         return accrual.getStorePath().get(0);
     }
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2022  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="valentina.tomada" id="add_column_lettera_pagam_estero">
+        <addColumn tableName="LETTERA_PAGAM_ESTERO">
+            <column name="DIVISA_ACCR" type="VARCHAR2(3 BYTE)" remarks="Sigla divisa di accredito"/>
+            <column name="ABA_ROUTING" type="VARCHAR2(11 BYTE)" remarks="Codice Aba/Routing"/>
+            <column name="BANCA_ABA_ROUT" type="VARCHAR2(250 BYTE)" remarks="Anagrafica Banca corrispondente al codice Aba/Routing"/>
+            <column name="COD_SWIFT_TRAM" type="VARCHAR2(11 BYTE)" remarks="Codice SWIFT banca di tramite"/>
+            <column name="BANCA_TRAMITE" type="VARCHAR2(250 BYTE)" remarks="Anagrafica Banca di tramite"/>
+            <column name="NOTICE_AGREED" type="VARCHAR2(6 BYTE)" remarks="Notice/Agreed, codice per eventuale prenotazione cambio effettuata"/>
+            <column name="PURPOSE_PAY" type="VARCHAR2(9 BYTE)" remarks="Codice che indica il motivo del bonifico internazionale"/>
+            <column name="COD_LEI_BEN" type="VARCHAR2(50 BYTE)" remarks="Codice identificativo globale e univoco del beneficiario"/>
+            <column name="CIVICO_BEN" type="VARCHAR2(10 BYTE)" remarks="Numero civico indirizzo beneficiario"/>
+            <column name="CAP_BEN" type="VARCHAR2(10 BYTE)" remarks="Codice Postale beneficiario"/>
+            <column name="BENEFICIARIO_EFF" type="VARCHAR2(250 BYTE)" remarks="Anagrafica Beneficiario effettivo"/>
+            <column name="COD_LEI_BEN_EFF" type="VARCHAR2(50 BYTE)" remarks="Codice identificativo globale e univoco del beneficiario effettivo"/>
+            <column name="INDIRIZZO_BEN_EFF" type="VARCHAR2(250 BYTE)" remarks="Indirizzo Beneficiario effettivo"/>
+            <column name="CIVICO_BEN_EFF" type="VARCHAR2(10 BYTE)" remarks="Numero civico indirizzo beneficiario effettivo"/>
+            <column name="PAESE_BEN_EFF" type="VARCHAR2(100 BYTE)" remarks="Paese beneficiario effettivo"/>
+            <column name="CAP_BEN_EFF" type="VARCHAR2(10 BYTE)" remarks="Codice Postale beneficiario effettivo"/>
+            <column name="CONTO_COMMISSIONI" type="VARCHAR2(250 BYTE)" remarks="Filiale/categoria/conto delle commissioni solo se diverso dal conto di addebito"/>
+            <column name="ORDINANTE" type="VARCHAR2(250 BYTE)" remarks="Anagrafica Ordinante presente per pagamenti > di 500.000€"/>
+            <column name="LETTERA_VERS" type="NUMBER(1,0)" defaultValue="1" remarks="Versionamento della lettera pagamento estero"/>
+        </addColumn>
+    </changeSet>
+
+
+</databaseChangeLog>

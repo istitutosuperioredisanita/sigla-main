@@ -21,18 +21,39 @@
 		xmlns="https://contab.cnr.it/schema/SIGLA" 
 		xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
 	<fieldProperty
+			name="aspectName"
+			property="aspectName"
+			inputType="SELECT"
+			keysProperty="aspectNamesKeys"
+			command="doDefault"
+			inputSize="40"
+			nullable="false"
+			enabledOnInsert="true"
+			enabledOnEdit="true"
+			label="Tipologia"/>
+
+	<fieldProperty
 		name="esercizioDiAppartenenza"
 		property="esercizioDiAppartenenza"
 		label="Inserito nel"
 		inputType="ROTEXT"
 		maxLength="4"
 		inputSize="4" />
-		
+
+	<form name="default">
+		<formFieldProperty name="aspectName"/>
+		<formFieldProperty name="nome"/>
+		<formFieldProperty name="descrizione"/>
+		<formFieldProperty name="file"/>
+		<formFieldProperty name="attivaFile"/>
+	</form>
+
 	<formFieldProperty
 		name="esercizioDiAppartenenza" />
 		
 	<columnSet
 		name="readonly" >
+		<columnFieldProperty name="aspectName"/>
 		<columnFieldProperty
 			name="nome" />
 		<columnFieldProperty
@@ -45,6 +66,7 @@
 	
 	<columnSet
 		name="archivioAllegati" >
+		<columnFieldProperty name="aspectName"/>
 		<columnFieldProperty
 			name="nome" />
 		<columnFieldProperty
@@ -56,6 +78,7 @@
 	</columnSet>
 
 	<form name="archivioAllegati">
+		<columnFieldProperty name="aspectName"/>
 		<formFieldProperty
 			name="nome" />
 		<formFieldProperty

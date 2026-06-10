@@ -5,7 +5,7 @@ import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.jada.DetailedRuntimeException;
 
-@Schema( description = "Il tipo di gestione Spesa/Entrata o Entrambe")
+@Schema( name = "TipoStatoObbligazione", description = "Lo stato dell'obbligazione PROVVISORIO,DEFINITIVO,STORNATO")
 public enum EnumStatoObbligazione {
     PROVVISORIO(ObbligazioneBulk.STATO_OBB_PROVVISORIO),
     DEFINITIVO(ObbligazioneBulk.STATO_OBB_DEFINITIVO),
