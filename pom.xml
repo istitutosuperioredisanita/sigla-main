@@ -436,6 +436,13 @@
             <version>3.9</version>
         </dependency>
 
+        <!-- Workflow Service API: necessaria SEMPRE per compilare anche senza profilo iss -->
+        <dependency>
+            <groupId>it.iss.si</groupId>
+            <artifactId>workflow-service-commons</artifactId>
+            <version>${workflow-service.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
@@ -842,6 +849,26 @@
                 <bootable.jar>true</bootable.jar>
                 <sigla.build.number>${maven.build.timestamp}</sigla.build.number>
             </properties>
+        </profile>
+        <profile>
+            <id>iss</id>
+            <dependencies>
+                <dependency>
+                    <groupId>it.iss.si</groupId>
+                    <artifactId>workflow-service-happysign</artifactId>
+                    <version>${workflow-service.version}</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-context</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-api</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
     <licenses>
