@@ -150,6 +150,8 @@ echo "Creazione HTTP Authentication Factory..."
     security-domain=sigla-auth, \
     http-server-mechanism-factory=global, \
     mechanism-configurations=[ \
+        {mechanism-name=BASIC, \
+        mechanism-realm-configurations=[{realm-name="SIGLA realm"}]}, \
         {mechanism-name=FORM} \
     ] \
 )

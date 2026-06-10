@@ -125,3 +125,68 @@ docker run -p 8080:8080 --link sigla-postgres:db -e LC_ALL="it_IT.UTF-8" -e LANG
 
 Collegarsi a http://localhost:8080/SIGLA/Login.do username: _ENTE_ password da impostare al primo login.
 FINE
+
+## Workflow completo per lo Sviluppo con IntelliJ
+
+### 1. Prima volta — crea il server e il WAR
+```shell
+mvn clean wildfly:package
+```
+Questo provisionna WildFly in `target/server` e crea il WAR.
+
+---
+
+### 2. Avvia il server
+```shell
+mvn wildfly:start -Dwildfly.debug=true -Dwildfly.debug.port=8787 -Dspring.profiles.active=liquibase-iss
+```
+
+---
+
+### 3. Deploya il WAR
+```shell
+mvn wildfly:deploy
+```
+
+Questo prende `target/sigla.war` e lo deploya sul server in esecuzione.
+
+---
+
+### 4. Sviluppo — dopo modifiche Java
+
+```
+Ctrl+F9  →  IntelliJ compila solo i file modificati
+```
+
+Poi scegli:
+
+**A) Hot Code Replacement** (per modifiche piccole al corpo dei metodi):
+```
+Run → Debugging Actions → Reload Changed Classes
+```
+Nessun redeploy necessario.
+
+**B) Redeploy completo** (per modifiche a EJB, CDI, configurazioni):
+```shell
+mvn wildfly:redeploy
+```
+
+---
+
+### 5. Ferma il server
+```shell
+mvn wildfly:shutdown
+```
+
+---
+
+## Riepilogo Run Configurations in IntelliJ
+
+| Nome | Command line | Quando |
+|---|---|---|
+| WildFly Package | `wildfly:package` | Prima volta / cambio dipendenze |
+| WildFly Start | `wildfly:start -Dwildfly.debug=true` | Ogni mattina |
+| WildFly Deploy | `wildfly:deploy` | Dopo Start |
+| WildFly Redeploy | `wildfly:redeploy` | Dopo modifiche significative |
+| WildFly Stop | `wildfly:shutdown` | Fine sessione |
+| WildFly Debug | Remote JVM Debug su porta 8787 | Dopo Start |

@@ -614,7 +614,7 @@ public OggettoBulk modificaConBulk (UserContext userContext,OggettoBulk bulk) th
 	 *
 	 * @param userContext   contesto utente
 	 */
-	public void generaBilancioIRES(UserContext userContext) throws ComponentException {
+	public void generaBilancio(UserContext userContext, String cdTipoBilancio, String cdPianoGruppi) throws ComponentException {
 		try {
 			var esercizio = CNRUserContext.getEsercizio(userContext);
 			var configurazioneCnrHome = (Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class);
@@ -623,30 +623,31 @@ public OggettoBulk modificaConBulk (UserContext userContext,OggettoBulk bulk) th
 			var profPerd = Optional.ofNullable(configurazioneCnrHome.getConfigurazione(esercizio, null, Configurazione_cnrBulk.PK_VOCEEP_SPECIALE, Configurazione_cnrBulk.SK_CONTO_ECONOMICO))
 					.map(Configurazione_cnrBulk::getVal01).orElse("");
 			/**
-			 * Recupero lo schema di bilancio civilistico
+			 * Recupero lo schema di bilancio
 			 */
 			var associazioneContoGruppoHome = getHome(userContext, AssociazioneContoGruppoBulk.class);
 			var movimento_cogeHome = (Movimento_cogeHome)getHome(userContext, Movimento_cogeBulk.class);
 			var homeGruppoEP = getHome(userContext, GruppoEPBulk.class);
 			var sqlGruppoEP = homeGruppoEP.createSQLBuilder();
-			sqlGruppoEP.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, AssociazioneContoGruppoBulk.PianoGruppi.CE.name());
-			sqlGruppoEP.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, TipoBilancioEnum.CIVILISTICO.name());
+			sqlGruppoEP.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, cdTipoBilancio);
+			Optional.ofNullable(cdPianoGruppi).ifPresent(s -> sqlGruppoEP.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, s));
 			List<GruppoEPBulk> gruppoEPBulks = homeGruppoEP.fetchAll(sqlGruppoEP);
 			for(GruppoEPBulk gruppoEPBulk : gruppoEPBulks) {
 				if (gruppoEPBulk.getFlMastrino()) {
 					SQLBuilder sqlAssContoGruppo = associazioneContoGruppoHome.createSQLBuilder();
-					sqlAssContoGruppo.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, AssociazioneContoGruppoBulk.PianoGruppi.CE.name());
 					sqlAssContoGruppo.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
 					sqlAssContoGruppo.addClause(FindClause.AND, "cdGruppoEp", SQLBuilder.EQUALS, gruppoEPBulk.getCdGruppoEp());
-					sqlAssContoGruppo.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, TipoBilancioEnum.CIVILISTICO.name());
+					sqlAssContoGruppo.addClause(FindClause.AND, "cdTipoBilancio", SQLBuilder.EQUALS, cdTipoBilancio);
+					Optional.ofNullable(cdPianoGruppi).ifPresent(s -> sqlAssContoGruppo.addClause(FindClause.AND, "cdPianoGruppi", SQLBuilder.EQUALS, s));
+
 					List<AssociazioneContoGruppoBulk> associazioneContoGruppoBulks = associazioneContoGruppoHome.fetchAll(sqlAssContoGruppo);
 					for(AssociazioneContoGruppoBulk acg : associazioneContoGruppoBulks) {
 						var voceEP = (Voce_epBulk) super.findByPrimaryKey(userContext, new Voce_epBulk(acg.getCdVoceEp(), acg.getEsercizio()));
 						Pair<BigDecimal, BigDecimal> movimentiConto;
 						if (voceEP.getCd_voce_ep().equalsIgnoreCase(contoAvanzo)) {
-							movimentiConto = movimento_cogeHome.getMovimentiContoAvanzo(userContext, voceEP.getCd_voce_ep(), TipoIVA.COMMERCIALE.value(), profPerd);
+							movimentiConto = movimento_cogeHome.getMovimentiContoAvanzo(userContext, voceEP.getCd_voce_ep(), null,  profPerd);
 						} else {
-							movimentiConto = movimento_cogeHome.getMovimentiConto(userContext, voceEP.getCd_voce_ep(), TipoIVA.COMMERCIALE.value());
+							movimentiConto = movimento_cogeHome.getMovimentiConto(userContext, voceEP.getCd_voce_ep(), null, true);
 						}
 						BigDecimal saldoConto = acg.getSezione().equalsIgnoreCase(AssociazioneContoGruppoBulk.Sezione.D.name()) ?
 								movimentiConto.getFirst().subtract(movimentiConto.getSecond()) :
@@ -657,10 +658,11 @@ public OggettoBulk modificaConBulk (UserContext userContext,OggettoBulk bulk) th
 						BilRiclassificatoBulk bil = new BilRiclassificatoBulk(
 								esercizio,
 								CNRUserContext.getCd_unita_organizzativa(userContext),
-								TipoBilancioEnum.IRES.name(),
+								cdTipoBilancio,
 								voceEP.getCd_voce_ep()
 						);
 						bil.setSezione(acg.getSezione());
+						bil.setCdPianoGruppi(acg.getCdPianoGruppi());
 						Optional.ofNullable(super.findByPrimaryKey(userContext, bil))
 								.map(BilRiclassificatoBulk.class::cast)
 								.map(persistent -> {

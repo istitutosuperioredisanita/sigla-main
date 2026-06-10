@@ -92,6 +92,8 @@ public class Documento_genericoBase extends Documento_genericoKey implements Key
     // FL_STORNO CHAR(1)
     private java.lang.Boolean fl_storno;
 
+    private boolean fl_terzo_no_entita=false;
+
     public Documento_genericoBase() {
         super();
     }
@@ -426,5 +428,13 @@ public class Documento_genericoBase extends Documento_genericoKey implements Key
 
     public void setFl_storno(Boolean fl_storno) {
         this.fl_storno = fl_storno;
+    }
+
+    public boolean isFl_terzo_no_entita() {
+        return fl_terzo_no_entita;
+    }
+
+    public void setFl_terzo_no_entita(boolean fl_terzo_no_entita) {
+        this.fl_terzo_no_entita = fl_terzo_no_entita;
     }
 }

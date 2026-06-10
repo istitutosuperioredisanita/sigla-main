@@ -127,16 +127,8 @@ BEGIN
       AND  CD_CHIAVE_PRIMARIA    = 'VOCEEP_SPECIALE'
       AND  CD_CHIAVE_SECONDARIA  = 'CONTO_ECONOMICO';
 
-    -- -------------------------------------------------------------------------
-    -- 3. Normalizzazione tipo bilancio (IRES → CIVILISTICO)
-    -- -------------------------------------------------------------------------
     v_i := 0;
-
-    IF p_cd_tipo_bilancio = 'IRES' THEN
-        v_tipo_bilancio := 'CIVILISTICO';
-    ELSE
-        v_tipo_bilancio := p_cd_tipo_bilancio;
-    END IF;
+    v_tipo_bilancio := p_cd_tipo_bilancio;
 
     -- =========================================================================
     -- 4. Loop principale sullo schema di riclassificazione
@@ -238,7 +230,8 @@ BEGIN
                                 WHERE  ESERCIZIO              = p_es
                                   AND  CD_VOCE_EP             = r_conti_ass.CD_VOCE_EP
                                   AND  CD_TIPO_BILANCIO       = p_cd_tipo_bilancio
-                                  AND  CD_UNITA_ORGANIZZATIVA = v_uo_ente;
+                                  AND  CD_UNITA_ORGANIZZATIVA = v_uo_ente
+                                  AND  CD_PIANO_GRUPPI        = 'CE';
                             EXCEPTION
                                 WHEN NO_DATA_FOUND THEN
                                     SELECT NVL(SUM(DECODE(D.SEZIONE, 'D', D.IM_MOVIMENTO)), 0),
@@ -296,13 +289,14 @@ BEGIN
                                 DBMS_OUTPUT.PUT_LINE('SELECT SU CONTO (normale): ' || r_conti_ass.CD_VOCE_EP);
 
                                 BEGIN
-                                    SELECT DECODE(SEZIONE, 'D', IMPORTO_FINALE, 0),DECODE(SEZIONE, 'A', IMPORTO_FINALE, 0), COUNT(0)
+                                    SELECT DECODE(SEZIONE, 'D', IMPORTO_FINALE, 0),DECODE(SEZIONE, 'A', IMPORTO_FINALE, 0), 1
                                     INTO   v_dare_conto, v_avere_conto, v_contamov
                                     FROM   BIL_RICLASSIFICATO
                                     WHERE  ESERCIZIO              = p_es
                                       AND  CD_VOCE_EP             = r_conti_ass.CD_VOCE_EP
                                       AND  CD_TIPO_BILANCIO       = p_cd_tipo_bilancio
-                                      AND  CD_UNITA_ORGANIZZATIVA = v_uo_ente;
+                                      AND  CD_UNITA_ORGANIZZATIVA = v_uo_ente
+                                      AND  CD_PIANO_GRUPPI        = 'CE';
                                 EXCEPTION
                                     WHEN NO_DATA_FOUND THEN
                                         SELECT NVL(SUM(DECODE(D.SEZIONE, 'D', D.IM_MOVIMENTO)), 0),
@@ -387,7 +381,8 @@ BEGIN
                                         WHERE  ESERCIZIO              = p_es
                                           AND  CD_VOCE_EP             = r_conti_ass.CD_VOCE_EP
                                           AND  CD_TIPO_BILANCIO       = p_cd_tipo_bilancio
-                                          AND  CD_UNITA_ORGANIZZATIVA = v_uo_ente;
+                                          AND  CD_UNITA_ORGANIZZATIVA = v_uo_ente
+                                          AND  CD_PIANO_GRUPPI        = 'CE';
                                     EXCEPTION
                                         WHEN NO_DATA_FOUND THEN
                                             SELECT v_dare_cds  + NVL(SUM(DECODE(D.SEZIONE, 'D', D.IM_MOVIMENTO)), 0),
@@ -430,7 +425,8 @@ BEGIN
                                         WHERE  ESERCIZIO              = p_es
                                           AND  CD_VOCE_EP             = r_conti_ass.CD_VOCE_EP
                                           AND  CD_TIPO_BILANCIO       = p_cd_tipo_bilancio
-                                          AND  CD_UNITA_ORGANIZZATIVA = v_uo_ente;
+                                          AND  CD_UNITA_ORGANIZZATIVA = v_uo_ente
+                                          AND  CD_PIANO_GRUPPI        = 'CE';
                                     EXCEPTION
                                         WHEN NO_DATA_FOUND THEN
                                             SELECT v_dare_cds  + NVL(SUM(DECODE(D.SEZIONE, 'D', D.IM_MOVIMENTO)), 0),

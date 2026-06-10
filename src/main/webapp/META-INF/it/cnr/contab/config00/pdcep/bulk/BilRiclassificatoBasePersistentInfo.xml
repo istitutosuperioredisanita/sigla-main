@@ -33,6 +33,16 @@
 			columnScale="6"
 			nullable="false" />
 		<columnMapping
+			columnName="CD_PIANO_GRUPPI"
+			propertyName="cdPianoGruppi"
+			sqlTypeName="VARCHAR"
+			columnSize="5" />
+		<columnMapping
+			columnName="NOTE"
+			propertyName="note"
+			sqlTypeName="VARCHAR"
+			columnSize="2000" />
+		<columnMapping
 			columnName="DACR"
 			propertyName="dacr"
 			sqlTypeName="TIMESTAMP"
@@ -62,6 +72,7 @@
 			sqlTypeName="DECIMAL"
 			columnSize="38"
 			nullable="false" />
+
 	</defaultColumnMap>
 	<persistentProperty
 		name="sezione" />
@@ -72,6 +83,10 @@
 	<persistentProperty
 		name="importoFinale" />
 	<persistentProperty
+		name="cdPianoGruppi" />
+	<persistentProperty
+		name="note" />
+	<persistentProperty
 		name="dacr" />
 	<persistentProperty
 		name="utcr" />
@@ -81,4 +96,6 @@
 		name="utuv" />
 	<persistentProperty
 		name="pg_ver_rec" />
+
+
 </SQLPersistentInfo>

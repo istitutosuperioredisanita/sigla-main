@@ -240,6 +240,16 @@ public class Movimento_cogeHome extends BulkHome {
 	 * @return Pair composta dal totale dare e totale avere
 	 */
 	public Pair<BigDecimal, BigDecimal> getMovimentiConto(UserContext userContext, String voceEP, String ti_istituz_commerc) throws PersistencyException{
+		return  getMovimentiConto(userContext, voceEP, ti_istituz_commerc, false);
+	}
+	/**
+	 * @param userContext 			Contesto utente, da cui viene recuperato l'esercizio
+	 * @param voceEP 				Conto di economica
+	 * @param ti_istituz_commerc 	Istituzionale/Commerciale
+	 * @param escludiChiusure		Esclude le scritture di chiusura
+	 * @return Pair composta dal totale dare e totale avere
+	 */
+	public Pair<BigDecimal, BigDecimal> getMovimentiConto(UserContext userContext, String voceEP, String ti_istituz_commerc, Boolean escludiChiusure) throws PersistencyException{
 		SQLBuilder sql = this.createSQLBuilder();
 		sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
 		sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.ATTIVA", SQLBuilder.EQUALS, "Y");
@@ -254,15 +264,26 @@ public class Movimento_cogeHome extends BulkHome {
 		if (uo.getCd_tipo_unita().compareTo(Tipo_unita_organizzativaHome.TIPO_UO_ENTE) != 0) {
 			sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, uo.getCd_unita_organizzativa());
 		}
-
-		sql.openParenthesis(FindClause.AND);
-			sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.ISNULL, null);
-			sql.openParenthesis(FindClause.OR);
-				sql.addSQLClause(FindClause.OR, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.name());
-				sql.addSQLClause(FindClause.OR, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name());
-				sql.addSQLClause(FindClause.OR, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.name());
+		if (escludiChiusure) {
+			sql.openParenthesis(FindClause.AND);
+				sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.ISNULL, null);
+				sql.openParenthesis(FindClause.OR);
+					sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.NOT_EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.name());
+					sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.NOT_EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name());
+					sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.NOT_EQUALS, Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.name());
+				sql.closeParenthesis();
 			sql.closeParenthesis();
-		sql.closeParenthesis();
+		} else {
+			sql.openParenthesis(FindClause.AND);
+				sql.addSQLClause(FindClause.AND, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.ISNULL, null);
+				sql.openParenthesis(FindClause.OR);
+					sql.addSQLClause(FindClause.OR, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_STATO_PATRIMONIALE.name());
+					sql.addSQLClause(FindClause.OR, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.CHIUSURA_CONTO_ECONOMICO.name());
+					sql.addSQLClause(FindClause.OR, "SCRITTURA_PARTITA_DOPPIA.CD_CAUSALE_COGE", SQLBuilder.EQUALS, Scrittura_partita_doppiaBulk.Causale.DETERMINAZIONE_UTILE_PERDITA.name());
+				sql.closeParenthesis();
+			sql.closeParenthesis();
+		}
+
 		sql.openParenthesis(FindClause.AND);
 			sql.openParenthesis(FindClause.OR);
 				sql.addClause(FindClause.AND, "dt_da_competenza_coge", SQLBuilder.ISNULL, null);

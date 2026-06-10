@@ -1454,7 +1454,13 @@ public class DocumentoGenericoComponent
                 //filtro disabilitato sul terzo ho terzo + diversi
                 sql.openParenthesis("AND");
                 sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TERZO", SQLBuilder.EQUALS, filtro.getFornitore().getCd_terzo());
-                sql.addSQLClause("OR", "ANAGRAFICO.TI_ENTITA", SQLBuilder.EQUALS, AnagraficoBulk.DIVERSI);
+
+                if(filtro.isFlNoEntitaTerzo()) {
+                    sql.addSQLClause("OR", "ANAGRAFICO.TI_ENTITA", SQLBuilder.ISNOTNULL,null);
+                }else{
+                    sql.addSQLClause("OR", "ANAGRAFICO.TI_ENTITA", SQLBuilder.EQUALS, AnagraficoBulk.DIVERSI);
+
+                }
                 sql.closeParenthesis();
             } else {
                 //filtro abilitato sul terzo ho solo terzo
@@ -1462,7 +1468,9 @@ public class DocumentoGenericoComponent
             }
         } else {
             //se diverso ho solo diversi
-            sql.addSQLClause("AND", "ANAGRAFICO.TI_ENTITA", SQLBuilder.EQUALS, AnagraficoBulk.DIVERSI);
+            if(!filtro.isFlNoEntitaTerzo()) {
+                sql.addSQLClause("AND", "ANAGRAFICO.TI_ENTITA", SQLBuilder.EQUALS, AnagraficoBulk.DIVERSI);
+                }
         }
         return iterator(
                 context,
@@ -4249,6 +4257,9 @@ public class DocumentoGenericoComponent
             //sql.addSQLClause("AND", "TIPO_DOCUMENTO_AMM.TI_ENTRATA_SPESA='" + (((Documento_genericoBulk) bulk).isGenericoAttivo() ? "E" : "S") + "')");
             //sql.closeParenthesis();
         }
+        if(((Documento_genericoBulk) bulk).isFl_terzo_no_entita()){
+            sql.addSQLClause("AND", "FL_TERZO_NO_ENT = 'Y'");
+        }
         return sql;
     }
 //^^@@
@@ -5043,7 +5054,7 @@ public class DocumentoGenericoComponent
                                 throw handleException(e);
                             }
                         }
-                        if (!riga.getObbligazione_scadenziario().getObbligazione().getCreditore().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI) &&
+                        if ((!documentoGenerico.isFl_terzo_no_entita() &&  !riga.getObbligazione_scadenziario().getObbligazione().getCreditore().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI)) &&
                                 !(riga.getTerzo().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI)))
                             throw new it.cnr.jada.comp.ApplicationException(
                                     "Attenzione la riga " + riga.getDs_riga() + " ha un terzo incompatibile con il documento contabile associato.");

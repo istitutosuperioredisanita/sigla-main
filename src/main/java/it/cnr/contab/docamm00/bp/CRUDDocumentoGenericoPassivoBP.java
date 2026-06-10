@@ -191,6 +191,15 @@ public class CRUDDocumentoGenericoPassivoBP
     }
 
     @Override
+    protected void initialize(ActionContext actioncontext) throws BusinessProcessException {
+        super.initialize(actioncontext);
+        Documento_genericoBulk doc = (Documento_genericoBulk) getModel();
+        if(this.getMapping().getConfig().getInitParameter("NO_ENTITA_TERZO") != null){
+            doc.setFl_terzo_no_entita(true);
+        }
+    }
+
+    @Override
     protected Class<AllegatoGenericoBulk> getAllegatoClass() {
         return AllegatoGenericoBulk.class;
     }
@@ -308,6 +317,8 @@ public class CRUDDocumentoGenericoPassivoBP
     public it.cnr.jada.util.RemoteIterator findObbligazioni(it.cnr.jada.UserContext userContext, Filtro_ricerca_obbligazioniVBulk filtro) throws it.cnr.jada.action.BusinessProcessException {
 
         try {
+            Documento_genericoBulk doc = (Documento_genericoBulk) CRUDDocumentoGenericoPassivoBP.this.getModel();
+            filtro.setFlNoEntitaTerzo(doc.isFl_terzo_no_entita());
 
             DocumentoGenericoComponentSession sess = (DocumentoGenericoComponentSession) createComponentSession("CNRDOCAMM00_EJB_DocumentoGenericoComponentSession", DocumentoGenericoComponentSession.class);
             return sess.cercaObbligazioni(userContext, filtro);

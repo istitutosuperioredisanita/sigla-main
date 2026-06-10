@@ -56,6 +56,7 @@ public class Filtro_ricerca_obbligazioniVBulk
 	private boolean hasDocumentoCompetenzaCOGESoloInAnnoCorrente = false;
 	private List<Elemento_voceBulk> listaVociSelezionabili = null;
 	private boolean competenzaCOGESuEnte = false;
+	private boolean flNoEntitaTerzo=false;
 /**
  * Filtro_ricerca_obbligazioniVBulk constructor comment.
  */
@@ -479,4 +480,11 @@ public void setContratto(ContrattoBulk contratto) {
 	this.contratto = contratto;
 }
 
+	public boolean isFlNoEntitaTerzo() {
+		return flNoEntitaTerzo;
+	}
+
+	public void setFlNoEntitaTerzo(boolean flNoEntitaTerzo) {
+		this.flNoEntitaTerzo = flNoEntitaTerzo;
+	}
 }

@@ -2,6 +2,8 @@ package it.cnr.contab.config00.action;
 
 import it.cnr.contab.config00.bp.CRUDElaboraBilRiclassificatoBP;
 import it.cnr.contab.config00.pdcep.bulk.BilRiclassificatoBulk;
+import it.cnr.contab.doccont00.bp.AbstractFirmaDigitaleDocContBP;
+import it.cnr.contab.doccont00.intcass.bulk.StatoTrasmissione;
 import it.cnr.contab.pdg01.bp.SelezionatoreAssestatoBP;
 import it.cnr.contab.prevent00.bulk.V_assestatoBulk;
 import it.cnr.contab.util.Utility;
@@ -10,6 +12,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.bulk.FillException;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.SelezionatoreListaAction;
 
 import java.math.BigDecimal;
@@ -21,7 +24,7 @@ public class CRUDElaboraBilRiclassificatoAction extends SelezionatoreListaAction
         try {
             fillModel(actioncontext);
             CRUDElaboraBilRiclassificatoBP bp = (CRUDElaboraBilRiclassificatoBP) actioncontext.getBusinessProcess();
-            bp.elaboraBilancioIRES(actioncontext);
+            bp.elaboraBilancio(actioncontext);
             return actioncontext.findDefaultForward();
         } catch(Exception e) {
             return handleException(actioncontext,e);
@@ -33,6 +36,19 @@ public class CRUDElaboraBilRiclassificatoAction extends SelezionatoreListaAction
         try {
             bp.fillModels(actioncontext);
             bp.aggiornaImportoFinale(actioncontext);
+        } catch (FillException e) {
+            bp.setMessage(e.getMessage());
+        } catch (BusinessProcessException e) {
+            return handleException(actioncontext, e);
+        }
+        return actioncontext.findDefaultForward();
+    }
+
+    public Forward doOnChangeNote(ActionContext actioncontext){
+        CRUDElaboraBilRiclassificatoBP bp = (CRUDElaboraBilRiclassificatoBP)actioncontext.getBusinessProcess();
+        try {
+            bp.fillModels(actioncontext);
+            bp.aggiornaNote(actioncontext);
         } catch (FillException e) {
             bp.setMessage(e.getMessage());
         } catch (BusinessProcessException e) {
@@ -62,4 +78,22 @@ public class CRUDElaboraBilRiclassificatoAction extends SelezionatoreListaAction
             return handleException(actioncontext,e);
         }
     }
+
+
+    public Forward doFiltra(ActionContext actioncontext) {
+        CRUDElaboraBilRiclassificatoBP bp = (CRUDElaboraBilRiclassificatoBP) actioncontext.getBusinessProcess();
+        try {
+            fillModel(actioncontext);
+            it.cnr.jada.util.RemoteIterator ri = bp.search(
+                    actioncontext,
+                    null,
+                    bp.getModel()
+            );
+            bp.setIterator(actioncontext, ri);
+            return actioncontext.findDefaultForward();
+        } catch(Throwable e) {
+            return handleException(actioncontext, e);
+        }
+    }
+
 }

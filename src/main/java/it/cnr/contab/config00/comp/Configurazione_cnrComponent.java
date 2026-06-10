@@ -1646,4 +1646,25 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
         ((Configurazione_cnrBulk)oggettobulk).caricaEsercizioList(usercontext);
         super.initializeKeysAndOptionsInto(usercontext,oggettobulk);
     }
+
+    public Boolean isNoAperturaGaeSuProgettoInizialeEnable(UserContext userContext) throws ComponentException, RemoteException{
+        try {
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_LINEA_ATTIVITA,
+                    Configurazione_cnrBulk.SK_NO_STATO_PROGETTO_INI,
+                    ASTERISCO,
+                    0);
+            return val01YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException|ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
 }

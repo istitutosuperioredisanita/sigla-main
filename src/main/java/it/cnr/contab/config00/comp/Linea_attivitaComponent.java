@@ -837,6 +837,7 @@ public SQLBuilder selectProgettoByClause (UserContext userContext,
 	Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHome( userContext, Unita_organizzativa_enteBulk.class).findAll().get(0);
 	if (!((CNRUserContext) userContext).getCd_unita_organizzativa().equals( ente.getCd_unita_organizzativa()))
 	  	sql.addSQLExistsClause("AND",progettohome.abilitazioniModuli(userContext));
+
     if (clause != null) 
         sql.addClause(clause);
     return sql;
@@ -864,6 +865,15 @@ public SQLBuilder selectModulo2015ByClause (UserContext userContext,
 		sql.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO_PADRE","PROGETTO_DIP.PG_PROGETTO");
 		sql.addSQLJoin("V_PROGETTO_PADRE.TIPO_FASE_PROGETTO_PADRE","PROGETTO_DIP.TIPO_FASE");
 		sql.addSQLClause(FindClause.AND, "PROGETTO_DIP.P_CD_DIPARTIMENTO", SQLBuilder.EQUALS, linea_attivita.getPdgProgramma().getCd_programma());
+	}
+	Boolean isNoAperturaGaeSuProgettoInApprovazioneEnable = false;
+	try {
+		isNoAperturaGaeSuProgettoInApprovazioneEnable = Utility.createConfigurazioneCnrComponentSession().isNoAperturaGaeSuProgettoInizialeEnable(userContext);
+	}catch (RemoteException e) {
+		throw handleException(linea_attivita,e);
+	}
+	if(isNoAperturaGaeSuProgettoInApprovazioneEnable){
+		sql.addSQLClause("AND", "V_PROGETTO_PADRE.STATO_OTHER_FIELD", sql.NOT_EQUALS, "INI");
 	}
     if (clause != null) 
         sql.addClause(clause);
@@ -898,6 +908,17 @@ public SQLBuilder selectProgetto2016ByClause (UserContext userContext,
 	Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHome( userContext, Unita_organizzativa_enteBulk.class).findAll().get(0);
 	if (!((CNRUserContext) userContext).getCd_unita_organizzativa().equals( ente.getCd_unita_organizzativa()))
 		sql.addSQLExistsClause("AND",progettohome.abilitazioniCommesse(userContext));
+
+	Boolean isNoAperturaGaeSuProgettoInizialeEnable = false;
+	try {
+		isNoAperturaGaeSuProgettoInizialeEnable = Utility.createConfigurazioneCnrComponentSession().isNoAperturaGaeSuProgettoInizialeEnable(userContext);
+	}catch (RemoteException e) {
+		throw handleException(linea_attivita,e);
+	}
+	if(isNoAperturaGaeSuProgettoInizialeEnable){
+		sql.addSQLClause("AND", "V_PROGETTO_PADRE.STATO_OTHER_FIELD", sql.NOT_EQUALS,"INI");
+	}
+
 	if (clause != null) 
 		sql.addClause(clause);
 
