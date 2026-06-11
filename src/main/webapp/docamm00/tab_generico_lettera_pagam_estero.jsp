@@ -134,9 +134,9 @@
              </div>
              <div class="form-row">
                 <!-- COD SWIFT -->
-                <div class="col-md-2"> <% bp.writeFormFieldDoc1210(out, "indirizzo_swift");%></div>
+                <div class="col-md-2"> <% bp.writeFormFieldDoc1210(out, "indirizzo_swift_v2");%></div>
                 <!-- BANCA SWIFT -->
-                <div class="col-md-10">  <% bp.writeFormFieldDoc1210(out, "indirizzo");%> </div>
+                <div class="col-md-10">  <% bp.writeFormFieldDoc1210(out, "indirizzo_v2");%> </div>
              </div>
               <div class="form-row">
                  <div class="col-md-2"> <% bp.writeFormFieldDoc1210(out, "cod_aba_routing");%></div>
@@ -151,7 +151,7 @@
                   <div class="col-md-4">  <% bp.writeFormFieldDoc1210(out, "purpose_pay");%> </div>
                </div>
                <div class="form-row">
-                    <div class="col-md-12><% bp.writeFormFieldDoc1210(out, "istruzioni_speciali_1");%></div>
+                    <div class="col-md-12"><% bp.writeFormFieldDoc1210(out, "segnalazioni_v2");%></div>
                </div>
                <div class="GroupLabel h3 text-primary"></div>
                <div class="form-row">

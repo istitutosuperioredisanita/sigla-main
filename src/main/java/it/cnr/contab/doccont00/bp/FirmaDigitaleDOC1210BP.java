@@ -194,142 +194,158 @@ public class FirmaDigitaleDOC1210BP extends AbstractFirmaDigitaleDocContBP {
 		}
 		return valoreImpostato+valoreImporto;
 	}
+	private List<PDField>compilaLetteraNuovaVersione(Lettera_pagam_esteroBulk lettera,PDAcroForm pdAcroForm, Configurazione_cnrBulk confDatiFissi) throws ApplicationException, IOException {
 
+		List<PDField> fields = new ArrayList<PDField>();
+		fields.add(valorizzaField(pdAcroForm, "FILIALE ISS", "", false));
+		// DA GESTIRE!!!! Inserire nel form la scelta fra Bonifico ed Assegno
+		fields.add(valorizzaField(pdAcroForm, "BON ASS", "Scelta1", false));
+		// DA GESTIRE!!!! Inserire nel form la scelta di addebito su C/C
+		fields.add(valorizzaField(pdAcroForm, "ADDEBITO CC ISS", "true", false));
+		// DA GESTIRE!! Valorizzare FISSO solo se check ADDEBITO CC ISS
+		fields.add(valorizzaField(pdAcroForm, "INTESTAZIONE CONTO ISS", confDatiFissi.getVal01(), false));
+		fields.add(valorizzaField(pdAcroForm, "DIVISA LETTERE ISS", confDatiFissi.getVal02(), false));
+
+
+		return fields;
+	}
 	private List<PDField> predisponiPerLaFirmaISS(Lettera_pagam_esteroBulk lettera,PDAcroForm pdAcroForm, Configurazione_cnrBulk confDatiFissi,Format dateFormat) throws ApplicationException, IOException {
 
 		List<PDField> fields = new ArrayList<PDField>();
 		try {
-			// DA GESTIRE!!!! - Se va editata o impostata fissa
-			fields.add(valorizzaField(pdAcroForm, "FILIALE ISS", "", false));
-			// DA GESTIRE!!!! Inserire nel form la scelta fra Bonifico ed Assegno
-			fields.add(valorizzaField(pdAcroForm, "BON ASS", "Scelta1", false));
-			// DA GESTIRE!!!! Inserire nel form la scelta di addebito su C/C
-			fields.add(valorizzaField(pdAcroForm, "ADDEBITO CC ISS", "true", false));
-			// DA GESTIRE!! Valorizzare FISSO solo se check ADDEBITO CC ISS
-					fields.add(valorizzaField(pdAcroForm, "INTESTAZIONE CONTO ISS", confDatiFissi.getVal01(), false));
-					fields.add(valorizzaField(pdAcroForm, "DIVISA LETTERE ISS",  confDatiFissi.getVal02(), false));
+			if(!lettera.getLettera_vers().equals(Lettera_pagam_esteroBulk.PRIMA_VERSIONE)){
+				fields = compilaLetteraNuovaVersione(lettera, pdAcroForm,  confDatiFissi);
+			}else {
+				// DA GESTIRE!!!! - Se va editata o impostata fissa
+				fields.add(valorizzaField(pdAcroForm, "FILIALE ISS", "", false));
+				// DA GESTIRE!!!! Inserire nel form la scelta fra Bonifico ed Assegno
+				fields.add(valorizzaField(pdAcroForm, "BON ASS", "Scelta1", false));
+				// DA GESTIRE!!!! Inserire nel form la scelta di addebito su C/C
+				fields.add(valorizzaField(pdAcroForm, "ADDEBITO CC ISS", "true", false));
+				// DA GESTIRE!! Valorizzare FISSO solo se check ADDEBITO CC ISS
+				fields.add(valorizzaField(pdAcroForm, "INTESTAZIONE CONTO ISS", confDatiFissi.getVal01(), false));
+				fields.add(valorizzaField(pdAcroForm, "DIVISA LETTERE ISS", confDatiFissi.getVal02(), false));
 
-					String[] datiContoSplit  = confDatiFissi.getVal03().split("/");
+				String[] datiContoSplit = confDatiFissi.getVal03().split("/");
 
-					int index=1;
-					for(int i=1;i<=datiContoSplit.length;i++){
-						String valoreConto=datiContoSplit[i-1];
-						for(int x=0;x<valoreConto.length();x++) {
-							char valore = valoreConto.charAt(x);
-							fields.add(valorizzaField(pdAcroForm, "COD CONTO ISS " + index, String.valueOf(valore), false));
-							index++;
+				int index = 1;
+				for (int i = 1; i <= datiContoSplit.length; i++) {
+					String valoreConto = datiContoSplit[i - 1];
+					for (int x = 0; x < valoreConto.length(); x++) {
+						char valore = valoreConto.charAt(x);
+						fields.add(valorizzaField(pdAcroForm, "COD CONTO ISS " + index, String.valueOf(valore), false));
+						index++;
+					}
+				}
+
+				// DA GESTIRE!! Inserire nel form il check di "Concessione Finanzionamento
+				fields.add(valorizzaField(pdAcroForm, "FINANZIAMENTO ISS", "false", false));
+				// DA GESTIRE!! Inserire nel form solo se check "Concessione Finanzionamento impostato
+				fields.add(valorizzaField(pdAcroForm, "FINANZIAMENTO INTESTATO A", "", false));
+				fields.add(valorizzaField(pdAcroForm, "FINANZIAMENTO DIVISA ISS", "", false));
+
+
+				for (int i = 0; i < lettera.getDivisa().length(); i++) {
+					char valoreDivisa = lettera.getDivisa().charAt(i);
+					fields.add(valorizzaField(pdAcroForm, "COD DIVISA BEN " + (i + 1), String.valueOf(valoreDivisa), false));
+				}
+
+				DecimalFormat df = new DecimalFormat("#.00", new DecimalFormatSymbols(Locale.ENGLISH));
+				String impoStr = df.format(lettera.getIm_pagamento());
+				//String impoStr = String.valueOf(lettera.getIm_pagamento());
+				String[] importoPagamentoBen = impoStr.split("\\.");
+
+				for (int i = 0; i < importoPagamentoBen.length; i++) {
+
+					String valoreImporto = "";
+					// L'importo intero viene scritto partendo da destra e riempito di blak a sinistra
+					if (i == 0) {
+						valoreImporto = StringUtils.leftPad(importoPagamentoBen[i], 10, "");
+					}
+					// L'importo decimale allineato a sinistra e riempito di 0
+					if (i == 1) {
+						valoreImporto = StringUtils.rightPad(importoPagamentoBen[i], 2, "0");
+					}
+
+					for (int x = 0; x < valoreImporto.length(); x++) {
+						char valore = valoreImporto.charAt(x);
+						if (i == 0) {
+							fields.add(valorizzaField(pdAcroForm, "IMPORTO BEN " + (x + 1), String.valueOf(valore), false));
+						}
+						// SE CI SONO I DECIMALI
+						else {
+							if (x < 2) {
+								fields.add(valorizzaField(pdAcroForm, "IMPORTO DECIMAL BEN " + (x + 1), String.valueOf(valore), false));
+							}
+						}
+
+					}
+				}
+
+				for (int i = 0; i < lettera.getIban().length(); i++) {
+					char valoreIban = lettera.getIban().charAt(i);
+					fields.add(valorizzaField(pdAcroForm, "IBAN BEN " + (i + 1), String.valueOf(valoreIban), false));
+				}
+				for (int i = 0; i < lettera.getIndirizzo_swift().length(); i++) {
+					char valoreIndirizzoSw = lettera.getIndirizzo_swift().charAt(i);
+					fields.add(valorizzaField(pdAcroForm, "BIC/SWIFT BEN " + (i + 1), String.valueOf(valoreIndirizzoSw), false));
+				}
+
+				fields.add(valorizzaField(pdAcroForm, "IMPORTO IN LETTERE", Utility.NumberToTextPadDecimal(lettera.getIm_pagamento()), true));
+				fields.add(valorizzaField(pdAcroForm, "ANAGRAFICA BANCA BENEFICIARIA Opzionale", lettera.getIndirizzo(), true));
+				fields.add(valorizzaField(pdAcroForm, "NOMINATIVO BENEFICIARIO", lettera.getBeneficiario(), true));
+				fields.add(valorizzaField(pdAcroForm, "INDIRIZZO BENEFICIARIO", lettera.getIndirizzo_beneficiario(), true));
+				fields.add(valorizzaField(pdAcroForm, "PAESE BENEFICIARIO", lettera.getPaese_beneficiario(), true));
+
+				// DA GESTIRE !! Inserire nel form il radio button per BEN o OUR
+				// Viene impostata la Commissione solo se diversa da SHARE (Scelta 1) perchè "Per i bonifici verso PAESI e con DIVISE dell'Unione Eurogea UE
+				// e Area Economica Eurogea EEA non è consentita modalità di spesa diversa da SHARE" (rif. 1210.PDF)
+				if (lettera.getCommissioni_spese() != null && !lettera.getCommissioni_spese().equals(Lettera_pagam_esteroBulk.SHA)) {
+					fields.add(valorizzaField(pdAcroForm, "COMMISSIONI", lettera.getCommissioni_spese(), false));
+				}
+				if (lettera.getIstruzioni_speciali_1() != null) {
+					fields.add(valorizzaField(pdAcroForm, "ALTRE EVENTUALI ISTRUZIONI 1", lettera.getIstruzioni_speciali_1(), true));
+				}
+				if (lettera.getIstruzioni_speciali_2() != null) {
+					fields.add(valorizzaField(pdAcroForm, "ALTRE EVENTUALI ISTRUZIONI 2", lettera.getIstruzioni_speciali_2(), true));
+				}
+				if (lettera.getIstruzioni_speciali_3() != null) {
+					fields.add(valorizzaField(pdAcroForm, "ALTRE EVENTUALI ISTRUZIONI 3", lettera.getIstruzioni_speciali_3(), true));
+				}
+
+				if (lettera.getMotivo_pag().length() > 70) {
+					String[] causaleSplit = lettera.getMotivo_pag().split(" ");
+					String causaleConcat = "";
+					boolean primaRigaCompletata = false;
+					for (int i = 0; i < causaleSplit.length; i++) {
+						causaleConcat = causaleConcat + causaleSplit[i] + " ";
+						if (causaleConcat.length() >= 70 && !primaRigaCompletata) {
+							fields.add(valorizzaField(pdAcroForm, "CAUSALE 1", causaleConcat, false));
+							causaleConcat = "";
+							primaRigaCompletata = true;
 						}
 					}
-
-			// DA GESTIRE!! Inserire nel form il check di "Concessione Finanzionamento
-			fields.add(valorizzaField(pdAcroForm, "FINANZIAMENTO ISS", "false", false));
-					// DA GESTIRE!! Inserire nel form solo se check "Concessione Finanzionamento impostato
-					fields.add(valorizzaField(pdAcroForm, "FINANZIAMENTO INTESTATO A","", false));
-					fields.add(valorizzaField(pdAcroForm, "FINANZIAMENTO DIVISA ISS","", false));
-
-
-
-			for(int i=0;i<lettera.getDivisa().length();i++) {
-				char valoreDivisa = lettera.getDivisa().charAt(i);
-				fields.add(valorizzaField(pdAcroForm, "COD DIVISA BEN " + (i+1), String.valueOf(valoreDivisa), false));
-			}
-
-			DecimalFormat df = new DecimalFormat("#.00",new DecimalFormatSymbols(Locale.ENGLISH) );
-			String impoStr =df.format(lettera.getIm_pagamento());
-			//String impoStr = String.valueOf(lettera.getIm_pagamento());
-			String[] importoPagamentoBen  = impoStr.split("\\.");
-
-			for(int i=0;i<importoPagamentoBen.length;i++) {
-
-				String valoreImporto = "";
-				// L'importo intero viene scritto partendo da destra e riempito di blak a sinistra
-				if(i==0){
-					valoreImporto = StringUtils.leftPad(importoPagamentoBen[i], 10, "");
+					fields.add(valorizzaField(pdAcroForm, "CAUSALE 2", causaleConcat, false));
+				} else {
+					fields.add(valorizzaField(pdAcroForm, "CAUSALE 1", lettera.getMotivo_pag(), false));
 				}
-				// L'importo decimale allineato a sinistra e riempito di 0
-				if(i==1){
-					valoreImporto = StringUtils.rightPad(importoPagamentoBen[i], 2, "0");
+				String dataString = new SimpleDateFormat("dd/MM/yyyy").format(lettera.getDt_registrazione());
+				String[] dataSplit = dataString.split("/");
+				// GESTIONE GIORNO
+				for (int i = 0; i < dataSplit[0].length(); i++) {
+					char valoreGiorno = dataSplit[0].charAt(i);
+					fields.add(valorizzaField(pdAcroForm, "DATA GG " + (i + 1), String.valueOf(valoreGiorno), false));
 				}
-
-				for(int x=0;x<valoreImporto.length();x++){
-					char valore = valoreImporto.charAt(x);
-					if(i==0) {
-						fields.add(valorizzaField(pdAcroForm, "IMPORTO BEN " + (x+1), String.valueOf(valore), false));
-					}
-					// SE CI SONO I DECIMALI
-					else{
-						if(x<2) {
-							fields.add(valorizzaField(pdAcroForm, "IMPORTO DECIMAL BEN " + (x + 1), String.valueOf(valore), false));
-						}
-					}
-
+				// GESTIONE MESE
+				for (int i = 0; i < dataSplit[1].length(); i++) {
+					char valoreMese = dataSplit[1].charAt(i);
+					fields.add(valorizzaField(pdAcroForm, "DATA MM " + (i + 1), String.valueOf(valoreMese), false));
 				}
-			}
-
-			for(int i=0;i<lettera.getIban().length();i++) {
-				char valoreIban = lettera.getIban().charAt(i);
-				fields.add(valorizzaField(pdAcroForm, "IBAN BEN " + (i+1), String.valueOf(valoreIban), false));
-			}
-			for(int i=0;i<lettera.getIndirizzo_swift().length();i++) {
-				char valoreIndirizzoSw = lettera.getIndirizzo_swift().charAt(i);
-				fields.add(valorizzaField(pdAcroForm, "BIC/SWIFT BEN " + (i+1), String.valueOf(valoreIndirizzoSw), false));
-			}
-
-			fields.add(valorizzaField(pdAcroForm, "IMPORTO IN LETTERE", Utility.NumberToTextPadDecimal(lettera.getIm_pagamento()), true));
-			fields.add(valorizzaField(pdAcroForm, "ANAGRAFICA BANCA BENEFICIARIA Opzionale", lettera.getIndirizzo(), true));
-			fields.add(valorizzaField(pdAcroForm, "NOMINATIVO BENEFICIARIO", lettera.getBeneficiario(), true));
-			fields.add(valorizzaField(pdAcroForm, "INDIRIZZO BENEFICIARIO", lettera.getIndirizzo_beneficiario(), true));
-			fields.add(valorizzaField(pdAcroForm, "PAESE BENEFICIARIO", lettera.getPaese_beneficiario(), true));
-
-			// DA GESTIRE !! Inserire nel form il radio button per BEN o OUR
-			// Viene impostata la Commissione solo se diversa da SHARE (Scelta 1) perchè "Per i bonifici verso PAESI e con DIVISE dell'Unione Eurogea UE
-			// e Area Economica Eurogea EEA non è consentita modalità di spesa diversa da SHARE" (rif. 1210.PDF)
-			if(lettera.getCommissioni_spese() != null && !lettera.getCommissioni_spese().equals(Lettera_pagam_esteroBulk.SHA)) {
-				fields.add(valorizzaField(pdAcroForm, "COMMISSIONI", lettera.getCommissioni_spese(), false));
-			}
-			if(lettera.getIstruzioni_speciali_1()!=null) {
-				fields.add(valorizzaField(pdAcroForm, "ALTRE EVENTUALI ISTRUZIONI 1", lettera.getIstruzioni_speciali_1(), true));
-			}
-			if(lettera.getIstruzioni_speciali_2()!=null) {
-				fields.add(valorizzaField(pdAcroForm, "ALTRE EVENTUALI ISTRUZIONI 2", lettera.getIstruzioni_speciali_2(), true));
-			}
-			if(lettera.getIstruzioni_speciali_3()!=null) {
-				fields.add(valorizzaField(pdAcroForm, "ALTRE EVENTUALI ISTRUZIONI 3", lettera.getIstruzioni_speciali_3(), true));
-			}
-
-			if(lettera.getMotivo_pag().length() > 70){
-				String[] causaleSplit = lettera.getMotivo_pag().split(" ");
-				String causaleConcat="";
-				boolean primaRigaCompletata=false;
-				for(int i=0;i<causaleSplit.length;i++){
-					causaleConcat=causaleConcat+causaleSplit[i]+" ";
-					if(causaleConcat.length() >= 70 && !primaRigaCompletata){
-						fields.add(valorizzaField(pdAcroForm, "CAUSALE 1", causaleConcat, false));
-						causaleConcat="";
-						primaRigaCompletata=true;
-					}
+				// GESTIONE ANNO
+				for (int i = 2, x = 0; i < dataSplit[2].length(); i++, x++) {
+					char valoreAnno = dataSplit[2].charAt(i);
+					fields.add(valorizzaField(pdAcroForm, "DATA AA " + (x + 1), String.valueOf(valoreAnno), false));
 				}
-				fields.add(valorizzaField(pdAcroForm, "CAUSALE 2", causaleConcat, false));
-			}
-			else{
-				fields.add(valorizzaField(pdAcroForm, "CAUSALE 1", lettera.getMotivo_pag(), false));
-			}
-			String dataString = new SimpleDateFormat("dd/MM/yyyy").format(lettera.getDt_registrazione());
-			String[] dataSplit = dataString.split("/");
-			// GESTIONE GIORNO
-			for(int i=0;i<dataSplit[0].length();i++){
-				char valoreGiorno = dataSplit[0].charAt(i);
-				fields.add(valorizzaField(pdAcroForm, "DATA GG " + (i+1), String.valueOf(valoreGiorno), false));
-			}
-			// GESTIONE MESE
-			for(int i=0;i<dataSplit[1].length();i++){
-				char valoreMese = dataSplit[1].charAt(i);
-				fields.add(valorizzaField(pdAcroForm, "DATA MM " + (i+1), String.valueOf(valoreMese), false));
-			}
-			// GESTIONE ANNO
-			for(int i=2,x=0;i<dataSplit[2].length();i++,x++){
-				char valoreAnno = dataSplit[2].charAt(i);
-				fields.add(valorizzaField(pdAcroForm, "DATA AA " + (x+1), String.valueOf(valoreAnno), false));
 			}
 		}catch (Exception e){
 			throw new ApplicationMessageFormatException(

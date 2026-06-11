@@ -576,7 +576,20 @@
 		label="Anagrafica Banca Beneficiario"
 		enabledOnSearch="true"
 		enabledOnFreeSearch="false"
-		caseSensitiveSearch="false" />		
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="indirizzo_v2"
+		property="lettera_pagamento_estero.indirizzo"
+		readonlyProperty="ROStatoTrasmissioneLettera"
+		maxLength="250"
+		inputSize="250"
+		inputType="TEXTAREA"
+		cols="75"
+		rows="1"
+		label="Nome Banca Beneficiaria"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="false"
+		caseSensitiveSearch="false" />
 	<fieldProperty
 		name="indirizzo_swift"
 		property="lettera_pagamento_estero.indirizzo_swift"
@@ -589,6 +602,17 @@
 		enabledOnSearch="true"
 		enabledOnFreeSearch="false"
 		caseSensitiveSearch="false" />
+	<fieldProperty
+			name="indirizzo_swift_v2"
+			property="lettera_pagamento_estero.indirizzo_swift"
+			readonlyProperty="ROStatoTrasmissioneLettera"
+			maxLength="11"
+			inputSize="11"
+			inputType="TEXT"
+			label="Codice SWIFT"
+			enabledOnSearch="true"
+			enabledOnFreeSearch="false"
+			caseSensitiveSearch="false" />
 	<fieldProperty
 		name="bic_banca_intermediaria"
 		property="lettera_pagamento_estero.bic_banca_intermediaria"
@@ -664,6 +688,14 @@
 		inputSize="100"
 		label="Primo" />
 	<fieldProperty
+		name="segnalazioni_v2"
+		property="lettera_pagamento_estero.istruzioni_speciali_1"
+		readonlyProperty="ROStatoTrasmissioneLettera"
+		inputType="TEXT"
+		maxLength="250"
+		inputSize="100"
+		label="Segnalazioni" />
+	<fieldProperty
 		name="istruzioni_speciali_2"
 		property="lettera_pagamento_estero.istruzioni_speciali_2"
 		readonlyProperty="ROStatoTrasmissioneLettera"
@@ -703,7 +735,7 @@
 			inputType="TEXTAREA"
 			cols="75"
 			rows="1"
-			label="Banca Beneficiaria ABA/Routing"
+			label="Nome Banca Beneficiaria"
 			readonlyProperty="ROStatoTrasmissioneLettera"/>
 	<fieldProperty
 			name="cod_swift_tramite"
@@ -721,7 +753,7 @@
 			inputType="TEXTAREA"
 			cols="75"
 			rows="1"
-			label="Banca Tramite"
+			label="Nome Banca"
 			readonlyProperty="ROStatoTrasmissioneLettera"/>
 	<fieldProperty
 			name="notice_agreed"
@@ -735,8 +767,8 @@
 			name="purpose_pay"
 			property="lettera_pagamento_estero.purpose_pay"
 			inputType="TEXT"
-			maxLength="6"
-			inputSize="6"
+			maxLength="9"
+			inputSize="9"
 			label="Purpose of Payment"
 			readonlyProperty="ROStatoTrasmissioneLettera"/>
 	<fieldProperty
@@ -964,9 +996,14 @@
 	<formFieldProperty
 		name="iban"/>		
 	<formFieldProperty
-		name="indirizzo"/>		
+		name="indirizzo"/>
+	<formFieldProperty
+			name="indirizzo_v2"/>
 	<formFieldProperty
 		name="indirizzo_swift"/>
+	<formFieldProperty
+		name="indirizzo_swift_v2"/>
+
 	<formFieldProperty
 		name="bic_banca_intermediaria"/>
 	<formFieldProperty
@@ -979,6 +1016,8 @@
 		name="commissioni_spese"/>
 	<formFieldProperty
 		name="istruzioni_speciali_1" />
+	<formFieldProperty
+			name="segnalazioni_v2" />
 	<formFieldProperty
 		name="istruzioni_speciali_2" />
 	<formFieldProperty
