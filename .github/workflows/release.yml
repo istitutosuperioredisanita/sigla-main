@@ -36,6 +36,11 @@ jobs:
         run: |
           docker push ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
 
+      - name: Tag and push release image
+        run: |
+          docker tag ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }} ghcr.io/${{ github.repository }}:release
+          docker push ghcr.io/${{ github.repository }}:release
+
       - name: Update version in pom.xml width SNAPSHOT version
         run: |
           mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }}-SNAPSHOT -DgenerateBackupPoms=false
