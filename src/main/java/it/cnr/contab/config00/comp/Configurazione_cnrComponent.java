@@ -20,6 +20,7 @@ package it.cnr.contab.config00.comp;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Configurazione_cnrKey;
+import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.utente00.ejb.RuoloComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
@@ -1667,4 +1668,68 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
             throw handleException(e);
         }
     }
+    public Boolean isEnabledAllegatiObbligazioni(UserContext userContext) throws ComponentException {
+        try {
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_IMPEGNI,
+                    Configurazione_cnrBulk.SK_IMPEGNI_ENABLED_ALLEGATI,
+                    ASTERISCO,
+                    CNRUserContext.getEsercizio(userContext));
+            return val01YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val01YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException|ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+
+    private Boolean isEnabledMandatoryAllegatoAutorizzativoObb(UserContext userContext) throws ComponentException {
+        try {
+            Configurazione_cnrKey configurazioneCnrKey = new Configurazione_cnrKey(
+                    Configurazione_cnrBulk.PK_IMPEGNI,
+                    Configurazione_cnrBulk.SK_IMPEGNI_ENABLED_ALLEGATI,
+                    ASTERISCO,
+                    CNRUserContext.getEsercizio(userContext));
+            return val02YesNo(userContext, configurazioneCnrKey)
+                    .orElseGet(() -> {
+                        try {
+                            return val02YesNo(userContext, configurazioneCnrKey.esercizio(0))
+                                    .orElse(Boolean.FALSE);
+                        } catch (PersistencyException|ComponentException e) {
+                            throw new PersistencyError(e);
+                        }
+                    });
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
+
+    private Timestamp getStartDateMandatoriAllegAutorObb(UserContext userContext) throws ComponentException {
+
+            Timestamp startDate= getDt01(userContext, CNRUserContext.getEsercizio(userContext), ASTERISCO,Configurazione_cnrBulk.PK_IMPEGNI,Configurazione_cnrBulk.SK_IMPEGNI_ENABLED_ALLEGATI);
+            if ( !Optional.ofNullable(startDate).isPresent())
+                startDate= getDt01(userContext, 0, ASTERISCO,Configurazione_cnrBulk.PK_IMPEGNI,Configurazione_cnrBulk.SK_IMPEGNI_ENABLED_ALLEGATI);
+            return startDate;
+
+    }
+
+    public Boolean isMandatoryAllegatoAutorizzativoObb(UserContext userContext, ObbligazioneBulk obbligazioneBulk) throws ComponentException {
+
+           if ( isEnabledAllegatiObbligazioni( userContext) && isEnabledMandatoryAllegatoAutorizzativoObb(userContext) ) {
+                Timestamp starDate = getStartDateMandatoriAllegAutorObb(userContext);
+                if ( !Optional.ofNullable(starDate).isPresent())
+                    return Boolean.TRUE;
+               return obbligazioneBulk.getDt_registrazione() != null && starDate != null &&
+                       (obbligazioneBulk.getDt_registrazione() .compareTo(starDate)>=0 );
+             }
+           return Boolean.FALSE;
+
+    }
+
 }

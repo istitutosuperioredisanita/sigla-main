@@ -40,7 +40,6 @@ import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.prevent00.bulk.V_assestatoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.utenze00.bulk.CNRUserInfo;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -54,6 +53,8 @@ import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
+import it.cnr.si.spring.storage.StorageObject;
+import it.cnr.si.spring.storage.config.StoragePropertyNames;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -117,6 +118,7 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
     private boolean variazioneAutomaticaEnabled = false;
     private boolean attivoOrdini = false;
     private boolean esercizioChiuso;
+    private boolean isEnabledAllegati = Boolean.FALSE;
 
     private byte[] bringBackClone = null;
 
@@ -148,6 +150,8 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
                     .createEJB("CNRCONFIG00_EJB_EsercizioComponentSession",
                             EsercizioComponentSession.class))
                     .isEsercizioChiuso(actioncontext.getUserContext()));
+            isEnabledAllegati= Utility.createConfigurazioneCnrComponentSession().isEnabledAllegatiObbligazioni(actioncontext.getUserContext());
+
         } catch (Throwable e) {
             throw new BusinessProcessException(e);
         }
@@ -1304,7 +1308,8 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
                     pages.put(i++, new String[]{"tabObbligazioniPluriennali", "Obbligazioni Pluriennali", "/doccont00/tab_obb_pluriennali.jsp"});
             }
         }
-        pages.put(i++, new String[]{"tabAllegati","Allegati","/util00/tab_allegati.jsp"});
+        if (isEnabledAllegati)
+         pages.put(i++, new String[]{"tabAllegati","Allegati","/util00/tab_allegati.jsp"});
 
 
         String[][] tabs = new String[i][3];
@@ -1312,6 +1317,13 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         for (int j = 0; j < i; j++)
             tabs[j] = new String[]{pages.get(j)[0], pages.get(j)[1], pages.get(j)[2]};
         return tabs;
+    }
+
+    private Boolean isProvvisoria(){
+        ObbligazioneBulk obbligazione = (ObbligazioneBulk)getModel();
+        if ( Optional.ofNullable(obbligazione).map(ObbligazioneBulk::getStato_obbligazione).filter(e->e.equalsIgnoreCase(ObbligazioneBulk.STATO_OBB_PROVVISORIO)).isPresent())
+            return Boolean.TRUE;
+        return Boolean.FALSE;
     }
 
     public boolean isAttivoOrdini() {
@@ -1330,5 +1342,17 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
             return false;
         }
         return true;
+    }
+    protected void completeAllegato(AllegatoObbligazioneBulk allegato, StorageObject storageObject) throws ApplicationException {
+
+        Optional.ofNullable(storageObject.<List<String>>getPropertyValue(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value()))
+                .map(strings -> strings.stream())
+                .ifPresent(stringStream -> {
+                    stringStream
+                            .filter(s -> AllegatoObbligazioneBulk.aspectNamesKeys.get(s) != null)
+                            .findFirst()
+                            .ifPresent(s -> allegato.setAspectName(s));
+                });
+        super.completeAllegato(allegato, storageObject);
     }
 }

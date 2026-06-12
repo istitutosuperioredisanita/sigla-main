@@ -17,6 +17,7 @@
 
 package it.cnr.contab.config00.ejb;
 
+import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -165,5 +166,10 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
     void ribaltaProgetti(UserContext userContext, int esercizio) throws ComponentException, RemoteException;
 
     Boolean isNoAperturaGaeSuProgettoInizialeEnable(UserContext param0) throws ComponentException, RemoteException;
+
+    Boolean isEnabledAllegatiObbligazioni(UserContext userContext) throws ComponentException, RemoteException;
+    Boolean isMandatoryAllegatoAutorizzativoObb(UserContext userContext, ObbligazioneBulk obbligazioneBulk) throws ComponentException, RemoteException;
+
+
 
 }
