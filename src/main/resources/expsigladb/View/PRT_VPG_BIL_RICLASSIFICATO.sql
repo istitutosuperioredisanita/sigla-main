@@ -2,7 +2,7 @@
 --  DDL for View PRT_VPG_BIL_RICLASSIFICATO
 --------------------------------------------------------
 
-  CREATE OR REPLACE FORCE VIEW "PRT_VPG_BIL_RICLASSIFICATO" ("ID", "CHIAVE", "TIPO", "SEQUENZA", "ORDINE", "CONTO_RICLASS", "I_LIVELLO", "II_LIVELLO", "III_LIVELLO", "IV_LIVELLO", "DESCRIZIONE", "PARZIALE_I_ANNO", "TOTALE_I_ANNO", "PARZIALE_II_ANNO", "TOTALE_II_ANNO", "SN_TOTALE") AS 
+  CREATE OR REPLACE FORCE VIEW "PRT_VPG_BIL_RICLASSIFICATO" ("ID", "CHIAVE", "TIPO", "SEQUENZA", "ORDINE", "CONTO_RICLASS", "I_LIVELLO", "II_LIVELLO", "III_LIVELLO", "IV_LIVELLO", "DESCRIZIONE", "PARZIALE_I_ANNO", "TOTALE_I_ANNO", "PARZIALE_II_ANNO", "TOTALE_II_ANNO", "SN_TOTALE",, "NOME_TASS_ACCRUAL") AS
   select
 
 -- Date: 06/08/2004
@@ -21,6 +21,7 @@
 -- Version: 1.1
 -- Modificati il nome della view e della procedure, eliminato il nome dello
 -- schema, aggiunto history nella procedure
+-- 16/96/2026 | 1.2 |        | Aggiunto la tassonmia accrual
 --
 -- Body:
 ID,	CHIAVE,	TIPO,	SEQUENZA,
@@ -35,7 +36,8 @@ IMPORTO_2,	-- PARZIALE_I_ANNO,
 IMPORTO_3,	-- TOTALE_I_ANNO,
 IMPORTO_4,	-- PARZIALE_II_ANNO,
 IMPORTO_5,	-- TOTALE_II_ANNO
-ATTRIBUTO_7     -- SN_TOTALE
+ATTRIBUTO_7,     -- SN_TOTALE
+ATTRIBUTO_8     -- NOME_TASS_ACCRUAL
 from tmp_report_generico
 ;
 
