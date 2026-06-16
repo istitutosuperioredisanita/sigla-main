@@ -18,6 +18,7 @@
 package it.cnr.contab.config00.ejb;
 
 import it.cnr.contab.config00.comp.Configurazione_cnrComponent;
+import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.AdminUserContext;
@@ -1304,4 +1305,46 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
             throw uncaughtError(userContext, componentObj, e);
         }
     }
+
+    @Override
+    public Boolean isEnabledAllegatiObbligazioni(UserContext userContext) throws ComponentException, RemoteException {
+        pre_component_invocation(userContext, componentObj);
+        try {
+            Boolean result = ((Configurazione_cnrComponent)componentObj).isEnabledAllegatiObbligazioni(userContext);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    @Override
+    public Boolean isMandatoryAllegatoAutorizzativoObb(UserContext userContext, ObbligazioneBulk obbligazione) throws ComponentException, RemoteException {
+        pre_component_invocation(userContext, componentObj);
+        try {
+            Boolean result = ((Configurazione_cnrComponent)componentObj).isMandatoryAllegatoAutorizzativoObb(userContext,obbligazione);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+
 }

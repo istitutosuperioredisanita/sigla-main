@@ -13,7 +13,7 @@ function doScaricaFile() {
 }
 </script>
 <div class="Group m-1">
-<%  bp.getCrudArchivioAllegati().writeHTMLTable(pageContext,bp.getAllegatiFormName(),true,false,true,"100%","30vh"); %>
+<%  bp.getCrudArchivioAllegati().writeHTMLTable(pageContext,bp.getAllegatiFormName(),bp.isEnabledAddButton(),false,bp.isEnabledRemoveButton(),"100%","30vh"); %>
 </div> 
 <div class="Group card mt-3">
   <table>
