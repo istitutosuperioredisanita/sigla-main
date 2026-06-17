@@ -363,7 +363,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             DocTraspRientHappySignService happySignService = SpringUtil.getBean("docTraspRientHappySignService", DocTraspRientHappySignService.class);
             String uuidHappysign = null;//happySignService.inviaDocumentoAdHappySign(doc, pdfBytes);
 
-            doc.setIdFlussoHappysign(uuidHappysign);
+            doc.setUuidFlussoAutorizzativo(uuidHappysign);
             doc.setDataInvioFirma(new Timestamp(System.currentTimeMillis()));
             doc = getComponentSession(bp).changeStatoInInviato(context.getUserContext(), doc);
 

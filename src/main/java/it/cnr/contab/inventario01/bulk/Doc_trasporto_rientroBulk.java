@@ -465,7 +465,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public boolean isFirmabile()            { return isInviatoInFirma() && !isDefinitivoCompletamente(); }
     public boolean isDefinitivoCompletamente() { return "FIR".equals(getStatoFlusso()) || isDefinitivo(); }
-    public boolean hasFlussoFirmaAttivo()   { return getIdFlussoHappysign() != null && !isDefinitivoCompletamente(); }
+    public boolean hasFlussoFirmaAttivo()   { return getUuidFlussoAutorizzativo() != null && !isDefinitivoCompletamente(); }
     public int getNumeroFirmatariRichiesti(){ return isRitiroIncaricato() ? 3 : 2; }
 
     public void inizializzaPerInvioFirma() {
@@ -484,13 +484,13 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         setStato(STATO_INSERITO);
         setStatoFlusso("RIF");
         setNoteRifiuto(motivoRifiuto);
-        setIdFlussoHappysign(null);
+        setUuidFlussoAutorizzativo(null);
         setDataInvioFirma(null);
         setDataFirma(null);
     }
 
     public void resetFlussoFirma() {
-        setIdFlussoHappysign(null);
+        setUuidFlussoAutorizzativo(null);
         setStatoFlusso(null);
         setDataInvioFirma(null);
         setDataFirma(null);
@@ -499,14 +499,14 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public boolean isInviabileAllaFirma() {
         return isInviatoInFirma()
-                && getIdFlussoHappysign() == null
+                && getUuidFlussoAutorizzativo() == null
                 && getConsegnatario() != null
                 && getCdTerzoResponsabile() != null
                 && hasDettagli();
     }
 
     public boolean isRifiutatoInFirma()  { return "RIF".equals(getStatoFlusso()); }
-    public boolean isInviatoAlFlusso()   { return "INV".equals(getStatoFlusso()) && getIdFlussoHappysign() != null; }
+    public boolean isInviatoAlFlusso()   { return "INV".equals(getStatoFlusso()) && getUuidFlussoAutorizzativo() != null; }
 
     // =========================================================================
     // VALIDAZIONE
