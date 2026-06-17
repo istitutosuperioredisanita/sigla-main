@@ -38,6 +38,9 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 	//    CD_TIPO_BILANCIO VARCHAR(10)
 	private String cdTipoBilancio;
 
+	// NOME_TASS_ACCRUAL
+	private String nomeTassAccrual;
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: CNR_GRUPPO_EP
@@ -216,5 +219,13 @@ public class GruppoEPBase extends GruppoEPKey implements Keyed {
 
 	public void setCdTipoBilancio(String cdTipoBilancio) {
 		this.cdTipoBilancio = cdTipoBilancio;
+	}
+
+	public String getNomeTassAccrual() {
+		return nomeTassAccrual;
+	}
+
+	public void setNomeTassAccrual(String nomeTassAccrual) {
+		this.nomeTassAccrual = nomeTassAccrual;
 	}
 }
