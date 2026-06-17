@@ -20,6 +20,7 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.jsp.Button;
 
 import java.rmi.RemoteException;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -70,6 +71,9 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
             selezione_tipo_bilancio.setTipoBilancio(selezione_tipo_bilancio.getTipoBilanci().stream().findFirst().orElse(null));
             selezioneTipoBilancioController.setModel(actioncontext, selezione_tipo_bilancio);
             setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(GruppoEPBulk.class));
+
+            gestisciVisibilitaColonne();
+
             refreshRemoteBulkTree(actioncontext);
         } catch (RemoteException | ComponentException e) {
             throw handleException(e);
@@ -93,6 +97,8 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
 
     public void refreshRemoteBulkTree(ActionContext actionContext) throws BusinessProcessException {
         try {
+            gestisciVisibilitaColonne();
+
             OggettoBulk model = getModel();
             int focus = getSelection().getFocus();
             if (getParentElement() != null) {
@@ -111,6 +117,36 @@ public class SelezionatoreGruppoEpBP extends SelezionatoreListaAlberoBP {
             setFocusedElement(actionContext, model);
         } catch (RemoteException | ComponentException e) {
             throw handleException(e);
+        }
+    }
+
+    /**
+     * Gestisce la visibilità dinamica delle colonne tramite setColumns.
+     * Se il tipo bilancio non è ACCRUAL o ACCRUAL-AGG, esclude 'nomeTassAccrual' dalla visualizzazione.
+     */
+    private void gestisciVisibilitaColonne() {
+        if (getBulkInfo() != null && selezione_tipo_bilancio != null && selezione_tipo_bilancio.getTipoBilancio() != null) {
+            String cdTipoBilancio = selezione_tipo_bilancio.getTipoBilancio().getCdTipoBilancio();
+
+            boolean mostraTassAccrual = TipoBilancioBulk.ACCRUAL.equals(cdTipoBilancio)
+                    || TipoBilancioBulk.ACCRUAL_AGG.equals(cdTipoBilancio);
+
+            java.util.Dictionary colonneOriginali = getBulkInfo().getColumnFieldPropertyDictionary();
+
+            if (colonneOriginali != null) {
+                java.util.Dictionary colonneFiltrate = new it.cnr.jada.util.OrderedHashtable();
+                Enumeration keys = colonneOriginali.keys();
+
+                while (keys.hasMoreElements()) {
+                    Object key = keys.nextElement();
+                    if (!mostraTassAccrual && "nomeTassAccrual".equals(key)) {
+                        continue;
+                    }
+                    colonneFiltrate.put(key, colonneOriginali.get(key));
+                }
+
+                setColumns(colonneFiltrate);
+            }
         }
     }
 
