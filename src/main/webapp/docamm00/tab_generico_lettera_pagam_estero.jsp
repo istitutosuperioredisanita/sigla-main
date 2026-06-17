@@ -130,7 +130,7 @@
                 <div class="col-md-2 h-100"><% bp.writeFormFieldDoc1210(out, "cod_divisa_accr");%></div>
              </div>
              <div class="form-row">
-                <div class="col-md-12><% bp.writeFormFieldDoc1210(out, "iban");%></div>
+                <div class="col-md-12"><% bp.writeFormFieldDoc1210(out, "iban");%></div>
              </div>
              <div class="form-row">
                 <!-- COD SWIFT -->
@@ -184,7 +184,7 @@
                      <div  class="col-md-12"><% bp.writeFormFieldDoc1210(out, "motivo_pag");%></div>
                 </div>
                 <div class="form-row">
-                    <div  class="col-md-12"><% bp.writeFormFieldDoc1210(out, "commissioni_spese");%></div>
+                    <div  class="col-md-12"><% bp.writeFormFieldDoc1210(out, "commissioni_spese_v2");%></div>
                 </div>
                 <div class="form-row">
                   <div  class="col-md-12"><% bp.writeFormFieldDoc1210(out, "conto_commissioni");%></div>

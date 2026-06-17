@@ -237,8 +237,8 @@
 			name="civico_beneficiario"
 			property="civico_beneficiario"
 			inputType="TEXT"
-			maxLength="10"
-			inputSize="10"
+			maxLength="5"
+			inputSize="5"
 			label="Num Civico" />
 	<fieldProperty
 			name="cap_beneficiario"
@@ -276,8 +276,8 @@
 			name="civico_ben_eff"
 			property="civico_ben_eff"
 			inputType="TEXT"
-			maxLength="10"
-			inputSize="10"
+			maxLength="5"
+			inputSize="5"
 			label="Num Civico" />
 	<fieldProperty
 			name="paese_ben_eff"

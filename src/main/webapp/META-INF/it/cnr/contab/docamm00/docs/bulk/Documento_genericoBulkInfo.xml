@@ -680,6 +680,19 @@
 		enabledOnFreeSearch="false"
 		caseSensitiveSearch="false"/>
 	<fieldProperty
+		name="commissioni_spese_v2"
+		property="lettera_pagamento_estero.commissioni_spese"
+		readonlyProperty="ROStatoTrasmissioneLettera"
+		maxLength="1"
+		inputSize="1"
+		inputType="RADIOGROUP"
+		keysProperty="ti_commissione_speseKeys_V2"
+		label="Commissioni e spese"
+		nullable="false"
+		layout="HORIZONTAL"
+		enabledOnFreeSearch="false"
+		caseSensitiveSearch="false"/>
+	<fieldProperty
 		name="istruzioni_speciali_1"
 		property="lettera_pagamento_estero.istruzioni_speciali_1"
 		readonlyProperty="ROStatoTrasmissioneLettera"
@@ -691,9 +704,11 @@
 		name="segnalazioni_v2"
 		property="lettera_pagamento_estero.istruzioni_speciali_1"
 		readonlyProperty="ROStatoTrasmissioneLettera"
-		inputType="TEXT"
 		maxLength="250"
-		inputSize="100"
+		inputSize="250"
+		inputType="TEXTAREA"
+		cols="75"
+		rows="1"
 		label="Segnalazioni" />
 	<fieldProperty
 		name="istruzioni_speciali_2"
@@ -783,8 +798,8 @@
 			name="civico_beneficiario"
 			property="lettera_pagamento_estero.civico_beneficiario"
 			inputType="TEXT"
-			maxLength="10"
-			inputSize="10"
+			maxLength="5"
+			inputSize="5"
 			label="Num Civico"
 			readonlyProperty="ROStatoTrasmissioneLettera"/>
 	<fieldProperty
@@ -827,8 +842,8 @@
 			name="civico_ben_eff"
 			property="lettera_pagamento_estero.civico_ben_eff"
 			inputType="TEXT"
-			maxLength="10"
-			inputSize="10"
+			maxLength="5"
+			inputSize="5"
 			label="Num Civico" />
 	<fieldProperty
 			name="paese_ben_eff"
@@ -1014,6 +1029,8 @@
 		name="conto_debito"/>		
 	<formFieldProperty
 		name="commissioni_spese"/>
+	<formFieldProperty
+		name="commissioni_spese_v2"/>
 	<formFieldProperty
 		name="istruzioni_speciali_1" />
 	<formFieldProperty
