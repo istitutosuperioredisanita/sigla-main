@@ -48,7 +48,7 @@
 	<persistentProperty name="noteRitiro" />
 	<persistentProperty name="note" />
 
-	<persistentProperty name="setUuidFlussoAutorizzativo" />
+	<persistentProperty name="uuidFlussoAutorizzativo" />
 	<persistentProperty name="statoFlusso" />
 	<persistentProperty name="dataInvioFirma" />
 	<persistentProperty name="dataFirma" />
