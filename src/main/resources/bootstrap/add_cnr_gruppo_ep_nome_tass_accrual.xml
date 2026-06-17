@@ -23,8 +23,7 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet author="ciro.salvio" id="add_cnr_gruppo_ep_nome_tass_accrual">
-        <addColumn tableName="CNR_GRUPPO_EP
- ">
+        <addColumn tableName="CNR_GRUPPO_EP">
             <column name="NOME_TASS_ACCRUAL" remarks="nome della tassonomia accrual" type="VARCHAR(30)" >
                 <constraints nullable="true"/>
             </column>
