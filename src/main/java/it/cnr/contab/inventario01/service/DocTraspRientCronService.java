@@ -56,10 +56,7 @@ public class DocTraspRientCronService {
      * Recupera tutti i documenti, filtra i duplicati basandosi sull'UUID per gestire
      * le firme multiple a monte, logga i dati reali e avvia l’elaborazione a batch.
      */
-//    //TODO non prende il valore della variabile nel.properties quindi glielo setto hardcode (ogni min)
-//    @Scheduled(
-//            cron = "0 * * * * *",
-//            scheduler = "siglaScheduler")
+    @Scheduled(cron = "${doc.trasp.rient.happysign.timer.cron.expression:0 * * * * *}")
     public void executeVerificaFirmeHappySign() {
 
         long start = System.currentTimeMillis();

@@ -188,13 +188,4 @@
 
     <task:annotation-driven executor="siglaTaskExecutor" scheduler="siglaScheduler"/>
 
-    <beans profile="iss">
-
-        <task:scheduled-tasks scheduler="siglaScheduler">
-            <task:scheduled ref="docTraspRientCronService"
-                            method="executeVerificaFirmeHappySign"
-                            cron="0 * * * * *"/>
-        </task:scheduled-tasks>
-
-    </beans>
 </beans>
