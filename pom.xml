@@ -64,6 +64,7 @@
         <test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
 
         <cors.allow-origin>http://localhost:9000</cors.allow-origin>
+        <version.xbraccrual>1.0.0-SNAPSHOT</version.xbraccrual>
     </properties>
 
     <!-- Repository necessari per le dipendenze WildFly/JBoss -->
@@ -79,6 +80,19 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
+        <repository>
+            <id>github-xbraccrual</id>
+            <name>GitHub Packages - xbr-accrual</name>
+            <url>https://maven.pkg.github.com/istitutosuperioredisanita/xbrl-accrual</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
     </repositories>
     <dependencyManagement>
         <dependencies>
@@ -664,6 +678,11 @@
             <version>19.3.0.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>it.iss.si</groupId>
+            <artifactId>xbrl-accrual</artifactId>
+            <version>${version.xbraccrual}</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -841,6 +860,16 @@
                 <sigla.build.number>${maven.build.timestamp}</sigla.build.number>
             </properties>
         </profile>
+        <profile>
+            <id>ACCRUAL</id>
+            <dependencies>
+                <dependency>
+                    <groupId>it.iss.si</groupId>
+                    <artifactId>xbrl-accrual</artifactId>
+                    <version>${version.xbraccrual}</version>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
     <licenses>
         <license>
@@ -913,6 +942,34 @@
             <email>francesco@uliana.it</email>
             <roles>
                 <role>architet</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>ciro.salvio</id>
+            <name>Ciro Salvio</name>
+            <email>ciro.salvio@iss.it</email>
+            <organization>Istituto Superiore di Sanità</organization>
+            <roles>
+                <role>architet</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>valentina.tomada</id>
+            <name>Valentina Tomada</name>
+            <email>valentina.tomada@iss.it</email>
+            <organization>Istituto Superiore di Sanità</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>davide.mirra</id>
+            <name>Davide Mirra</name>
+            <email>davide.miraa@iss.it</email>
+            <organization>Istituto Superiore di Sanità</organization>
+            <roles>
                 <role>developer</role>
             </roles>
         </developer>
