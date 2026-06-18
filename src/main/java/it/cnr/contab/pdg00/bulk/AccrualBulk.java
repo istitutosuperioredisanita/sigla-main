@@ -25,6 +25,11 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
     public static final String STATO_PREDISPOSTO = "PRE";
     public static final String STATO_INVIATO = "INV";
 
+    public enum TIPOFILEXBRL {
+        STATO_PATRIMONIALE,CONTO_ECONOMICO,SCHEMA_AGGIUNTIVO;
+    }
+
+
     public static final Dictionary STATO;
 
     static {
@@ -197,4 +202,6 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
 
         super.validate();
     }
+
+    
 }
