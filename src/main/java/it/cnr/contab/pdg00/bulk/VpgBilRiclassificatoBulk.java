@@ -54,6 +54,10 @@ public class VpgBilRiclassificatoBulk extends OggettoBulk implements Persistent 
 
 	//    SN_TOTALE VARCHAR(200)
 	private java.lang.String snTotale;
+
+	//   NOME_TASS_ACCRUAL  VARCHAR(200)
+	private java.lang.String nomeTassAccrual;
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: PRT_VPG_BIL_RICLASSIFICATO
@@ -284,5 +288,13 @@ public class VpgBilRiclassificatoBulk extends OggettoBulk implements Persistent 
 	 **/
 	public void setSnTotale(java.lang.String snTotale)  {
 		this.snTotale=snTotale;
+	}
+
+	public String getNomeTassAccrual() {
+		return nomeTassAccrual;
+	}
+
+	public void setNomeTassAccrual(String nomeTassAccrual) {
+		this.nomeTassAccrual = nomeTassAccrual;
 	}
 }

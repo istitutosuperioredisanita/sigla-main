@@ -105,6 +105,12 @@
 				sqlTypeName="VARCHAR"
 				columnSize="200"
 				nullable="true" />
+		<columnMapping
+				columnName="NOME_TASS_ACCRUAL"
+				propertyName="nomeTassAccrual"
+				sqlTypeName="VARCHAR"
+				columnSize="30"
+				nullable="true" />
 	</defaultColumnMap>
 	<persistentProperty
 			name="id" />
@@ -138,4 +144,7 @@
 			name="totaleIiAnno" />
 	<persistentProperty
 			name="snTotale" />
+	<persistentProperty
+			name="nomeTassAccrual" />
+
 </SQLPersistentInfo>
