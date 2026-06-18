@@ -24,6 +24,8 @@ CREATE OR REPLACE PROCEDURE PRT_S_SP_RICLASSIFICATO
 -- Applicato sia per esercizio corrente (DARE1/AVERE1) che precedente
 -- (DARE2/AVERE2), per CONTO_AVANZO e per i conti normali.
 --
+-- 16/96/2026 | 1.2 |        | Aggiunto la tassonmia accrual
+--
 -- Body
 --
 (ATTPAS         IN VARCHAR2,
@@ -282,11 +284,11 @@ If conti_sn = 'Y' AND CONTAMOV>0 Then
 Insert into PRT_VPG_BIL_RICLASSIFICATO (ID, CHIAVE, TIPO, SEQUENZA,
                                         ORDINE, CONTO_RICLASS, I_LIVELLO, II_LIVELLO, III_LIVELLO, IV_LIVELLO,
                                         DESCRIZIONE, PARZIALE_I_ANNO, TOTALE_I_ANNO, PARZIALE_II_ANNO, TOTALE_II_ANNO,
-                                        SN_TOTALE)
+                                        SN_TOTALE,NOME_TASS_ACCRUAL)
 Values (aId, 'chiave', 't', i, SCHEMA_SP.SEQUENZA, Null, Null, Null, Null, Null,
         CONTI_ASS.CD_VOCE_EP||' '||aConto.ds_voce_ep,
         Decode(CONTI_ASS.SEZIONE, 'D', DARE1-AVERE1, 'A', AVERE1-DARE1),
-        Null, Null, Null, 'N');
+        Null, Null, Null, 'N',SCHEMA_SP.NOME_TASS_ACCRUAL);
 End If;
 
   IF CONTI_ASS.SEZIONE = 'D' THEN
@@ -471,9 +473,9 @@ I := I + 1;
 insert into PRT_VPG_BIL_RICLASSIFICATO (ID, CHIAVE, TIPO, SEQUENZA,
                                         ORDINE, CONTO_RICLASS, I_LIVELLO, II_LIVELLO, III_LIVELLO, IV_LIVELLO,
                                         DESCRIZIONE, PARZIALE_I_ANNO, TOTALE_I_ANNO, PARZIALE_II_ANNO, TOTALE_II_ANNO,
-                                        SN_TOTALE)
+                                        SN_TOTALE,NOME_TASS_ACCRUAL)
 VALUES (aId, 'chiave', 't', i, SCHEMA_SP.SEQUENZA, SCHEMA_SP.CD_GRUPPO_EP,
-        LIV1, LIV2, LIV3, LIV4, SCHEMA_SP.DS_GRUPPO_EP, PARZ1, TOT1, PARZ2, TOT2, FLAG_TOT);
+        LIV1, LIV2, LIV3, LIV4, SCHEMA_SP.DS_GRUPPO_EP, PARZ1, TOT1, PARZ2, TOT2, FLAG_TOT,SCHEMA_SP.NOME_TASS_ACCRUAL);
 
 END LOOP; -- FINE LOOP PRINCIPALE SULLO SCHEMA DI RICLASSIFICAZIONE
 CLOSE SCHEMA_SP_RICLASSIFICATO;
@@ -518,17 +520,17 @@ BEGIN
             insert into PRT_VPG_BIL_RICLASSIFICATO (ID, CHIAVE, TIPO, SEQUENZA,
                                                     ORDINE, CONTO_RICLASS, I_LIVELLO, II_LIVELLO, III_LIVELLO, IV_LIVELLO,
                                                     DESCRIZIONE, PARZIALE_I_ANNO, TOTALE_I_ANNO, PARZIALE_II_ANNO, TOTALE_II_ANNO,
-                                                    SN_TOTALE)
+                                                    SN_TOTALE,NOME_TASS_ACCRUAL)
             VALUES (aId, 'chiave', 't', i, 999999, 'XXXXX',
-                    NULL, NULL, NULL, NULL, '***** CONTI NON ASSOCIATI *****', NULL, NULL, NULL, NULL, 'Y');
+                    NULL, NULL, NULL, NULL, '***** CONTI NON ASSOCIATI *****', NULL, NULL, NULL, NULL, 'Y',SCHEMA_SP.NOME_TASS_ACCRUAL);
         END IF;
         I := I + 1;
         insert into PRT_VPG_BIL_RICLASSIFICATO (ID, CHIAVE, TIPO, SEQUENZA,
                                                 ORDINE, CONTO_RICLASS, I_LIVELLO, II_LIVELLO, III_LIVELLO, IV_LIVELLO,
                                                 DESCRIZIONE, PARZIALE_I_ANNO, TOTALE_I_ANNO, PARZIALE_II_ANNO, TOTALE_II_ANNO,
-                                                SN_TOTALE)
+                                                SN_TOTALE,NOME_TASS_ACCRUAL)
         VALUES (aId, 'chiave', 't', i, 999999, 'XXXXX',
-                'Z', NULL, NULL, NULL, CONTI_MOV.CD_VOCE_EP||' '||aConto.ds_voce_ep, DARE1-AVERE1, NULL, NULL, NULL, 'N');
+                'Z', NULL, NULL, NULL, CONTI_MOV.CD_VOCE_EP||' '||aConto.ds_voce_ep, DARE1-AVERE1, NULL, NULL, NULL, 'N',SCHEMA_SP.NOME_TASS_ACCRUAL);
 
     END LOOP; -- FINE LOOP PRINCIPALE SULLO SCHEMA DI RICLASSIFICAZIONE
     CLOSE CONTI_MOVIMENTATI_NON_ASSOCIATI;

@@ -6347,8 +6347,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_configurazione_cnr_progetto_ini_apertura_gae.xml"/>
     <!-- Autore : Ciro Salvio -Modifica ordine menu Tipo  Compensi" -->
     <include file="bootstrap/update_tipo_compenso_albero_main.xml"/>
-
-
     <!--
         Autore: davide.mirra
         Descrizione: Contabilita Accrual - MEF.
@@ -6358,5 +6356,12 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     -->
     <include file="bootstrap/create_table_accrual.xml"/>
     <include file="bootstrap/add_accesso_accrual.xml"/>
+    <!-- Autore : Ciro Salvio -Gestione Allegati Obbligazioni   " -->
+    <include file="bootstrap/add_configurazione_cnr_impegni_allegati.xml"/>
+    <!-- Autore : Ciro Salvio -Aggiunto node schema su CNR_GRUPPO_EY   " -->
+    <include file="bootstrap/add_cnr_gruppo_ep_nome_tass_accrual.xml"/>
+
+    <!-- Autore : Davide Mirra -Rinominata colonna id flusso fea in uuid flusso autorizativo" -->
+    <include file="bootstrap/rename_id_flusso_fea_doc_trasporto_rientro.xml"/>
 
 </databaseChangeLog>

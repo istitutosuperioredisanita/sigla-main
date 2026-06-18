@@ -32,11 +32,11 @@ public class AllegatoObbligazioneBulk extends AllegatoGenericoBulk {
 	public static OrderedHashtable aspectNamesKeys = new OrderedHashtable();
 
 	public static final String ASPECT_ALLEGATI_OBBLIGAZIONI= "P:obbligazioni_attachment:allegati";
-	public static final String ASPECT_ALLEGATI_APPROVAZIONE= "P:obbligazioni_attachment:approvazione";
+	public static final String ASPECT_ALLEGATI_APPROVAZIONE= "P:obbligazioni_attachment:atto_di_impegno";
 
 	static {
+		aspectNamesKeys.put(ASPECT_ALLEGATI_APPROVAZIONE,"Atto di impegno");
 		aspectNamesKeys.put(ASPECT_ALLEGATI_OBBLIGAZIONI,"Altro");
-		aspectNamesKeys.put(ASPECT_ALLEGATI_APPROVAZIONE,"Approvazione");
 	}
 
 	private Integer esercizioDiAppartenenza;

@@ -1,76 +1,58 @@
-  name: Release Packages
+name: Release Packages
+on:
+  release:
+    types: [created]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 'master'
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Update version in pom.xml (Release only) and deploy to Github Package Registry
+        run: |
+          mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
+          mvn clean deploy -s .m2/settings.xml -PAZURE,PROD -Darguments="-DskipTests" -DskipTests --batch-mode --errors --fail-at-end --show-version
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  on:
-    release:
-      types:
-        - created
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-  jobs:
-    release:
-      runs-on: ubuntu-latest
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }} .
 
-      permissions:
-        contents: write
-        packages: write
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
 
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            ref: master
+      - name: Tag and push release image
+        run: |
+          docker tag ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }} ghcr.io/${{ github.repository }}:release
+          docker push ghcr.io/${{ github.repository }}:release
 
-        - uses: actions/setup-java@v4
-          with:
-            java-version: '21'
-            distribution: 'temurin'
-            cache: 'maven'
-
-        - name: Check active Maven profiles
-          run: |
-            mvn help:active-profiles -s .m2/settings.xml -PAZURE,PROD,iss
-          env:
-            GITHUB_USERNAME: ${{ github.actor }}
-            GITHUB_TOKEN: ${{ secrets.ISS_PAT }}
-
-        - name: Set release version
-          run: |
-            mvn -B versions:set \
-              -DnewVersion=${{ github.event.release.tag_name }} \
-              -DgenerateBackupPoms=false
-
-        - name: Deploy release
-          run: |
-            mvn clean deploy \
-              -s .m2/settings.xml \
-              -PAZURE,PROD,iss \
-              -Darguments="-DskipTests" \
-              -DskipTests \
-              --batch-mode --errors --fail-at-end --show-version
-          env:
-            GITHUB_USERNAME: ${{ github.actor }}
-            GITHUB_TOKEN: ${{ secrets.ISS_PAT }}
-
-        - name: Log in to GitHub Container Registry
-          run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-
-        - name: Build Docker image
-          run: |
-            docker build -t ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }} .
-
-        - name: Push Docker image
-          run: |
-            docker push ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
-
-        - name: Set next SNAPSHOT version
-          run: |
-            mvn -B versions:set \
-              -DnewVersion=${{ github.event.release.tag_name }}-SNAPSHOT \
-              -DgenerateBackupPoms=false
-
-        - name: Commit and push changes
-          run: |
-            git config --global user.email "dirgensa@iss.it"
-            git config --global user.name "dirgensa"
-            
-            git add pom.xml
-            git commit -m "Bumped version to ${{ github.event.release.tag_name }}-SNAPSHOT" || echo "No changes to commit"
-            git push origin master
+      - name: Update version in pom.xml width SNAPSHOT version
+        run: |
+          mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }}-SNAPSHOT -DgenerateBackupPoms=false
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit and push changes to pom.
+        run: |
+          git config --global user.email "dirgensa@iss.it"
+          git config --global user.name "dirgensa"        
+          git commit -am "Bumped version to ${{ github.event.release.tag_name }}"
+          git push
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

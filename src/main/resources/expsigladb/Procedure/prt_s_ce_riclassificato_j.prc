@@ -11,6 +11,7 @@ CREATE OR REPLACE PROCEDURE PRT_S_CE_RICLASSIFICATO_J
 -- 06/08/2004 | 1.1 |        | Modificati nome view e procedura, eliminato nome
 --            |     |        | schema, aggiunto history
 -- 06/08/2004 | 1.2 |        | Aggiunto HINT RULE alle SELECT (performance)
+-- 16/96/2026 | 1.2 |        | Aggiunto la tassonmia accrual
 -- =============================================================================
 (
     p_ist_comm        IN VARCHAR2,
@@ -271,13 +272,14 @@ BEGIN
                                     DESCRIZIONE,
                                     PARZIALE_I_ANNO, TOTALE_I_ANNO,
                                     PARZIALE_II_ANNO, TOTALE_II_ANNO,
-                                    SN_TOTALE
+                                    SN_TOTALE,
+                                    NOME_TASS_ACCRUAL
                                 ) VALUES (
                                      v_id, 'chiave', 't', v_i,
                                      r_schema_ce.SEQUENZA, NULL, NULL, NULL, NULL, NULL,
                                      r_conti_ass.CD_VOCE_EP || ' ' || v_conto.DS_VOCE_EP,
                                      Decode(r_conti_ass.SEZIONE, 'D', V_DARE_CONTO-V_AVERE_CONTO, 'A', V_AVERE_CONTO-V_DARE_CONTO),
-                                     NULL, NULL, NULL, 'N'
+                                     NULL, NULL, NULL, 'N',r_schema_ce.NOME_TASS_ACCRUAL
                                 );
                             END IF;
 
@@ -340,13 +342,14 @@ BEGIN
                                     DESCRIZIONE,
                                     PARZIALE_I_ANNO, TOTALE_I_ANNO,
                                     PARZIALE_II_ANNO, TOTALE_II_ANNO,
-                                    SN_TOTALE
+                                    SN_TOTALE,
+                                    NOME_TASS_ACCRUAL
                                 ) VALUES (
                                      v_id, 'chiave', 't', v_i,
                                      r_schema_ce.SEQUENZA, NULL, NULL, NULL, NULL, NULL,
                                      r_conti_ass.CD_VOCE_EP || ' ' || v_conto.DS_VOCE_EP,
                                      Decode(r_conti_ass.SEZIONE, 'D', V_DARE_CONTO-V_AVERE_CONTO, 'A', V_AVERE_CONTO-V_DARE_CONTO),
-                                     NULL, NULL, NULL, 'N'
+                                     NULL, NULL, NULL, 'N',r_schema_ce.NOME_TASS_ACCRUAL
                                 );
                             END IF;
 
@@ -520,13 +523,14 @@ BEGIN
                                     DESCRIZIONE,
                                     PARZIALE_I_ANNO, TOTALE_I_ANNO,
                                     PARZIALE_II_ANNO, TOTALE_II_ANNO,
-                                    SN_TOTALE
+                                    SN_TOTALE,
+                                    NOME_TASS_ACCRUAL
                                 ) VALUES (
                                              v_id, 'chiave', 't', v_i,
                                              r_schema_ce.SEQUENZA, NULL, NULL, NULL, NULL, NULL,
                                              r_conti_ass.CD_VOCE_EP || ' ' || v_conto.DS_VOCE_EP,
                                              Decode(r_conti_ass.SEZIONE, 'D', V_DARE_CDS-V_AVERE_CDS, 'A', V_AVERE_CDS-V_DARE_CDS),
-                                             NULL, NULL, NULL, 'N'
+                                             NULL, NULL, NULL, 'N',r_schema_ce.NOME_TASS_ACCRUAL
                                          );
                             END IF;
 
@@ -611,7 +615,8 @@ BEGIN
             DESCRIZIONE,
             PARZIALE_I_ANNO, TOTALE_I_ANNO,
             PARZIALE_II_ANNO, TOTALE_II_ANNO,
-            SN_TOTALE
+            SN_TOTALE,
+            NOME_TASS_ACCRUAL
         ) VALUES (
              v_id, 'chiave', 't', v_i,
              r_schema_ce.SEQUENZA,
@@ -624,7 +629,8 @@ BEGIN
              DECODE(r_schema_ce.CD_GRUPPO_EP, 'AVA', NULL, v_tot1),
              v_parz2,
              v_tot2,
-             v_flag_tot
+             v_flag_tot,
+             r_schema_ce.NOME_TASS_ACCRUAL
         );
 
     END LOOP;  -- c_schema_ce

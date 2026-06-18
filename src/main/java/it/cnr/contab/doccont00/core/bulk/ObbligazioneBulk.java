@@ -39,12 +39,16 @@ import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.*;
+import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.Persister;
 import it.cnr.jada.util.OrderedHashtable;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 @JsonInclude(value=Include.NON_NULL)
 public class ObbligazioneBulk extends ObbligazioneBase implements Cloneable, IDocumentoContabileBulk, AllegatoParentBulk {
 	private static final long serialVersionUID = 1L;
@@ -2041,4 +2045,22 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
     public void setFromModifica(Boolean fromModifica) {
 		this.fromModifica = fromModifica;
     }
+
+	public Boolean existAllegatoAutorizzativo() throws ComponentException {
+		List<AllegatoGenericoBulk> attivi = this.getArchivioAllegati().stream()
+				.filter(a -> a.getCrudStatus() != OggettoBulk.TO_BE_DELETED)
+				.collect(Collectors.toList());
+
+		long countAllegatiAuotizzativi= attivi.stream()
+				.filter(a -> a instanceof AllegatoObbligazioneBulk)
+				.map(a -> (AllegatoObbligazioneBulk) a)
+				.filter(a -> AllegatoObbligazioneBulk.ASPECT_ALLEGATI_APPROVAZIONE.equals(a.getAspectName())).count();
+		if ( countAllegatiAuotizzativi>1)
+			throw new ApplicationException(
+					"Attenzione: è consentito allegare un solo Atto di Impegno.");
+
+		return ( countAllegatiAuotizzativi>0);
+
+
+	}
 }

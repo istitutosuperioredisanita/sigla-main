@@ -1,24 +1,31 @@
-/*
- * Created by BulkGenerator 2.0 [07/12/2009]
- * Date 14/03/2025
- */
 package it.cnr.contab.config00.pdcep.bulk;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.util.action.CRUDBP;
+
 public class TipoBilancioBulk extends TipoBilancioBase {
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Table name: TIPO_BILANCIO
-	 **/
-	public TipoBilancioBulk() {
-		super();
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Table name: TIPO_BILANCIO
-	 **/
-	public TipoBilancioBulk(String cdTipoBilancio) {
-		super(cdTipoBilancio);
-	}
+
+    public final static String ACCRUAL = "ACCRUAL";
+    public final static String ACCRUAL_AGG = "ACCRUAL-AGG";
+    public final static String IRES = "IRES";
+    public final static String CIVILISTICO = "CIVILISTICO";
+
+    private final static java.util.Dictionary tipoBilancioKeys;
+
+    static {
+        tipoBilancioKeys = new it.cnr.jada.util.OrderedHashtable();
+        tipoBilancioKeys.put(ACCRUAL, "Accrual");
+        tipoBilancioKeys.put(ACCRUAL_AGG, "Accrual Aggregato");
+        tipoBilancioKeys.put(IRES, "IRES");
+        tipoBilancioKeys.put(CIVILISTICO, "Civilistico");
+    }
+
+    public TipoBilancioBulk() {
+        super();
+    }
+
+    public TipoBilancioBulk(String cdTipoBilancio) {
+        super(cdTipoBilancio);
+    }
+
+    public final java.util.Dictionary getTipoBilancioKeys() {
+        return tipoBilancioKeys;
+    }
 }

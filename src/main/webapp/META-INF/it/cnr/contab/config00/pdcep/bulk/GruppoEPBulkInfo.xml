@@ -96,6 +96,15 @@
 		maxLength="2000"
 		enabledOnEdit="true"
 		label="Formula" />
+	<fieldProperty
+			name="nomeTassAccrual"
+			property="nomeTassAccrual"
+			inputType="TEXT"
+			cols="30"
+			rows="5"
+			maxLength="2000"
+			enabledOnEdit="true"
+			label="Nome Tass. Accrual" />
 
 	<formFieldProperty
 		name="tipoBilancio" />
@@ -119,6 +128,8 @@
 		name="cdPianoPadre" />
 	<formFieldProperty
 		name="formula" />
+	<formFieldProperty
+			name="nomeTassAccrual" />
 
 	<findFieldProperty
 		name="cdPianoGruppi" />
@@ -140,6 +151,8 @@
 		name="cdPianoPadre" />
 	<findFieldProperty
 		name="formula" />
+	<findFieldProperty
+			name="nomeTassAccrual" />
 
 	<columnFieldProperty
 		name="cdPianoGruppi" />
@@ -157,4 +170,6 @@
 		name="flMastrino" />
 	<columnFieldProperty
 		name="formula" />
+	<columnFieldProperty
+			name="nomeTassAccrual" />
 </bulkInfo>

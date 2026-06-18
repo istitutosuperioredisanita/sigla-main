@@ -238,6 +238,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
 	public final static String PK_IMPEGNI = "IMPEGNI";
 	public final static String SK_IMPEGNI_PLURIENNALI = "IMPEGNI_PLURIENNALI";
+    public final static String SK_IMPEGNI_ENABLED_ALLEGATI = "IMPEGNI_ENABLED_ALLEGATI";
 
 	public final static String PK_ACCERTAMENTI = "ACCERTAMENTI";
 	public final static String SK_ACCERTAMENTI_PLURIENNALI = "ACCERTAMENTI_PLURIENNALI";

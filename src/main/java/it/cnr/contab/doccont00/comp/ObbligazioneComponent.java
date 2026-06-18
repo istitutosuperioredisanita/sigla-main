@@ -5996,7 +5996,17 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		Parametri_cnrBulk bulkCNR = (Parametri_cnrBulk)getHome(uc, Parametri_cnrBulk.class).findByPrimaryKey(new Parametri_cnrBulk(CNRUserContext.getEsercizio(uc)));		
 		if (bulkCNR == null)
 		  throw new ApplicationException("Parametri CNR non presenti per l'anno "+CNRUserContext.getEsercizio(uc));
-		
+
+		if (!obbligazione.isObbligazioneResiduo() ){
+			// verifica obbligatoreta allegato atto di impegno
+			if ( Utility.createConfigurazioneCnrComponentSession().isMandatoryAllegatoAutorizzativoObb(uc,obbligazione) && ( !obbligazione.existAllegatoAutorizzativo()))
+				throw new ApplicationException("Attenzione: Manca l'aggelato Atto di Impegno Obbligatorio.");
+			if ( Utility.createConfigurazioneCnrComponentSession().isEnabledAllegatiObbligazioni(uc) )
+				// cos' da controllare che non ci siano due allegati di tipo atto di impegno
+				obbligazione.existAllegatoAutorizzativo();
+
+		}
+
 		if (!obbligazione.isObbligazioneResiduo() &&
 			bulkCNR.getFl_motivazione_su_imp() &&
 			obbligazione.getMotivazione()==null) {

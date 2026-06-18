@@ -135,8 +135,7 @@
 				name="progressivo"
 				style="width:40px" />
 		<columnFieldProperty
-				name="ds_bene"
-				style="width:300px" />
+				name="ds_bene"/>
 		<columnFieldProperty
 				name="valore_bene"
 				style="width:100px" />
@@ -157,8 +156,7 @@
 				name="progressivo"
 				style="width:40px" />
 		<columnFieldProperty
-				name="ds_bene"
-				style="width:300px" />
+				name="ds_bene"/>
 		<columnFieldProperty
 				name="valore_bene"
 				style="width:100px" />
