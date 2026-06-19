@@ -1,6 +1,7 @@
 package it.cnr.contab.pdg00.bp;
 
 import it.cnr.contab.config00.ejb.EsercizioComponentSession;
+import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.pdg00.bulk.AccrualBulk;
 import it.cnr.contab.pdg00.bulk.AllegatoAccrualBulk;
 import it.cnr.contab.pdg00.bulk.Stampa_vpg_stato_patrim_riclassVBulk;
@@ -8,9 +9,13 @@ import it.cnr.contab.pdg00.bulk.VpgBilRiclassificatoBulk;
 import it.cnr.contab.pdg00.ejb.BilancioAccrualComponentSession;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
+import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.ejb.EJBCommonServices;
@@ -22,16 +27,19 @@ import it.iss.accrual.xbrl.dto.AccrualXbrl;
 import it.iss.accrual.xbrl.dto.ContextXbrl;
 import it.iss.accrual.xbrl.dto.DurationContextXbrl;
 import it.iss.accrual.xbrl.dto.FactXbrl;
+import jakarta.activation.MimetypesFileTypeMap;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -40,7 +48,9 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     private static final Logger log = LoggerFactory.getLogger(CRUDAccrualMefBP.class);
 
-    private boolean esercizioChiuso = false;
+    private boolean enabledButton = false;
+
+
 
     public CRUDAccrualMefBP() {
         super();
@@ -55,12 +65,21 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
             throws BusinessProcessException {
 
         try {
-            esercizioChiuso = (((EsercizioComponentSession) EJBCommonServices
+           EsercizioBulk ultimoEsercizioAperto = (((EsercizioComponentSession) EJBCommonServices
                     .createEJB(
                             "CNRCONFIG00_EJB_EsercizioComponentSession",
                             EsercizioComponentSession.class
                     ))
-                    .isEsercizioChiuso(context.getUserContext()));
+                    .getLastEsercizioOpen(context.getUserContext()));
+            Integer esercizioScrivania = it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context.getUserContext());
+
+            BiPredicate<Integer, Integer> validaEsercizio = (ultimo, scrivania) -> {
+                if (ultimo == null) return true;
+                int diff = ultimo - scrivania;
+                return diff == 0 || diff == 1;
+            };
+            enabledButton=validaEsercizio.test(Optional.ofNullable(ultimoEsercizioAperto).orElse(new EsercizioBulk()).getEsercizio(), esercizioScrivania);
+
 
         } catch (Throwable e) {
             throw new BusinessProcessException(e);
@@ -136,22 +155,27 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         super.completeAllegato(allegato, storageObject);
     }
 
+    public boolean isPredisponiButtonEnabled() {
+        return isEnabledButton() && this.getModel().getDacr()!=null;
+    }
+
     @Override
     public boolean isNewButtonEnabled() {
-        return !isEsercizioChiuso() && super.isNewButtonEnabled();
+        return isEnabledButton() && super.isNewButtonEnabled();
     }
 
     @Override
     public boolean isSaveButtonEnabled() {
-        return !isEsercizioChiuso() && super.isSaveButtonEnabled();
+        return isEnabledButton() && super.isSaveButtonEnabled();
     }
 
     @Override
     public boolean isDeleteButtonEnabled() {
-        return !isEsercizioChiuso() && super.isDeleteButtonEnabled();
+        return isEnabledButton() && super.isDeleteButtonEnabled();
     }
-    public boolean isEsercizioChiuso() {
-        return esercizioChiuso;
+
+    public boolean isEnabledButton() {
+        return enabledButton;
     }
 
     public BilancioAccrualComponentSession createComponentSession() throws BusinessProcessException {
@@ -174,7 +198,8 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     }
 
     private String getIdContext(Integer esericizio,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
-        if ( AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl)
+        if ( AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl
+        || AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO==tipofilexbrl)
             return  "CTX_INT_".concat(esericizio.toString());
         return  "CTX_IST_2025".concat( esericizio.toString());
 
@@ -182,7 +207,8 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     private Map<String ,ContextXbrl> getContextXbrl(AccrualBulk accrualBulk, AccrualBulk.TIPOFILEXBRL tipofilexbrl){
         Map<String ,ContextXbrl> contexts = new HashMap<String ,ContextXbrl>();
-        if ( AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl) {
+        if ( AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl
+        ||AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO==tipofilexbrl) {
 
             contexts.put(getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), new DurationContextXbrl(
                     getIdContext( accrualBulk.getEsercizio(),tipofilexbrl),getEnte(accrualBulk,tipofilexbrl),
@@ -211,7 +237,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         return accrualService.generaFileXbrl(accrualXbrl);
     }
 
-    private void addFactc(AccrualXbrl accrualXbrl,List<VpgBilRiclassificatoBulk> datiBilancioRiclassificato, AccrualBulk.TIPOFILEXBRL tipofilexbrl){
+    private void addFactc(AccrualXbrl accrualXbrl,List<VpgBilRiclassificatoBulk> datiBilancioRiclassificato,AccrualBulk accrualBulk, AccrualBulk.TIPOFILEXBRL tipofilexbrl){
         Map<String, List<VpgBilRiclassificatoBulk>> raggrTassonomie= datiBilancioRiclassificato.stream()
                 .filter(java.util.Objects::nonNull)
                 .collect(Collectors.groupingBy(
@@ -255,7 +281,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
                     ));
 
             if ( totali.getValoreValido().compareTo(BigDecimal.ZERO)!=0)
-                accrualXbrl.getFacts().add(new FactXbrl(chiaveTassonomia, totali.getValoreValido(),"2",null,null,accrualXbrl.getContexts().get(getIdContext(2025,tipofilexbrl))));
+                accrualXbrl.getFacts().add(new FactXbrl(chiaveTassonomia, totali.getValoreValido(),"2",null,null,accrualXbrl.getContexts().get(getIdContext(accrualBulk.getEsercizio(),tipofilexbrl))));
 
         });
     }
@@ -263,9 +289,9 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         try {
             AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
             List resultAttivo = createComponentSession().bilancioRiclasPatr(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_ATTIVITA);
-            addFactc(accrualXbrl,resultAttivo, AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
+            addFactc(accrualXbrl,resultAttivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
             List resultPassivo = createComponentSession().bilancioRiclasPatr(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_PASSIVITA);
-            addFactc(accrualXbrl,resultPassivo, AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
+            addFactc(accrualXbrl,resultPassivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
 
             return  creaFileAccrual(accrualXbrl) ;
         } catch (RemoteException e) {
@@ -278,7 +304,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         try {
             AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO);
             List resultCE = createComponentSession().bilancioRiclasCE(context.getUserContext(), accrualBulk);
-            addFactc(accrualXbrl,resultCE, AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO);
+            addFactc(accrualXbrl,resultCE, accrualBulk,AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO);
 
             return  creaFileAccrual(accrualXbrl);
         } catch (RemoteException e) {
@@ -287,6 +313,22 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
             throw handleException(e);
         }
     }
+    private byte[] creaFileSchemaAggiuntivo(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException {
+        try {
+            AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO);
+            List resultAttivo = createComponentSession().bilancioRiclasPatrSchedaAgg(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_ATTIVITA);
+            addFactc(accrualXbrl,resultAttivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO);
+            List resultPassivo = createComponentSession().bilancioRiclasPatrSchedaAgg(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_PASSIVITA);
+            addFactc(accrualXbrl,resultPassivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO);
+            return  creaFileAccrual(accrualXbrl) ;
+
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        } catch (ComponentException |JAXBException e) {
+            throw handleException(e);
+        }
+    }
+
     private void aggiungiFileAZip(ZipOutputStream zos, String nomeFile, byte[] contenuto) throws IOException {
         byte[] datiSicuri = (contenuto == null) ? new byte[0] : contenuto;
         ZipEntry entry = new ZipEntry(nomeFile);
@@ -294,16 +336,47 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         zos.write(datiSicuri, 0, datiSicuri.length);
         zos.closeEntry();
     }
+
+    private void addFileToArchivioAllegati(ActionContext context,AccrualBulk accrualBulk, File f){
+
+        AllegatoAccrualBulk allegatoAccrualBulk  = Optional.ofNullable(accrualBulk.getArchivioAllegati()).orElse(new BulkList<>()).
+                stream().filter(AllegatoAccrualBulk.class::isInstance)
+                .map(AllegatoAccrualBulk.class::cast).
+                filter(e->e.getAspectName().equalsIgnoreCase(AllegatoAccrualBulk.P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP)).findAny().orElse(null);
+        if ( !Optional.ofNullable(allegatoAccrualBulk).isPresent()) {
+            allegatoAccrualBulk = new AllegatoAccrualBulk();
+            allegatoAccrualBulk.initializeForInsert(this, context);
+            allegatoAccrualBulk.setAspectName(allegatoAccrualBulk.P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP);
+            allegatoAccrualBulk.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+            accrualBulk.getArchivioAllegati().add(allegatoAccrualBulk);
+        }else
+            allegatoAccrualBulk.setCrudStatus(OggettoBulk.TO_BE_UPDATED);
+        allegatoAccrualBulk.setNome(f.getName());
+        allegatoAccrualBulk.setFile(f);
+        allegatoAccrualBulk.setContentType( new MimetypesFileTypeMap().getContentType(f.getName()));
+
+
+
+    }
+    private String  getOutputFileNameOrdine(AccrualBulk accrualBulk){
+        return "File Accrual Zip Esercizio2".concat(accrualBulk.getEsercizio().toString()).concat(".zip");
+    }
     public void creaFileAccrual(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException {
 
         try {
-            String percorsoZip = "/home/csalvio/Esportazione_Bilancio.zip";
-            try (FileOutputStream fos = new FileOutputStream(percorsoZip);
+            File output = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/", File.separator + getOutputFileNameOrdine( accrualBulk));
+            try (FileOutputStream fos = new FileOutputStream(output);
                  ZipOutputStream zos = new ZipOutputStream(fos)) {
 
                 aggiungiFileAZip(zos, "ISS_STATO_PATRIMONIALE.xbrl", creaFileStatoPatrimoniale(context,accrualBulk));
                 aggiungiFileAZip(zos, "ISS_CONTO_ECONOMICO.xbrl", creaFileContoEconomico(context,accrualBulk));
-                //aggiungiFileAZip(zos, "3_Note_Informative.csv", fileNote);
+                aggiungiFileAZip(zos, "ISS_SCHEMA_AGGIUNTIVO.xbrl", creaFileSchemaAggiuntivo(context,accrualBulk));
+                zos.finish();
+
+                addFileToArchivioAllegati(context,accrualBulk,output);
+
+                setModel(context,accrualBulk);
+                update(context);
             }
         } catch (RemoteException e) {
             throw new RuntimeException(e);
