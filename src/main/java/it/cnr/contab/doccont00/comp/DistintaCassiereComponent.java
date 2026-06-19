@@ -5815,7 +5815,7 @@ public class DistintaCassiereComponent extends
                         throw new ApplicationMessageFormatException(
                                 "Impossibile generare il flusso, indicare data richiesta pagamento nel mandato cds {0} n. {1}",
                                 docContabile.getCdCds(), docContabile.getPgDocumento());
-                    } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
+                    } else if (!mandatoBulk.isAnnullato() && tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
                             && docContabile.getDtPagamentoRichiesta() != null &&
                             (EJBCommonServices.getServerTimestamp().after(docContabile.getDtPagamentoRichiesta()))) {
                         throw new ApplicationMessageFormatException(
