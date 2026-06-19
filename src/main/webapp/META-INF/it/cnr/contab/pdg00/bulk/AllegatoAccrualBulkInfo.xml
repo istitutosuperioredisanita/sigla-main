@@ -60,7 +60,6 @@
         <columnFieldProperty name="aspectName"/>
         <columnFieldProperty name="nome"/>
         <columnFieldProperty name="descrizione"/>
-        <columnFieldProperty name="utente"/>
         <columnFieldProperty name="data"/>
     </columnSet>
 
