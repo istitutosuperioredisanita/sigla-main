@@ -26,10 +26,7 @@ import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import it.iss.accrual.xbrl.AccrualService;
 import it.iss.accrual.xbrl.AccrualXbrException;
 import it.iss.accrual.xbrl.NoDataNotFoundException;
-import it.iss.accrual.xbrl.dto.AccrualXbrl;
-import it.iss.accrual.xbrl.dto.ContextXbrl;
-import it.iss.accrual.xbrl.dto.DurationContextXbrl;
-import it.iss.accrual.xbrl.dto.FactXbrl;
+import it.iss.accrual.xbrl.dto.*;
 import jakarta.activation.MimetypesFileTypeMap;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
@@ -193,9 +190,8 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         if ( AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl
         ||AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO==tipofilexbrl) {
 
-            contexts.put(getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), new DurationContextXbrl(
+            contexts.put(getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), new InstantContextXbrl(
                     getIdContext( accrualBulk.getEsercizio(),tipofilexbrl),getCodiceBpaoEnte(accrualBulk,tipofilexbrl),
-                    LocalDate.of(accrualBulk.getEsercizio(), 01, 01),
                     LocalDate.of(accrualBulk.getEsercizio(), 12, 31)));
         }
         if ( AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO==tipofilexbrl){
