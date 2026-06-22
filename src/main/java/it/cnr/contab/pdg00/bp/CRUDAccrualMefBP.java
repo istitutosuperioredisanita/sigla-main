@@ -23,6 +23,8 @@ import it.cnr.jada.util.jsp.Button;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import it.iss.accrual.xbrl.AccrualService;
+import it.iss.accrual.xbrl.AccrualXbrException;
+import it.iss.accrual.xbrl.NoDataNotFoundException;
 import it.iss.accrual.xbrl.dto.AccrualXbrl;
 import it.iss.accrual.xbrl.dto.ContextXbrl;
 import it.iss.accrual.xbrl.dto.DurationContextXbrl;
@@ -185,8 +187,11 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         final AccrualService accrualService = SpringUtil.getBean("accrualService", AccrualService.class);
         try {
             byte[] bytes = accrualService.generaFileXbrl(dati);
-        } catch (JAXBException e) {
+
+        } catch (AccrualXbrException e) {
             throw new ApplicationException(e);
+        }catch (NoDataNotFoundException e) {
+            throw new ApplicationException(e.getMessage());
         }
     }
 
@@ -232,7 +237,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
         return  accrual;
     }
-    private byte[] creaFileAccrual(AccrualXbrl accrualXbrl) throws JAXBException {
+    private byte[] creaFileAccrual(AccrualXbrl accrualXbrl) throws NoDataNotFoundException, AccrualXbrException {
         final AccrualService accrualService = SpringUtil.getBean("accrualService", AccrualService.class);
         return accrualService.generaFileXbrl(accrualXbrl);
     }
@@ -285,7 +290,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
         });
     }
-    private byte[] creaFileStatoPatrimoniale(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException {
+    private byte[] creaFileStatoPatrimoniale(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
         try {
             AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
             List resultAttivo = createComponentSession().bilancioRiclasPatr(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_ATTIVITA);
@@ -296,11 +301,13 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
             return  creaFileAccrual(accrualXbrl) ;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
-        } catch (ComponentException |JAXBException e) {
+        } catch (ComponentException e) {
             throw handleException(e);
+        }catch (NoDataNotFoundException|AccrualXbrException e) {
+            throw new ApplicationException(e);
         }
     }
-    private byte[] creaFileContoEconomico(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException {
+    private byte[] creaFileContoEconomico(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
         try {
             AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO);
             List resultCE = createComponentSession().bilancioRiclasCE(context.getUserContext(), accrualBulk);
@@ -309,11 +316,13 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
             return  creaFileAccrual(accrualXbrl);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
-        } catch (ComponentException |JAXBException e) {
+        } catch (ComponentException e) {
             throw handleException(e);
+        } catch (NoDataNotFoundException|AccrualXbrException e) {
+         throw new ApplicationException(e);
         }
     }
-    private byte[] creaFileSchemaAggiuntivo(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException {
+    private byte[] creaFileSchemaAggiuntivo(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
         try {
             AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO);
             List resultAttivo = createComponentSession().bilancioRiclasPatrSchedaAgg(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_ATTIVITA);
@@ -324,8 +333,10 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
         } catch (RemoteException e) {
             throw new RuntimeException(e);
-        } catch (ComponentException |JAXBException e) {
+        } catch (ComponentException  e) {
             throw handleException(e);
+        } catch (NoDataNotFoundException|AccrualXbrException e) {
+            throw new ApplicationException(e);
         }
     }
 
@@ -361,7 +372,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     private String  getOutputFileNameOrdine(AccrualBulk accrualBulk){
         return "File Accrual Zip Esercizio2".concat(accrualBulk.getEsercizio().toString()).concat(".zip");
     }
-    public void creaFileAccrual(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException {
+    public void creaFileAccrual(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
 
         try {
             File output = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/", File.separator + getOutputFileNameOrdine( accrualBulk));
