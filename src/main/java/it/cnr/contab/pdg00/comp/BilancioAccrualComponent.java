@@ -56,7 +56,7 @@ public class BilancioAccrualComponent extends CRUDComponent implements ICRUDMgr,
                 cs.setInt(2,accrualBulk.getEsercizio()); // Esercizio
                 cs.setString(3, "*"); // CDS
                 cs.setString(4, "*"); // UO
-                cs.setString(5, "Y"); // Dettaglio Conti
+                cs.setString(5, "N"); // Dettaglio Conti
                 cs.setString(6, cdTipoBilancio); // Tipo Bilancio
 
                 cs.executeQuery();
@@ -86,7 +86,7 @@ public class BilancioAccrualComponent extends CRUDComponent implements ICRUDMgr,
                 cs.setInt(3, accrualBulk.getEsercizio()); // Esercizio
                 cs.setString(4, "*"); // Cds
                 cs.setString(5, "*"); // uo
-                cs.setString(6, "Y"); // dettagli Comti
+                cs.setString(6, "N"); // dettagli Comti
                 cs.setString(7, cdTipoBilancio); // Tipo Bilancio
 
                 cs.executeQuery();
