@@ -257,7 +257,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String PK_PAGAMENTO_ESTERO = "PAGAMENTO_ESTERO";
     public final static String SK_PAGAMENTO_ESTERO_ISS = "MODULO_PAGAMENTO_ISS";
 
-    public final static String PK_ESERCIZIO_SPECIALE = "ESERCIZIO_SPECIALET";
+    public final static String PK_ESERCIZIO_SPECIALE = "ESERCIZIO_SPECIALE";
     public final static String SK_ESERCIZIO_PARTENZA = "ESERCIZIO_PARTENZA";
 
     public final static String PK_PCC = "PCC";
