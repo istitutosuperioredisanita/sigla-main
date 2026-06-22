@@ -184,17 +184,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     public BilancioAccrualComponentSession createComponentSession() throws BusinessProcessException {
         return (BilancioAccrualComponentSession)createComponentSession("CNRPDG00_EJB_BilancioAccrualComponentSession", BilancioAccrualComponentSession.class);
     }
-    private void generaFileAccrual(ActionContext actionContext, AccrualXbrl dati) throws ApplicationException {
-        final AccrualService accrualService = SpringUtil.getBean("accrualService", AccrualService.class);
-        try {
-            byte[] bytes = accrualService.generaFileXbrl(dati);
 
-        } catch (AccrualXbrException e) {
-            throw new ApplicationException(e);
-        }catch (NoDataNotFoundException e) {
-            throw new ApplicationException(e.getMessage());
-        }
-    }
 
     private String getDocumentIdAccrrual(AccrualBulk accrualBulk,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
         return "DOC_SKA_REND";
@@ -371,7 +361,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     }
     private String  getOutputFileNameOrdine(AccrualBulk accrualBulk){
-        return "File Accrual Zip Esercizio2".concat(accrualBulk.getEsercizio().toString()).concat(".zip");
+        return "File Accrual Zip Esercizio".concat(accrualBulk.getEsercizio().toString()).concat(".zip");
     }
     public void creaFileAccrual(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
 
@@ -389,6 +379,8 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
                 setModel(context,accrualBulk);
                 update(context);
+                this.edit(context,accrualBulk);
+
             }
         } catch (RemoteException e) {
             throw new RuntimeException(e);
