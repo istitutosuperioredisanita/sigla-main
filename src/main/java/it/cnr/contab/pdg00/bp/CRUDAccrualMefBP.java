@@ -186,7 +186,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     }
     private void generaFileAccrual(ActionContext actionContext, AccrualXbrl dati) throws ApplicationException {
         final AccrualService accrualService = SpringUtil.getBean("accrualService", AccrualService.class);
-        try {
+        try {/sr:CE_E.
             byte[] bytes = accrualService.generaFileXbrl(dati);
 
         } catch (AccrualXbrException e) {
@@ -380,9 +380,9 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
             try (FileOutputStream fos = new FileOutputStream(output);
                  ZipOutputStream zos = new ZipOutputStream(fos)) {
 
-               // aggiungiFileAZip(zos, "ISS_STATO_PATRIMONIALE.xbrl", creaFileStatoPatrimoniale(context,accrualBulk));
+                aggiungiFileAZip(zos, "ISS_STATO_PATRIMONIALE.xbrl", creaFileStatoPatrimoniale(context,accrualBulk));
                 aggiungiFileAZip(zos, "ISS_CONTO_ECONOMICO.xbrl", creaFileContoEconomico(context,accrualBulk));
-               // aggiungiFileAZip(zos, "ISS_SCHEMA_AGGIUNTIVO.xbrl", creaFileSchemaAggiuntivo(context,accrualBulk));
+                aggiungiFileAZip(zos, "ISS_SCHEMA_AGGIUNTIVO.xbrl", creaFileSchemaAggiuntivo(context,accrualBulk));
                 zos.finish();
 
                 addFileToArchivioAllegati(context,accrualBulk,output);
