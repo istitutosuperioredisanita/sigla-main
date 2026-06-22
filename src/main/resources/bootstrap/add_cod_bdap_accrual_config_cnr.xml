@@ -6,7 +6,7 @@
 
     <changeSet author="ciro.salvio" id="add_cod_bdap_accrual_config_cnr">
         <insert tableName="configurazione_cnr">
-            <column name="esercizio" type="NUMERIC" valueNumeric="0idcd"/>
+            <column name="esercizio" type="NUMERIC" valueNumeric="0"/>
             <column name="cd_unita_funzionale" type="STRING" value="*"/>
             <column name="cd_chiave_primaria" type="STRING" value="BILANCIO_ACCRUAL"/>
             <column name="cd_chiave_secondaria" type="STRING" value="CODICE_BDAP_ENTE"/>
