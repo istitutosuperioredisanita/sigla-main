@@ -6359,6 +6359,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_cnr_gruppo_ep_nome_tass_accrual.xml"/>
     <!-- Autore : Ciro Salvio -Aggiunto in configurazione_cne il codice BDAP per il bilancio Accrual " -->
     <include file="bootstrap/add_cod_bdap_accrual_config_cnr.xml"/>
+    <!-- Autore : Ciro Salvio -Modificata la lughezza del campo Nome Tass. Accrual a 50 caretteri " -->
+    <include file="bootstrap/modify_length_nom_tass_accrual.xml"/>
 
     <!-- Autore : Davide Mirra -Rinominata colonna id flusso fea in uuid flusso autorizativo" -->
     <include file="bootstrap/rename_id_flusso_fea_doc_trasporto_rientro.xml"/>
