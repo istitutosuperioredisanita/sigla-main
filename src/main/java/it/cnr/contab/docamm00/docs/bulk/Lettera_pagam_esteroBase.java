@@ -118,6 +118,26 @@ public class Lettera_pagam_esteroBase extends Lettera_pagam_esteroKey implements
 	//  ISTRUZIONI_SPECIALI_3     VARCHAR2(250),
 	private java.lang.String istruzioni_speciali_3;
 
+	private String cod_divisa_accr;
+	private String cod_aba_routing;
+	private String banca_aba_routing;
+	private String cod_swift_tramite;
+	private String banca_tramite;
+	private String notice_agreed;
+	private String purpose_pay;
+	private String cod_lei_beneficiario;
+	private String civico_beneficiario;
+	private String cap_beneficiario;
+	private String beneficiario_eff;
+	private String cod_lei_ben_eff;
+	private String indirizzio_ben_eff;
+	private String civico_ben_eff;
+	private String paese_ben_eff;
+	private String cap_ben_eff;
+	private String conto_commissioni;
+	private String ordinante;
+	private Integer lettera_vers;
+
 	public Lettera_pagam_esteroBase() {
 		super();
 	}
@@ -359,6 +379,159 @@ public class Lettera_pagam_esteroBase extends Lettera_pagam_esteroKey implements
 
 	public void setPaese_beneficiario(String paese_beneficiario) {
 		this.paese_beneficiario = paese_beneficiario;
+	}
+
+	public String getCod_divisa_accr() {
+		return cod_divisa_accr;
+	}
+
+	public void setCod_divisa_accr(String cod_divisa_accr) {
+		this.cod_divisa_accr = cod_divisa_accr;
+	}
+
+	public String getCod_aba_routing() {
+		return cod_aba_routing;
+	}
+
+	public void setCod_aba_routing(String cod_aba_routing) {
+		this.cod_aba_routing = cod_aba_routing;
+	}
+
+	public String getBanca_aba_routing() {
+		return banca_aba_routing;
+	}
+
+	public void setBanca_aba_routing(String banca_aba_routing) {
+		this.banca_aba_routing = banca_aba_routing;
+	}
+
+	public String getCod_swift_tramite() {
+		return cod_swift_tramite;
+	}
+
+	public void setCod_swift_tramite(String cod_swift_tramite) {
+		this.cod_swift_tramite = cod_swift_tramite;
+	}
+
+	public String getBanca_tramite() {
+		return banca_tramite;
+	}
+
+	public void setBanca_tramite(String banca_tramite) {
+		this.banca_tramite = banca_tramite;
+	}
+
+	public String getNotice_agreed() {
+		return notice_agreed;
+	}
+
+	public void setNotice_agreed(String notice_agreed) {
+		this.notice_agreed = notice_agreed;
+	}
+
+	public String getPurpose_pay() {
+		return purpose_pay;
+	}
+
+	public void setPurpose_pay(String purpose_pay) {
+		this.purpose_pay = purpose_pay;
+	}
+
+	public String getCod_lei_beneficiario() {
+		return cod_lei_beneficiario;
+	}
+
+	public void setCod_lei_beneficiario(String cod_lei_beneficiario) {
+		this.cod_lei_beneficiario = cod_lei_beneficiario;
+	}
+
+	public String getCivico_beneficiario() {
+		return civico_beneficiario;
+	}
+
+	public void setCivico_beneficiario(String civico_beneficiario) {
+		this.civico_beneficiario = civico_beneficiario;
+	}
+
+	public String getCap_beneficiario() {
+		return cap_beneficiario;
+	}
+
+	public void setCap_beneficiario(String cap_beneficiario) {
+		this.cap_beneficiario = cap_beneficiario;
+	}
+
+	public String getCod_lei_ben_eff() {
+		return cod_lei_ben_eff;
+	}
+
+	public void setCod_lei_ben_eff(String cod_lei_ben_eff) {
+		this.cod_lei_ben_eff = cod_lei_ben_eff;
+	}
+
+	public String getIndirizzio_ben_eff() {
+		return indirizzio_ben_eff;
+	}
+
+	public void setIndirizzio_ben_eff(String indirizzio_ben_eff) {
+		this.indirizzio_ben_eff = indirizzio_ben_eff;
+	}
+
+	public String getCivico_ben_eff() {
+		return civico_ben_eff;
+	}
+
+	public void setCivico_ben_eff(String civico_ben_eff) {
+		this.civico_ben_eff = civico_ben_eff;
+	}
+
+	public String getPaese_ben_eff() {
+		return paese_ben_eff;
+	}
+
+	public void setPaese_ben_eff(String paese_ben_eff) {
+		this.paese_ben_eff = paese_ben_eff;
+	}
+
+	public String getCap_ben_eff() {
+		return cap_ben_eff;
+	}
+
+	public void setCap_ben_eff(String cap_ben_eff) {
+		this.cap_ben_eff = cap_ben_eff;
+	}
+
+	public String getConto_commissioni() {
+		return conto_commissioni;
+	}
+
+	public void setConto_commissioni(String conto_commissioni) {
+		this.conto_commissioni = conto_commissioni;
+	}
+
+
+	public Integer getLettera_vers() {
+		return lettera_vers;
+	}
+
+	public void setLettera_vers(Integer lettera_vers) {
+		this.lettera_vers = lettera_vers;
+	}
+
+	public String getBeneficiario_eff() {
+		return beneficiario_eff;
+	}
+
+	public void setBeneficiario_eff(String beneficiario_eff) {
+		this.beneficiario_eff = beneficiario_eff;
+	}
+
+	public String getOrdinante() {
+		return ordinante;
+	}
+
+	public void setOrdinante(String ordinante) {
+		this.ordinante = ordinante;
 	}
 }
 
