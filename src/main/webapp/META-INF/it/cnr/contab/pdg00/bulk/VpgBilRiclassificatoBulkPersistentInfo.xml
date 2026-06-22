@@ -109,7 +109,7 @@
 				columnName="NOME_TASS_ACCRUAL"
 				propertyName="nomeTassAccrual"
 				sqlTypeName="VARCHAR"
-				columnSize="30"
+				columnSize="50"
 				nullable="true" />
 	</defaultColumnMap>
 	<persistentProperty
