@@ -173,7 +173,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     }
     private void generaFileAccrual(ActionContext actionContext, AccrualXbrl dati) throws ApplicationException {
         final AccrualService accrualService = SpringUtil.getBean("accrualService", AccrualService.class);
-        try {/sr:CE_E.
+        try {
             byte[] bytes = accrualService.generaFileXbrl(dati);
 
         } catch (AccrualXbrException e) {
