@@ -252,10 +252,12 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_GESTIONE_INVENTARIA_DA_DOCUMENTI = "GESTIONE_INVENTARIA_DA_DOCUMENTI";
     public final static String SK_GEST_LIQ_FATT_ORDINE_CHECK_INV = "GEST_LIQ_FATT_ORDINE_CHECK_INV";
 
+
+
     public final static String PK_PAGAMENTO_ESTERO = "PAGAMENTO_ESTERO";
     public final static String SK_PAGAMENTO_ESTERO_ISS = "MODULO_PAGAMENTO_ISS";
 
-    public final static String PK_ESERCIZIO_SPECIALE = "ESERCIZIO_SPECIALE";
+    public final static String PK_ESERCIZIO_SPECIALE = "ESERCIZIO_SPECIALET";
     public final static String SK_ESERCIZIO_PARTENZA = "ESERCIZIO_PARTENZA";
 
     public final static String PK_PCC = "PCC";
@@ -276,6 +278,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_MODALITA_PAGAMENTO = "MODALITA_PAGAMENTO";
 
     public final static String SK_LIQ_IVA_ANTICIPATA = "LIQ_IVA_ANTICIPATA";
+    public final static String PK_BILANCIO_ACCRUAL = "BILANCIO_ACCRUAL";
+    public final static String SK_CODICE_BDAP_ENTE = "CODICE_BDAP_ENTE";
 
     public final static Map<String,String> TI_STEP_FINE_ANNO = new HashMap<String, String>() {{
         put("N", "No");

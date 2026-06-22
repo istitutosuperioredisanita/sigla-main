@@ -1,5 +1,6 @@
 package it.cnr.contab.pdg00.bp;
 
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.pdg00.bulk.AccrualBulk;
@@ -52,6 +53,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     private boolean enabledButton = false;
 
+    private String codice_bdap=null;
 
 
     public CRUDAccrualMefBP() {
@@ -81,8 +83,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
                 return diff == 0 || diff == 1;
             };
             enabledButton=validaEsercizio.test(Optional.ofNullable(ultimoEsercizioAperto).orElse(new EsercizioBulk()).getEsercizio(), esercizioScrivania);
-
-
+            codice_bdap =((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).getVal01(context.getUserContext(), Integer.valueOf(0), "*", Configurazione_cnrBulk.PK_BILANCIO_ACCRUAL, Configurazione_cnrBulk.SK_CODICE_BDAP_ENTE);
         } catch (Throwable e) {
             throw new BusinessProcessException(e);
         }
@@ -198,8 +199,8 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     private String getDocumentIdAccrrual(AccrualBulk accrualBulk,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
         return "DOC_SKA_REND";
     }
-    private String getEnte(AccrualBulk accrualBulk,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
-        return "ISS";
+    private String getCodiceBpaoEnte(AccrualBulk accrualBulk,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
+        return codice_bdap;
     }
 
     private String getIdContext(Integer esericizio,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
@@ -216,13 +217,13 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         ||AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO==tipofilexbrl) {
 
             contexts.put(getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), new DurationContextXbrl(
-                    getIdContext( accrualBulk.getEsercizio(),tipofilexbrl),getEnte(accrualBulk,tipofilexbrl),
+                    getIdContext( accrualBulk.getEsercizio(),tipofilexbrl),getCodiceBpaoEnte(accrualBulk,tipofilexbrl),
                     LocalDate.of(accrualBulk.getEsercizio(), 01, 01),
                     LocalDate.of(accrualBulk.getEsercizio(), 12, 31)));
         }
         if ( AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO==tipofilexbrl){
             contexts.put(getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), new DurationContextXbrl(
-                    getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), getEnte(accrualBulk,tipofilexbrl),
+                    getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), getCodiceBpaoEnte(accrualBulk,tipofilexbrl),
                     LocalDate.of(accrualBulk.getEsercizio(), 01, 01),
                     LocalDate.of(accrualBulk.getEsercizio(), 12, 31)));
         }
@@ -231,7 +232,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     private AccrualXbrl getAccrualXbrL(ActionContext actionContext, AccrualBulk accrualBulk, AccrualBulk.TIPOFILEXBRL tipofilexbrl){
         AccrualXbrl accrual = new AccrualXbrl();
-            accrual.setEnte(getEnte( accrualBulk,tipofilexbrl));
+            accrual.setEnte(getCodiceBpaoEnte( accrualBulk,tipofilexbrl));
             accrual.setDocumentId(getDocumentIdAccrrual(accrualBulk,tipofilexbrl));
             accrual.setContexts( getContextXbrl(accrualBulk,tipofilexbrl));
 
