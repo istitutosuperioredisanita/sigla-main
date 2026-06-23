@@ -173,13 +173,12 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     private String getDocumentIdAccrrual(AccrualBulk accrualBulk,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
         return "DOC_SKA_REND";
     }
-    private String getCodiceBdapEnte(AccrualBulk accrualBulk,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
+    private String getCodiceBdapEnte(){
         return codice_bdap;
     }
 
-    private String getIdContext(Integer esericizio,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
-        if ( AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl
-        || AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO==tipofilexbrl)
+    private String getIdContext(Integer esericizio,boolean isInstantContext){
+        if (isInstantContext)
             return  "CTX_IST_".concat(esericizio.toString());
         return  "CTX_INT_2025".concat( esericizio.toString());
 
@@ -187,16 +186,17 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     private Map<String ,ContextXbrl> getContextXbrl(AccrualBulk accrualBulk, AccrualBulk.TIPOFILEXBRL tipofilexbrl){
         Map<String ,ContextXbrl> contexts = new HashMap<String ,ContextXbrl>();
-        if ( AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl
-        ||AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO==tipofilexbrl) {
+        if ( !Optional.ofNullable(tipofilexbrl).isPresent()
+            ||(AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl
+        ||AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO==tipofilexbrl)) {
 
-            contexts.put(getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), new InstantContextXbrl(
-                    getIdContext( accrualBulk.getEsercizio(),tipofilexbrl),getCodiceBdapEnte(accrualBulk,tipofilexbrl),
+            contexts.put(getIdContext( accrualBulk.getEsercizio(),true), new InstantContextXbrl(
+                    getIdContext( accrualBulk.getEsercizio(),true),getCodiceBdapEnte(),
                     LocalDate.of(accrualBulk.getEsercizio(), 12, 31)));
         }
-        if ( AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO==tipofilexbrl){
-            contexts.put(getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), new DurationContextXbrl(
-                    getIdContext( accrualBulk.getEsercizio(),tipofilexbrl), getCodiceBdapEnte(accrualBulk,tipofilexbrl),
+        if (  (!Optional.ofNullable(tipofilexbrl).isPresent()) || AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO==tipofilexbrl){
+            contexts.put(getIdContext( accrualBulk.getEsercizio(),false), new DurationContextXbrl(
+                    getIdContext( accrualBulk.getEsercizio(),false), getCodiceBdapEnte(),
                     LocalDate.of(accrualBulk.getEsercizio(), 01, 01),
                     LocalDate.of(accrualBulk.getEsercizio(), 12, 31)));
         }
@@ -205,7 +205,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     private AccrualXbrl getAccrualXbrL(ActionContext actionContext, AccrualBulk accrualBulk, AccrualBulk.TIPOFILEXBRL tipofilexbrl){
         AccrualXbrl accrual = new AccrualXbrl();
-            accrual.setEnte(getCodiceBdapEnte( accrualBulk,tipofilexbrl));
+            accrual.setEnte(getCodiceBdapEnte( ));
             accrual.setDocumentId(getDocumentIdAccrrual(accrualBulk,tipofilexbrl));
             accrual.setContexts( getContextXbrl(accrualBulk,tipofilexbrl));
 
@@ -260,7 +260,9 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
                     ));
 
             if ( totali.getValoreValido().compareTo(BigDecimal.ZERO)!=0)
-                accrualXbrl.getFacts().add(new FactXbrl(chiaveTassonomia, totali.getValoreValido(),"2",null,null,accrualXbrl.getContexts().get(getIdContext(accrualBulk.getEsercizio(),tipofilexbrl))));
+                accrualXbrl.getFacts().add(new FactXbrl(chiaveTassonomia, totali.getValoreValido(),"2",null,null,accrualXbrl.getContexts().get(getIdContext(accrualBulk.getEsercizio(),
+                        ( AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl
+                        || AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO==tipofilexbrl )))));
 
         });
     }
@@ -314,6 +316,30 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         }
     }
 
+    private byte[] createFileXbr( ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
+        try {
+            AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,null);
+            List resultAttivo = createComponentSession().bilancioRiclasPatr(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_ATTIVITA);
+            addFactc(accrualXbrl,resultAttivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
+            List resultPassivo = createComponentSession().bilancioRiclasPatr(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_PASSIVITA);
+            addFactc(accrualXbrl,resultPassivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
+            List resultSchedaAttivo = createComponentSession().bilancioRiclasPatrSchedaAgg(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_ATTIVITA);
+            addFactc(accrualXbrl,resultSchedaAttivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO);
+            List resultSchedaPassivo = createComponentSession().bilancioRiclasPatrSchedaAgg(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_PASSIVITA);
+            addFactc(accrualXbrl,resultSchedaPassivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO);
+            List resultCE = createComponentSession().bilancioRiclasCE(context.getUserContext(), accrualBulk);
+            addFactc(accrualXbrl,resultCE, accrualBulk,AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO);
+
+            return  creaFileAccrual(accrualXbrl);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        } catch (ComponentException  e) {
+            throw handleException(e);
+        } catch (NoDataNotFoundException|AccrualXbrException e) {
+            throw new ApplicationException(e);
+        }
+    }
+
     private void aggiungiFileAZip(ZipOutputStream zos, String nomeFile, byte[] contenuto) throws IOException {
         byte[] datiSicuri = (contenuto == null) ? new byte[0] : contenuto;
         ZipEntry entry = new ZipEntry(nomeFile);
@@ -343,19 +369,22 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
 
     }
-    private String  getOutputFileNameOrdine(AccrualBulk accrualBulk){
-        return "File Accrual Zip Esercizio".concat(accrualBulk.getEsercizio().toString()).concat(".zip");
+    private String  getOutputFileNameZip(AccrualBulk accrualBulk){
+        return getPrefixFile( accrualBulk).concat(".zip");
+    }
+    private String  getPrefixFile(AccrualBulk accrualBulk){
+        return (accrualBulk.getEsercizio().toString()).concat(getCodiceBdapEnte()).concat("RENDSKA");
     }
     public void creaFileAccrual(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
 
         try {
-            File output = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/", File.separator + getOutputFileNameOrdine( accrualBulk));
+            File output = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/", File.separator + getOutputFileNameZip( accrualBulk));
             try (FileOutputStream fos = new FileOutputStream(output);
                  ZipOutputStream zos = new ZipOutputStream(fos)) {
 
-                aggiungiFileAZip(zos, "ISS_STATO_PATRIMONIALE.xbrl", creaFileStatoPatrimoniale(context,accrualBulk));
-                aggiungiFileAZip(zos, "ISS_CONTO_ECONOMICO.xbrl", creaFileContoEconomico(context,accrualBulk));
-                aggiungiFileAZip(zos, "ISS_SCHEMA_AGGIUNTIVO.xbrl", creaFileSchemaAggiuntivo(context,accrualBulk));
+                aggiungiFileAZip(zos, getPrefixFile(accrualBulk).concat(".xbrl"), createFileXbr(context,accrualBulk));
+                //aggiungiFileAZip(zos, "ISS_CONTO_ECONOMICO.xbrl", creaFileContoEconomico(context,accrualBulk));
+                //aggiungiFileAZip(zos, "ISS_SCHEMA_AGGIUNTIVO.xbrl", creaFileSchemaAggiuntivo(context,accrualBulk));
                 zos.finish();
 
                 addFileToArchivioAllegati(context,accrualBulk,output);
