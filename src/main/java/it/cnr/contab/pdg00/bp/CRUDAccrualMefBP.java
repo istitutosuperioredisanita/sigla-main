@@ -170,7 +170,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     }
 
 
-    private String getDocumentIdAccrrual(AccrualBulk accrualBulk,AccrualBulk.TIPOFILEXBRL tipofilexbrl){
+    private String getDocumentIdAccrrual(AccrualBulk accrualBulk){
         return "DOC_SKA_REND";
     }
     private String getCodiceBdapEnte(){
@@ -184,30 +184,26 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     }
 
-    private Map<String ,ContextXbrl> getContextXbrl(AccrualBulk accrualBulk, AccrualBulk.TIPOFILEXBRL tipofilexbrl){
+    private Map<String ,ContextXbrl> getContextXbrl(AccrualBulk accrualBulk){
         Map<String ,ContextXbrl> contexts = new HashMap<String ,ContextXbrl>();
-        if ( !Optional.ofNullable(tipofilexbrl).isPresent()
-            ||(AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE==tipofilexbrl
-        ||AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO==tipofilexbrl)) {
 
             contexts.put(getIdContext( accrualBulk.getEsercizio(),true), new InstantContextXbrl(
                     getIdContext( accrualBulk.getEsercizio(),true),getCodiceBdapEnte(),
                     LocalDate.of(accrualBulk.getEsercizio(), 12, 31)));
-        }
-        if (  (!Optional.ofNullable(tipofilexbrl).isPresent()) || AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO==tipofilexbrl){
+
             contexts.put(getIdContext( accrualBulk.getEsercizio(),false), new DurationContextXbrl(
                     getIdContext( accrualBulk.getEsercizio(),false), getCodiceBdapEnte(),
                     LocalDate.of(accrualBulk.getEsercizio(), 01, 01),
                     LocalDate.of(accrualBulk.getEsercizio(), 12, 31)));
-        }
+
         return contexts;
     }
 
-    private AccrualXbrl getAccrualXbrL(ActionContext actionContext, AccrualBulk accrualBulk, AccrualBulk.TIPOFILEXBRL tipofilexbrl){
+    private AccrualXbrl getAccrualXbrL(ActionContext actionContext, AccrualBulk accrualBulk){
         AccrualXbrl accrual = new AccrualXbrl();
             accrual.setEnte(getCodiceBdapEnte( ));
-            accrual.setDocumentId(getDocumentIdAccrrual(accrualBulk,tipofilexbrl));
-            accrual.setContexts( getContextXbrl(accrualBulk,tipofilexbrl));
+            accrual.setDocumentId(getDocumentIdAccrrual(accrualBulk));
+            accrual.setContexts( getContextXbrl(accrualBulk));
 
         return  accrual;
     }
@@ -266,59 +262,10 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
         });
     }
-    private byte[] creaFileStatoPatrimoniale(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
-        try {
-            AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
-            List resultAttivo = createComponentSession().bilancioRiclasPatr(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_ATTIVITA);
-            addFactc(accrualXbrl,resultAttivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
-            List resultPassivo = createComponentSession().bilancioRiclasPatr(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_PASSIVITA);
-            addFactc(accrualXbrl,resultPassivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
-
-            return  creaFileAccrual(accrualXbrl) ;
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (ComponentException e) {
-            throw handleException(e);
-        }catch (NoDataNotFoundException|AccrualXbrException e) {
-            throw new ApplicationException(e);
-        }
-    }
-    private byte[] creaFileContoEconomico(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
-        try {
-            AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO);
-            List resultCE = createComponentSession().bilancioRiclasCE(context.getUserContext(), accrualBulk);
-            addFactc(accrualXbrl,resultCE, accrualBulk,AccrualBulk.TIPOFILEXBRL.CONTO_ECONOMICO);
-
-            return  creaFileAccrual(accrualXbrl);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (ComponentException e) {
-            throw handleException(e);
-        } catch (NoDataNotFoundException|AccrualXbrException e) {
-         throw new ApplicationException(e);
-        }
-    }
-    private byte[] creaFileSchemaAggiuntivo(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
-        try {
-            AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO);
-            List resultAttivo = createComponentSession().bilancioRiclasPatrSchedaAgg(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_ATTIVITA);
-            addFactc(accrualXbrl,resultAttivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO);
-            List resultPassivo = createComponentSession().bilancioRiclasPatrSchedaAgg(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_PASSIVITA);
-            addFactc(accrualXbrl,resultPassivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.SCHEMA_AGGIUNTIVO);
-            return  creaFileAccrual(accrualXbrl) ;
-
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (ComponentException  e) {
-            throw handleException(e);
-        } catch (NoDataNotFoundException|AccrualXbrException e) {
-            throw new ApplicationException(e);
-        }
-    }
 
     private byte[] createFileXbr( ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
         try {
-            AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk,null);
+            AccrualXbrl accrualXbrl  =getAccrualXbrL(context,accrualBulk);
             List resultAttivo = createComponentSession().bilancioRiclasPatr(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_ATTIVITA);
             addFactc(accrualXbrl,resultAttivo, accrualBulk,AccrualBulk.TIPOFILEXBRL.STATO_PATRIMONIALE);
             List resultPassivo = createComponentSession().bilancioRiclasPatr(context.getUserContext(), accrualBulk, Stampa_vpg_stato_patrim_riclassVBulk.TIPO_PASSIVITA);
