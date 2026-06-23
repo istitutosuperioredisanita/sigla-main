@@ -253,6 +253,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_GESTIONE_INVENTARIA_DA_DOCUMENTI = "GESTIONE_INVENTARIA_DA_DOCUMENTI";
     public final static String SK_GEST_LIQ_FATT_ORDINE_CHECK_INV = "GEST_LIQ_FATT_ORDINE_CHECK_INV";
 
+
+
     public final static String PK_PAGAMENTO_ESTERO = "PAGAMENTO_ESTERO";
     public final static String SK_PAGAMENTO_ESTERO_ISS = "MODULO_PAGAMENTO_ISS";
 
@@ -277,6 +279,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_MODALITA_PAGAMENTO = "MODALITA_PAGAMENTO";
 
     public final static String SK_LIQ_IVA_ANTICIPATA = "LIQ_IVA_ANTICIPATA";
+    public final static String PK_BILANCIO_ACCRUAL = "BILANCIO_ACCRUAL";
+    public final static String SK_CODICE_BDAP_ENTE = "CODICE_BDAP_ENTE";
 
     public final static String PK_LINEA_ATTIVITA = "LINEA_ATTIVITA";
     public final static String SK_NO_STATO_PROGETTO_INI = "NO_STATO_PROGETTO_INI";

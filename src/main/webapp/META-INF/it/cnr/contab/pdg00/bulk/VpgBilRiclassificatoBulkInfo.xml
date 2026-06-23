@@ -140,6 +140,14 @@
 		maxLength="200"
 		enabledOnEdit="false"
 		label="TOTALE" />
+	<fieldProperty
+			name="nomeTassAccrual"
+			property="nomeTassAccrual"
+			inputType="TEXT"
+			inputSize="50"
+			maxLength="50"
+			enabledOnEdit="false"
+			label="Nome Tass. Accrual" />
 	<form
 		name="searchtool">
 	</form>
@@ -175,6 +183,8 @@
 		name="totaleIiAnno" />
 	<formFieldProperty
 		name="snTotale" />
+	<formFieldProperty
+			name="nomeTassAccrual" />
 	<findFieldProperty
 		name="id" />
 	<findFieldProperty
@@ -207,7 +217,8 @@
 		name="totaleIiAnno" />
 	<findFieldProperty
 		name="snTotale" />
-
+	<findFieldProperty
+			name="nomeTassAccrual" />
 	<columnFieldProperty
 		name="sequenza" />
 	<columnFieldProperty
@@ -234,4 +245,6 @@
 		name="totaleIiAnno" />
 	<columnFieldProperty
 		name="snTotale" />
+	<columnFieldProperty
+			name="nomeTassAccrual" />
 </bulkInfo>

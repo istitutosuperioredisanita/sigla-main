@@ -111,6 +111,7 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
     public void validate() throws ValidationException {
         super.validate();
         if (P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP.equals(getAspectName())) {
+            if (isToBeCreated() || isToBeUpdated()) {
                 File file = getFile();
                 try {
                     String mimeType = Files.probeContentType(file.toPath());
@@ -124,6 +125,7 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
                 }
                 validaFileAccrualXbrlZip(file);
             }
+        }
 
 
         super.validate();

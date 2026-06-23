@@ -5304,6 +5304,17 @@ public class DistintaCassiereComponent extends
             mandato.setTipoOperazione(getTipoOperazione(userContext, bulk));
 
             Configurazione_cnrBulk inviaTagBilanio= null;
+            MandatoIHome mandatoHome = Optional.ofNullable(getHome(userContext, MandatoIBulk.class))
+                    .filter(MandatoIHome.class::isInstance)
+                    .map(MandatoIHome.class::cast)
+                    .orElseThrow(() -> new ComponentException("Home del mandato non trovata!"));
+            MandatoBulk mandatoBulk = Optional.ofNullable(
+                            mandatoHome.findByPrimaryKey(
+                                    new MandatoBulk(bulk.getCd_cds(), bulk.getEsercizio(), bulk.getPg_documento_cont()
+                                    )
+                            )).filter(MandatoBulk.class::isInstance)
+                    .map(MandatoBulk.class::cast)
+                    .orElseThrow(() -> new ComponentException("Mandato non trovato!"));
             try {
                 inviaTagBilanio= getConfigurazioneInviaBilancio( userContext);
             } catch (RemoteException e) {
@@ -5312,18 +5323,6 @@ public class DistintaCassiereComponent extends
             if ( Optional.ofNullable(inviaTagBilanio).map(s->Boolean.valueOf(s.getVal01())).orElse(Boolean.FALSE)) {
                 Integer numMaxVociBilancio =Optional.ofNullable(inviaTagBilanio.getVal02()).map(s->Integer.valueOf(s)).orElse(1);
 
-                MandatoIHome mandatoHome = Optional.ofNullable(getHome(userContext, MandatoIBulk.class))
-                        .filter(MandatoIHome.class::isInstance)
-                        .map(MandatoIHome.class::cast)
-                        .orElseThrow(() -> new ComponentException("Home del mandato non trovata!"));
-                MandatoBulk mandatoBulk = Optional.ofNullable(
-                        mandatoHome.findByPrimaryKey(
-                                new MandatoBulk(bulk.getCd_cds(), bulk.getEsercizio(), bulk.getPg_documento_cont()
-                                )
-                        )).filter(MandatoBulk.class::isInstance)
-                        .map(MandatoBulk.class::cast)
-                        .orElseThrow(() -> new ComponentException("Mandato non trovato!"));
-                //mandatoBulk.setMandato_rigaColl(new BulkList(mandatoHome.findMandato_riga(userContext, mandatoBulk)));
                 completeMandato(userContext,mandatoBulk);
 
                 List<Bilancio> bilancioTag = this.createBilancio(userContext, mandatoHome.getSiopeBilancio(userContext, mandatoBulk));
@@ -5481,7 +5480,7 @@ public class DistintaCassiereComponent extends
                                 "Impossibile generare il flusso, indicare data richiesta pagamento nel mandato cds {0} n. {1}",
                                 docContabile.getCdCds(), docContabile.getPgDocumento());
 
-                    } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
+                    } else if (!mandatoBulk.isAnnullato() && tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
                             && docContabile.getDtPagamentoRichiesta() != null &&
                             (EJBCommonServices.getServerTimestamp().after(docContabile.getDtPagamentoRichiesta()))) {
                         throw new ApplicationMessageFormatException(
@@ -5816,7 +5815,7 @@ public class DistintaCassiereComponent extends
                         throw new ApplicationMessageFormatException(
                                 "Impossibile generare il flusso, indicare data richiesta pagamento nel mandato cds {0} n. {1}",
                                 docContabile.getCdCds(), docContabile.getPgDocumento());
-                    } else if (tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
+                    } else if (!mandatoBulk.isAnnullato() && tipoPagamentoSiopePlus.equals(Rif_modalita_pagamentoBulk.TipoPagamentoSiopePlus.F24EP)
                             && docContabile.getDtPagamentoRichiesta() != null &&
                             (EJBCommonServices.getServerTimestamp().after(docContabile.getDtPagamentoRichiesta()))) {
                         throw new ApplicationMessageFormatException(

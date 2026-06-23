@@ -100,9 +100,8 @@
 			name="nomeTassAccrual"
 			property="nomeTassAccrual"
 			inputType="TEXT"
-			cols="30"
-			rows="5"
-			maxLength="2000"
+			inputSize="50"
+			maxLength="50"
 			enabledOnEdit="true"
 			label="Nome Tass. Accrual" />
 
