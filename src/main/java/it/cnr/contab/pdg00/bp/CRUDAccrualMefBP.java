@@ -365,9 +365,6 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         allegatoAccrualBulk.setNome(f.getName());
         allegatoAccrualBulk.setFile(f);
         allegatoAccrualBulk.setContentType( new MimetypesFileTypeMap().getContentType(f.getName()));
-
-
-
     }
     private String  getOutputFileNameZip(AccrualBulk accrualBulk){
         return getPrefixFile( accrualBulk).concat(".zip");
