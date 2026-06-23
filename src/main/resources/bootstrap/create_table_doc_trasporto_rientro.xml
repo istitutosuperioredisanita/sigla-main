@@ -57,7 +57,7 @@
             <column name="note" remarks="Note relative al documento di trasporto/rientro. Campo abilitato in base al flag FL_ABILITA_NOTE della tipologia" type="VARCHAR(4000)"/>
 
             <!-- ========================================
-                 FIRMA DIGITALE HAPPYSIGN
+                 FIRMA DIGITALE
                  ======================================== -->
             <column name="id_flusso_happysign" remarks="ID del flusso HappySign per la firma digitale del documento" type="VARCHAR(100)"/>
             <column name="stato_flusso" remarks="Stato del flusso di firma. Dominio: INV = Inviato, FIR = Firmato, RIF = Rifiutato" type="VARCHAR(3)"/>

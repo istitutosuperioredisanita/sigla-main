@@ -15,7 +15,7 @@
     /*
      * NON usare bp.isEditable() qui.
      *
-     * Dopo firma HappySign, bp.isEditable() può essere true
+     * Dopo firma, bp.isEditable() può essere true
      * per permettere il salvataggio/gestione degli allegati.
      *
      * I dettagli beni invece devono restare modificabili solo

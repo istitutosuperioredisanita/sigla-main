@@ -16,7 +16,7 @@
      * IMPORTANTISSIMO:
      * Non usare bp.isEditable() per decidere se i dettagli sono modificabili.
      *
-     * Dopo la firma HappySign, isEditable() può risultare true
+     * Dopo la firma, isEditable() può risultare true
      * perché serve al framework allegati per consentire la gestione degli allegati.
      *
      * I dettagli invece devono restare bloccati dopo firma.

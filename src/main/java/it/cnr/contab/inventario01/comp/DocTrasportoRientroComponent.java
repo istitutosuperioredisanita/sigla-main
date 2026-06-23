@@ -1149,7 +1149,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
     }
 
     /**
-     * Gestisce archiviazione, aggiornamento e cancellazione degli allegati T/R su CMIS.
+     * Gestisce archiviazione, aggiornamento e cancellazione degli allegati T/R sul documentale.
      *
      * IMPORTANTE:
      * Non usare cast a DocumentoTrasportoBulk / DocumentoRientroBulk.
@@ -3582,8 +3582,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
     /**
      * Scrive un array di byte PDF su un file temporaneo.
      *
-     * Il file temporaneo serve solo perché il sistema allegati/CMIS
-     * lavora su File/InputStream.
+     * Il file temporaneo serve solo perché il documentale lavora su File/InputStream.
      */
     private File creaFileTemporaneoPdf(String nomeFile, byte[] pdfBytes)
             throws Exception {

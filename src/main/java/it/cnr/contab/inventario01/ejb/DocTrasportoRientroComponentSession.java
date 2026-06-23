@@ -250,7 +250,7 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
 
 
     /**
-     * Invia il documento Trasporto/Rientro ad HappySign.
+     * Invia il documento Trasporto/Rientro in firma tramite worfkflow.
      */
     Doc_trasporto_rientroBulk inviaDocumentoAllaFirma(
             UserContext userContext,

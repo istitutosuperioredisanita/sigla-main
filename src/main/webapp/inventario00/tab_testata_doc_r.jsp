@@ -83,9 +83,8 @@ function doStampaDocTraspRient() {
         <td colspan="3"><% bp.getController().writeFormInput(out, null, "dsDocTrasportoRientro", !bp.isInserting(), null, null); %></td>
     </tr>
 
-    <!-- ==================== SEPARATORE ==================== -->
     <tr>
-        <td colspan="4" style="border-top: 2px solid #003d7a; padding-top: 15px;"></td>
+        <td colspan="4" style="padding-top: 20px;"></td>
     </tr>
 
     <!-- ==================== TIPO RITIRO ==================== -->
@@ -140,11 +139,12 @@ function doStampaDocTraspRient() {
       </tr>
     <% } %>
 
-    <!-- ==================== HAPPYSIGN / FIRMA ==================== -->
-    <% if (!bp.isInserting()) { %>
-      <tr>
-        <td colspan="4" style="border-top: 2px solid #003d7a; padding-top: 15px;"></td>
-      </tr>
+    <!-- ==================== FIRMA ==================== -->
+    <% if (!bp.isInserting() && !bp.isInviaInFirmaButtonHidden()) { %>
+
+    <tr>
+        <td colspan="4" style="padding-top: 20px;"></td>
+    </tr>
 
       <tr>
         <td><% bp.getController().writeFormLabel(out,"uuidFlussoAutorizzativo"); %></td>

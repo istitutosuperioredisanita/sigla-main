@@ -35,7 +35,7 @@ import java.util.Objects;
  * Gestisce:
  * - stato documento;
  * - tipo ritiro;
- * - dati firma HappySign;
+ * - dati firma;
  * - dettagli beni;
  * - allegati;
  * - campi REST transitori.

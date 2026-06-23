@@ -186,7 +186,7 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 	}
 
 	// ========================================
-	// GETTER E SETTER - FIRMA DIGITALE HAPPYSIGN
+	// GETTER E SETTER - FIRMA DIGITALE
 	// ========================================
 
 	public String getUuidFlussoAutorizzativo() {

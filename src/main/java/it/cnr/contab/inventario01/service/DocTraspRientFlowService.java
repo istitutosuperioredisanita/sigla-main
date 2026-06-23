@@ -62,7 +62,7 @@ public class DocTraspRientFlowService {
             );
         } catch (RemoteException e) {
             throw new ComponentException(
-                    "Errore remoto aggiornamento documento firmato HappySign",
+                    "Errore remoto aggiornamento documento firmato",
                     e
             );
         }
@@ -81,7 +81,7 @@ public class DocTraspRientFlowService {
             );
         } catch (RemoteException e) {
             throw new ComponentException(
-                    "Errore remoto aggiornamento documento rifiutato HappySign",
+                    "Errore remoto aggiornamento documento rifiutato",
                     e
             );
         }

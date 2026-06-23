@@ -437,7 +437,7 @@ public abstract class CRUDTraspRientInventarioBP<
         return getDoc() != null && getDoc().isDefinitivo();
     }
 
-    public boolean isDocumentoInAttesaDiFirmaHappySign() {
+    public boolean isDocumentoInAttesaDiFirma() {
         return getDoc() != null && getDoc().isInAttesaDiFirma();
     }
 

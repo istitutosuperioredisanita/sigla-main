@@ -6287,8 +6287,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/create_table_doc_trasporto_rientro.xml"/>
     <!-- Autore : DAVIDE MIRRA - Creata tabella principale Dettaglio Documento Trasporto Rientro -->
     <include file="bootstrap/create_table_doc_trasporto_rientro_dett.xml"/>
-      <!-- Autore : DAVIDE MIRRA - Creata tabella per la gestione dei documenti TR respinti in Happysign -->
-    <!--<include file="bootstrap/create_table_docTR_respinto_happysign.xml"/>!-->
     <!-- Autore : DAVIDE MIRRA - Aggiunta configurazione stampe prioritarie per Documento Trasporto Rientro -->
     <include file="bootstrap/add_print_priority_doc_trasporto_rientro.xml"/>
     <!-- Autore : DAVIDE MIRRA - Aggiunti accessi per Documento Trasporto Rientro Beni -->

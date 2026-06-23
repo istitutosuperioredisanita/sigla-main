@@ -42,7 +42,7 @@ public class DocTraspRientCronService {
     @PostConstruct
     public void init() {
         userContext = new WSUserContext(
-                "HAPPYSIGN",
+                "SIGN_WORKFLOW",
                 null,
                 Calendar.getInstance().get(Calendar.YEAR),
                 null,
@@ -57,12 +57,12 @@ public class DocTraspRientCronService {
      * le firme multiple a monte, logga i dati reali e avvia l’elaborazione a batch.
      */
     @Scheduled(cron = "${doc.trasp.rient.happysign.timer.cron.expression:0 * * * * *}")
-    public void executeVerificaFirmeHappySign() {
+    public void executeVerificaFirmeWorkflow() {
 
         long start = System.currentTimeMillis();
 
         try {
-            log.info("START HappySign T/R - user={}, esercizio={}",
+            log.info("START SIGN_WORKFLOW T/R - user={}, esercizio={}",
                     userContext.getUser(),
                     Calendar.getInstance().get(Calendar.YEAR));
 
@@ -92,11 +92,11 @@ public class DocTraspRientCronService {
             processaBatch(documentiUnici);
 
         } catch (Exception e) {
-            log.error("Errore globale job HappySign T/R", e);
+            log.error("Errore globale job SIGN_WORKFLOW T/R", e);
         }
 
         long end = System.currentTimeMillis();
-        log.info("END HappySign T/R - durata={} ms", (end - start));
+        log.info("END SIGN_WORKFLOW T/R - durata={} ms", (end - start));
     }
 
     /**
@@ -122,7 +122,7 @@ public class DocTraspRientCronService {
 
     /**
      * Gestisce il retry automatico per ogni documento.
-     * In caso di errore transient, ad esempio timeout HappySign, riprova fino a RETRY_MAX volte
+     * In caso di errore transient, ad esempio timeout SIGN_WORKFLOW, riprova fino a RETRY_MAX volte
      * prima di fallire definitivamente.
      */
     private void processaDocumentoConRetry(Doc_trasporto_rientroBulk doc) {
@@ -156,7 +156,7 @@ public class DocTraspRientCronService {
     }
 
     /**
-     * Controlla lo stato del documento su HappySign e instrada verso le azioni corrette:
+     * Controlla lo stato del documento su SIGN_WORKFLOW e instrada verso le azioni corrette:
      * firmato -> aggiornamento documento,
      * rifiutato -> gestione rifiuto,
      * inviato -> in attesa.
