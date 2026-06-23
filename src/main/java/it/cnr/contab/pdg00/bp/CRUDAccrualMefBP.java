@@ -229,13 +229,13 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         raggrTassonomie.forEach((chiaveTassonomia, listaBulk) -> {
             record TotaleImporti(BigDecimal parzialeAnno, BigDecimal totaleAnno) {
                 public TotaleImporti {
-                    if (parzialeAnno.compareTo(BigDecimal.ZERO) > 0 && totaleAnno.compareTo(BigDecimal.ZERO) > 0) {
+                    if (parzialeAnno.compareTo(BigDecimal.ZERO) != 0 && totaleAnno.compareTo(BigDecimal.ZERO) != 0) {
                         throw new IllegalArgumentException("Errore: Entrambi gli importi sono maggiori di zero!");
                     }
                 }
                 // Metodo per estrarre l'unico valore valorizzato (maggiore di zero)
                 public BigDecimal getValoreValido() {
-                    if (parzialeAnno.compareTo(BigDecimal.ZERO) > 0) {
+                    if (parzialeAnno.compareTo(BigDecimal.ZERO) != 0) {
                         return parzialeAnno;
                     }
                     return totaleAnno;
