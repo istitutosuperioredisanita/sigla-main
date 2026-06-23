@@ -338,14 +338,9 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
             File output = new File(System.getProperty("tmp.dir.SIGLAWeb") + "/tmp/", File.separator + getOutputFileNameZip( accrualBulk));
             try (FileOutputStream fos = new FileOutputStream(output);
                  ZipOutputStream zos = new ZipOutputStream(fos)) {
-
                 aggiungiFileAZip(zos, getPrefixFile(accrualBulk).concat(".xbrl"), createFileXbr(context,accrualBulk));
-                //aggiungiFileAZip(zos, "ISS_CONTO_ECONOMICO.xbrl", creaFileContoEconomico(context,accrualBulk));
-                //aggiungiFileAZip(zos, "ISS_SCHEMA_AGGIUNTIVO.xbrl", creaFileSchemaAggiuntivo(context,accrualBulk));
                 zos.finish();
-
                 addFileToArchivioAllegati(context,accrualBulk,output);
-
                 setModel(context,accrualBulk);
                 update(context);
                 this.edit(context,accrualBulk);

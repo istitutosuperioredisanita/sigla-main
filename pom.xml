@@ -64,7 +64,7 @@
         <test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
 
         <cors.allow-origin>http://localhost:9000</cors.allow-origin>
-        <version.xbraccrual>1.0.0-SNAPSHOT</version.xbraccrual>
+        <version.xbraccrual>1.0.0</version.xbraccrual>
     </properties>
 
     <!-- Repository necessari per le dipendenze WildFly/JBoss -->
