@@ -3,16 +3,13 @@ package it.cnr.contab.pdg00.bp;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.ejb.EsercizioComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
-import it.cnr.contab.pdg00.bulk.AccrualBulk;
-import it.cnr.contab.pdg00.bulk.AllegatoAccrualBulk;
-import it.cnr.contab.pdg00.bulk.Stampa_vpg_stato_patrim_riclassVBulk;
-import it.cnr.contab.pdg00.bulk.VpgBilRiclassificatoBulk;
+import it.cnr.contab.pdg00.bulk.*;
 import it.cnr.contab.pdg00.ejb.BilancioAccrualComponentSession;
 import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
 import it.cnr.jada.bulk.BulkList;
@@ -28,7 +25,6 @@ import it.iss.accrual.xbrl.AccrualXbrException;
 import it.iss.accrual.xbrl.NoDataNotFoundException;
 import it.iss.accrual.xbrl.dto.*;
 import jakarta.activation.MimetypesFileTypeMap;
-import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,13 +151,13 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         super.completeAllegato(allegato, storageObject);
     }
 
-    public boolean isPredisponiButtonEnabled() {
-        return isEnabledButton() && this.getModel().getDacr()!=null;
+    public boolean isCreaFileAccrualButtonEnabled() {
+        return isEnabledButton();// && this.getModel().getDacr()!=null;
     }
 
     @Override
     public boolean isNewButtonEnabled() {
-        return isEnabledButton() && super.isNewButtonEnabled();
+        return isEnabledButton() && super.isNewButtonEnabled() && ( !super.isEditing());
     }
 
     @Override
@@ -182,6 +178,26 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         return (BilancioAccrualComponentSession)createComponentSession("CNRPDG00_EJB_BilancioAccrualComponentSession", BilancioAccrualComponentSession.class);
     }
 
+    @Override
+    public BusinessProcess initBusinessProcess(ActionContext actioncontext) throws BusinessProcessException {
+        BusinessProcess businessProcess = super.initBusinessProcess(actioncontext);
+        BilancioAccrualComponentSession session = createComponentSession();
+        AccrualBulk accrualBulk = null;
+        try {
+            accrualBulk = (AccrualBulk) session.findByPrimaryKey(actioncontext.getUserContext(), new AccrualBulk(CNRUserContext.getEsercizio(actioncontext.getUserContext()),null,null));
+        } catch (ComponentException e) {
+            throw new RuntimeException(e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        if ( Optional.ofNullable(accrualBulk).isPresent())
+                edit(actioncontext,accrualBulk);
+        else{
+
+        }
+
+        return this;
+    }
 
     private String getDocumentIdAccrrual(AccrualBulk accrualBulk){
         return "DOC_SKA_REND";
@@ -236,10 +252,10 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         List<FactXbrl> facts = new ArrayList<FactXbrl>();
 
         raggrTassonomie.forEach((chiaveTassonomia, listaBulk) -> {
-            record TotaleImporti(BigDecimal parzialeAnno, BigDecimal totaleAnno) {
+            record TotaleImporti(String chiaveTassonomia,BigDecimal parzialeAnno, BigDecimal totaleAnno) {
                 public TotaleImporti {
                     if (parzialeAnno.compareTo(BigDecimal.ZERO) != 0 && totaleAnno.compareTo(BigDecimal.ZERO) != 0) {
-                        throw new IllegalArgumentException("Errore: Entrambi gli importi sono maggiori di zero!");
+                        throw new IllegalArgumentException("Errore: Per la Tassonomia ".concat( chiaveTassonomia).concat(" Entrambi gli importi sono maggiori di zero!"));
                     }
                 }
                 // Metodo per estrarre l'unico valore valorizzato (maggiore di zero)
@@ -264,8 +280,8 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
                             Collectors.mapping(VpgBilRiclassificatoBulk::getTotaleIAnno,
                                     Collectors.reducing(BigDecimal.ZERO, TotaleImporti::safeAdd)),
 
-                            // Unione nel record
-                            TotaleImporti::new
+                            (parziale, totale) ->
+                                    new TotaleImporti(chiaveTassonomia, parziale, totale)
                     ));
 
             if ( totali.getValoreValido().compareTo(BigDecimal.ZERO)!=0)
@@ -295,7 +311,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
             throw new RuntimeException(e);
         } catch (ComponentException  e) {
             throw handleException(e);
-        } catch (NoDataNotFoundException|AccrualXbrException e) {
+        } catch (NoDataNotFoundException|AccrualXbrException|IllegalArgumentException e) {
             throw new ApplicationException(e);
         }
     }
