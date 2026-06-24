@@ -242,7 +242,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
             record TotaleImporti(String chiaveTassonomia,BigDecimal parzialeAnno, BigDecimal totaleAnno) {
                 public TotaleImporti {
                     if (parzialeAnno.compareTo(BigDecimal.ZERO) != 0 && totaleAnno.compareTo(BigDecimal.ZERO) != 0) {
-                        throw new IllegalArgumentException("Errore: Per la Tassonomia ".concat( chiaveTassonomia).concat(" Entrambi gli importi sono maggiori di zero!"));
+                        throw new IllegalArgumentException("Errore: Per la Tassonomia ".concat( chiaveTassonomia).concat(" Entrambi gli importi, parzialeAnno e totaleAnno, sono diversi da zero!"));
                     }
                 }
                 // Metodo per estrarre l'unico valore valorizzato (maggiore di zero)
