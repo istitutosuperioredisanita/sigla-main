@@ -271,6 +271,7 @@ public class OrdineAcqComponent
 
         parametri.setCoefacq(riga.getCoefConv());
         parametri.setPrezzo(riga.getPrezzoUnitario());
+        parametri.setIvaCommerciale(ordine.isCommerciale());
         parametri.setPrezzoRet(fatturaOrdine.getPrezzoUnitarioRett());
         parametri.setSconto1(riga.getSconto1());
         parametri.setSconto1Ret(fatturaOrdine.getSconto1Rett());
@@ -301,7 +302,7 @@ public class OrdineAcqComponent
         parametri.setArrAliIva(cons.getArrAliIva());
 
         ImportoOrdine importo = magazzino ? calcoloImportoPerMagazzino(parametri) : calcoloImporto(parametri);
-        fatturaOrdine.setImImponibile(importo.getImponibile());
+        fatturaOrdine.setImImponibile(importo.getPrezzoUnitario());
         fatturaOrdine.setImImponibileDivisa(importo.getImponibile());
         fatturaOrdine.setImIva(importo.getImportoIva());
         fatturaOrdine.setImIvaDivisa(importo.getImportoIva());

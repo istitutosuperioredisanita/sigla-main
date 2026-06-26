@@ -17,31 +17,21 @@
 
 package it.cnr.contab.inventario00.docs.bulk;
 
-import it.cnr.contab.config00.sto.bulk.DipartimentoBulk;
-import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
-import it.cnr.contab.inventario00.bp.CRUDTransitoBeniOrdiniBP;
 import it.cnr.contab.inventario00.tabrif.bulk.Condizione_beneBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Ubicazione_beneBulk;
-import it.cnr.contab.inventario01.bp.CRUDCaricoInventarioBP;
 import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqConsegnaBulk;
 import it.cnr.contab.ordmag.ordini.bulk.OrdineAcqRigaBulk;
-import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
-import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.bulk.BulkCollection;
 import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.bulk.ValidationException;
-import it.cnr.jada.util.action.CRUDBP;
-import org.apache.commons.lang.StringUtils;
+
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Dictionary;
-import java.util.Iterator;
 
 public class Transito_beni_ordiniBulk extends Transito_beni_ordiniBase {
 

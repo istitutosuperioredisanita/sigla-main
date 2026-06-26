@@ -268,8 +268,8 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 
 		try {
 			ImportoOrdine importo =  recuperoPrezzoUnitario(userContext, consegna);
-			BigDecimal prezzoUnitario = importo.getPrezzo();
-			BigDecimal prezzoIvaUnitario = importo.getIva();
+			BigDecimal prezzoUnitario = importo.getPrezzoUnitario();
+			BigDecimal prezzoIvaUnitario = importo.getPrezzoIvaUnitaria();
 
 			//Rapporto il prezzo unitario al Coefficiente di Conversione usato nell'evasione se diverso da quello indicato sulla riga
 			if (!movimentoMag.getCoeffConv().equals(consegna.getOrdineAcqRiga().getCoefConv())) {
@@ -456,11 +456,11 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 		movimentoMag.setOrdineAcqConsegnaUt(consegna);
 
         {
-			BigDecimal prezzoUnitarioOrdine = importoCns.getPrezzo();
-			BigDecimal prezzoIvaUnitarioOrdine = importoCns.getIva();
+			BigDecimal prezzoUnitarioOrdine = importoCns.getPrezzoUnitario();
+			BigDecimal prezzoIvaUnitarioOrdine = importoCns.getPrezzoIvaUnitaria();
 
-			BigDecimal prezzoUnitarioOrdineRettificato = importoRet.getPrezzo();
-			BigDecimal prezzoUnitarioIvaOrdineRettificato = importoRet.getIva();
+			BigDecimal prezzoUnitarioOrdineRettificato = importoRet.getPrezzoUnitario();
+			BigDecimal prezzoUnitarioIvaOrdineRettificato = importoRet.getPrezzoIvaUnitaria();
 
 			BigDecimal diffOrdineRettificato = prezzoUnitarioOrdineRettificato.subtract(prezzoUnitarioOrdine);
 			BigDecimal diffIvaOrdineRettificato = prezzoUnitarioIvaOrdineRettificato.subtract(prezzoIvaUnitarioOrdine);
@@ -649,8 +649,8 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 
 			ImportoOrdine importi = calcoloImportoPerMagazzino(parametri);
 
-			riga.setPrezzoUnitario(importi.getPrezzo());
-			riga.setImpIva(importi.getIva());
+			riga.setPrezzoUnitario(importi.getPrezzoUnitario());
+			riga.setImpIva(importi.getPrezzoIvaUnitaria());
 
 		}
 	}
