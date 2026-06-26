@@ -3681,7 +3681,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         ImportoOrdine importo = new ImportoOrdine();
         importo.setImponibile(fatturaOrdineBulk1.getImImponibile());
         importo.setImportoIvaInd(fatturaOrdineBulk1.getImIvaNd());
-        return importo.getPrezzoUnitario();//getPrezzoUnitarioFattura(importo);
+        return importo.getPrezzoUnitario();//sostituito il metodo getPrezzoUnitarioFattura(importo);
     }
 
     public BigDecimal getPrezzoUnitarioFattura(ImportoOrdine importo) {
