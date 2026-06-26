@@ -302,7 +302,7 @@ public class OrdineAcqComponent
         parametri.setArrAliIva(cons.getArrAliIva());
 
         ImportoOrdine importo = magazzino ? calcoloImportoPerMagazzino(parametri) : calcoloImporto(parametri);
-        fatturaOrdine.setImImponibile(importo.getPrezzoUnitario());
+        fatturaOrdine.setImImponibile(importo.getImponibile());
         fatturaOrdine.setImImponibileDivisa(importo.getImponibile());
         fatturaOrdine.setImIva(importo.getImportoIva());
         fatturaOrdine.setImIvaDivisa(importo.getImportoIva());
