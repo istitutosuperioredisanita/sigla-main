@@ -25,6 +25,8 @@ import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponen
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.contratto.bulk.AllegatoContrattoDocumentBulk;
+import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
@@ -51,6 +53,7 @@ import it.cnr.contab.doccont00.ejb.AccertamentoAbstractComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
+import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.Utility;
@@ -67,6 +70,10 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import it.cnr.si.spring.storage.StorageDriver;
+import it.cnr.si.spring.storage.StorageObject;
+import it.cnr.si.spring.storage.StoreService;
+import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import jakarta.ejb.EJBException;
 
 import javax.naming.OperationNotSupportedException;
@@ -466,7 +473,34 @@ public class DocumentoGenericoComponent
         }
         return documentoGenerico;
     }
+    /*
+    public String getCMISPathFolderContratto(ContrattoBulk contrattoBulk) {
+        return Stream.concat(getBasePath(contrattoBulk).stream(), Stream.of(contrattoBulk.getCMISFolderName())).collect(
+                Collectors.joining(StorageDriver.SUFFIX)
+        );
+    }
 
+    public void changeProgressivoNodeRef(ObbligazioneBulk obbligazioneTemporanea, ObbligazioneBulk obbligazioneBulk) throws ApplicationException {
+
+        StoreService storeService = SpringUtil.getBean("storeService", StoreService.class);
+        String pathFolder =Stream.concat(getBasePath(obbligazioneBulk).stream(), Stream.of(obbligazioneBulk.getCMISFolderName())).collect(
+                Collectors.joining(StorageDriver.SUFFIX)
+        StorageObject folder = storeService.getFolderContratto((ContrattoBulk) bp.getModel());
+        List<StorageObject> children = storeService.getChildren(oldStorageObject.getKey());
+        for (StorageObject child : children) {
+            AllegatoObbligazioneBulk allegato = AllegatoObbligazioneBulk.construct(child.getKey());
+            allegato.setNome(child.<String>getPropertyValue("sigla_contratti_attachment:original_name"));
+            //allegato.setType(child.<String>getPropertyValue(StoragePropertyNames.OBJECT_TYPE_ID.value()));
+            allegato.setTitolo(child.<String>getPropertyValue(StoragePropertyNames.TITLE.value()));
+            allegato.setDescrizione(child.<String>getPropertyValue(StoragePropertyNames.DESCRIPTION.value()));
+            //allegato.setContrattoBulk(O);
+            storeService.updateProperties(allegato, child);
+
+        }
+        storeService.updateProperties(obbligazione, oldStorageObject);
+    }
+
+ */
     private void aggiornaObbligazioni(
             UserContext userContext,
             Documento_genericoBulk documento,
@@ -598,7 +632,8 @@ public class DocumentoGenericoComponent
     private void aggiornaObbligazioniTemporanee(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
 
         try {
-            Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
+            Utility.createObbligazioneComponentSession().aggiornaObbligazioniTemporanee( userContext, obbligazioneTemporanea);
+           /* Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
             Long pg = null;
             pg = numHome.getNextPg(userContext,
                     obbligazioneTemporanea.getEsercizio(),
@@ -606,11 +641,11 @@ public class DocumentoGenericoComponent
                     obbligazioneTemporanea.getCd_tipo_documento_cont(),
                     obbligazioneTemporanea.getUser());
             ObbligazioneHome home = (ObbligazioneHome) getHome(userContext, obbligazioneTemporanea);
-            home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);
+            home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);*/
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(obbligazioneTemporanea, e);
-        } catch (it.cnr.jada.persistency.IntrospectionException e) {
-            throw handleException(obbligazioneTemporanea, e);
+        }  catch (RemoteException e) {
+            throw new RuntimeException(e);
         }
     }
 

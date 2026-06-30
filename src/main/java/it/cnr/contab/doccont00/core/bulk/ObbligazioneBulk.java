@@ -31,6 +31,7 @@ import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attiva_rigaBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
 import it.cnr.contab.prevent00.bulk.V_assestatoBulk;
 import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.spring.service.UtilService;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
@@ -43,6 +44,8 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.Persister;
 import it.cnr.jada.util.OrderedHashtable;
+import it.cnr.si.spring.storage.StorageDriver;
+import it.cnr.si.spring.storage.annotation.StorageProperty;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -50,7 +53,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @JsonInclude(value=Include.NON_NULL)
-public class ObbligazioneBulk extends ObbligazioneBase implements Cloneable, IDocumentoContabileBulk, AllegatoParentBulk {
+public class ObbligazioneBulk extends ObbligazioneBase implements Cloneable, IDocumentoContabileBulk, AllegatoParentBulk,ObbligazioneParentBulk {
 	private static final long serialVersionUID = 1L;
 
 	private it.cnr.jada.util.OrderedHashtable anniResidui = new it.cnr.jada.util.OrderedHashtable();
@@ -2062,5 +2065,35 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 		return ( countAllegatiAuotizzativi>0);
 
 
+	}
+
+	@Override
+	public String getStorePath() {
+		return Arrays.asList(getBasePath(),
+				String.valueOf(this.getPg_obbligazione())
+		).stream().collect(
+				Collectors.joining(StorageDriver.SUFFIX)
+		);
+	}
+
+
+	public String getCMISFolderName(){
+		return String.valueOf(this.getPg_obbligazione());
+	}
+
+	@Override
+	public String getBasePath() {
+		return Arrays.asList(
+				SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+				Optional.ofNullable(this.getUnita_organizzativa())
+						.map(Unita_organizzativaBulk::getCd_unita_organizzativa)
+						.orElse(""),
+				"Obbligazioni",
+				Optional.ofNullable(this.getEsercizio())
+						.map(esercizio -> String.valueOf(esercizio))
+						.orElse("0")
+		).stream().collect(
+				Collectors.joining(StorageDriver.SUFFIX)
+		);
 	}
 }

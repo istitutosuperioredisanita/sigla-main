@@ -963,4 +963,24 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 			}
 		}
 	}
+
+	@Override
+	public void aggiornaObbligazioniTemporanee(UserContext uc, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException ,RemoteException, PersistencyException{
+		try {
+			invoke("aggiornaObbligazioniTemporanee",new Object[] {
+					uc,
+					obbligazioneTemporanea
+			});
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
 }

@@ -23,31 +23,10 @@
  */
 package it.cnr.contab.doccont00.bp;
 
-import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoResiduoBulk;
-import it.cnr.contab.doccont00.core.bulk.AllegatoObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
-import it.cnr.contab.doccont00.core.bulk.ObbligazioneResBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_modificaBulk;
-import it.cnr.contab.doccont00.core.bulk.Obbligazione_scadenzarioBulk;
+import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneResComponentSession;
-import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.spring.service.StorePath;
-import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
@@ -62,6 +41,13 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TreeMap;
 
 /**
  * @author rpagano
@@ -341,19 +327,7 @@ public class CRUDObbligazioneResBP extends CRUDObbligazioneBP{
 
 	@Override
 	protected String getStorePath(ObbligazioneBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
-		return Arrays.asList(
-				SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
-				Optional.ofNullable(allegatoParentBulk.getUnita_organizzativa())
-						.map(Unita_organizzativaBulk::getCd_unita_organizzativa)
-						.orElse(""),
-				"Riaccertamento dei residui passivi",
-				Optional.ofNullable(allegatoParentBulk.getEsercizio())
-						.map(esercizio -> String.valueOf(esercizio))
-						.orElse("0"),
-				allegatoParentBulk.getCd_uo_origine() + "-" + allegatoParentBulk.getEsercizio_originale() + allegatoParentBulk.getPg_obbligazione()
-		).stream().collect(
-				Collectors.joining(StorageDriver.SUFFIX)
-		);
+		return allegatoParentBulk.getStorePath();
 	}
 
 	public String [][] getTabs() {

@@ -128,7 +128,7 @@
 
 
     <businessProcess
-            name="CRUDObbligazioneBP" className="it.cnr.contab.doccont00.bp.CRUDObbligazioneBP">
+            name="CRUDObbligazioneBP" className="it.cnr.contab.doccont00.bp.CRUDObbligazioneCompBP">
         <forward name="default" path="/doccont00/main_obbligazione.jsp"/>
         <init-param name="bulkClassName" value="it.cnr.contab.doccont00.core.bulk.ObbligazioneOrdBulk"/>
         <init-param name="componentSessionName" value="CNRDOCCONT00_EJB_ObbligazioneComponentSession"/>

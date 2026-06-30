@@ -24,11 +24,14 @@ import it.cnr.contab.doccont00.comp.DocumentoContabileComponentSession;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
+import it.cnr.contab.doccont00.service.ObbligazioneService;
+import it.cnr.contab.ordmag.ordini.service.OrdineAcqCMISService;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.BusinessProcessException;
@@ -38,6 +41,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.si.spring.storage.StorageDriver;
+import it.cnr.si.spring.storage.StoreService;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -520,23 +524,12 @@ public static ObbligazioneAbstractComponentSession setSafePoint (
 	}
 
 	protected String getStorePath(ObbligazioneBulk allegatoParentBulk, boolean create) throws BusinessProcessException {
-		return Arrays.asList(
-				SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
-				Optional.ofNullable(allegatoParentBulk.getUnita_organizzativa())
-						.map(Unita_organizzativaBulk::getCd_unita_organizzativa)
-						.orElse(""),
-				"Obbligazioni",
-				Optional.ofNullable(allegatoParentBulk.getEsercizio())
-						.map(esercizio -> String.valueOf(esercizio))
-						.orElse("0"),
-				String.valueOf(allegatoParentBulk.getPg_obbligazione())
-		).stream().collect(
-				Collectors.joining(StorageDriver.SUFFIX)
-		);
+		return allegatoParentBulk.getStorePath();
 	}
 
 	@Override
 	protected Class<AllegatoObbligazioneBulk> getAllegatoClass() {
 		return AllegatoObbligazioneBulk.class;
 	}
+
 }
