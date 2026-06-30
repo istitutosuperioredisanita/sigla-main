@@ -33,6 +33,7 @@ import java.util.Optional;
 import it.cnr.contab.config00.pdcep.bulk.*;
 import it.cnr.contab.config00.pdcep.cla.bulk.V_classificazione_voci_epBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util.enumeration.TipoIVA;
 import it.cnr.jada.UserContext;
@@ -422,8 +423,8 @@ public OggettoBulk inizializzaBulkPerModifica(UserContext userContext,OggettoBul
 
 		Voce_analiticaHome voceAnaliticaHome = (Voce_analiticaHome) getHome(userContext, Voce_analiticaBulk.class);
 		((ContoBulk)bulk).setVoceAnaliticaColl(new BulkList(voceAnaliticaHome.findVoceAnaliticaList((ContoBulk)bulk)));
-
-		if (isEsercizioChiuso(userContext))
+		UtenteBulk utente = (UtenteBulk) (getHome(userContext, UtenteBulk.class).findByPrimaryKey(new UtenteBulk(CNRUserContext.getUser(userContext))));
+		if (!utente.isSupervisore() && isEsercizioChiuso(userContext))
 			bulk = asRO(bulk,"Non è possibile modificare voci ad esercizio chiuso.");
 		return bulk;
 	}
