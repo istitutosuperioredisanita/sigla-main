@@ -6364,6 +6364,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/rename_id_flusso_fea_doc_trasporto_rientro.xml"/>
     <!-- Autore : Valentina Tomada -LETTERA PAGAMENTO ESTERO - inserite nuove colonne per il nuovo documento di pagamento-->
     <include file="bootstrap/add_column_lettera_pagam_estero.xml"/>
+    <!-- Autore : Davide Mirra - Aggiunta colonna dell'email del richiedente nei documenti Trasporto/Rientro -->
+    <include file="/bootstrap/add_column_utente_remoto_request.xml"/>
 
 
 </databaseChangeLog>

@@ -27,6 +27,7 @@
 		<columnMapping columnName="NOTE_RIFIUTO" propertyName="noteRifiuto" sqlTypeName="VARCHAR" columnSize="4000" nullable="true" />
 		<columnMapping columnName="CD_TERZO_RESPONSABILE" propertyName="cdTerzoResponsabile" sqlTypeName="DECIMAL" columnSize="38" nullable="true" />
 
+		<columnMapping columnName="UTENTE_REMOTO_REQUEST" propertyName="utenteRemotoRequest" sqlTypeName="VARCHAR" columnSize="100" nullable="true" />
 		<!-- Campi Audit -->
 		<columnMapping columnName="DACR" propertyName="dacr" sqlTypeName="TIMESTAMP" columnSize="7" nullable="false" />
 		<columnMapping columnName="UTCR" propertyName="utcr" sqlTypeName="VARCHAR" columnSize="20" nullable="false" />
@@ -47,6 +48,7 @@
 	<persistentProperty name="nominativoVettore" />
 	<persistentProperty name="noteRitiro" />
 	<persistentProperty name="note" />
+	<persistentProperty name="utenteRemotoRequest" />
 
 	<persistentProperty name="uuidFlussoAutorizzativo" />
 	<persistentProperty name="statoFlusso" />

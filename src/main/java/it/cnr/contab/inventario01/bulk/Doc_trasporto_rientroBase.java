@@ -59,6 +59,11 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 	private Integer cdTerzoResponsabile;
 
 	/**
+	 * Email del richiedente remoto.
+	 */
+	private String utenteRemotoRequest;
+
+	/**
 	 * Tipo documento di riferimento (per collegamento tra trasporti e rientri)
 	 */
 	private String tiDocumentoRif;
@@ -183,6 +188,14 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 
 	public void setNominativoVettore(String nominativoVettore) {
 		this.nominativoVettore = nominativoVettore;
+	}
+
+	public String getUtenteRemotoRequest() {
+		return utenteRemotoRequest;
+	}
+
+	public void setUtenteRemotoRequest(String utenteRemotoRequest) {
+		this.utenteRemotoRequest = utenteRemotoRequest;
 	}
 
 	// ========================================

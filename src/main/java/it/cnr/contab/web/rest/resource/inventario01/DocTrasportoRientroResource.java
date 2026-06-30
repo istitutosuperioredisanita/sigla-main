@@ -7,12 +7,10 @@ import it.cnr.contab.inventario00.tabrif.bulk.Id_inventarioBulk;
 import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.inventario01.DocTrasportoRientroLocal;
 import it.cnr.contab.web.rest.model.AttachmentDocTrasportoRientro;
 import it.cnr.contab.web.rest.model.DocTRWSResponse;
-import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.SimpleBulkList;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
@@ -26,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.*;
 
 import static it.cnr.jada.bulk.OggettoBulk.isNullOrEmpty;
@@ -79,27 +76,34 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
      * @throws Exception errore durante il processo di salvataggio
      */
     @Override
-    public Response saveDocTR(@Context HttpServletRequest request, Map<String, Object> body) throws Exception {
+    public Response saveDocTR(@Context HttpServletRequest request,
+                              Map<String, Object> body) throws Exception {
 
         CNRUserContext ctx = (CNRUserContext) securityContext.getUserPrincipal();
         Doc_trasporto_rientroBulk bulk = deserializzaBulk(body);
         validaRichiestaHttp(bulk, ctx);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> rawDettagli = (List<Map<String, Object>>) body.get("dettagli");
-        List<Doc_trasporto_rientro_dettBulk> dettagli = deserializzaDettagli(bulk, rawDettagli);
+        List<Map<String, Object>> rawDettagli =
+                (List<Map<String, Object>>) body.get("dettagli");
+
+        List<Doc_trasporto_rientro_dettBulk> dettagli =
+                deserializzaDettagli(bulk, rawDettagli);
 
         validaDettagliHttp(bulk, dettagli);
         validaAssenzeAllegatiHttp(body);
 
-        bulk.setDoc_trasporto_rientro_dettColl(new SimpleBulkList<>(dettagli));
+        bulk.setDoc_trasporto_rientro_dettColl(
+                new SimpleBulkList<>(dettagli));
 
         try {
-            Doc_trasporto_rientroBulk docSalvato = componenteDocTR.saveDocFromWS(ctx, bulk);
+            Doc_trasporto_rientroBulk docSalvato =
+                    componenteDocTR.saveDocFromWS(ctx, bulk);
 
-            String message = Doc_trasporto_rientroBulk.TRASPORTO.equals(docSalvato.getTiDocumento())
-                    ? "Documento di Trasporto salvato con successo"
-                    : "Documento di Rientro salvato con successo";
+            String message =
+                    Doc_trasporto_rientroBulk.TRASPORTO.equals(docSalvato.getTiDocumento())
+                            ? "Documento di Trasporto salvato con successo"
+                            : "Documento di Rientro salvato con successo";
 
             return Response.status(Response.Status.CREATED)
                     .entity(DocTRWSResponse.of(true, message, docSalvato))
@@ -107,7 +111,11 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
 
         } catch (Exception e) {
             log.error("Errore durante saveDocTR", e);
-            return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, e, "Documento non salvato");
+            return buildErrorResponse(
+                    Response.Status.INTERNAL_SERVER_ERROR,
+                    e,
+                    "Documento non salvato"
+            );
         }
     }
 
@@ -118,10 +126,10 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
     /**
      * Ricerca documento di Trasporto o Rientro associato ad un bene inventariale.
      *
-     * @param request     richiesta HTTP
-     * @param tiDocumento tipo documento (T/R)
-     * @param stato       stato documento
-     * @param esercizio   esercizio contabile
+     * @param request      richiesta HTTP
+     * @param tiDocumento  tipo documento (T/R)
+     * @param stato        stato documento
+     * @param esercizio    esercizio contabile
      * @param nrInventario numero inventario del bene
      * @return documento trovato
      * @throws Exception errore durante la ricerca
@@ -205,10 +213,10 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
 
         for (Map<String, Object> map : rawDettagli) {
 
-            Long pgInventario  = toLong(map.get("pgInventario"));
-            Long nrInventario  = toLong(map.get("nrInventario"));
+            Long pgInventario = toLong(map.get("pgInventario"));
+            Long nrInventario = toLong(map.get("nrInventario"));
             Integer progressivo = toInt(map.get("progressivo"));
-            int progSafe        = progressivo != null ? progressivo : 0;
+            int progSafe = progressivo != null ? progressivo : 0;
 
             Doc_trasporto_rientro_dettBulk dett;
 
@@ -300,6 +308,14 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
      * Ammesso solo lo stato INSERITO.
      */
     private void validaRichiestaHttp(Doc_trasporto_rientroBulk bulk, CNRUserContext ctx) {
+
+
+        if (isNullOrEmpty(bulk.getUtenteRemotoRequest())) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "Email obbligatoria dell'utente remoto che effettua la richiesta (utenteRemotoRequest)"
+            );
+        }
 
         if (isNullOrEmpty(bulk.getTiDocumento())) {
             throw new RestException(
