@@ -53,7 +53,6 @@ public interface DocTrasportoRientroLocal {
     ) throws Exception;
 
     @GET
-    @Path("/cerca")
     @RolesAllowed(SIGLARoles.DOC_T_R)
     @Operation(
             summary = "Cerca un documento di Trasporto o Rientro",
