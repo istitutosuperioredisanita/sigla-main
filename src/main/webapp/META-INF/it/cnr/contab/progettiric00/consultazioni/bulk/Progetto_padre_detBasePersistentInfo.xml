@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SQLPersistentInfo
+	persistentClassName="it.cnr.contab.progettiric00.consultazioni.bulk.Progetto_padre_detBase"
+	keyClassName="it.cnr.contab.progettiric00.consultazioni.bulk.Progetto_padre_detKey"
+	homeClassName="it.cnr.contab.progettiric00.consultazioni.bulk.Progetto_padre_detHome">
+	<defaultColumnMap
+		tableName="V_PROGETTO_PADRE_DET">
+		<columnMapping
+			columnName="CD_PROGETTO"
+			propertyName="cdProgetto"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_PROGETTO_PADRE"
+			propertyName="cdProgettoPadre"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="CD_UNITA_ORGANIZZATIVA"
+			propertyName="cdUnitaOrganizzativa"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="DS_PROGETTO"
+			propertyName="dsProgetto"
+			sqlTypeName="VARCHAR"
+			columnSize="400"
+			nullable="true" />
+		<columnMapping
+			columnName="IM_FINANZIATO"
+			propertyName="imFinanziato"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="true" />
+		<columnMapping
+			columnName="IM_COFINANZIATO"
+			propertyName="imCofinanziato"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="true" />
+		<columnMapping
+			columnName="DT_INIZIO"
+			propertyName="dtInizio"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="true" />
+		<columnMapping
+			columnName="DT_FINE"
+			propertyName="dtFine"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="true" />
+		<columnMapping
+			columnName="DT_PROROGA"
+			propertyName="dtProroga"
+			sqlTypeName="TIMESTAMP"
+			columnSize="7"
+			nullable="true" />
+		<columnMapping
+			columnName="STATO"
+			propertyName="stato"
+			sqlTypeName="CHAR"
+			columnSize="3"
+			nullable="true" />
+		<columnMapping
+			columnName="TIPO_PROGETTO"
+			propertyName="tipoProgetto"
+			sqlTypeName="VARCHAR"
+			columnSize="10"
+			nullable="false" />
+		<columnMapping
+			columnName="DS_TIPO_PROGETTO"
+			propertyName="dsTipoProgetto"
+			sqlTypeName="VARCHAR"
+			columnSize="100"
+			nullable="false" />
+		<columnMapping
+			columnName="FINANZIATORE_TERZO"
+			propertyName="finanziatoreTerzo"
+			sqlTypeName="DECIMAL"
+			columnSize="38"
+			nullable="true" />
+		<columnMapping
+			columnName="DENOMINAZIONE_SEDE"
+			propertyName="denominazioneSede"
+			sqlTypeName="VARCHAR"
+			columnSize="200"
+			nullable="true" />
+		<columnMapping
+			columnName="IM_FINANZIATO_FINANZIATORE"
+			propertyName="imFinanziatoFinanziatore"
+			sqlTypeName="DECIMAL"
+			columnSize="15"
+			columnScale="2"
+			nullable="true" />
+	</defaultColumnMap>
+	<persistentProperty
+		name="cdProgetto" />
+	<persistentProperty
+		name="cdProgettoPadre" />
+	<persistentProperty
+		name="cdUnitaOrganizzativa" />
+	<persistentProperty
+		name="dsProgetto" />
+	<persistentProperty
+		name="imFinanziato" />
+	<persistentProperty
+		name="imCofinanziato" />
+	<persistentProperty
+		name="dtInizio" />
+	<persistentProperty
+		name="dtFine" />
+	<persistentProperty
+		name="dtProroga" />
+	<persistentProperty
+		name="stato" />
+	<persistentProperty
+		name="tipoProgetto" />
+	<persistentProperty
+		name="dsTipoProgetto" />
+	<persistentProperty
+		name="finanziatoreTerzo" />
+	<persistentProperty
+		name="denominazioneSede" />
+	<persistentProperty
+		name="imFinanziatoFinanziatore" />
+</SQLPersistentInfo>

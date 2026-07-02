@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulkInfo>
+	<fieldProperty
+		name="cdProgetto"
+		property="cdProgetto"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		label="cdProgetto" />
+	<fieldProperty
+		name="cdProgettoPadre"
+		property="cdProgettoPadre"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		label="cdProgettoPadre" />
+	<fieldProperty
+		name="cdUnitaOrganizzativa"
+		property="cdUnitaOrganizzativa"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		enabledOnEdit="false"
+		label="cdUnitaOrganizzativa" />
+	<fieldProperty
+		name="dsProgetto"
+		property="dsProgetto"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="400"
+		enabledOnEdit="false"
+		label="dsProgetto" />
+	<fieldProperty
+		name="imFinanziato"
+		property="imFinanziato"
+		inputType="TEXT"
+		formatName="it.cnr.contab.util.EuroFormat"
+		enabledOnEdit="false"
+		label="imFinanziato" />
+	<fieldProperty
+		name="imCofinanziato"
+		property="imCofinanziato"
+		inputType="TEXT"
+		formatName="it.cnr.contab.util.EuroFormat"
+		enabledOnEdit="false"
+		label="imCofinanziato" />
+	<fieldProperty
+		name="dtInizio"
+		property="dtInizio"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="false"
+		label="dtInizio" />
+	<fieldProperty
+		name="dtFine"
+		property="dtFine"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="false"
+		label="dtFine" />
+	<fieldProperty
+		name="dtProroga"
+		property="dtProroga"
+		inputType="TEXT"
+		formatName="date_short"
+		enabledOnEdit="false"
+		label="dtProroga" />
+	<fieldProperty
+		name="stato"
+		property="stato"
+		inputType="TEXT"
+		inputSize="3"
+		maxLength="3"
+		enabledOnEdit="false"
+		label="stato" />
+	<fieldProperty
+		name="tipoProgetto"
+		property="tipoProgetto"
+		inputType="TEXT"
+		inputSize="10"
+		maxLength="10"
+		enabledOnEdit="false"
+		nullable="false"
+		label="tipoProgetto" />
+	<fieldProperty
+		name="dsTipoProgetto"
+		property="dsTipoProgetto"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="100"
+		enabledOnEdit="false"
+		nullable="false"
+		label="dsTipoProgetto" />
+	<fieldProperty
+		name="finanziatoreTerzo"
+		property="finanziatoreTerzo"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="38"
+		enabledOnEdit="false"
+		label="finanziatoreTerzo" />
+	<fieldProperty
+		name="denominazioneSede"
+		property="denominazioneSede"
+		inputType="TEXTAREA"
+		cols="60"
+		rows="5"
+		maxLength="200"
+		enabledOnEdit="false"
+		label="denominazioneSede" />
+	<fieldProperty
+		name="imFinanziatoFinanziatore"
+		property="imFinanziatoFinanziatore"
+		inputType="TEXT"
+		formatName="it.cnr.contab.util.EuroFormat"
+		enabledOnEdit="false"
+		label="imFinanziatoFinanziatore" />
+	<form
+		name="searchtool">
+	</form>
+	<formFieldProperty
+		name="cdProgetto" />
+	<formFieldProperty
+		name="cdProgettoPadre" />
+	<formFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<formFieldProperty
+		name="dsProgetto" />
+	<formFieldProperty
+		name="imFinanziato" />
+	<formFieldProperty
+		name="imCofinanziato" />
+	<formFieldProperty
+		name="dtInizio" />
+	<formFieldProperty
+		name="dtFine" />
+	<formFieldProperty
+		name="dtProroga" />
+	<formFieldProperty
+		name="stato" />
+	<formFieldProperty
+		name="tipoProgetto" />
+	<formFieldProperty
+		name="dsTipoProgetto" />
+	<formFieldProperty
+		name="finanziatoreTerzo" />
+	<formFieldProperty
+		name="denominazioneSede" />
+	<formFieldProperty
+		name="imFinanziatoFinanziatore" />
+	<findFieldProperty
+		name="cdProgetto" />
+	<findFieldProperty
+		name="cdProgettoPadre" />
+	<findFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<findFieldProperty
+		name="dsProgetto" />
+	<findFieldProperty
+		name="imFinanziato" />
+	<findFieldProperty
+		name="imCofinanziato" />
+	<findFieldProperty
+		name="dtInizio" />
+	<findFieldProperty
+		name="dtFine" />
+	<findFieldProperty
+		name="dtProroga" />
+	<findFieldProperty
+		name="stato" />
+	<findFieldProperty
+		name="tipoProgetto" />
+	<findFieldProperty
+		name="dsTipoProgetto" />
+	<findFieldProperty
+		name="finanziatoreTerzo" />
+	<findFieldProperty
+		name="denominazioneSede" />
+	<findFieldProperty
+		name="imFinanziatoFinanziatore" />
+	<columnFieldProperty
+		name="cdProgetto" />
+	<columnFieldProperty
+		name="cdProgettoPadre" />
+	<columnFieldProperty
+		name="cdUnitaOrganizzativa" />
+	<columnFieldProperty
+		name="dsProgetto" />
+	<columnFieldProperty
+		name="imFinanziato" />
+	<columnFieldProperty
+		name="imCofinanziato" />
+	<columnFieldProperty
+		name="dtInizio" />
+	<columnFieldProperty
+		name="dtFine" />
+	<columnFieldProperty
+		name="dtProroga" />
+	<columnFieldProperty
+		name="stato" />
+	<columnFieldProperty
+		name="tipoProgetto" />
+	<columnFieldProperty
+		name="dsTipoProgetto" />
+	<columnFieldProperty
+		name="finanziatoreTerzo" />
+	<columnFieldProperty
+		name="denominazioneSede" />
+	<columnFieldProperty
+		name="imFinanziatoFinanziatore" />
+</bulkInfo>
