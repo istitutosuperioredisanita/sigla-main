@@ -111,6 +111,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	private boolean attivaEconomica = false;
 	private boolean attivaFinanziaria = false;
 	private boolean attivaAnalitica = false;
+	private boolean attivaFirmaOrdine=Boolean.FALSE;
 
 	public void setDettaglioContrattoCollapse(boolean dettaglioContrattoCollapse) {
 		this.dettaglioContrattoCollapse = dettaglioContrattoCollapse;
@@ -982,6 +983,8 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 			attivaAnalitica = Utility.createConfigurazioneCnrComponentSession().isAttivaAnalitica(context.getUserContext(), esercizioScrivania);
 			resultRigheEcoTestata.setCollapsed(Boolean.FALSE);
 
+			attivaFirmaOrdine= Utility.createConfigurazioneCnrComponentSession().isAttivaFirmaOrdine(context.getUserContext(), esercizioScrivania);
+
 			setRibaltato(initRibaltato(context));
 			if (!isAnnoSolareInScrivania()) {
 				String cds = it.cnr.contab.utenze00.bp.CNRUserContext.getCd_cds(context.getUserContext());
@@ -1135,10 +1138,15 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 		return attivaAnalitica;
 	}
 
+	public boolean isAttivaFirmaOrdine() {
+		return attivaFirmaOrdine;
+	}
+
 	@Override
 	public OggettoBulk initializeModelForInsert(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
 		oggettobulk = super.initializeModelForInsert(actioncontext, oggettobulk);
 		((OrdineAcqBulk)oggettobulk).setAttivaFinanziaria(isAttivaFinanziaria());
+		((OrdineAcqBulk)oggettobulk).setAttivaFirmaOrdine(isAttivaFirmaOrdine());
 		return oggettobulk;
 	}
 
@@ -1146,6 +1154,7 @@ public class CRUDOrdineAcqBP extends AllegatiCRUDBP<AllegatoOrdineBulk, OrdineAc
 	public OggettoBulk initializeModelForEdit(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
 		oggettobulk = super.initializeModelForEdit(actioncontext, oggettobulk);
 		((OrdineAcqBulk)oggettobulk).setAttivaFinanziaria(isAttivaFinanziaria());
+		((OrdineAcqBulk)oggettobulk).setAttivaFirmaOrdine(isAttivaFirmaOrdine());
 		return oggettobulk;
 	}
 
