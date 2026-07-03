@@ -694,4 +694,14 @@ public class Configurazione_cnrHome extends BulkHome {
         }
         throw new ComponentException("Esercizio di partenza non specificato in configurazione CNR.");
     }
+    public boolean isAttivaFirmaOrdine(int esercizio) throws PersistencyException {
+        return Optional.ofNullable(
+                        this.getConfigurazione(esercizio, null,
+                                Configurazione_cnrBulk.PK_ORDINI,
+                                Configurazione_cnrBulk.SK_GESTIONE_ORDINI)
+                )
+                .map(Configurazione_cnrBulk::getVal04)
+                .map(s -> !s.equalsIgnoreCase("N"))
+                .orElse(Boolean.FALSE);
+    }
 }

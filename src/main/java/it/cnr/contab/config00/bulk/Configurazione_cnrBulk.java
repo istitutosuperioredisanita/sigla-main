@@ -241,6 +241,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
 	public final static String PK_ACCERTAMENTI = "ACCERTAMENTI";
 	public final static String SK_ACCERTAMENTI_PLURIENNALI = "ACCERTAMENTI_PLURIENNALI";
+    public final static String SK_IMPEGNI_ENABLED_ALLEGATI = "IMPEGNI_ENABLED_ALLEGATI";
+
 
     public final static String PK_INVENTARIO = "INVENTARIO";
     public final static String SK_GESTIONE_ETICHETTA_BENE = "GESTIONE_ETICHETTA_BENE";
@@ -280,6 +282,9 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_LIQ_IVA_ANTICIPATA = "LIQ_IVA_ANTICIPATA";
     public final static String PK_BILANCIO_ACCRUAL = "BILANCIO_ACCRUAL";
     public final static String SK_CODICE_BDAP_ENTE = "CODICE_BDAP_ENTE";
+
+    public final static String PK_LINEA_ATTIVITA = "LINEA_ATTIVITA";
+    public final static String SK_NO_STATO_PROGETTO_INI = "NO_STATO_PROGETTO_INI";
 
     public final static Map<String,String> TI_STEP_FINE_ANNO = new HashMap<String, String>() {{
         put("N", "No");
