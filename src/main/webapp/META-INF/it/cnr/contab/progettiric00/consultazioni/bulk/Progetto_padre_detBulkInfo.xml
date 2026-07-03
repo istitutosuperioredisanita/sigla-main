@@ -213,4 +213,16 @@
 		name="denominazioneSede" />
 	<columnFieldProperty
 		name="imFinanziatoFinanziatore" />
+
+
+	<freeSearchSet name="CERCA_IMP_PLUR">
+		<findFieldProperty
+				name="cdProgetto" />
+	</freeSearchSet>
+
+	<columnSet name="RIS_IMP_PLUR">
+		<columnFieldProperty
+				name="cdProgetto" />
+	</columnSet>
+
 </bulkInfo>
