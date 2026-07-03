@@ -166,7 +166,7 @@
     <init-param name="multiSelezione" value="Y" />
   </businessProcess>
 
-  <businessProcess name="ProgPadreDetBP" className="t.cnr.contab.progettiric00.consultazioni.bp.ProgPadreDetBP">
+  <businessProcess name="ProgPadreDetBP" className="it.cnr.contab.progettiric00.consultazioni.bp.ProgPadreDetBP">
     <forward name="default" path="/consultazioni/form_lista.jsp" />
     <init-param name="bulkClassName" value="it.cnr.contab.progettiric00.consultazioni.bulk.Progetto_padre_detBulk" />
     <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
