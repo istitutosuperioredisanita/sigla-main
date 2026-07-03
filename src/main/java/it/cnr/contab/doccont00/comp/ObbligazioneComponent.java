@@ -6920,20 +6920,29 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 
 	private  void changeProgressivoNodeRef(StorageObject oldStorageObject, ObbligazioneBulk obbligazione) throws ApplicationException {
 		ObbligazioneService obbligazioneService = SpringUtil.getBean("obbligazioneService", ObbligazioneService.class);
-		List<StorageObject> children = obbligazioneService.getChildren(oldStorageObject.getKey());
-		for (StorageObject child : children) {
-			AllegatoObbligazioneBulk allegato = new AllegatoObbligazioneBulk(child.getKey());
-			//allegato.setNome(child.<String>getPropertyValue("sigla_contratti_attachment:original_name"));
-			//allegato.setType(child.<String>getPropertyValue(StoragePropertyNames.OBJECT_TYPE_ID.value()));
-			allegato.setTitolo(child.<String>getPropertyValue(StoragePropertyNames.TITLE.value()));
-			allegato.setDescrizione(child.<String>getPropertyValue(StoragePropertyNames.DESCRIPTION.value()));
+		if ( Optional.ofNullable(oldStorageObject).isPresent()) {
+			List<StorageObject> children = obbligazioneService.getChildren(oldStorageObject.getKey());
+			for (StorageObject child : children) {
+				AllegatoObbligazioneBulk allegato = new AllegatoObbligazioneBulk(child.getKey());
+				Optional.ofNullable(child.<List<String>>getPropertyValue(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value()))
+						.map(strings -> strings.stream())
+						.ifPresent(stringStream -> {
+							stringStream
+									.filter(s -> AllegatoObbligazioneBulk.aspectNamesKeys.get(s) != null)
+									.findFirst()
+									.ifPresent(s -> (( AllegatoObbligazioneBulk) allegato).setAspectName(s));
+						});
+				allegato.setTitolo(child.<String>getPropertyValue(StoragePropertyNames.TITLE.value()));
+				allegato.setDescrizione(child.<String>getPropertyValue(StoragePropertyNames.DESCRIPTION.value()));
 
-			obbligazioneService.updateProperties(allegato, child);
+				obbligazioneService.updateProperties(allegato, child);
 
+			}
+			obbligazioneService.updateProperties(obbligazione, oldStorageObject);
 		}
-		obbligazioneService.updateProperties(obbligazione, oldStorageObject);
 	}
-	public void aggiornaObbligazioniTemporanee(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
+
+	public ObbligazioneBulk aggiornaObbligazioniTemporanee(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
 
 		try {
 			ObbligazioneService obbligazioneService = SpringUtil.getBean("obbligazioneService", ObbligazioneService.class);
@@ -6948,6 +6957,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			ObbligazioneHome home = (ObbligazioneHome) getHome(userContext, obbligazioneTemporanea);
 			home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);
 			changeProgressivoNodeRef( oldStorageObject, obbligazioneTemporanea);
+			return obbligazioneTemporanea;
 		} catch (it.cnr.jada.persistency.PersistencyException e) {
 			throw handleException(obbligazioneTemporanea, e);
 		} catch (it.cnr.jada.persistency.IntrospectionException e) {

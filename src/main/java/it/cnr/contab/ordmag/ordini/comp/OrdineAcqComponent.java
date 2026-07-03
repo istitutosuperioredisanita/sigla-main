@@ -1811,7 +1811,15 @@ public class OrdineAcqComponent
     }
 
     private void aggiornaObbligazioniTemporanee(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
-
+        try {
+            obbligazioneTemporanea.setPg_obbligazione(Utility.createObbligazioneComponentSession().aggiornaObbligazioniTemporanee( userContext, obbligazioneTemporanea).getPg_obbligazione());
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw handleException(obbligazioneTemporanea, e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /*
         try {
             Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
             Long pg = numHome.getNextPg(userContext,
@@ -1824,7 +1832,7 @@ public class OrdineAcqComponent
         } catch (PersistencyException | IntrospectionException e) {
             throw handleException(obbligazioneTemporanea, e);
         }
-    }
+    }*/
 
     private java.math.BigDecimal calcolaTotaleObbligazione(
             it.cnr.jada.UserContext userContext,

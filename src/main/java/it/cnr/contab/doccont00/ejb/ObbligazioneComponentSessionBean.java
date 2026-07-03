@@ -759,11 +759,12 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 	}
 
 	@Override
-	public void aggiornaObbligazioniTemporanee(UserContext uc, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
+	public ObbligazioneBulk aggiornaObbligazioniTemporanee(UserContext uc, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
 		pre_component_invocation(uc,componentObj);
 		try {
-			((ObbligazioneComponent)componentObj).aggiornaObbligazioniTemporanee(uc,obbligazioneTemporanea);
+			ObbligazioneBulk result =  ((ObbligazioneComponent)componentObj).aggiornaObbligazioniTemporanee(uc,obbligazioneTemporanea);
 			component_invocation_succes(uc,componentObj);
+			return result;
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
 			component_invocation_succes(uc,componentObj);
 			throw e;

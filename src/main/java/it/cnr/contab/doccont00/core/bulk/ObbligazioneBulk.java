@@ -46,6 +46,7 @@ import it.cnr.jada.persistency.Persister;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.annotation.StorageProperty;
+import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -690,14 +691,14 @@ public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp,it.cnr.
 	unita_organizzativa = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
 	setCd_cds( unita_organizzativa.getCd_unita_padre());
 
-	setFl_calcolo_automatico( new Boolean(true) );
+	setFl_calcolo_automatico( Boolean.TRUE);
 	if (this instanceof ObbligazioneResBulk)  
 		setStato_obbligazione( STATO_OBB_DEFINITIVO );
 	else
 		setStato_obbligazione( STATO_OBB_PROVVISORIO );
 
-	setFl_spese_costi_altrui( new Boolean( false ));
-	setFl_gara_in_corso( new Boolean( false ));
+	setFl_spese_costi_altrui( Boolean.FALSE);
+	setFl_gara_in_corso( Boolean.FALSE);
 	setRiportato("N");
 
 	// I seguenti campi sono definiti temporaneamente, ma DA CANCELLARE
@@ -1834,7 +1835,7 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 				for ( Iterator osvNewIterator = osNew.getObbligazione_scad_voceColl().iterator(); osvNewIterator.hasNext(); )
 				{
 					osvNew = (Obbligazione_scad_voceBulk) osvNewIterator.next();
-					Boolean trovato = new Boolean(Boolean.FALSE);
+					Boolean trovato =Boolean.FALSE;
 					for ( Iterator osvOldIterator = osOld.getObbligazione_scad_voceColl().iterator(); osvOldIterator.hasNext()&&!trovato; )
 					{
 						osvOld = (Obbligazione_scad_voceBulk) osvOldIterator.next();
@@ -2076,7 +2077,7 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 		);
 	}
 
-
+	@StorageProperty(name="cmis:name")
 	public String getCMISFolderName(){
 		return String.valueOf(this.getPg_obbligazione());
 	}
@@ -2097,3 +2098,4 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 		);
 	}
 }
+

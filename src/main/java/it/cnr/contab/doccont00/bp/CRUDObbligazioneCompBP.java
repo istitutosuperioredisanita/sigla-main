@@ -62,7 +62,7 @@ public class CRUDObbligazioneCompBP extends CRUDObbligazioneBP {
         super.init(config, actioncontext);
     }
 
-
+    @Override
     public String getAllegatiFormName() {
         if (this.getCrudArchivioAllegati().getModel()!=null && !this.getCrudArchivioAllegati().getModel().isNew())
             if (!isPossibileModifica((AllegatoGenericoBulk)this.getCrudArchivioAllegati().getModel()))

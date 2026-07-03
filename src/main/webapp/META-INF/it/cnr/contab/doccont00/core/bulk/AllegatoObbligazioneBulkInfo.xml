@@ -41,6 +41,8 @@
 		inputSize="4" />
 
 	<form name="default">
+		<formFieldProperty name="aspectName"/>
+		<formFieldProperty name="titolo"/>
 		<formFieldProperty name="nome"/>
 		<formFieldProperty name="descrizione"/>
 		<formFieldProperty name="file"/>
@@ -52,6 +54,7 @@
 		
 	<columnSet
 		name="readonly" >
+
 		<columnFieldProperty
 			name="nome" />
 		<columnFieldProperty
@@ -88,31 +91,7 @@
 		<formFieldProperty
 			name="attivaFile" />	
 	</form>
-	<form name="archivioAllegati-comp">
-		<columnFieldProperty name="aspectName"/>
-		<formFieldProperty
-				name="nome" />
-		<formFieldProperty
-				name="descrizione" />
-		<formFieldProperty
-				name="titolo" />
-		<formFieldProperty
-				name="file" />
-		<formFieldProperty
-				name="attivaFile" />
-	</form>
-	<columnSet
-			name="archivioAllegati-comp" >
-		<columnFieldProperty name="aspectName"/>
-		<columnFieldProperty
-				name="nome" />
-		<columnFieldProperty
-				name="descrizione" />
-		<columnFieldProperty
-				name="titolo" />
-		<columnFieldProperty
-				name="esercizioDiAppartenenza" />
-	</columnSet>
+
 	<columnSet
 			name="readonly-comp" >
 		<columnFieldProperty name="aspectName"/>
@@ -126,16 +105,30 @@
 				name="esercizioDiAppartenenza" />
 	</columnSet>
 
-
 	<columnSet
-	name="default" >
-	<columnFieldProperty
-			name="nome" />
-	<columnFieldProperty
-			name="descrizione" />
-	<columnFieldProperty
-			name="titolo" />
-	<columnFieldProperty
-			name="esercizioDiAppartenenza" />
-</columnSet>
+			name="archivioAllegati-comp" >
+		<columnFieldProperty name="aspectName"/>
+		<columnFieldProperty
+				name="nome" />
+		<columnFieldProperty
+				name="descrizione" />
+		<columnFieldProperty
+				name="titolo" />
+		<columnFieldProperty
+				name="esercizioDiAppartenenza" />
+	</columnSet>
+
+	<form name="archivioAllegati-comp">
+		<formFieldProperty name="aspectName"/>
+		<formFieldProperty
+				name="nome" />
+		<formFieldProperty
+				name="descrizione" />
+		<formFieldProperty
+				name="titolo" />
+		<formFieldProperty
+				name="file" />
+		<formFieldProperty
+				name="attivaFile" />
+	</form>
 </bulkInfo>

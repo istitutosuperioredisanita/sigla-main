@@ -965,9 +965,9 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 	}
 
 	@Override
-	public void aggiornaObbligazioniTemporanee(UserContext uc, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException ,RemoteException, PersistencyException{
+	public ObbligazioneBulk aggiornaObbligazioniTemporanee(UserContext uc, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException ,RemoteException, PersistencyException{
 		try {
-			invoke("aggiornaObbligazioniTemporanee",new Object[] {
+			return ( ObbligazioneBulk) invoke("aggiornaObbligazioniTemporanee",new Object[] {
 					uc,
 					obbligazioneTemporanea
 			});

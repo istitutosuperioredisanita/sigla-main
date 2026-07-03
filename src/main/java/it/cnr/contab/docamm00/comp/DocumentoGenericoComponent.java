@@ -497,7 +497,7 @@ public class DocumentoGenericoComponent
                     //DEVE ESSERE FATTO PRIMA DELL'AGGIORNAMENTO A DEFINITIVA
                     aggiornaSaldi(userContext, documento, obblT, status);
 
-                    aggiornaObbligazioniTemporanee(userContext, obblT);
+                     aggiornaObbligazioniTemporanee(userContext, obblT);
                     obblTemporanee = new it.cnr.jada.bulk.PrimaryKeyHashtable(obblTemporanee);
                     for (Iterator i = ((Vector) obblTemporanee.get(obblT)).iterator(); i.hasNext(); )
                         ((ObbligazioneBulk) i.next()).setPg_obbligazione(obblT.getPg_obbligazione());
@@ -603,21 +603,11 @@ public class DocumentoGenericoComponent
     }
 
     private void aggiornaObbligazioniTemporanee(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
-
         try {
-        //   Utility.createObbligazioneComponentSession().aggiornaObbligazioniTemporanee( userContext, obbligazioneTemporanea);
-           Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
-            Long pg = null;
-            pg = numHome.getNextPg(userContext,
-                    obbligazioneTemporanea.getEsercizio(),
-                    obbligazioneTemporanea.getCd_cds(),
-                    obbligazioneTemporanea.getCd_tipo_documento_cont(),
-                    obbligazioneTemporanea.getUser());
-            ObbligazioneHome home = (ObbligazioneHome) getHome(userContext, obbligazioneTemporanea);
-            home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);
+            obbligazioneTemporanea.setPg_obbligazione(Utility.createObbligazioneComponentSession().aggiornaObbligazioniTemporanee( userContext, obbligazioneTemporanea).getPg_obbligazione());
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(obbligazioneTemporanea, e);
-        }  catch (IntrospectionException e) {
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
