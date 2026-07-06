@@ -17,7 +17,6 @@
 
 package it.cnr.contab.inventario01.ejb;
 
-import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.jada.UserContext;
@@ -227,13 +226,12 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
     /**
      * Cerca documenti (dettagli) associati a un bene.
      */
-    Doc_trasporto_rientroBulk cercaDocumentoPerBene(
+    List<Doc_trasporto_rientroBulk> cercaDocumentiPerBene(
             UserContext userContext,
             String tiDocumento,
             String stato,
-            Long nrInventario,
-            Integer esercizio)
-            throws ComponentException, RemoteException;
+            String nrInventario,
+            Integer esercizio) throws ComponentException, RemoteException;
 
     /**
      * Salvataggio completo documento Trasporto Rientro da Web Service.
@@ -276,4 +274,13 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             Doc_trasporto_rientroBulk doc,
             String motivoRifiuto)
             throws ComponentException, RemoteException;
+
+    Doc_trasporto_rientroBulk findDocTrasportoRientro(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk chiave)
+            throws ComponentException, RemoteException;
+
+    void caricaAllegatiDocumento(UserContext userContext,Doc_trasporto_rientroBulk doc) throws ComponentException, RemoteException;
+
+
 }

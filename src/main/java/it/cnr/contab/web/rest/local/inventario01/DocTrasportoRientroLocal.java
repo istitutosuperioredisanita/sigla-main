@@ -52,6 +52,7 @@ public interface DocTrasportoRientroLocal {
             @Valid Map<String, Object> body
     ) throws Exception;
 
+
     @GET
     @RolesAllowed(SIGLARoles.DOC_T_R)
     @Operation(
@@ -71,11 +72,37 @@ public interface DocTrasportoRientroLocal {
                     schema = @Schema(implementation = DocTRWSResponse.class)
             )
     )
-    Response cercaDocTrasportoRientro(
+    Response getBeneIntoDoc(
             @Context HttpServletRequest request,
+            @Context jakarta.ws.rs.core.Request jaxrsRequest,
+            @Context jakarta.ws.rs.core.UriInfo uriInfo,
             @QueryParam("tiDocumento") String tiDocumento,
             @QueryParam("stato") String stato,
             @QueryParam("esercizio") Integer esercizio,
-            @QueryParam("nrInventario") Long nrInventario
+            @QueryParam("nrInventario") String nrInventario
+    ) throws Exception;
+
+
+    @GET
+    @Path("/{pgInventario}/{tiDocumento}/{esercizio}/{pgDocTrasportoRientro}")
+    @RolesAllowed(SIGLARoles.DOC_T_R)
+    @Operation(
+            summary = "Ritorna un documento di Trasporto o Rientro",
+            description = "Restituisce il documento identificato dalla chiave primaria completa")
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(responseCode = "200", description = "Documento trovato",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DocTRWSResponse.class)))
+    Response get(
+            @Context HttpServletRequest request,
+            @Context jakarta.ws.rs.core.Request jaxrsRequest, // <-- AGGIUNTO PER L'ETAG
+            @Context jakarta.ws.rs.core.UriInfo uriInfo,
+            @PathParam("pgInventario") Long pgInventario,
+            @PathParam("tiDocumento") String tiDocumento,
+            @PathParam("esercizio") Integer esercizio,
+            @PathParam("pgDocTrasportoRientro") Long pgDocTrasportoRientro
     ) throws Exception;
 }

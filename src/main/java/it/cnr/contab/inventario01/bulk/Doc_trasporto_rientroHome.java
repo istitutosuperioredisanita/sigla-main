@@ -222,5 +222,13 @@ public class Doc_trasporto_rientroHome extends BulkHome {
         return columns.getBuffer();
     }
 
+    /**
+     * Trova il documento (Trasporto o Rientro) tramite chiave primaria.
+     */
+    public Doc_trasporto_rientroBulk findDocTrasportoRientro(Doc_trasporto_rientroBulk chiave)
+            throws PersistencyException {
+        return (Doc_trasporto_rientroBulk) findByPrimaryKey(chiave);
+    }
+
 
 }

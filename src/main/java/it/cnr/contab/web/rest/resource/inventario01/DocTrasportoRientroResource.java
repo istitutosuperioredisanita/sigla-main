@@ -9,22 +9,17 @@ import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.inventario01.DocTrasportoRientroLocal;
-import it.cnr.contab.web.rest.model.AttachmentDocTrasportoRientro;
 import it.cnr.contab.web.rest.model.DocTRWSResponse;
 import it.cnr.jada.bulk.SimpleBulkList;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static it.cnr.jada.bulk.OggettoBulk.isNullOrEmpty;
 
@@ -55,10 +50,6 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final int MIN_PDF_FILE_SIZE_BYTES = 512;
-
-    // =========================================================================
-    // SALVA DOCUMENTO (stato INS, senza allegati)
-    // =========================================================================
 
     /**
      * Salva un documento di Trasporto o Rientro in stato INSERITO.
@@ -119,68 +110,172 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
         }
     }
 
-    // =========================================================================
-    // RICERCA DOCUMENTO
-    // =========================================================================
-
     /**
-     * Ricerca documento di Trasporto o Rientro associato ad un bene inventariale.
+     * Ricerca di un bene inventariale all'interno di un Documento di Trasporto o Rientro*
      *
      * @param request      richiesta HTTP
-     * @param tiDocumento  tipo documento (T/R)
-     * @param stato        stato documento
+     * @param jaxrsRequest richiesta JAX-RS
+     * @param uriInfo      informazioni URI della richiesta
+     * @param tiDocumento  tipo documento (T=Trasporto, R=Rientro)
+     * @param stato        stato del documento
      * @param esercizio    esercizio contabile
      * @param nrInventario numero inventario del bene
-     * @return documento trovato
+     * @return documento trovato con dettagli e allegati
      * @throws Exception errore durante la ricerca
      */
     @Override
-    public Response cercaDocTrasportoRientro(@Context HttpServletRequest request,
-                                             String tiDocumento,
-                                             String stato,
-                                             Integer esercizio,
-                                             Long nrInventario) throws Exception {
+    public Response getBeneIntoDoc(
+            @Context HttpServletRequest request,
+            @Context Request jaxrsRequest,
+            @Context UriInfo uriInfo,
+            String tiDocumento,
+            String stato,
+            Integer esercizio,
+            String nrInventario)
+            throws Exception {
 
         CNRUserContext ctx = (CNRUserContext) securityContext.getUserPrincipal();
-
-        if (nrInventario == null) {
-            throw new RestException(Response.Status.BAD_REQUEST, "nrInventario obbligatorio");
-        }
+        validaParametriRicercaDocumento(tiDocumento, nrInventario);
 
         Integer esercizioEffettivo = esercizio != null ? esercizio : ctx.getEsercizio();
 
         try {
-            Doc_trasporto_rientroBulk trovato = componenteDocTR.cercaDocumentoPerBene(
-                    ctx,
-                    tiDocumento,
-                    stato,
-                    nrInventario,
-                    esercizioEffettivo
-            );
+            List<Doc_trasporto_rientroBulk> documenti = componenteDocTR.cercaDocumentiPerBene(
+                    ctx, tiDocumento, stato, nrInventario, esercizioEffettivo);
 
-            if (trovato == null) {
-                return Response.ok(
-                        DocTRWSResponse.messageOnly(false, "Documento non trovato")
-                ).build();
+            if (documenti == null || documenti.isEmpty()) {
+                return Response.ok(DocTRWSResponse.messageOnly(false, "Nessun documento trovato")).build();
             }
 
-            String message = Doc_trasporto_rientroBulk.TRASPORTO.equals(trovato.getTiDocumento())
-                    ? "Documento di Trasporto trovato"
-                    : "Documento di Rientro trovato";
+            EntityTag eTag = DocTrasportoRientroRestUtils.buildETag(documenti);
+            Response notModifiedResp = DocTrasportoRientroRestUtils.evaluateNotModified(jaxrsRequest, eTag);
+            if (notModifiedResp != null) {
+                return notModifiedResp;
+            }
 
-            return Response.ok(
-                    DocTRWSResponse.of(true, message, trovato)
-            ).build();
+            List<DocTRWSResponse.DocumentoDTO> documentiDTO = documenti.stream()
+                    .map(doc -> DocTRWSResponse.DocumentoDTO.from(doc, DocTrasportoRientroRestUtils.costruisciLinks(uriInfo, doc)))
+                    .toList();
+
+            String message = documenti.size() == 1
+                    ? (documenti.get(0).isTrasporto() ? "Documento di Trasporto trovato" : "Documento di Rientro trovato")
+                    : "Trovati " + documenti.size() + " documenti";
+
+            return Response.ok()
+                    .tag(eTag)
+                    .entity(DocTRWSResponse.ofList(true, message, documentiDTO))
+                    .build();
 
         } catch (Exception e) {
-            log.error("Errore durante cercaDocTrasportoRientro", e);
+            log.error(
+                    "Errore durante getBeneIntoDoc (tipo={}, stato={}, esercizio={}, nrInventario={})",
+                    tiDocumento, stato, esercizioEffettivo, nrInventario, e
+            );
             return buildErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, e, "Errore durante la ricerca del documento");
         }
     }
 
-    // =========================================================================
-    // DESERIALIZZAZIONE
-    // =========================================================================
+    @Override
+    public Response get(
+            @Context HttpServletRequest request,
+            @Context Request jaxrsRequest,
+            @Context UriInfo uriInfo,
+            Long pgInventario,
+            String tiDocumento,
+            Integer esercizio,
+            Long pgDocTrasportoRientro)
+            throws Exception {
+
+        try {
+            CNRUserContext ctx = (CNRUserContext) securityContext.getUserPrincipal();
+
+            if (pgInventario == null) {
+                throw new RestException(Response.Status.BAD_REQUEST, "pgInventario obbligatorio");
+            }
+            if (esercizio == null) {
+                throw new RestException(Response.Status.BAD_REQUEST, "esercizio obbligatorio");
+            }
+            if (pgDocTrasportoRientro == null) {
+                throw new RestException(Response.Status.BAD_REQUEST, "pgDocTrasportoRientro obbligatorio");
+            }
+
+            Doc_trasporto_rientroBulk chiave =
+                    costruisciChiavePerRicerca(tiDocumento, pgInventario, esercizio, pgDocTrasportoRientro);
+
+            Doc_trasporto_rientroBulk documento = componenteDocTR.findDocTrasportoRientro(ctx, chiave);
+
+            if (Optional.ofNullable(documento).isEmpty()) {
+                throw new RestException(Response.Status.NOT_FOUND, "Documento Trasporto/Rientro non presente!");
+            }
+
+            EntityTag eTag = DocTrasportoRientroRestUtils.buildETag(documento);
+            Response notModifiedResp = DocTrasportoRientroRestUtils.evaluateNotModified(jaxrsRequest, eTag);
+            if (notModifiedResp != null) {
+                return notModifiedResp;
+            }
+
+            String message = documento.isTrasporto()
+                    ? "Documento di Trasporto trovato"
+                    : "Documento di Rientro trovato";
+
+            return Response.status(Response.Status.OK)
+                    .tag(eTag)
+                    .entity(DocTRWSResponse.of(
+                            true,
+                            message,
+                            documento,
+                            DocTrasportoRientroRestUtils.costruisciLinks(uriInfo, documento) // DELEGA HATEOAS
+                    ))
+                    .build();
+
+        } catch (Throwable e) {
+            if (e instanceof RestException) {
+                throw (RestException) e;
+            }
+            log.error(
+                    "Errore durante get (pgInventario={}, tiDocumento={}, esercizio={}, pgDocTrasportoRientro={})",
+                    pgInventario, tiDocumento, esercizio, pgDocTrasportoRientro, e
+            );
+            throw new RestException(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+
+    /**
+     * Costruisce l'istanza concreta (DocumentoTrasportoBulk/DocumentoRientroBulk)
+     * usata come chiave di ricerca, coerente col tipo documento indicato.
+     */
+    private Doc_trasporto_rientroBulk costruisciChiavePerRicerca(
+            String tiDocumento, Long pgInventario, Integer esercizio, Long pgDocTrasportoRientro) {
+
+        if (isNullOrEmpty(tiDocumento)) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "tiDocumento obbligatorio (valori ammessi: T o R)"
+            );
+        }
+
+        Doc_trasporto_rientroBulk chiave;
+
+        if (Doc_trasporto_rientroBulk.TRASPORTO.equals(tiDocumento)) {
+            chiave = new DocumentoTrasportoBulk();
+        } else if (Doc_trasporto_rientroBulk.RIENTRO.equals(tiDocumento)) {
+            chiave = new DocumentoRientroBulk();
+        } else {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "tiDocumento non valido '" + tiDocumento
+                            + "': valori ammessi T (Trasporto) o R (Rientro)"
+            );
+        }
+
+        chiave.setPgInventario(pgInventario);
+        chiave.setTiDocumento(tiDocumento);
+        chiave.setEsercizio(esercizio);
+        chiave.setPgDocTrasportoRientro(pgDocTrasportoRientro);
+
+        return chiave;
+    }
 
     /**
      * Deserializza la testata del documento dal body JSON.
@@ -269,39 +364,6 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
         return result;
     }
 
-    /**
-     * Deserializza gli allegati presenti nel body della richiesta.
-     * Usato solo per la gestione allegati su documenti in stato FIRMATO.
-     */
-    @SuppressWarnings("unchecked")
-    private List<AttachmentDocTrasportoRientro> deserializzaAllegati(Map<String, Object> body) {
-
-        List<Map<String, Object>> rawAllegati =
-                (List<Map<String, Object>>) body.get("attachments");
-
-        if (rawAllegati == null || rawAllegati.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<AttachmentDocTrasportoRientro> allegati = new ArrayList<>();
-
-        for (int i = 0; i < rawAllegati.size(); i++) {
-            try {
-                allegati.add(MAPPER.convertValue(rawAllegati.get(i), AttachmentDocTrasportoRientro.class));
-            } catch (IllegalArgumentException e) {
-                throw new RestException(
-                        Response.Status.BAD_REQUEST,
-                        "Allegato[" + i + "] non valido: " + e.getMessage()
-                );
-            }
-        }
-
-        return allegati;
-    }
-
-    // =========================================================================
-    // VALIDAZIONE
-    // =========================================================================
 
     /**
      * Valida i dati della testata del documento ricevuto via REST.
@@ -547,220 +609,51 @@ public class DocTrasportoRientroResource implements DocTrasportoRientroLocal {
         }
     }
 
-//    /**
-//     * Valida gli allegati per documenti in stato FIRMATO.
-//     * <p>
-//     * Regole:
-//     * - nomeFile obbligatorio
-//     * - bytes obbligatori e di dimensione minima
-//     * - typeAttachment obbligatorio e valido per il tipo documento (T/R)
-//     * - descrizione obbligatoria
-//     * - nessun nomeFile duplicato
-//     * - al massimo un allegato FIRMATO
-//     *
-//     * @param bulk     testata del documento
-//     * @param allegati lista allegati da validare
-//     */
-//    private void validaAllegatiPerDocumentoFirmato(Doc_trasporto_rientroBulk bulk,
-//                                                   List<AttachmentDocTrasportoRientro> allegati) {
-//
-//        String aspectFirmato = bulk.isTrasporto()
-//                ? AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO
-//                : AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
-//
-//        String aspectAltro = bulk.isTrasporto()
-//                ? AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO
-//                : AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO;
-//
-//        Set<String> aspectValidi = new HashSet<>();
-//        aspectValidi.add(aspectFirmato);
-//        aspectValidi.add(aspectAltro);
-//
-//        Set<String> nomiVisti = new HashSet<>();
-//        int countFirmato = 0;
-//
-//        if (allegati == null || allegati.isEmpty()) {
-//            throw new RestException(
-//                    Response.Status.BAD_REQUEST,
-//                    "Per un documento in stato FIRMATO è obbligatorio fornire almeno un allegato."
-//            );
-//        }
-//
-//        for (int i = 0; i < allegati.size(); i++) {
-//
-//            AttachmentDocTrasportoRientro att = allegati.get(i);
-//            String pfx = "Allegato[" + i + "]: ";
-//            String nomeFile = att.getNomeFile();
-//
-//            if (isNullOrEmpty(nomeFile)) {
-//                throw new RestException(Response.Status.BAD_REQUEST, pfx + "nomeFile mancante");
-//            }
-//
-//            if (att.getBytes() == null) {
-//                throw new RestException(
-//                        Response.Status.BAD_REQUEST,
-//                        nomeFile + ": file non fornito"
-//                );
-//            }
-//
-//            if (att.getBytes().length < MIN_PDF_FILE_SIZE_BYTES) {
-//                throw new RestException(
-//                        Response.Status.BAD_REQUEST,
-//                        nomeFile + ": file vuoto o non accessibile (dimensione: "
-//                                + att.getBytes().length + " bytes)"
-//                );
-//            }
-//
-//            if (isNullOrEmpty(att.getTypeAttachment())) {
-//                throw new RestException(
-//                        Response.Status.BAD_REQUEST,
-//                        nomeFile + ": typeAttachment mancante"
-//                );
-//            }
-//
-//            if (!aspectValidi.contains(att.getTypeAttachment())) {
-//                throw new RestException(
-//                        Response.Status.BAD_REQUEST,
-//                        nomeFile + ": typeAttachment non valido per il tipo documento"
-//                );
-//            }
-//
-//            if (isNullOrEmpty(att.getDescrizione())) {
-//                throw new RestException(
-//                        Response.Status.BAD_REQUEST,
-//                        nomeFile + ": descrizione mancante"
-//                );
-//            }
-//
-//            if (!nomiVisti.add(nomeFile.toLowerCase())) {
-//                throw new RestException(
-//                        Response.Status.BAD_REQUEST,
-//                        nomeFile + ": nomeFile duplicato nella richiesta"
-//                );
-//            }
-//
-//            if (aspectFirmato.equals(att.getTypeAttachment())) {
-//                countFirmato++;
-//            }
-//        }
-//
-//        if (countFirmato > 1) {
-//            throw new RestException(
-//                    Response.Status.BAD_REQUEST,
-//                    "È consentito allegare al massimo un documento FIRMATO (trovati: " + countFirmato + ")"
-//            );
-//        }
-//    }
-//
-//    // =========================================================================
-//    // ARCHIVIAZIONE ALLEGATI (solo per documenti in stato FIRMATO)
-//    // =========================================================================
-//
-//    /**
-//     * Archivia gli allegati del documento nel repository documentale.
-//     * Utilizzato solo per documenti in stato FIRMATO (statoFlusso=FIR).
-//     *
-//     * @param ctx        contesto utente
-//     * @param docSalvato documento già persistito
-//     * @param allegati   lista allegati da archiviare
-//     */
-//    private void archiviaAllegati(CNRUserContext ctx,
-//                                  Doc_trasporto_rientroBulk docSalvato,
-//                                  List<AttachmentDocTrasportoRientro> allegati) {
-//
-//        List<File> tmpFiles = new ArrayList<>();
-//
-//        try {
-//            BulkList<AllegatoGenericoBulk> archivio = new BulkList<>();
-//
-//            for (AttachmentDocTrasportoRientro att : allegati) {
-//                File tmp = creaFileTemporaneo(att.getNomeFile(), att.getBytes());
-//                tmpFiles.add(tmp);
-//
-//                AllegatoDocTraspRientroBulk a = costruisciAllegato(att, docSalvato, tmp);
-//                a.setToBeCreated();
-//                archivio.add(a);
-//            }
-//
-//            docSalvato.setArchivioAllegati(archivio);
-//
-//            try {
-//                componenteDocTR.archiviaAllegatiDocTR(ctx, docSalvato);
-//            } catch (Exception e) {
-//                log.error("Errore durante archiviaAllegatiDocTR", e);
-//                throw new RestException(
-//                        Response.Status.INTERNAL_SERVER_ERROR,
-//                        "Documento salvato ma errore nell'archiviazione allegati: " + e.getMessage()
-//                );
-//            }
-//
-//        } finally {
-//            for (File f : tmpFiles) {
-//                try {
-//                    Files.deleteIfExists(f.toPath());
-//                } catch (IOException ignored) {
-//                }
-//            }
-//        }
-//    }
+    private void validaParametriRicercaDocumento(
+            String tiDocumento,
+            String nrInventario) {
 
-    /**
-     * Costruisce l'oggetto Bulk rappresentante un allegato del documento.
-     */
-    private AllegatoDocTraspRientroBulk costruisciAllegato(AttachmentDocTrasportoRientro att,
-                                                           Doc_trasporto_rientroBulk doc,
-                                                           File tmp) {
-
-        boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
-
-        AllegatoDocTraspRientroBulk a = isTrasporto
-                ? new AllegatoDocumentoTrasportoBulk()
-                : new AllegatoDocumentoRientroBulk();
-
-        a.setAspectName(att.getTypeAttachment());
-        a.setNome(att.getNomeFile());
-        a.setTitolo(att.getNomeFile());
-        a.setDescrizione(!isNullOrEmpty(att.getDescrizione())
-                ? att.getDescrizione()
-                : att.getNomeFile());
-
-        if (att.getMimeTypes() != null) {
-            a.setContentType(att.getMimeTypes().mimetype());
-        }
-
-        a.setFile(tmp);
-
-        return a;
-    }
-
-    /**
-     * Crea un file temporaneo a partire dai byte di un allegato.
-     */
-    private File creaFileTemporaneo(String nome, byte[] bytes) {
-
-        try {
-            String pref = nome.contains(".") ? nome.substring(0, nome.lastIndexOf(".")) : nome;
-            String suff = nome.contains(".") ? nome.substring(nome.lastIndexOf(".")) : ".tmp";
-
-            if (pref.length() < 3) {
-                pref += "___";
-            }
-
-            File tmp = File.createTempFile(pref, suff);
-            tmp.deleteOnExit();
-
-            try (FileOutputStream fos = new FileOutputStream(tmp)) {
-                fos.write(bytes);
-            }
-
-            return tmp;
-
-        } catch (IOException e) {
+        if (isNullOrEmpty(nrInventario)) {
             throw new RestException(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Errore creazione file temporaneo per: " + nome
+                    Response.Status.BAD_REQUEST,
+                    "nrInventario obbligatorio"
             );
         }
+
+        long nrInventarioValue;
+
+        try {
+            nrInventarioValue = Long.parseLong(nrInventario);
+        } catch (NumberFormatException e) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "nrInventario deve essere numerico"
+            );
+        }
+
+        if (nrInventarioValue <= 0L) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "nrInventario deve essere un numero positivo maggiore di zero"
+            );
+        }
+
+        if (isNullOrEmpty(tiDocumento)) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "tiDocumento obbligatorio (valori ammessi: T o R)"
+            );
+        }
+
+        if (!Doc_trasporto_rientroBulk.TRASPORTO.equals(tiDocumento)
+                && !Doc_trasporto_rientroBulk.RIENTRO.equals(tiDocumento)) {
+            throw new RestException(
+                    Response.Status.BAD_REQUEST,
+                    "tiDocumento non valido '" + tiDocumento
+                            + "': valori ammessi T (Trasporto) o R (Rientro)"
+            );
+        }
+
     }
 
     // =========================================================================

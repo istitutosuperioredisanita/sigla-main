@@ -730,16 +730,16 @@ public class DocTrasportoRientroComponentSessionBean
     }
 
     @Override
-    public Doc_trasporto_rientroBulk cercaDocumentoPerBene(
+    public List<Doc_trasporto_rientroBulk> cercaDocumentiPerBene(
             UserContext userContext,
             String tiDocumento,
             String stato,
-            Long nrInventario,
+            String nrInventario,
             Integer esercizio) throws ComponentException {
 
         pre_component_invocation(userContext, componentObj);
         try {
-            Doc_trasporto_rientroBulk result = ((DocTrasportoRientroComponent) componentObj)
+            List<Doc_trasporto_rientroBulk>  result = ((DocTrasportoRientroComponent) componentObj)
                     .cercaDocumentiPerBene(userContext, tiDocumento, stato, nrInventario, esercizio);
             component_invocation_succes(userContext, componentObj);
             return result;
@@ -903,4 +903,50 @@ public class DocTrasportoRientroComponentSessionBean
             throw uncaughtError(userContext, componentObj, e);
         }
     }
+
+    @Override
+    public Doc_trasporto_rientroBulk findDocTrasportoRientro(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+
+        try {
+            Doc_trasporto_rientroBulk result =
+                    ((DocTrasportoRientroComponent) componentObj).findDocTrasportoRientro(userContext, doc);
+
+            component_invocation_succes(userContext, componentObj);
+            return result;
+
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+
+        } catch (ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    @Override
+    public void caricaAllegatiDocumento(UserContext userContext, Doc_trasporto_rientroBulk doc) throws ComponentException, RemoteException{
+        pre_component_invocation(userContext, componentObj);
+        try {
+            ((DocTrasportoRientroComponent) componentObj)
+                    .caricaAllegatiDocumento(userContext, doc);
+            component_invocation_succes(userContext, componentObj);
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
 }

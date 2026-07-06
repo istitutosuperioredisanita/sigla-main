@@ -37,6 +37,7 @@ import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageException;
 import it.cnr.si.spring.storage.StorageObject;
 import it.cnr.si.spring.storage.StoreService;
+import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import it.iss.si.workflow.service.SignatureFlowRequest;
 import it.iss.si.workflow.service.SignatureFlowService;
 import it.iss.si.workflow.service.SignatureFlowStatus;
@@ -3118,52 +3119,157 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
     // CERCA DOCUMENTI PER BENE
     // =========================================================================
 
+
     /**
-     * Cerca il primo documento T/R che contiene un bene dato per stato ed esercizio.
+     * Cerca tutti i documenti T/R che contengono un bene dato per stato ed esercizio.
+     * Restituisce l'elenco completo (con dettagli e allegati caricati), ordinato
+     * per PG_DOC_TRASPORTO_RIENTRO decrescente.
      */
-    public Doc_trasporto_rientroBulk cercaDocumentiPerBene(
+    public List<Doc_trasporto_rientroBulk> cercaDocumentiPerBene(
             UserContext userContext,
-            String tiDocumento, String stato, Long nrInventario, Integer esercizio)
+            String tiDocumento,
+            String stato,
+            String nrInventario,
+            Integer esercizio)
             throws ComponentException {
 
         try {
+
             Doc_trasporto_rientroHome home;
-            if (TRASPORTO.equals(tiDocumento))
-                home = (Doc_trasporto_rientroHome) getHome(userContext, DocumentoTrasportoBulk.class);
-            else if (RIENTRO.equals(tiDocumento))
-                home = (Doc_trasporto_rientroHome) getHome(userContext, DocumentoRientroBulk.class);
-            else
-                home = (Doc_trasporto_rientroHome) getHome(userContext, Doc_trasporto_rientroBulk.class);
+
+            if (TRASPORTO.equals(tiDocumento)) {
+                home = (Doc_trasporto_rientroHome)
+                        getHome(userContext, DocumentoTrasportoBulk.class);
+
+            } else if (RIENTRO.equals(tiDocumento)) {
+                home = (Doc_trasporto_rientroHome)
+                        getHome(userContext, DocumentoRientroBulk.class);
+
+            } else {
+                home = (Doc_trasporto_rientroHome)
+                        getHome(userContext, Doc_trasporto_rientroBulk.class);
+            }
 
             SQLBuilder sql = home.createSQLBuilder();
             sql.addTableToHeader("DOC_TRASPORTO_RIENTRO_DETT dett");
+
             sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.PG_INVENTARIO", "dett.PG_INVENTARIO");
             sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.TI_DOCUMENTO", "dett.TI_DOCUMENTO");
             sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.ESERCIZIO", "dett.ESERCIZIO");
-            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.PG_DOC_TRASPORTO_RIENTRO",
-                    "dett.PG_DOC_TRASPORTO_RIENTRO");
+            sql.addSQLJoin("DOC_TRASPORTO_RIENTRO.PG_DOC_TRASPORTO_RIENTRO", "dett.PG_DOC_TRASPORTO_RIENTRO");
 
-            if (tiDocumento != null)
-                sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO.TI_DOCUMENTO",
-                        SQLBuilder.EQUALS, tiDocumento);
-            if (stato != null)
+            if (tiDocumento != null) {
+                sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO.TI_DOCUMENTO", SQLBuilder.EQUALS, tiDocumento);
+            }
+            if (stato != null) {
                 sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO.STATO", SQLBuilder.EQUALS, stato);
-            if (esercizio != null)
-                sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO.ESERCIZIO",
-                        SQLBuilder.EQUALS, esercizio);
-            if (nrInventario != null)
+            }
+            if (esercizio != null) {
+                sql.addSQLClause("AND", "DOC_TRASPORTO_RIENTRO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+            }
+            if (nrInventario != null) {
                 sql.addSQLClause("AND", "dett.NR_INVENTARIO", SQLBuilder.EQUALS, nrInventario);
-
+            }
             sql.setDistinctClause(true);
             sql.addOrderBy("DOC_TRASPORTO_RIENTRO.PG_DOC_TRASPORTO_RIENTRO DESC");
 
             List<Doc_trasporto_rientroBulk> docs = home.fetchAll(sql);
-            return (docs != null && !docs.isEmpty()) ? docs.get(0) : null;
+
+            if (docs == null || docs.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            List<Doc_trasporto_rientroBulk> risultato = new ArrayList<>(docs.size());
+            for (Doc_trasporto_rientroBulk documento : docs) {
+                getDetailsFor(userContext, documento);
+                caricaAllegatiDocumento(userContext, documento);
+                risultato.add(documento);
+            }
+
+            return risultato;
 
         } catch (PersistencyException e) {
             throw handleException(e);
+        } catch (Exception e) {
+            throw new ComponentException(
+                    "Errore caricamento documenti completi",
+                    e
+            );
         }
     }
+
+    public void caricaAllegatiDocumento(UserContext userContext, Doc_trasporto_rientroBulk doc) throws ApplicationException {
+        if (doc == null) return;
+
+        if (storeService == null) {
+            storeService = SpringUtil.getBean("storeService", StoreService.class);
+        }
+
+        String path = getStorePathDocTrasportoRientro(doc);
+        StorageObject folder = storeService.getStorageObjectByPath(path);
+
+        if (folder == null) {
+            doc.setArchivioAllegati(new BulkList<>());
+            return;
+        }
+
+        BulkList<AllegatoGenericoBulk> archivio = new BulkList<>();
+        for (StorageObject storageObject : storeService.getChildren(folder.getKey())) {
+            AllegatoDocTraspRientroBulk allegato;
+
+            if (Doc_trasporto_rientroBulk.TRASPORTO.equals(doc.getTiDocumento())) {
+                allegato = new AllegatoDocumentoTrasportoBulk(storageObject.getKey());
+            } else {
+                allegato = new AllegatoDocumentoRientroBulk(storageObject.getKey());
+            }
+
+            allegato.setNome(storageObject.getPropertyValue(StoragePropertyNames.NAME.value()));
+            allegato.setDescrizione(storageObject.getPropertyValue(StoragePropertyNames.DESCRIPTION.value()));
+            allegato.setTitolo(storageObject.getPropertyValue(StoragePropertyNames.TITLE.value()));
+            allegato.setContentType(storageObject.getPropertyValue(StoragePropertyNames.CONTENT_STREAM_MIME_TYPE.value()));
+            allegato.setCrudStatus(OggettoBulk.NORMAL);
+            archivio.add(allegato);
+        }
+        doc.setArchivioAllegati(archivio);
+    }
+
+
+    /**
+     * Cerca il documento di Trasporto/Rientro tramite chiave primaria,
+     * selezionando la home concreta corretta (Trasporto/Rientro) in base a tiDocumento.
+     */
+    public Doc_trasporto_rientroBulk findDocTrasportoRientro(
+            UserContext uc,
+            Doc_trasporto_rientroBulk chiave) throws ComponentException {
+
+        try {
+            Doc_trasporto_rientroBulk docTrovato = null;
+            if (TRASPORTO.equals(chiave.getTiDocumento())) {
+                DocumentoTrasportoHome home = (DocumentoTrasportoHome) getHome(uc, DocumentoTrasportoBulk.class);
+                docTrovato = home.findDocTrasportoRientro(chiave);
+            } else if (RIENTRO.equals(chiave.getTiDocumento())) {
+                DocumentoRientroHome home = (DocumentoRientroHome) getHome(uc, DocumentoRientroBulk.class);
+                docTrovato = home.findDocTrasportoRientro(chiave);
+            } else {
+                throw new ApplicationException(
+                        "Tipo documento Trasporto/Rientro non riconosciuto: "
+                                + chiave.getTiDocumento());
+            }
+
+            if (docTrovato != null) {
+                getDetailsFor(uc, docTrovato);
+                caricaAllegatiDocumento(uc, docTrovato);
+            }
+
+            return docTrovato;
+
+        } catch (PersistencyException e) {
+            throw new ComponentException(e);
+        } catch (ApplicationException e) {
+            throw e;
+        }
+    }
+
 
     // =========================================================================
     // VALIDAZIONE DOCUMENTO
