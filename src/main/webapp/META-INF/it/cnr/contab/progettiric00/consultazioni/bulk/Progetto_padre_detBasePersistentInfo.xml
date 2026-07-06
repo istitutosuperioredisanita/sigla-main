@@ -6,6 +6,12 @@
 	<defaultColumnMap
 		tableName="V_PROGETTO_PADRE_DET">
 		<columnMapping
+				columnName="ESERCIZIO"
+				propertyName="esercizio"
+				sqlTypeName="DECIMAL"
+				columnSize="4"
+				nullable="true" />
+		<columnMapping
 			columnName="CD_PROGETTO"
 			propertyName="cdProgetto"
 			sqlTypeName="VARCHAR"
@@ -99,6 +105,8 @@
 			columnScale="2"
 			nullable="true" />
 	</defaultColumnMap>
+	<persistentProperty
+			name="esercizio" />
 	<persistentProperty
 		name="cdProgetto" />
 	<persistentProperty

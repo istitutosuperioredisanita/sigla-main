@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bulkInfo>
 	<fieldProperty
+			name="esercizio"
+			property="esercizio"
+			inputType="TEXT"
+			inputSize="30"
+			maxLength="30"
+			enabledOnEdit="false"
+			label="esercizio" />
+	<fieldProperty
 		name="cdProgetto"
 		property="cdProgetto"
 		inputType="TEXT"
@@ -124,6 +132,8 @@
 		name="searchtool">
 	</form>
 	<formFieldProperty
+			name="esercizio" />
+	<formFieldProperty
 		name="cdProgetto" />
 	<formFieldProperty
 		name="cdProgettoPadre" />
@@ -154,6 +164,8 @@
 	<formFieldProperty
 		name="imFinanziatoFinanziatore" />
 	<findFieldProperty
+			name="esercizio" />
+	<findFieldProperty
 		name="cdProgetto" />
 	<findFieldProperty
 		name="cdProgettoPadre" />
@@ -183,6 +195,8 @@
 		name="denominazioneSede" />
 	<findFieldProperty
 		name="imFinanziatoFinanziatore" />
+	<columnFieldProperty
+			name="esercizio" />
 	<columnFieldProperty
 		name="cdProgetto" />
 	<columnFieldProperty
@@ -215,14 +229,55 @@
 		name="imFinanziatoFinanziatore" />
 
 
-	<freeSearchSet name="CERCA_IMP_PLUR">
+	<freeSearchSet name="CERCA">
 		<findFieldProperty
 				name="cdProgetto" />
+		<findFieldProperty
+				name="cdProgettoPadre" />
+		<findFieldProperty
+				name="cdUnitaOrganizzativa" />
+		<findFieldProperty
+				name="stato" />
+		<findFieldProperty
+				name="tipoProgetto" />
+		<findFieldProperty
+				name="finanziatoreTerzo" />
 	</freeSearchSet>
 
-	<columnSet name="RIS_IMP_PLUR">
+	<columnSet name="STAMPA">
+		<columnFieldProperty
+				name="esercizio" />
 		<columnFieldProperty
 				name="cdProgetto" />
+		<columnFieldProperty
+				name="cdProgettoPadre" />
+		<columnFieldProperty
+				name="cdUnitaOrganizzativa" />
+		<columnFieldProperty
+				name="dsProgetto" />
+		<columnFieldProperty
+				name="imFinanziato" />
+		<columnFieldProperty
+				name="imCofinanziato" />
+		<columnFieldProperty
+				name="dtInizio" />
+		<columnFieldProperty
+				name="dtFine" />
+		<columnFieldProperty
+				name="dtProroga" />
+		<columnFieldProperty
+				name="stato" />
+		<columnFieldProperty
+				name="tipoProgetto" />
+		<columnFieldProperty
+				name="dsTipoProgetto" />
+		<columnFieldProperty
+				name="finanziatoreTerzo" />
+		<columnFieldProperty
+				name="denominazioneSede" />
+		<columnFieldProperty
+				name="imFinanziatoFinanziatore" />
+
 	</columnSet>
 
 </bulkInfo>

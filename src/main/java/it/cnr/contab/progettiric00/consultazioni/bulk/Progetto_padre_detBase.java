@@ -5,7 +5,10 @@
 package it.cnr.contab.progettiric00.consultazioni.bulk;
 import it.cnr.jada.persistency.Keyed;
 public class Progetto_padre_detBase extends Progetto_padre_detKey implements Keyed {
-//    CD_PROGETTO VARCHAR(30)
+
+	private java.lang.Integer esercizio;
+
+	//    CD_PROGETTO VARCHAR(30)
 	private java.lang.String cdProgetto;
  
 //    CD_PROGETTO_PADRE VARCHAR(30)
@@ -56,6 +59,14 @@ public class Progetto_padre_detBase extends Progetto_padre_detKey implements Key
 	 **/
 	public Progetto_padre_detBase() {
 		super();
+	}
+
+	public java.lang.Integer getEsercizio() {
+		return esercizio;
+	}
+
+	public void setEsercizio(java.lang.Integer esercizio)  {
+		this.esercizio=esercizio;
 	}
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
