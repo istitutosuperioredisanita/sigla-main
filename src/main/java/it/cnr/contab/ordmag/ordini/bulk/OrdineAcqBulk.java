@@ -1875,4 +1875,7 @@ public class OrdineAcqBulk extends OrdineAcqBase
     public void setAttivaFirmaOrdine(boolean attivaFirmaOrdine) {
         this.attivaFirmaOrdine = attivaFirmaOrdine;
     }
+    public boolean isOrdineDaFirmare(){
+        return ( ( !this.isOrdineMepa()) && isAttivaFirmaOrdine());
+    }
 }

@@ -1030,6 +1030,7 @@ public class OrdineAcqComponent
         }
     }
 
+
     private void controlliCambioStato(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException {
         OrdineAcqBulk ordineDB;
         try {
@@ -1059,14 +1060,14 @@ public class OrdineAcqComponent
                     if (!abilHome.isUtenteAbilitato(usercontext, TipoOperazioneOrdBulk.OPERAZIONE_APPROVAZIONE_ORDINE, ordine.getCdUnitaOperativa())) {
                         throw new it.cnr.jada.comp.ApplicationException("Utente non abilitato ad operare su ordini in approvazione");
                     }
-
-                    if ((!ordine.isOrdineMepa()) && (!(ordine.isStatoAllaFirma() || ordine.isStatoInserito()))) {
+                    if ((ordine.isOrdineDaFirmare()) && (!(ordine.isStatoAllaFirma() || ordine.isStatoInserito()))) {
                         throw new it.cnr.jada.comp.ApplicationException("Non è possibile indicare uno stato diverso da inserito o alla firma");
                     }
-                    if (ordine.isOrdineMepa() && (!(ordine.isStatoDefinitivo() || ordine.isStatoInserito()))) {
-                        throw new it.cnr.jada.comp.ApplicationException("Non è possibile indicare uno stato diverso da inserito o Definitivo");
+
+                     if (( !ordine.isOrdineDaFirmare()) && (!(ordine.isStatoDefinitivo() || ordine.isStatoInserito()))) {
+                            throw new it.cnr.jada.comp.ApplicationException("Non è possibile indicare uno stato diverso da inserito o Definitivo");
                     }
-                    if (ordine.isStatoAllaFirma() || (ordine.isOrdineMepa() && ordine.isStatoDefinitivo())) {
+                    if (ordine.isStatoAllaFirma() || ( (!ordine.isOrdineDaFirmare()) && ordine.isStatoDefinitivo())) {
                         for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
                             if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, riga.getEsercizio())) {
                                 for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
