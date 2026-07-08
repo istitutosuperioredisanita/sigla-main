@@ -6005,7 +6005,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		if (!obbligazione.isObbligazioneResiduo() ){
 			// verifica obbligatoreta allegato atto di impegno
 			if ( Utility.createConfigurazioneCnrComponentSession().isMandatoryAllegatoAutorizzativoObb(uc,obbligazione) && ( !obbligazione.existAllegatoAutorizzativo()))
-				throw new ApplicationException("Attenzione: Manca l'aggelato Atto di Impegno Obbligatorio.");
+				throw new ApplicationException("Attenzione: Manca l'allegato Atto di Impegno Obbligatorio.");
 			if ( Utility.createConfigurazioneCnrComponentSession().isEnabledAllegatiObbligazioni(uc) )
 				// cos' da controllare che non ci siano due allegati di tipo atto di impegno
 				obbligazione.existAllegatoAutorizzativo();
