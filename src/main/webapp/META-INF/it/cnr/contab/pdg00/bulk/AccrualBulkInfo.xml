@@ -25,11 +25,11 @@
             inputSize="3"
             maxLength="3"
             enabledOnInsert="false"
-            enabledOnEdit="false"
+            enabledOnEdit="true"
             enabledOnSearch="true"
             nullable="false"
             label="Stato" />
-    <fieldProperty
+<!--    <fieldProperty
             name="esito"
             property="esito"
             inputType="TEXT"
@@ -40,23 +40,23 @@
             enabledOnSearch="false"
             nullable="true"
             label="Esito" />
-
+-->
     <form name="searchtool">
         <formFieldProperty name="esercizio" />
         <formFieldProperty name="stato" />
-        <formFieldProperty name="esito" />
+   <!--     <formFieldProperty name="esito" />-->
     </form>
 
     <formFieldProperty name="esercizio" />
     <formFieldProperty name="stato" />
-    <formFieldProperty name="esito" />
+    <!--<formFieldProperty name="esito" /> -->
 
     <findFieldProperty name="esercizio" />
     <findFieldProperty name="stato" />
-    <findFieldProperty name="esito" />
+    <!--<findFieldProperty name="esito" />-->
 
     <columnFieldProperty name="esercizio" />
     <columnFieldProperty name="stato" />
-    <columnFieldProperty name="esito" />
+    <!--<columnFieldProperty name="esito" /> -->
 
 </bulkInfo>

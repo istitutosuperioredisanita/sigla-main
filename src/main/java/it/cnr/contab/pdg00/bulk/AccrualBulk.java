@@ -14,6 +14,7 @@ import it.cnr.contab.util00.bulk.storage.AllegatoStorePath;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.si.spring.storage.StorageDriver;
 
 import java.util.*;
@@ -35,7 +36,7 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
     static {
         STATO = new it.cnr.jada.util.OrderedHashtable();
         STATO.put(STATO_INSERITO, "Inserito");
-        STATO.put(STATO_PREDISPOSTO, "Predisposto");
+       // STATO.put(STATO_PREDISPOSTO, "Predisposto");
         STATO.put(STATO_INVIATO, "Inviato");
     }
 
@@ -128,7 +129,10 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
     // =========================================================================
 
     public Dictionary getStatoKeys() {
-        return STATO;
+        OrderedHashtable STATO_RET = (OrderedHashtable) (( OrderedHashtable) STATO).clone();
+        if ( STATO_INVIATO.equalsIgnoreCase(this.getStato()))
+            STATO_RET.remove(STATO_INSERITO);
+        return STATO_RET;
     }
 
     public Dictionary getStatoKeysForSearch() {
@@ -140,26 +144,6 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
         }
 
         return (it.cnr.jada.util.OrderedHashtable) d.clone();
-    }
-
-    public Dictionary getStatoKeysForUpdate() {
-        Dictionary stato = new it.cnr.jada.util.OrderedHashtable();
-
-        if (isInserito()) {
-            stato.put(STATO_INSERITO, "Inserito");
-            stato.put(STATO_PREDISPOSTO, "Predisposto");
-        } else if (isPredisposto()) {
-            stato.put(STATO_PREDISPOSTO, "Predisposto");
-            stato.put(STATO_INVIATO, "Inviato");
-        } else if (isInviato()) {
-            stato.put(STATO_INVIATO, "Inviato");
-        } else {
-            stato.put(STATO_INSERITO, "Inserito");
-            stato.put(STATO_PREDISPOSTO, "Predisposto");
-            stato.put(STATO_INVIATO, "Inviato");
-        }
-
-        return stato;
     }
 
     private boolean hasStato(String stato) {
@@ -203,5 +187,15 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
         super.validate();
     }
 
-    
+    public AllegatoAccrualBulk getAllegatoAccrualXbrl() {
+        return Optional.ofNullable(this.getArchivioAllegati()).orElse(new BulkList<>()).
+                stream().filter(AllegatoAccrualBulk.class::isInstance)
+                .map(AllegatoAccrualBulk.class::cast).
+                filter(e->e.isAllegatoAccrualXbr()).findAny().orElse(null);
+    }
+
+    public boolean existsAllegatoAccrualXbrl(){
+        return Optional.ofNullable(getAllegatoAccrualXbrl()).isPresent();
+    }
+
 }
