@@ -1199,10 +1199,7 @@ public class ProgettoHome extends BulkHome {
 			ps = new LoggableStatement(this.getConnection(), sql, true, this.getClass());
 
 			ps.setString(1, progetto.getNote());
-			String utenteModifica = progetto.getUser() != null ? progetto.getUser() : uc.getUser();
-			if (utenteModifica != null && utenteModifica.length() > 20) {
-				utenteModifica = utenteModifica.substring(0, 20);
-			}
+			String utenteModifica = CNRUserContext.getUser(uc);
 			ps.setString(2, utenteModifica);
 			ps.setInt(3, progetto.getPg_progetto());
 
