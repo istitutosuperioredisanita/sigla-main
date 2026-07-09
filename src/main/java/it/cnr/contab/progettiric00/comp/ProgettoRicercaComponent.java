@@ -629,6 +629,9 @@ public ProgettoRicercaComponent() {
 			if (!isInformix)
 				allineaAbilitazioniTerzoLivello(uc, (ProgettoBulk)bulk);
 
+			ProgettoHome progettoHome = (ProgettoHome) getHome(uc, ProgettoBulk.class);
+			progettoHome.propagaNoteSuFigli(uc, (ProgettoBulk) bulk);
+
 			validaPianoEconomico(uc, (ProgettoBulk)bulk);
 			validaAnagraficheProgetto(uc, (ProgettoBulk)bulk);
 		}catch(Throwable throwable){

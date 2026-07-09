@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import it.cnr.jada.persistency.sql.*;
 import jakarta.ejb.EJBException;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
@@ -74,10 +75,6 @@ import it.cnr.jada.persistency.ObjectNotFoundException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.Persistent;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.PersistentHome;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.DateUtils;
 
 public class ProgettoHome extends BulkHome {
@@ -1173,5 +1170,50 @@ public class ProgettoHome extends BulkHome {
 		sql.addSQLClause("AND", "PROGETTO_OTHER_FIELD.PG_PROGETTO", sql.EQUALS, pgProgetto);
 
 		return obbligazionePlurVoceHome.fetchAll(sql);
+	}
+
+	/**
+	 * Propaga in modo massivo le note del progetto su tutta la gerarchia (padre e figli),
+	 * ignorando i filtri di contesto. Aggiorna direttamente su DB i campi di audit
+	 * e la versione record.
+	 */
+	public void propagaNoteSuFigli(UserContext uc, ProgettoBulk progetto) throws PersistencyException {
+		LoggableStatement ps = null;
+		try {
+			String sql =
+					"UPDATE PROGETTO_SIP " +
+							"SET NOTE = ?, " +
+							"    UTUV = ?, " +
+							"    DUVA = SYSDATE, " +
+							"    PG_VER_REC = NVL(PG_VER_REC, 0) + 1 " +
+							"WHERE PG_PROGETTO IN ( " +
+							"    SELECT PG_PROGETTO " +
+							"    FROM ( " +
+							"        SELECT DISTINCT PG_PROGETTO, PG_PROGETTO_PADRE " +
+							"        FROM PROGETTO_SIP " +
+							"    ) " +
+							"    START WITH PG_PROGETTO = ? " +
+							"    CONNECT BY PRIOR PG_PROGETTO = PG_PROGETTO_PADRE " +
+							")";
+
+			ps = new LoggableStatement(this.getConnection(), sql, true, this.getClass());
+
+			ps.setString(1, progetto.getNote());
+			String utenteModifica = progetto.getUser() != null ? progetto.getUser() : uc.getUser();
+			if (utenteModifica != null && utenteModifica.length() > 20) {
+				utenteModifica = utenteModifica.substring(0, 20);
+			}
+			ps.setString(2, utenteModifica);
+			ps.setInt(3, progetto.getPg_progetto());
+
+			ps.executeUpdate();
+
+		} catch (java.sql.SQLException e) {
+			throw new PersistencyException("Errore SQL durante la propagazione delle note", e);
+		} finally {
+			if (ps != null) {
+				try { ps.close(); } catch (Exception ignored) {}
+			}
+		}
 	}
 }
