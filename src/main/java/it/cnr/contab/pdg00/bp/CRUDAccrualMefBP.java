@@ -8,11 +8,11 @@ import it.cnr.contab.pdg00.ejb.BilancioAccrualComponentSession;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
-import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
@@ -138,8 +138,22 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         super.completeAllegato(allegato, storageObject);
     }
 
+    private boolean checkFileAccrual(AllegatoGenericoBulk allegato){
+        return !(Optional.ofNullable(allegato)
+                .filter(AllegatoAccrualBulk.class::isInstance)
+                .map(AllegatoAccrualBulk.class::cast)
+                .map(AllegatoAccrualBulk::isAllegatoAccrualXbr)
+                .orElse(Boolean.FALSE));
+    }
+
+    @Override
+    protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
+        return checkFileAccrual( allegato);
+
+    }
+
     public boolean isCreaFileAccrualButtonEnabled() {
-        return isEnabledButton();// && this.getModel().getDacr()!=null;
+        return isEnabledButton() && ( !(AccrualBulk.STATO_INVIATO.equalsIgnoreCase((( AccrualBulk)this.getModel()).getStato())));
     }
 
     @Override
@@ -154,7 +168,8 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     @Override
     public boolean isDeleteButtonEnabled() {
-        return isEnabledButton() && super.isDeleteButtonEnabled();
+        return isEnabledButton() && super.isDeleteButtonEnabled()
+                && ( !(AccrualBulk.STATO_INVIATO.equalsIgnoreCase((( AccrualBulk)this.getModel()).getStato())));
     }
 
     public boolean isEnabledButton() {
@@ -164,7 +179,13 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     public BilancioAccrualComponentSession createComponentSession() throws BusinessProcessException {
         return (BilancioAccrualComponentSession)createComponentSession("CNRPDG00_EJB_BilancioAccrualComponentSession", BilancioAccrualComponentSession.class);
     }
-
+    @Override
+    public String getAllegatiFormName() {
+        if (this.getCrudArchivioAllegati().getModel() != null && !this.getCrudArchivioAllegati().getModel().isNew())
+            if (((AllegatoAccrualBulk) this.getCrudArchivioAllegati().getModel()).isAllegatoAccrualXbr())
+                return "readonly";
+        return "default";
+    }
     @Override
     public BusinessProcess initBusinessProcess(ActionContext actioncontext) throws BusinessProcessException {
         BusinessProcess businessProcess = super.initBusinessProcess(actioncontext);
@@ -310,13 +331,13 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         zos.write(datiSicuri, 0, datiSicuri.length);
         zos.closeEntry();
     }
+    private String getDescrizioneFileAccrual(ActionContext context,AccrualBulk accrualBulk){
+        return "File Accrual XBRL anno bilancio "+String.valueOf(accrualBulk.getEsercizio());
+    }
 
     private void addFileToArchivioAllegati(ActionContext context,AccrualBulk accrualBulk, File f){
 
-        AllegatoAccrualBulk allegatoAccrualBulk  = Optional.ofNullable(accrualBulk.getArchivioAllegati()).orElse(new BulkList<>()).
-                stream().filter(AllegatoAccrualBulk.class::isInstance)
-                .map(AllegatoAccrualBulk.class::cast).
-                filter(e->e.getAspectName().equalsIgnoreCase(AllegatoAccrualBulk.P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP)).findAny().orElse(null);
+        AllegatoAccrualBulk allegatoAccrualBulk  = accrualBulk.getAllegatoAccrualXbrl();
         if ( !Optional.ofNullable(allegatoAccrualBulk).isPresent()) {
             allegatoAccrualBulk = new AllegatoAccrualBulk();
             allegatoAccrualBulk.initializeForInsert(this, context);
@@ -326,6 +347,7 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         }else
             allegatoAccrualBulk.setCrudStatus(OggettoBulk.TO_BE_UPDATED);
         allegatoAccrualBulk.setNome(f.getName());
+        allegatoAccrualBulk.setDescrizione(getDescrizioneFileAccrual( context,accrualBulk));
         allegatoAccrualBulk.setFile(f);
         allegatoAccrualBulk.setContentType( new MimetypesFileTypeMap().getContentType(f.getName()));
     }

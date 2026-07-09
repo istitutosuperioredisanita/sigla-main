@@ -63,4 +63,24 @@
         <columnFieldProperty name="data"/>
     </columnSet>
 
+    <form name="readonly">
+        <formFieldProperty name="aspectName" enabledOnEdit="false"/>
+        <formFieldProperty
+                name="nome"/>
+        <formFieldProperty
+                name="descrizione"
+                enabledOnEdit="false"/>
+        <formFieldProperty
+                name="attivaFile"/>
+    </form>
+
+
+
+    <columnSet name="readonly">
+        <columnFieldProperty name="aspectName"/>
+        <columnFieldProperty name="nome"/>
+        <columnFieldProperty name="descrizione"/>
+        <columnFieldProperty name="data"/>
+    </columnSet>
+
 </bulkInfo>

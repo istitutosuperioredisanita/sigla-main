@@ -1,6 +1,7 @@
 package it.cnr.contab.pdg00.bulk;
 
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.jada.bulk.FieldProperty;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.si.spring.storage.annotation.StoragePolicy;
@@ -49,8 +50,13 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
     public void setAspectName(String aspectName) {
         this.aspectName = aspectName;
     }
-    public static OrderedHashtable getAspectNamesKeys() {
-        return aspectNamesKeys;
+    public  OrderedHashtable getAspectNamesKeys() {
+        OrderedHashtable aspectNamesKeysRet = new OrderedHashtable();
+        if ( this.isAllegatoAccrualXbr())
+            aspectNamesKeysRet.put(P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP,"Accrual XBRL ZIP");
+        else
+            aspectNamesKeysRet.put(P_SIGLA_ACCRUAL_ATTACHMENT_ALTRO,"Altro");
+        return aspectNamesKeysRet;
     }
 
     @StorageProperty(name = "cmis:secondaryObjectTypeIds")
@@ -65,21 +71,6 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
 
         return results;
     }
-
-    @Override
-    @StoragePolicy(
-            name = "P:cm:titled",
-            property = @StorageProperty(name = "cm:description")
-    )
-    public String getDescrizione() {
-        return super.getDescrizione();
-    }
-
-    @Override
-    public void setDescrizione(String descrizione) {
-        super.setDescrizione(descrizione);
-    }
-
 
     @Override
     @StorageProperty(name = "cmis:name")
@@ -166,4 +157,9 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
             return false;
         }
     }
+
+    public boolean isAllegatoAccrualXbr(){
+        return AllegatoAccrualBulk.P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP.equalsIgnoreCase(this.getAspectName());
+    }
+
 }
