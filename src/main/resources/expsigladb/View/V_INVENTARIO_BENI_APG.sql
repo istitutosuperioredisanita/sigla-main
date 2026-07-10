@@ -59,7 +59,8 @@ CREATE OR REPLACE FORCE VIEW "V_INVENTARIO_BENI_APG" (
     "FL_DISMESSO",
     "DT_DISMESSO",
     "CAUSALE_DISMESSO",
-    "FL_BENE_IN_IST"
+    "FL_BENE_IN_IST",
+    "FL_ONERE"
 ) AS
 SELECT
 --
@@ -166,7 +167,8 @@ SELECT
     inv.FL_DISMESSO,
     inv.DT_DISMESSO,
     inv.CAUSALE_DISMESSO,
-    inv.FL_BENE_IN_IST
+    inv.FL_BENE_IN_IST,
+    inv.FL_ONERE
 FROM inventario_beni inv,
      inventario_beni_apg apg
 WHERE inv.PG_INVENTARIO = apg.PG_INVENTARIO
