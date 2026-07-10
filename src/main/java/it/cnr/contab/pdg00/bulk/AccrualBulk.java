@@ -188,10 +188,13 @@ public class AccrualBulk extends AccrualBase implements AllegatoParentBulk, Alle
     }
 
     public AllegatoAccrualBulk getAllegatoAccrualXbrl() {
+        return getAllegatoAccrualFromAspectName(AllegatoAccrualBulk.P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP);
+    }
+    public AllegatoAccrualBulk getAllegatoAccrualFromAspectName(String aspectName) {
         return Optional.ofNullable(this.getArchivioAllegati()).orElse(new BulkList<>()).
                 stream().filter(AllegatoAccrualBulk.class::isInstance)
                 .map(AllegatoAccrualBulk.class::cast).
-                filter(e->e.isAllegatoAccrualXbr()).findAny().orElse(null);
+                filter(e->e.isAllegatoApesctName(aspectName)).findAny().orElse(null);
     }
 
     public boolean existsAllegatoAccrualXbrl(){
