@@ -244,40 +244,40 @@
 				name="finanziatoreTerzo" />
 	</freeSearchSet>
 
-	<columnSet name="STAMPA">
-		<columnFieldProperty
-				name="esercizio" />
-		<columnFieldProperty
-				name="cdProgetto" />
-		<columnFieldProperty
-				name="cdProgettoPadre" />
-		<columnFieldProperty
-				name="cdUnitaOrganizzativa" />
-		<columnFieldProperty
-				name="dsProgetto" />
-		<columnFieldProperty
-				name="imFinanziato" />
-		<columnFieldProperty
-				name="imCofinanziato" />
-		<columnFieldProperty
-				name="dtInizio" />
-		<columnFieldProperty
-				name="dtFine" />
-		<columnFieldProperty
-				name="dtProroga" />
-		<columnFieldProperty
-				name="stato" />
-		<columnFieldProperty
-				name="tipoProgetto" />
-		<columnFieldProperty
-				name="dsTipoProgetto" />
-		<columnFieldProperty
-				name="finanziatoreTerzo" />
-		<columnFieldProperty
-				name="denominazioneSede" />
-		<columnFieldProperty
-				name="imFinanziatoFinanziatore" />
+<!--	<columnSet name="STAMPA">-->
+<!--		<columnFieldProperty-->
+<!--				name="esercizio" />-->
+<!--		<columnFieldProperty-->
+<!--				name="cdProgetto" />-->
+<!--		<columnFieldProperty-->
+<!--				name="cdProgettoPadre" />-->
+<!--		<columnFieldProperty-->
+<!--				name="cdUnitaOrganizzativa" />-->
+<!--		<columnFieldProperty-->
+<!--				name="dsProgetto" />-->
+<!--		<columnFieldProperty-->
+<!--				name="imFinanziato" />-->
+<!--		<columnFieldProperty-->
+<!--				name="imCofinanziato" />-->
+<!--		<columnFieldProperty-->
+<!--				name="dtInizio" />-->
+<!--		<columnFieldProperty-->
+<!--				name="dtFine" />-->
+<!--		<columnFieldProperty-->
+<!--				name="dtProroga" />-->
+<!--		<columnFieldProperty-->
+<!--				name="stato" />-->
+<!--		<columnFieldProperty-->
+<!--				name="tipoProgetto" />-->
+<!--		<columnFieldProperty-->
+<!--				name="dsTipoProgetto" />-->
+<!--		<columnFieldProperty-->
+<!--				name="finanziatoreTerzo" />-->
+<!--		<columnFieldProperty-->
+<!--				name="denominazioneSede" />-->
+<!--		<columnFieldProperty-->
+<!--				name="imFinanziatoFinanziatore" />-->
 
-	</columnSet>
+<!--	</columnSet>-->
 
 </bulkInfo>

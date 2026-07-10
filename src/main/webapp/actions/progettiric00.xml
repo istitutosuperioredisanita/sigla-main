@@ -171,7 +171,7 @@
     <init-param name="bulkClassName" value="it.cnr.contab.progettiric00.consultazioni.bulk.Progetto_padre_detBulk" />
     <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
     <init-param name="freeSearchSet" value="CERCA" />
-    <init-param name="searchResultColumnSet" value="STAMPA" />
+    <!--<init-param name="searchResultColumnSet" value="STAMPA" />-->
     <init-param name="defaultAction" value="ConsultazioniAction" />
   </businessProcess>
 
