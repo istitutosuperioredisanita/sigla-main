@@ -148,10 +148,16 @@ public class Progetto_other_fieldBulk extends Progetto_other_fieldBase {
 	}
 
 	/*
-	 * Indica che è obbligatorio indicare le date del progetto
+	 * Indica che è obbligatorio indicare le date del progetto.
+	 * Le date sono obbligatorie se è richiesto il piano economico
+	 * OPPURE se il tipo di finanziamento è CODICE_AUT_AREE.
 	 */
 	public boolean isDatePianoEconomicoRequired() {
-		return this.isPianoEconomicoRequired();
+		boolean isAutAree = Optional.ofNullable(this.getTipoFinanziamento())
+				.map(TipoFinanziamentoBulk::isAutofinanziamentoAree)
+				.orElse(Boolean.FALSE);
+
+		return this.isPianoEconomicoRequired() || isAutAree;
 	}
 	
 	/*

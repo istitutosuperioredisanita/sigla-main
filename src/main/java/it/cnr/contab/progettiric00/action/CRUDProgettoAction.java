@@ -246,6 +246,12 @@ public class CRUDProgettoAction extends CRUDAbstractProgettoAction {
 			progetto.getOtherField().setDtFine(null);
 			progetto.getOtherField().setDtProroga(null);
 		}
+
+		if (tipoFinanziamento != null && tipoFinanziamento.isAutofinanziamentoAree()) {
+			progetto.getOtherField().setImFinanziato(null);
+			progetto.getOtherField().setImCofinanziato(null);
+		}
+
 		if (progetto.isPianoEconomicoRequired() && progetto.getOtherField().isStatoIniziale() && progetto.getDettagliPianoEconomicoTotale().isEmpty()) {
 			progetto.getOtherField().setImFinanziato(BigDecimal.ZERO);
 			progetto.getOtherField().setImCofinanziato(BigDecimal.ZERO);
