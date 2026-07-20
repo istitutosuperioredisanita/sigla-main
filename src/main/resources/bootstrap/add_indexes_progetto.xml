@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="davide.mirra" id="add_indexes_progetto">
+
+        <createIndex indexName="IX_PROGETTO_FILTRO" tableName="PROGETTO_SIP" unique="false">
+            <column name="ESERCIZIO"/>
+            <column name="LIVELLO"/>
+            <column name="TIPO_FASE"/>
+            <column name="PG_PROGETTO"/>
+        </createIndex>
+
+        <createIndex indexName="IX_PROGETTO_PADRE" tableName="PROGETTO_SIP" unique="false">
+            <column name="PG_PROGETTO_PADRE"/>
+            <column name="ESERCIZIO_PROGETTO_PADRE"/>
+            <column name="TIPO_FASE_PROGETTO_PADRE"/>
+        </createIndex>
+
+        <createIndex indexName="IX_PROGETTO_OTHER_FIELD" tableName="PROGETTO_SIP" unique="false">
+            <column name="PG_PROGETTO_OTHER_FIELD"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>

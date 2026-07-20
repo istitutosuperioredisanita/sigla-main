@@ -162,4 +162,12 @@
     <init-param name="multiSelezione" value="Y" />
   </businessProcess>
 
+  <businessProcess
+          name="EstrazioneCompletaProgettiBP" className="it.cnr.contab.progettiric00.consultazioni.bp.EstrazioneCompletaProgettiBP">
+    <forward name="default" path="/consultazioni/form_lista.jsp"/>
+    <init-param name="bulkClassName" value="it.cnr.contab.progettiric00.consultazioni.bulk.V_cons_est_progettiBulk"/>
+    <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+    <init-param name="defaultAction" value="ConsultazioniAction"/>
+  </businessProcess>
+
 </action-mappings>
