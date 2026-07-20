@@ -49,7 +49,7 @@ public class TipoFinanziamentoBulk extends TipoFinanziamentoBase {
         codiceKeys.put(CODICE_FOE, "FOE");
         codiceKeys.put(CODICE_FOE_PRO, "FOE Progetti");
         codiceKeys.put(CODICE_AUT, "Autofinanziamento");
-        codiceKeys.put(CODICE_AUT_AREE, "Autofinanziamento AREE");
+        codiceKeys.put(CODICE_AUT_AREE, "Accordi senza contributo aggiuntivo");
         codiceKeys.put(CODICE_RIM, "Rimborsi da soggetti terzi");
         codiceKeys.put(CODICE_COF, "Cofinanziamento");
         codiceKeys.put(CODICE_FIN, "Finanziamento");
