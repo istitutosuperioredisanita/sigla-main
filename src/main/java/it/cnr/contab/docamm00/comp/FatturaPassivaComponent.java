@@ -890,21 +890,12 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
     }
 
     private void aggiornaObbligazioniTemporanee(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
-
         try {
-            Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
-            Long pg = null;
-            pg = numHome.getNextPg(userContext,
-                    obbligazioneTemporanea.getEsercizio(),
-                    obbligazioneTemporanea.getCd_cds(),
-                    obbligazioneTemporanea.getCd_tipo_documento_cont(),
-                    obbligazioneTemporanea.getUser());
-            ObbligazioneHome home = (ObbligazioneHome) getHome(userContext, obbligazioneTemporanea);
-            home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);
+            obbligazioneTemporanea.setPg_obbligazione(Utility.createObbligazioneComponentSession().aggiornaObbligazioniTemporanee( userContext, obbligazioneTemporanea).getPg_obbligazione());
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(obbligazioneTemporanea, e);
-        } catch (it.cnr.jada.persistency.IntrospectionException e) {
-            throw handleException(obbligazioneTemporanea, e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -3681,7 +3672,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         ImportoOrdine importo = new ImportoOrdine();
         importo.setImponibile(fatturaOrdineBulk1.getImImponibile());
         importo.setImportoIvaInd(fatturaOrdineBulk1.getImIvaNd());
-        return getPrezzoUnitarioFattura(importo);
+        return importo.getPrezzoUnitario();//getPrezzoUnitarioFattura(importo);
     }
 
     public BigDecimal getPrezzoUnitarioFattura(ImportoOrdine importo) {

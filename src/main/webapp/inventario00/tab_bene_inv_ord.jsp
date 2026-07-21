@@ -91,10 +91,10 @@
                     </tr>
                     <tr>
                         <td >
-                            <% bp.getController().writeFormLabel(out,"find_assegnatario"); %>
+                            <% bp.getController().writeFormLabel(out,"findAssegnatario"); %>
                         </td>
                         <td colspan="5"	>
-                            <% bp.getController().writeFormInput(out,null,"find_assegnatario"); %>
+                            <% bp.getController().writeFormInput(out,null,"findAssegnatario"); %>
                         </td>
                     </tr>
                     <tr>

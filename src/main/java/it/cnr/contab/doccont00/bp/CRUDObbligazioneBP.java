@@ -1343,16 +1343,4 @@ public class CRUDObbligazioneBP extends CRUDVirtualObbligazioneBP {
         }
         return true;
     }
-    protected void completeAllegato(AllegatoObbligazioneBulk allegato, StorageObject storageObject) throws ApplicationException {
-
-        Optional.ofNullable(storageObject.<List<String>>getPropertyValue(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value()))
-                .map(strings -> strings.stream())
-                .ifPresent(stringStream -> {
-                    stringStream
-                            .filter(s -> AllegatoObbligazioneBulk.aspectNamesKeys.get(s) != null)
-                            .findFirst()
-                            .ifPresent(s -> allegato.setAspectName(s));
-                });
-        super.completeAllegato(allegato, storageObject);
-    }
 }

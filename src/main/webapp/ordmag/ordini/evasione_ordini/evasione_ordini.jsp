@@ -40,7 +40,7 @@
                 "tab",
                 new String[][] {
                    { "tabEvasioneConsegne", "Consegne", "/ordmag/ordini/evasione_ordini/tab_evasione_consegne.jsp" },
-                   { "tabEvasioneRichieste", "Richieste", "/ordmag/ordini/evasione_ordini/tab_evasione_richieste.jsp" },
+                   //{ "tabEvasioneRichieste", "Richieste", "/ordmag/ordini/evasione_ordini/tab_evasione_richieste.jsp" },
                    { "tabAllegati", "Allegati", "/util00/tab_allegati.jsp" }
                 },
                 bp.getTab("tab"),

@@ -42,6 +42,7 @@ public class AllegatoObbligazioneBulk extends AllegatoGenericoBulk {
 	private Integer esercizioDiAppartenenza;
 	private String aspectName;
 
+
 	public String getAspectName() {
 		return aspectName;
 	}
@@ -54,14 +55,13 @@ public class AllegatoObbligazioneBulk extends AllegatoGenericoBulk {
 	public List<String> getAspect() {
 		List<String> results = new ArrayList<>();
 
-		results.add("P:cm:titled");
-
 		if (getAspectName() != null && !getAspectName().isEmpty()) {
 			results.add(getAspectName());
 		}
 
 		return results;
 	}
+
 
 	public AllegatoObbligazioneBulk() {
 		super();

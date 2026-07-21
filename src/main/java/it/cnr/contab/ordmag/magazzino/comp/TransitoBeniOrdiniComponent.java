@@ -17,12 +17,15 @@
 
 package it.cnr.contab.ordmag.magazzino.comp;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Bene_servizioHome;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventHome;
 import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.*;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.LottoMagBulk;
 import it.cnr.contab.ordmag.magazzino.bulk.LottoMagHome;
 import it.cnr.contab.ordmag.magazzino.bulk.MovimentiMagBulk;
@@ -37,10 +40,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.Query;
-import it.cnr.jada.persistency.sql.SimpleFindClause;
+import it.cnr.jada.persistency.sql.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -205,4 +205,23 @@ public class TransitoBeniOrdiniComponent extends CRUDComponent implements ICRUDM
 		return super.select(usercontext,compoundfindclause,oggettobulk);
 	}
 
+	/**
+	 * Ricerca ASSEGNATARIO delegando al componente Terzo (TerzoBulk diretto).
+	 */
+	public SQLBuilder selectAssegnatarioByClause(
+			UserContext userContext,
+			Transito_beni_ordiniBulk transito,
+			TerzoBulk terzo,
+			CompoundFindClause clause)
+			throws ComponentException, RemoteException {
+		try {
+			TerzoComponentSession sess = (TerzoComponentSession)
+					it.cnr.jada.util.ejb.EJBCommonServices.createEJB(
+							"CNRANAGRAF00_EJB_TerzoComponentSession",
+							TerzoComponentSession.class);
+			return sess.findTerziDipendentiByClause(userContext, terzo, clause);
+		} catch (PersistencyException | IntrospectionException e) {
+			throw new ComponentException(e);
+		}
+	}
 }

@@ -629,6 +629,9 @@ public ProgettoRicercaComponent() {
 			if (!isInformix)
 				allineaAbilitazioniTerzoLivello(uc, (ProgettoBulk)bulk);
 
+			ProgettoHome progettoHome = (ProgettoHome) getHome(uc, ProgettoBulk.class);
+			progettoHome.propagaNoteSuFigli(uc, (ProgettoBulk) bulk);
+
 			validaPianoEconomico(uc, (ProgettoBulk)bulk);
 			validaAnagraficheProgetto(uc, (ProgettoBulk)bulk);
 		}catch(Throwable throwable){
@@ -2055,50 +2058,63 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			throw handleException(e);
 		}
     }
-    
-    public SQLBuilder selectOtherField_tipoFinanziamentoByClause(UserContext userContext,ProgettoBulk progetto,TipoFinanziamentoBulk tipoFinanziamento,CompoundFindClause clauses) throws ComponentException {
-    	try {
-	    	TipoFinanziamentoHome home = (TipoFinanziamentoHome)getHome(userContext, TipoFinanziamentoBulk.class);
-	    	SQLBuilder sql = home.createSQLBuilder();
+
+	public SQLBuilder selectOtherField_tipoFinanziamentoByClause(UserContext userContext, ProgettoBulk progetto, TipoFinanziamentoBulk tipoFinanziamento, CompoundFindClause clauses) throws ComponentException {
+		try {
+			TipoFinanziamentoHome home = (TipoFinanziamentoHome) getHome(userContext, TipoFinanziamentoBulk.class);
+			SQLBuilder sql = home.createSQLBuilder();
+
 			sql.addClause(FindClause.AND, "flAttivo", SQLBuilder.EQUALS, Boolean.TRUE);
 
-	    	if (progetto.isDettagliPianoEconomicoPresenti()) {
-	    		sql.addClause(FindClause.AND, "flPianoEcoFin", SQLBuilder.EQUALS, Boolean.TRUE);
-	    		
-	        	if (progetto.getAllDetailsProgettoPianoEconomico().stream()
+			CompoundFindClause findClause = new CompoundFindClause();
+
+			if (progetto.isDettagliPianoEconomicoPresenti()) {
+				findClause.addClause(FindClause.AND, "flPianoEcoFin", SQLBuilder.EQUALS, Boolean.TRUE);
+
+				if (progetto.getAllDetailsProgettoPianoEconomico().stream()
 						.filter(el -> Optional.ofNullable(el.getVoce_piano_economico()).isPresent())
 						.anyMatch(el -> el.getVoce_piano_economico().isVocePersonaleTempoDeterminato()))
-	        		sql.addClause(FindClause.AND, "flAssCatVociDet", SQLBuilder.EQUALS, Boolean.TRUE);
-	
-	        	if (progetto.getAllDetailsProgettoPianoEconomico().stream()
+					findClause.addClause(FindClause.AND, "flAssCatVociDet", SQLBuilder.EQUALS, Boolean.TRUE);
+
+				if (progetto.getAllDetailsProgettoPianoEconomico().stream()
 						.filter(el -> Optional.ofNullable(el.getVoce_piano_economico()).isPresent())
 						.anyMatch(el -> el.getVoce_piano_economico().isVocePersonaleTempoIndeterminato()))
-	        		sql.addClause(FindClause.AND, "flAssCatVociInd", SQLBuilder.EQUALS, Boolean.TRUE);
-	
-	        	if (progetto.getAllDetailsProgettoPianoEconomico().stream()
+					findClause.addClause(FindClause.AND, "flAssCatVociInd", SQLBuilder.EQUALS, Boolean.TRUE);
+
+				if (progetto.getAllDetailsProgettoPianoEconomico().stream()
 						.filter(el -> Optional.ofNullable(el.getVoce_piano_economico()).isPresent())
 						.anyMatch(el -> el.getVoce_piano_economico().isVocePersonaleAltraTipologia()))
-	        		sql.addClause(FindClause.AND, "flAssCatVociAltro", SQLBuilder.EQUALS, Boolean.TRUE);
-	    	}        	
-	
-	   		it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configSession = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
-	   		BigDecimal annoFrom = configSession.getIm01(userContext, 0, null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
-	
-	   		Pdg_modulo_costiHome pdgModuloHome = (Pdg_modulo_costiHome)getHome(userContext, Pdg_modulo_costiBulk.class);
-	        SQLBuilder sqlPdgModulo = pdgModuloHome.createSQLBuilder();
-		   	if (Optional.ofNullable(annoFrom).isPresent())
-		       	sqlPdgModulo.addClause(FindClause.AND, "esercizio", SQLBuilder.GREATER_EQUALS, annoFrom);
-	        sqlPdgModulo.addClause(FindClause.AND, "pg_progetto", SQLBuilder.EQUALS, progetto.getPg_progetto());
-	        	
-	        if (sqlPdgModulo.executeExistsQuery(getConnection(userContext)))
-	           	sql.addClause(FindClause.AND, "flPrevEntSpesa", SQLBuilder.EQUALS, Boolean.TRUE);
-	
-	    	sql.addClause(clauses);
-	    	return sql;
-		} catch(Throwable e) {
+					findClause.addClause(FindClause.AND, "flAssCatVociAltro", SQLBuilder.EQUALS, Boolean.TRUE);
+			}
+
+			it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configSession = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
+			BigDecimal annoFrom = configSession.getIm01(userContext, 0, null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
+
+			Pdg_modulo_costiHome pdgModuloHome = (Pdg_modulo_costiHome) getHome(userContext, Pdg_modulo_costiBulk.class);
+			SQLBuilder sqlPdgModulo = pdgModuloHome.createSQLBuilder();
+			if (Optional.ofNullable(annoFrom).isPresent())
+				sqlPdgModulo.addClause(FindClause.AND, "esercizio", SQLBuilder.GREATER_EQUALS, annoFrom);
+			sqlPdgModulo.addClause(FindClause.AND, "pg_progetto", SQLBuilder.EQUALS, progetto.getPg_progetto());
+
+			if (sqlPdgModulo.executeExistsQuery(getConnection(userContext)))
+				findClause.addClause(FindClause.AND, "flPrevEntSpesa", SQLBuilder.EQUALS, Boolean.TRUE);
+
+			// nei filtri mettiamo in OR anche CODICE_AUT_AREE per includerlo sempre tra i risultati.
+			if (findClause.getClauses().hasMoreElements()) {
+				CompoundFindClause autAreeClause = new CompoundFindClause();
+				autAreeClause.addClause(FindClause.AND, "codice", SQLBuilder.EQUALS, TipoFinanziamentoBulk.CODICE_AUT_AREE);
+
+				CompoundFindClause combinedClause = CompoundFindClause.or(findClause, autAreeClause);
+				sql.addClause(combinedClause);
+			}
+
+			sql.addClause(clauses);
+			return sql;
+
+		} catch (Throwable e) {
 			throw handleException(e);
 		}
-    }
+	}
     
     private void validaDatePianoEconomico(UserContext userContext, ProgettoBulk progetto) throws ComponentException {
 		try{

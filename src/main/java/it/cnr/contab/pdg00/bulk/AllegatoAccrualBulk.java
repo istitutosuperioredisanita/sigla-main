@@ -1,6 +1,7 @@
 package it.cnr.contab.pdg00.bulk;
 
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.jada.bulk.FieldProperty;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.si.spring.storage.annotation.StoragePolicy;
@@ -24,11 +25,28 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
 
     public static final String P_SIGLA_ACCRUAL_ATTACHMENT_ALTRO =
             "P:sigla_accrual_attachment:altro";
+    public static final String P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_ATTIVO=
+            "P:sigla_accrual_attachment:statopatrimoniale_accrual_attivo";
+    public static final String P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_PASSIVO=
+            "P:sigla_accrual_attachment:statopatrimoniale_accrual_passivo";
+
+    public static final String P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_ATTIVO=
+            "P:sigla_accrual_attachment:statopatrimoniale_accrual_agg_attivo";
+    public static final String P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_PASSIVO=
+            "P:sigla_accrual_attachment:statopatrimoniale_accrual_agg_passivo";
+
+    public static final String P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_CONTO_ECONOMICO=
+            "P:sigla_accrual_attachment:statopatrimoniale_accrual_conto_economico";
 
     public static OrderedHashtable aspectNamesKeys = new OrderedHashtable();
 
     static {
         aspectNamesKeys.put(P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP,"Accrual XBRL ZIP");
+        aspectNamesKeys.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_ATTIVO,"Stato Patr. Accrual Attività");
+        aspectNamesKeys.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_PASSIVO,"Stato Patr. Accrual Passività");
+        aspectNamesKeys.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_ATTIVO,"Stato Patr. Accrual Scheda Agg. Attività");
+        aspectNamesKeys.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_PASSIVO,"Stato Patr. Accrual Scheda Agg. Passività");
+        aspectNamesKeys.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_CONTO_ECONOMICO,"Conto Economico Accrual");
         aspectNamesKeys.put(P_SIGLA_ACCRUAL_ATTACHMENT_ALTRO,"Altro");
     }
 
@@ -49,8 +67,23 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
     public void setAspectName(String aspectName) {
         this.aspectName = aspectName;
     }
-    public static OrderedHashtable getAspectNamesKeys() {
-        return aspectNamesKeys;
+    public  OrderedHashtable getAspectNamesKeys() {
+        OrderedHashtable aspectNamesKeysRet = new OrderedHashtable();
+        if ( this.isAllegatoAccrualXbr())
+            aspectNamesKeysRet.put(P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP,aspectNamesKeys.get(P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP));
+        if ( this.isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_ATTIVO))
+            aspectNamesKeysRet.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_ATTIVO,aspectNamesKeys.get(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_ATTIVO));
+        if ( this.isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_PASSIVO))
+            aspectNamesKeysRet.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_PASSIVO,aspectNamesKeys.get(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_PASSIVO));
+        if ( this.isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_ATTIVO))
+            aspectNamesKeysRet.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_ATTIVO,aspectNamesKeys.get(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_ATTIVO));
+        if ( this.isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_PASSIVO))
+            aspectNamesKeysRet.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_PASSIVO,aspectNamesKeys.get(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_PASSIVO));
+        if ( this.isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_CONTO_ECONOMICO))
+            aspectNamesKeysRet.put(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_CONTO_ECONOMICO,aspectNamesKeys.get(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_CONTO_ECONOMICO));
+        else
+            aspectNamesKeysRet.put(P_SIGLA_ACCRUAL_ATTACHMENT_ALTRO,aspectNamesKeys.get(P_SIGLA_ACCRUAL_ATTACHMENT_ALTRO));
+        return aspectNamesKeysRet;
     }
 
     @StorageProperty(name = "cmis:secondaryObjectTypeIds")
@@ -65,21 +98,6 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
 
         return results;
     }
-
-    @Override
-    @StoragePolicy(
-            name = "P:cm:titled",
-            property = @StorageProperty(name = "cm:description")
-    )
-    public String getDescrizione() {
-        return super.getDescrizione();
-    }
-
-    @Override
-    public void setDescrizione(String descrizione) {
-        super.setDescrizione(descrizione);
-    }
-
 
     @Override
     @StorageProperty(name = "cmis:name")
@@ -143,13 +161,6 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
         }
     }
 
-    private boolean haEstensioneZip(String fileName) {
-        return fileName != null
-                && fileName.trim()
-                .toLowerCase()
-                .endsWith(".zip");
-    }
-
     private boolean contieneFileXbrl(File file) {
 
         try (ZipFile zipFile = new ZipFile(file)) {
@@ -166,4 +177,22 @@ public class AllegatoAccrualBulk extends AllegatoGenericoBulk {
             return false;
         }
     }
+    public boolean isAllegatoApesctName(String aspectName){
+        return aspectName.equalsIgnoreCase(this.getAspectName());
+    }
+
+    public boolean isAllegatoAccrualXbr(){
+        return isAllegatoApesctName(this.P_SIGLA_ACCRUAL_ATTACHMENT_XBRL_ZIP);
+    }
+
+    public boolean isAllegatoCancModidicabile(){
+        return !( isAllegatoAccrualXbr()||
+                isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_ATTIVO) ||
+                isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_ATTIVO)||
+                isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_AGG_STATO_PATR_PASSIVO) ||
+                isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_STATO_PATR_PASSIVO) ||
+                isAllegatoApesctName(P_SIGLA_ACCRUAL_ATTACHMENT_ACCRUAL_CONTO_ECONOMICO));
+    }
+
+
 }

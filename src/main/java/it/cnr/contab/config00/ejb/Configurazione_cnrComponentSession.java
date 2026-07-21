@@ -169,6 +169,7 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
 
     Boolean isEnabledAllegatiObbligazioni(UserContext userContext) throws ComponentException, RemoteException;
     Boolean isMandatoryAllegatoAutorizzativoObb(UserContext userContext, ObbligazioneBulk obbligazioneBulk) throws ComponentException, RemoteException;
+    Boolean isAttivaFirmaOrdine(it.cnr.jada.UserContext param0,int esercizio) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
 
 

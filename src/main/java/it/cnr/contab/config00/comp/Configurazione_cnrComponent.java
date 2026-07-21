@@ -1731,5 +1731,16 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
            return Boolean.FALSE;
 
     }
+    public Boolean isAttivaFirmaOrdine(UserContext userContext,int esercizio) throws ComponentException {
+        try {
+            return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
+                    .filter(Configurazione_cnrHome.class::isInstance)
+                    .map(Configurazione_cnrHome.class::cast)
+                    .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
+                    .isAttivaFirmaOrdine(esercizio);
+        } catch (PersistencyException e) {
+            throw handleException(e);
+        }
+    }
 
 }

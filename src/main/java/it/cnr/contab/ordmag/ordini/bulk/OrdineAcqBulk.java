@@ -119,6 +119,8 @@ public class OrdineAcqBulk extends OrdineAcqBase
     private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<>();
     private MagazzinoBulk unicoMagazzinoAbilitato = null;
     private java.math.BigDecimal importoTotalePerObbligazione = new java.math.BigDecimal(0);
+    private boolean attivaFirmaOrdine;
+
     /**
      * [NOTA_PRECODIFICATA Rappresenta l'anagrafica delle note precodificate.]
      **/
@@ -985,14 +987,15 @@ public class OrdineAcqBulk extends OrdineAcqBase
         } else if (isStatoOriginaleInApprovazione()) {
             stato.put(STATO_INSERITO, "Inserito");
             stato.put(STATO_IN_APPROVAZIONE, "In Approvazione");
-            if ( isOrdineMepa())
+            if ( isOrdineMepa()||(!this.isAttivaFirmaOrdine()))
                 stato.put(STATO_DEFINITIVO, "Definitivo");
             else if ( isOrdineContabilizzato())
                 stato.put(STATO_ALLA_FIRMA, "Alla firma");
         } else {
             stato.put(STATO_INSERITO, "Inserito");
             stato.put(STATO_IN_APPROVAZIONE, "In Approvazione");
-            stato.put(STATO_ALLA_FIRMA, "Alla firma");
+            if ( this.isAttivaFirmaOrdine() ||( this.isStatoAllaFirma()))
+                stato.put(STATO_ALLA_FIRMA, "Alla firma");
             stato.put(STATO_ANNULLATO, "Annullato");
             stato.put(STATO_DEFINITIVO, "Definitivo");
         }
@@ -1863,5 +1866,16 @@ public class OrdineAcqBulk extends OrdineAcqBase
                 .map(Collection::stream)
                 .orElse(Stream.empty())
                 .anyMatch(OrdineAcqRigaBulk::isImportiConsegneModificati);
+    }
+
+    public boolean isAttivaFirmaOrdine() {
+        return attivaFirmaOrdine;
+    }
+
+    public void setAttivaFirmaOrdine(boolean attivaFirmaOrdine) {
+        this.attivaFirmaOrdine = attivaFirmaOrdine;
+    }
+    public boolean isOrdineDaFirmare(){
+        return ( ( !this.isOrdineMepa()) && isAttivaFirmaOrdine());
     }
 }

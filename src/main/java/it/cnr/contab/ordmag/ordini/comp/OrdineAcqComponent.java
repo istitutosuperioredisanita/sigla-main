@@ -271,6 +271,7 @@ public class OrdineAcqComponent
 
         parametri.setCoefacq(riga.getCoefConv());
         parametri.setPrezzo(riga.getPrezzoUnitario());
+        parametri.setIvaCommerciale(ordine.isCommerciale());
         parametri.setPrezzoRet(fatturaOrdine.getPrezzoUnitarioRett());
         parametri.setSconto1(riga.getSconto1());
         parametri.setSconto1Ret(fatturaOrdine.getSconto1Rett());
@@ -301,7 +302,7 @@ public class OrdineAcqComponent
         parametri.setArrAliIva(cons.getArrAliIva());
 
         ImportoOrdine importo = magazzino ? calcoloImportoPerMagazzino(parametri) : calcoloImporto(parametri);
-        fatturaOrdine.setImImponibile(importo.getImponibile());
+        fatturaOrdine.setImImponibile(importo.getPrezzoUnitario());
         fatturaOrdine.setImImponibileDivisa(importo.getImponibile());
         fatturaOrdine.setImIva(importo.getImportoIva());
         fatturaOrdine.setImIvaDivisa(importo.getImportoIva());
@@ -1029,6 +1030,7 @@ public class OrdineAcqComponent
         }
     }
 
+
     private void controlliCambioStato(UserContext usercontext, OrdineAcqBulk ordine) throws ComponentException {
         OrdineAcqBulk ordineDB;
         try {
@@ -1058,14 +1060,14 @@ public class OrdineAcqComponent
                     if (!abilHome.isUtenteAbilitato(usercontext, TipoOperazioneOrdBulk.OPERAZIONE_APPROVAZIONE_ORDINE, ordine.getCdUnitaOperativa())) {
                         throw new it.cnr.jada.comp.ApplicationException("Utente non abilitato ad operare su ordini in approvazione");
                     }
-
-                    if ((!ordine.isOrdineMepa()) && (!(ordine.isStatoAllaFirma() || ordine.isStatoInserito()))) {
+                    if ((ordine.isOrdineDaFirmare()) && (!(ordine.isStatoAllaFirma() || ordine.isStatoInserito()))) {
                         throw new it.cnr.jada.comp.ApplicationException("Non è possibile indicare uno stato diverso da inserito o alla firma");
                     }
-                    if (ordine.isOrdineMepa() && (!(ordine.isStatoDefinitivo() || ordine.isStatoInserito()))) {
-                        throw new it.cnr.jada.comp.ApplicationException("Non è possibile indicare uno stato diverso da inserito o Definitivo");
+
+                     if (( !ordine.isOrdineDaFirmare()) && (!(ordine.isStatoDefinitivo() || ordine.isStatoInserito()))) {
+                            throw new it.cnr.jada.comp.ApplicationException("Non è possibile indicare uno stato diverso da inserito o Definitivo");
                     }
-                    if (ordine.isStatoAllaFirma() || (ordine.isOrdineMepa() && ordine.isStatoDefinitivo())) {
+                    if (ordine.isStatoAllaFirma() || ( (!ordine.isOrdineDaFirmare()) && ordine.isStatoDefinitivo())) {
                         for (OrdineAcqRigaBulk riga : ordine.getRigheOrdineColl()) {
                             if (Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(usercontext, riga.getEsercizio())) {
                                 for (OrdineAcqConsegnaBulk cons : riga.getRigheConsegnaColl()) {
@@ -1810,7 +1812,15 @@ public class OrdineAcqComponent
     }
 
     private void aggiornaObbligazioniTemporanee(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
-
+        try {
+            obbligazioneTemporanea.setPg_obbligazione(Utility.createObbligazioneComponentSession().aggiornaObbligazioniTemporanee( userContext, obbligazioneTemporanea).getPg_obbligazione());
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw handleException(obbligazioneTemporanea, e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /*
         try {
             Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
             Long pg = numHome.getNextPg(userContext,
@@ -1823,7 +1833,7 @@ public class OrdineAcqComponent
         } catch (PersistencyException | IntrospectionException e) {
             throw handleException(obbligazioneTemporanea, e);
         }
-    }
+    }*/
 
     private java.math.BigDecimal calcolaTotaleObbligazione(
             it.cnr.jada.UserContext userContext,

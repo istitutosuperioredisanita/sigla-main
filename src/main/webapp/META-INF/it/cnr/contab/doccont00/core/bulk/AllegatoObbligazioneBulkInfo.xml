@@ -42,6 +42,7 @@
 
 	<form name="default">
 		<formFieldProperty name="aspectName"/>
+		<formFieldProperty name="titolo"/>
 		<formFieldProperty name="nome"/>
 		<formFieldProperty name="descrizione"/>
 		<formFieldProperty name="file"/>
@@ -53,7 +54,7 @@
 		
 	<columnSet
 		name="readonly" >
-		<columnFieldProperty name="aspectName"/>
+
 		<columnFieldProperty
 			name="nome" />
 		<columnFieldProperty
@@ -66,7 +67,7 @@
 	
 	<columnSet
 		name="archivioAllegati" >
-		<columnFieldProperty name="aspectName"/>
+
 		<columnFieldProperty
 			name="nome" />
 		<columnFieldProperty
@@ -78,7 +79,7 @@
 	</columnSet>
 
 	<form name="archivioAllegati">
-		<columnFieldProperty name="aspectName"/>
+
 		<formFieldProperty
 			name="nome" />
 		<formFieldProperty
@@ -92,15 +93,42 @@
 	</form>
 
 	<columnSet
-	name="default" >
-	<columnFieldProperty name="aspectName"/>
-	<columnFieldProperty
-			name="nome" />
-	<columnFieldProperty
-			name="descrizione" />
-	<columnFieldProperty
-			name="titolo" />
-	<columnFieldProperty
-			name="esercizioDiAppartenenza" />
-</columnSet>
+			name="readonly-comp" >
+		<columnFieldProperty name="aspectName"/>
+		<columnFieldProperty
+				name="nome" />
+		<columnFieldProperty
+				name="descrizione" />
+		<columnFieldProperty
+				name="titolo" />
+		<columnFieldProperty
+				name="esercizioDiAppartenenza" />
+	</columnSet>
+
+	<columnSet
+			name="archivioAllegati-comp" >
+		<columnFieldProperty name="aspectName"/>
+		<columnFieldProperty
+				name="nome" />
+		<columnFieldProperty
+				name="descrizione" />
+		<columnFieldProperty
+				name="titolo" />
+		<columnFieldProperty
+				name="esercizioDiAppartenenza" />
+	</columnSet>
+
+	<form name="archivioAllegati-comp">
+		<formFieldProperty name="aspectName"/>
+		<formFieldProperty
+				name="nome" />
+		<formFieldProperty
+				name="descrizione" />
+		<formFieldProperty
+				name="titolo" />
+		<formFieldProperty
+				name="file" />
+		<formFieldProperty
+				name="attivaFile" />
+	</form>
 </bulkInfo>

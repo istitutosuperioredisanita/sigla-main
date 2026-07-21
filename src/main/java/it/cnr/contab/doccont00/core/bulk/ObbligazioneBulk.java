@@ -31,6 +31,7 @@ import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_attiva_rigaBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
 import it.cnr.contab.prevent00.bulk.V_assestatoBulk;
 import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.spring.service.UtilService;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
@@ -43,6 +44,9 @@ import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.Persister;
 import it.cnr.jada.util.OrderedHashtable;
+import it.cnr.si.spring.storage.StorageDriver;
+import it.cnr.si.spring.storage.annotation.StorageProperty;
+import org.apache.commons.lang.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -50,7 +54,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @JsonInclude(value=Include.NON_NULL)
-public class ObbligazioneBulk extends ObbligazioneBase implements Cloneable, IDocumentoContabileBulk, AllegatoParentBulk {
+public class ObbligazioneBulk extends ObbligazioneBase implements Cloneable, IDocumentoContabileBulk, AllegatoParentBulk,ObbligazioneParentBulk {
 	private static final long serialVersionUID = 1L;
 
 	private it.cnr.jada.util.OrderedHashtable anniResidui = new it.cnr.jada.util.OrderedHashtable();
@@ -687,14 +691,14 @@ public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp,it.cnr.
 	unita_organizzativa = it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
 	setCd_cds( unita_organizzativa.getCd_unita_padre());
 
-	setFl_calcolo_automatico( new Boolean(true) );
+	setFl_calcolo_automatico( Boolean.TRUE);
 	if (this instanceof ObbligazioneResBulk)  
 		setStato_obbligazione( STATO_OBB_DEFINITIVO );
 	else
 		setStato_obbligazione( STATO_OBB_PROVVISORIO );
 
-	setFl_spese_costi_altrui( new Boolean( false ));
-	setFl_gara_in_corso( new Boolean( false ));
+	setFl_spese_costi_altrui( Boolean.FALSE);
+	setFl_gara_in_corso( Boolean.FALSE);
 	setRiportato("N");
 
 	// I seguenti campi sono definiti temporaneamente, ma DA CANCELLARE
@@ -1831,7 +1835,7 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 				for ( Iterator osvNewIterator = osNew.getObbligazione_scad_voceColl().iterator(); osvNewIterator.hasNext(); )
 				{
 					osvNew = (Obbligazione_scad_voceBulk) osvNewIterator.next();
-					Boolean trovato = new Boolean(Boolean.FALSE);
+					Boolean trovato =Boolean.FALSE;
 					for ( Iterator osvOldIterator = osOld.getObbligazione_scad_voceColl().iterator(); osvOldIterator.hasNext()&&!trovato; )
 					{
 						osvOld = (Obbligazione_scad_voceBulk) osvOldIterator.next();
@@ -2063,4 +2067,35 @@ public void validateTerzo( it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo ) t
 
 
 	}
+
+	@Override
+	public String getStorePath() {
+		return Arrays.asList(getBasePath(),
+				String.valueOf(this.getPg_obbligazione())
+		).stream().collect(
+				Collectors.joining(StorageDriver.SUFFIX)
+		);
+	}
+
+	@StorageProperty(name="cmis:name")
+	public String getCMISFolderName(){
+		return String.valueOf(this.getPg_obbligazione());
+	}
+
+	@Override
+	public String getBasePath() {
+		return Arrays.asList(
+				SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+				Optional.ofNullable(this.getUnita_organizzativa())
+						.map(Unita_organizzativaBulk::getCd_unita_organizzativa)
+						.orElse(""),
+				"Obbligazioni",
+				Optional.ofNullable(this.getEsercizio())
+						.map(esercizio -> String.valueOf(esercizio))
+						.orElse("0")
+		).stream().collect(
+				Collectors.joining(StorageDriver.SUFFIX)
+		);
+	}
 }
+

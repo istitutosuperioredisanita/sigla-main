@@ -120,12 +120,12 @@ public class ImportoOrdine implements Serializable {
 		return (Utility.nvl(this.getImportoIvaInd()).add(Utility.nvl(this.getArrAliIva())));
 	}
 
-	public BigDecimal getPrezzo(){
+	public BigDecimal getPrezzoUnitario(){
 		if ( isIvaCommerciale())
 			return getImponibile();
 		return getPrezzoCompIva();
 	}
-	public BigDecimal getIva(){
+	public BigDecimal getPrezzoIvaUnitaria(){
 		if ( isIvaCommerciale())
 			return BigDecimal.ZERO;
 		return getTotaleIva();
