@@ -34,64 +34,27 @@ public class V_cons_est_progettiHome extends BulkHome {
 
         SQLBuilder sql = super.selectByClause(userContext, clauses);
         applicaFiltriBase(sql, userContext);
-        applicaFiltriSicurezza(sql, userContext);
-
         return sql;
     }
 
     /**
      * Filtri applicativi sempre presenti.
      */
-    private void applicaFiltriBase(SQLBuilder sql, UserContext context) {
+    private void applicaFiltriBase(SQLBuilder sql, UserContext context) throws PersistencyException {
         Integer esercizioCorrente = CNRUserContext.getEsercizio(context);
         sql.addSQLClause(FindClause.AND, VISTA_CONS + ".ESERCIZIO", SQLBuilder.EQUALS, esercizioCorrente);
-        sql.addSQLClause(FindClause.AND, VISTA_CONS + ".LIVELLO", SQLBuilder.EQUALS, ProgettoBulk.LIVELLO_PROGETTO_SECONDO);
         sql.addSQLClause(FindClause.AND, VISTA_CONS + ".TIPO_FASE", SQLBuilder.EQUALS, ProgettoBulk.TIPO_FASE_NON_DEFINITA);
-    }
+        sql.addSQLClause(FindClause.AND, VISTA_CONS + ".ESERCIZIO_PIANO", SQLBuilder.EQUALS, esercizioCorrente);
+        Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHomeCache()
+                .getHome(Unita_organizzativa_enteBulk.class)
+                .findAll()
+                .getFirst();
 
-    /**
-     * Logica di sicurezza: verifica se l'utente appartiene a una UO specifica.
-     * Se l'utente non è "centrale" (ente), limita i risultati ai soli progetti
-     * visibili per la sua UO.
-     */
-    private void applicaFiltriSicurezza(SQLBuilder sql, UserContext context)
-            throws PersistencyException {
+        String uo = CNRUserContext.getCd_unita_organizzativa(context);
 
-        try {
-            Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHomeCache()
-                    .getHome(Unita_organizzativa_enteBulk.class)
-                    .findAll()
-                    .getFirst();
-
-            String uo = CNRUserContext.getCd_unita_organizzativa(context);
-
-            if (uo != null && !uo.equals(ente.getCd_unita_organizzativa())) {
-
-                ProgettoHome ph = (ProgettoHome) getHomeCache().getHome(ProgettoBulk.class);
-
-                sql.addTableToHeader(VISTA_PADRE);
-                sql.addSQLJoin(VISTA_CONS + ".PG_PROGETTO", VISTA_PADRE + ".PG_PROGETTO");
-                sql.addSQLJoin(VISTA_CONS + ".ESERCIZIO", VISTA_PADRE + ".ESERCIZIO");
-                sql.addSQLJoin(VISTA_CONS + ".TIPO_FASE", VISTA_PADRE + ".TIPO_FASE");
-
-                sql.addSQLExistsClause("AND", ph.abilitazioniCommesse(context));
-
-                String subQuery =
-                        "EXISTS ( " +
-                                "SELECT 1 " +
-                                "FROM PROGETTO_UO PUO " +
-                                "WHERE PUO.PG_PROGETTO = " + VISTA_CONS + ".PG_PROGETTO " +
-                                "AND PUO.FL_VISIBILE = '" + FL_VISIBILE_SI + "' " +
-                                "AND PUO.CD_UNITA_ORGANIZZATIVA = '" + uo + "'" +
-                                ")";
-
-                sql.addSQLClause("AND", subQuery);
-            }
-
-        } catch (Exception e) {
-            throw new PersistencyException(
-                    "Errore durante l'applicazione dei filtri di sicurezza sui progetti",
-                    e);
+        if (uo != null && !uo.equals(ente.getCd_unita_organizzativa())) {
+            sql.addSQLClause(FindClause.AND, VISTA_CONS + ".CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, uo);
         }
+
     }
 }

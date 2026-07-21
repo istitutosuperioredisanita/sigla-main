@@ -29,7 +29,7 @@ public class V_cons_est_progettiBase extends V_cons_est_progettiKey implements K
     private java.math.BigDecimal quotaStanziata;
     private java.math.BigDecimal quotaUtilizzata;
     private java.math.BigDecimal quotaPagata;
-
+    private java.lang.Integer esercizioPiano;
 
     public V_cons_est_progettiBase() {
         super();
@@ -104,4 +104,8 @@ public class V_cons_est_progettiBase extends V_cons_est_progettiKey implements K
 
     public java.math.BigDecimal getQuotaPagata() { return quotaPagata; }
     public void setQuotaPagata(java.math.BigDecimal quotaPagata) { this.quotaPagata = quotaPagata; }
+
+    public Integer getEsercizioPiano() {return esercizioPiano;}
+
+    public void setEsercizioPiano(Integer esercizioPiano) {this.esercizioPiano = esercizioPiano;}
 }
