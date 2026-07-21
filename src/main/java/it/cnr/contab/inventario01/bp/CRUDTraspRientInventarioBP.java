@@ -72,7 +72,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     private String tipo;
     private boolean isAmministratore = false;
-    private boolean isVisualizzazione = false;
     private boolean isGestioneInvioInFirmaAttiva = false;
     private boolean skipAllegatiReload = false;
 
@@ -339,23 +338,53 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                     DocTrasportoRientroComponentSession.class
             );
 
-            setAmministratore(
-                    UtenteBulk.isAmministratoreInventario(context.getUserContext())
-            );
+            setAmministratore(UtenteBulk.isAmministratoreInventario(context.getUserContext()));
 
-            bulk = super.initializeModelForEdit(context, bulk);
-
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
-
-            if (doc != null && Doc_trasporto_rientroBulk.STATO_ANNULLATO.equals(doc.getStato())) {
-                setErrorMessage("Documento ANNULLATO - Nessuna modifica consentita");
-            }
-
-            return bulk;
+            return super.initializeModelForEdit(context, bulk);
 
         } catch (ComponentException | RemoteException e1) {
             throw handleException(e1);
         }
+    }
+
+
+    @Override
+    public boolean isEditable() {
+        if (isDocumentoNonModificabile()) {
+            return false;
+        }
+        return !isViewing() && super.isEditable();
+    }
+
+    @Override
+    public boolean isInputReadonly() {
+        return super.isInputReadonly() || isDocumentoNonModificabile() || isViewing();
+    }
+
+    @Override
+    public boolean isNewButtonEnabled() {
+        return super.isNewButtonEnabled() && (isEditing() || isInserting());
+    }
+
+    public boolean isStampaDocButtonEnabled() {
+        return !isStampaDocButtonHidden() && !isViewing();
+    }
+
+    public boolean isSalvaDefinitivoButtonEnabled() {
+        Doc_trasporto_rientroBulk doc = getDoc();
+
+        return doc != null
+                && doc.isInserito()
+                && !doc.isAnnullato()
+                && doc.hasDettagli()
+                && hasAllegatoFirmato()
+                && !isViewing();
+    }
+
+    public boolean isAnagraficiReadonly() {
+        return isDocumentoNonModificabile()
+                || isViewing()
+                || (!isInserting() && !isEditing());
     }
 
     /**
@@ -460,15 +489,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
     public void setAmministratore(boolean isAmministratore) {
         this.isAmministratore = isAmministratore;
     }
-
-    public boolean isVisualizzazione() {
-        return isVisualizzazione;
-    }
-
-    public void setVisualizzazione(boolean isVisualizzazione) {
-        this.isVisualizzazione = isVisualizzazione;
-    }
-
     /**
      * Restituisce il documento corrente
      */
@@ -504,25 +524,12 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         return isDocumentoAnnullato() || isDocumentoInviatoInFirma() || isDocumentoDefinitivo();
     }
 
-    @Override
-    public boolean isEditable() {
-        if (isDocumentoNonModificabile()) {
-            return false;
-        }
-        return !isVisualizzazione() && super.isEditable();
-    }
 
     @Override
     protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
         return !isDocumentoNonModificabile();
     }
 
-    /**
-     * Determina se gli input devono essere readonly
-     */
-    public boolean isInputReadonly() {
-        return isDocumentoNonModificabile() || isVisualizzazione();
-    }
 
     private boolean hasValidModel() {
         return getModel() != null && getDoc() != null;
@@ -639,7 +646,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
 
     @Override
     public boolean isDeleteButtonEnabled() {
-        return !isDeleteButtonHidden();
+        return super.isDeleteButtonEnabled() && (isEditing() || isInserting()) && !isDeleteButtonHidden();
     }
 
     /**
@@ -688,7 +695,7 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
      */
     @Override
     public boolean isSaveButtonEnabled() {
-        return !isDocumentoNonModificabile();
+        return super.isSaveButtonEnabled() && (isEditing() || isInserting()) && !isDocumentoNonModificabile();
     }
 
     /**
@@ -702,11 +709,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         );
     }
 
-    @Override
-    public boolean isNewButtonEnabled() {
-        return !isVisualizzazione();
-    }
-
     /**
      * Nasconde pulsante STAMPA se documento non salvato o non nel tab testata
      */
@@ -717,10 +719,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         }
         String currentTab = getTab("tab");
         return !getMainTabName().equals(currentTab);
-    }
-
-    public boolean isStampaDocButtonEnabled() {
-        return !isStampaDocButtonHidden() && !isVisualizzazione();
     }
 
     /**
@@ -766,19 +764,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         return false;
     }
 
-    /**
-     * Abilita pulsante SALVA DEFINITIVO se inserito, con dettagli e allegato firmato
-     */
-    public boolean isSalvaDefinitivoButtonEnabled() {
-        Doc_trasporto_rientroBulk doc = getDoc();
-
-        return doc != null
-                && doc.isInserito()
-                && !doc.isAnnullato()
-                && doc.hasDettagli()
-                && hasAllegatoFirmato()
-                && !isVisualizzazione();
-    }
 
     /**
      * Verifica presenza allegato firmato (controllo UI-only)
@@ -1982,15 +1967,6 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
                 }
             }
         }
-    }
-
-    /**
-     * Readonly campi anagrafici se documento non modificabile o non in edit
-     */
-    public boolean isAnagraficiReadonly() {
-        return isDocumentoNonModificabile()
-                || isVisualizzazione()
-                || (!isInserting() && !isEditing());
     }
 
     /**
