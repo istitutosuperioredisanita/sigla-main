@@ -90,7 +90,6 @@ public abstract class CRUDTraspRientInventarioBP<
 
     private String tipo;
     private boolean isAmministratore;
-    private boolean isVisualizzazione;
     private boolean isGestioneInvioInFirmaAttiva;
     private boolean skipAllegatiReload;
 
@@ -256,25 +255,35 @@ public abstract class CRUDTraspRientInventarioBP<
         return bulk;
     }
 
+
+    @Override
+    public void basicEdit(ActionContext context, OggettoBulk bulk, boolean doInitializeForEdit) throws BusinessProcessException {
+        super.basicEdit(context, bulk, doInitializeForEdit);
+
+        if (getStatus() != VIEW) {
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
+            if (doc != null) {
+                if (doc.isDefinitivo()) {
+                    setStatus(VIEW);
+                    setMessage("Documento Definitivo. Non è possibile modificarlo.");
+                } else if (doc.isInviatoInFirma() || doc.isInAttesaDiFirma()) {
+                    setStatus(VIEW);
+                    setMessage("Documento Inviato o In Attesa di Firma. Non è possibile modificarlo.");
+                } else if (doc.isAnnullato()) {
+                    setStatus(VIEW);
+                    setMessage("Documento Annullato. Non è possibile modificarlo.");
+                }
+            }
+        }
+    }
+
     @Override
     public OggettoBulk initializeModelForEdit(ActionContext context, OggettoBulk bulk)
             throws BusinessProcessException {
 
         try {
-            setAmministratore(
-                    UtenteBulk.isAmministratoreInventario(context.getUserContext())
-            );
-
-            bulk = super.initializeModelForEdit(context, bulk);
-
-            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
-
-            if (doc != null && doc.isAnnullato()) {
-                setErrorMessage("Documento ANNULLATO - Nessuna modifica consentita");
-            }
-
-            return bulk;
-
+            setAmministratore(UtenteBulk.isAmministratoreInventario(context.getUserContext()));
+            return super.initializeModelForEdit(context, bulk);
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
@@ -397,14 +406,6 @@ public abstract class CRUDTraspRientInventarioBP<
         isAmministratore = amministratore;
     }
 
-    public boolean isVisualizzazione() {
-        return isVisualizzazione;
-    }
-
-    public void setVisualizzazione(boolean visualizzazione) {
-        isVisualizzazione = visualizzazione;
-    }
-
     public boolean isGestioneInvioInFirmaAttiva() {
         return isGestioneInvioInFirmaAttiva;
     }
@@ -456,11 +457,12 @@ public abstract class CRUDTraspRientInventarioBP<
             return false;
         }
 
-        return isVisualizzazione()
+        return isViewing()
                 || doc.isAnnullato()
                 || doc.isDefinitivo()
                 || doc.isInAttesaDiFirma()
-                || doc.isFirmatoDaCompletare();
+                || doc.isFirmatoDaCompletare()
+                || doc.isInviatoInFirma();
     }
 
     /**
@@ -575,7 +577,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
     @Override
     public boolean isDeleteButtonEnabled() {
-        return !isDeleteButtonHidden();
+        return super.isDeleteButtonEnabled() && (isEditing() || isInserting()) && !isDeleteButtonHidden();
     }
 
     private boolean haRientroNonAnnullato() {
@@ -608,7 +610,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
     @Override
     public boolean isNewButtonEnabled() {
-        return !isVisualizzazione();
+        return super.isNewButtonEnabled() && (isEditing() || isInserting());
     }
 
     public boolean isStampaDocButtonHidden() {
@@ -622,7 +624,7 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     public boolean isStampaDocButtonEnabled() {
-        return !isStampaDocButtonHidden() && !isVisualizzazione();
+        return !isStampaDocButtonHidden() && (isEditing() || isInserting());
     }
 
     private boolean hasAllegatoFirmato() {
@@ -726,6 +728,10 @@ public abstract class CRUDTraspRientInventarioBP<
                 || doc == null
                 || (status != OggettoBulk.NORMAL && status != OggettoBulk.TO_BE_UPDATED)
                 || !doc.isInviabileAllaFirma();
+    }
+
+    public boolean isInviaInFirmaButtonEnabled() {
+        return !isInviaInFirmaButtonHidden() && (isEditing() || isInserting());
     }
 
     protected final RemoteDetailCRUDController dettBeniController =
@@ -2182,7 +2188,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
     @Override
     public boolean isEditable() {
-        if (isVisualizzazione()) {
+        if (isViewing()) {
             return false;
         }
 
@@ -2194,28 +2200,20 @@ public abstract class CRUDTraspRientInventarioBP<
             return false;
         }
 
-        return super.isEditable();
+        return !isViewing() && super.isEditable();
     }
 
-    /**
-     * Restituisce true se i campi di input devono essere in sola lettura.
-     *
-     * OVERRIDE: quando il documento è "firmato da completare" gli allegati
-     * sono modificabili, quindi il form allegati NON deve essere in sola lettura,
-     * anche se testata e dettagli lo sono.
-     *
-     * In tutti gli altri casi bloccati delega a isTestataEDettagliBloccati().
-     */
     @Override
     public boolean isInputReadonly() {
         if (isAllegatiModificabili()) {
-            return false;
+            return super.isInputReadonly();
         }
-        return isTestataEDettagliBloccati();
+        return super.isInputReadonly() || isTestataEDettagliBloccati() || isViewing();
     }
 
     public boolean isAnagraficiReadonly() {
         return isTestataEDettagliBloccati()
+                || isViewing()
                 || (!isInserting() && !isEditing());
     }
 
@@ -2223,7 +2221,7 @@ public abstract class CRUDTraspRientInventarioBP<
     public boolean isSaveButtonEnabled() {
         Doc_trasporto_rientroBulk doc = getDoc();
 
-        if (doc == null || isVisualizzazione()) {
+        if (doc == null || isViewing()) {
             return false;
         }
 
@@ -2234,7 +2232,9 @@ public abstract class CRUDTraspRientInventarioBP<
             return false;
         }
 
-        return !isDocumentoNonModificabile() || isAllegatiModificabili();
+        return super.isSaveButtonEnabled()
+                && (isEditing() || isInserting())
+                && (!isDocumentoNonModificabile() || isAllegatiModificabili());
     }
 
     @Override
@@ -2276,7 +2276,7 @@ public abstract class CRUDTraspRientInventarioBP<
     public boolean isSalvaDefinitivoButtonEnabled() {
         Doc_trasporto_rientroBulk doc = getDoc();
 
-        if (doc == null || isVisualizzazione()) {
+        if (doc == null || isViewing()) {
             return false;
         }
 
@@ -2286,7 +2286,8 @@ public abstract class CRUDTraspRientInventarioBP<
 
         return doc.isFirmatoDaCompletare()
                 && doc.hasDettagli()
-                && hasAllegatoFirmato();
+                && hasAllegatoFirmato()
+                && (isEditing() || isInserting());
     }
 
     public boolean isAllegatiAccessibili() {
@@ -2308,7 +2309,7 @@ public abstract class CRUDTraspRientInventarioBP<
     public boolean isAllegatiModificabili() {
         Doc_trasporto_rientroBulk doc = getDoc();
 
-        if (doc == null || isVisualizzazione()) {
+        if (doc == null || isViewing()) {
             return false;
         }
 
