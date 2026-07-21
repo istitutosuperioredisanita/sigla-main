@@ -326,6 +326,27 @@ public abstract class CRUDTraspRientInventarioBP<T extends AllegatoDocTraspRient
         return bulk;
     }
 
+    @Override
+    public void basicEdit(ActionContext context, OggettoBulk bulk, boolean doInitializeForEdit) throws BusinessProcessException {
+        super.basicEdit(context, bulk, doInitializeForEdit);
+
+        if (getStatus() != VIEW) {
+            Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
+            if (doc != null) {
+                if (doc.isDefinitivo()) {
+                    setStatus(VIEW);
+                    setMessage("Documento Definitivo. Non è possibile modificarlo.");
+                } else if (doc.isInviatoInFirma()) {
+                    setStatus(VIEW);
+                    setMessage("Documento Inviato in Firma. Non è possibile modificarlo.");
+                } else if (doc.isAnnullato()) {
+                    setStatus(VIEW);
+                    setMessage("Documento Annullato. Non è possibile modificarlo.");
+                }
+            }
+        }
+    }
+
     /**
      * Inizializza modello per modifica con verifica stato documento
      */
