@@ -6,17 +6,7 @@ package it.cnr.contab.progettiric00.consultazioni.bulk;
 import it.cnr.jada.persistency.Keyed;
 public class Progetto_padre_detBase extends Progetto_padre_detKey implements Keyed {
 
-	private java.lang.Integer esercizio;
 
-	//    CD_PROGETTO VARCHAR(30)
-	private java.lang.String cdProgetto;
- 
-//    CD_PROGETTO_PADRE VARCHAR(30)
-	private java.lang.String cdProgettoPadre;
- 
-//    CD_UNITA_ORGANIZZATIVA VARCHAR(30)
-	private java.lang.String cdUnitaOrganizzativa;
- 
 //    DS_PROGETTO VARCHAR(400)
 	private java.lang.String dsProgetto;
  
@@ -61,56 +51,7 @@ public class Progetto_padre_detBase extends Progetto_padre_detKey implements Key
 		super();
 	}
 
-	public java.lang.Integer getEsercizio() {
-		return esercizio;
-	}
-
-	public void setEsercizio(java.lang.Integer esercizio)  {
-		this.esercizio=esercizio;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [cdProgetto]
-	 **/
-	public java.lang.String getCdProgetto() {
-		return cdProgetto;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [cdProgetto]
-	 **/
-	public void setCdProgetto(java.lang.String cdProgetto)  {
-		this.cdProgetto=cdProgetto;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [cdProgettoPadre]
-	 **/
-	public java.lang.String getCdProgettoPadre() {
-		return cdProgettoPadre;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [cdProgettoPadre]
-	 **/
-	public void setCdProgettoPadre(java.lang.String cdProgettoPadre)  {
-		this.cdProgettoPadre=cdProgettoPadre;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Restituisce il valore di: [cdUnitaOrganizzativa]
-	 **/
-	public java.lang.String getCdUnitaOrganizzativa() {
-		return cdUnitaOrganizzativa;
-	}
-	/**
-	 * Created by BulkGenerator 2.0 [07/12/2009]
-	 * Setta il valore di: [cdUnitaOrganizzativa]
-	 **/
-	public void setCdUnitaOrganizzativa(java.lang.String cdUnitaOrganizzativa)  {
-		this.cdUnitaOrganizzativa=cdUnitaOrganizzativa;
-	}
-	/**
+		/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Restituisce il valore di: [dsProgetto]
 	 **/
