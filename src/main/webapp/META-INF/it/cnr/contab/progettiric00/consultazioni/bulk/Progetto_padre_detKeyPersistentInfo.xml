@@ -8,33 +8,41 @@
 				propertyName="esercizio"
 				sqlTypeName="DECIMAL"
 				columnSize="4"
-				nullable="true" />
+				nullable="true"
+				primary="true" />
 		<columnMapping
 				columnName="CD_PROGETTO"
 				propertyName="cdProgetto"
 				sqlTypeName="VARCHAR"
 				columnSize="30"
-				nullable="true" />
+				nullable="true"
+				primary="true" />
 		<columnMapping
 				columnName="CD_PROGETTO_PADRE"
 				propertyName="cdProgettoPadre"
 				sqlTypeName="VARCHAR"
 				columnSize="30"
-				nullable="true" />
+				nullable="true"
+				primary="true" />
 		<columnMapping
 				columnName="CD_UNITA_ORGANIZZATIVA"
 				propertyName="cdUnitaOrganizzativa"
 				sqlTypeName="VARCHAR"
 				columnSize="30"
-				nullable="true" />
+				nullable="true"
+				primary="true" />
 	</defaultColumnMap>
 
 	<persistentProperty
-			name="esercizio" />
+			name="esercizio"
+			partOfOid="true" />
 	<persistentProperty
-			name="cdProgetto" />
+			name="cdProgetto"
+			partOfOid="true"/>
 	<persistentProperty
-			name="cdProgettoPadre" />
+			name="cdProgettoPadre"
+			partOfOid="true"/>
 	<persistentProperty
-			name="cdUnitaOrganizzativa" />
+			name="cdUnitaOrganizzativa"
+			partOfOid="true"/>
 </SQLPersistentInfo>
