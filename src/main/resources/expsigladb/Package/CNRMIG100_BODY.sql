@@ -4351,10 +4351,12 @@ begin
 	    AND TABELLA IN ('VAR_STANZ_RES' , 'VAR_STANZ_RES$'));
 
 	   INIT_RIBALTAMENTO_pdgp(aEs,pg_exec,aMessage);
-	   AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
-       INSERIMENTO_PROGETTI(aEs,pg_exec);
-       AGGIORNAMENTO_PRG_PIAECO(aEs,pg_exec);
-
+	   /*
+	      27-07-2026 - Codice eliminato - Il ribaltamento dei progetti avviene puntualmente con funzione schedulata a parte
+	      AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
+          INSERIMENTO_PROGETTI(aEs,pg_exec);
+          AGGIORNAMENTO_PRG_PIAECO(aEs,pg_exec);
+       */
        ibmutl200.logInf(pg_exec,aMessage, '', '');
        ibmutl200.logInf(pg_exec,'Batch di ribaltamento configurazione, str.organizzativa, anagrafica capitoli e piano dei conti.', 'End:'||to_char(sysdate,'YYYY/MM/DD HH-MI-SS'), '');
     end if;
