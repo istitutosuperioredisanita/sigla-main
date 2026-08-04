@@ -395,7 +395,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     }
     public void caricaEsercizioList(UserContext usercontext) {
 
-        this.getEsercizioList().put(new Integer(0), new Integer(0));
+        this.getEsercizioList().put(Integer.valueOf(0), Integer.valueOf(0));
         Integer e = CNRUserContext.getEsercizio(usercontext).intValue();
         this.getEsercizioList().put(e, e);
     }
