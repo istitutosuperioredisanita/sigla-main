@@ -73,6 +73,7 @@ import javax.naming.OperationNotSupportedException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -3683,6 +3684,13 @@ public class DocumentoGenericoComponent
 
         } catch (java.sql.SQLException ex) {
             throw handleException(ex);
+        }finally {
+            try {
+                if (cs != null) cs.close();
+            } catch (SQLException e) {
+                throw handleSQLException(e);
+            }
+
         }
 
         return false;
@@ -5372,7 +5380,7 @@ public class DocumentoGenericoComponent
 
                 return "Y".equals(cs.getString(1));
             } finally {
-                cs.close();
+                if (cs != null) cs.close();
             }
         } catch (java.sql.SQLException e) {
             throw handleSQLException(e);
