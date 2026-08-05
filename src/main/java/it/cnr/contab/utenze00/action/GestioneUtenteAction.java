@@ -413,10 +413,13 @@ public class GestioneUtenteAction extends it.cnr.jada.util.action.BulkAction {
             it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk uo = bp.getUserInfo().getUnita_organizzativa();
             it.cnr.contab.utenze00.bulk.Albero_mainBulk nodo = getComponentSession().validaNodoPerUtente(context.getUserContext(), bp.getUserInfo().getUtente(), uo == null ? null : uo.getCd_unita_organizzativa(), cd_nodo);
             if (nodo == null) return context.findDefaultForward();
-            if (currentBusinessProcess.getTransactionPolicy() == BusinessProcess.REQUIRES_NEW_TRANSACTION) {
+            /**
+             * Rimosso temporaneamente per verifica delle connessioni rimaste attive
+             */
+            //if (currentBusinessProcess.getTransactionPolicy() == BusinessProcess.REQUIRES_NEW_TRANSACTION) {
                 bp.closeAllChildren(context);
                 currentBusinessProcess = bp;
-            }
+            //}
             return startNodo(context, currentBusinessProcess, nodo);
         } catch (NoSuchBusinessProcessException _ex) {
             return context.findForward("sessionExpired");
