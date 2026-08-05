@@ -19,35 +19,28 @@ package it.cnr.contab.doccont00.bp;
 
 import it.cnr.contab.chiusura00.ejb.RicercaDocContComponentSession;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
-import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.doccont00.comp.DocumentoContabileComponentSession;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
 import it.cnr.contab.doccont00.service.ObbligazioneService;
-import it.cnr.contab.ordmag.ordini.service.OrdineAcqCMISService;
 import it.cnr.contab.service.SpringUtil;
-import it.cnr.contab.spring.service.StorePath;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bp.AllegatiCRUDBP;
-import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.ejb.CRUDComponentSession;
 import it.cnr.jada.util.jsp.Button;
-import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StoreService;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public abstract class CRUDVirtualObbligazioneBP 
 	extends AllegatiCRUDBP<AllegatoObbligazioneBulk, ObbligazioneBulk>
@@ -103,7 +96,13 @@ protected void aggiornaDefferUpdateSaldi(it.cnr.jada.action.ActionContext contex
 	IDocumentoContabileBulk docCont = (IDocumentoContabileBulk) getModel();
 	docAmm.addToDefferredSaldi( docCont, docCont.getSaldiInfo() );
 }
-public void basicEdit(it.cnr.jada.action.ActionContext context,it.cnr.jada.bulk.OggettoBulk bulk, boolean doInitializeForEdit) throws it.cnr.jada.action.BusinessProcessException 
+
+@Override
+protected StoreService getBeanStoreService(ActionContext actioncontext) throws BusinessProcessException {
+	return SpringUtil.getBean("obbligazioneService", ObbligazioneService.class);
+}
+
+public void basicEdit(it.cnr.jada.action.ActionContext context, it.cnr.jada.bulk.OggettoBulk bulk, boolean doInitializeForEdit) throws it.cnr.jada.action.BusinessProcessException
 {
 	
 	super.basicEdit(context, bulk, doInitializeForEdit);
@@ -530,6 +529,18 @@ public static ObbligazioneAbstractComponentSession setSafePoint (
 	@Override
 	protected Class<AllegatoObbligazioneBulk> getAllegatoClass() {
 		return AllegatoObbligazioneBulk.class;
+	}
+	@Override
+	protected OggettoBulk initializeModelForEditAllegati(ActionContext actioncontext, OggettoBulk oggettobulk, String path, boolean includeSubFolder) throws BusinessProcessException {
+
+		try {
+			ObbligazioneService service= ( ObbligazioneService) this.getBeanStoreService( actioncontext);
+			service.findAllegati((ObbligazioneBulk) oggettobulk,path,includeSubFolder);
+
+		} catch (ApplicationException e) {
+			throw handleException(e);
+		}
+		return oggettobulk;
 	}
 
 }
