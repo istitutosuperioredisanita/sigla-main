@@ -5995,6 +5995,16 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		return getHome(userContext, V_assestatoBulk.class).fetchAll( sql );
 	}
 
+	private boolean existAllegatoAutorizzativo( UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException {
+		if ( !Optional.ofNullable(obbligazione.getArchivioAllegati())
+				.filter(lista -> !lista.isEmpty())
+				.isPresent()) {
+			// nel caso provengo da un componente che ha letto solo l'obbligazione dal db quindi mi carico gli allegati
+			ObbligazioneService obbligazioneService = SpringUtil.getBean("obbligazioneService", ObbligazioneService.class);
+			obbligazioneService.findAllegati(obbligazione, Boolean.TRUE);
+		}
+		return obbligazione.existAllegatoAutorizzativo();
+	}
 	private void validaCampi(UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException {
 	try {
 		// controlli di validazione del campo MOTIVAZIONE
@@ -6004,7 +6014,8 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 
 		if (!obbligazione.isObbligazioneResiduo() ){
 			// verifica obbligatoreta allegato atto di impegno
-			if ( Utility.createConfigurazioneCnrComponentSession().isMandatoryAllegatoAutorizzativoObb(uc,obbligazione) && ( !obbligazione.existAllegatoAutorizzativo()))
+			if ( Utility.createConfigurazioneCnrComponentSession().isEnabledAllegatiObbligazioni(uc)
+				&& Utility.createConfigurazioneCnrComponentSession().isMandatoryAllegatoAutorizzativoObb(uc,obbligazione) && ( !existAllegatoAutorizzativo( uc,obbligazione)))
 				throw new ApplicationException("Attenzione: Manca l'allegato Atto di Impegno Obbligatorio.");
 			if ( Utility.createConfigurazioneCnrComponentSession().isEnabledAllegatiObbligazioni(uc) )
 				// cos' da controllare che non ci siano due allegati di tipo atto di impegno

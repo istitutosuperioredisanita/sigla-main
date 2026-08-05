@@ -19,6 +19,9 @@ package it.cnr.contab.doccont00.service;
 
 import it.cnr.contab.doccont00.core.bulk.AllegatoObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
+import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.si.spring.storage.StorageDriver;
 import it.cnr.si.spring.storage.StorageObject;
@@ -27,10 +30,7 @@ import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -83,6 +83,67 @@ public class ObbligazioneService extends StoreService {
 
 		}
 		updateProperties(obbligazioneBulk, oldStorageObject);
+	}
+	protected void completeAllegato(AllegatoObbligazioneBulk allegato, StorageObject storageObject) throws ApplicationException {
+
+		Optional.ofNullable(storageObject.<List<String>>getPropertyValue(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value()))
+				.map(strings -> strings.stream())
+				.ifPresent(stringStream -> {
+					stringStream
+							.filter(s -> AllegatoObbligazioneBulk.aspectNamesKeys.get(s) != null)
+							.findFirst()
+							.ifPresent(s -> (( AllegatoObbligazioneBulk) allegato).setAspectName(s));
+				});
+	}
+	private String getStorePath(ObbligazioneBulk allegatoParentBulk,boolean completeAllegatocreate){
+		return allegatoParentBulk.getStorePath();
+	}
+	public OggettoBulk findAllegati(  ObbligazioneBulk oggettobulk, boolean includeSubFolder)throws ApplicationException {
+		String path = oggettobulk.getStorePath();
+		return findAllegati(  oggettobulk, path,  includeSubFolder);
+	}
+	public OggettoBulk findAllegati( ObbligazioneBulk oggettobulk, String path, boolean includeSubFolder) throws ApplicationException {
+			AllegatoParentBulk allegatoParentBulk = (AllegatoParentBulk) oggettobulk;
+
+			if (path == null)
+				return oggettobulk;
+			if (getStorageObjectByPath(path) == null)
+				return oggettobulk;
+			for (StorageObject storageObject : getChildren(getStorageObjectByPath(path).getKey())) {
+				if (hasAspect(storageObject, StoragePropertyNames.SYS_ARCHIVED.value()))
+					continue;
+
+				if (Optional.ofNullable(storageObject.getPropertyValue(StoragePropertyNames.BASE_TYPE_ID.value()))
+						.map(String.class::cast)
+						.filter(s -> s.equals(StoragePropertyNames.CMIS_FOLDER.value()))
+						.isPresent()) {
+					if (includeSubFolder)
+						findAllegati( oggettobulk, storageObject.getPath(),Boolean.FALSE);
+					continue;
+				}
+				final String primaryPath = getStorePath( oggettobulk, false);
+				AllegatoObbligazioneBulk allegato = new AllegatoObbligazioneBulk( storageObject.getKey());
+				allegato.setContentType(storageObject.getPropertyValue(StoragePropertyNames.CONTENT_STREAM_MIME_TYPE.value()));
+				allegato.setNome(storageObject.getPropertyValue(StoragePropertyNames.NAME.value()));
+				allegato.setDescrizione(storageObject.getPropertyValue(StoragePropertyNames.DESCRIPTION.value()));
+				allegato.setTitolo(storageObject.getPropertyValue(StoragePropertyNames.TITLE.value()));
+				allegato.setLastModificationDate(
+						Optional.ofNullable(storageObject.<Calendar>getPropertyValue(StoragePropertyNames.LAST_MODIFIED.value()))
+								.map(calendar -> calendar.getTime())
+								.orElse(new Date()));
+
+				allegato.setRelativePath(
+						Optional.ofNullable(storageObject.getPath())
+								.map(s -> s.substring(s.indexOf(primaryPath) + primaryPath.length()))
+								.map(s -> s.substring(0, s.lastIndexOf(StorageDriver.SUFFIX)))
+								.orElse(StorageDriver.SUFFIX)
+				);
+				completeAllegato(allegato, storageObject);
+				allegato.setCrudStatus(OggettoBulk.NORMAL);
+				allegatoParentBulk.addToArchivioAllegati(allegato);
+			}
+			return oggettobulk;
+
 	}
 
 }
