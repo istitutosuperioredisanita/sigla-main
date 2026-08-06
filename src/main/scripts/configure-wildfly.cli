@@ -94,6 +94,30 @@ echo "=== Configurazione Management Console Authentication ==="
 # Abilito le statistiche sul DataSource
 /subsystem=datasources/data-source=SIGLA:write-attribute(name=statistics-enabled,value=true)
 
+# Validazione connessioni: evita di riconsegnare al pool connessioni Oracle
+# già chiuse lato server (causa dei "SQLRecoverableException: Connessione chiusa"
+# visti nei log durante il cleanup di sessione)
+/subsystem=datasources/data-source=SIGLA:write-attribute( \
+    name=valid-connection-checker-class-name, \
+    value=org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker \
+)
+/subsystem=datasources/data-source=SIGLA:write-attribute( \
+    name=exception-sorter-class-name, \
+    value=org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter \
+)
+/subsystem=datasources/data-source=SIGLA:write-attribute( \
+    name=background-validation, \
+    value=true \
+)
+/subsystem=datasources/data-source=SIGLA:write-attribute( \
+    name=background-validation-millis, \
+    value=${sigla.db.background-validation-millis:60000} \
+)
+/subsystem=datasources/data-source=SIGLA:write-attribute( \
+    name=blocking-timeout-wait-millis, \
+    value=${sigla.db.blocking-timeout-millis:5000} \
+)
+
 # ============================================================================
 # Verifica DataSource
 # ============================================================================
