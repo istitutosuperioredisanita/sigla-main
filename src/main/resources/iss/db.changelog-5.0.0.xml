@@ -149,5 +149,8 @@
     <!-- Autore : VALENTINA TOMADA - Aggiunta colonna in DOCUMENTO_GENERICO per indicare se l'entità del terzo era obbligatoriamente DIVERSI -->
     <include file="iss/add_column_fl_no_entita_terzo_doc_gen.xml"/>
 
+    <!-- Autore : DAVIDE MIRRA - Aggiornamento descrizione del tipo di finanziamento con codice AUT_AREE -->
+    <include file="iss/update_desc_tipo_fin_aut_aree.xml"/>
+
 
 </databaseChangeLog>
