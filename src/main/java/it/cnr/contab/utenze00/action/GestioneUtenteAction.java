@@ -416,10 +416,10 @@ public class GestioneUtenteAction extends it.cnr.jada.util.action.BulkAction {
             /**
              * Rimosso temporaneamente per verifica delle connessioni rimaste attive
              */
-            //if (currentBusinessProcess.getTransactionPolicy() == BusinessProcess.REQUIRES_NEW_TRANSACTION) {
+            if (currentBusinessProcess.getTransactionPolicy() == BusinessProcess.REQUIRES_NEW_TRANSACTION) {
                 bp.closeAllChildren(context);
                 currentBusinessProcess = bp;
-            //}
+            }
             return startNodo(context, currentBusinessProcess, nodo);
         } catch (NoSuchBusinessProcessException _ex) {
             return context.findForward("sessionExpired");
