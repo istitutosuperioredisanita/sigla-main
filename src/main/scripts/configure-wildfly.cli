@@ -94,6 +94,17 @@ echo "=== Configurazione Management Console Authentication ==="
 # Abilito le statistiche sul DataSource
 /subsystem=datasources/data-source=SIGLA:write-attribute(name=statistics-enabled,value=true)
 
+# TCP Keepalive lato driver Oracle JDBC (Dead Connection Detection client-side).
+# A differenza di background-validation, questo protegge ANCHE le connessioni
+# "checked-out" (in uso, associate a una transazione/EJB legata alla sessione
+# HTTP finché non scade), che sono il caso del WARN "Connessione chiusa" visto
+# nei log durante ExpireSessionServlet/HttpEJBCleaner. Invia probe ogni N minuti
+# per mantenere vivo il socket attraverso eventuali firewall/NAT che droppano
+# connessioni idle silenziosamente.
+/subsystem=datasources/data-source=SIGLA/connection-properties=oracle.net.expire_time:add( \
+    value=${sigla.db.expire-time:2} \
+)
+
 # Validazione connessioni: evita di riconsegnare al pool connessioni Oracle
 # già chiuse lato server (causa dei "SQLRecoverableException: Connessione chiusa"
 # visti nei log durante il cleanup di sessione)
