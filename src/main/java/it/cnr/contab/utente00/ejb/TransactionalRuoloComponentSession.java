@@ -279,6 +279,24 @@ public class TransactionalRuoloComponentSession extends it.cnr.jada.ejb.Transact
         }
     }
 
+    public boolean hasPrivilegio(it.cnr.jada.UserContext param0, String cdPrivilegio) throws RemoteException, it.cnr.jada.comp.ComponentException {
+        try {
+            return ((Boolean) invoke("hasPrivilegio", new Object[]{
+                    param0,
+                    cdPrivilegio})).booleanValue();
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (it.cnr.jada.comp.ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
+            }
+        }
+    }
+
     public boolean isCapoCommessa(it.cnr.jada.UserContext param0) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {
             return ((Boolean) invoke("isCapoCommessa", new Object[]{

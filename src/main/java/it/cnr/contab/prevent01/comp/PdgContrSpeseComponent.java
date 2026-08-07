@@ -28,6 +28,8 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 
+import it.cnr.contab.prevent01.bulk.*;
+import it.cnr.jada.persistency.sql.FindClause;
 import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -41,24 +43,9 @@ import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.CdsHome;
 import it.cnr.contab.config00.sto.bulk.DipartimentoBulk;
 import it.cnr.contab.config00.sto.bulk.DipartimentoHome;
-import it.cnr.contab.config00.sto.bulk.EnteBulk;
 import it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
-import it.cnr.contab.prevent01.bulk.Ass_dipartimento_areaBulk;
-import it.cnr.contab.prevent01.bulk.Ass_dipartimento_areaHome;
-import it.cnr.contab.prevent01.bulk.Contrattazione_speseVirtualBulk;
-import it.cnr.contab.prevent01.bulk.Pdg_Modulo_EntrateBulk;
-import it.cnr.contab.prevent01.bulk.Pdg_Modulo_EntrateHome;
-import it.cnr.contab.prevent01.bulk.Pdg_approvato_dip_areaBulk;
-import it.cnr.contab.prevent01.bulk.Pdg_approvato_dip_areaHome;
-import it.cnr.contab.prevent01.bulk.Pdg_contrattazione_speseBulk;
-import it.cnr.contab.prevent01.bulk.Pdg_contrattazione_speseHome;
-import it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk;
-import it.cnr.contab.prevent01.bulk.Pdg_esercizioHome;
-import it.cnr.contab.prevent01.bulk.Pdg_moduloBulk;
-import it.cnr.contab.prevent01.bulk.Pdg_modulo_speseBulk;
-import it.cnr.contab.prevent01.bulk.Pdg_modulo_speseHome;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_sipBulk;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_sipHome;
@@ -109,7 +96,8 @@ public class PdgContrSpeseComponent extends CRUDComponent {
 			for (java.util.Iterator i = testata.getDettagliDipArea().iterator(); i.hasNext();) 
 		   	{
 				Pdg_approvato_dip_areaBulk appDipArea = (Pdg_approvato_dip_areaBulk) i.next();
-				appDipArea.setImporto_ripartito(pdgDipAreaHome.calcolaTotaleApprovatoSpeseInterne(usercontext, appDipArea));
+				appDipArea.setImporto_ripartito_fin(pdgDipAreaHome.calcolaTotaleApprovatoSpeseInterne(usercontext, appDipArea));
+				appDipArea.setImporto_ripartito_fes(pdgDipAreaHome.calcolaTotaleApprovatoSpeseEsterne(usercontext, appDipArea));
 				appDipArea.setUtenteDipartimento(utente != null && utente.getCd_dipartimento() != null);
 		   	}
 			
@@ -407,9 +395,9 @@ public class PdgContrSpeseComponent extends CRUDComponent {
 	}
 	public void approvaDefinitivamente(UserContext userContext)	throws ComponentException {
 		try {
-			List listaModuli = findPdgEsercizio(userContext, Pdg_esercizioBulk.STATO_IN_ESAME_CDR );
-			if (!listaModuli.isEmpty())
-				throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutti i CDS hanno il PDGP in stato " + Pdg_esercizioBulk.STATO_IN_ESAME_CDR);
+			List<Pdg_esercizioBulk> listaEsercizi = findPdgEsercizio(userContext);
+			if (!listaEsercizi.stream().allMatch(Pdg_esercizioBulk::isStatoInEsameCdr))
+				throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutti i CDS hanno il PDGP in stato 'In Esame del Centro'.");
 
 			controllaImportiFontiInterneApprovate(userContext);
 
@@ -419,19 +407,53 @@ public class PdgContrSpeseComponent extends CRUDComponent {
 			par.setFl_approvato_definitivo(Boolean.TRUE);
 			par.setToBeUpdated();
 			updateBulk(userContext, par);
+
+			//Metto tutti gli stati in "ESAMINATI DAL CENTRO"
+			for (Pdg_esercizioBulk pdgEse : listaEsercizi) {
+				pdgEse.setStato(Pdg_esercizioBulk.STATO_ESAMINATO_CDR);
+				pdgEse.setToBeUpdated();
+				makeBulkPersistent(userContext, pdgEse);
+
+				List<Pdg_moduloBulk> listaModuli = findPdgModulo(userContext, pdgEse);
+				for (Pdg_moduloBulk pdgModulo : listaModuli) {
+					pdgModulo.setStato(Pdg_moduloBulk.STATO_EC);
+					pdgModulo.setToBeUpdated();
+					makeBulkPersistent(userContext, pdgModulo);
+				}
+			}
 		} catch (Throwable e) {
 			throw handleException(e);
 		}
 	}
 	public void undoApprovazioneDefinitiva(UserContext userContext)	throws ComponentException {
 		try {
+			List<Pdg_esercizioBulk> listaEsercizi = findPdgEsercizio(userContext);
+			if (!listaEsercizi.stream().allMatch(Pdg_esercizioBulk::isStatoEsaminatoCdr))
+				throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutti i CDS hanno il PDGP in stato 'Esaminato dal Centro'.");
+
 			Parametri_cnrHome parhome = (Parametri_cnrHome)getHome(userContext, Parametri_cnrBulk.class);
 			Parametri_cnrBulk par = new Parametri_cnrBulk(CNRUserContext.getEsercizio(userContext));
 			par = (Parametri_cnrBulk) parhome.findByPrimaryKey(par);
 			par.setFl_approvato_definitivo(Boolean.FALSE);
 			par.setToBeUpdated();
 			updateBulk(userContext, par);
-		} catch (PersistencyException e) {
+
+			//Metto tutti gli stati in "IN ESAME DEL CENTRO"
+			for (Pdg_esercizioBulk pdgEse : listaEsercizi) {
+				if (pdgEse.isStatoEsaminatoCdr()) {
+					pdgEse.setStato(Pdg_esercizioBulk.STATO_IN_ESAME_CDR);
+					pdgEse.setToBeUpdated();
+					makeBulkPersistent(userContext, pdgEse);
+
+					List<Pdg_moduloBulk> listaModuli = findPdgModulo(userContext, pdgEse);
+					for (Pdg_moduloBulk pdgModulo : listaModuli) {
+						pdgModulo.setStato(Pdg_moduloBulk.STATO_CC);
+						pdgModulo.setToBeUpdated();
+						makeBulkPersistent(userContext, pdgModulo);
+					}
+				}
+			}
+		} catch (Throwable e) {
 			throw handleException(e);
 		}
 	}
@@ -470,12 +492,17 @@ public class PdgContrSpeseComponent extends CRUDComponent {
 			throw handleException(e);
 		}
 	}
-	private java.util.List findPdgEsercizio(UserContext userContext, String notStato ) throws ComponentException, PersistencyException, BusyResourceException, OutdatedResourceException {
+	private java.util.List<Pdg_esercizioBulk> findPdgEsercizio(UserContext userContext ) throws ComponentException, PersistencyException, BusyResourceException, OutdatedResourceException {
 		BulkHome home = getHome(userContext,Pdg_esercizioBulk.class);
 		SQLBuilder sql = home.createSQLBuilder();
-		sql.addClause("AND","esercizio",sql.EQUALS,CNRUserContext.getEsercizio(userContext));
-		sql.addClause("AND","stato",sql.NOT_EQUALS,notStato);
+		sql.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,CNRUserContext.getEsercizio(userContext));
 		return home.fetchAll(sql);
 	}
-
+	private java.util.List<Pdg_moduloBulk> findPdgModulo(UserContext userContext, Pdg_esercizioBulk pdg_esercizio) throws ComponentException, PersistencyException, BusyResourceException, OutdatedResourceException {
+		BulkHome home = getHome(userContext,Pdg_moduloBulk.class);
+		SQLBuilder sql = home.createSQLBuilder();
+		sql.addSQLClause(FindClause.AND,"CD_CENTRO_RESPONSABILITA",SQLBuilder.EQUALS,pdg_esercizio.getCd_centro_responsabilita());
+		sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS,pdg_esercizio.getEsercizio());
+		return home.fetchAll(sql);
+	}
 }

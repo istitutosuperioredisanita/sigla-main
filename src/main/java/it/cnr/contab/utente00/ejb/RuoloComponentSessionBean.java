@@ -34,6 +34,25 @@ public class RuoloComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSess
         componentObj = new it.cnr.contab.utente00.comp.RuoloComponent();
     }
 
+    public boolean hasPrivilegio(it.cnr.jada.UserContext param0, String cdPrivilegio) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            boolean result = ((RuoloComponent) componentObj).hasPrivilegio(param0, cdPrivilegio);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
+
     public boolean isCapoCommessa(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, jakarta.ejb.EJBException {
         pre_component_invocation(param0, componentObj);
         try {

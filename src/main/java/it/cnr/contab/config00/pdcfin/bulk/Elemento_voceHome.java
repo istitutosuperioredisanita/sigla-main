@@ -452,11 +452,11 @@ public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome
         return sql;
 	}
 
-	public java.util.List<Elemento_voceBulk> findElementoVociAssociate(Classificazione_vociBulk classificazione) throws IntrospectionException, PersistencyException {
+	public java.util.List<Elemento_voceBulk> findElementoVociAssociate(int esercizio, int idClass) throws IntrospectionException, PersistencyException {
     	Parametri_cnrHome parCnrhome = (Parametri_cnrHome)getHomeCache().getHome(Parametri_cnrBulk.class);
-    	Parametri_cnrBulk parCnrBulk = (Parametri_cnrBulk)parCnrhome.findByPrimaryKey(new Parametri_cnrBulk(classificazione.getEsercizio()));
+    	Parametri_cnrBulk parCnrBulk = (Parametri_cnrBulk)parCnrhome.findByPrimaryKey(new Parametri_cnrBulk(esercizio));
 
     	PersistentHome home = getHomeCache().getHome(Elemento_voceBulk.class);
-        return home.fetchAll(this.selectElementoVociAssociate(classificazione.getEsercizio(), parCnrBulk.getLivello_pdg_decis_spe(), classificazione.getId_classificazione()));
+        return home.fetchAll(this.selectElementoVociAssociate(esercizio, parCnrBulk.getLivello_pdg_decis_spe(), idClass));
     }
 }

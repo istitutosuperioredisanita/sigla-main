@@ -180,7 +180,17 @@
 			<% bp.getController().writeFormLabel(out,"fl_pdg_contrattazione");%>
 			</TD><TD colspan="3">
 			<% bp.getController().writeFormInput(out,"fl_pdg_contrattazione");%>
-		</TD></TR>					
+		</TD></TR>
+		<TR><TD>
+			<% bp.getController().writeFormLabel(out,"fl_pdg_calderone");%>
+			</TD><TD colspan="3">
+			<% bp.getController().writeFormInput(out,"fl_pdg_calderone");%>
+		</TD></TR>
+		<TR><TD>
+			<% bp.getController().writeFormLabel(out,"fl_pdg_calderone_rib");%>
+		</TD><TD colspan="3">
+			<% bp.getController().writeFormInput(out,"fl_pdg_calderone_rib");%>
+		</TD></TR>
 		<TR><TD>
 			<% bp.getController().writeFormLabel(out,"fl_pdg_quadra_fonti_esterne");%>
 			</TD><TD colspan="3">

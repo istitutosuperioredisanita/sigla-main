@@ -20,11 +20,11 @@ package it.cnr.contab.config00.comp;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioHome;
-import it.cnr.contab.config00.sto.bulk.CdsBulk;
-import it.cnr.contab.config00.sto.bulk.EnteBulk;
-import it.cnr.contab.config00.sto.bulk.EnteHome;
+import it.cnr.contab.config00.sto.bulk.*;
 import it.cnr.contab.doccont00.core.bulk.V_disp_cassa_cdsBulk;
 import it.cnr.contab.doccont00.core.bulk.V_disp_cassa_cnrBulk;
+import it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk;
+import it.cnr.contab.prevent01.bulk.Pdg_esercizioHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
@@ -39,8 +39,10 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Classe che ridefinisce alcune operazioni di CRUD su EsercizioBulk
@@ -125,14 +127,14 @@ public class EsercizioComponent extends it.cnr.jada.comp.CRUDComponent implement
         try {
             EsercizioBulk esercizioEnte = getEsercizioEnte(userContext, esercizio);
 
-            if (!esercizio.getCd_cds().equals(esercizioEnte.getCd_cds()) && esercizioEnte.getSt_apertura_chiusura().equals(esercizio.STATO_INIZIALE))
+            if (!esercizio.getCd_cds().equals(esercizioEnte.getCd_cds()) && EsercizioBulk.STATO_INIZIALE.equals(esercizioEnte.getSt_apertura_chiusura()))
                 throw handleException(new ApplicationException("Il piano di gestione non è stato ancora aperto dall'Ente"));
 
             EsercizioHome home = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
             home.callApriPdGProcedure(esercizio);
 
-            if (esercizio.getSt_apertura_chiusura().equals(esercizio.STATO_INIZIALE)) {
-                esercizio.setSt_apertura_chiusura(esercizio.STATO_PDG_APERTO);
+            if (EsercizioBulk.STATO_INIZIALE.equals(esercizio.getSt_apertura_chiusura())) {
+                esercizio.setSt_apertura_chiusura(EsercizioBulk.STATO_PDG_APERTO);
                 updateBulk(userContext, esercizio);
             }
             return esercizio;
@@ -204,57 +206,74 @@ public class EsercizioComponent extends it.cnr.jada.comp.CRUDComponent implement
 
     public EsercizioBulk cambiaStatoConBulk(UserContext userContext, EsercizioBulk esercizio) throws it.cnr.jada.comp.ComponentException {
         try {
-            EsercizioHome esercizioHome = (EsercizioHome) getHome(userContext, esercizio);
-/*
-		if ( esercizio.getSt_apertura_chiusura().equals(esercizio.STATO_CHIUSO_DEF) ||
-			 esercizio.getSt_apertura_chiusura().equals(esercizio.STATO_INIZIALE))
-			throw new it.cnr.jada.comp.ApplicationException( "Non è possibile cambiare lo stato");
-*/
-            if (esercizio.getSt_apertura_chiusura().equals(esercizio.STATO_INIZIALE))
-                throw new it.cnr.jada.comp.ApplicationException("Non è possibile cambiare lo stato");
+            EsercizioHome esercizioHome = (EsercizioHome) getHome(userContext, EsercizioBulk.class);
+            Pdg_esercizioHome pdgEsercizioHome = (Pdg_esercizioHome) getHome(userContext, Pdg_esercizioBulk.class);
+            CdsHome cdsHome = (CdsHome) getHome(userContext, CdsBulk.class);
+
+            if (esercizio.isStatoIniziale())
+                throw new it.cnr.jada.comp.ApplicationException("Non è possibile cambiare lo stato.");
 
             String next = (String) EsercizioBulk.getProssimoStato().get(esercizio.getSt_apertura_chiusura());
 
             // pdg aperto --> aperto
-            if (esercizio.STATO_PDG_APERTO.equals(esercizio.getSt_apertura_chiusura()) &&
-                    next.equals(esercizio.STATO_APERTO)) {
-//			EsercizioBulk esercizioPrecedente = esercizioHome.findEsercizioPrecedente( esercizio );
-//			if ( esercizioPrecedente != null && !esercizioPrecedente.isChiuso() )
-//				throw new it.cnr.jada.comp.ApplicationException( "L'esercizio precedente non è stato chiuso." );
+            if (esercizio.isStatoPdgAperto() && next.equals(EsercizioBulk.STATO_APERTO)) {
                 if (!esercizioHome.verificaEsercizi2AnniPrecedenti(esercizio))
                     throw new it.cnr.jada.comp.ApplicationException("Esistono esercizi non chiusi per l'anno " + Integer.valueOf(esercizio.getEsercizio().intValue() - 2));
-            }
 
+                Unita_organizzativaBulk uo = (Unita_organizzativaBulk)getHome(userContext, Unita_organizzativaBulk.class).
+                        findByPrimaryKey(new Unita_organizzativaBulk(CNRUserContext.getCd_unita_organizzativa(userContext)));
+
+                List<Pdg_esercizioBulk> result = new ArrayList<>();
+                if (uo.isUoEnte()) {
+                    List<CdsBulk> cdsList = cdsHome.findAllCds(userContext, esercizio.getEsercizio());
+                    for (CdsBulk cds : cdsList) {
+                        List<Pdg_esercizioBulk> resultCds = pdgEsercizioHome.findAllPdgpProgetti(esercizio.getEsercizio(), cds.getCd_unita_organizzativa());
+                        if (resultCds.isEmpty())
+                            throw new it.cnr.jada.comp.ApplicationException("Non risulta caricato per l'anno "+esercizio.getEsercizio()+" nessun Piano di gestione " +
+                                    "per il CDS "+cds.getCd_unita_organizzativa());
+                        result.addAll(resultCds);
+                    }
+                } else {
+                    result = pdgEsercizioHome.findAllPdgpProgetti(esercizio.getEsercizio(), esercizio.getCd_cds());
+                }
+                if (result.isEmpty())
+                    throw new it.cnr.jada.comp.ApplicationException("Non risulta caricato per l'anno "+esercizio.getEsercizio()+" nessun Piano di gestione " +
+                            (uo.isUoEnte()?"per nessun CDS.":"per il CDS "+esercizio.getCd_cds()));
+
+                String cdrNonChiusi = result.stream().filter(el->!el.isStatoChiusuraGestionaleCdr())
+                        .map(Pdg_esercizioBulk::getCd_centro_responsabilita)
+                        .collect(Collectors.joining(", "));
+                if (!cdrNonChiusi.isEmpty())
+                    throw new it.cnr.jada.comp.ApplicationException("Esistono per l'anno "+esercizio.getEsercizio()+" Piani di gestione non chiusi per i seguenti CDR: " + cdrNonChiusi);
+
+                if (!uo.isUoEnte()) {
+                    boolean isEsercizioAperto = esercizioHome.isEsercizioAperto(esercizio.getEsercizio(), uo.getCd_cds());
+                    if (!isEsercizioAperto)
+                        throw new it.cnr.jada.comp.ApplicationException("Attenzione: l'esercizio dell'Ente non risulta in stato aperto.");
+                }
+            }
 
             // chiuso --> aperto - Esercizio ENTE chiuso
-            if (esercizio.STATO_CHIUSO_DEF.equals(esercizio.getSt_apertura_chiusura()) &&
-                    esercizio.STATO_CHIUSO_DEF.equals(getEsercizioEnte(userContext, esercizio).getSt_apertura_chiusura())) {
-
+            if (esercizio.isStatoChiuso() && getEsercizioEnte(userContext, esercizio).isStatoChiuso())
                 throw new it.cnr.jada.comp.ApplicationException("Attenzione: l'esercizio dell'Ente risulta in stato chiuso.");
-            }
 
             // chiuso --> aperto
-            if (esercizio.STATO_CHIUSO_DEF.equals(esercizio.getSt_apertura_chiusura()) &&
-                    next.equals(esercizio.STATO_APERTO)) {
+            if (esercizio.isStatoChiuso() && next.equals(EsercizioBulk.STATO_APERTO)) {
                 EsercizioBulk esercizioSuccessivo = esercizioHome.findEsercizioSuccessivo(esercizio);
-                if (esercizioSuccessivo != null && esercizioSuccessivo.isChiuso())
+                if (esercizioSuccessivo != null && esercizioSuccessivo.isStatoChiuso())
                     throw new it.cnr.jada.comp.ApplicationException("E' possibile mettere in stato aperto solo l'ultimo esercizio chiuso.");
             }
 
             // chiuso --> aperto - Esercizio economico del CdS chiuso
-            if (esercizio.STATO_CHIUSO_DEF.equals(esercizio.getSt_apertura_chiusura()) &&
-                    isEsercizioCdSChiuso(userContext))
+            if (esercizio.isStatoChiuso() && isEsercizioCdSChiuso(userContext))
                 throw new it.cnr.jada.comp.ApplicationException("Attenzione: l'esercizio economico del CdS risulta in stato chiuso.");
 
-
             // aperto --> chiuso
-            if (esercizio.STATO_APERTO.equals(esercizio.getSt_apertura_chiusura()) &&
-                    next.equals(esercizio.STATO_CHIUSO_DEF)) {
+            if (esercizio.isStatoAperto() && next.equals(EsercizioBulk.STATO_CHIUSO_DEF)) {
                 EsercizioBulk esercizioPrecedente = esercizioHome.findEsercizioPrecedente(esercizio);
-                if (esercizioPrecedente != null && !esercizioPrecedente.isChiuso())
+                if (esercizioPrecedente != null && !esercizioPrecedente.isStatoChiuso())
                     throw new it.cnr.jada.comp.ApplicationException("E' impossibile mettere in stato chiuso perchè l'esercizio precedente non è ancora chiuso.");
                 verificaChiudibilitaEsercizio(userContext, esercizio);
-//			aggiornaIm_cassa_iniziale( userContext, esercizio );
             }
 
             esercizio.setSt_apertura_chiusura(next);
@@ -262,7 +281,6 @@ public class EsercizioComponent extends it.cnr.jada.comp.CRUDComponent implement
             updateBulk(userContext, esercizio);
 
             return esercizio;
-
         } catch (Throwable e) {
             throw handleException(esercizio, e);
         }
