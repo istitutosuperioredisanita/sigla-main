@@ -1224,6 +1224,17 @@ begin
 			stato_fine := 'W';
 		end;
 
+        begin
+            aMessage := 'Inserimento del record per ACCRUAL '||aEs||'. Lock tabella ACCRUAL';
+            ibmutl200.LOGINF(aPgEsec,aMessage,'','');
+
+        insert into  ACCRUAL(ESERCIZIO, STATO, ESITO, DACR, UTCR, DUVA, UTUV, PG_VER_REC)
+            values (aEs,'INS',null,sysdate,cgUtente,sysdate,cgUtente,1);
+        exception when DUP_VAL_ON_INDEX then
+                    ibmutl200.LOGWAR(aPgEsec,'Record ACCRUAL '||aEs||' già esistente','','');
+                    stato_fine := 'W';
+        end;
+
 		-- Creazione Parametri CNR
 		begin
 			aMessage := 'Inserimento dei Parametri CNR per l''esercizio base '||aEs||'. Lock tabella PARAMETRI_CNR';
