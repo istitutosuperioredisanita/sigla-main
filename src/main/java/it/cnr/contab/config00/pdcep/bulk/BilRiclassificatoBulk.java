@@ -28,14 +28,6 @@ public class BilRiclassificatoBulk extends BilRiclassificatoBase {
 		this.accrual = accrual;
 	}
 
-	public static Dictionary<String, String> getTiSezioneKeys() {
-		return tiSezioneKeys;
-	}
-
-	public static void setTiSezioneKeys(Dictionary<String, String> tiSezioneKeys) {
-		BilRiclassificatoBulk.tiSezioneKeys = tiSezioneKeys;
-	}
-
 	private List<TipoBilancioBulk> tipoBilanci;
 
 	private TipoBilancioBulk tipo_bilancio;
