@@ -20,7 +20,10 @@ package it.cnr.contab.config00.comp;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Configurazione_cnrKey;
+import it.cnr.contab.config00.latt.bulk.CofogBulk;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.utente00.ejb.RuoloComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
@@ -1743,4 +1746,27 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
         }
     }
 
+    public CofogBulk getCofogProgettoDefault(UserContext userContext, int esercizio) throws ComponentException {
+        return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
+                .filter(Configurazione_cnrHome.class::isInstance)
+                .map(Configurazione_cnrHome.class::cast)
+                .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
+                .getCofogProgettoDefault(esercizio);
+    }
+
+    public ProgettoBulk getProgettoCalderone(UserContext userContext, int esercizio) throws ComponentException {
+        return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
+                .filter(Configurazione_cnrHome.class::isInstance)
+                .map(Configurazione_cnrHome.class::cast)
+                .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
+                .getProgettoCalderone(esercizio);
+    }
+
+    public WorkpackageBulk getGaeCalderone(UserContext userContext, int esercizio) throws ComponentException {
+        return Optional.ofNullable(getHome(userContext, Configurazione_cnrBulk.class))
+                .filter(Configurazione_cnrHome.class::isInstance)
+                .map(Configurazione_cnrHome.class::cast)
+                .orElseThrow(() -> new DetailedRuntimeException("Configurazione Home not found"))
+                .getGaeCalderone(esercizio);
+    }
 }

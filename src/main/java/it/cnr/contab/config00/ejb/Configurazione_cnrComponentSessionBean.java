@@ -18,7 +18,10 @@
 package it.cnr.contab.config00.ejb;
 
 import it.cnr.contab.config00.comp.Configurazione_cnrComponent;
+import it.cnr.contab.config00.latt.bulk.CofogBulk;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.action.AdminUserContext;
@@ -1366,5 +1369,60 @@ public class Configurazione_cnrComponentSessionBean extends it.cnr.jada.ejb.CRUD
         }
     }
 
+    public CofogBulk getCofogProgettoDefault(UserContext param0, int esercizio) throws ComponentException, EJBException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            CofogBulk result = ((Configurazione_cnrComponent)componentObj).getCofogProgettoDefault(param0, esercizio);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
 
+    public ProgettoBulk getProgettoCalderone(UserContext param0, int esercizio) throws ComponentException, EJBException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            ProgettoBulk result = ((Configurazione_cnrComponent)componentObj).getProgettoCalderone(param0, esercizio);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
+
+    public WorkpackageBulk getGaeCalderone(UserContext param0, int esercizio) throws ComponentException, EJBException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            WorkpackageBulk result = ((Configurazione_cnrComponent)componentObj).getGaeCalderone(param0, esercizio);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(param0, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(param0, componentObj, e);
+        }
+    }
 }

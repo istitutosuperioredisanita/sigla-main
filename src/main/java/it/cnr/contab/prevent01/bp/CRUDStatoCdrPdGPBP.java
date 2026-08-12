@@ -27,6 +27,11 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
+import it.cnr.contab.prevent01.comp.PdGPreliminareComponent;
+import it.cnr.contab.prevent01.ejb.PdGPreliminareComponentSession;
+import it.cnr.contab.prevent01.ejb.PdgContrSpeseComponentSession;
+import it.cnr.jada.comp.ComponentException;
 import jakarta.ejb.RemoveException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -53,6 +58,7 @@ import it.cnr.jada.util.jsp.Button;
  */
 public class CRUDStatoCdrPdGPBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 	private Parametri_cnrBulk parametriCnr;
+	private Unita_organizzativaBulk uoScrivania;
 
 	private SimpleDetailCRUDController crudDettagli = new SimpleDetailCRUDController( "Dettagli", Pdg_esercizioBulk.class, "dettagli", this, false) {
 		public boolean isFiltered()
@@ -86,6 +92,7 @@ public class CRUDStatoCdrPdGPBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 		setModel(context, new CdrBulk());
 		try {
 			setParametriCnr(Utility.createParametriCnrComponentSession().getParametriCnr(context.getUserContext(), CNRUserContext.getEsercizio(context.getUserContext())));
+			setUoScrivania(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context));
 			cerca(context);
 		} catch(Exception e) {
 			throw handleException(e);
@@ -168,9 +175,12 @@ public class CRUDStatoCdrPdGPBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 		if ( isEditing() && isEditable() &&
 			pdg_es != null &&
 			pdg_es.getStato() != null &&
-			!pdg_es.getStato().equals(Pdg_esercizioBulk.STATO_CHIUSURA_GESTIONALE_CDR))
+			!pdg_es.getStato().equals(Pdg_esercizioBulk.STATO_CHIUSURA_GESTIONALE_CDR) &&
+			!(pdg_es.getStato().equals(Pdg_esercizioBulk.STATO_IN_ESAME_CDR) &&
+				getParametriCnr().getFl_pdg_calderone().equals(Boolean.TRUE)) &&
+			!(pdg_es.getStato().equals(Pdg_esercizioBulk.STATO_ESAMINATO_CDR) &&
+				getParametriCnr().getFl_pdg_calderone().equals(Boolean.TRUE)))
 			return true;
-
 		return false;
 	}
 
@@ -248,5 +258,33 @@ public class CRUDStatoCdrPdGPBP extends it.cnr.jada.util.action.SimpleCRUDBP {
 
 	public void setParametriCnr(Parametri_cnrBulk bulk) {
 			parametriCnr = bulk;
+	}
+
+	public void ribaltaSuCalderone(ActionContext context) throws BusinessProcessException {
+		try {
+			PdGPreliminareComponentSession session = (PdGPreliminareComponentSession)createComponentSession();
+			if (!this.isUoEnte())
+				throw new ApplicationException("Attenzione: questa operazione è possibile effettuarla solo a livello Ente!");
+			session.ribaltaSuCalderone(context.getUserContext());
+			initialize(context);
+		} catch (RemoteException | ComponentException e) {
+			throw new BusinessProcessException(e);
+		}
+    }
+
+	public void setUoScrivania(Unita_organizzativaBulk uoScrivania) {
+		this.uoScrivania = uoScrivania;
+	}
+
+	public Unita_organizzativaBulk getUoScrivania() {
+		return uoScrivania;
+	}
+
+	public boolean isUoEnte(){
+		return (uoScrivania.getCd_tipo_unita().compareTo(it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_ENTE)==0);
+	}
+
+	public boolean isRibaltatoSuCalderone() {
+		return parametriCnr.getFl_pdg_calderone() && parametriCnr.getFl_pdg_calderone_rib();
 	}
 }

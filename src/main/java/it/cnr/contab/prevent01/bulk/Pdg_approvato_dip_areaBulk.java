@@ -34,7 +34,8 @@ public class Pdg_approvato_dip_areaBulk extends Pdg_approvato_dip_areaBase {
 	private BulkList dettagliContrSpese = new BulkList();
 	private DipartimentoBulk dipartimento;
 	private CdsBulk area;
-	private BigDecimal importo_ripartito;
+	private BigDecimal importo_ripartito_fin;
+	private BigDecimal importo_ripartito_fes;
 	private boolean utenteDipartimento = false;
 
 	public Pdg_approvato_dip_areaBulk() {
@@ -93,8 +94,8 @@ public class Pdg_approvato_dip_areaBulk extends Pdg_approvato_dip_areaBase {
 		area = bulk;
 	}
 	private void inizializzaImporti(){
-		setImporto_approvato(Utility.ZERO);
-		setImporto_ripartito(Utility.ZERO);
+		setImporto_ripartito_fin(Utility.ZERO);
+		setImporto_ripartito_fes(Utility.ZERO);
 	}
 	public boolean isROrigates() {
 		if (!isToBeCreated())
@@ -108,11 +109,17 @@ public class Pdg_approvato_dip_areaBulk extends Pdg_approvato_dip_areaBase {
 	public boolean isROImporto_approvato() {
 		return isUtenteDipartimento();
 	}
-	public BigDecimal getImporto_ripartito() {
-		return importo_ripartito;
+	public BigDecimal getImporto_ripartito_fin() {
+		return importo_ripartito_fin;
 	}
-	public void setImporto_ripartito(BigDecimal importo_ripartito) {
-		this.importo_ripartito = importo_ripartito;
+	public void setImporto_ripartito_fin(BigDecimal importo_ripartito_fin) {
+		this.importo_ripartito_fin = importo_ripartito_fin;
+	}
+	public BigDecimal getImporto_ripartito_fes() {
+		return importo_ripartito_fes;
+	}
+	public void setImporto_ripartito_fes(BigDecimal importo_ripartito_fes) {
+		this.importo_ripartito_fes = importo_ripartito_fes;
 	}
 	public void setUtenteDipartimento(boolean newUtenteDipartimento) {
 		utenteDipartimento = newUtenteDipartimento;

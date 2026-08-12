@@ -32,11 +32,17 @@
 %>
 
 <div class="Group card">
-	<%	controller.writeHTMLTable(pageContext,null,false,false,false,"100%","250px"); %>
+	<%	controller.writeHTMLTable(pageContext,null,false,false,false,"100%","30vh"); %>
 	<table border="0" cellspacing="0" cellpadding="20" class="w-100">
-		<td><% 
+		<td><%
 			if (bp.getParametriCnr().getFl_pdg_contrattazione())
-				controller.writeFormInput( out, "stato" ); 
+				if (bp.getParametriCnr().getFl_pdg_calderone()) {
+					if (!bp.isRibaltatoSuCalderone())
+						controller.writeFormInput( out, "statoConCalderone" );
+					else
+						controller.writeFormInput( out, "statoConCalderoneRib" );
+				} else
+					controller.writeFormInput( out, "stato" );
 			else
 				controller.writeFormInput( out, "statoSenzaContrattazione" ); 
 			%>
@@ -62,7 +68,20 @@
 					"btn-outline-info btn-title btn-block",
 					bp.isRiportaStatoPrecedenteButtonEnabled(),
 					bp.getParentRoot().isBootstrap()); %>
-		</td>	
+		</td>
+		<% if (bp.isUoEnte() && bp.getParametriCnr().getFl_pdg_contrattazione() &&
+				bp.getParametriCnr().getFl_approvato_definitivo() && !bp.isRibaltatoSuCalderone()) { %>
+			<td ALIGN="CENTER">
+				<% JSPUtils.button(out,
+						bp.getParentRoot().isBootstrap() ? "fa fa-fw fa-undo" : bp.encodePath("img/undo24.gif"),
+						bp.getParentRoot().isBootstrap() ? "fa fa-fw fa-undo" : bp.encodePath("img/undo24.gif"),
+						"Ribalta su Calderone",
+						"javascript:submitForm('doRibaltaSuCalderone')",
+						"btn-outline-info btn-title btn-block",
+						true,//bp.isRiportaStatoPrecedenteButtonEnabled(),
+						bp.getParentRoot().isBootstrap()); %>
+			</td>
+		<% } %>
 	</table>
 </div>
 <%	bp.closeFormWindow(pageContext); %>

@@ -313,7 +313,21 @@
 			sqlTypeName="CHAR"
 			columnSize="1"
 			nullable="false"
-			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />		
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+            columnName="FL_PDG_CALDERONE"
+            propertyName="fl_pdg_calderone"
+            sqlTypeName="CHAR"
+            columnSize="1"
+            nullable="false"
+            converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+            columnName="FL_PDG_CALDERONE_RIB"
+            propertyName="fl_pdg_calderone_rib"
+            sqlTypeName="CHAR"
+            columnSize="1"
+            nullable="false"
+            converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 		<columnMapping
 			columnName="FL_PDG_QUADRA_FONTI_ESTERNE"
 			propertyName="fl_pdg_quadra_fonti_esterne"
@@ -417,6 +431,10 @@
 		name="fl_pdg_codlast"/>
 	<persistentProperty
 		name="fl_pdg_contrattazione"/>
+	<persistentProperty
+        name="fl_pdg_calderone"/>
+	<persistentProperty
+		name="fl_pdg_calderone_rib"/>
 	<persistentProperty
 		name="fl_pdg_quadra_fonti_esterne"/>
 	<persistentProperty

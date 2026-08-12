@@ -49,6 +49,7 @@ public class Pdg_modulo_speseBase extends Pdg_modulo_speseKey implements Keyed {
 
 	// CD_VOCE_PIANO VARCHAR(10) NOT NULL
 	private java.lang.String cd_voce_piano;
+	private java.lang.String note;
 
 	public Pdg_modulo_speseBase() {
 		super();
@@ -119,5 +120,13 @@ public class Pdg_modulo_speseBase extends Pdg_modulo_speseKey implements Keyed {
 	
 	public void setCd_voce_piano(java.lang.String cd_voce_piano) {
 		this.cd_voce_piano = cd_voce_piano;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
 	}
 }

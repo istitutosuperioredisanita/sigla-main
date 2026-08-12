@@ -304,8 +304,15 @@
 		inputType="ROTEXT"
 		maxLength="50"
 		formatName="it.cnr.contab.util.EuroFormat"
-		label="Tot.Risorse per&lt;BR&gt;Progetto" />	
-		
+		label="Tot.Risorse per&lt;BR&gt;Progetto" />
+	<fieldProperty
+		name="note"
+		property="note"
+		label="Note"
+		cols="80"
+		rows="2"
+		inputType="TEXTAREA" />
+
 	<formFieldProperty
 		name="esercizio_ro" />
 	<formFieldProperty
@@ -345,8 +352,10 @@
 	<formFieldProperty
 		name="cd_programma_liv2" />
 	<formFieldProperty
-		name="importo_totale_liv2" />				
-					
+		name="importo_totale_liv2" />
+	<formFieldProperty
+		name="note" />
+
 <!-- fine r.p.-->		
 	<formFieldProperty
 		name="esercizio" />
@@ -468,6 +477,8 @@
 		<findFieldProperty
 				name="stato"
 				label="Stato attuale" />
+		<findFieldProperty
+				name="note" />
 	</freeSearchSet>
 	<columnSet name="prg_liv2">
 		<columnFieldProperty
@@ -485,6 +496,8 @@
 		<columnFieldProperty
 			name="stato"
 			label="Stato attuale" />
+		<columnFieldProperty
+			name="note" />
 		<columnFieldProperty
 			name="existDecisionaleE"
 			label="Entrata"
