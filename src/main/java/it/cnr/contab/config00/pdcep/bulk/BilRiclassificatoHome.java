@@ -3,8 +3,6 @@
  * Date 24/03/2026
  */
 package it.cnr.contab.config00.pdcep.bulk;
-import java.sql.Connection;
-import java.util.Optional;
 
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
@@ -14,6 +12,9 @@ import it.cnr.jada.persistency.PersistentCache;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.sql.Connection;
+import java.util.Optional;
 
 public class BilRiclassificatoHome extends BulkHome {
 	public BilRiclassificatoHome(Connection conn) {
@@ -29,5 +30,15 @@ public class BilRiclassificatoHome extends BulkHome {
 		compoundFindClause.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(usercontext));
 		compoundFindClause.addClause(FindClause.AND, "cdUnitaOrganizzativa", SQLBuilder.EQUALS, CNRUserContext.getCd_unita_organizzativa(usercontext));
 		return super.selectByClause(usercontext, compoundFindClause);
+
 	}
+	@Override
+	public SQLBuilder selectByClause(CompoundFindClause compoundfindclause)
+			throws PersistencyException {
+		SQLBuilder sqlbuilder = createSQLBuilder();
+		sqlbuilder.setFromClause(new StringBuffer("BIL_RICLASSIFICATO LEFT OUTER JOIN ACCRUAL ON ACCRUAL.ESERCIZIO=BIL_RICLASSIFICATO.ESERCIZIO"));
+		sqlbuilder.addClause(compoundfindclause);
+		return sqlbuilder;
+	}
+
 }
