@@ -32,13 +32,6 @@ public class BilRiclassificatoHome extends BulkHome {
 		return super.selectByClause(usercontext, compoundFindClause);
 
 	}
-	@Override
-	public SQLBuilder selectByClause(CompoundFindClause compoundfindclause)
-			throws PersistencyException {
-		SQLBuilder sqlbuilder = createSQLBuilder();
-		sqlbuilder.setFromClause(new StringBuffer("BIL_RICLASSIFICATO LEFT OUTER JOIN ACCRUAL ON ACCRUAL.ESERCIZIO=BIL_RICLASSIFICATO.ESERCIZIO"));
-		sqlbuilder.addClause(compoundfindclause);
-		return sqlbuilder;
-	}
+
 
 }
