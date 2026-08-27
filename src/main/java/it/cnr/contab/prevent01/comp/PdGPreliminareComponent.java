@@ -357,19 +357,6 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 							throw new ApplicationException("Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato " + Pdg_moduloBulk.STATO_CG);
 					}
 
-					// aggiorniamo le righe di pdg_modulo in CG
-					BulkHome home = getHome(userContext,Pdg_moduloBulk.class);
-					SQLBuilder sql = home.createSQLBuilder();
-					sql.addSQLClause("AND","CD_CENTRO_RESPONSABILITA",sql.EQUALS,pdg_esercizio.getCd_centro_responsabilita());
-					sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,pdg_esercizio.getEsercizio());
-					java.util.List moduli_list = getHome(userContext,Pdg_moduloBulk.class).fetchAll(sql);
-					for (java.util.Iterator i = moduli_list.iterator();i.hasNext();) {
-						Pdg_moduloBulk mod = (Pdg_moduloBulk)i.next();
-						mod.setStato(Pdg_moduloBulk.STATO_CG);
-						mod.setUser(userContext.getUser());
-						updateBulk(userContext,mod);
-					}
-
 					ribaltaCDPSuPdg(userContext, pdg_esercizio);
 
 					ribaltaCostiPdGArea(userContext, pdg_esercizio);
