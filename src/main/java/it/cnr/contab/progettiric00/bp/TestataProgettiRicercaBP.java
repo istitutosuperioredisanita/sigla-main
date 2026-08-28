@@ -136,6 +136,7 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
     private boolean flNuovoPdg = false;
     private boolean flInformix = false;
     private boolean flPrgPianoEconomico = false;
+    private boolean flPdgCalderone = false;
 
     private Integer annoFromPianoEconomico;
     private Integer esercizioScrivania;
@@ -251,6 +252,8 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
             Parametri_enteBulk parEnte = Utility.createParametriEnteComponentSession().getParametriEnte(actioncontext.getUserContext());
             setFlInformix(parEnte.getFl_informix());
             setFlPrgPianoEconomico(parEnte.getFl_prg_pianoeco());
+            setFlPdgCalderone(parCnr.getFl_pdg_calderone());
+
             esercizioScrivania = CNRUserContext.getEsercizio(actioncontext.getUserContext());
             cdrScrivania = CNRUserContext.getCd_cdr(actioncontext.getUserContext());
             uoScrivania = (Unita_organizzativaBulk) Utility.createUnita_organizzativaComponentSession().findUOByCodice(actioncontext.getUserContext(), CNRUserContext.getCd_unita_organizzativa(actioncontext.getUserContext()));
@@ -532,6 +535,14 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
 
     public void setFlPrgPianoEconomico(boolean flPrgPianoEconomico) {
         this.flPrgPianoEconomico = flPrgPianoEconomico;
+    }
+
+    public boolean isFlPdgCalderone() {
+        return flPdgCalderone;
+    }
+
+    public void setFlPdgCalderone(boolean flPdgCalderone) {
+        this.flPdgCalderone = flPdgCalderone;
     }
 
     @Override
@@ -999,7 +1010,7 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
                 throw new ValidationException("Operazione non possibile! Indicare l'importo cofinanziato (valore maggiore o uguale a 0)!");
 
             if (optProgetto.get().isPianoEconomicoRequired()) {
-                if (!optProgetto.map(ProgettoBulk::getImTotale).filter(el -> el.compareTo(BigDecimal.ZERO) > 0).isPresent())
+                if (!isFlPdgCalderone() && !optProgetto.map(ProgettoBulk::getImTotale).filter(el -> el.compareTo(BigDecimal.ZERO) > 0).isPresent())
                     throw new ValidationException("Operazione non possibile! Indicare almeno un importo positivo tra quello finanziato e cofinanziato!");
                 if (!optProgetto.map(ProgettoBulk::isDettagliPianoEconomicoPresenti).orElse(Boolean.TRUE))
                     throw new ValidationException("Operazione non possibile! E' obbligatorio caricare il piano economico del progetto!");
