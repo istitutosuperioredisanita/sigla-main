@@ -26,9 +26,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Test di:
@@ -156,7 +160,7 @@ public class CRUDOrdineAcqBP001 extends ActionDeployments {
      */
     @Test
     @Order(3)
-    public void testEvasioneConsegna() {
+    public void testEvasioneConsegna() throws IOException {
         switchToFrameMenu();
         doSelezionaMenu(ORD_EVAORD);
 
@@ -224,7 +228,10 @@ public class CRUDOrdineAcqBP001 extends ActionDeployments {
         String textAlert = handleTextAlert(browser);
         Assertions.assertEquals("Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).", textAlert);
 
-        File file = new File("src/test/resources/contratto.pdf");
+        File original = new File("src/test/resources/contratto.pdf");
+        File file = new File(original.getParentFile(), "contratto".concat(UUID.randomUUID().toString()).concat(".pdf"));
+        Files.copy(original.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
         doClickButton("doTab('tab','tabAllegati')");
         doClickButton("doAddToCRUD(main.ArchivioAllegati)");
         Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
