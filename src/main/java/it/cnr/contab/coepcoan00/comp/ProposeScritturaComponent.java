@@ -547,9 +547,7 @@ public class ProposeScritturaComponent extends CRUDComponent {
 								aContoEconomico = findContoNotaCreditoDaRicevere(userContext, docamm.getEsercizio());
 							else
 								aContoEconomico = findContoDocumentoGenericoDaRicevere(userContext, docamm.getEsercizio());
-						} else if (docamm.getTipoDocumentoEnum().isFatturaPassiva())
-							aContoEconomico = conto;
-						else
+						} else
 							aContoEconomico = findContoFattureDaRicevere(userContext, docamm.getEsercizio());
 					}
 					DettaglioPrimaNota dettPN = this.addDettaglioCostoRicavo(userContext, docamm, dettFin, aContoEconomico, importoAnniPrecedenti, null, null);
