@@ -98,7 +98,6 @@ Successivamente si può avviare l'applicazione con H2 in memoria avendo anche cu
 ```
 java -jar target/sigla-bootable.jar --properties=src/main/resources/application-h2.properties --cli-script=src/main/scripts/management-admin-user.cli
 ```
-
 # 🐳 Startup Docker
 
 #### _Per avviare una istanza di SIGLA con h2 in memoria_
