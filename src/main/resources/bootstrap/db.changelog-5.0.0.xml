@@ -6378,4 +6378,8 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <include file="bootstrap/add_configurazione_progetti_dati_default.xml"/>
     <!-- Autore : RAFFAELE PAGANO - AGGIUNTO PARAMETRI NUOVI IN TABELLA CONFIGURAZIONE -->
     <include file="bootstrap/add_column_on_pdg_modulo.xml"/>
+
+    <!-- Autore : RAFFAELE PAGANO - ELIMINATA UNIQUE_KEY SU TABELLA PDG_MODULO_SPESE -->
+    <include file="bootstrap/modify_table_pdg_modulo_spese.xml"/>
+
 </databaseChangeLog>
