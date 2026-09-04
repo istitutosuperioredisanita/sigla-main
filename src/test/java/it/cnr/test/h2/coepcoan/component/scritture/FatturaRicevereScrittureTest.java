@@ -46,7 +46,11 @@ public class FatturaRicevereScrittureTest extends DeploymentsH2 {
         proposeScritturaComponentSession = lookup("CNRCOEPCOAN00_EJB_ProposeScritturaComponentSession", ProposeScritturaComponentSession.class);
         scritturaPartitaDoppiaFromDocumentoComponentSession = lookup("CNRCOEPCOAN00_EJB_ScritturaPartitaDoppiaFromDocumentoComponentSession", ScritturaPartitaDoppiaFromDocumentoComponentSession.class);
     }
-    
+
+    /*
+        Da Settembre 2026 cambiata logica. Il conto Fatture da ricevere viene movimentato solo su fatture da Ordini
+        Pertanto anche se la fattura è residua i conti movimentati sono quelli patrimoniali
+     */
     /**
      * Fattura {@code Istituzionale} {@code No Split Payment} {@code No Ordini} {@code Bene Inventariabile}
      * {@code Residua} su mono voce di 2 righe pagate con 2 mandati di pagamento:
@@ -68,7 +72,8 @@ public class FatturaRicevereScrittureTest extends DeploymentsH2 {
      * <b>Scrittura Economica Fattura</b>
      * <pre>
      *     Sezione   Importo      Conto
-     *        D       28,67       P00047  - Fatture da ricevere
+     *        D       18,67       A22012  - Macchine per ufficio
+     *        D       10,00       A22010  - Attrezzature scientifiche
      *        A       16,97       P22012  - Debiti verso fornitori per acquisto di
      *                                      macchine per ufficio
      *        A       10,00       P22010  - Debiti verso fornitori per acquisto di
@@ -123,12 +128,17 @@ public class FatturaRicevereScrittureTest extends DeploymentsH2 {
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                Assertions.assertEquals(1, movimentiDare.size());
+                Assertions.assertEquals(2, movimentiDare.size());
 
-                Optional<Movimento_cogeBulk> rigaTipoPassivita1 = movimentiDare.stream().filter(el -> "P00047".equals(el.getCd_voce_ep())).findAny();
-                Assertions.assertTrue(rigaTipoPassivita1.isPresent(),"Conto P00047 non presente.");
-                Assertions.assertTrue(rigaTipoPassivita1.filter(Movimento_cogeBulk::isRigaTipoPassivita).isPresent(),"Riga tipo attivita non presente.");
-                Assertions.assertEquals(new BigDecimal("28.67"), rigaTipoPassivita1.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Optional<Movimento_cogeBulk> rigaTipoAttivita1 = movimentiDare.stream().filter(el -> "A22012".equals(el.getCd_voce_ep())).findAny();
+                Assertions.assertTrue(rigaTipoAttivita1.isPresent(),"Conto A22012 non presente.");
+                Assertions.assertTrue(rigaTipoAttivita1.filter(Movimento_cogeBulk::isRigaTipoAttivita).isPresent(),"Riga tipo attività non presente.");
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoAttivita1.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+
+                Optional<Movimento_cogeBulk> rigaTipoAttivita2 = movimentiDare.stream().filter(el -> "A22010".equals(el.getCd_voce_ep())).findAny();
+                Assertions.assertTrue(rigaTipoAttivita2.isPresent(),"Conto A22010 non presente.");
+                Assertions.assertTrue(rigaTipoAttivita2.filter(Movimento_cogeBulk::isRigaTipoAttivita).isPresent(),"Riga tipo attività non presente.");
+                Assertions.assertEquals(new BigDecimal("10.00"), rigaTipoAttivita2.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
@@ -255,6 +265,10 @@ public class FatturaRicevereScrittureTest extends DeploymentsH2 {
         }
     }
 
+    /*
+        Da Settembre 2026 cambiata logica. Il conto Fatture da ricevere viene movimentato solo su fatture da Ordini
+        Pertanto anche se la fattura è residua i conti movimentati sono quelli patrimoniali
+     */
     /**
      * Fattura {@code Istituzionale} {@code No Split Payment} {@code No Ordini} {@code Bene Inventariabile}
      * {@code Residua} su mono voce di 2 righe stornate con 1 nota di credito {@code Residua}:
@@ -276,7 +290,8 @@ public class FatturaRicevereScrittureTest extends DeploymentsH2 {
      * <b>Scrittura Economica Fattura</b>
      * <pre>
      *     Sezione   Importo      Conto
-     *        D       28,67       P00047  - Fatture da ricevere
+     *        D       18,67       A22012  - Macchine per ufficio
+     *        D       10,00       A22010  - Attrezzature scientifiche
      *        A       16,97       P22012  - Debiti verso fornitori per acquisto di
      *                                      macchine per ufficio
      *        A       10,00       P22010  - Debiti verso fornitori per acquisto di
@@ -333,12 +348,17 @@ public class FatturaRicevereScrittureTest extends DeploymentsH2 {
                 BulkList<Movimento_cogeBulk> movimentiDare = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiDareColl)
                         .orElse(new BulkList<>());
-                Assertions.assertEquals(1, movimentiDare.size());
+                Assertions.assertEquals(2, movimentiDare.size());
 
-                Optional<Movimento_cogeBulk> rigaTipoPassivita1 = movimentiDare.stream().filter(el -> "P00047".equals(el.getCd_voce_ep())).findAny();
-                Assertions.assertTrue(rigaTipoPassivita1.isPresent(),"Conto P00047 non presente.");
-                Assertions.assertTrue(rigaTipoPassivita1.filter(Movimento_cogeBulk::isRigaTipoPassivita).isPresent(),"Riga tipo attivita non presente.");
-                Assertions.assertEquals(new BigDecimal("28.67"), rigaTipoPassivita1.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+                Optional<Movimento_cogeBulk> rigaTipoAttivita1 = movimentiDare.stream().filter(el -> "A22012".equals(el.getCd_voce_ep())).findAny();
+                Assertions.assertTrue(rigaTipoAttivita1.isPresent(),"Conto A22012 non presente.");
+                Assertions.assertTrue(rigaTipoAttivita1.filter(Movimento_cogeBulk::isRigaTipoAttivita).isPresent(),"Riga tipo attività non presente.");
+                Assertions.assertEquals(new BigDecimal("18.67"), rigaTipoAttivita1.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
+
+                Optional<Movimento_cogeBulk> rigaTipoAttivita2 = movimentiDare.stream().filter(el -> "A22010".equals(el.getCd_voce_ep())).findAny();
+                Assertions.assertTrue(rigaTipoAttivita2.isPresent(),"Conto A22010 non presente.");
+                Assertions.assertTrue(rigaTipoAttivita2.filter(Movimento_cogeBulk::isRigaTipoAttivita).isPresent(),"Riga tipo attività non presente.");
+                Assertions.assertEquals(new BigDecimal("10.00"), rigaTipoAttivita2.map(Movimento_cogeBulk::getIm_movimento).orElse(null));
 
                 BulkList<Movimento_cogeBulk> movimentiAvere = Optional.ofNullable(result.getScritturaPartitaDoppiaBulk())
                         .map(Scrittura_partita_doppiaBulk::getMovimentiAvereColl)
