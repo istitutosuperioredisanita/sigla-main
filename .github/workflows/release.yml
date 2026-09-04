@@ -24,33 +24,34 @@ jobs:
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Generate CHANGELOG.md
+        run: |
+          mvn -B se.bjurr.gitchangelog:git-changelog-maven-plugin:git-changelog
+        env:
+          MAVEN_OPTS: "--add-opens java.base/sun.security.ssl=ALL-UNNAMED"
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-
       - name: Build Docker image
         run: |
           docker build -t ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }} .
-
       - name: Push Docker image
         run: |
           docker push ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
-
       - name: Tag and push release image
         run: |
           docker tag ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }} ghcr.io/${{ github.repository }}:release
           docker push ghcr.io/${{ github.repository }}:release
-
       - name: Update version in pom.xml width SNAPSHOT version
         run: |
           mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }}-SNAPSHOT -DgenerateBackupPoms=false
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Commit and push changes to pom.
+      - name: Commit and push changes to pom and changelog
         run: |
           git config --global user.email "dirgensa@iss.it"
-          git config --global user.name "dirgensa"        
+          git config --global user.name "dirgensa"
+          git add docs/CHANGELOG.md
           git commit -am "Bumped version to ${{ github.event.release.tag_name }}"
           git push
         env:
