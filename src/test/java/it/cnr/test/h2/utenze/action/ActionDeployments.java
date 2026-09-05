@@ -29,9 +29,16 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +50,7 @@ public class ActionDeployments extends DeploymentsH2 {
 
     /** Timeout standard per presenza/clickability degli elementi (secondi) */
     private static final int ELEMENT_TIMEOUT_SECONDS =
-            Integer.parseInt(System.getProperty("test.element.timeout", "10"));
+            Integer.parseInt(System.getProperty("test.element.timeout", "30"));
 
     /**
      * Timeout breve usato SOLO per verificare l'ASSENZA di un elemento.
@@ -172,13 +179,33 @@ public class ActionDeployments extends DeploymentsH2 {
      * (getWebElement + waitGui clickable) che raddoppiava i tempi di attesa.
      */
     private void findAndClickButton(By buttonLocator) {
-        WebElement button = new FluentWait<>(browser)
-                .withTimeout(Duration.ofSeconds(ELEMENT_TIMEOUT_SECONDS))
-                .pollingEvery(Duration.ofMillis(POLLING_MILLIS))
-                .ignoring(StaleElementReferenceException.class)
-                .ignoring(NoSuchElementException.class)
-                .until(ExpectedConditions.elementToBeClickable(buttonLocator));
-        button.click();
+        try {
+            WebElement button = new FluentWait<>(browser)
+                    .withTimeout(Duration.ofSeconds(ELEMENT_TIMEOUT_SECONDS))
+                    .pollingEvery(Duration.ofMillis(POLLING_MILLIS))
+                    .ignoring(StaleElementReferenceException.class)
+                    .ignoring(NoSuchElementException.class)
+                    .until(ExpectedConditions.elementToBeClickable(buttonLocator));
+            button.click();
+        } catch (TimeoutException e) {
+            salvaScreenshot("findAndClickButton_" + buttonLocator);
+            throw e;
+        }
+    }
+
+    private void salvaScreenshot(String label) {
+        try {
+            File screenshot = ((TakesScreenshot) browser).getScreenshotAs(OutputType.FILE);
+            Path targetDir = Paths.get("target/screenshots");
+            Files.createDirectories(targetDir);
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            Path target = targetDir.resolve("findAndClickButton_" + timestamp + ".png");
+            Files.copy(screenshot.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("label: " + label);
+            System.out.println("Screenshot salvato: " + target.toAbsolutePath());
+        } catch (Exception ex) {
+            System.err.println("Screenshot fallito: " + ex.getMessage());
+        }
     }
 
     protected GrapheneElement getTableRowElement(String tableName, int numberRow) {

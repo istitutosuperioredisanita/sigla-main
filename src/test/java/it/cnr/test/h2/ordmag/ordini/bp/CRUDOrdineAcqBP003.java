@@ -453,9 +453,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSearch(main.find_ubicazione)");
 
         //Valorizzo il campo Assegnatario con il valore 1
-        doClickButton("doBlankSearch(main.find_assegnatario)");
-        getGrapheneElement("main.find_assegnatario.cd_terzo").writeIntoElement("1");
-        doClickButton("doSearch(main.find_assegnatario)");
+        doClickButton("doBlankSearch(main.findAssegnatario)");
+        getGrapheneElement("main.findAssegnatario.cd_terzo").writeIntoElement("103");
+        doClickButton("doSearch(main.findAssegnatario)");
 
         //Salvo
         doClickButton("doSalva()");
@@ -642,9 +642,9 @@ public class CRUDOrdineAcqBP003 extends ActionDeployments {
         doClickButton("doSearch(main.find_ubicazione)");
 
         //Valorizzo il campo Assegnatario con il valore 1
-        doClickButton("doBlankSearch(main.find_assegnatario)");
-        getGrapheneElement("main.find_assegnatario.cd_terzo").writeIntoElement("1");
-        doClickButton("doSearch(main.find_assegnatario)");
+        doClickButton("doBlankSearch(main.findAssegnatario)");
+        getGrapheneElement("main.findAssegnatario.cd_terzo").writeIntoElement("103");
+        doClickButton("doSearch(main.findAssegnatario)");
 
         //Salvo
         doClickButton("doSalva()");
