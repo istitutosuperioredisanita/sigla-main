@@ -520,4 +520,14 @@
         <init-param name="defaultAction" value="CRUDAutofatturaAction"/>
     </businessProcess>
 
+    <businessProcess name="CRUDGenericoPassOnereEnteBP" className="it.cnr.contab.docamm00.bp.CRUDDocumentoGenericoPassivoBP">
+        <forward name="default" path="/docamm00/documento_passivo.jsp"/>
+        <init-param name="bulkClassName" value="it.cnr.contab.docamm00.docs.bulk.Documento_genericoBulk"/>
+        <init-param name="componentSessionName" value="CNRDOCAMM00_EJB_DocumentoGenericoComponentSession"/>
+        <init-param name="defaultAction" value="CRUDDocumentoGenericoAction"/>
+        <init-param name="NO_ENTITA_TERZO" value="Y"/>
+    </businessProcess>
+
+
+
 </action-mappings>

@@ -270,6 +270,13 @@
 		enabledOnSearch="false"
 		enabledOnFreeSearch="true"
 	 	label="Tipo Debito per Siope+"/>
+	<form
+			name="searchtool" >
+		<formFieldProperty
+				name="cd_trattamento"/>
+		<formFieldProperty
+				name="ds_ti_trattamento"/>
+	</form>
 			
 	<formFieldProperty
 		name="cd_trattamento"

@@ -125,7 +125,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             doc.setFlIncaricato(Boolean.FALSE);
             doc.setFlVettore(Boolean.FALSE);
 
-            doc.setIdFlussoHappysign(null);
+            doc.setUuidFlussoAutorizzativo(null);
             doc.setStatoFlusso(null);
             doc.setDataInvioFirma(null);
             doc.setDataFirma(null);
@@ -681,7 +681,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             docTR.setStato(Doc_trasporto_rientroBulk.STATO_INVIATO);
             docTR.setStatoFlusso("INV");
 
-            if (docTR.getIdFlussoHappysign() == null || docTR.getIdFlussoHappysign().isEmpty()) {
+            if (docTR.getUuidFlussoAutorizzativo() == null || docTR.getUuidFlussoAutorizzativo().isEmpty()) {
                 throw new ApplicationException("ID flusso HappySign non impostato");
             }
 
@@ -2446,7 +2446,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             SQLBuilder sql = home.createSQLBuilder();
             sql.addSQLClause("AND", "STATO", SQLBuilder.EQUALS, STATO_INVIATO);
             sql.addSQLClause("AND", "STATO_FLUSSO", SQLBuilder.EQUALS, "INV");
-            sql.addSQLClause("AND", "ID_FLUSSO_HAPPYSIGN", SQLBuilder.ISNOTNULL, null);
+            sql.addSQLClause("AND", "UUID_FLUSSO_AUTORIZZATIVO", SQLBuilder.ISNOTNULL, null);
             sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.LESS_EQUALS,
                     CNRUserContext.getEsercizio(userContext));
             sql.addOrderBy("DATA_INVIO_FIRMA ASC");

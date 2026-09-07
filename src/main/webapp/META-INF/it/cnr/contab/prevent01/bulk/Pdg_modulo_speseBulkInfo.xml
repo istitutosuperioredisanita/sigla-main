@@ -466,6 +466,7 @@
 		label="Missione"
 		inputType="SEARCHTOOL"
 		formName="searchtool"
+		readonlyProperty="ROMissione"
 		enabledOnSearch="true" />
 	<fieldProperty
 		name="cd_missione"
@@ -534,6 +535,7 @@
 		label="Cofog"
 		inputType="SEARCHTOOL"
 		formName="searchtool"
+		readonlyProperty="ROCofog"
 		enabledOnSearch="true"
 		completeOnSave="false" />
 	<fieldProperty
@@ -551,6 +553,13 @@
 		formName="searchtool"
 		readonlyProperty="ROVocePianoEconomico"
 		label="Voce del piano economico" />
+	<fieldProperty
+		name="note"
+		property="note"
+		label="Note"
+		cols="40"
+		rows="5"
+		inputType="TEXTAREA" />
 
 	<formFieldProperty
 		name="esercizio" />
@@ -690,7 +699,9 @@
 		name="cofog"/>
 	<formFieldProperty 
 		name="voce_piano" />
-				
+	<formFieldProperty
+		name="note" />
+
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty

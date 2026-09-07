@@ -1,5 +1,7 @@
 package it.cnr.contab.config00.pdcep.bulk;
 
+import java.util.stream.Stream;
+
 public class TipoBilancioBulk extends TipoBilancioBase {
 
     public final static String ACCRUAL = "ACCRUAL";
@@ -27,5 +29,9 @@ public class TipoBilancioBulk extends TipoBilancioBase {
 
     public final java.util.Dictionary getTipoBilancioKeys() {
         return tipoBilancioKeys;
+    }
+
+    public boolean isTipoAccrual(){
+        return Stream.of(ACCRUAL, ACCRUAL_AGG) .anyMatch(tipo -> tipo.equals(getCdTipoBilancio()));
     }
 }

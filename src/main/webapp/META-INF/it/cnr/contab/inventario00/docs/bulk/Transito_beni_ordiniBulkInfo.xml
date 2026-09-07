@@ -292,7 +292,7 @@
 		inputType="TEXT"
 		label="Codice Inventario" />
 	<fieldProperty
-		name="find_assegnatario"
+		name="findAssegnatario"
 		property="assegnatario"
 		inputType="SEARCHTOOL" 	
 		formName="searchtool" 	
@@ -562,7 +562,7 @@
 	
 /****** 	ASSEGNATARIO  ***********/	
 	<formFieldProperty
-		name="find_assegnatario" />
+		name="findAssegnatario" />
 	<formFieldProperty
 		name="cd_assegnatario" />
 	<formFieldProperty

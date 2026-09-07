@@ -150,7 +150,7 @@ public class Chiusura_magazzinoHome extends Valori_magazzinoHome {
 		try{
 
 			ChiusuraAnnoMagRimHome chiusuraAnnoMagRimHome  = ( ChiusuraAnnoMagRimHome)getHomeCache().getHome(ChiusuraAnnoMagRimBulk.class);
-			List<ChiusuraAnnoMagRimBulk> ChiusuraAnnoMagRimList = chiusuraAnnoMagRimHome.getCalcoliChiusuraAnno(uc,esercizio,dataFine,dataInizio,codRaggrMag,catGruppo);
+			List<ChiusuraAnnoMagRimBulk> chiusuraAnnoMagRimList = chiusuraAnnoMagRimHome.getCalcoliChiusuraAnno(uc,esercizio,dataFine,dataInizio,codRaggrMag,catGruppo);
 
 
 

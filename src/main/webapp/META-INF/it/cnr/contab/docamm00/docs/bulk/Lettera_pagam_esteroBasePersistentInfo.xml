@@ -216,8 +216,103 @@
 			propertyName="istruzioni_speciali_3"
 			sqlTypeName="VARCHAR"
 			columnSize="250"/>
-
+		<columnMapping
+			columnName="DIVISA_ACCR"
+			propertyName="cod_divisa_accr"
+			sqlTypeName="VARCHAR"
+			columnSize="3"/>
+		<columnMapping
+			columnName="ABA_ROUTING"
+			propertyName="cod_aba_routing"
+			sqlTypeName="VARCHAR"
+			columnSize="11"/>
+		<columnMapping
+			columnName="BANCA_ABA_ROUT"
+			propertyName="banca_aba_routing"
+			sqlTypeName="VARCHAR"
+			columnSize="250"/>
+		<columnMapping
+			columnName="COD_SWIFT_TRAM"
+			propertyName="cod_swift_tramite"
+			sqlTypeName="VARCHAR"
+			columnSize="11"/>
+		<columnMapping
+			columnName="BANCA_TRAMITE"
+			propertyName="banca_tramite"
+			sqlTypeName="VARCHAR"
+			columnSize="250"/>
+		<columnMapping
+			columnName="NOTICE_AGREED"
+			propertyName="notice_agreed"
+			sqlTypeName="VARCHAR"
+			columnSize="6"/>
+		<columnMapping
+			columnName="PURPOSE_PAY"
+			propertyName="purpose_pay"
+			sqlTypeName="VARCHAR"
+			columnSize="9"/>
+		<columnMapping
+			columnName="COD_LEI_BEN"
+			propertyName="cod_lei_beneficiario"
+			sqlTypeName="VARCHAR"
+			columnSize="50"/>
+		<columnMapping
+			columnName="CIVICO_BEN"
+			propertyName="civico_beneficiario"
+			sqlTypeName="VARCHAR"
+			columnSize="10"/>
+		<columnMapping
+			columnName="CAP_BEN"
+			propertyName="cap_beneficiario"
+			sqlTypeName="VARCHAR"
+			columnSize="10"/>
+		<columnMapping
+			columnName="BENEFICIARIO_EFF"
+			propertyName="beneficiario_eff"
+			sqlTypeName="VARCHAR"
+			columnSize="250"/>
+		<columnMapping
+			columnName="COD_LEI_BEN_EFF"
+			propertyName="cod_lei_ben_eff"
+			sqlTypeName="VARCHAR"
+			columnSize="50"/>
+		<columnMapping
+			columnName="INDIRIZZO_BEN_EFF"
+			propertyName="indirizzio_ben_eff"
+			sqlTypeName="VARCHAR"
+			columnSize="250"/>
+		<columnMapping
+			columnName="CIVICO_BEN_EFF"
+			propertyName="civico_ben_eff"
+			sqlTypeName="VARCHAR"
+			columnSize="10"/>
+		<columnMapping
+			columnName="PAESE_BEN_EFF"
+			propertyName="paese_ben_eff"
+			sqlTypeName="VARCHAR"
+			columnSize="100"/>
+		<columnMapping
+			columnName="CAP_BEN_EFF"
+			propertyName="cap_ben_eff"
+			sqlTypeName="VARCHAR"
+			columnSize="10"/>
+		<columnMapping
+			columnName="CONTO_COMMISSIONI"
+			propertyName="conto_commissioni"
+			sqlTypeName="VARCHAR"
+			columnSize="250"/>
+		<columnMapping
+			columnName="ORDINANTE"
+			propertyName="ordinante"
+			sqlTypeName="VARCHAR"
+			columnSize="250"/>
+		<columnMapping
+			columnName="LETTERA_VERS"
+			propertyName="lettera_vers"
+			sqlTypeName="DECIMAL"
+			columnSize="1" />
 	</defaultColumnMap>
+	s
 	<persistentProperty
 		name="pg_ver_rec" />
 	<persistentProperty
@@ -290,4 +385,43 @@
 		name="istruzioni_speciali_2"/>
 	<persistentProperty
 		name="istruzioni_speciali_3"/>
+	<persistentProperty
+		name="cod_divisa_accr"/>
+	<persistentProperty
+		name="cod_aba_routing"/>
+	<persistentProperty
+		name="banca_aba_routing"/>
+	<persistentProperty
+		name="cod_swift_tramite"/>
+	<persistentProperty
+		name="banca_tramite"/>
+	<persistentProperty
+		name="notice_agreed"/>
+	<persistentProperty
+		name="purpose_pay"/>
+	<persistentProperty
+		name="cod_lei_beneficiario"/>
+	<persistentProperty
+		name="civico_beneficiario"/>
+	<persistentProperty
+		name="cap_beneficiario"/>
+	<persistentProperty
+		name="beneficiario_eff"/>
+	<persistentProperty
+		name="cod_lei_ben_eff"/>
+	<persistentProperty
+		name="indirizzio_ben_eff"/>
+	<persistentProperty
+		name="civico_ben_eff"/>
+	<persistentProperty
+		name="paese_ben_eff"/>
+	<persistentProperty
+		name="cap_ben_eff"/>
+	<persistentProperty
+		name="conto_commissioni"/>
+	<persistentProperty
+		name="ordinante"/>
+	<persistentProperty
+		name="lettera_vers"/>
+
 </SQLPersistentInfo>

@@ -33,6 +33,7 @@
         <property name="pecMailConf" ref="props-pec-mail"></property>
     </bean>
     <bean id="contrattiService" class="it.cnr.contab.incarichi00.service.ContrattiService" />
+    <bean id="obbligazioneService" class="it.cnr.contab.doccont00.service.ObbligazioneService" />
     <bean id="contrattoService" class="it.cnr.contab.config00.service.ContrattoService"> 
             <property name="folderFlowsName" value="${contratto.flows.folder}"/>
             <property name="uniOrgInPathWithDot" value="${contratto.flows.uniorgwithdot}"/>

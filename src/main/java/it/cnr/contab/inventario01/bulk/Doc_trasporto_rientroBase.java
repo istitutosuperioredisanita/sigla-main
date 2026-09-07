@@ -24,13 +24,13 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 
 
 	// ========================================
-	// NUOVI CAMPI PER FIRMA DIGITALE HAPPYSIGN
+	// NUOVI CAMPI PER FIRMA DIGITALE
 	// ========================================
 
 	/**
-	 * ID del flusso HappySign per la firma digitale
+	 * UUID del flusso autorizzativo per la firma digitale
 	 */
-	private String idFlussoHappysign;
+	private String uuidFlussoAutorizzativo;
 
 	/**
 	 * Stato del flusso di firma
@@ -189,12 +189,12 @@ public class Doc_trasporto_rientroBase extends Doc_trasporto_rientroKey implemen
 	// GETTER E SETTER - FIRMA DIGITALE HAPPYSIGN
 	// ========================================
 
-	public String getIdFlussoHappysign() {
-		return idFlussoHappysign;
+	public String getUuidFlussoAutorizzativo() {
+		return uuidFlussoAutorizzativo;
 	}
 
-	public void setIdFlussoHappysign(String idFlussoHappysign) {
-		this.idFlussoHappysign = idFlussoHappysign;
+	public void setUuidFlussoAutorizzativo(String uuidFlussoAutorizzativo) {
+		this.uuidFlussoAutorizzativo = uuidFlussoAutorizzativo;
 	}
 
 	public String getStatoFlusso() {

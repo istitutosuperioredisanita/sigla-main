@@ -17,6 +17,7 @@
 
 package it.cnr.contab.inventario00.actions;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
@@ -33,6 +34,9 @@ import it.cnr.contab.inventario00.docs.bulk.Utilizzatore_CdrVBulk;
 import it.cnr.contab.inventario00.docs.bulk.V_ass_inv_bene_fatturaBulk;
 import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_ammortamentoBulk;
+import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
+import it.cnr.contab.inventario01.bp.CRUDTrasportoBeniInvBP;
+import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.missioni00.bp.CRUDAnticipoBP;
 import it.cnr.contab.ordmag.anag00.TipoMovimentoMagBulk;
 import it.cnr.contab.utenze00.bulk.SelezionaCdsBulk;
@@ -49,6 +53,7 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import jakarta.ejb.RemoveException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Insert the type's description here.
@@ -466,5 +471,31 @@ public Forward doDettagli(ActionContext context) {
 			return handleException(actioncontext, e);
 		}
 	}
+
+	public Forward doBringBackSearchFindAssegnatario(ActionContext context,
+													 Transito_beni_ordiniBulk bene,
+													 TerzoBulk terzoSelezionato) {
+		try {
+			if (terzoSelezionato != null) {
+				bene.setAssegnatario(terzoSelezionato);
+			}
+			return context.findDefaultForward();
+		} catch (Throwable e) {
+			return handleException(context, e);
+		}
+	}
+
+	public Forward doOnAssegnatarioChange(ActionContext context) {
+		try {
+			CRUDTransitoBeniOrdiniBP bp = (CRUDTransitoBeniOrdiniBP) getBusinessProcess(context);
+			Transito_beni_ordiniBulk transito = (Transito_beni_ordiniBulk) bp.getModel();
+			fillModel(context);
+			bp.setModel(context, transito);
+			return context.findDefaultForward();
+		} catch (Throwable e) {
+			return handleException(context, e);
+		}
+	}
+
 
 }

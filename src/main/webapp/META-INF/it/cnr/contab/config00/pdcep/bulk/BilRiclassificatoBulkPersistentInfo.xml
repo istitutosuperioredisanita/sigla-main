@@ -10,9 +10,13 @@
 		<columnMapping
 			columnName="CD_VOCE_EP"
 			propertyName="voceEp.cd_voce_ep" />
+		<columnMapping
+				columnName="ESERCIZIO"
+				propertyName="accrual.esercizio" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="voceEp"
 		partOfOid="true" />
-
+	<persistentProperty
+			name="accrual"/>
 </SQLPersistentInfo>

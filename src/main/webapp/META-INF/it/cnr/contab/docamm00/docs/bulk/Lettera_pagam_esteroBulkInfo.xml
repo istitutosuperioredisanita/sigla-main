@@ -173,6 +173,149 @@
 		maxLength="250"
 		inputSize="100"
 		label="Istruzioni Speciali - Terzo" />
+	<fieldProperty
+		name="cod_divisa_accr"
+		property="cod_divisa_accr"
+		inputType="TEXT"
+		maxLength="3"
+		inputSize="3"
+		label="Sigla divisa di Accredito" />
+	<fieldProperty
+			name="cod_aba_routing"
+			property="cod_aba_routing"
+			inputType="TEXT"
+			maxLength="11"
+			inputSize="11"
+			label="ABA/Routing" />
+	<fieldProperty
+			name="banca_aba_routing"
+			property="banca_aba_routing"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="2"
+			label="Banca Beneficiaria ABA/Routing"/>
+	<fieldProperty
+			name="cod_swift_tramite"
+			property="cod_swift_tramite"
+			inputType="TEXT"
+			maxLength="11"
+			inputSize="11"
+			label="SWIFT Banca Tramite" />
+	<fieldProperty
+			name="banca_tramite"
+			property="banca_tramite"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="2"
+			label="Banca Tramite"/>
+	<fieldProperty
+			name="notice_agreed"
+			property="notice_agreed"
+			inputType="TEXT"
+			maxLength="6"
+			inputSize="6"
+			label="Notice/Agreed" />
+	<fieldProperty
+			name="purpose_pay"
+			property="purpose_pay"
+			inputType="TEXT"
+			maxLength="6"
+			inputSize="6"
+			label="Purpose of Payment" />
+	<fieldProperty
+			name="cod_lei_beneficiario"
+			property="cod_lei_beneficiario"
+			inputType="TEXT"
+			maxLength="50"
+			inputSize="50"
+			label="Codice LEI" />
+	<fieldProperty
+			name="civico_beneficiario"
+			property="civico_beneficiario"
+			inputType="TEXT"
+			maxLength="5"
+			inputSize="5"
+			label="Num Civico" />
+	<fieldProperty
+			name="cap_beneficiario"
+			property="cap_beneficiario"
+			inputType="TEXT"
+			maxLength="10"
+			inputSize="10"
+			label="Cod Postale/CAP" />
+	<fieldProperty
+			name="beneficiario_eff"
+			property="beneficiario_eff"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="2"
+			label="Nominativo Beneficiario Effettivo"/>
+	<fieldProperty
+			name="cod_lei_ben_eff"
+			property="cod_lei_ben_eff"
+			inputType="TEXT"
+			maxLength="50"
+			inputSize="50"
+			label="Codice LEI" />
+	<fieldProperty
+			name="indirizzio_ben_eff"
+			property="indirizzio_ben_eff"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="2"
+			label="Indirizzo Beneficiario Effettivo"/>
+	<fieldProperty
+			name="civico_ben_eff"
+			property="civico_ben_eff"
+			inputType="TEXT"
+			maxLength="5"
+			inputSize="5"
+			label="Num Civico" />
+	<fieldProperty
+			name="paese_ben_eff"
+			property="paese_ben_eff"
+			maxLength="100"
+			inputSize="100"
+			inputType="TEXT"
+			label="Paese Beneficiario Effettivo"/>
+	<fieldProperty
+			name="cap_ben_eff"
+			property="cap_ben_eff"
+			inputType="TEXT"
+			maxLength="10"
+			inputSize="10"
+			label="Cod Postale/CAP" />
+	<fieldProperty
+			name="conto_commissioni"
+			property="conto_commissioni"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="2"
+			label="Filiale/categoria/conto delle commissioni"/>
+	<fieldProperty
+			name="ordinante"
+			property="ordinante"
+			maxLength="250"
+			inputSize="250"
+			inputType="TEXTAREA"
+			cols="75"
+			rows="2"
+			label="Nominativo Ordinante"/>
+	<fieldProperty
+			name="lettera_vers"
+			property="lettera_vers"
+			inputType="TEXT"
+			label="Versione lettera pagamento estero" />
 
 	<formFieldProperty
 		name="esercizio" />
@@ -204,6 +347,44 @@
 		name="istruzioni_speciali_2" />
 	<formFieldProperty
 		name="istruzioni_speciali_3" />
+	<formFieldProperty
+			name="cod_divisa_accr" />
+	<formFieldProperty
+			name="cod_aba_routing" />
+	<formFieldProperty
+			name="banca_aba_routing" />
+	<formFieldProperty
+			name="cod_swift_tramite" />
+	<formFieldProperty
+			name="banca_tramite" />
+	<formFieldProperty
+			name="notice_agreed" />
+	<formFieldProperty
+			name="purpose_pay" />
+	<formFieldProperty
+			name="cod_lei_beneficiario" />
+	<formFieldProperty
+			name="civico_beneficiario" />
+	<formFieldProperty
+			name="cap_beneficiario" />
+	<formFieldProperty
+			name="beneficiario_eff" />
+	<formFieldProperty
+			name="cod_lei_ben_eff" />
+	<formFieldProperty
+			name="indirizzio_ben_eff" />
+	<formFieldProperty
+			name="civico_ben_eff" />
+	<formFieldProperty
+			name="paese_ben_eff" />
+	<formFieldProperty
+			name="cap_ben_eff" />
+	<formFieldProperty
+			name="conto_commissioni" />
+	<formFieldProperty
+			name="ordinante" />
+	<formFieldProperty
+			name="lettera_vers" />
 
 	<columnFieldProperty
 		name="esercizio" />

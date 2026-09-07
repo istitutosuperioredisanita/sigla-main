@@ -17,7 +17,10 @@
 
 package it.cnr.contab.config00.ejb;
 
+import it.cnr.contab.config00.latt.bulk.CofogBulk;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.util.enumeration.TipoRapportoTesoreriaEnum;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -171,6 +174,7 @@ public interface Configurazione_cnrComponentSession extends it.cnr.jada.ejb.CRUD
     Boolean isMandatoryAllegatoAutorizzativoObb(UserContext userContext, ObbligazioneBulk obbligazioneBulk) throws ComponentException, RemoteException;
     Boolean isAttivaFirmaOrdine(it.cnr.jada.UserContext param0,int esercizio) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
-
-
+    CofogBulk getCofogProgettoDefault(it.cnr.jada.UserContext param0, int esercizio) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
+    ProgettoBulk getProgettoCalderone(it.cnr.jada.UserContext param0, int esercizio)  throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
+    WorkpackageBulk getGaeCalderone(it.cnr.jada.UserContext param0, int esercizio)  throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 }

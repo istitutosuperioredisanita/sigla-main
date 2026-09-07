@@ -313,19 +313,11 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
     private void aggiornaObbligazioneTemporanea(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
         try {
-            Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
-            Long pg = null;
-            pg = numHome.getNextPg(userContext,
-                    obbligazioneTemporanea.getEsercizio(),
-                    obbligazioneTemporanea.getCd_cds(),
-                    obbligazioneTemporanea.getCd_tipo_documento_cont(),
-                    obbligazioneTemporanea.getUser());
-            ObbligazioneHome home = (ObbligazioneHome) getHome(userContext, obbligazioneTemporanea);
-            home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);
+            obbligazioneTemporanea.setPg_obbligazione(Utility.createObbligazioneComponentSession().aggiornaObbligazioniTemporanee( userContext, obbligazioneTemporanea).getPg_obbligazione());
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(obbligazioneTemporanea, e);
-        } catch (it.cnr.jada.persistency.IntrospectionException e) {
-            throw handleException(obbligazioneTemporanea, e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -3470,7 +3462,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
         sql.addParameter(nazione.getPg_nazione(), java.sql.Types.NUMERIC, 8);
         sql.addParameter(inquadramento, java.sql.Types.NUMERIC, 9);
         //sql.addParameter(missione.getDt_inizio_missione(), java.sql.Types.TIMESTAMP, 10);
-        sql.addParameter(dataTappa, java.sql.Types.TIMESTAMP, 10);
+        sql.addParameter(dataTappa, java.sql.Types.TIMESTAMP, 0);
 
         return sql;
     }

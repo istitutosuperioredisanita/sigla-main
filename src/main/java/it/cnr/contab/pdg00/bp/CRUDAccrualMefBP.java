@@ -113,16 +113,8 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
 
     public String[][] getTabs() {
         return new String[][]{
-                {
-                        "tabModulo",
-                        "Modulo",
-                        "/pdg00/tab_accrual_mef_modulo.jsp"
-                },
-                {
-                        "tabAllegati",
-                        "Allegati",
-                        "/util00/tab_allegati.jsp"
-                }
+                {"tabModulo","Modulo","/pdg00/tab_accrual_mef_modulo.jsp"},
+                {"tabAllegati","Allegati","/util00/tab_allegati.jsp"}
         };
     }
 

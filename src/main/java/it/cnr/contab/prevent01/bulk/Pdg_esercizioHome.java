@@ -22,6 +22,8 @@
 package it.cnr.contab.prevent01.bulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.config00.sto.bulk.V_struttura_organizzativaBulk;
+import it.cnr.contab.config00.sto.bulk.V_struttura_organizzativaHome;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_sipBulk;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_sipHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
@@ -35,6 +37,8 @@ import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 public class Pdg_esercizioHome extends BulkHome {
 	public Pdg_esercizioHome(java.sql.Connection conn) {
@@ -50,10 +54,8 @@ public class Pdg_esercizioHome extends BulkHome {
 		return esercizioPrecente;
 	
 	}
-	public Pdg_esercizioBulk findEsercizioSuccessivo( Pdg_esercizioBulk esercizioCorrente ) throws IntrospectionException, PersistencyException
-	{
+	public Pdg_esercizioBulk findEsercizioSuccessivo( Pdg_esercizioBulk esercizioCorrente ) throws IntrospectionException, PersistencyException {
 		return (Pdg_esercizioBulk)findByPrimaryKey( new Pdg_esercizioKey( Integer.valueOf( esercizioCorrente.getEsercizio().intValue() + 1), esercizioCorrente.getCd_centro_responsabilita()));
-	
 	}
 
 	/**
@@ -74,5 +76,19 @@ public class Pdg_esercizioHome extends BulkHome {
 		sqlPdgEsercizio.addSQLClause(FindClause.AND,"PDG_MODULO.PG_PROGETTO",SQLBuilder.EQUALS,pgProgetto);
 
 		return !sqlPdgEsercizio.executeExistsQuery(getConnection());
+	}
+
+	public List<Pdg_esercizioBulk> findAllPdgpProgetti(Integer esercizio, String cdCds) throws IntrospectionException, PersistencyException {
+		SQLBuilder sqlPdgEsercizio = this.createSQLBuilder();
+		sqlPdgEsercizio.addClause(FindClause.AND,"esercizio", SQLBuilder.EQUALS, esercizio);
+
+		SQLBuilder sqlStruttura = getHomeCache().getHome(V_struttura_organizzativaBulk.class).createSQLBuilder();
+		sqlStruttura.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
+		Optional.ofNullable(cdCds).ifPresent(el->sqlStruttura.addClause( FindClause.AND, "cd_cds", SQLBuilder.EQUALS, el));
+		sqlStruttura.addClause( FindClause.AND, "cd_tipo_livello", SQLBuilder.EQUALS, V_struttura_organizzativaHome.LIVELLO_CDR);
+		sqlStruttura.addSQLJoin( "V_STRUTTURA_ORGANIZZATIVA.CD_ROOT", "PDG_ESERCIZIO.CD_CENTRO_RESPONSABILITA");
+		sqlPdgEsercizio.addSQLExistsClause(FindClause.AND, sqlStruttura);
+
+		return fetchAll(sqlPdgEsercizio);
 	}
 }

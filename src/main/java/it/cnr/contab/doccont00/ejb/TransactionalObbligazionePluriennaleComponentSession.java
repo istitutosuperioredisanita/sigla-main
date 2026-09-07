@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Optional;
 
 @TipoObbligazione(TipoObbligazione.Tipo.PLURIENNALE)
-public class TransactionalObbligazionePluriennaleComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements ObbligazionePluriennaleComponentSession {
+public class TransactionalObbligazionePluriennaleComponentSession extends TransactionalObbligazioneComponentSession implements ObbligazionePluriennaleComponentSession {
 public void aggiornaCogeCoanInDifferita(UserContext param0, it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1, java.util.Map param2) throws RemoteException,it.cnr.jada.comp.ComponentException {
 	try {
 		invoke("aggiornaCogeCoanInDifferita",new Object[] {

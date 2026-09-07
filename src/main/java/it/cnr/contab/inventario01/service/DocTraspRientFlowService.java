@@ -154,7 +154,7 @@ public class DocTraspRientFlowService {
             documento.setStato(Doc_trasporto_rientroBulk.STATO_INSERITO);
             documento.setStatoFlusso("RIF");
             documento.setNoteRifiuto(motivoTroncato);
-            documento.setIdFlussoHappysign(null);
+            documento.setUuidFlussoAutorizzativo(null);
             documento.setDataInvioFirma(null);
             documento.setDataFirma(null);
 

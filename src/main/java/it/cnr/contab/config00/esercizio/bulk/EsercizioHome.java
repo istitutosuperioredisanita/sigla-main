@@ -301,6 +301,12 @@ public class EsercizioHome extends BulkHome {
         return fetchAll(sqlBuilder);
     }
 
+    public List<EsercizioBulk> findAllEsercizi(Integer esercizio) throws PersistencyException {
+        final SQLBuilder sqlBuilder = createSQLBuilder();
+        sqlBuilder.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);
+        return fetchAll(sqlBuilder);
+    }
+
     public boolean isEsercizioApertoPerAlmenoUnCds(Integer esercizio) throws PersistencyException {
         SQLBuilder sql = createSQLBuilder();
         sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, esercizio);

@@ -31,7 +31,7 @@ import java.util.Optional;
 
 import java.util.Optional;
 @TipoObbligazione(TipoObbligazione.Tipo.RESIDUO)
-public class TransactionalObbligazioneResComponentSession extends it.cnr.jada.ejb.TransactionalCRUDComponentSession implements ObbligazioneResComponentSession {
+public class TransactionalObbligazioneResComponentSession extends TransactionalObbligazioneComponentSession implements ObbligazioneResComponentSession {
 public void aggiornaCogeCoanInDifferita(it.cnr.jada.UserContext param0,it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk param1,java.util.Map param2) throws RemoteException,it.cnr.jada.comp.ComponentException {
 	try {
 		invoke("aggiornaCogeCoanInDifferita",new Object[] {

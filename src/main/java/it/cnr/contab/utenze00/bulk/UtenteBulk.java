@@ -219,6 +219,9 @@ public class UtenteBulk extends UtenteBase {
 	public static boolean isAbilitatoECF(it.cnr.jada.UserContext param0) throws ComponentException, RemoteException{
 		return getRuoloComponentSession().isAbilitatoECF(param0);
 	}
+	public static boolean hasPrivilegio(it.cnr.jada.UserContext param0, String cdPrivilegio) throws ComponentException, RemoteException{
+		return getRuoloComponentSession().hasPrivilegio(param0, cdPrivilegio);
+	}
 	public static RuoloComponentSession getRuoloComponentSession() throws jakarta.ejb.EJBException, java.rmi.RemoteException {
 		return (RuoloComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRUTENZE00_EJB_RuoloComponentSession",RuoloComponentSession.class);
 	}

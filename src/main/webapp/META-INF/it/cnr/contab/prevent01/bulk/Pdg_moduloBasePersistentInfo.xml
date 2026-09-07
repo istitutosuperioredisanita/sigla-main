@@ -29,6 +29,12 @@
 			columnSize="2"
 			nullable="true" />
 		<columnMapping
+			columnName="NOTE"
+			propertyName="note"
+			sqlTypeName="VARCHAR"
+			columnSize="500"
+			nullable="true" />
+		<columnMapping
 			columnName="UTCR"
 			propertyName="utcr"
 			sqlTypeName="VARCHAR"
@@ -61,6 +67,8 @@
 	</defaultColumnMap>
 	<persistentProperty
 		name="stato" />
+	<persistentProperty
+		name="note" />
 	<persistentProperty
 		name="utcr" />
 	<persistentProperty

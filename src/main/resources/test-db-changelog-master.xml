@@ -640,6 +640,15 @@
         <dropDefaultValue tableName="contributo_ritenuta" columnName="dacr"/>
         <dropDefaultValue tableName="contributo_ritenuta" columnName="duva"/>
     </changeSet>
+    <changeSet author="test" id="create-tipo-rapporto">
+        <addDefaultValue tableName="tipo_rapporto" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="tipo_rapporto" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="test/csv/tipo_rapporto.csv" tableName="tipo_rapporto"/>
+
+        <dropDefaultValue tableName="tipo_rapporto" columnName="dacr"/>
+        <dropDefaultValue tableName="tipo_rapporto" columnName="duva"/>
+    </changeSet>
     <changeSet author="test" id="create-rapporto">
         <addDefaultValue tableName="rapporto" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="rapporto" columnName="duva" defaultValueDate="${now}"/>

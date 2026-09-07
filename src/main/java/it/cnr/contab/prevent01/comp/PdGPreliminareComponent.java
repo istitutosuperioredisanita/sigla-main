@@ -26,11 +26,14 @@ package it.cnr.contab.prevent01.comp;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
 import it.cnr.contab.config00.bulk.Parametri_cnrHome;
+import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceHome;
 import it.cnr.contab.config00.pdcfin.bulk.NaturaBulk;
@@ -44,6 +47,7 @@ import it.cnr.contab.config00.sto.bulk.DipartimentoBulk;
 import it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.pdg01.bulk.Pdg_modulo_spese_gestBulk;
 import it.cnr.contab.prevent00.bulk.Pdg_piano_ripartoBulk;
 import it.cnr.contab.prevent00.bulk.Pdg_piano_ripartoHome;
 import it.cnr.contab.prevent01.bulk.Ass_dipartimento_areaBulk;
@@ -64,28 +68,23 @@ import it.cnr.contab.prevent01.bulk.V_pdg_piano_ripartoBulk;
 import it.cnr.contab.prevent01.bulk.V_pdg_piano_ripartoHome;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoHome;
+import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoBulk;
 import it.cnr.contab.progettiric00.ejb.ProgettoRicercaModuloComponentSession;
+import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.BulkHome;
-import it.cnr.jada.bulk.BusyResourceException;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.OutdatedResourceException;
+import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.Query;
-import it.cnr.jada.persistency.sql.SQLBroker;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 /**
  * @author mincarnatoPdg_esercizioHome
- *
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
@@ -97,16 +96,16 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 			if (parametri.getFl_pdg_contrattazione().equals(Boolean.FALSE) &&
 				pdgEsercizio.getStato().equals(Pdg_esercizioBulk.STATO_CHIUSURA_CDR)) {
 				Pdg_esercizioBulk statoInEsameCDR = innerCambiaStatoConBulk(userContext, pdgEsercizio, false);
-				
+
 				approvaAllRighePdgContrattazione(userContext, statoInEsameCDR);
 				aggiornaStatoAllModuli(userContext, statoInEsameCDR, Pdg_moduloBulk.STATO_CC);
-				
-				Pdg_esercizioBulk statoEsaminatoCDR = innerCambiaStatoConBulk(userContext, statoInEsameCDR, false);				
+
+				Pdg_esercizioBulk statoEsaminatoCDR = innerCambiaStatoConBulk(userContext, statoInEsameCDR, false);
 				aggiornaStatoAllModuli(userContext, statoEsaminatoCDR, Pdg_moduloBulk.STATO_AP);
 
 				Pdg_esercizioBulk statoApprovazioneCDR = innerCambiaStatoConBulk(userContext, statoEsaminatoCDR, false);
 				//statoAperturaGestionaleCDR
-				return innerCambiaStatoConBulk(userContext, statoApprovazioneCDR, false);		
+				return innerCambiaStatoConBulk(userContext, statoApprovazioneCDR, false);
 			} else
 				return innerCambiaStatoConBulk(userContext, pdgEsercizio, true);
 		} catch (Exception e) {
@@ -118,12 +117,25 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 	{
 		try 
 		{
+			Parametri_cnrBulk pcnr = new Parametri_cnrBulk(pdg_esercizio.getEsercizio());
+			pcnr = (Parametri_cnrBulk) getHome(userContext,Parametri_cnrBulk.class).findByPrimaryKey(pcnr);
 
-			Pdg_esercizioHome pdg_esercizioHome = (Pdg_esercizioHome) getHome(userContext,pdg_esercizio);
+			String next;
+			String prev;
+			if (pcnr.getFl_pdg_calderone()) {
+				if (pcnr.getFl_pdg_calderone_rib()) {
+					next = (String) Pdg_esercizioBulk.getProssimoStatoConCalderoneRib().get(pdg_esercizio.getStato());
+					prev = (String) Pdg_esercizioBulk.getPrecedenteStatoConCalderoneRib().get(next);
+				} else {
+					next = (String) Pdg_esercizioBulk.getProssimoStatoConCalderone().get(pdg_esercizio.getStato());
+					prev = (String) Pdg_esercizioBulk.getPrecedenteStatoConCalderone().get(next);
+				}
+			} else {
+				next = (String) Pdg_esercizioBulk.getProssimoStato().get(pdg_esercizio.getStato());
+				prev = (String) Pdg_esercizioBulk.getPrecedenteStato().get(next);
+			}
 
-			String next =(String)Pdg_esercizioBulk.getProssimoStato().get( pdg_esercizio.getStato());
 			if (next!=null) {
-
 				// CONTROLLI
 				if (eseguiControlli) {
 					// solo l'UO 999.000 può avanzare lo stato a STATO_IN_ESAME_CDR e STATO_ESAMINATO_CDR
@@ -154,9 +166,6 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 				if (next.equals(Pdg_esercizioBulk.STATO_ESAMINATO_CDR)) {
 					lockPdgModulo(userContext, pdg_esercizio);
 
-					Parametri_cnrBulk pcnr = new Parametri_cnrBulk(pdg_esercizio.getEsercizio());
-					pcnr = (Parametri_cnrBulk) getHome(userContext,Parametri_cnrBulk.class).findByPrimaryKey(pcnr);
-					
 					Unita_organizzativaBulk uo = new Unita_organizzativaBulk(CNRUserContext.getCd_unita_organizzativa(userContext));
 					uo = (Unita_organizzativaBulk) getHome(userContext,uo).findByPrimaryKey(uo);
 					
@@ -172,9 +181,9 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 						throw new ApplicationException( "Lo stato non può essere aggiornato poichè il PDGP non risulta definitivamente approvato.");
 					*/
 					// controlliamo che le righe di pdg_modulo siano tutte CC
-					List listaModuli = findPdgModulo(userContext, pdg_esercizio, Pdg_moduloBulk.STATO_CC );
+					List listaModuli = findPdgModulo(userContext, pdg_esercizio, prev );
 					if (!listaModuli.isEmpty())
-						throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato "+Pdg_moduloBulk.STATO_CC);
+						throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato "+prev);
 										
 					controllaImportiFontiEsterneApprovate(userContext, pdg_esercizio);
 					aggiungiModuliContrattazione(userContext, pdg_esercizio);
@@ -202,7 +211,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 					List listaModuli = findPdgModulo(userContext, pdg_esercizio, Pdg_moduloBulk.STATO_CC );
 					if (!listaModuli.isEmpty())
 						throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato "+Pdg_moduloBulk.STATO_CC);
-										
+
 					controllaPianoRiparto(userContext, pdg_esercizio, false);
 					//viene richiamata la procedura, il controllo viene fatto nel package
 					aggiornaLimiti(userContext, pdg_esercizio);
@@ -214,10 +223,14 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 					lockPdgModulo(userContext, pdg_esercizio);
 
 					// controlliamo che le righe di pdg_modulo siano tutte CC
-					List listaModuli = findPdgModulo(userContext, pdg_esercizio, Pdg_moduloBulk.STATO_CC );
-					if (!listaModuli.isEmpty())
-						throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato "+Pdg_moduloBulk.STATO_CC);
-										
+					List<Pdg_moduloBulk> listaModuli = findPdgModulo(userContext, pdg_esercizio, Pdg_moduloBulk.STATO_CC);
+					if (pcnr.getFl_pdg_calderone() && pcnr.getFl_pdg_calderone_rib()) {
+						if (listaModuli.stream().anyMatch(el -> !el.getStato().equals(Pdg_moduloBulk.STATO_EC)))
+							throw new ApplicationException("Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato " + Pdg_moduloBulk.STATO_CC);
+				 	} else {
+						if (!listaModuli.isEmpty())
+							throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato "+Pdg_moduloBulk.STATO_CC);
+					}
 					controllaPianoRiparto(userContext, pdg_esercizio, false);
 
 				}
@@ -264,21 +277,68 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 					lockPdgModulo(userContext, pdg_esercizio);
 
 					// controlliamo che le righe di pdg_modulo siano tutte AP
-					List listaModuli = findPdgModulo(userContext, pdg_esercizio, Pdg_moduloBulk.STATO_AP );
-					if (!listaModuli.isEmpty())
-						throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato "+Pdg_moduloBulk.STATO_AP);
-										
+					List<Pdg_moduloBulk> listaModuli = findPdgModulo(userContext, pdg_esercizio, prev );
+					if (pcnr.getFl_pdg_calderone() && pcnr.getFl_pdg_calderone_rib()) {
+						if (listaModuli.stream().anyMatch(el -> !el.getStato().equals(Pdg_moduloBulk.STATO_EC)))
+							throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato "+prev);
+					} else {
+						if (!listaModuli.isEmpty())
+							throw new ApplicationException("Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato " + prev);
+					}
+
 					// aggiorniamo le righe di pdg_modulo in AG
 					BulkHome home = getHome(userContext,Pdg_moduloBulk.class);
 					SQLBuilder sql = home.createSQLBuilder();
-					sql.addSQLClause("AND","CD_CENTRO_RESPONSABILITA",sql.EQUALS,pdg_esercizio.getCd_centro_responsabilita());
-					sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,pdg_esercizio.getEsercizio());
+					sql.addSQLClause(FindClause.AND,"CD_CENTRO_RESPONSABILITA",SQLBuilder.EQUALS,pdg_esercizio.getCd_centro_responsabilita());
+					sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS,pdg_esercizio.getEsercizio());
+					if (pcnr.getFl_pdg_calderone() && pcnr.getFl_pdg_calderone_rib())
+						sql.addSQLClause(FindClause.AND,"STATO",SQLBuilder.NOT_EQUALS,Pdg_moduloBulk.STATO_EC);
 					java.util.List moduli_list = getHome(userContext,Pdg_moduloBulk.class).fetchAll(sql);
 					for (java.util.Iterator i = moduli_list.iterator();i.hasNext();) {
 						Pdg_moduloBulk mod = (Pdg_moduloBulk)i.next();
 						mod.setStato(Pdg_moduloBulk.STATO_AG);
 						mod.setUser(userContext.getUser());
 						updateBulk(userContext,mod);
+
+						//Carico il gestionale
+						if (pcnr.getFl_pdg_calderone() && pcnr.getFl_pdg_calderone_rib()) {
+							WorkpackageBulk gaeCalderone = ((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).getGaeCalderone(mod.getEsercizio());
+							if (gaeCalderone==null || gaeCalderone.getCd_linea_attivita()==null)
+								throw new ApplicationException("Non risulta indicata la GAE calderone nella tabella CONFIGURAZIONE_CNR. Impossibile procedere.");
+
+							BulkHome homePdgModuloSpese = getHome(userContext, Pdg_modulo_speseBulk.class);
+							SQLBuilder sqlPdgModulo = homePdgModuloSpese.createSQLBuilder();
+							sqlPdgModulo.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, mod.getEsercizio());
+							sqlPdgModulo.addSQLClause(FindClause.AND, "CD_CENTRO_RESPONSABILITA", SQLBuilder.EQUALS, mod.getCd_centro_responsabilita());
+							sqlPdgModulo.addSQLClause(FindClause.AND, "PG_PROGETTO", SQLBuilder.EQUALS, mod.getPg_progetto());
+							java.util.List<Pdg_modulo_speseBulk> moduliSpeseList = getHome(userContext, Pdg_modulo_speseBulk.class).fetchAll(sqlPdgModulo);
+
+							for (Pdg_modulo_speseBulk moduloSpeseBulk : moduliSpeseList) {
+								Pdg_modulo_spese_gestBulk moduloSpeseGestBulk = new Pdg_modulo_spese_gestBulk();
+								moduloSpeseGestBulk.setPdg_modulo_spese(moduloSpeseBulk);
+
+								List<Elemento_voceBulk> vociList = ((Elemento_voceHome) getHome(userContext, Elemento_voceBulk.class)).findElementoVociAssociate(moduloSpeseBulk.getEsercizio(), moduloSpeseBulk.getId_classificazione());
+								if (vociList.isEmpty())
+									throw new ApplicationException("Non risultano associate voci di bilancio alla classificazione con id " + moduloSpeseBulk.getId_classificazione() + ". Impossibile procedere.");
+								if (vociList.size() > 1)
+									throw new ApplicationException("Risultano associate troppe voci di bilancio alla classificazione con id " + moduloSpeseBulk.getId_classificazione() + ". Impossibile procedere.");
+								moduloSpeseGestBulk.setElemento_voce(vociList.getFirst());
+
+								moduloSpeseGestBulk.setOrigine(Pdg_modulo_spese_gestBulk.OR_PREVISIONE);
+								moduloSpeseGestBulk.setCategoria_dettaglio(Pdg_modulo_spese_gestBulk.CAT_DIRETTA);
+								moduloSpeseGestBulk.setFl_sola_lettura(Boolean.FALSE);
+								moduloSpeseGestBulk.setDt_registrazione(it.cnr.jada.util.ejb.EJBCommonServices.getServerDate());
+
+								moduloSpeseGestBulk.setLinea_attivita(gaeCalderone);
+								moduloSpeseGestBulk.setIm_pagamenti(BigDecimal.ZERO);
+								moduloSpeseGestBulk.setIm_spese_gest_accentrata_int(moduloSpeseBulk.getIm_spese_gest_accentrata_int());
+								moduloSpeseGestBulk.setIm_spese_gest_accentrata_est(moduloSpeseBulk.getIm_spese_gest_accentrata_est());
+								moduloSpeseGestBulk.setIm_spese_gest_decentrata_int(moduloSpeseBulk.getIm_spese_gest_decentrata_int());
+								moduloSpeseGestBulk.setIm_spese_gest_decentrata_est(moduloSpeseBulk.getIm_spese_gest_decentrata_est());
+								moduloSpeseGestBulk.setToBeCreated();
+								makeBulkPersistent(userContext, moduloSpeseGestBulk);
+							}
+						}
 					}
 				}
 
@@ -288,21 +348,13 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 					lockPdgModulo(userContext, pdg_esercizio);
 
 					// controlliamo che le righe di pdg_modulo siano tutte CG
-					List listaModuli = findPdgModulo(userContext, pdg_esercizio, Pdg_moduloBulk.STATO_CG);
-					if (!listaModuli.isEmpty())
-						throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato "+Pdg_moduloBulk.STATO_CG);
-										
-					// aggiorniamo le righe di pdg_modulo in CG
-					BulkHome home = getHome(userContext,Pdg_moduloBulk.class);
-					SQLBuilder sql = home.createSQLBuilder();
-					sql.addSQLClause("AND","CD_CENTRO_RESPONSABILITA",sql.EQUALS,pdg_esercizio.getCd_centro_responsabilita());
-					sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,pdg_esercizio.getEsercizio());
-					java.util.List moduli_list = getHome(userContext,Pdg_moduloBulk.class).fetchAll(sql);
-					for (java.util.Iterator i = moduli_list.iterator();i.hasNext();) {
-						Pdg_moduloBulk mod = (Pdg_moduloBulk)i.next();
-						mod.setStato(Pdg_moduloBulk.STATO_CG);
-						mod.setUser(userContext.getUser());
-						updateBulk(userContext,mod);
+					List<Pdg_moduloBulk> listaModuli = findPdgModulo(userContext, pdg_esercizio, Pdg_moduloBulk.STATO_CG);
+					if (pcnr.getFl_pdg_calderone() && pcnr.getFl_pdg_calderone_rib()) {
+						if (listaModuli.stream().anyMatch(el -> !el.getStato().equals(Pdg_moduloBulk.STATO_EC)))
+							throw new ApplicationException("Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato " + Pdg_moduloBulk.STATO_CG);
+					} else {
+						if (!listaModuli.isEmpty())
+							throw new ApplicationException("Lo stato non può essere aggiornato poichè non tutte le righe del PdGP hanno stato " + Pdg_moduloBulk.STATO_CG);
 					}
 
 					ribaltaCDPSuPdg(userContext, pdg_esercizio);
@@ -494,7 +546,6 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 	 * 
 	 * @param userContext
 	 * @param pdg_esercizio
-	 * @param notStato
 	 * @return
 	 * @throws ComponentException
 	 * @throws PersistencyException
@@ -523,6 +574,7 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 			String prev =(String)Pdg_esercizioBulk.getPrecedenteStato().get( pdg_esercizio.getStato());
 
 			if (prev!=null) {
+				Parametri_cnrBulk parametri = ((Parametri_cnrHome)getHome(userContext,Parametri_cnrBulk.class)).getParametriCnr(userContext);
 
 				Pdg_esercizioHome pdg_esercizioHome = (Pdg_esercizioHome) getHome(userContext,pdg_esercizio);
 	
@@ -543,7 +595,12 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 				}
 				//viene richiamata la procedura, il controllo viene fatto nel package
 				aggiornaLimiti(userContext, pdg_esercizio);
-				
+
+				if (parametri.getFl_pdg_contrattazione().equals(Boolean.TRUE) &&
+						parametri.getFl_pdg_calderone().equals(Boolean.TRUE) &&
+						prev.equals(Pdg_esercizioBulk.STATO_PRECHIUSURA_CDR))
+					prev = Pdg_esercizioBulk.STATO_APERTURA_CDR;
+
 				pdg_esercizio.setStato(prev);
 				updateBulk( userContext,pdg_esercizio );
 			}
@@ -711,10 +768,12 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 								impEst = rs.getBigDecimal(4);
 							if (rs.getBigDecimal(5)!= null)
 								impInt = rs.getBigDecimal(5);
-								
-							// Inserisce le righe con i totali prelevati da pdg_modulo_spese
-							Pdg_approvato_dip_areaBulk appDipArea = inserisciApprovatoDipArea(userContext, pdg, livContrSpe, pgMod, idCla, impEst, impInt, cds);
-							inserisciRigaPdgContrattazione(userContext, pdg, appDipArea, livContrSpe, pgMod, idCla, impEst, impInt, cds);
+
+							if (impEst.compareTo(BigDecimal.ZERO)!=0 || impInt.compareTo(BigDecimal.ZERO)!=0 ) {
+								// Inserisce le righe con i totali prelevati da pdg_modulo_spese
+								Pdg_approvato_dip_areaBulk appDipArea = inserisciApprovatoDipArea(userContext, pdg, livContrSpe, pgMod, idCla, impEst, impInt, cds);
+								inserisciRigaPdgContrattazione(userContext, pdg, appDipArea, livContrSpe, pgMod, idCla, impEst, impInt, cds);
+							}
 						}
 					} catch (java.sql.SQLException e) {
 						throw handleSQLException(e);
@@ -730,7 +789,8 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 
 			// Inserisce le righe con totali nulli delle varie classificazioni che 
 			// non sono state inserite in pdg_modulo_spese dagli utenti in fase preliminare 
-			inserisciRigaPdgContrattazioneAltre(userContext, pdg, livContrSpe);
+			// eliminato per richiesta ISS
+			//inserisciRigaPdgContrattazioneAltre(userContext, pdg, livContrSpe);
 
 		} catch (ComponentException e) {
 			throw handleException(e);
@@ -1479,4 +1539,91 @@ public class PdGPreliminareComponent extends it.cnr.jada.comp.CRUDComponent impl
 			throw handleException(e);
 		}
 	}
+
+	public void ribaltaSuCalderone(UserContext userContext)	throws ComponentException {
+		try {
+			Parametri_cnrHome parhome = (Parametri_cnrHome)getHome(userContext, Parametri_cnrBulk.class);
+			Parametri_cnrBulk par = new Parametri_cnrBulk(CNRUserContext.getEsercizio(userContext));
+			par = (Parametri_cnrBulk) parhome.findByPrimaryKey(par);
+			if (!par.getFl_approvato_definitivo())
+				throw new ApplicationException("Non risulta ancora approvata definitivamente la procedura di contrattazione spese. Impossibile procedere.");
+
+			//Il fatto che tutti iprogetti sono in stato ESAMINATO_DAL_CENTRO è già stato controllato in fase di definitività della
+			//procedura di contrattazione
+
+			PersistentHome dettHome = getHomeCache(userContext).getHome(Pdg_contrattazione_speseBulk.class);
+			SQLBuilder sql = dettHome.createSQLBuilder();
+			sql.addClause(FindClause.AND,"esercizio_dip",SQLBuilder.EQUALS,par.getEsercizio());
+			List<Pdg_contrattazione_speseBulk> result = dettHome.fetchAll(sql);
+
+			Map<Integer, List<Pdg_contrattazione_speseBulk>> mapClass =
+					result.stream().collect(Collectors.groupingBy(Pdg_contrattazione_speseBulk::getId_classificazione));
+
+			//recupero le chiavi per caricare il progetto calderone
+			ProgettoBulk prgCalderone = ((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).getProgettoCalderone(par.getEsercizio());
+			if (prgCalderone==null || prgCalderone.getPg_progetto()==null)
+				throw new ApplicationException("Non risulta indicato il progetto calderone nella tabella CONFIGURAZIONE_CNR. Impossibile procedere.");
+
+			WorkpackageBulk gaeCalderone = ((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).getGaeCalderone(par.getEsercizio());
+			if (gaeCalderone==null || gaeCalderone.getCd_linea_attivita()==null)
+				throw new ApplicationException("Non risulta indicata la GAE calderone nella tabella CONFIGURAZIONE_CNR. Impossibile procedere.");
+
+			Pdg_esercizioBulk pdgEsercizioBulk = (Pdg_esercizioBulk)getHome(userContext, Pdg_esercizioBulk.class).findByPrimaryKey(new Pdg_esercizioBulk(par.getEsercizio(), gaeCalderone.getCd_centro_responsabilita()));
+			pdgEsercizioBulk.setStato(Pdg_esercizioBulk.STATO_APERTURA_CDR);
+			pdgEsercizioBulk.setToBeUpdated();
+			makeBulkPersistent(userContext, pdgEsercizioBulk);
+
+			Pdg_moduloBulk moduloBulk = new Pdg_moduloBulk(par.getEsercizio(), gaeCalderone.getCd_centro_responsabilita(), prgCalderone.getPg_progetto());
+			moduloBulk.setStato(Pdg_moduloBulk.STATO_AC);
+			moduloBulk.setToBeCreated();
+			makeBulkPersistent(userContext, moduloBulk);
+
+			Pdg_modulo_costiBulk moduloCostiBulk = new Pdg_modulo_costiBulk(moduloBulk.getEsercizio(), moduloBulk.getCd_centro_responsabilita(), moduloBulk.getPg_progetto());
+			moduloCostiBulk.setToBeCreated();
+			makeBulkPersistent(userContext, moduloCostiBulk);
+
+			for (Integer aIdClass : mapClass.keySet()) {
+				List<Pdg_contrattazione_speseBulk> righeContratt = mapClass.get(aIdClass);
+
+				Pdg_modulo_speseBulk moduloSpeseBulk = new Pdg_modulo_speseBulk();
+				moduloSpeseBulk.setPdg_modulo_costi(moduloCostiBulk);
+				moduloSpeseBulk.setClassificazione(new V_classificazione_vociBulk(aIdClass));
+				CdrBulk cdrBulk = (CdrBulk)getHome(userContext, CdrBulk.class).findByPrimaryKey(gaeCalderone.getCentro_responsabilita());
+				Unita_organizzativaBulk uoBulk = (Unita_organizzativaBulk)getHome(userContext, Unita_organizzativaBulk.class).findByPrimaryKey(cdrBulk.getUnita_padre());
+				CdsBulk cdsBulk = (CdsBulk)getHome(userContext, CdsBulk.class).findByPrimaryKey(uoBulk.getUnita_padre());
+				moduloSpeseBulk.setArea(cdsBulk);
+				moduloSpeseBulk.setIm_spese_a2(BigDecimal.ZERO);
+				moduloSpeseBulk.setIm_spese_a3(BigDecimal.ZERO);
+				moduloSpeseBulk.setIm_spese_gest_accentrata_int(BigDecimal.ZERO);
+				moduloSpeseBulk.setIm_spese_gest_accentrata_est(BigDecimal.ZERO);
+
+				moduloSpeseBulk.setIm_spese_gest_decentrata_int(righeContratt.stream()
+						.map(Pdg_contrattazione_speseBulk::getAppr_tot_spese_decentr_int)
+						.reduce(BigDecimal.ZERO, BigDecimal::add));
+				moduloSpeseBulk.setIm_spese_gest_decentrata_est(righeContratt.stream()
+						.map(Pdg_contrattazione_speseBulk::getAppr_tot_spese_decentr_est)
+						.reduce(BigDecimal.ZERO, BigDecimal::add));
+				makeBulkPersistent(userContext, moduloSpeseBulk);
+
+				moduloSpeseBulk.setPdgMissione(prgCalderone.getPdgMissione());
+				moduloSpeseBulk.setCofog(Utility.createConfigurazioneCnrComponentSession().getCofogProgettoDefault(userContext,
+						CNRUserContext.getEsercizio(userContext)));
+				java.util.Collection<Progetto_piano_economicoBulk> result2 = find(userContext, Progetto_piano_economicoBulk.class, "findProgettoPianoEconomicoList", moduloSpeseBulk.getEsercizio(), moduloSpeseBulk.getPg_progetto(), moduloSpeseBulk.getId_classificazione());
+				if (!Optional.ofNullable(result2).orElse(Collections.emptyList()).isEmpty()) {
+					Voce_piano_economico_prgBulk vocePiaeco = result2.stream().findAny().map(Progetto_piano_economicoBulk::getVoce_piano_economico).get();
+					vocePiaeco = (Voce_piano_economico_prgBulk)findByPrimaryKey(userContext, vocePiaeco);
+					moduloSpeseBulk.setVoce_piano_economico(vocePiaeco);
+				}
+				moduloSpeseBulk.setToBeCreated();
+				makeBulkPersistent(userContext, moduloSpeseBulk);
+			}
+
+			//Aggiorno il flag sui parametri
+			par.setFl_pdg_calderone_rib(Boolean.TRUE);
+			par.setToBeUpdated();
+			updateBulk(userContext, par);
+		} catch (PersistencyException | RemoteException e) {
+			throw handleException(e);
+        }
+    }
 }

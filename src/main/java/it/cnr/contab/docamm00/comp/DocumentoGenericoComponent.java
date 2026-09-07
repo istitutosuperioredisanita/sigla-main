@@ -25,6 +25,8 @@ import it.cnr.contab.coepcoan00.comp.ScritturaPartitaDoppiaFromDocumentoComponen
 import it.cnr.contab.compensi00.docs.bulk.CompensoBulk;
 import it.cnr.contab.config00.bulk.CausaleContabileBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.contratto.bulk.AllegatoContrattoDocumentBulk;
+import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
@@ -51,6 +53,7 @@ import it.cnr.contab.doccont00.ejb.AccertamentoAbstractComponentSession;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario01.bulk.*;
+import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.ApplicationMessageFormatException;
 import it.cnr.contab.util.Utility;
@@ -67,6 +70,10 @@ import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import it.cnr.si.spring.storage.StorageDriver;
+import it.cnr.si.spring.storage.StorageObject;
+import it.cnr.si.spring.storage.StoreService;
+import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import jakarta.ejb.EJBException;
 
 import javax.naming.OperationNotSupportedException;
@@ -491,7 +498,7 @@ public class DocumentoGenericoComponent
                     //DEVE ESSERE FATTO PRIMA DELL'AGGIORNAMENTO A DEFINITIVA
                     aggiornaSaldi(userContext, documento, obblT, status);
 
-                    aggiornaObbligazioniTemporanee(userContext, obblT);
+                     aggiornaObbligazioniTemporanee(userContext, obblT);
                     obblTemporanee = new it.cnr.jada.bulk.PrimaryKeyHashtable(obblTemporanee);
                     for (Iterator i = ((Vector) obblTemporanee.get(obblT)).iterator(); i.hasNext(); )
                         ((ObbligazioneBulk) i.next()).setPg_obbligazione(obblT.getPg_obbligazione());
@@ -597,21 +604,12 @@ public class DocumentoGenericoComponent
     }
 
     private void aggiornaObbligazioniTemporanee(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
-
         try {
-            Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
-            Long pg = null;
-            pg = numHome.getNextPg(userContext,
-                    obbligazioneTemporanea.getEsercizio(),
-                    obbligazioneTemporanea.getCd_cds(),
-                    obbligazioneTemporanea.getCd_tipo_documento_cont(),
-                    obbligazioneTemporanea.getUser());
-            ObbligazioneHome home = (ObbligazioneHome) getHome(userContext, obbligazioneTemporanea);
-            home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);
+            obbligazioneTemporanea.setPg_obbligazione(Utility.createObbligazioneComponentSession().aggiornaObbligazioniTemporanee( userContext, obbligazioneTemporanea).getPg_obbligazione());
         } catch (it.cnr.jada.persistency.PersistencyException e) {
             throw handleException(obbligazioneTemporanea, e);
-        } catch (it.cnr.jada.persistency.IntrospectionException e) {
-            throw handleException(obbligazioneTemporanea, e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -1455,7 +1453,13 @@ public class DocumentoGenericoComponent
                 //filtro disabilitato sul terzo ho terzo + diversi
                 sql.openParenthesis("AND");
                 sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TERZO", SQLBuilder.EQUALS, filtro.getFornitore().getCd_terzo());
-                sql.addSQLClause("OR", "ANAGRAFICO.TI_ENTITA", SQLBuilder.EQUALS, AnagraficoBulk.DIVERSI);
+
+                if(filtro.isFlNoEntitaTerzo()) {
+                    sql.addSQLClause("OR", "ANAGRAFICO.TI_ENTITA", SQLBuilder.ISNOTNULL,null);
+                }else{
+                    sql.addSQLClause("OR", "ANAGRAFICO.TI_ENTITA", SQLBuilder.EQUALS, AnagraficoBulk.DIVERSI);
+
+                }
                 sql.closeParenthesis();
             } else {
                 //filtro abilitato sul terzo ho solo terzo
@@ -1463,7 +1467,9 @@ public class DocumentoGenericoComponent
             }
         } else {
             //se diverso ho solo diversi
-            sql.addSQLClause("AND", "ANAGRAFICO.TI_ENTITA", SQLBuilder.EQUALS, AnagraficoBulk.DIVERSI);
+            if(!filtro.isFlNoEntitaTerzo()) {
+                sql.addSQLClause("AND", "ANAGRAFICO.TI_ENTITA", SQLBuilder.EQUALS, AnagraficoBulk.DIVERSI);
+                }
         }
         return iterator(
                 context,
@@ -4257,6 +4263,9 @@ public class DocumentoGenericoComponent
             //sql.addSQLClause("AND", "TIPO_DOCUMENTO_AMM.TI_ENTRATA_SPESA='" + (((Documento_genericoBulk) bulk).isGenericoAttivo() ? "E" : "S") + "')");
             //sql.closeParenthesis();
         }
+        if(((Documento_genericoBulk) bulk).isFl_terzo_no_entita()){
+            sql.addSQLClause("AND", "FL_TERZO_NO_ENT = 'Y'");
+        }
         return sql;
     }
 //^^@@
@@ -5051,7 +5060,7 @@ public class DocumentoGenericoComponent
                                 throw handleException(e);
                             }
                         }
-                        if (!riga.getObbligazione_scadenziario().getObbligazione().getCreditore().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI) &&
+                        if ((!documentoGenerico.isFl_terzo_no_entita() &&  !riga.getObbligazione_scadenziario().getObbligazione().getCreditore().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI)) &&
                                 !(riga.getTerzo().getAnagrafico().getTi_entita().equals(AnagraficoBulk.DIVERSI)))
                             throw new it.cnr.jada.comp.ApplicationException(
                                     "Attenzione la riga " + riga.getDs_riga() + " ha un terzo incompatibile con il documento contabile associato.");

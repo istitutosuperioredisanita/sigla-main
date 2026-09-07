@@ -24,7 +24,6 @@ import org.jboss.arquillian.graphene.GrapheneElement;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
-import org.wildfly.common.Assert;
 
 import java.io.File;
 import java.io.IOException;

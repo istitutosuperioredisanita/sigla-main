@@ -19,12 +19,16 @@ package it.cnr.contab.config00.bulk;
 
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoCogeBulk;
 import it.cnr.contab.coepcoan00.core.bulk.IDocumentoDetailEcoCogeBulk;
+import it.cnr.contab.config00.latt.bulk.CofogBulk;
+import it.cnr.contab.config00.latt.bulk.CofogHome;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.latt.bulk.WorkpackageHome;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
+import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
+import it.cnr.contab.progettiric00.core.bulk.ProgettoHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
@@ -704,4 +708,74 @@ public class Configurazione_cnrHome extends BulkHome {
                 .map(s -> !s.equalsIgnoreCase("N"))
                 .orElse(Boolean.FALSE);
     }
+
+    public CofogBulk getCofogProgettoDefault(int esercizio) throws ComponentException {
+        try {
+            Optional<String> aCdCofog =  Optional.ofNullable(
+                            this.getConfigurazione(esercizio, null,
+                                    Configurazione_cnrBulk.PK_GESTIONE_PROGETTI,
+                                    Configurazione_cnrBulk.SK_COFOG_DEFAULT)
+                    ).map(Configurazione_cnrBase::getVal01);
+
+            if (aCdCofog.isPresent()) {
+                CofogHome cofogHome = (CofogHome) getHomeCache().getHome(CofogBulk.class);
+                return (CofogBulk) cofogHome.findByPrimaryKey(new CofogBulk(aCdCofog.get()));
+            }
+            return null;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    public ProgettoBulk getProgettoCalderone(int esercizio) throws ComponentException {
+        try {
+            Optional<BigDecimal> aPgProgetto =  Optional.ofNullable(
+                    this.getConfigurazione(esercizio, null,
+                            Configurazione_cnrBulk.PK_GESTIONE_PROGETTI,
+                            Configurazione_cnrBulk.SK_PROGETTO_CALDERONE)
+            ).map(Configurazione_cnrBase::getIm01);
+
+            if (aPgProgetto.isPresent()) {
+                ProgettoHome prgHome = (ProgettoHome) getHomeCache().getHome(ProgettoBulk.class);
+                return (ProgettoBulk) prgHome
+                        .findByPrimaryKey(
+                                new ProgettoBulk(
+                                        esercizio,
+                                        aPgProgetto.get().intValue(),
+                                        ProgettoBulk.TIPO_FASE_PREVISIONE));
+            }
+            return null;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
+    public WorkpackageBulk getGaeCalderone(int esercizio) throws ComponentException {
+        try {
+            Optional<String> aCdCdrLinea =  Optional.ofNullable(
+                    this.getConfigurazione(esercizio, null,
+                            Configurazione_cnrBulk.PK_GESTIONE_PROGETTI,
+                            Configurazione_cnrBulk.SK_GAE_CALDERONE)
+            ).map(Configurazione_cnrBase::getVal01);
+
+            Optional<String> aCdLinea =  Optional.ofNullable(
+                    this.getConfigurazione(esercizio, null,
+                            Configurazione_cnrBulk.PK_GESTIONE_PROGETTI,
+                            Configurazione_cnrBulk.SK_GAE_CALDERONE)
+            ).map(Configurazione_cnrBase::getVal02);
+
+            if (aCdCdrLinea.isPresent() && aCdLinea.isPresent()) {
+                WorkpackageHome wpHome = (WorkpackageHome) getHomeCache().getHome(WorkpackageBulk.class);
+                return (WorkpackageBulk) wpHome
+                        .findByPrimaryKey(
+                                new WorkpackageBulk(aCdCdrLinea.get(), aCdLinea.get()));
+
+
+            }
+            return null;
+        } catch (it.cnr.jada.persistency.PersistencyException e) {
+            throw new ComponentException(e);
+        }
+    }
+
 }

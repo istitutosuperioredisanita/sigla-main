@@ -199,7 +199,7 @@ private SQLBuilder selectTipoTrattamento(Filtro_trattamentoBulk filtro) {
   * @return L'SQL statement relativo
   *
 **/
-private SQLBuilder selectTipoTrattamentoValido(Filtro_trattamentoBulk filtro) {
+public SQLBuilder selectTipoTrattamentoValido(Filtro_trattamentoBulk filtro) {
 
 	SQLBuilder sql = createSQLBuilder();
 	addSQLTipoTrattamento(sql, filtro);

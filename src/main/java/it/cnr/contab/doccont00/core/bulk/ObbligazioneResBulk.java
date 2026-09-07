@@ -17,15 +17,22 @@
 
 package it.cnr.contab.doccont00.core.bulk;
 
+import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import it.cnr.contab.config00.pdcfin.bulk.Voce_fBulk;
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.doccont00.core.bulk.AccertamentoResiduoBulk.Stato;
+import it.cnr.contab.service.SpringUtil;
+import it.cnr.contab.spring.service.StorePath;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.action.CRUDBP;
+import it.cnr.si.spring.storage.StorageDriver;
 
 /**
  * Insert the method's description here.
@@ -93,7 +100,7 @@ public class ObbligazioneResBulk extends ObbligazioneBulk {
 	// metodo per inizializzare l'oggetto bulk
 	private void initialize () {
 		setCd_tipo_documento_cont( Numerazione_doc_contBulk.TIPO_OBB_RES );
-		setFl_pgiro( new Boolean( false ));
+		setFl_pgiro( Boolean.FALSE);
 	}
 	/* (non-Javadoc)
 	 * @see it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk#initializeForInsert(it.cnr.jada.util.action.CRUDBP, it.cnr.jada.action.ActionContext)
@@ -182,5 +189,26 @@ public class ObbligazioneResBulk extends ObbligazioneBulk {
 	public boolean isNonLiquidabile() {
 		return StatoResiduo.NON_LIQUIDABILE.value.equals(getStatoResiduo());
 	}
-	
+
+
+	@Override
+	public String getBasePath() {
+		return Arrays.asList(
+				SpringUtil.getBean(StorePath.class).getPathComunicazioniDal(),
+				Optional.ofNullable(this.getUnita_organizzativa())
+						.map(Unita_organizzativaBulk::getCd_unita_organizzativa)
+						.orElse(""),
+				"Riaccertamento dei residui passivi",
+				Optional.ofNullable(this.getEsercizio())
+						.map(esercizio -> String.valueOf(esercizio))
+						.orElse("0")
+		).stream().collect(
+				Collectors.joining(StorageDriver.SUFFIX)
+		);
+	}
+
+	@Override
+	public String getCMISFolderName() {
+		return this.getCd_uo_origine() + "-" + this.getEsercizio_originale() + this.getPg_obbligazione();
+	}
 }

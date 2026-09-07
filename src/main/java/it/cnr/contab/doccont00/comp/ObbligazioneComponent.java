@@ -40,6 +40,7 @@ import it.cnr.contab.doccont00.dto.ProgettoObbliPluriennaleDto;
 import it.cnr.contab.doccont00.dto.RimoduzioneObbliPluriennaleDto;
 import it.cnr.contab.doccont00.dto.VocePianoObbliPluriennaleDto;
 import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
+import it.cnr.contab.doccont00.service.ObbligazioneService;
 import it.cnr.contab.incarichi00.bulk.Ass_incarico_uoBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioBulk;
 import it.cnr.contab.incarichi00.bulk.Incarichi_repertorioHome;
@@ -52,6 +53,7 @@ import it.cnr.contab.prevent00.bulk.Voce_f_saldi_cmpBulk;
 import it.cnr.contab.progettiric00.core.bulk.*;
 import it.cnr.contab.progettiric00.ejb.RimodulaProgettoRicercaComponentSession;
 import it.cnr.contab.progettiric00.enumeration.StatoProgettoRimodulazione;
+import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import it.cnr.contab.util.ApplicationMessageFormatException;
@@ -66,6 +68,9 @@ import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.DateUtils;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
+import it.cnr.si.spring.storage.StorageObject;
+import it.cnr.si.spring.storage.StoreService;
+import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -3631,7 +3636,7 @@ public IScadenzaDocumentoContabileBulk modificaScadenzaInAutomatico( UserContext
 			
 	if ( modificaScadenzaSuccessiva )
 	{
-		scadenza.setFl_aggiorna_scad_successiva( new Boolean( true) );
+		scadenza.setFl_aggiorna_scad_successiva( Boolean.TRUE );
 
 		//salvo i dati iniziali
 		Obbligazione_scadenzarioBulk scadIniziale = new Obbligazione_scadenzarioBulk();
@@ -5990,13 +5995,34 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		return getHome(userContext, V_assestatoBulk.class).fetchAll( sql );
 	}
 
+	private boolean existAllegatoAutorizzativo( UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException {
+		if ( !Optional.ofNullable(obbligazione.getArchivioAllegati())
+				.filter(lista -> !lista.isEmpty())
+				.isPresent()) {
+			// nel caso provengo da un componente che ha letto solo l'obbligazione dal db quindi mi carico gli allegati
+			ObbligazioneService obbligazioneService = SpringUtil.getBean("obbligazioneService", ObbligazioneService.class);
+			obbligazioneService.findAllegati(obbligazione, Boolean.TRUE);
+		}
+		return obbligazione.existAllegatoAutorizzativo();
+	}
 	private void validaCampi(UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException {
 	try {
 		// controlli di validazione del campo MOTIVAZIONE
 		Parametri_cnrBulk bulkCNR = (Parametri_cnrBulk)getHome(uc, Parametri_cnrBulk.class).findByPrimaryKey(new Parametri_cnrBulk(CNRUserContext.getEsercizio(uc)));		
 		if (bulkCNR == null)
 		  throw new ApplicationException("Parametri CNR non presenti per l'anno "+CNRUserContext.getEsercizio(uc));
-		
+
+		if (!obbligazione.isObbligazioneResiduo() ){
+			// verifica obbligatoreta allegato atto di impegno
+			if ( Utility.createConfigurazioneCnrComponentSession().isEnabledAllegatiObbligazioni(uc)
+				&& Utility.createConfigurazioneCnrComponentSession().isMandatoryAllegatoAutorizzativoObb(uc,obbligazione) && ( !existAllegatoAutorizzativo( uc,obbligazione)))
+				throw new ApplicationException("Attenzione: Manca l'allegato Atto di Impegno Obbligatorio.");
+			if ( Utility.createConfigurazioneCnrComponentSession().isEnabledAllegatiObbligazioni(uc) )
+				// cos' da controllare che non ci siano due allegati di tipo atto di impegno
+				obbligazione.existAllegatoAutorizzativo();
+
+		}
+
 		if (!obbligazione.isObbligazioneResiduo() &&
 			bulkCNR.getFl_motivazione_su_imp() &&
 			obbligazione.getMotivazione()==null) {
@@ -6862,7 +6888,6 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		for(Obbligazione_pluriennaleBulk obblPluriennale : obblPlurList) {
 			if (obblPluriennale.isToBeCreated() || obblPluriennale.isToBeUpdated() || obblPluriennale.isToBeDeleted() ) {
 				ObbligazionePluriennaleDto obblPlurAddDTO = new ObbligazionePluriennaleDto();
-
 				obblPlurAddDTO.setAnno(obblPluriennale.getAnno());
 				obblPlurAddDTO.setImporto(obblPluriennale.getImporto().multiply(prcImputazioneFin).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP));
 				if(!gestioneAdd){
@@ -6902,5 +6927,52 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 			obbPlurVoceNewList.add(obblVoceNew);
 		}
 		return obbPlurVoceNewList;
+	}
+
+	private  void changeProgressivoNodeRef(StorageObject oldStorageObject, ObbligazioneBulk obbligazione) throws ApplicationException {
+		ObbligazioneService obbligazioneService = SpringUtil.getBean("obbligazioneService", ObbligazioneService.class);
+		if ( Optional.ofNullable(oldStorageObject).isPresent()) {
+			List<StorageObject> children = obbligazioneService.getChildren(oldStorageObject.getKey());
+			for (StorageObject child : children) {
+				AllegatoObbligazioneBulk allegato = new AllegatoObbligazioneBulk(child.getKey());
+				Optional.ofNullable(child.<List<String>>getPropertyValue(StoragePropertyNames.SECONDARY_OBJECT_TYPE_IDS.value()))
+						.map(strings -> strings.stream())
+						.ifPresent(stringStream -> {
+							stringStream
+									.filter(s -> AllegatoObbligazioneBulk.aspectNamesKeys.get(s) != null)
+									.findFirst()
+									.ifPresent(s -> (( AllegatoObbligazioneBulk) allegato).setAspectName(s));
+						});
+				allegato.setTitolo(child.<String>getPropertyValue(StoragePropertyNames.TITLE.value()));
+				allegato.setDescrizione(child.<String>getPropertyValue(StoragePropertyNames.DESCRIPTION.value()));
+
+				obbligazioneService.updateProperties(allegato, child);
+
+			}
+			obbligazioneService.updateProperties(obbligazione, oldStorageObject);
+		}
+	}
+
+	public ObbligazioneBulk aggiornaObbligazioniTemporanee(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
+
+		try {
+			ObbligazioneService obbligazioneService = SpringUtil.getBean("obbligazioneService", ObbligazioneService.class);
+			StorageObject oldStorageObject = obbligazioneService.getFolderObbligazione(obbligazioneTemporanea);
+			Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
+			Long pg = null;
+			pg = numHome.getNextPg(userContext,
+					obbligazioneTemporanea.getEsercizio(),
+					obbligazioneTemporanea.getCd_cds(),
+					obbligazioneTemporanea.getCd_tipo_documento_cont(),
+					obbligazioneTemporanea.getUser());
+			ObbligazioneHome home = (ObbligazioneHome) getHome(userContext, obbligazioneTemporanea);
+			home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);
+			changeProgressivoNodeRef( oldStorageObject, obbligazioneTemporanea);
+			return obbligazioneTemporanea;
+		} catch (it.cnr.jada.persistency.PersistencyException e) {
+			throw handleException(obbligazioneTemporanea, e);
+		} catch (it.cnr.jada.persistency.IntrospectionException e) {
+			throw handleException(obbligazioneTemporanea, e);
+		}
 	}
 }

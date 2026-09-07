@@ -1224,6 +1224,17 @@ begin
 			stato_fine := 'W';
 		end;
 
+        begin
+            aMessage := 'Inserimento del record per ACCRUAL '||aEs||'. Lock tabella ACCRUAL';
+            ibmutl200.LOGINF(aPgEsec,aMessage,'','');
+
+        insert into  ACCRUAL(ESERCIZIO, STATO, ESITO, DACR, UTCR, DUVA, UTUV, PG_VER_REC)
+            values (aEs,'INS',null,sysdate,cgUtente,sysdate,cgUtente,1);
+        exception when DUP_VAL_ON_INDEX then
+                    ibmutl200.LOGWAR(aPgEsec,'Record ACCRUAL '||aEs||' già esistente','','');
+                    stato_fine := 'W';
+        end;
+
 		-- Creazione Parametri CNR
 		begin
 			aMessage := 'Inserimento dei Parametri CNR per l''esercizio base '||aEs||'. Lock tabella PARAMETRI_CNR';
@@ -4351,10 +4362,12 @@ begin
 	    AND TABELLA IN ('VAR_STANZ_RES' , 'VAR_STANZ_RES$'));
 
 	   INIT_RIBALTAMENTO_pdgp(aEs,pg_exec,aMessage);
-	   AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
-       INSERIMENTO_PROGETTI(aEs,pg_exec);
-       AGGIORNAMENTO_PRG_PIAECO(aEs,pg_exec);
-
+	   /*
+	      27-07-2026 - Codice eliminato - Il ribaltamento dei progetti avviene puntualmente con funzione schedulata a parte
+	      AGGIORNAMENTO_PROGETTI(aEs,pg_exec);
+          INSERIMENTO_PROGETTI(aEs,pg_exec);
+          AGGIORNAMENTO_PRG_PIAECO(aEs,pg_exec);
+       */
        ibmutl200.logInf(pg_exec,aMessage, '', '');
        ibmutl200.logInf(pg_exec,'Batch di ribaltamento configurazione, str.organizzativa, anagrafica capitoli e piano dei conti.', 'End:'||to_char(sysdate,'YYYY/MM/DD HH-MI-SS'), '');
     end if;

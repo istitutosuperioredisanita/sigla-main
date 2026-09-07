@@ -41,6 +41,7 @@ import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
 import it.cnr.contab.doccont00.core.bulk.ObbligazioneHome;
 import it.cnr.contab.doccont00.core.bulk.OptionRequestParameter;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
@@ -55,6 +56,7 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.DateUtils;
 
 import java.math.BigDecimal;
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -754,20 +756,13 @@ public class BltVisiteComponent extends CRUDComponent {
 	}
 	
 	private void aggiornaObbligazioneTemporanea(UserContext userContext, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
-		try 
-		{
-			Numerazione_doc_contHome numHome = (Numerazione_doc_contHome) getHomeCache(userContext).getHome(Numerazione_doc_contBulk.class);
-			Long pg = null;
-			pg = numHome.getNextPg(	userContext,
-									obbligazioneTemporanea.getEsercizio(), 
-									obbligazioneTemporanea.getCd_cds(), 
-									obbligazioneTemporanea.getCd_tipo_documento_cont(), 
-									obbligazioneTemporanea.getUser());
-			ObbligazioneHome home = (ObbligazioneHome)getHome(userContext, obbligazioneTemporanea);
-			home.confirmObbligazioneTemporanea(userContext, obbligazioneTemporanea, pg);
-		} 
-		catch (it.cnr.jada.persistency.PersistencyException e) {throw handleException(obbligazioneTemporanea, e);} 
-		catch (it.cnr.jada.persistency.IntrospectionException e) {throw handleException(obbligazioneTemporanea, e);}	
+		try {
+			obbligazioneTemporanea.setPg_obbligazione(Utility.createObbligazioneComponentSession().aggiornaObbligazioniTemporanee( userContext, obbligazioneTemporanea).getPg_obbligazione());
+		} catch (it.cnr.jada.persistency.PersistencyException e) {
+			throw handleException(obbligazioneTemporanea, e);
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void aggiornaSaldi(it.cnr.jada.UserContext userContext, Blt_visiteBulk visita, IDocumentoContabileBulk docCont, OptionRequestParameter status) throws ComponentException

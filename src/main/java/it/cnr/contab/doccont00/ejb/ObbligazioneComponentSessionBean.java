@@ -758,4 +758,24 @@ public void callRiportaIndietroRequiresNew(it.cnr.jada.UserContext param0,it.cnr
 		}
 	}
 
+	@Override
+	public ObbligazioneBulk aggiornaObbligazioniTemporanee(UserContext uc, ObbligazioneBulk obbligazioneTemporanea) throws ComponentException {
+		pre_component_invocation(uc,componentObj);
+		try {
+			ObbligazioneBulk result =  ((ObbligazioneComponent)componentObj).aggiornaObbligazioniTemporanee(uc,obbligazioneTemporanea);
+			component_invocation_succes(uc,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(uc,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(uc,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(uc,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(uc,componentObj,e);
+		}
+	}
+
 }

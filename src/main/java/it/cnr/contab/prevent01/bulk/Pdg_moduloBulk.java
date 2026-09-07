@@ -40,6 +40,7 @@ public class Pdg_moduloBulk extends Pdg_moduloBase {
 	private final static java.util.Dictionary statiKeys_AP;
 	private final static java.util.Dictionary statiKeys_AG;
 	private final static java.util.Dictionary statiKeys_CG;
+	private final static java.util.Dictionary statiKeys_EC;
 
 	public static String STATO_AC       = "AC";
 	public static String STATO_CC       = "CC";
@@ -47,6 +48,7 @@ public class Pdg_moduloBulk extends Pdg_moduloBase {
 	public static String STATO_AP       = "AP";
 	public static String STATO_AG       = "AG";
 	public static String STATO_CG       = "CG";
+	public static String STATO_EC       = "EC";
 
 	static {
 		statiKeys = new it.cnr.jada.util.OrderedHashtable();
@@ -56,6 +58,7 @@ public class Pdg_moduloBulk extends Pdg_moduloBase {
 		statiKeys.put(STATO_AP,"AP - Approvato");
 		statiKeys.put(STATO_AG,"AG - Apertura Gestionale del CDR");
 		statiKeys.put(STATO_CG,"CG - Chiusura Gestionale del CDR");
+		statiKeys.put(STATO_EC,"EC - Esaminato dal Centro");
 
 		statiKeys_AC = new it.cnr.jada.util.OrderedHashtable();
 		statiKeys_AC.put(STATO_AC,statiKeys.get(STATO_AC));
@@ -81,6 +84,9 @@ public class Pdg_moduloBulk extends Pdg_moduloBase {
 		statiKeys_CG = new it.cnr.jada.util.OrderedHashtable();
 		statiKeys_CG.put(STATO_CG,statiKeys.get(STATO_CG));
 		statiKeys_CG.put(STATO_AG,statiKeys.get(STATO_AG));
+
+		statiKeys_EC = new it.cnr.jada.util.OrderedHashtable();
+		statiKeys_EC.put(STATO_EC,statiKeys.get(STATO_EC));
 	}
 
 	private java.lang.String cambia_stato;
@@ -148,6 +154,8 @@ public class Pdg_moduloBulk extends Pdg_moduloBase {
 			return statiKeys_AG;
 		else if (STATO_CG.equals(getStato()))
 			return statiKeys_CG;
+		else if (STATO_EC.equals(getStato()))
+			return statiKeys_EC;
 		else
 			return statiKeys;
 	}

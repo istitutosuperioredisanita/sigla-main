@@ -98,6 +98,12 @@ public abstract class AllegatiCRUDBP<T extends AllegatoGenericoBulk, K extends A
         return true;
     }
 
+    public Boolean isEnabledAddButton() {
+        return Boolean.TRUE;
+    }
+    public Boolean isEnabledRemoveButton() {
+        return Boolean.TRUE;
+    }
     /*
      * Necessario per la creazione di una form con enctype di tipo "multipart/form-data"
      * Sovrascrive quello presente nelle superclassi

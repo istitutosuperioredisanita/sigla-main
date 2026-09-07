@@ -26,10 +26,6 @@
 			<td><% controller.writeFormInput(out,"area");%></td>
 		</tr>
 		<% } %>
-		<tr>
-	  		<td><% controller.writeFormLabel(out,"importo_approvato");%></td>
-			<td><% controller.writeFormInput(out,"importo_approvato");%></td>
-		</tr>
 	</table>
 </div>
 

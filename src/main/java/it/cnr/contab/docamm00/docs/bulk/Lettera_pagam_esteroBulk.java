@@ -46,6 +46,11 @@ import java.util.stream.Collectors;
 @StorageType(name="D:doccont:document")
 public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implements AllegatoParentBulk, StatoTrasmissione{
 
+	public static final Integer PRIMA_VERSIONE=1;
+	public static final Integer SECONDA_VERSIONE=2;
+
+	public static final Integer IBAN_ORD_LENGHT=27;
+
 	private it.cnr.contab.doccont00.core.bulk.SospesoBulk sospeso = null;
 	private java.util.Vector sospesiCancellati = null;
 	private boolean annoDiCompetenza = true;
@@ -88,6 +93,7 @@ public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implement
 	}
 
 	public final static String SHA = "Scelta1", OUR = "Scelta2", BEN = "Scelta3";
+	public final static String CRED = "Scelta1", DEBT = "Scelta2";
 	@SuppressWarnings("rawtypes")
 	public final static java.util.Dictionary ti_commissione_speseKeys;
 	static 
@@ -96,6 +102,14 @@ public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implement
 		ti_commissione_speseKeys.put(SHA, "SHA -> L'Ordinante e il Beneficiario supportano ciascuno le spese della propria Banca");
 		ti_commissione_speseKeys.put(OUR, "OUR*** -> Tutte le spese – anche quelle della Banca del Beneficiario – sono a carico dell'Ordinante");
 		ti_commissione_speseKeys.put(BEN, "BEN*** -> Tutte le spese – anche quelle della Banca dell'Ordinante – sono a carico del Beneficiario");
+	}
+	public final static java.util.Dictionary ti_commissione_speseKeys_V2;
+	static
+	{
+		ti_commissione_speseKeys_V2 = new it.cnr.jada.util.OrderedHashtable();
+		ti_commissione_speseKeys_V2.put(CRED, "Beneficiario (CRED)");
+		ti_commissione_speseKeys_V2.put(DEBT, "Ordinante (DEBT)");
+
 	}
 	public enum Divisa {
 		AED,AUD,BGN,CAD,CHF,CNY,CZK,DKK,EUR,GBP,HKD,HUF,ILS,INR,JPY,KWD,
@@ -131,6 +145,10 @@ public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implement
 	public static java.util.Dictionary getTiCommissioneSpesekeys() {
 		return ti_commissione_speseKeys;
 	}
+	public static java.util.Dictionary getTiCommissioneSpeseKeysV2() {
+		return ti_commissione_speseKeys_V2;
+	}
+
 	public void addToSospesiCancellati(SospesoBulk sospeso) {
 		if (getSospesiCancellati() == null)
 			setSospesiCancellati(new java.util.Vector());
@@ -148,6 +166,7 @@ public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implement
 		if (annoSolare != esercizioInScrivania)
 			date = new java.sql.Timestamp(new java.text.SimpleDateFormat("dd/MM/yyyy").parse("31/12/" + esercizioInScrivania).getTime());
 		setDt_registrazione(date);
+		setLettera_vers(SECONDA_VERSIONE);
 
 		setIm_commissioni(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
 		setIm_pagamento(new java.math.BigDecimal(0).setScale(2, java.math.BigDecimal.ROUND_HALF_UP));
@@ -400,4 +419,5 @@ public class Lettera_pagam_esteroBulk extends Lettera_pagam_esteroBase implement
 					.map(lettera -> "Lettera di Pagamento estero n. " + lettera)
 				.orElseGet(() -> super.toString());
 	}
+
 }
