@@ -1727,7 +1727,7 @@ public class Configurazione_cnrComponent extends it.cnr.jada.comp.CRUDDetailComp
            if ( isEnabledAllegatiObbligazioni( userContext) && isEnabledMandatoryAllegatoAutorizzativoObb(userContext) ) {
                 Timestamp starDate = getStartDateMandatoriAllegAutorObb(userContext);
                 if ( !Optional.ofNullable(starDate).isPresent())
-                    return Boolean.TRUE;
+                    return Boolean.FALSE;
                return obbligazioneBulk.getDt_registrazione() != null && starDate != null &&
                        (obbligazioneBulk.getDt_registrazione() .compareTo(starDate)>=0 );
              }
