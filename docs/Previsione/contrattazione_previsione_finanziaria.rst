@@ -13,6 +13,7 @@ Previsione di Spesa
 Di seguito vengono riporatati i passi da gestire per l'intero processo:
 
 1.	Dall'anno in corso effettuare il - ribaltamento delle anagrafiche - indicando valore anno=anno successivo;
+
 -	E’ escluso dal ribaltamento il riporto dei Progetti al nuovo anno (da farsi quando serve con funzione di ribaltamento specifica);
 -	Impostare in Parametri ENTE PDG CONTRATTAZIONE=’S’ e PDG QUADRATURA FONTI ESTERNE=’N’
 -	Il flag Contrattazione = Si, indicato al punto precedente indicherà questa nuova gestione della previsione. 
