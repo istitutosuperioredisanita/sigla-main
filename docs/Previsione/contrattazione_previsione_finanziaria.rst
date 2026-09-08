@@ -19,6 +19,7 @@ Di seguito vengono riporatati i passi da gestire per l'intero processo:
 -	Il flag Contrattazione = Si, indicato al punto precedente indicherà questa nuova gestione della previsione. 
 
 2.	Manualmente saranno creati tutti i progetti di funzionamento per il nuovo anno per tutte le UO e le relative Gae (dall'amministrazione centrale);
+
 -	Possono essere creati anche Progetti solo per impostare la previsione (quindi di sola Previsione), per poter accogliere fabbisogni per progetti di cui non si ha certezza;
 -	Creare le aree progettuali per il nuovo anno (se non incluse nel ribaltamento generale);
 -	Creare Progetti nel nuovo anno, con tipologia Finanziamento, allegare provvedimento, e APPROVARE.
@@ -27,17 +28,20 @@ Di seguito vengono riporatati i passi da gestire per l'intero processo:
 
 4.  Entrare su ogni CDS ed effettuare l’apertura dell’esercizio contabile:
 (CDS): Esercizio contabile: da Iniziale a Piano di Gestione Aperto (‘Apri PDGP’);
+
 -	Automaticamente sarà aperto l’esercizio contabile per tutte le UO del cds;
 
 5.	Creare Progetto calderone e sua Gae; 
 
-6.	Inserire in configurazione Ente i valori per la successiva gestione del gestionale: Progetto calderone (Progressivo Progetto), Cofog, Gae del progetto calderone: (il CDR e codice Gae) . Inserimento valori da Base dati dopo la loro creazione;
+6.	Inserire in configurazione Ente i valori per la successiva gestione del gestionale: Progetto calderone (Progressivo Progetto), Cofog, Gae del progetto calderone: (il CDR e codice Gae). Inserimento valori da Base dati dopo la loro creazione;
 
 7.	Gestione del Decisionale. Entrare sul Bilancio di previsione
+
 -	Ogni UO entrando in gestione sulla previsione può gestire solo i suoi progetti o i progetti ai quali partecipa. I progetti visibili sono solo quelli creati nel nuovo anno;
 -	Aggiunto il campo note (nuovo) che è riportato anche in griglia dopo il salvataggio
 
 8.	Indicazioni previsioni di spesa (DECISIONALE): 
+
 -	Ogni UO si aggiunge il progetto di cui vuole effettuare la previsione.
 -	per ogni progetto si entra in Contrattazione Spese e  poi sulla Tab ‘Previsioni di impegno’, si indicano le voci (classificazione ultimo livello voce) e si indica Importo Fonti esterne decentrate.
 -	Le voci sono solo quelle associate al Progetto
