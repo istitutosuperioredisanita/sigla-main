@@ -13,39 +13,39 @@ Previsione di Spesa
 Di seguito vengono riporatati i passi da gestire per l'intero processo:
 
 1.	Dall'anno in corso effettuare il - ribaltamento delle anagrafiche - indicando valore anno=anno successivo;
-  a.	E’ escluso dal ribaltamento il riporto dei Progetti al nuovo anno (da farsi quando serve con funzione di ribaltamento specifica);
-  b.	Impostare in Parametri ENTE PDG CONTRATTAZIONE=’S’ e PDG QUADRATURA FONTI ESTERNE=’N’
-  c.	Il flag Contrattazione = Si, indicato al punto precedente indicherà questa nuova gestione della previsione. 
+-	E’ escluso dal ribaltamento il riporto dei Progetti al nuovo anno (da farsi quando serve con funzione di ribaltamento specifica);
+-	Impostare in Parametri ENTE PDG CONTRATTAZIONE=’S’ e PDG QUADRATURA FONTI ESTERNE=’N’
+-	Il flag Contrattazione = Si, indicato al punto precedente indicherà questa nuova gestione della previsione. 
 
 2.	Manualmente saranno creati tutti i progetti di funzionamento per il nuovo anno per tutte le UO e le relative Gae (dall'amministrazione centrale);
-  a.	Possono essere creati anche Progetti solo per impostare la previsione (quindi di sola Previsione), per poter accogliere fabbisogni per progetti di cui non si ha certezza;
-  b.	Creare le aree progettuali per il nuovo anno (se non incluse nel ribaltamento generale);
-  c.	Creare Progetti nel nuovo anno, con tipologia Finanziamento, allegare provvedimento, e APPROVARE.
+-	Possono essere creati anche Progetti solo per impostare la previsione (quindi di sola Previsione), per poter accogliere fabbisogni per progetti di cui non si ha certezza;
+-	Creare le aree progettuali per il nuovo anno (se non incluse nel ribaltamento generale);
+-	Creare Progetti nel nuovo anno, con tipologia Finanziamento, allegare provvedimento, e APPROVARE.
 
 3.	Entrare nel nuovo anno, da 999 e ‘aprire’ l’esercizio contabile per la previsione (cambia stato in alto a destra), ESERCIZIO=AC, 999: Esercizio contabile: da Iniziale a Piano di Gestione Aperto (‘Apri PDGP’);
 
-4.	Entrare su ogni CDS ed effettuare l’apertura dell’esercizio contabile:
+4.  Entrare su ogni CDS ed effettuare l’apertura dell’esercizio contabile:
 (CDS): Esercizio contabile: da Iniziale a Piano di Gestione Aperto (‘Apri PDGP’);
-  a.	Automaticamente sarà aperto l’esercizio contabile per tutte le UO del cds;
+-	Automaticamente sarà aperto l’esercizio contabile per tutte le UO del cds;
 
 5.	Creare Progetto calderone e sua Gae; 
 
 6.	Inserire in configurazione Ente i valori per la successiva gestione del gestionale: Progetto calderone (Progressivo Progetto), Cofog, Gae del progetto calderone: (il CDR e codice Gae) . Inserimento valori da Base dati dopo la loro creazione;
 
 7.	Gestione del Decisionale. Entrare sul Bilancio di previsione
-  a.	Ogni UO entrando in gestione sulla previsione può gestire solo i suoi progetti o i progetti ai quali partecipa. I progetti visibili sono solo quelli creati nel nuovo anno;
-  b.	Aggiunto il campo note (nuovo) che è riportato anche in griglia dopo il salvataggio
+-	Ogni UO entrando in gestione sulla previsione può gestire solo i suoi progetti o i progetti ai quali partecipa. I progetti visibili sono solo quelli creati nel nuovo anno;
+-	Aggiunto il campo note (nuovo) che è riportato anche in griglia dopo il salvataggio
 
 8.	Indicazioni previsioni di spesa (DECISIONALE): 
-  a.	Ogni UO si aggiunge il progetto di cui vuole effettuare la previsione.
-  b.	 per ogni progetto si entra in Contrattazione Spese e  poi sulla Tab ‘Previsioni di impegno’, si indicano le voci (classificazione ultimo livello voce) e si indica Importo Fonti esterne decentrate.
-  c.	Le voci sono solo quelle associate al Progetto
-  d.	E’ proposto a zero l’importo per i pluriennali sui singoli Progetti;
-  e.	Vengono propostati i dati Cofog, non modificabili (indicato nei parametri);
-  f.	Vengono proposti i dati non modificabili: Missione e Voce economica. E’ consentito consultare i dati del piano economico del progetto (tab posta affianco alla tab ‘Previsioni di impegno’.
-  g.	E’ stato aggiunto il campo note a destra all’importo annuale di previsione (per ogni voce), gestibile sia dall’utente che compila la previsione che dal superutente che la valida.
-  h.	L’utente non Superutente può indicare solo l’importo annuale di previsione, non sono gestibili gli altri dati;
-  i.	Solo il Superutente modifica i dati e vede tutto
+-	Ogni UO si aggiunge il progetto di cui vuole effettuare la previsione.
+-	per ogni progetto si entra in Contrattazione Spese e  poi sulla Tab ‘Previsioni di impegno’, si indicano le voci (classificazione ultimo livello voce) e si indica Importo Fonti esterne decentrate.
+-	Le voci sono solo quelle associate al Progetto
+-	E’ proposto a zero l’importo per i pluriennali sui singoli Progetti;
+-	Vengono propostati i dati Cofog, non modificabili (indicato nei parametri);
+-	Vengono proposti i dati non modificabili: Missione e Voce economica. E’ consentito consultare i dati del piano economico del progetto (tab posta affianco alla tab ‘Previsioni di impegno’.
+-	E’ stato aggiunto il campo note a destra all’importo annuale di previsione (per ogni voce), gestibile sia dall’utente che compila la previsione che dal superutente che la valida.
+-	L’utente non Superutente può indicare solo l’importo annuale di previsione, non sono gestibili gli altri dati;
+-	Solo il Superutente modifica i dati e vede tutto
 
 9.	Ogni UO, dopo aver completato la previsione dei Progetti, effettua il passaggio di stato a ‘Chiusura compilazione’;
 
