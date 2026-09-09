@@ -46,7 +46,7 @@ Organizzato in questo modo il sistema prevede gestisce e controlla l’aspetto a
    nuovo_layout
    funzionalita_servizio/index
    configurazione/index
-   Previsione/index
+   previsione/index
    documenti_contabili/index
    documenti_amministrativi/index
    contabilita_economica
