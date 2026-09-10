@@ -14,22 +14,22 @@ Di seguito vengono riporatati i passi da gestire per l'intero processo:
 
 1.	Dall'anno in corso effettuare il - ribaltamento delle anagrafiche - indicando valore anno=anno successivo;
 
--	E’ escluso dal ribaltamento il riporto dei Progetti al nuovo anno (da farsi quando serve con funzione di ribaltamento specifica);
--	Impostare in Parametri ENTE PDG CONTRATTAZIONE=’S’ e PDG QUADRATURA FONTI ESTERNE=’N’
--	Il flag Contrattazione = Si, indicato al punto precedente indicherà questa nuova gestione della previsione. 
+ -	E’ escluso dal ribaltamento il riporto dei Progetti al nuovo anno (da farsi quando serve con funzione di ribaltamento specifica);
+ -	Impostare in Parametri ENTE PDG CONTRATTAZIONE=’S’ e PDG QUADRATURA FONTI ESTERNE=’N’
+ -	Il flag Contrattazione = Si, indicato al punto precedente indicherà questa nuova gestione della previsione. 
 
 2.	Manualmente saranno creati tutti i progetti di funzionamento per il nuovo anno per tutte le UO e le relative Gae (dall'amministrazione centrale);
 
--	Possono essere creati anche Progetti solo per impostare la previsione (quindi di sola Previsione), per poter accogliere fabbisogni per progetti di cui non si ha certezza;
--	Creare le aree progettuali per il nuovo anno (se non incluse nel ribaltamento generale);
--	Creare Progetti nel nuovo anno, con tipologia Finanziamento, allegare provvedimento, e APPROVARE.
+ -	Possono essere creati anche Progetti solo per impostare la previsione (quindi di sola Previsione), per poter accogliere fabbisogni per progetti di cui non si ha certezza;
+ -	Creare le aree progettuali per il nuovo anno (se non incluse nel ribaltamento generale);
+ -	Creare Progetti nel nuovo anno, con tipologia Finanziamento, allegare provvedimento, e APPROVARE.
 
 3.	Entrare nel nuovo anno, da 999 e ‘aprire’ l’esercizio contabile per la previsione (cambia stato in alto a destra), ESERCIZIO=AC, 999: Esercizio contabile: da Iniziale a Piano di Gestione Aperto (‘Apri PDGP’);
 
 4.	Entrare su ogni CDS ed effettuare l’apertura dell’esercizio contabile:
-(CDS): Esercizio contabile: da Iniziale a Piano di Gestione Aperto (‘Apri PDGP’);
+   Esercizio contabile: da Iniziale a Piano di Gestione Aperto (‘Apri PDGP’);
 
--	Automaticamente sarà aperto l’esercizio contabile per tutte le UO del cds;
+ -	Automaticamente sarà aperto l’esercizio contabile per tutte le UO del cds;
 
 5.	Creare Progetto calderone e sua Gae; 
 
