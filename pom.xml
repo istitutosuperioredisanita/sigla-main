@@ -60,7 +60,7 @@
         <version.org.wildfly.arquillian>6.0.0.Alpha1</version.org.wildfly.arquillian>
         <version.org.jboss.arquillian.junit>1.7.2.Final</version.org.jboss.arquillian.junit>
 
-        <version.arquillian-graphene>3.0.0-alpha.4</version.arquillian-graphene>
+        <version.arquillian-graphene>3.0.1.Final</version.arquillian-graphene>
         <test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
 
         <cors.allow-origin>http://localhost:9000</cors.allow-origin>
