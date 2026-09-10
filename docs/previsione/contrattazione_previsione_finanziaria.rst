@@ -26,14 +26,14 @@ Di seguito vengono riporatati i passi da gestire per l'intero processo:
 
 3.	Entrare nel nuovo anno, da 999 e ‘aprire’ l’esercizio contabile per la previsione (cambia stato in alto a destra), ESERCIZIO=AC, 999: Esercizio contabile: da Iniziale a Piano di Gestione Aperto (‘Apri PDGP’);
 
-4.  Entrare su ogni CDS ed effettuare l’apertura dell’esercizio contabile:
+4. Entrare su ogni CDS ed effettuare l’apertura dell’esercizio contabile:
 (CDS): Esercizio contabile: da Iniziale a Piano di Gestione Aperto (‘Apri PDGP’);
 
 -	Automaticamente sarà aperto l’esercizio contabile per tutte le UO del cds;
 
 5.	Creare Progetto calderone e sua Gae; 
 
-6.	Inserire in configurazione Ente i valori per la successiva gestione del gestionale: Progetto calderone (Progressivo Progetto), Cofog, Gae del progetto calderone: (il CDR e codice Gae). Inserimento valori da Base dati dopo la loro creazione;
+6.	Inserire in configurazione Ente i valori per la successiva gestione del gestionale: Progetto calderone (Progressivo Progetto), Cofog, Gae del progetto calderone: (il CDR e codice Gae). Inserimento valori da Funzione di configurazione dopo la loro creazione;
 
 7.	Gestione del Decisionale. Entrare sul Bilancio di previsione
 
@@ -54,10 +54,10 @@ Di seguito vengono riporatati i passi da gestire per l'intero processo:
 
 9.	Ogni UO, dopo aver completato la previsione dei Progetti, effettua il passaggio di stato a ‘Chiusura compilazione’;
 
-10.	Successivamente ogni UO (oppure il Superutente per tutti) effettua la ‘chiusura CDR’: cambio stato in alto a destra. Lo stato cambia da Apertura a Chiusura del CDR.
+10. Successivamente ogni UO (oppure il Superutente per tutti) effettua la ‘chiusura CDR’: cambio stato in alto a destra. Lo stato cambia da Apertura a Chiusura del CDR.
 Solo la UO 999 può tornare indietro in questa fase;
 
-11.	Quando le UO hanno completato si può passare allo stato  ‘In esame dal centro’. Solo la 999  lo può fare selezionando una o tutte le UO (condizione per la multiselezione è che le UO selezionate abbiano lo stesso stato di partenza).
+11. Quando le UO hanno completato si può passare allo stato  ‘In esame dal centro’. Solo la 999  lo può fare selezionando una o tutte le UO (condizione per la multiselezione è che le UO selezionate abbiano lo stesso stato di partenza).
 
 
 A questo punto si prosegue con le attività del centro che verifica e rettifica gli importi indicati dai singoli CDR.
