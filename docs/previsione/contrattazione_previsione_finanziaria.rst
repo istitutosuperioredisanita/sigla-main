@@ -35,6 +35,12 @@ Di seguito vengono riporatati i passi da gestire per l'intero processo:
 
 6.	Inserire in configurazione Ente i valori per la successiva gestione del gestionale: Progetto calderone (Progressivo Progetto), Cofog, Gae del progetto calderone: (il CDR e codice Gae). Inserimento valori da Funzione di configurazione dopo la loro creazione;
 
+Nota tecnica:
+Per il progetto calderone mettere nel campo Importo1 della tabella CONFIGURAZIONE_CNR (CHIAVE_PRIMARIA: PROGETTI -     CHIAVE_SECONDARIA: PROGETTO_CALDERONE) il Progressivo progetto del progetto Calderone;
+Per il COFOG mettere nel campo Valore1 della tabella CONFIGURAZIONE_CNR (CHIAVE_PRIMARIA: PROGETTI - CHIAVE_SECONDARIA: COFOG_DEFAULT) il codice Cofog
+Per la Gae calderone mettere nel campo Valore1 e Valore2 il CDR e codice Gae calderone.
+
+
 7.	Gestione del Decisionale. Entrare sul Bilancio di previsione
 
 -	Ogni UO entrando in gestione sulla previsione può gestire solo i suoi progetti o i progetti ai quali partecipa. I progetti visibili sono solo quelli creati nel nuovo anno;
