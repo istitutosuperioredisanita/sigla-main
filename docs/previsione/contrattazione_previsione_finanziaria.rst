@@ -5,7 +5,7 @@ Contrattazione della Previsione
 Premessa
 --------
 La contrattazione relativa alla raccolta fabbisogni per l'anno successivo si riferisce alla richiesta, da parte delle singole strutture dell'Ente, di stanziamenti di spesa per ogni Progetto e per ogni voce di bilancio.
-La raccolta di Fabbisogni di spesa, per questa specifica gestione della previsione, attivabile in configurazione in modalità specifica attraverso l'indicazione del flag Contrattazione=Si, prevede un particolare processo riassunto di seguito nei vari step a partire dall'apertura del nuovo anno (che inizia circa a metà dell'anno precedente) e termina con la creazione degli stanziamenti.
+La raccolta di Fabbisogni di spesa, per questa specifica gestione della previsione, attivabile in configurazione in modalità puntuale attraverso l'indicazione del flag Contrattazione=Si, prevede un particolare processo riassunto di seguito nei vari step, a partire dall'apertura del nuovo anno, (che inizia circa a metà dell'anno precedente), e termina con la creazione degli stanziamenti.
 
 
 Previsione di Spesa
@@ -69,7 +69,7 @@ Solo la UO 999 può tornare indietro in questa fase;
 A questo punto si prosegue con le attività del centro che verifica e rettifica gli importi indicati dai singoli CDR.
 In questa fase (con la chiusura dei CDR) le singole UO non possono più operare ma solo consultare i dati inseriti.
 
-La 999 Rettifica gli importi selezionando i vari cdr/Progetti nella funzione di ‘Contrattazione’ specifica per questa operazione e abilitata all'Amministrazione Centrale. 
+La UO Ente Rettifica gli importi selezionando i vari cdr/Progetti nella funzione di ‘Contrattazione’ specifica per questa operazione e abilitata all'Amministrazione Centrale. 
 La funzione di Contrattazione mostra l’elenco dei progetti/voci inseriti in fase decisionale e consente la modifica degli importi. 
 
 Sulla tab ‘dettaglio’ vengono visualizzati i progetti e le voci legate alle previsioni decisionali;
