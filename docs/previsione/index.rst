@@ -1,6 +1,3 @@
-================
-Previsione
-================
 .. toctree::
    :caption: Indice dei contenuti
    :maxdepth: 2
