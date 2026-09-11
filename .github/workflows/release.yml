@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: 'master'
+          fetch-depth: 0
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -26,7 +27,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate CHANGELOG.md
         run: |
-          mvn -B se.bjurr.gitchangelog:git-changelog-maven-plugin:git-changelog
+          PREV_TAG=$(git tag --sort=-creatordate | grep -v "^${{ github.event.release.tag_name }}$" | head -n 1)
+          if [ -n "$PREV_TAG" ]; then
+            echo "Generating changelog from $PREV_TAG to HEAD"
+            mvn -B se.bjurr.gitchangelog:git-changelog-maven-plugin:git-changelog -Dgit-changelog.from-ref="$PREV_TAG"
+          else
+            echo "No previous tag found, generating full changelog"
+            mvn -B se.bjurr.gitchangelog:git-changelog-maven-plugin:git-changelog
+          fi
         env:
           MAVEN_OPTS: "--add-opens java.base/sun.security.ssl=ALL-UNNAMED"
       - name: Log in to GitHub Container Registry
