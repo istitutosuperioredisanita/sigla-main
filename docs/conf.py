@@ -23,7 +23,7 @@ source_parsers = {
 }
 
 project = 'Sistema Informativo Gestione Linee di Attività'
-release = '8.0.25'
+release = '8.0.26'
 author = u'Istituto Superiore di Sanità'
 
 show_authors = True
