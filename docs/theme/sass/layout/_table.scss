@@ -1,0 +1,38 @@
+#doc-content {
+  table:not(.footnote) {
+    border: 0;
+
+    td {
+      border-right: 0;
+      border-left: 0;
+    }
+
+    &:not(.highlighttable) {
+      td {
+        min-width: 220px;
+      }
+    }
+
+    thead {
+      .head {
+        border-right: 0;
+        border-left: 0;
+        text-transform: uppercase;
+        color: $black;
+        font-size: 0.75rem;
+        vertical-align: top;
+      }
+    }
+
+    tr {
+      font-size: 0.75rem;
+
+      // This rule is not working for tables having rowspan
+      // Consider using colgroups (supporting only few css properties)
+      // td:nth-of-type(1) {
+      //   font-weight: 700;
+      //   color: $dark-blue;
+      // }
+    }
+  }
+}

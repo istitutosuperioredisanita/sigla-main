@@ -1,0 +1,9 @@
+privacy:
+  title: footer_link_privacy_policy
+  url: '/privacy-policy/'
+cookies:
+  title: footer_link_cookies
+  url: '/cookies-policy'
+legal:
+  title: footer_link_legal_notes
+  url: '/note-legali'

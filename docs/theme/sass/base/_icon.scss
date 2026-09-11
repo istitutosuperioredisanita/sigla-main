@@ -1,0 +1,207 @@
+@font-face {
+  font-family: $docs-font-icon;
+  src: url('#{$icon-font-path}/docs.eot');
+  src:
+    url('#{$icon-font-path}/docs-italia.eot#iefix') format('embedded-opentype'),
+    url('#{$icon-font-path}/docs-italia.ttf') format('truetype'),
+    url('#{$icon-font-path}/docs-italia.woff') format('woff'),
+    url('#{$icon-font-path}/docs-italia.svg#docs') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="docs-icon-"],
+[class*=" docs-icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  /* stylelint-disable */
+  font-family: $docs-font-icon !important;
+  /* stylelint-enable */
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: middle;
+  color: inherit;
+  font-size: 1.3rem;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* stylelint-disable */
+@function unicode($str) {
+  @return unquote("\"") + $str + unquote("\"");
+}
+/* stylelint-enable */
+
+.docs-icon-more {
+  &::before {
+    content: unicode($docs-icon-more);
+  }
+}
+
+.docs-icon-expand {
+  &::before {
+    content: unicode($docs-icon-expand);
+  }
+}
+
+.docs-icon-collapse {
+  &::before {
+    content: unicode($docs-icon-collapse);
+  }
+}
+
+.docs-icon-plus {
+  &::before {
+    content: unicode($docs-icon-plus);
+  }
+}
+
+.docs-icon-minus {
+  &::before {
+    content: unicode($docs-icon-minus);
+  }
+}
+
+.docs-icon-document {
+  &::before {
+    content: unicode($docs-icon-document);
+  }
+}
+
+.docs-icon-edit {
+  &::before {
+    content: unicode($docs-icon-edit);
+  }
+}
+
+.docs-icon-download {
+  &::before {
+    content: unicode($docs-icon-download);
+  }
+}
+
+.docs-icon-info {
+  &::before {
+    content: unicode($docs-icon-info);
+  }
+}
+
+.docs-icon-compare {
+  &::before {
+    content: unicode($docs-icon-compare);
+  }
+}
+
+.docs-icon-github {
+  &::before {
+    content: unicode($docs-icon-github);
+  }
+}
+
+.docs-icon-share {
+  &::before {
+    content: unicode($docs-icon-share);
+  }
+}
+
+.docs-icon-search {
+  &::before {
+    content: unicode($docs-icon-search);
+  }
+}
+
+.docs-icon-link {
+  &::before {
+    content: unicode($docs-icon-link);
+  }
+}
+
+.docs-icon-external-link {
+  &::before {
+    content: unicode($docs-icon-external-link);
+  }
+}
+
+.docs-icon-comment {
+  &::before {
+    content: unicode($docs-icon-comment);
+  }
+}
+
+.docs-icon-attention,
+.docs-icon-warning {
+  &::before {
+    content: unicode($docs-icon-attention);
+  }
+}
+
+.docs-icon-example {
+  &::before {
+    content: unicode($docs-icon-example);
+  }
+}
+
+.docs-icon-procedure {
+  &::before {
+    content: unicode($docs-icon-procedure);
+  }
+}
+
+.docs-icon-hint {
+  &::before {
+    content: unicode($docs-icon-hint);
+  }
+}
+
+.docs-icon-note {
+  &::before {
+    content: unicode($docs-icon-note);
+  }
+}
+
+.docs-icon-step {
+  &::before {
+    content: unicode($docs-icon-step);
+  }
+}
+
+.docs-icon-pdf {
+  &::before {
+    content: unicode($docs-icon-pdf);
+  }
+}
+
+.docs-icon-html {
+  &::before {
+    content: unicode($docs-icon-html);
+  }
+}
+
+.docs-icon-project {
+  &::before {
+    content: unicode($docs-icon-project);
+  }
+}
+
+.docs-icon-publisher {
+  &::before {
+    content: unicode($docs-icon-publisher);
+  }
+}
+
+.docs-icon-docs {
+  &::before {
+    content: unicode($docs-icon-docs);
+  }
+}
+
+.docs-icon-user {
+  &::before {
+    content: unicode($docs-icon-user);
+  }
+}

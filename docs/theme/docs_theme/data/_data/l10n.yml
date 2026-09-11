@@ -1,0 +1,211 @@
+it:
+  code: ita
+  name: italiano
+  t:
+    this: it
+    locale: it_IT
+    about_these_documents: Informazioni su questi documenti
+    active_lang: lingua attiva
+    contents: Contenuti
+    cookiebar_accept: Accetto
+    cookiebar_msg: Questo sito utilizza cookie tecnici, analytics e di terze parti. Proseguendo nella navigazione accetti l’utilizzo dei cookie.
+    cookiebar_privacy_policy: Cookie policy
+    copyright: Copyright
+    documents: Documentazione
+    download: Scarica
+    footer_link_privacy_policy: Privacy policy
+    footer_link_cookies: Cookie policy
+    footer_link_legal_notes: Note legali
+    go_to: Vai a
+    index: Indice
+    last_updated: Più recenti
+    most_viewed_this_month: Più visti questo mese
+    navigation_menu_label: Menu di navigazione
+    navigation_menu_esc: esci dalla navigazione
+    search: Cerca
+    search_form_label: Cerca nel documento
+    search_form_off: disattiva il form di ricerca
+    search_form_on: attiva il form di ricerca
+    search_form_start: avvia la ricerca
+    search_results: Risultati della ricerca
+    search_no_results: La tua ricerca non ha prodotto documenti. Assicurati di non aver commesso errori di digitazione.
+    site_subtitle: Sistema Informativo Gestione Linee di Attività
+    site_title: Docs Italia
+    share_msg: condividi
+    skiplink_goto_content: vai ai contenuti
+    skiplink_goto_navigation: vai alla navigazione del sito
+    toggle_menu_label: accedi al menu
+    version: versione
+    compare: Confronta
+    copy_link: copia link
+    copied_link: link copiato
+    see_actions: vedi azioni
+    other_actions: altre azioni
+    comments: commenti
+    back_to_text: torna al testo
+    glossary_empty: informazione non trovata
+    glossary: Glossario
+    go_to_glossary: vai al glossario
+    deepening: approfondimento
+    example: esempio
+    must: si deve
+    must_not: non si deve
+    should: si dovrebbe
+    should_not: non si dovrebbe
+    may: si può
+    use: usa
+    use_not: non usare
+    consultation: consultazione
+    show_more: mostra tutto
+    show_less: mostra meno
+    content_index: Indice dei contenuti
+    table_index: Indice delle tabelle
+    figures_index: Indice delle figure
+    figures: figura 
+    tables: tabelle
+    contents: contenuti
+    in_consultation: in consultazione
+    indices_and_glossary: indici e glossario
+    note: nota
+    no_description: nessuna descrizione
+    no_content: nessuna sezione
+    no_glossary: nessun glossario
+    no_figures: nessuna figura
+    no_tables: nessuna tabella
+    summary: Sommario
+    project: Progetto
+    administration: Amministrazione
+    info: Informazioni
+    related: Documenti correlati
+    actions: Azioni
+    tags: Tag
+
+    view_source: Sorgente
+
+    previous: precedente
+    next: successivo
+
+    in_collaboration_with: in collaborazione con
+    follow_us: seguici su
+
+    header_link_trasformazione: Piano Triennale
+    header_link_piattaforme: Piattaforme
+    header_link_software: Software
+    header_link_api: API
+    header_link_community: Le community
+    header_link_developers: Developers
+    header_link_design: Designers
+    header_link_tools: Gli strumenti
+    header_link_forum: Forum
+    header_link_docs: Docs
+    header_link_github: GitHub
+    header_link_secondary_who_we_are: Chi siamo
+    header_link_projects: Progetti
+    header_link_documents: Documenti
+    header_link_administrations: Amministrazioni
+    header_link_whatis: Che cos'è
+
+en:
+  code: eng
+  name: english
+  t:
+    this: en
+    locale: en_US
+    about_these_documents: About these Documents
+    active_lang: current language
+    cookiebar_accept: Accept
+    cookiebar_msg: We are using cookies to provide statistics that help us give you the best experience of our site. By continuing to use the site you are agreeing to our use of cookies.
+    cookiebar_privacy_policy: Cookie policy
+    copyright: Copyright
+    documents: Documents
+    download: Download
+    footer_link_privacy_policy: Privacy policy
+    footer_link_cookies: Cookie policy
+    footer_link_legal_notes: Legal notes
+    go_to: Go to
+    index: Index
+    last_updated: Last updated
+    most_viewed_this_month: Most viewed this month
+    navigation_menu_label: Navigation menu
+    navigation_menu_esc: exit navigation
+    search: Search
+    search_form_label: Search in Document
+    search_form_off: exit search form
+    search_form_on: enter search form
+    search_form_start: start searching
+    search_results: Search Results
+    search_no_results: Your search did not match any documents. Please make sure that all words are spelled correctly.
+    site_subtitle: Public documents, made digital.
+    site_title: Docs Italia
+    share_msg: share
+    skiplinks_goto_content: go to content
+    skiplinks_goto_navigation: go to site navigation
+    toggle_menu_label: go to navigation
+    version: version
+    compare: Compare
+    copy_link: copy link
+    copied_link: copied link
+    see_actions: see actions
+    other_actions: other actions
+    comments: comments
+    back_to_text: back to the text
+    glossary_empty: information not found
+    glossary: glossary
+    go_to_glossary: vai al glossario
+    deepening: deepening
+    example: example
+    must: must
+    must_not: must not
+    should: should
+    should_not: should not
+    may: may
+    use: use
+    use_not: don't use
+    consultation: consultation
+    show_more: show more
+    show_less: show less
+    content_index: content index
+    table_index: table index
+    figures_index: index of figures
+    figures: figures
+    tables: tables
+    contents: contents
+    in_consultation: in consultation
+    indices_and_glossary: indices and glossary
+    note: note
+    no_description: no description
+    no_content: no sections
+    no_glossary: no glossary
+    no_figures: no figures
+    no_tables: no tables
+    summary: summary
+    project: Project
+    administration: Administration
+    info: About this document
+    related: Related documents
+    actions: Actions
+    tags: Tags
+
+    view_source: Source
+
+    previous: previous
+    next: next
+
+    in_collaboration_with: in collaboration with
+    follow_us: follow us on
+
+    header_link_trasformazione: Piano Triennale
+    header_link_piattaforme: Platforms
+    header_link_software: Software
+    header_link_api: API
+    header_link_community: Communities
+    header_link_developers: Developers
+    header_link_design: Designers
+    header_link_tools: Tools
+    header_link_forum: Forum
+    header_link_docs: Docs
+    header_link_github: GitHub
+    header_link_projects: Projects
+    header_link_documents: Documents
+    header_link_administrations: Administrations
+    header_link_whatis: What is
