@@ -16,17 +16,36 @@ jobs:
   build-and-deploy:
     name: Build and gh-pages
     runs-on: ubuntu-latest
-    container: consiglionazionalericerche/sphinx-latex:latest
     steps:
       # https://github.com/marketplace/actions/checkout
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      # https://github.com/actions/setup-python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # LaTeX/PDF e EPUB richiedono texlive e strumenti correlati,
+      # che nel vecchio container erano già preinstallati
+      - name: Install LaTeX and build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-lang-italian \
+            latexmk \
+            librsvg2-bin
+
       # https://docs.github.com/en/actions/guides/building-and-testing-python#installing-dependencies
-      # ^-- This gives info on installing dependencies with pip
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+
       - name: Debugging information
         run: |
           echo "github.ref:" ${{github.ref}}
@@ -41,6 +60,7 @@ jobs:
           python -V
           pip list --not-required
           pip list
+
       # Build
       - name: Build Sphinx docs
         run: |
@@ -49,6 +69,7 @@ jobs:
           cp _build/latex/*.pdf _build/html/
           make epub
           cp _build/epub/*.epub _build/html/
+
       # The following supports building all branches and combining on
       # gh-pages
 
@@ -61,6 +82,7 @@ jobs:
           ( git branch gh-pages remotes/origin/gh-pages && git clone . --branch=gh-pages _gh-pages/ ) || mkdir _gh-pages
           rm -rf _gh-pages/.git/
           mkdir -p _gh-pages/branch/
+
       # If a push and default branch, copy build to _gh-pages/ as the "main"
       # deployment.
       - name: Copy new build (default branch)
@@ -75,6 +97,7 @@ jobs:
           # _gh-pages itself.
           find _gh-pages/ -mindepth 1 ! -path '_gh-pages/branch*' -delete
           rsync -a _build/html/ _gh-pages/
+
       # If a push and not on default branch, then copy the build to
       # _gh-pages/branch/$brname (transforming '/' into '--')
       - name: Copy new build (branch)
@@ -89,6 +112,7 @@ jobs:
           brdir=${brname//\//--}   # replace '/' with '--'
           rm -rf   _gh-pages/branch/${brdir}
           rsync -a _build/dirhtml/ _gh-pages/branch/${brdir}
+
       # Go through each branch in _gh-pages/branch/, if it's not a
       # ref, then delete it.
       - name: Delete old feature branches
@@ -102,11 +126,13 @@ jobs:
                   rm -r _gh-pages/branch/$brdir/
               fi
           done
+
       # Add the .nojekyll file
       - name: nojekyll
         if: ${{ github.event_name == 'push' }}
         run: |
           touch _gh-pages/.nojekyll
+
       # Deploy
       # https://github.com/peaceiris/actions-gh-pages
       - name: Deploy
