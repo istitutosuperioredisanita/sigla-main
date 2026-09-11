@@ -26,7 +26,8 @@ latex_documents = [
     ('index', 'Manuale-SIGLA.tex', project, author, 'manual'),
 ]
 latex_elements = {
-    'extraclassoptions': 'openany,oneside'
+    'extraclassoptions': 'openany,oneside',
+    'fontpkg': '',   # disabilita l'override dei TeX Gyre fatto da Sphinx di default
 }
 epub_basename = u'Manuale-SIGLA'
 
