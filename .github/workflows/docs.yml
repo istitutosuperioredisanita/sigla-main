@@ -34,12 +34,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            texlive-latex-recommended \
-            texlive-latex-extra \
-            texlive-fonts-recommended \
-            texlive-lang-italian \
-            latexmk \
-            librsvg2-bin
+          texlive-latex-recommended \
+          texlive-latex-extra \
+          texlive-fonts-recommended \
+          texlive-fonts-extra \
+          texlive-lang-italian \
+          latexmk \
+          librsvg2-bin
 
       # https://docs.github.com/en/actions/guides/building-and-testing-python#installing-dependencies
       - name: Install dependencies
