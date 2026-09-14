@@ -1,0 +1,16 @@
+include *.txt
+include LICENSE
+include package.json
+recursive-include docs_theme *.conf
+recursive-include docs_theme *.css
+recursive-include docs_theme *.eot
+recursive-include docs_theme *.html
+recursive-include docs_theme *.js
+recursive-include docs_theme *.svg
+recursive-include docs_theme *.png
+recursive-include docs_theme *.ttf
+recursive-include docs_theme *.woff
+recursive-include docs_theme *.woff2
+recursive-include docs_theme/data *.yaml
+recursive-include docs_theme/data *.yml
+recursive-include docs_theme/data *.json

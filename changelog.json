@@ -3,5 +3,5 @@
   "ignoreCommitsWithoutIssue": "false",
   "noIssueName": "Changes",
   "dateFormat": "MMMM dd, yyyy",
-  "fromRef": "6.0.2",
+  "fromRef": "6.0.2"
 }

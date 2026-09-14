@@ -1,0 +1,647 @@
+.main-container {
+  overflow: hidden;
+  position: relative;
+  background-color: $white;
+}
+
+.doc-content__consultation {
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  background-color: $teal;
+  text-align: left;
+  padding: 0.5rem 0;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: $black;
+  padding-left: 2rem;
+
+  @include media-breakpoint-up(lg) {
+    padding-left: 4rem;
+  }
+
+  @include media-breakpoint-up(xl) {
+    transform: rotate(45deg) translate(45px, -125px);
+    width: 320px;
+    transform-origin: left;
+    z-index: 1;
+    left: auto;
+    text-align: center;
+    padding-left: 0;
+  }
+}
+
+.col-content {
+  padding: 4rem 2rem;
+
+  @include media-breakpoint-up(lg) {
+    padding: 4rem 4rem 5rem 4rem;
+  }
+}
+
+/* Caption */
+.caption-wrap {
+  clear: both;
+
+  .caption--table {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    display: block;
+    font-family: $stack-font;
+    font-style: italic;
+    font-size: 0.75rem;
+    padding: 0;
+
+    @include media-breakpoint-up(lg) {
+      width: calc(100% - #{$chapter-nav-width});
+      float: left;
+    }
+  }
+
+  .reference--wrap {
+    font-family: $titillium-font;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    font-size: 0.9em;
+
+    @include media-breakpoint-up(md) {
+      width: $chapter-nav-width;
+      float: right;
+      padding-left: 2rem;
+    }
+  }
+}
+
+.caption-number {
+  font-weight: 700;
+  color: $black;
+}
+
+/* Title H1/H2 */
+.chapter-header {
+  margin-bottom: 1rem;
+  margin-left: 0.5rem;
+}
+
+.chapter-nav {
+  position: relative;
+
+  @include media-breakpoint-up(lg) {
+    width: $chapter-nav-width;
+    float: left;
+  }
+}
+
+// Figure
+.figure-fixed-wrap {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.figure-fixed {
+  max-width: none;
+}
+
+/* Title nav */
+.title__background {
+  width: 100%;
+  background-color: $light-blue;
+  position: absolute;
+  top: -1px;
+  height: auto;
+  left: -0.5rem;
+  display: none;
+  right: 0;
+  z-index: 0;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 100%;
+    transform: translateX(-50%);
+    top: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid $light-blue;
+  }
+}
+
+/* Term */
+.std-term {
+  background-color: $sky-blue;
+  color: $black;
+  padding: 0.2rem;
+}
+
+/* Footer btn */
+.footer-buttons--next {
+  clear: both;
+  margin-top: 4rem;
+
+  a {
+    background-color: $blue;
+    color: $white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.2rem;
+    font-weight: 700;
+    display: inline-block;
+  }
+}
+
+.footer-buttons--prev {
+  margin-bottom: 2.5rem;
+}
+
+.reference-icon {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* General width */
+#doc-content {
+  width: 100%;
+  position: relative;
+
+  @include media-breakpoint-up(md) {
+    width: calc(100% - #{$sidebar-width});
+    float: left;
+  }
+
+  a.reference[href] {
+    text-decoration: underline;
+  }
+
+  .useful-docs {
+    .mimetype {
+      display: none;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    li {
+      border-top: 1px $grey solid;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      vertical-align: middle;
+
+      &::after {
+        display: none;
+      }
+    }
+
+    [class^="docs-icon-"],
+    [class*=" docs-icon-"] {
+      font-size: 1.9rem;
+      color: $blue;
+    }
+  }
+
+  ul.simple,
+  ul.simple ul {
+    list-style-type: disc;
+
+    li {
+      position: relative;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+
+      ul li {
+        margin-top: 0.5rem;
+      }
+    }
+  }
+
+  .section {
+    clear: both;
+
+    &::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    // Content width
+    > * {
+      @include media-breakpoint-up(lg) {
+        width: calc(100% - #{$chapter-nav-width});
+        float: left;
+        clear: left;
+      }
+    }
+
+    // fix for singlehtml format
+    > .toctree-wrapper.compound {
+      @include media-breakpoint-up(lg) {
+        width: 100%;
+      }
+    }
+
+    // Exception
+    .section,
+    .chapter-header,
+    .caption-wrap,
+    .table-responsive,
+    .figure,
+    .full-width {
+      @include media-breakpoint-up(lg) {
+        width: 100%;
+      }
+    }
+
+    .figure {
+      width: 100%;
+    }
+
+    .figure,
+    .table,
+    .section,
+    .rubric.ref {
+      &[id] {
+        border-top: 4.2rem solid transparent;
+      }
+    }
+
+    .glossary dt:not([id=""]) {
+      margin-top: -4em;
+      padding-top: 4em;
+    }
+
+    // Ordered lists
+    ol.loweralpha,
+    ol.loweralpha li {
+      list-style: lower-alpha;
+    }
+
+    ol.upperalpha,
+    ol.upperalpha li {
+      list-style: upper-alpha;
+    }
+
+    ol.upperroman,
+    ol.upperroman li {
+      list-style: upper-roman;
+    }
+
+    ol,
+    ol.arabic {
+      list-style: decimal;
+    }
+  }
+
+  .topic-title {
+    color: $black;
+    font-weight: 700;
+    font-size: 1.4rem;
+    font-family: $titillium-font;
+  }
+
+  // Procedure
+  .topic.procedure {
+    margin-bottom: 3rem;
+
+    em {
+      font-weight: 700;
+    }
+
+    ol {
+      padding-left: 1rem;
+
+      li {
+        position: relative;
+        margin-bottom: 1rem;
+        padding-left: 1rem;
+        counter-increment: list;
+        list-style-type: none;
+        font-family: $stack-font;
+
+        &::after {
+          position: absolute;
+          left: -1rem;
+          top: 0;
+          width: 1rem;
+          height: 1.5rem;
+          z-index: 1;
+          content: counter(list);
+          color: $white;
+          text-align: center;
+          font-family: $titillium-font;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .topic-title {
+      text-transform: uppercase;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $dark-blue;
+      font-family: $titillium-font;
+      padding-bottom: 0.2rem;
+      background: linear-gradient($mid-dark-blue, $mid-dark-blue) no-repeat right bottom / calc(100% - 2rem) 2px;
+      margin-bottom: 1rem;
+
+      [class^="docs-icon-"],
+      [class*=" docs-icon-"] {
+        margin-right: 0.5rem;
+      }
+    }
+
+    .procedure__img {
+      padding-left: 1.5rem;
+      margin-bottom: 2rem;
+      margin-left: 0.5rem;
+      margin-top: 2rem;
+      border-left: 1px $medium-blue-01 solid;
+
+      img {
+        box-shadow: 0 0 61px 0 rgba($black, 0.15);
+      }
+    }
+
+    .procedure-internal-title {
+      text-transform: uppercase;
+      color: $black;
+      font-family: $titillium-font;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .docs-icon-step {
+      color: $mid-dark-blue;
+      position: absolute;
+      left: -1.5rem;
+      font-size: 2rem;
+    }
+  }
+
+  // Title
+  .title-wrap {
+    @include media-breakpoint-up(lg) {
+      width: calc(100% - #{$chapter-nav-width});
+      float: left;
+      clear: left;
+      position: relative;
+
+      h2 {
+        line-height: 60px;
+      }
+
+      h3 {
+        line-height: 46px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        display: inline;
+        cursor: pointer;
+        position: relative;
+        color: $black;
+        box-shadow: 0.5rem 0 0 $white, -0.5rem 0 0 $white;
+        -webkit-box-shadow: 0.5rem 0 0 $white, -0.5rem 0 0 $white;
+        -webkit-box-decoration-break: clone;
+        -ms-box-decoration-break: clone;
+        -o-box-decoration-break: clone;
+        box-decoration-break: clone;
+        left: -0.5rem;
+        z-index: 1;
+
+        .title__chapter {
+          position: relative;
+          color: $blue;
+        }
+      }
+
+      /* line-height is defined in px instead rem for background element crossbrowser */
+      h1 {
+        line-height: 71px;
+
+        .title__chapter {
+          position: relative;
+          background-color: $blue;
+          color: $white;
+          margin-right: 0.5rem;
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+          display: inline-block;
+          z-index: 1;
+
+          &::after,
+          &::before {
+            content: "";
+            top: 0;
+            bottom: 0;
+            width: 0.5rem;
+            background-color: $blue;
+            position: absolute;
+          }
+
+          &::after {
+            right: 100%;
+          }
+
+          &::before {
+            left: 100%;
+          }
+        }
+      }
+    }
+
+    &.active {
+      h1,
+      h2,
+      h3 {
+        box-shadow: 0.5rem 0 0 $light-blue, -0.5rem 0 0 $light-blue;
+        background-color: $light-blue;
+      }
+
+      .title__background {
+        display: block;
+      }
+    }
+  }
+
+  .headerlink {
+    display: none;
+  }
+
+  // Publisher / Licenza.
+  .document-info {
+    padding: 0;
+
+    .docutils.field-list {
+      width: 100%;
+      margin-bottom: 2rem;
+      border-bottom: 1px $grey solid;
+      font-family: $titillium-font;
+      display: grid;
+
+      tr {
+        display: block;
+
+        @include media-breakpoint-up(sm) {
+          width: 50%;
+          float: left;
+        }
+
+        margin-bottom: 2rem;
+      }
+
+      .field-name,
+      .field-body {
+        display: block;
+        font-weight: 400;
+      }
+
+      .field-body {
+        color: $medium-blue;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  // Definition lists
+  dd > p {
+    font-family: $titillium-font;
+  }
+
+  // Block quote.
+  .highlights {
+    font-size: 1.5rem;
+    font-family: $stack-font;
+  }
+
+  // Quote
+  blockquote.epigraph {
+    margin-top: 2rem;
+    padding-left: 2rem;
+    border-left: 4px $light-blue-01 solid;
+    color: $grey-mid;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+
+    .attribution {
+      margin-bottom: 0;
+      font-size: 1rem;
+    }
+  }
+
+  // Pool quote.
+  .question-and-answers {
+    blockquote {
+      margin-top: 0.5rem;
+      margin-bottom: 0;
+
+      > div {
+        font-weight: 700;
+        font-family: $stack-font;
+      }
+    }
+
+    .pull-quote {
+      max-width: 490px;
+      margin-bottom: 2rem;
+
+      ul {
+        list-style-type: none;
+        padding-left: 1.5rem;
+
+        li {
+          display: inline-block;
+          margin-top: 1rem;
+
+          &::after {
+            display: none;
+          }
+
+          a {
+            padding: 0.2rem 0.5rem;
+            margin-right: 0.2rem;
+            background-color: $sky-blue;
+            color: $black;
+            font-family: $titillium-font;
+            border-bottom: 2px dotted $grey;
+          }
+        }
+      }
+
+      > div > p {
+        text-transform: uppercase;
+        font-family: $titillium-font;
+        color: $grey-dark;
+        margin-bottom: 0;
+        font-weight: 100;
+      }
+
+      &:nth-of-type(odd) {
+        float: left;
+        clear: right;
+
+        blockquote > div,
+        ul {
+          padding-left: 1.5rem;
+          border-left: 5px $light-blue-01 solid;
+        }
+      }
+
+      &:nth-of-type(even) {
+        float: right;
+        text-align: right;
+        clear: left;
+
+        blockquote > div,
+        ul {
+          padding-right: 1.5rem;
+          border-right: 5px $light-blue-01 solid;
+        }
+      }
+    }
+  }
+
+  // Keywords
+  .question-and-answers .glossary.docutils {
+    display: none;
+  }
+
+  .highlighted {
+    background: $sky-blue;
+    display: inline-block;
+    font-weight: bold;
+  }
+}
+
+.highlight {
+  padding: 1rem;
+  margin-bottom: 1em;
+
+  pre {
+    margin: 0;
+    padding-bottom: 1em;
+  }
+
+  .highlighttable & {
+    padding: 0;
+  }
+
+  .code & {
+    background: none;
+  }
+}
+
+code:not(.download) .pre {
+  background-color: $light-green;
+  padding: 0.2rem;
+}
+
+code.download {
+  font-family: $titillium-font;
+  font-size: 100%;
+}

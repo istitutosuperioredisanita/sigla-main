@@ -1,0 +1,23 @@
+<script type="text/javascript">
+var PRODUCTION_DOMAIN = '{{ PRODUCTION_DOMAIN }}';
+var DOCSITALIA_DATA = {
+  publisher_slug: '{{ publisher_slug }}',
+  publisher_project_slug: '{{ publisher_project_slug }}'
+}
+{% if LOCAL %}
+LOCAL = true;
+READTHEDOCS_DATA = {
+  project: '{{ slug }}',
+  version: '{{ current_version }}',
+  language: '{{ rtd_language }}',
+  api_host: '//' + PRODUCTION_DOMAIN
+}
+{% endif %}
+</script>
+<script src="{{ pathto('_static/js/theme.js', 1) }}"></script>
+<script src="{{ pathto('_static/language_data.js', 1) }}"></script>
+{%- for scriptfile in script_files %}
+{%- if not 'jquery' in scriptfile %}
+<script type="text/javascript" src="{{ pathto(scriptfile, 1) }}"></script>
+{%- endif %}
+{%- endfor %}

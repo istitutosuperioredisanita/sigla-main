@@ -1,0 +1,59 @@
+/* Background colors */
+.bg-primary--dark {
+  background-color: $medium-blue;
+}
+
+.bg-primary--mid-dark {
+  background-color: $mid-dark-blue;
+}
+
+.bg-primary--darken {
+  background-color: $dark-blue;
+}
+
+/* Text colors */
+.text-grey {
+  color: $grey;
+}
+
+.text-sans-serif {
+  font-family: $titillium-font;
+}
+
+.text-serif {
+  font-family: $stack-font;
+}
+
+.text-light-blue {
+  color: $light-blue;
+}
+
+.text-blue {
+  color: $blue;
+}
+
+/* Border colors */
+.border-dark-blue {
+  border-color: $dark-blue-border !important;
+}
+
+.border-medium-blue {
+  border-color: $medium-blue !important;
+}
+
+.border-grey-light {
+  border-color: $grey-light-02 !important;
+}
+
+// Border width
+.border-width-2 {
+  border-width: 2px !important;
+}
+
+.stopScrolling--vertical {
+  overflow-y: hidden;
+}
+
+.deactive {
+  display: none !important;
+}
