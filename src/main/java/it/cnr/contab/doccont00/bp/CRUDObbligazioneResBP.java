@@ -30,7 +30,6 @@ import it.cnr.contab.doccont00.ejb.ObbligazioneResComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
-import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
@@ -400,6 +399,36 @@ public class CRUDObbligazioneResBP extends CRUDObbligazioneBP{
     			return "readonly";
     	return "archivioAllegati";
     }
+
+	private RemoteIterator remoteIteratorFactory(ActionContext context,ObbligazioneBulk oggettobulk,Boolean residui)
+			throws BusinessProcessException {
+		if ( residui)
+			return this.find(context, new CompoundFindClause(), new ObbligazioneResBulk(), oggettobulk, "allEqualsObbligazioniRes");
+		 return this.find(context, new CompoundFindClause(), new ObbligazioneBulk(), oggettobulk, "allEqualsObbligazioni");
+	}
+	private BulkList<AllegatoObbligazioneBulk> getAllegati(ActionContext context,ObbligazioneBulk oggettobulk,Boolean residui ) throws BusinessProcessException {
+		RemoteIterator ri= remoteIteratorFactory(context,oggettobulk,residui);
+		BulkList<AllegatoObbligazioneBulk> archivioAllegati = new BulkList<AllegatoObbligazioneBulk>();
+		try {
+			ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context, ri);
+			while (ri.hasMoreElements()) {
+				ObbligazioneBulk currObbligazione = (ObbligazioneBulk) ri.nextElement();
+				if (currObbligazione.isObbligazioneResiduo() == residui) {
+					if (currObbligazione.getEsercizio().compareTo(oggettobulk.getEsercizio()) <= 0) {
+
+						currObbligazione = (ObbligazioneBulk) initializeModelForEditAllegati(context, currObbligazione);
+						for (AllegatoGenericoBulk allegatoGenericoBulk : currObbligazione.getArchivioAllegati())
+							((AllegatoObbligazioneBulk) allegatoGenericoBulk).setEsercizioDiAppartenenza(currObbligazione.getEsercizio());
+						archivioAllegati.addAll(currObbligazione.getArchivioAllegati());
+					}
+				}
+			}
+			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
+		}catch(java.rmi.RemoteException ex){
+			throw handleException(ex);
+		}
+		return archivioAllegati;
+	}
 	/**
 	 * Inizializza il modello per la modifica.
 	 * @param context Il contesto dell'azione
@@ -411,25 +440,9 @@ public class CRUDObbligazioneResBP extends CRUDObbligazioneBP{
 			ObbligazioneBulk oggettobulk = (ObbligazioneBulk)super.initializeModelForEdit(context, bulk);
 
 			if (isStatoVisibile()) {
-				BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<AllegatoGenericoBulk>();
-				try	{
-					RemoteIterator ri = this.find(context, new CompoundFindClause(), new ObbligazioneBulk(), oggettobulk, "allEqualsObbligazioni");
-					ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context, ri);
-					while (ri.hasMoreElements()) {
-						ObbligazioneBulk currObbligazione = (ObbligazioneBulk) ri.nextElement();
-						if (currObbligazione.getEsercizio().compareTo(oggettobulk.getEsercizio())<=0) {
-							currObbligazione = (ObbligazioneBulk)initializeModelForEditAllegati(context, currObbligazione);
-							for (AllegatoGenericoBulk allegatoGenericoBulk : currObbligazione.getArchivioAllegati())
-								((AllegatoObbligazioneBulk)allegatoGenericoBulk).setEsercizioDiAppartenenza(currObbligazione.getEsercizio());
-							archivioAllegati.addAll(currObbligazione.getArchivioAllegati());
-						}
-					}
-					it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
-				}catch(java.rmi.RemoteException ex){
-					throw handleException(ex);
-				}
-	
-				((AllegatoParentBulk)oggettobulk).setArchivioAllegati(archivioAllegati);
+				BulkList<AllegatoObbligazioneBulk> archivioAllegati = new BulkList<AllegatoObbligazioneBulk>();
+					archivioAllegati.addAll(getAllegati(context, oggettobulk, false));
+					archivioAllegati.addAll(getAllegati(context, oggettobulk, true));
 			}
 			
 			return oggettobulk;

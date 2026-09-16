@@ -17,14 +17,8 @@
 
 package it.cnr.contab.doccont00.core.bulk;
 
-import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import it.cnr.contab.config00.pdcfin.bulk.Voce_fBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.doccont00.core.bulk.AccertamentoResiduoBulk.Stato;
 import it.cnr.contab.service.SpringUtil;
 import it.cnr.contab.spring.service.StorePath;
 import it.cnr.jada.action.ActionContext;
@@ -33,6 +27,11 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.si.spring.storage.StorageDriver;
+
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Insert the method's description here.
@@ -202,6 +201,15 @@ public class ObbligazioneResBulk extends ObbligazioneBulk {
 				Optional.ofNullable(this.getEsercizio())
 						.map(esercizio -> String.valueOf(esercizio))
 						.orElse("0")
+		).stream().collect(
+				Collectors.joining(StorageDriver.SUFFIX)
+		);
+	}
+
+	@Override
+	public String getStorePath() {
+		return Arrays.asList(getBasePath(),
+				this.getCd_uo_origine() + "-" + this.getEsercizio_originale() + this.getPg_obbligazione()
 		).stream().collect(
 				Collectors.joining(StorageDriver.SUFFIX)
 		);
