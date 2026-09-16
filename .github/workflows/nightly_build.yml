@@ -1,0 +1,28 @@
+name: Nightly Build
+on:
+  schedule:
+    - cron: '0 2 * * *'  # ogni giorno alle 02:00 UTC
+  workflow_dispatch:      # per poterlo lanciare anche manualmente
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: sviluppo   # nome del branch da buildare
+
+      - uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Integration Test
+        run: |
+          mvn clean integration-test -s .m2/settings.xml -PPROD --batch-mode --errors --fail-at-end --show-version
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
