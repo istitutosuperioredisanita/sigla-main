@@ -126,6 +126,32 @@ public class ActionDeployments extends DeploymentsH2 {
         return this.getGrapheneElement(By.name(element));
     }
 
+    /**
+     * Localizza l'elemento e ci scrive dentro come operazione atomica con retry.
+     * A differenza di getGrapheneElement(...).writeIntoElement(...), se il DOM
+     * cambia tra la localizzazione e la scrittura (es. dopo un submit/AJAX che
+     * ricrea il form), ri-localizza l'elemento da capo invece di affidarsi al
+     * solo retry interno di Graphene.
+     */
+    protected void doWriteIntoElement(String element, String value) {
+        doWriteIntoElement(By.name(element), value);
+    }
+
+    protected void doWriteIntoElement(By locator, String value) {
+        int attempts = 0;
+        while (true) {
+            try {
+                getGrapheneElement(locator).writeIntoElement(value);
+                return;
+            } catch (StaleElementReferenceException e) {
+                if (++attempts >= 3) {
+                    LOGGER.error("writeIntoElement fallito dopo {} tentativi su {}", attempts, locator, e);
+                    throw e;
+                }
+            }
+        }
+    }
+
     private void switchToDefaultContent() {
         browser.switchTo().defaultContent();
         // logPageSource() rimosso: serializzava l'intero DOM ad ogni switch
@@ -177,19 +203,33 @@ public class ActionDeployments extends DeploymentsH2 {
      * Attende che il bottone sia clickable (presenza + visibilità + enabled)
      * con un singolo FluentWait — elimina il doppio wait precedente
      * (getWebElement + waitGui clickable) che raddoppiava i tempi di attesa.
+     * In caso di StaleElementReferenceException tra la elementToBeClickable()
+     * e il click() (race dovuta a un re-render nel frattempo), ri-localizza
+     * e ri-prova invece di ingoiare silenziosamente l'eccezione: un click
+     * "perso" senza retry lascia l'app in uno stato inatteso e fa fallire
+     * a cascata tutte le asserzioni successive del test.
      */
     private void findAndClickButton(By buttonLocator) {
-        try {
-            WebElement button = new FluentWait<>(browser)
-                    .withTimeout(Duration.ofSeconds(ELEMENT_TIMEOUT_SECONDS))
-                    .pollingEvery(Duration.ofMillis(POLLING_MILLIS))
-                    .ignoring(StaleElementReferenceException.class)
-                    .ignoring(NoSuchElementException.class)
-                    .until(ExpectedConditions.elementToBeClickable(buttonLocator));
-            button.click();
-        } catch (TimeoutException e) {
-            salvaScreenshot("findAndClickButton_" + buttonLocator);
-            throw e;
+        int attempts = 0;
+        while (true) {
+            try {
+                WebElement button = new FluentWait<>(browser)
+                        .withTimeout(Duration.ofSeconds(ELEMENT_TIMEOUT_SECONDS))
+                        .pollingEvery(Duration.ofMillis(POLLING_MILLIS))
+                        .until(ExpectedConditions.elementToBeClickable(buttonLocator));
+                button.click();
+                return;
+            } catch (TimeoutException e) {
+                LOGGER.error("Cannot find button {} dopo {} tentativi timeout", buttonLocator, attempts, e);
+                salvaScreenshot("findAndClickButton_" + buttonLocator);
+                throw e;
+            } catch (StaleElementReferenceException e) {
+                LOGGER.warn("Cannot find button {} dopo {} tentativi", buttonLocator, attempts, e);
+                if (++attempts >= 3) {
+                    LOGGER.error("Cannot find button {} dopo {} tentativi", buttonLocator, attempts, e);
+                    throw e;
+                }
+            }
         }
     }
 

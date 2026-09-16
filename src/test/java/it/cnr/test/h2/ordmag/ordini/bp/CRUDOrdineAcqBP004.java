@@ -106,23 +106,23 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
-        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
         doClickButton("doSearch(main.findUnitaOperativaOrd)");
 
         //Scelgo Magazzino: PT
         doClickButton("doBlankSearch(main.findMagazzino)");
-        getGrapheneElement("main.findMagazzino.cdMagazzino").writeIntoElement(CD_MAGAZZINO);
+        doWriteIntoElement("main.findMagazzino.cdMagazzino", CD_MAGAZZINO);
         doClickButton("doSearch(main.findMagazzino)");
 
         //Data Bolla: Oggi
-        getGrapheneElement("main.dataBolla").writeIntoElement(DATA_ODIERNA);
+        doWriteIntoElement("main.dataBolla", DATA_ODIERNA);
         doClickButton("doOnDtBollaChange");
 
         //Numero Bolla: 7
-        getGrapheneElement("main.numeroBolla").writeIntoElement("11");
+        doWriteIntoElement("main.numeroBolla", "11");
 
         //Data Consegna: Oggi
-        getGrapheneElement("main.dataConsegna").writeIntoElement(DATA_ODIERNA);
+        doWriteIntoElement("main.dataConsegna", DATA_ODIERNA);
         doClickButton("doOnDtConsegnaChange");
 
         //Eseguo la ricerca
@@ -158,7 +158,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("doAddToCRUD(main.ArchivioAllegati)");
         Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
         select.selectByValue("P:sigla_evasione_attachment:ddt");
-        getGrapheneElement("main.ArchivioAllegati.descrizione").writeIntoElement("TEST");
+        doWriteIntoElement("main.ArchivioAllegati.descrizione", "TEST");
         getGrapheneElement("main.ArchivioAllegati.file").sendKeys(file.getAbsolutePath());
         getTableRowElement("main.ArchivioAllegati", 0).click();
         doClickButton("doTab('tab','tabEvasioneConsegne')");
@@ -186,16 +186,16 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("doNuovaRicerca()");
 
         doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
-        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
         doClickButton("doSearch(main.findUnitaOperativaOrd)");
 
         doClickButton("doBlankSearch(main.findNumerazioneOrd)");
-        getGrapheneElement("main.findNumerazioneOrd.cdNumeratore").writeIntoElement(CD_NUMERATORE);
+        doWriteIntoElement("main.findNumerazioneOrd.cdNumeratore", CD_NUMERATORE);
         doClickButton("doSearch(main.findNumerazioneOrd)");
 
         getGrapheneElement("main.esercizio").clear();
-        getGrapheneElement("main.esercizio").writeIntoElement("2024");
-        getGrapheneElement("main.numero").writeIntoElement("1");
+        doWriteIntoElement("main.esercizio", "2024");
+        doWriteIntoElement("main.numero", "1");
 
         doClickButton("doCerca()");
 
@@ -310,16 +310,16 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
 
         //Scelgo Unità operativa: DRUE
         doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
-        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
         doClickButton("doSearch(main.findUnitaOperativaOrd)");
 
         //Scelgo Magazzino: PT
         doClickButton("doBlankSearch(main.findMagazzino)");
-        getGrapheneElement("main.findMagazzino.cdMagazzino").writeIntoElement(CD_MAGAZZINO);
+        doWriteIntoElement("main.findMagazzino.cdMagazzino", CD_MAGAZZINO);
         doClickButton("doSearch(main.findMagazzino)");
 
-        getGrapheneElement("main.daNumeroOrdine").writeIntoElement("1");
-        getGrapheneElement("main.aNumeroOrdine").writeIntoElement("1");
+        doWriteIntoElement("main.daNumeroOrdine", "1");
+        doWriteIntoElement("main.aNumeroOrdine", "1");
 
         doClickButton("doCerca");
 
@@ -355,23 +355,23 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
-        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
         doClickButton("doSearch(main.findUnitaOperativaOrd)");
 
         //Scelgo Magazzino: PT
         doClickButton("doBlankSearch(main.findMagazzino)");
-        getGrapheneElement("main.findMagazzino.cdMagazzino").writeIntoElement(CD_MAGAZZINO);
+        doWriteIntoElement("main.findMagazzino.cdMagazzino", CD_MAGAZZINO);
         doClickButton("doSearch(main.findMagazzino)");
 
         //Data Bolla: Oggi
-        getGrapheneElement("main.dataBolla").writeIntoElement(DATA_ODIERNA);
+        doWriteIntoElement("main.dataBolla", DATA_ODIERNA);
         doClickButton("doOnDtBollaChange");
 
         //Numero Bolla: 7
-        getGrapheneElement("main.numeroBolla").writeIntoElement("11");
+        doWriteIntoElement("main.numeroBolla", "11");
 
         //Data Consegna: Oggi
-        getGrapheneElement("main.dataConsegna").writeIntoElement(DATA_ODIERNA);
+        doWriteIntoElement("main.dataConsegna", DATA_ODIERNA);
         doClickButton("doOnDtConsegnaChange");
 
         //Eseguo la ricerca
@@ -407,7 +407,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("doAddToCRUD(main.ArchivioAllegati)");
         Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
         select.selectByValue("P:sigla_evasione_attachment:ddt");
-        getGrapheneElement("main.ArchivioAllegati.descrizione").writeIntoElement("TEST");
+        doWriteIntoElement("main.ArchivioAllegati.descrizione", "TEST");
         getGrapheneElement("main.ArchivioAllegati.file").sendKeys(file.getAbsolutePath());
         getTableRowElement("main.ArchivioAllegati", 0).click();
         doClickButton("doTab('tab','tabEvasioneConsegne')");
@@ -433,15 +433,15 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         //Cerco l'ordine DSA/1/1/1 per verificare che l'annullamento del riscontro a valore abbia rimesso i valori corretti
         doClickButton("doNuovaRicerca()");
 
-        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
         doClickButton("doSearch(main.findUnitaOperativaOrd)");
 
-        getGrapheneElement("main.findNumerazioneOrd.cdNumeratore").writeIntoElement(CD_NUMERATORE);
+        doWriteIntoElement("main.findNumerazioneOrd.cdNumeratore", CD_NUMERATORE);
         doClickButton("doSearch(main.findNumerazioneOrd)");
 
         getGrapheneElement("main.esercizio").clear();
-        getGrapheneElement("main.esercizio").writeIntoElement("2024");
-        getGrapheneElement("main.numero").writeIntoElement("1");
+        doWriteIntoElement("main.esercizio", "2024");
+        doWriteIntoElement("main.numero", "1");
 
         doClickButton("doCerca()");
 
@@ -527,7 +527,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         switchToFrameWorkspace();
 
         //Ricerco la fattura SDI: 90000000002
-        getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000005");
+        doWriteIntoElement("main.identificativoSdi", "90000000005");
 
         Select select = new Select(getGrapheneElement("main.statoDocumento"));
         select.selectByValue("");
@@ -550,7 +550,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         //Verifico che fattura da Ordini=Si
         Assertions.assertTrue(getGrapheneElement("main.flDaOrdini").isSelected());
 
-        getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST ORDINE EVASO ANNO PRECEDENTE");
+        doWriteIntoElement("main.ds_fattura_passiva", "RISCONTRO VALORE TEST ORDINE EVASO ANNO PRECEDENTE");
 
         //Passo alla tab ‘ordini’
         doClickButton("doTab('tab','tabFatturaPassivaOrdini')");
@@ -622,7 +622,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         switchToFrameWorkspace();
 
         //Ricerco la fattura SDI: 90000000002
-        getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000006");
+        doWriteIntoElement("main.identificativoSdi", "90000000006");
 
         Select select = new Select(getGrapheneElement("main.statoDocumento"));
         select.selectByValue("");
@@ -645,7 +645,7 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         //Verifico che fattura da Ordini=Si
         Assertions.assertTrue(getGrapheneElement("main.flDaOrdini").isSelected());
 
-        getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST ORDINE EVASO ANNO CORRENTE");
+        doWriteIntoElement("main.ds_fattura_passiva", "RISCONTRO VALORE TEST ORDINE EVASO ANNO CORRENTE");
 
         //Passo alla tab ‘ordini’
         doClickButton("doTab('tab','tabFatturaPassivaOrdini')");
@@ -721,16 +721,16 @@ public class CRUDOrdineAcqBP004 extends ActionDeployments {
         doClickButton("doNuovaRicerca()");
 
         doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
-        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
         doClickButton("doSearch(main.findUnitaOperativaOrd)");
 
         doClickButton("doBlankSearch(main.findNumerazioneOrd)");
-        getGrapheneElement("main.findNumerazioneOrd.cdNumeratore").writeIntoElement(CD_NUMERATORE);
+        doWriteIntoElement("main.findNumerazioneOrd.cdNumeratore", CD_NUMERATORE);
         doClickButton("doSearch(main.findNumerazioneOrd)");
 
         getGrapheneElement("main.esercizio").clear();
-        getGrapheneElement("main.esercizio").writeIntoElement("2024");
-        getGrapheneElement("main.numero").writeIntoElement("1");
+        doWriteIntoElement("main.esercizio", "2024");
+        doWriteIntoElement("main.numero", "1");
 
         doClickButton("doCerca()");
 
