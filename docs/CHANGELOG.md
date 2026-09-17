@@ -1,3 +1,71 @@
+## Release 8.0.27  -- _September 17, 2026_ 
+**Changes**
+
+>**Fix:Visualizzazione e gestione degli allegati delle obbligazioni residue**
+>
+>[23e5bad56c644f8](https://github.com/istitutosuperioredisanita/sigla-main/commit/23e5bad56c644f8) csalvio *September 17, 2026*
+
+>**ci: aggiunto workflow GitHub Actions per nightly build**
+> * Schedulato ogni giorno alle 02:00 UTC (cron) sul branch &#x27;sviluppo&#x27;,
+> * lanciabile anche manualmente via workflow_dispatch. Esegue il checkout
+> * Java 21 (temurin) con cache Maven, poi mvn clean integration-test sui
+> * profili PROD.
+>
+>[cd926586ef540f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/cd926586ef540f9) marco.spasiano *September 16, 2026*
+
+>**upgrade: bump WildFly 38 -> 40, wildfly-maven-plugin 6.0.0 -> 6.0.1,**
+> * git-changelog-maven-plugin 1.61 -&gt; 2.3.0, rimosso il feature-pack
+> * wildfly-datasources-galleon-pack (non più necessario), aggiunta
+> * dipendenza selenium-devtools-v153.
+>
+>[90ebb74d2785a6b](https://github.com/istitutosuperioredisanita/sigla-main/commit/90ebb74d2785a6b) marco.spasiano *September 16, 2026*
+
+>**test(sigla): retry su StaleElementReferenceException e tuning ambiente test**
+> * - Introduce doWriteIntoElement(...) come wrapper con retry (max 3 tentativi)
+> * attorno a getGrapheneElement(...).writeIntoElement(...), per gestire il
+> * caso in cui il DOM venga ricreato tra la localizzazione e la scrittura
+> * dell&#x27;elemento (submit/AJAX che rigenera il form). Sostituite tutte le
+> * chiamate dirette nei test CRUDOrdineAcqBP001-005.
+> * - findAndClickButton: non ignora più silenziosamente
+> * StaleElementReferenceException, ma ritenta localizzazione/click fino a
+> * 3 volte prima di fallire, loggando ogni tentativo.
+> * - arquillian.xml: abilita reuseDriver, imposta chromeCapabilities
+> * (webSocketUrl:false, pageLoadStrategy:eager), riduce la window-size a
+> * 1024x768 e aggiunge tuning del datasource H2 in-memory (LOG&#x3D;0,
+> * UNDO_LOG&#x3D;0, LOCK_MODE&#x3D;0, CACHE_SIZE, pool size min/max, disabilitata
+> * background-validation) per velocizzare l&#x27;avvio dei test.
+>
+>[f318a01b4f1475c](https://github.com/istitutosuperioredisanita/sigla-main/commit/f318a01b4f1475c) marco.spasiano *September 16, 2026*
+
+>**Eliminato dal conteggio del liquidato spese gli ordini**
+>
+>[1c58e98776aa0c2](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c58e98776aa0c2) salvio_ciro *September 14, 2026*
+
+>**add: aggiornata la versione sphinx per la documentazione**
+>
+>[5a7a8ba4fefac4a](https://github.com/istitutosuperioredisanita/sigla-main/commit/5a7a8ba4fefac4a) marco.spasiano *September 11, 2026*
+
+>**add: aggiornata la versione sphinx per la documentazione [ci skip]**
+>
+>[cccf06bbd12447e](https://github.com/istitutosuperioredisanita/sigla-main/commit/cccf06bbd12447e) marco.spasiano *September 11, 2026*
+
+>**add: aggiornata la versione sphinx per la documentazione [ci skip]**
+>
+>[2c9af75aa83a968](https://github.com/istitutosuperioredisanita/sigla-main/commit/2c9af75aa83a968) marco.spasiano *September 11, 2026*
+
+>**add: aggiornata la versione sphinx per la documentazione**
+>
+>[165b370ea7476de](https://github.com/istitutosuperioredisanita/sigla-main/commit/165b370ea7476de) marco.spasiano *September 11, 2026*
+
+>**add: aggiornata la versione sphinx per la documentazione**
+>
+>[1be3dd0894dd2ea](https://github.com/istitutosuperioredisanita/sigla-main/commit/1be3dd0894dd2ea) marco.spasiano *September 11, 2026*
+
+>**Bumped version to 8.0.26**
+>
+>[d2b419839d81999](https://github.com/istitutosuperioredisanita/sigla-main/commit/d2b419839d81999) dirgensa *September 11, 2026*
+
+
 ## Release 8.0.26  -- _September 11, 2026_ 
 **Changes**
 
@@ -161,21 +229,6 @@
 >
 >[787508976876632](https://github.com/istitutosuperioredisanita/sigla-main/commit/787508976876632) raffaele.pagano *September 04, 2026*
 
->**Revert "Conto Fatture da Ricevere: eliminato utilizzo conto "fatture da ricevere" sulla base della data di competenza della fattura."**
-> * This reverts commit 171ba70ab1250d42617f1551a1045009cb2da0c0.
->
->[7406449ce88012b](https://github.com/istitutosuperioredisanita/sigla-main/commit/7406449ce88012b) csalvio *September 04, 2026*
-
->**Reapply "Conto Fatture da Ricevere: eliminato utilizzo conto "fatture da ricevere" sulla base della data di competenza della fattura."**
-> * This reverts commit bebf6432273dd0f3ea67fac13d554ab3c43718c6.
->
->[cfc92760f4aa789](https://github.com/istitutosuperioredisanita/sigla-main/commit/cfc92760f4aa789) csalvio *September 04, 2026*
-
->**Revert "Conto Fatture da Ricevere: eliminato utilizzo conto "fatture da ricevere" sulla base della data di competenza della fattura."**
-> * This reverts commit 171ba70ab1250d42617f1551a1045009cb2da0c0.
->
->[bebf6432273dd0f](https://github.com/istitutosuperioredisanita/sigla-main/commit/bebf6432273dd0f) csalvio *September 04, 2026*
-
 >**add: aggiunta la generazione del changelog.md in fase di release**
 >
 >[6eecf7b9f9fc780](https://github.com/istitutosuperioredisanita/sigla-main/commit/6eecf7b9f9fc780) marco.spasiano *September 04, 2026*
@@ -187,10 +240,6 @@
 >**fix corretta precisione decimale del parametro timestamp (dataTappa) in selectTipo_spesaByClause**
 >
 >[61f4addf64c03c6](https://github.com/istitutosuperioredisanita/sigla-main/commit/61f4addf64c03c6) davide-mirra *September 02, 2026*
-
->**Conto Fatture da Ricevere: eliminato utilizzo conto "fatture da ricevere" sulla base della data di competenza della fattura.**
->
->[171ba70ab1250d4](https://github.com/istitutosuperioredisanita/sigla-main/commit/171ba70ab1250d4) raffaele.pagano *September 02, 2026*
 
 >**Allineamento vista**
 >
@@ -660,9 +709,462 @@
 >
 >[2680c30f6f3af92](https://github.com/istitutosuperioredisanita/sigla-main/commit/2680c30f6f3af92) salvio_ciro *May 26, 2026*
 
+>**fix: issue #32117 di Spring Framework. A partire da Spring 6.1, se il codice è compilato senza il flag -parameters, l'espressione SpEL { #param1, #param2 } nella chiave di @Cacheable smette di funzionare correttamente: i parametri vengono risolti a null, e quindi la chiave diventa un ArrayList di null. Il risultato è che tutte le invocazioni successive restituiscono silenziosamente il risultato della prima, ignorando i valori reali dei parametri**
+>
+>[108f07cdf44ee20](https://github.com/istitutosuperioredisanita/sigla-main/commit/108f07cdf44ee20) mspasiano *May 26, 2026*
+
 >**Update maven.yml**
 >
 >[b88718b705cb7da](https://github.com/istitutosuperioredisanita/sigla-main/commit/b88718b705cb7da) dirgensa *May 25, 2026*
+
+
+## Release 8.0.23  -- _August 07, 2026_ 
+**Changes**
+
+>**fix: connessioni verso il DB non chiuse e che saturano il pool - aggiornato driver Oracle a ojdbc11 23.26.2.0.0 e aggiunto validazione connessioni per risolvere SQLRecoverableException a scadenza sessione**
+>
+>[e8c55893dcb3270](https://github.com/istitutosuperioredisanita/sigla-main/commit/e8c55893dcb3270) marco.spasiano *August 07, 2026*
+
+>**Bumped version to 8.0.22**
+>
+>[e21fd0c98abb531](https://github.com/istitutosuperioredisanita/sigla-main/commit/e21fd0c98abb531) dirgensa *August 06, 2026*
+
+
+## Release 8.0.22  -- _August 06, 2026_ 
+**Changes**
+
+>**fix: connessioni verso il DB non chiuse e che saturano il pool**
+>
+>[5e0c243af08e3fd](https://github.com/istitutosuperioredisanita/sigla-main/commit/5e0c243af08e3fd) marco.spasiano *August 06, 2026*
+
+>**Bumped version to 8.0.21**
+>
+>[023af677c14b215](https://github.com/istitutosuperioredisanita/sigla-main/commit/023af677c14b215) dirgensa *August 05, 2026*
+
+
+## Release 8.0.21  -- _August 05, 2026_ 
+**Changes**
+
+>**fix: connessioni verso il DB non chiuse e che saturano il pool**
+>
+>[44b3a71cd879f5f](https://github.com/istitutosuperioredisanita/sigla-main/commit/44b3a71cd879f5f) marco.spasiano *August 05, 2026*
+
+>**fix: NPE**
+>
+>[bbb0399880026ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/bbb0399880026ee) marco.spasiano *August 05, 2026*
+
+>**Bumped version to 8.0.20**
+>
+>[e1d61f2f5073105](https://github.com/istitutosuperioredisanita/sigla-main/commit/e1d61f2f5073105) dirgensa *August 04, 2026*
+
+
+## Release 8.0.20  -- _August 04, 2026_ 
+**Changes**
+
+>**Aggiunta la chiusura dello statement nel metodo isEsercizioCoepChiusoFor**
+>
+>[c1faea1d8517874](https://github.com/istitutosuperioredisanita/sigla-main/commit/c1faea1d8517874) csalvio *August 04, 2026*
+
+>**Bumped version to 8.0.19**
+>
+>[250c4c123b07599](https://github.com/istitutosuperioredisanita/sigla-main/commit/250c4c123b07599) dirgensa *August 04, 2026*
+
+
+## Release 8.0.19  -- _August 04, 2026_ 
+**Changes**
+
+>**Gestione Abilitazione Firma Ordine**
+>
+>[d3e3c7757eab233](https://github.com/istitutosuperioredisanita/sigla-main/commit/d3e3c7757eab233) csalvio *August 04, 2026*
+
+>**Fix errore passaggi di stato dell'ordine in funzione se è o meno attiva la firma dell'ordine**
+>
+>[6e91b3149a4780c](https://github.com/istitutosuperioredisanita/sigla-main/commit/6e91b3149a4780c) csalvio *August 04, 2026*
+
+>**Gestione Abilitazione Firma Ordine**
+>
+>[bd96fec805180b1](https://github.com/istitutosuperioredisanita/sigla-main/commit/bd96fec805180b1) csalvio *August 04, 2026*
+
+>**Aggiornata la gestione di CODICE_AUT_AREE ("Accordi senza contributo aggiuntivo"): tipo finanziamento sempre selezionabile, date progetto obbligatorie e rimozione della gestione degli importi finanziato/cofinanziato.**
+>
+>[6ac672ae8f190b8](https://github.com/istitutosuperioredisanita/sigla-main/commit/6ac672ae8f190b8) davide-mirra *July 22, 2026*
+
+>**Fix:Inserimento Esercizio Progetto Padre quello del progetto che si sta ribaltando solo se pg_progetto_padre è non null altriment null**
+>
+>[afce135d5ff1aa1](https://github.com/istitutosuperioredisanita/sigla-main/commit/afce135d5ff1aa1) csalvio *July 14, 2026*
+
+>**Bumped version to 8.0.18**
+>
+>[390dda673d646b3](https://github.com/istitutosuperioredisanita/sigla-main/commit/390dda673d646b3) dirgensa *July 13, 2026*
+
+
+## Release 8.0.18  -- _July 13, 2026_ 
+**Changes**
+
+>**SCARICO INVENTARIO - fix query ammortamento e aggiornamento vista**
+>
+>[488e4e5d1a09034](https://github.com/istitutosuperioredisanita/sigla-main/commit/488e4e5d1a09034) tomada_valentina *July 13, 2026*
+
+>**Aggiunta la generazione automatica dei report tra gli allegati**
+>
+>[056a24353573a48](https://github.com/istitutosuperioredisanita/sigla-main/commit/056a24353573a48) csalvio *July 13, 2026*
+
+>**Gestione Stato Inviato**
+>
+>[1f7ae69527531f1](https://github.com/istitutosuperioredisanita/sigla-main/commit/1f7ae69527531f1) csalvio *July 09, 2026*
+
+>**Bumped version to 8.0.17**
+>
+>[de707392c90a5bd](https://github.com/istitutosuperioredisanita/sigla-main/commit/de707392c90a5bd) dirgensa *June 30, 2026*
+
+
+## Release 8.0.17  -- _June 30, 2026_ 
+**Changes**
+
+>**new feature: in caso di utente supervisore possono essere modificati i conti anche ad esercizio chiuso**
+>
+>[4e7bb07f1df1d08](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e7bb07f1df1d08) marco.spasiano *June 30, 2026*
+
+>**Bumped version to 8.0.16**
+>
+>[a09dec065151690](https://github.com/istitutosuperioredisanita/sigla-main/commit/a09dec065151690) dirgensa *June 26, 2026*
+
+
+## Release 8.0.16  -- _June 26, 2026_ 
+**Changes**
+
+>**Fix set Imponibile**
+>
+>[262f63eb225705c](https://github.com/istitutosuperioredisanita/sigla-main/commit/262f63eb225705c) csalvio *June 26, 2026*
+
+>**Force build and tests**
+>
+>[206be7435861faf](https://github.com/istitutosuperioredisanita/sigla-main/commit/206be7435861faf) csalvio *June 26, 2026*
+
+>**Fix calcolo importo unitario per fattura associate a Ordini di tipo Commerciale**
+>
+>[95b449a38c33efc](https://github.com/istitutosuperioredisanita/sigla-main/commit/95b449a38c33efc) csalvio *June 26, 2026*
+
+>**Elimanato il tab richieste dall'evasione ordine**
+>
+>[2922a2fea940c7a](https://github.com/istitutosuperioredisanita/sigla-main/commit/2922a2fea940c7a) csalvio *June 24, 2026*
+
+>**Bumped version to 8.0.15**
+>
+>[2fb8a11dc1b8613](https://github.com/istitutosuperioredisanita/sigla-main/commit/2fb8a11dc1b8613) dirgensa *June 24, 2026*
+
+
+## Release 8.0.15  -- _June 24, 2026_ 
+**Changes**
+
+>**Modificato il messaggio di errore quando entrambi gli importi parzialeAnno e totaleAnno sono diversi da zero**
+>
+>[abeccaed512be88](https://github.com/istitutosuperioredisanita/sigla-main/commit/abeccaed512be88) csalvio *June 24, 2026*
+
+>**Modificato il comportamento: se il record per l'anno esiste lo apre in modifica è non è possibile selezionare nuovo. Se non è presente è adesso possibile lanciare la crezione dei file Accrual.**
+>
+>[aad7efd746a5a7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/aad7efd746a5a7c) csalvio *June 24, 2026*
+
+>**Aggiornata a dipendeza di xbrl-accrual alla versione chiusa 1.0.0**
+>
+>[58fccce28277221](https://github.com/istitutosuperioredisanita/sigla-main/commit/58fccce28277221) csalvio *June 23, 2026*
+
+>**Eliminato codice che generava tre file separati**
+>
+>[2a1b08562ddcfe9](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a1b08562ddcfe9) csalvio *June 23, 2026*
+
+>**Bumped version to 8.0.14**
+>
+>[ffedb7736b6ca85](https://github.com/istitutosuperioredisanita/sigla-main/commit/ffedb7736b6ca85) dirgensa *June 23, 2026*
+
+
+## Release 8.0.14  -- _June 23, 2026_ 
+**Changes**
+
+>**Bumped version to 8.0.13**
+>
+>[3e9ba8781ac9b0c](https://github.com/istitutosuperioredisanita/sigla-main/commit/3e9ba8781ac9b0c) dirgensa *June 23, 2026*
+
+
+## Release 8.0.13  -- _June 23, 2026_ 
+**Changes**
+
+>**fix: abilitata gestione valori negativo**
+>
+>[610e5b5c5178aa5](https://github.com/istitutosuperioredisanita/sigla-main/commit/610e5b5c5178aa5) csalvio *June 23, 2026*
+
+>**eliminati spazi**
+>
+>[f21ee2c12c75485](https://github.com/istitutosuperioredisanita/sigla-main/commit/f21ee2c12c75485) csalvio *June 23, 2026*
+
+>**Bumped version to 8.0.12**
+>
+>[9c10173ac51a5e4](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c10173ac51a5e4) dirgensa *June 23, 2026*
+
+
+## Release 8.0.12  -- _June 23, 2026_ 
+**Changes**
+
+>**[skip ci] modifica per generare il file zip con nome aaaannnnnnnnnnnnnnnnnnXXXXYYY.zip  come da documentazione che contiene un solo file xbrl con prefisso aaaannnnnnnnnnnnnnnnnnXXXXYYY dovve aaaa è l'anno nnnnnnnnnnnnnnnnnn e il codice bdap dell'ente e XXXXYYY pee la sperimentazione sempre RENDSKA**
+>
+>[d113b16072706b2](https://github.com/istitutosuperioredisanita/sigla-main/commit/d113b16072706b2) csalvio *June 23, 2026*
+
+>**Bumped version to 8.0.11**
+>
+>[c350a907a727548](https://github.com/istitutosuperioredisanita/sigla-main/commit/c350a907a727548) dirgensa *June 22, 2026*
+
+
+## Release 8.0.11  -- _June 22, 2026_ 
+**Changes**
+
+>**[skip ci] configuraro InstantContextXbrl per stato patrimoniale e schema aggiuntivo e corretto nome metodo getCodiceBdapEnte**
+>
+>[d4ef2de9f74b6d2](https://github.com/istitutosuperioredisanita/sigla-main/commit/d4ef2de9f74b6d2) csalvio *June 22, 2026*
+
+>**[skip ci] configuraro InstantContextXbrl per stato patrimoniale e schema aggiuntivo**
+>
+>[eeef1278f6278c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/eeef1278f6278c1) csalvio *June 22, 2026*
+
+>**Bumped version to 8.0.10**
+>
+>[6c3354f935d479a](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c3354f935d479a) dirgensa *June 22, 2026*
+
+
+## Release 8.0.10  -- _June 22, 2026_ 
+**Changes**
+
+>**fix:Nome File Zip e reload in edit post creazione file accrual**
+>
+>[fafb19bd933085e](https://github.com/istitutosuperioredisanita/sigla-main/commit/fafb19bd933085e) csalvio *June 22, 2026*
+
+>**Riattivati i test**
+>
+>[ddbf0fc7d64c268](https://github.com/istitutosuperioredisanita/sigla-main/commit/ddbf0fc7d64c268) csalvioiss *June 22, 2026*
+
+>**Bumped version to 8.0.9**
+>
+>[3982767edbbb87f](https://github.com/istitutosuperioredisanita/sigla-main/commit/3982767edbbb87f) dirgensa *June 22, 2026*
+
+
+## Release 8.0.9  -- _June 22, 2026_ 
+**Changes**
+
+>**Fix errore**
+>
+>[eb09ee77b9a76f0](https://github.com/istitutosuperioredisanita/sigla-main/commit/eb09ee77b9a76f0) csalvio *June 22, 2026*
+
+>**Restore generazione Stato Patrimnoniale e schema aggiuntivo**
+>
+>[67c4fd4ccdaf029](https://github.com/istitutosuperioredisanita/sigla-main/commit/67c4fd4ccdaf029) csalvio *June 22, 2026*
+
+>**Update maven.yml**
+>
+>[1f093b6f68b3f70](https://github.com/istitutosuperioredisanita/sigla-main/commit/1f093b6f68b3f70) csalvioiss *June 22, 2026*
+
+>**Eliminato il dettaglio conto dalle riclassificazioni**
+>
+>[17284a918c2dd34](https://github.com/istitutosuperioredisanita/sigla-main/commit/17284a918c2dd34) csalvio *June 22, 2026*
+
+>**Bumped version to 8.0.8**
+>
+>[b0e1e2d143174c5](https://github.com/istitutosuperioredisanita/sigla-main/commit/b0e1e2d143174c5) dirgensa *June 22, 2026*
+
+
+## Release 8.0.8  -- _June 22, 2026_ 
+**Changes**
+
+>**Aumentata la dimensione della lunghezza a 50 della colonna nomeTassAccrual**
+>
+>[2020c2f1875b0ce](https://github.com/istitutosuperioredisanita/sigla-main/commit/2020c2f1875b0ce) csalvio *June 22, 2026*
+
+>**Bumped version to 8.0.7**
+>
+>[251d8e7398d4734](https://github.com/istitutosuperioredisanita/sigla-main/commit/251d8e7398d4734) dirgensa *June 22, 2026*
+
+
+## Release 8.0.7  -- _June 22, 2026_ 
+**Changes**
+
+>**Revert modifica**
+>
+>[a264eeb78298791](https://github.com/istitutosuperioredisanita/sigla-main/commit/a264eeb78298791) csalvio *June 22, 2026*
+
+>**Aggiunta configurazione CNR per Accrual**
+>
+>[a6329ab996e3f04](https://github.com/istitutosuperioredisanita/sigla-main/commit/a6329ab996e3f04) csalvio *June 22, 2026*
+
+>**Aggiunta configurazione codice BDAP per XBRL Accrual**
+>
+>[464d7b8fda3e2cd](https://github.com/istitutosuperioredisanita/sigla-main/commit/464d7b8fda3e2cd) csalvio *June 22, 2026*
+
+>**Aggiunta gestione AccrualXbrException**
+>
+>[c2add86b0dc8f10](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2add86b0dc8f10) csalvio *June 22, 2026*
+
+>**Bumped version to 8.0.6**
+>
+>[a140395f3793cb1](https://github.com/istitutosuperioredisanita/sigla-main/commit/a140395f3793cb1) dirgensa *June 19, 2026*
+
+
+## Release 8.0.6  -- _June 19, 2026_ 
+**Changes**
+
+>**Accrual Salvataggio File in Storage**
+>
+>[3637780802fde10](https://github.com/istitutosuperioredisanita/sigla-main/commit/3637780802fde10) csalvio *June 19, 2026*
+
+>**Bumped version to 8.0.5**
+>
+>[c2de649ad10f8a4](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2de649ad10f8a4) dirgensa *June 19, 2026*
+
+
+## Release 8.0.5  -- _June 19, 2026_ 
+**Changes**
+
+>**Fix invio annullamento per mandato Banca D'Italia caso non multibeneficiario**
+>
+>[c23f423d44d57f5](https://github.com/istitutosuperioredisanita/sigla-main/commit/c23f423d44d57f5) csalvio *June 19, 2026*
+
+>**Bumped version to 8.0.4**
+>
+>[4db706f011b838a](https://github.com/istitutosuperioredisanita/sigla-main/commit/4db706f011b838a) dirgensa *June 18, 2026*
+
+
+## Release 8.0.4  -- _June 18, 2026_ 
+**Changes**
+
+>**Aggiunto add_cnr_gruppo_ep_nome_tass_accrual**
+>
+>[4a5b02e632dea1d](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a5b02e632dea1d) csalvio *June 18, 2026*
+
+>**gestita visibilità colonna NOME_TASS_ACCRUAL se selezionato come tipo bilancio ACCRUAL/ACCRUAL-AGG e fix width colonna checkbox dei dettagli doc. trasporto/rientro**
+>
+>[2cc280e0ce27d13](https://github.com/istitutosuperioredisanita/sigla-main/commit/2cc280e0ce27d13) davide-mirra *June 18, 2026*
+
+>**Sviluppo creazione file zip con i file xbrl**
+>
+>[aac159697b44ea3](https://github.com/istitutosuperioredisanita/sigla-main/commit/aac159697b44ea3) csalvio *June 18, 2026*
+
+>**Sviluppo creazione file zip con i file xb**
+>
+>[2a6d73b125d8dfb](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a6d73b125d8dfb) csalvio *June 18, 2026*
+
+>**Gestione Nome Tassonomia ACCRULA**
+>
+>[7c049342d761041](https://github.com/istitutosuperioredisanita/sigla-main/commit/7c049342d761041) csalvio *June 18, 2026*
+
+>**Aggiunto campo NOME_TASS_ACCRUAL su CNR_GRUPPO_EP**
+>
+>[7a2e747e8bf8459](https://github.com/istitutosuperioredisanita/sigla-main/commit/7a2e747e8bf8459) csalvio *June 18, 2026*
+
+>**aggiunta la colonna tassonomia accrual sul bilancio riclassificato**
+>
+>[7c3f166ea1fcdf4](https://github.com/istitutosuperioredisanita/sigla-main/commit/7c3f166ea1fcdf4) salvio_ciro *June 18, 2026*
+
+>**Implementazione Accrual**
+>
+>[5729bf605c81cba](https://github.com/istitutosuperioredisanita/sigla-main/commit/5729bf605c81cba) csalvio *June 18, 2026*
+
+>**Primo commit per gestione Contabilità Accrual MEF**
+> * - Aggiunti changelog Liquibase per tabella ACCRUAL e configurazione menu/accessi
+> * - Aggiunto AccrualBulk con dizionario stati e supporto al path documentale
+> * - Aggiunti CRUDAccrualMefBP e CRUDAccrualMefAction con tab Modulo e Allegati
+> * - Aggiunta gestione allegati dedicata per Accrual con tipologie XBRL ZIP e Altro
+> * - Aggiunta validazione file XBRL ZIP come archivio ZIP contenente almeno un file .xbrl
+> * - Configurate voci menu Visualizzazione e Gestione sotto Consuntivo
+>
+>[42f2013343f2414](https://github.com/istitutosuperioredisanita/sigla-main/commit/42f2013343f2414) mirra_davide *June 18, 2026*
+
+>**Fix invio annullamento per mandato Banca D'Italia**
+>
+>[34d50d1c99c0486](https://github.com/istitutosuperioredisanita/sigla-main/commit/34d50d1c99c0486) csalvio *June 18, 2026*
+
+>**Bumped version to 8.0.3**
+>
+>[d1fa1bcc576e17a](https://github.com/istitutosuperioredisanita/sigla-main/commit/d1fa1bcc576e17a) dirgensa *June 16, 2026*
+
+
+## Release 8.0.3  -- _June 16, 2026_ 
+**Changes**
+
+>**new feature: add session destroy endpoint**
+> * Add POST /session/destroy endpoint to invalidate the current
+> * HttpSession, to be called by the frontend on tab close
+> * (beforeunload) for proactive server-side session cleanup.
+>
+>[28e63d7031bf4a2](https://github.com/istitutosuperioredisanita/sigla-main/commit/28e63d7031bf4a2) marco.spasiano *June 16, 2026*
+
+>**Bumped version to 8.0.2**
+>
+>[e67ae160c8f263f](https://github.com/istitutosuperioredisanita/sigla-main/commit/e67ae160c8f263f) dirgensa *June 11, 2026*
+
+
+## Release 8.0.2  -- _June 11, 2026_ 
+**Changes**
+
+>**add: Docker image tagging with fixed "release" tag alongside versioned tag**
+>
+>[6dc3ab121da815b](https://github.com/istitutosuperioredisanita/sigla-main/commit/6dc3ab121da815b) marco.spasiano *June 11, 2026*
+
+>**Fix BASIC auth popup on session expiry: set FORM as first mechanism in sigla-http-auth factory, BASIC with silent=true as fallback.**
+>
+>[b8829a6e2b966e9](https://github.com/istitutosuperioredisanita/sigla-main/commit/b8829a6e2b966e9) marco.spasiano *June 11, 2026*
+
+>**fix(test): suppress Liquibase INFO logs during Arquillian tests**
+>
+>[6bc651362dad4cf](https://github.com/istitutosuperioredisanita/sigla-main/commit/6bc651362dad4cf) marco.spasiano *June 09, 2026*
+
+>**Bumped version to 8.0.1**
+>
+>[1fec6862d99986f](https://github.com/istitutosuperioredisanita/sigla-main/commit/1fec6862d99986f) dirgensa *June 08, 2026*
+
+
+## Release 8.0.1  -- _June 08, 2026_ 
+**Changes**
+
+>**fix: basic authenitcation mechanism**
+>
+>[804e34580d06f6e](https://github.com/istitutosuperioredisanita/sigla-main/commit/804e34580d06f6e) csalvio *June 08, 2026*
+
+>**new feature: rimozione del vincolo sul bilancio IRES ed estese le funzionalità di riclassificazione, aggiunto anche il campo note e modificata la stampa dello stato patrimoniale [ci skip]**
+>
+>[d33ae384245c00e](https://github.com/istitutosuperioredisanita/sigla-main/commit/d33ae384245c00e) marco.spasiano *June 04, 2026*
+
+>**add: upgrade version of jada**
+>
+>[60862d51506b165](https://github.com/istitutosuperioredisanita/sigla-main/commit/60862d51506b165) mspasiano *June 04, 2026*
+
+>**new feature: rimozione del vincolo sul bilancio IRES ed estese le funzionalità di riclassificazione**
+>
+>[145d186495207a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/145d186495207a9) mspasiano *June 04, 2026*
+
+>**new feature: rimozione del vincolo sul bilancio IRES ed estese le funzionalità di riclassificazione, aggiunto anche il campo note e modificata la stampa dello stato patrimoniale**
+>
+>[d67a7863d7409cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/d67a7863d7409cc) mspasiano *June 04, 2026*
+
+>**new feature: rimozione del vincolo sul bilancio IRES ed estese le funzionalità di riclassificazione**
+>
+>[5a3f1a969dfb89c](https://github.com/istitutosuperioredisanita/sigla-main/commit/5a3f1a969dfb89c) mspasiano *June 04, 2026*
+
+
+## Release 8.0.0  -- _May 26, 2026_ 
+**Changes**
+
+>**Aggiunto gestione tabella tipo_prestazione compenso**
+>
+>[25dc4061dbaf583](https://github.com/istitutosuperioredisanita/sigla-main/commit/25dc4061dbaf583) salvio_ciro *May 26, 2026*
+
+>**fix: issue #32117 di Spring Framework. A partire da Spring 6.1, se il codice è compilato senza il flag -parameters, l'espressione SpEL { #param1, #param2 } nella chiave di @Cacheable smette di funzionare correttamente: i parametri vengono risolti a null, e quindi la chiave diventa un ArrayList di null. Il risultato è che tutte le invocazioni successive restituiscono silenziosamente il risultato della prima, ignorando i valori reali dei parametri**
+>
+>[d3c1e09c3e98ba6](https://github.com/istitutosuperioredisanita/sigla-main/commit/d3c1e09c3e98ba6) mspasiano *May 26, 2026*
+
+>**Update maven.yml**
+>
+>[374bea3bbc2e2ec](https://github.com/istitutosuperioredisanita/sigla-main/commit/374bea3bbc2e2ec) dirgensa *May 25, 2026*
+
+>**Update maven.yml**
+>
+>[a460b20cfbca097](https://github.com/istitutosuperioredisanita/sigla-main/commit/a460b20cfbca097) dirgensa *May 25, 2026*
 
 >**POM.XML eliminate variabili per sviluppo**
 >
@@ -1089,18 +1591,9 @@
 >
 >[7ba8e6bcf126c4d](https://github.com/istitutosuperioredisanita/sigla-main/commit/7ba8e6bcf126c4d) salvio_ciro *March 17, 2026*
 
->**Revert "Fix ricerca conto ep su esegui calcolo"**
-> * This reverts commit 02fde6e5852e44a6cab598163c55cf856e5810ff.
->
->[1ba74d17dfe692b](https://github.com/istitutosuperioredisanita/sigla-main/commit/1ba74d17dfe692b) salvio_ciro *March 17, 2026*
-
 >**fix gestione per la ricerca dei terzi (dipendenti attivi) nella serchtool dell'assegnatario per i buoni di carico, dip. incaricato e dip. per lo smartworking nei doc di trasporto**
 >
 >[8785f518516adad](https://github.com/istitutosuperioredisanita/sigla-main/commit/8785f518516adad) mirra_davide *March 17, 2026*
-
->**Fix ricerca conto ep su esegui calcolo**
->
->[02fde6e5852e44a](https://github.com/istitutosuperioredisanita/sigla-main/commit/02fde6e5852e44a) salvio_ciro *March 16, 2026*
 
 >**fix segnalazione two methods in parallel types must not decalre parameter constraints**
 >
@@ -1113,6 +1606,10 @@
 >**Fixs Merge con sviluppo**
 >
 >[3aabdac5aab9539](https://github.com/istitutosuperioredisanita/sigla-main/commit/3aabdac5aab9539) salvio_ciro *March 13, 2026*
+
+>**fix error Caused by: oracle.jdbc.OracleDatabaseException: ORA-20020: Conto ep non trovato:-**
+>
+>[5b01e558f8d0396](https://github.com/istitutosuperioredisanita/sigla-main/commit/5b01e558f8d0396) salvio_ciro *March 13, 2026*
 
 >**Bumped version to 7.0.67**
 >
@@ -1207,10 +1704,6 @@
 >**fix: JAX-WS RI (Reference Implementation)**
 >
 >[265cbb00190088b](https://github.com/istitutosuperioredisanita/sigla-main/commit/265cbb00190088b) mspasiano *February 23, 2026*
-
->**Bumped version to 7.0.64**
->
->[c4f14cecfacbfea](https://github.com/istitutosuperioredisanita/sigla-main/commit/c4f14cecfacbfea) dirgensa *February 23, 2026*
 
 >**Fix tests**
 >
@@ -1493,17 +1986,11 @@
 >[e9f7a38dc453026](https://github.com/istitutosuperioredisanita/sigla-main/commit/e9f7a38dc453026) raffaele.pagano *January 26, 2026*
 
 >**Ribaltamento Inizio Anno:gestione configurazione 130_REG_FATT_PAS,140_STORNO_FATT_PAS,150_STORNO_FATT_ATT.**
-> * 130_REG_FATT_PAS: Viene valorizzato col primo giorno dell&#39;anno contabile che si sta aprendo
-> * 140_STORNO_FATT_PAS,150_STORNO_FATT_ATT: Valorizzati con mese e giorni dell&#39;anno precedente se esistono altrimenti con la data di ribaltamento
+> * 130_REG_FATT_PAS: Viene valorizzato col primo giorno dell&#x27;anno contabile che si sta aprendo
+> * 140_STORNO_FATT_PAS,150_STORNO_FATT_ATT: Valorizzati con mese e giorni dell&#x27;anno precedente se esistono altrimenti con la data di ribaltamento
 > * (cherry picked from commit 861d3a34c76538d643c409ff5b8d83157811d56b)
 >
 >[7cf7acb4b6b8b0a](https://github.com/istitutosuperioredisanita/sigla-main/commit/7cf7acb4b6b8b0a) salvio_ciro *January 26, 2026*
-
->**Ribaltamento Inizio Anno:gestione configurazione 130_REG_FATT_PAS,140_STORNO_FATT_PAS,150_STORNO_FATT_ATT.**
-> * 130_REG_FATT_PAS: Viene valorizzato col primo giorno dell&#39;anno contabile che si sta aprendo
-> * 140_STORNO_FATT_PAS,150_STORNO_FATT_ATT: Valorizzati con mese e giorni dell&#39;anno precedente se esistono altrimenti con la data di ribaltamento
->
->[861d3a34c76538d](https://github.com/istitutosuperioredisanita/sigla-main/commit/861d3a34c76538d) salvio_ciro *January 26, 2026*
 
 >**fix gestione selezione beni da far rientrare**
 >
@@ -1523,13 +2010,9 @@
 
 >**fix: rimozione accessori duplicati quando già inclusi in un bene principale selezionato**
 > * fix: Aggiunta degli accessori selezionati singolarmente dopo la gestione del bene principale dal popup
-> * eliminato filtro ricerca fl_dismesso=false
+> * eliminato filtro ricerca fl_dismesso&#x3D;false
 >
 >[69b352f8af5513b](https://github.com/istitutosuperioredisanita/sigla-main/commit/69b352f8af5513b) mirra_davide *January 26, 2026*
-
->**Bumped version to 7.0.59**
->
->[00b89e1d1aee657](https://github.com/istitutosuperioredisanita/sigla-main/commit/00b89e1d1aee657) dirgensa *January 26, 2026*
 
 >**new feature: aggiunta nuova consultazione dello scadenzario impegni per le informazioni sull'ordinato ed evaso**
 >
@@ -1661,7 +2144,7 @@
 
 >**Fix anomali registrazione Fattura:**
 > * -getsione inizializzazione Numerazione_coge_coan
-> * -gestione Rowrapper quando inventario per l&#39;esercizio è ancora chiuso
+> * -gestione Rowrapper quando inventario per l&#x27;esercizio è ancora chiuso
 > * (cherry picked from commit 346e389182965a25d330ce392eabc41ccb455ce5)
 >
 >[dfe2c6b4fe2ce09](https://github.com/istitutosuperioredisanita/sigla-main/commit/dfe2c6b4fe2ce09) salvio_ciro *January 16, 2026*
@@ -1756,16 +2239,16 @@
 
 >**new feature: resa possibile la cancellazione di modifiche agli impegni residui**
 > * # Conflicts:
-> * #&#9;sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/ObbligazioneResComponentSession.java
-> * #&#9;sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/TransactionalObbligazioneComponentSession.java
+> * #	sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/ObbligazioneResComponentSession.java
+> * #	sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/TransactionalObbligazioneComponentSession.java
 >
 >[11dc8fb706c53f4](https://github.com/istitutosuperioredisanita/sigla-main/commit/11dc8fb706c53f4) mspasiano *December 22, 2025*
 
 >**new feature: resa possibile la cancellazione di modifiche agli impegni residui**
 > * # Conflicts:
-> * #&#9;sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/TransactionalObbligazioneComponentSession.java
-> * #&#9;sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/TransactionalObbligazionePluriennaleComponentSession.java
-> * #&#9;sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/TransactionalObbligazioneResComponentSession.java
+> * #	sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/TransactionalObbligazioneComponentSession.java
+> * #	sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/TransactionalObbligazionePluriennaleComponentSession.java
+> * #	sigla-ejb/src/main/java/it/cnr/contab/doccont00/ejb/TransactionalObbligazioneResComponentSession.java
 >
 >[193554445c15112](https://github.com/istitutosuperioredisanita/sigla-main/commit/193554445c15112) mspasiano *December 22, 2025*
 
@@ -1976,10 +2459,6 @@
 
 >**Gestione Ribaltamento Progetti dopo apertura anno.**
 >
->[192c5472ae54ce1](https://github.com/istitutosuperioredisanita/sigla-main/commit/192c5472ae54ce1) raffaele.pagano *December 05, 2025*
-
->**Gestione Ribaltamento Progetti dopo apertura anno.**
->
 >[a94838a65bde3b6](https://github.com/istitutosuperioredisanita/sigla-main/commit/a94838a65bde3b6) raffaele.pagano *December 05, 2025*
 
 >**Fix tests**
@@ -2070,14 +2549,6 @@
 >
 >[ad78d1900eb4b20](https://github.com/istitutosuperioredisanita/sigla-main/commit/ad78d1900eb4b20) mspasiano *December 01, 2025*
 
->**Update inventario.rst**
->
->[98c4e45cf55c09e](https://github.com/istitutosuperioredisanita/sigla-main/commit/98c4e45cf55c09e) patriziavillani *December 01, 2025*
-
->**Update inventario.rst**
->
->[046ac84da29652d](https://github.com/istitutosuperioredisanita/sigla-main/commit/046ac84da29652d) patriziavillani *December 01, 2025*
-
 >**new feature: aggiornamento java 17 e wildfly 32.0.0.Final**
 >
 >[0bfa750bf2c888a](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bfa750bf2c888a) mspasiano *December 01, 2025*
@@ -2109,10 +2580,6 @@
 >**SCARICO INVENTARIO - controllo preventivo su presenza accessori per scarico totale definitivo**
 >
 >[1c1c49202f26a23](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c1c49202f26a23) tomada_valentina *November 27, 2025*
-
->**Bumped version to 7.0.49**
->
->[47db93306136179](https://github.com/istitutosuperioredisanita/sigla-main/commit/47db93306136179) dirgensa *November 27, 2025*
 
 >**Eliminato DocTraspRientCMISService**
 >
@@ -2184,26 +2651,10 @@
 >
 >[628d11ce9fd4f44](https://github.com/istitutosuperioredisanita/sigla-main/commit/628d11ce9fd4f44) salvio_ciro *November 14, 2025*
 
->**Fix issu creazione vista V_CONS_SALDI_RESIDUI_SPE_DET**
->
->[6bead5d4ccf2e66](https://github.com/istitutosuperioredisanita/sigla-main/commit/6bead5d4ccf2e66) salvio_ciro *November 14, 2025*
-
 >**Refactoring package NumerazioneOrdComponent**
 > * (cherry picked from commit f6b6af363700a7778124bcf2158630bc11b4c893)
 >
 >[031e12788cc0ba5](https://github.com/istitutosuperioredisanita/sigla-main/commit/031e12788cc0ba5) salvio_ciro *November 14, 2025*
-
->**Refactoring package NumerazioneOrdComponent**
->
->[f6b6af363700a77](https://github.com/istitutosuperioredisanita/sigla-main/commit/f6b6af363700a77) salvio_ciro *November 13, 2025*
-
->**Fix ricerca numeratori: Adesso la ricerca ritorna solo i numeratori di unita operative associate all'unità organizzativa del contesto. Se il contesto è la UO ente puoi gestire tutti i numeratori**
->
->[6f4ed5efb43fdf3](https://github.com/istitutosuperioredisanita/sigla-main/commit/6f4ed5efb43fdf3) salvio_ciro *November 13, 2025*
-
->**new feature: condizionati workflow si GitHub per la build della documentazione [ci skip]**
->
->[243e22b291dd649](https://github.com/istitutosuperioredisanita/sigla-main/commit/243e22b291dd649) mspasiano *November 13, 2025*
 
 >**Fix ricerca numeratori: Adesso la ricerca ritorna solo i numeratori di unita operative associate all'unità organizzativa del contesto. Se il contesto è la UO ente puoi gestire tutti i numeratori**
 >
@@ -2213,31 +2664,6 @@
 >
 >[ada57e63d834041](https://github.com/istitutosuperioredisanita/sigla-main/commit/ada57e63d834041) tomada_valentina *November 13, 2025*
 
->**Update limiti-di-spesa.rst**
->
->[2a90641b5ea0d04](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a90641b5ea0d04) patriziavillani *November 13, 2025*
-
->**Update condizione-sospensiva.rst [ci skip]**
->
->[6fc4588c27666e7](https://github.com/istitutosuperioredisanita/sigla-main/commit/6fc4588c27666e7) patriziavillani *November 13, 2025*
-
->**Update condizione-sospensiva.rst [ci skip]**
->
->[bf3567ee102667c](https://github.com/istitutosuperioredisanita/sigla-main/commit/bf3567ee102667c) patriziavillani *November 13, 2025*
-
->**Update condizione-sospensiva.rst [ci skip]**
->
->[f1b845390ad2edf](https://github.com/istitutosuperioredisanita/sigla-main/commit/f1b845390ad2edf) patriziavillani *November 13, 2025*
-
->**Revert "Fix ricerca numeratori: Adesso la ricerca ritorna solo i numeratori di unita operative associate all'unità organizzativa del contesto"**
-> * This reverts commit f37c9bb990101b592c51e87b55b197b9148ee4c3.
->
->[d3cd9fe34882f6e](https://github.com/istitutosuperioredisanita/sigla-main/commit/d3cd9fe34882f6e) salvio_ciro *November 13, 2025*
-
->**Fix ricerca numeratori: Adesso la ricerca ritorna solo i numeratori di unita operative associate all'unità organizzativa del contesto**
->
->[f37c9bb990101b5](https://github.com/istitutosuperioredisanita/sigla-main/commit/f37c9bb990101b5) salvio_ciro *November 13, 2025*
-
 >**FLUSSO CASSA - implementazione filtro trimestre**
 >
 >[3328677add7ae21](https://github.com/istitutosuperioredisanita/sigla-main/commit/3328677add7ae21) tomada_valentina *November 13, 2025*
@@ -2245,10 +2671,6 @@
 >**Sviluppo flussi di cassa**
 >
 >[676068adb48347f](https://github.com/istitutosuperioredisanita/sigla-main/commit/676068adb48347f) salvio_ciro *November 12, 2025*
-
->**Bumped version to 7.0.46**
->
->[5471ffdf9db4fb7](https://github.com/istitutosuperioredisanita/sigla-main/commit/5471ffdf9db4fb7) dirgensa *November 12, 2025*
 
 >**Fix Tipo Attivita Ordine con tipo attivita isituzionale/coomerciale Numeratore**
 >
@@ -2374,10 +2796,6 @@
 >
 >[65f0b6499ae919e](https://github.com/istitutosuperioredisanita/sigla-main/commit/65f0b6499ae919e) tomada_valentina *October 29, 2025*
 
->**autofattura-> prima di aprire la gestione alle note di credito con autofattura è necssario verificare l'xml generato**
->
->[95ac897dcf19954](https://github.com/istitutosuperioredisanita/sigla-main/commit/95ac897dcf19954) salvio_ciro *October 29, 2025*
-
 >**Tests Creazione Ordine, evasione, riscontro a valore e modifica riscontro a valore**
 >
 >[cd1bd58bfba6f31](https://github.com/istitutosuperioredisanita/sigla-main/commit/cd1bd58bfba6f31) raffaele.pagano *October 29, 2025*
@@ -2418,10 +2836,6 @@
 >**Tests Creazione Ordine, evasione, riscontro a valore e modifica riscontro a valore**
 >
 >[4ace7a27af7c099](https://github.com/istitutosuperioredisanita/sigla-main/commit/4ace7a27af7c099) raffaele.pagano *October 23, 2025*
-
->**Bumped version to 7.0.44**
->
->[cba565c44f3b77f](https://github.com/istitutosuperioredisanita/sigla-main/commit/cba565c44f3b77f) dirgensa *October 23, 2025*
 
 >**Aggiunto filtro su data acquisizione**
 >
@@ -2611,53 +3025,1195 @@
 >
 >[b510f8e4574e028](https://github.com/istitutosuperioredisanita/sigla-main/commit/b510f8e4574e028) raffaele.pagano *September 15, 2025*
 
->**FLUSSO STIPENDI - eliminato metodo non utilizzato**
->
->[a4e70cc4160a6bf](https://github.com/istitutosuperioredisanita/sigla-main/commit/a4e70cc4160a6bf) tomada_valentina *September 15, 2025*
-
 >**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
 >
 >[7a2d1daa89005cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/7a2d1daa89005cc) raffaele.pagano *September 12, 2025*
-
->**Bumped version to 7.0.30**
->
->[506c97a45f074ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/506c97a45f074ba) dirgensa *September 11, 2025*
-
->**Gestione MultiClassificazioni - Consultazione**
->
->[c36636cd512781f](https://github.com/istitutosuperioredisanita/sigla-main/commit/c36636cd512781f) raffaele.pagano *September 11, 2025*
 
 >**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
 >
 >[dac1c1354a13982](https://github.com/istitutosuperioredisanita/sigla-main/commit/dac1c1354a13982) raffaele.pagano *September 09, 2025*
 
->**SCARICO INVENTARIO - Scarico definitivo se movimento di Dismissione**
->
->[720af008371e04a](https://github.com/istitutosuperioredisanita/sigla-main/commit/720af008371e04a) tomada_valentina *September 09, 2025*
-
 >**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
 >
 >[b88e2e89ad2e429](https://github.com/istitutosuperioredisanita/sigla-main/commit/b88e2e89ad2e429) raffaele.pagano *August 29, 2025*
-
->**Fix anomalia chiusura ammortamento aggiungo progressico in join**
->
->[da3aaab8bf8da78](https://github.com/istitutosuperioredisanita/sigla-main/commit/da3aaab8bf8da78) salvio_ciro *August 28, 2025*
-
->**Bumped version to 7.0.25**
->
->[d954d7cce1bd44d](https://github.com/istitutosuperioredisanita/sigla-main/commit/d954d7cce1bd44d) dirgensa *August 27, 2025*
 
 >**fix calcolo consuntivo spese missione**
 >
 >[3678ff7e1b3d3ad](https://github.com/istitutosuperioredisanita/sigla-main/commit/3678ff7e1b3d3ad) davide.mirra *August 18, 2025*
 
->**Controllo per evitare di inserire più volte in ass_inv_bene_fattura**
->
->[39e9aa16fa58c8b](https://github.com/istitutosuperioredisanita/sigla-main/commit/39e9aa16fa58c8b) salvio_ciro *August 14, 2025*
-
 >**Check null list**
 >
 >[783605e1f10fa64](https://github.com/istitutosuperioredisanita/sigla-main/commit/783605e1f10fa64) salvio_ciro *August 14, 2025*
+
+>**Fix refactoring generazione movimenti magazzino**
+>
+>[39ab0e325675efb](https://github.com/istitutosuperioredisanita/sigla-main/commit/39ab0e325675efb) salvio_ciro *August 14, 2025*
+
+>**Aggiunto metodo caricoDaOrdineRigheEvase che esegue la movimentazione del magazzino per tutte le consegne dell'ordine. Ottimizzazione per evasioni di ordine con molte consegne**
+>
+>[77234816e146a99](https://github.com/istitutosuperioredisanita/sigla-main/commit/77234816e146a99) salvio_ciro *August 13, 2025*
+
+>**Aggiunto il default che la quantità evase è uguale alla quantità della riga. Per evitare che per ordine grandi bisogna selezionare ogni riga.**
+>
+>[88f6a727381c690](https://github.com/istitutosuperioredisanita/sigla-main/commit/88f6a727381c690) salvio_ciro *August 13, 2025*
+
+>**fix Riscontro valore-> aggiunti a OrdineAcqKey, OrdineAcqRigaKey e OrdineAcqConsegnaKey i metodi hashCode e equals**
+> * (cherry picked from commit e8a0fe97e05303863bc93b98d9c5e7f384c66372)
+>
+>[4e81f2215a527c5](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e81f2215a527c5) salvio_ciro *August 13, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[4cb35f3ce02c5ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/4cb35f3ce02c5ee) raffaele.pagano *August 05, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[e74a22d20eda9db](https://github.com/istitutosuperioredisanita/sigla-main/commit/e74a22d20eda9db) raffaele.pagano *August 05, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[33a6be1a0942449](https://github.com/istitutosuperioredisanita/sigla-main/commit/33a6be1a0942449) raffaele.pagano *August 01, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[fe633786c752964](https://github.com/istitutosuperioredisanita/sigla-main/commit/fe633786c752964) raffaele.pagano *July 26, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[aa8b3012d06fed3](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa8b3012d06fed3) raffaele.pagano *July 23, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[f83479a255f4be2](https://github.com/istitutosuperioredisanita/sigla-main/commit/f83479a255f4be2) raffaele.pagano *July 17, 2025*
+
+>**CONFRONTA COFE COFI - visualizzazione descrizioni e filtro ricerca**
+>
+>[ef156a933bb54ec](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef156a933bb54ec) tomada_valentina *July 14, 2025*
+
+>**CONFRONTA COFE COFI - visualizzazione descrizioni e filtro ricerca**
+>
+>[13acdef0d3e3a98](https://github.com/istitutosuperioredisanita/sigla-main/commit/13acdef0d3e3a98) tomada_valentina *July 14, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[0f018f353b00e1d](https://github.com/istitutosuperioredisanita/sigla-main/commit/0f018f353b00e1d) raffaele.pagano *July 12, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[92c1c74af61cdd0](https://github.com/istitutosuperioredisanita/sigla-main/commit/92c1c74af61cdd0) raffaele.pagano *July 10, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[fd4d0399ceb7955](https://github.com/istitutosuperioredisanita/sigla-main/commit/fd4d0399ceb7955) raffaele.pagano *July 09, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[962d30a5abe3eb7](https://github.com/istitutosuperioredisanita/sigla-main/commit/962d30a5abe3eb7) raffaele.pagano *July 06, 2025*
+
+>**fix error view**
+>
+>[56db785fda0b67f](https://github.com/istitutosuperioredisanita/sigla-main/commit/56db785fda0b67f) davide.mirra *June 30, 2025*
+
+>**aggiunta campi nuovi (flag e importi) a view e stored procedure, aggiunta al tab del consuntivo missione i totali di spese tracciate/non tracciate**
+>
+>[a93c0e495ee6ae2](https://github.com/istitutosuperioredisanita/sigla-main/commit/a93c0e495ee6ae2) davide.mirra *June 30, 2025*
+
+>**rename file liquidbase**
+>
+>[9a19e2bac64baf3](https://github.com/istitutosuperioredisanita/sigla-main/commit/9a19e2bac64baf3) davide.mirra *June 26, 2025*
+
+>**fix name spese tracc/no tracc**
+>
+>[b5dca53df4ee878](https://github.com/istitutosuperioredisanita/sigla-main/commit/b5dca53df4ee878) davide.mirra *June 25, 2025*
+
+>**aggiunto flag spesa tracciata per i dettagli spese delle missioni e implementata logica al momento dell'inserimento in SIGLA**
+>
+>[84418c28a9ca961](https://github.com/istitutosuperioredisanita/sigla-main/commit/84418c28a9ca961) davide.mirra *June 25, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[d2307900ea05ccf](https://github.com/istitutosuperioredisanita/sigla-main/commit/d2307900ea05ccf) raffaele.pagano *June 24, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[d1f3527f30812ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/d1f3527f30812ee) raffaele.pagano *June 21, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[d570c5afc912c3c](https://github.com/istitutosuperioredisanita/sigla-main/commit/d570c5afc912c3c) raffaele.pagano *June 20, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[5fae17aacbb6c95](https://github.com/istitutosuperioredisanita/sigla-main/commit/5fae17aacbb6c95) raffaele.pagano *June 16, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[1c02fc9b59b207c](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c02fc9b59b207c) raffaele.pagano *June 16, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[8d4579d1edd6047](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d4579d1edd6047) raffaele.pagano *May 26, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[4e383d2444a86ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e383d2444a86ba) raffaele.pagano *May 20, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[9427d894fdedce8](https://github.com/istitutosuperioredisanita/sigla-main/commit/9427d894fdedce8) raffaele.pagano *May 20, 2025*
+
+>**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
+>
+>[c7803f54c66b294](https://github.com/istitutosuperioredisanita/sigla-main/commit/c7803f54c66b294) raffaele.pagano *April 29, 2025*
+
+
+## Release 7.0.67  -- _March 12, 2026_ 
+**Changes**
+
+>**Abilita il check Studio Associato sull'anagrafica anche per le persone fisiche**
+>
+>[bfa01d88820b566](https://github.com/istitutosuperioredisanita/sigla-main/commit/bfa01d88820b566) salvio_ciro *March 12, 2026*
+
+>**Bumped version to 7.0.66**
+>
+>[1d498e126e6ab83](https://github.com/istitutosuperioredisanita/sigla-main/commit/1d498e126e6ab83) dirgensa *March 12, 2026*
+
+
+## Release 7.0.66  -- _March 12, 2026_ 
+**Changes**
+
+>**Gestione del Bollo Rivalsa -2 euro a compensazione del bollo di 2 euro che per viene assolto dall'ente e non imputato al debitore**
+>
+>[9ba73b51804ab88](https://github.com/istitutosuperioredisanita/sigla-main/commit/9ba73b51804ab88) salvio_ciro *March 12, 2026*
+
+>**Bumped version to 7.0.65**
+>
+>[77acdc5bf866799](https://github.com/istitutosuperioredisanita/sigla-main/commit/77acdc5bf866799) dirgensa *March 10, 2026*
+
+
+## Release 7.0.65  -- _March 10, 2026_ 
+**Changes**
+
+>**Modificato il controllo sul valore unitario al momento dell'inventariazione permettendo il valore zero**
+>
+>[5168f22fe2db804](https://github.com/istitutosuperioredisanita/sigla-main/commit/5168f22fe2db804) salvio_ciro *March 10, 2026*
+
+>**Bumped version to 7.0.64**
+>
+>[c4f14cecfacbfea](https://github.com/istitutosuperioredisanita/sigla-main/commit/c4f14cecfacbfea) dirgensa *February 23, 2026*
+
+
+## Release 7.0.64  -- _February 23, 2026_ 
+**Changes**
+
+>**NOTA DI CREDITO ATTIVA - Fix su BP in controlli onChange**
+>
+>[bb45c73d3843673](https://github.com/istitutosuperioredisanita/sigla-main/commit/bb45c73d3843673) tomada_valentina *February 23, 2026*
+
+>**-fix valorizzazione utente che ha fatto la chiusura anno inventario**
+>
+>[90519de1be2d8d6](https://github.com/istitutosuperioredisanita/sigla-main/commit/90519de1be2d8d6) salvio_ciro *February 17, 2026*
+
+>**Bumped version to 7.0.63**
+>
+>[9fa7758dad62aa2](https://github.com/istitutosuperioredisanita/sigla-main/commit/9fa7758dad62aa2) dirgensa *February 16, 2026*
+
+
+## Release 7.0.63  -- _February 16, 2026_ 
+**Changes**
+
+>**-fix importo iva unitaria su lotto**
+>
+>[c2ec89c03fb1ca4](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2ec89c03fb1ca4) salvio_ciro *February 16, 2026*
+
+>**-Fix anomalie riscontro a valore nel campo Importo Unitario veniva inserito il valore dell'iva**
+> * -Eliminato DULA dallo statment statmentCreazioneMovimentoChiusuraMagazzino
+>
+>[9b412b77ac25e84](https://github.com/istitutosuperioredisanita/sigla-main/commit/9b412b77ac25e84) salvio_ciro *February 16, 2026*
+
+>**Eliminato da ContrattoMaggioliResource l'override del metodo recuperoDatiContratto**
+>
+>[7ffee8968a64c53](https://github.com/istitutosuperioredisanita/sigla-main/commit/7ffee8968a64c53) salvio_ciro *February 16, 2026*
+
+>**Bumped version to 7.0.62**
+>
+>[0e4a6d8da5c1b17](https://github.com/istitutosuperioredisanita/sigla-main/commit/0e4a6d8da5c1b17) dirgensa *February 03, 2026*
+
+
+## Release 7.0.62  -- _February 03, 2026_ 
+**Changes**
+
+>**Fix su Numeratore Buoni di Carico e Scarico**
+>
+>[cd16178439ac149](https://github.com/istitutosuperioredisanita/sigla-main/commit/cd16178439ac149) salvio_ciro *February 03, 2026*
+
+>**Bumped version to 7.0.61**
+>
+>[fb0f61f11000c7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/fb0f61f11000c7c) dirgensa *February 03, 2026*
+
+
+## Release 7.0.61  -- _February 03, 2026_ 
+**Changes**
+
+>**Dimensione input text ds_riga**
+>
+>[2dbfcfa638c3c86](https://github.com/istitutosuperioredisanita/sigla-main/commit/2dbfcfa638c3c86) salvio_ciro *February 03, 2026*
+
+>**Aggiunta aggiornamento quota di avanzo anno precedente**
+>
+>[5820eeffa6ee6fb](https://github.com/istitutosuperioredisanita/sigla-main/commit/5820eeffa6ee6fb) salvio_ciro *February 03, 2026*
+
+>**fix gestione configurazione CNR**
+> * Scdenzario Voce
+>
+>[42a83dd74f7e2c8](https://github.com/istitutosuperioredisanita/sigla-main/commit/42a83dd74f7e2c8) tomada_valentina *January 30, 2026*
+
+>**Bumped version to 7.0.60**
+>
+>[fca93e81c789987](https://github.com/istitutosuperioredisanita/sigla-main/commit/fca93e81c789987) dirgensa *January 29, 2026*
+
+
+## Release 7.0.60  -- _January 29, 2026_ 
+**Changes**
+
+>**Impegni/Accertamenti pluriennali - spostamento voci di menù impegni\accertamenti da stampa a consultazione**
+>
+>[b5ebfca8e3ca637](https://github.com/istitutosuperioredisanita/sigla-main/commit/b5ebfca8e3ca637) massimiliano.digregorio *January 29, 2026*
+
+>**CONFIGURAZIONE CNR - Fix ricerca obbligatoria per esercizio**
+>
+>[6a385fbec5f56c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/6a385fbec5f56c1) tomada_valentina *January 28, 2026*
+
+>**CONFIGURAZIONE CNR - fix per ricerca**
+>
+>[c70e2243dc48999](https://github.com/istitutosuperioredisanita/sigla-main/commit/c70e2243dc48999) tomada_valentina *January 28, 2026*
+
+>**CONFIGURAZIONE CNR - gestione parti variabili**
+>
+>[0661db9ce6d155c](https://github.com/istitutosuperioredisanita/sigla-main/commit/0661db9ce6d155c) tomada_valentina *January 28, 2026*
+
+>**Configurazione CNR**
+> * Predisposizione per visualizzazione e modifica
+>
+>[aa5894c32fad89c](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa5894c32fad89c) Lucattini Stefano *January 28, 2026*
+
+>**Configurazione CNR**
+> * Predisposizione per visualizzazione e modifica
+>
+>[6982a79215f3018](https://github.com/istitutosuperioredisanita/sigla-main/commit/6982a79215f3018) Lucattini Stefano *January 28, 2026*
+
+>**Gestione configurazione cnr**
+>
+>[2a175d8112e6932](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a175d8112e6932) salvio_ciro *January 28, 2026*
+
+>**Gestione configurazione cnr**
+>
+>[65563026c4c64c7](https://github.com/istitutosuperioredisanita/sigla-main/commit/65563026c4c64c7) Lucattini Stefano *January 28, 2026*
+
+>**Configurazione CNR**
+> * Nuova voce per la gestione delle variabili della tabella
+>
+>[1988280982ae453](https://github.com/istitutosuperioredisanita/sigla-main/commit/1988280982ae453) Lucattini Stefano *January 28, 2026*
+
+>**Consultazione configurazione CNR**
+>
+>[479d8cb0bb35344](https://github.com/istitutosuperioredisanita/sigla-main/commit/479d8cb0bb35344) massimiliano.digregorio *January 28, 2026*
+
+>**Impegni pluriennali e accertamenti Pluriennali**
+>
+>[658aa2db12733b2](https://github.com/istitutosuperioredisanita/sigla-main/commit/658aa2db12733b2) salvio_ciro *January 28, 2026*
+
+>**Impegni/Accertamenti pluriennali - definizione campi griglia**
+>
+>[5d2b44b4526eb52](https://github.com/istitutosuperioredisanita/sigla-main/commit/5d2b44b4526eb52) massimiliano.digregorio *January 28, 2026*
+
+>**Impegni pluriennali/accertamenti - mod filtro**
+>
+>[17cdf03e3e98256](https://github.com/istitutosuperioredisanita/sigla-main/commit/17cdf03e3e98256) massimiliano.digregorio *January 28, 2026*
+
+>**Nuova stampa accertamenti pluriennali voce**
+>
+>[8262c186fe06b66](https://github.com/istitutosuperioredisanita/sigla-main/commit/8262c186fe06b66) Lucattini Stefano *January 28, 2026*
+
+>**Impegni pluriennali - Impostazione ricerca**
+>
+>[e16b53990236e70](https://github.com/istitutosuperioredisanita/sigla-main/commit/e16b53990236e70) massimiliano.digregorio *January 28, 2026*
+
+>**Impegni pluriennali - setting iniziale action-bp-bulkinfo**
+>
+>[18563d85874dc0a](https://github.com/istitutosuperioredisanita/sigla-main/commit/18563d85874dc0a) massimiliano.digregorio *January 28, 2026*
+
+>**Impegni pluriennali - setting iniziale action-bp-bulkinfo**
+>
+>[1cc6647d2c24d6a](https://github.com/istitutosuperioredisanita/sigla-main/commit/1cc6647d2c24d6a) massimiliano.digregorio *January 28, 2026*
+
+>**Preparazione accesso per impegni pluriennali (voci)**
+>
+>[43b7f2fb6ceaa36](https://github.com/istitutosuperioredisanita/sigla-main/commit/43b7f2fb6ceaa36) massimiliano.digregorio *January 28, 2026*
+
+>**PROGETTO - deselezione flag autorimodulazione se AREA008 e progetto annuale**
+>
+>[836dc6fa4fe8abf](https://github.com/istitutosuperioredisanita/sigla-main/commit/836dc6fa4fe8abf) tomada_valentina *January 28, 2026*
+
+>**Ribaltamento Inizio Anno:gestione configurazione 130_REG_FATT_PAS,140_STORNO_FATT_PAS,150_STORNO_FATT_ATT.**
+> * 130_REG_FATT_PAS: Viene valorizzato col primo giorno dell&#x27;anno contabile che si sta aprendo
+> * 140_STORNO_FATT_PAS,150_STORNO_FATT_ATT: Valorizzati con mese e giorni dell&#x27;anno precedente se esistono altrimenti con la data di ribaltamento
+>
+>[861d3a34c76538d](https://github.com/istitutosuperioredisanita/sigla-main/commit/861d3a34c76538d) salvio_ciro *January 26, 2026*
+
+>**Bumped version to 7.0.59**
+>
+>[00b89e1d1aee657](https://github.com/istitutosuperioredisanita/sigla-main/commit/00b89e1d1aee657) dirgensa *January 26, 2026*
+
+
+## Release 7.0.59  -- _January 23, 2026_ 
+**Changes**
+
+>**new feature: aggiunta nuova consultazione dello scadenzario impegni per le informazioni sull'ordinato ed evaso**
+>
+>[47316f6bb7cdc8f](https://github.com/istitutosuperioredisanita/sigla-main/commit/47316f6bb7cdc8f) mspasiano *January 23, 2026*
+
+>**Bumped version to 7.0.58**
+>
+>[b94ba5ab63c38d5](https://github.com/istitutosuperioredisanita/sigla-main/commit/b94ba5ab63c38d5) dirgensa *January 20, 2026*
+
+
+## Release 7.0.58  -- _January 20, 2026_ 
+**Changes**
+
+>**new feature: resa possibile la cancellazione di modifiche agli accertamenti residui**
+>
+>[1598a20b5ca3c4c](https://github.com/istitutosuperioredisanita/sigla-main/commit/1598a20b5ca3c4c) salvio_ciro *January 20, 2026*
+
+>**Fix issue cancellazione dettaglio di una modifica quando viene cancellata la modifica. ELiminava solo la testata**
+>
+>[737e92b4e2bbc78](https://github.com/istitutosuperioredisanita/sigla-main/commit/737e92b4e2bbc78) salvio_ciro *January 20, 2026*
+
+>**Fix messaggistica**
+>
+>[06f4b279a701d28](https://github.com/istitutosuperioredisanita/sigla-main/commit/06f4b279a701d28) salvio_ciro *January 20, 2026*
+
+>**V_CONS_SCAD_OBBL_VOCE**
+>
+>[ff338407637654f](https://github.com/istitutosuperioredisanita/sigla-main/commit/ff338407637654f) salvio_ciro *January 20, 2026*
+
+>**Fix estrazione Scandenziario Voce**
+>
+>[ee86b29916694f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/ee86b29916694f7) salvio_ciro *January 20, 2026*
+
+>**Bumped version to 7.0.57**
+>
+>[74b8b574890eb88](https://github.com/istitutosuperioredisanita/sigla-main/commit/74b8b574890eb88) dirgensa *January 19, 2026*
+
+
+## Release 7.0.57  -- _January 19, 2026_ 
+**Changes**
+
+>**new feature: aggiunte le informazioni sull'ordinato ed evaso alla stampa dello scadenzario impegni e alla consultazione**
+>
+>[a182e1193922d06](https://github.com/istitutosuperioredisanita/sigla-main/commit/a182e1193922d06) mspasiano *January 19, 2026*
+
+>**new feature: aggiunte le informazioni sull'ordinato ed evaso alla stampa dello scadenzario impegni**
+>
+>[5f3e18d4193b02d](https://github.com/istitutosuperioredisanita/sigla-main/commit/5f3e18d4193b02d) mspasiano *January 19, 2026*
+
+>**Bumped version to 7.0.56**
+>
+>[605d1d9ee626bd2](https://github.com/istitutosuperioredisanita/sigla-main/commit/605d1d9ee626bd2) dirgensa *January 16, 2026*
+
+
+## Release 7.0.56  -- _January 16, 2026_ 
+**Changes**
+
+>**Fix anomali registrazione Fattura:**
+> * -getsione inizializzazione Numerazione_coge_coan
+> * -gestione Rowrapper quando inventario per l&#x27;esercizio è ancora chiuso
+>
+>[346e389182965a2](https://github.com/istitutosuperioredisanita/sigla-main/commit/346e389182965a2) salvio_ciro *January 16, 2026*
+
+>**Bumped version to 7.0.55**
+>
+>[2dc8142dc8c1e38](https://github.com/istitutosuperioredisanita/sigla-main/commit/2dc8142dc8c1e38) dirgensa *January 15, 2026*
+
+
+## Release 7.0.55  -- _January 15, 2026_ 
+**Changes**
+
+>**BUONO CARICO SCARICO - Fix tipo movimenti in modifica Carichi da Ordine**
+>
+>[b94b394d9b5491a](https://github.com/istitutosuperioredisanita/sigla-main/commit/b94b394d9b5491a) tomada_valentina *January 15, 2026*
+
+>**ASS PARTITE DI GIRO - visualizzazione correlazione E/S**
+>
+>[dae1fd301c28d39](https://github.com/istitutosuperioredisanita/sigla-main/commit/dae1fd301c28d39) tomada_valentina *January 12, 2026*
+
+>**Bumped version to 7.0.54**
+>
+>[009f40a88aadb76](https://github.com/istitutosuperioredisanita/sigla-main/commit/009f40a88aadb76) dirgensa *January 08, 2026*
+
+
+## Release 7.0.54  -- _January 08, 2026_ 
+**Changes**
+
+>**Update maven.yml**
+>
+>[4af57834fbe8db6](https://github.com/istitutosuperioredisanita/sigla-main/commit/4af57834fbe8db6) Marco Spasiano *January 08, 2026*
+
+>**Update docs.yml**
+>
+>[e565e8e75469eb2](https://github.com/istitutosuperioredisanita/sigla-main/commit/e565e8e75469eb2) Marco Spasiano *January 08, 2026*
+
+>**Sviluppo flussi di cassa**
+>
+>[69d82670324d586](https://github.com/istitutosuperioredisanita/sigla-main/commit/69d82670324d586) salvio_ciro *January 08, 2026*
+
+>**FLUSSI CASSA - gestione estrazione rendiconto**
+>
+>[abb2d4250afed5b](https://github.com/istitutosuperioredisanita/sigla-main/commit/abb2d4250afed5b) tomada_valentina *January 08, 2026*
+
+>**FLUSSO CASSA - implementazione filtro livello**
+>
+>[d215d222f9022b3](https://github.com/istitutosuperioredisanita/sigla-main/commit/d215d222f9022b3) tomada_valentina *January 08, 2026*
+
+>**FLUSSO CASSA - implementazione filtro trimestre**
+>
+>[6d8e58d8cb0e86a](https://github.com/istitutosuperioredisanita/sigla-main/commit/6d8e58d8cb0e86a) tomada_valentina *January 08, 2026*
+
+>**Sviluppo flussi di cassa**
+>
+>[ee4edfa60d9bc9c](https://github.com/istitutosuperioredisanita/sigla-main/commit/ee4edfa60d9bc9c) salvio_ciro *January 08, 2026*
+
+>**Sviluppo flussi di cassa**
+>
+>[b2e049d4837073f](https://github.com/istitutosuperioredisanita/sigla-main/commit/b2e049d4837073f) salvio_ciro *January 08, 2026*
+
+>**Sviluppo flussi di cassa**
+>
+>[e991ef73c4910af](https://github.com/istitutosuperioredisanita/sigla-main/commit/e991ef73c4910af) salvio_ciro *January 08, 2026*
+
+>**Sviluppo flussi di cassa**
+>
+>[fad3e8add801ee4](https://github.com/istitutosuperioredisanita/sigla-main/commit/fad3e8add801ee4) salvio_ciro *January 08, 2026*
+
+>**Sviluppo flussi di cassa**
+>
+>[b7d3314bd673d72](https://github.com/istitutosuperioredisanita/sigla-main/commit/b7d3314bd673d72) salvio_ciro *January 08, 2026*
+
+>**FLUSSO CASSA - implementazione voce di menu e funzionalità**
+>
+>[003f31ecb4a5d39](https://github.com/istitutosuperioredisanita/sigla-main/commit/003f31ecb4a5d39) tomada_valentina *January 08, 2026*
+
+>**FLUSSO CASSA - implementazione voce di menu e funzionalità**
+>
+>[591bb3d3762e74d](https://github.com/istitutosuperioredisanita/sigla-main/commit/591bb3d3762e74d) tomada_valentina *January 08, 2026*
+
+>**FLUSSO CASSA - implementazione voce di menu e funzionalità**
+>
+>[856f48d74e6da1d](https://github.com/istitutosuperioredisanita/sigla-main/commit/856f48d74e6da1d) tomada_valentina *January 08, 2026*
+
+>**Bumped version to 7.0.53**
+>
+>[cdbe6576b2cf12b](https://github.com/istitutosuperioredisanita/sigla-main/commit/cdbe6576b2cf12b) dirgensa *January 08, 2026*
+
+
+## Release 7.0.53  -- _January 08, 2026_ 
+**Changes**
+
+>**Bumped version to 7.0.52**
+>
+>[8d5e634aeb80e3f](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d5e634aeb80e3f) dirgensa *January 07, 2026*
+
+>**Resa possibile la registrazione di una nota di debito nell'anno precedente rispetto alla configurazione 130_REG_FATT_PAS**
+>
+>[d9d61bf85e66e16](https://github.com/istitutosuperioredisanita/sigla-main/commit/d9d61bf85e66e16) salvio_ciro *January 07, 2026*
+
+
+## Release 7.0.52  -- _January 02, 2026_ 
+**Changes**
+
+>**Aggiunto nuova colonna TIPO sul ribaltamento PARAMETRI_LIVELLI_EP**
+>
+>[3980599216227af](https://github.com/istitutosuperioredisanita/sigla-main/commit/3980599216227af) salvio_ciro *January 02, 2026*
+
+>**Bumped version to 7.0.51**
+>
+>[ab49e079b082084](https://github.com/istitutosuperioredisanita/sigla-main/commit/ab49e079b082084) dirgensa *December 22, 2025*
+
+
+## Release 7.0.51  -- _December 22, 2025_ 
+**Changes**
+
+>**ANNULLA MOVIMENTO MAG - FIX verifica bene inventariato**
+>
+>[86e8a1b58799471](https://github.com/istitutosuperioredisanita/sigla-main/commit/86e8a1b58799471) tomada_valentina *December 22, 2025*
+
+>**new feature: resa possibile la cancellazione di modifiche agli impegni residui**
+>
+>[4f265a79f15fd44](https://github.com/istitutosuperioredisanita/sigla-main/commit/4f265a79f15fd44) mspasiano *December 22, 2025*
+
+>**new feature: resa possibile la cancellazione di modifiche agli impegni residui**
+>
+>[1bd2405a4fc96ed](https://github.com/istitutosuperioredisanita/sigla-main/commit/1bd2405a4fc96ed) mspasiano *December 22, 2025*
+
+>**new feature: resa possibile la cancellazione di modifiche agli impegni residui**
+>
+>[47a1d514cfac590](https://github.com/istitutosuperioredisanita/sigla-main/commit/47a1d514cfac590) mspasiano *December 22, 2025*
+
+>**Bumped version to 7.0.50**
+>
+>[285b001935bd114](https://github.com/istitutosuperioredisanita/sigla-main/commit/285b001935bd114) dirgensa *December 15, 2025*
+
+
+## Release 7.0.50  -- _December 10, 2025_ 
+**Changes**
+
+>**Fix insert into PARAMETRI_LIVELLI_EP**
+>
+>[1a1a91d181cbf23](https://github.com/istitutosuperioredisanita/sigla-main/commit/1a1a91d181cbf23) salvio_ciro *December 10, 2025*
+
+>**Gestione Ribaltamento Progetti dopo apertura anno.**
+>
+>[192c5472ae54ce1](https://github.com/istitutosuperioredisanita/sigla-main/commit/192c5472ae54ce1) raffaele.pagano *December 05, 2025*
+
+>**Update inventario.rst**
+>
+>[98c4e45cf55c09e](https://github.com/istitutosuperioredisanita/sigla-main/commit/98c4e45cf55c09e) patriziavillani *December 01, 2025*
+
+>**Update inventario.rst**
+>
+>[046ac84da29652d](https://github.com/istitutosuperioredisanita/sigla-main/commit/046ac84da29652d) patriziavillani *December 01, 2025*
+
+>**Bumped version to 7.0.49**
+>
+>[47db93306136179](https://github.com/istitutosuperioredisanita/sigla-main/commit/47db93306136179) dirgensa *November 27, 2025*
+
+
+## Release 7.0.49  -- _November 27, 2025_ 
+**Changes**
+
+>**Fix gestione Bic per multibeneficiari**
+>
+>[83f12b0ad707c46](https://github.com/istitutosuperioredisanita/sigla-main/commit/83f12b0ad707c46) salvio_ciro *November 27, 2025*
+
+>**Bumped version to 7.0.48**
+>
+>[43f567cea5d39ed](https://github.com/istitutosuperioredisanita/sigla-main/commit/43f567cea5d39ed) dirgensa *November 27, 2025*
+
+
+## Release 7.0.48  -- _November 26, 2025_ 
+**Changes**
+
+>**MANDATO - Fix lettura doc passivi associati inserita order by per leggere prima la ND e poi la NC**
+>
+>[d4d49f09ab88392](https://github.com/istitutosuperioredisanita/sigla-main/commit/d4d49f09ab88392) tomada_valentina *November 26, 2025*
+
+>**Bumped version to 7.0.47**
+>
+>[662de0c561fc41d](https://github.com/istitutosuperioredisanita/sigla-main/commit/662de0c561fc41d) dirgensa *November 24, 2025*
+
+
+## Release 7.0.47  -- _November 24, 2025_ 
+**Changes**
+
+>**Fix Predisposizoione Autofattura**
+>
+>[7aabc7ed74dbf51](https://github.com/istitutosuperioredisanita/sigla-main/commit/7aabc7ed74dbf51) salvio_ciro *November 24, 2025*
+
+>**Fix predisposizione Lettera 1210**
+>
+>[26342986fbe2155](https://github.com/istitutosuperioredisanita/sigla-main/commit/26342986fbe2155) salvio_ciro *November 21, 2025*
+
+>**AUTOFATTURA - pulsante visualizzazione in Fattura Passiva**
+>
+>[1253cf9b3ea5e9d](https://github.com/istitutosuperioredisanita/sigla-main/commit/1253cf9b3ea5e9d) tomada_valentina *November 20, 2025*
+
+>**AUTOFATTURA - pulsante visualizzazione in Fattura Passiva**
+>
+>[707666fba0be5ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/707666fba0be5ac) tomada_valentina *November 20, 2025*
+
+>**Fix issu creazione vista V_CONS_SALDI_RESIDUI_SPE_DET**
+>
+>[6bead5d4ccf2e66](https://github.com/istitutosuperioredisanita/sigla-main/commit/6bead5d4ccf2e66) salvio_ciro *November 14, 2025*
+
+>**Refactoring package NumerazioneOrdComponent**
+>
+>[f6b6af363700a77](https://github.com/istitutosuperioredisanita/sigla-main/commit/f6b6af363700a77) salvio_ciro *November 13, 2025*
+
+>**Fix ricerca numeratori: Adesso la ricerca ritorna solo i numeratori di unita operative associate all'unità organizzativa del contesto. Se il contesto è la UO ente puoi gestire tutti i numeratori**
+>
+>[6f4ed5efb43fdf3](https://github.com/istitutosuperioredisanita/sigla-main/commit/6f4ed5efb43fdf3) salvio_ciro *November 13, 2025*
+
+>**new feature: condizionati workflow si GitHub per la build della documentazione [ci skip]**
+>
+>[243e22b291dd649](https://github.com/istitutosuperioredisanita/sigla-main/commit/243e22b291dd649) mspasiano *November 13, 2025*
+
+>**Update limiti-di-spesa.rst**
+>
+>[2a90641b5ea0d04](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a90641b5ea0d04) patriziavillani *November 13, 2025*
+
+>**Update condizione-sospensiva.rst [ci skip]**
+>
+>[6fc4588c27666e7](https://github.com/istitutosuperioredisanita/sigla-main/commit/6fc4588c27666e7) patriziavillani *November 13, 2025*
+
+>**Update condizione-sospensiva.rst [ci skip]**
+>
+>[bf3567ee102667c](https://github.com/istitutosuperioredisanita/sigla-main/commit/bf3567ee102667c) patriziavillani *November 13, 2025*
+
+>**Update condizione-sospensiva.rst [ci skip]**
+>
+>[f1b845390ad2edf](https://github.com/istitutosuperioredisanita/sigla-main/commit/f1b845390ad2edf) patriziavillani *November 13, 2025*
+
+>**Bumped version to 7.0.46**
+>
+>[5471ffdf9db4fb7](https://github.com/istitutosuperioredisanita/sigla-main/commit/5471ffdf9db4fb7) dirgensa *November 12, 2025*
+
+
+## Release 7.0.46  -- _November 12, 2025_ 
+**Changes**
+
+>**Fix Ricerca Contratto e fix Passaggio ordine in firma**
+>
+>[4eecbd3f79d959a](https://github.com/istitutosuperioredisanita/sigla-main/commit/4eecbd3f79d959a) salvio_ciro *November 12, 2025*
+
+>**Fix Tipo Attivita Ordine con tipo attivita isituzionale/coomerciale Numeratore**
+>
+>[160098107631877](https://github.com/istitutosuperioredisanita/sigla-main/commit/160098107631877) salvio_ciro *November 12, 2025*
+
+>**Fix Ricerca Contratto e fix Passaggio ordine in firma**
+>
+>[2c4d937d5a3ca50](https://github.com/istitutosuperioredisanita/sigla-main/commit/2c4d937d5a3ca50) salvio_ciro *November 12, 2025*
+
+>**Sviluppo adeguamento Bonifico Estero Euro**
+>
+>[1fd96300e4f677d](https://github.com/istitutosuperioredisanita/sigla-main/commit/1fd96300e4f677d) salvio_ciro *November 12, 2025*
+
+>**Sviluppo adeguamento Bonifico Estero Euro**
+>
+>[cec6dcfcd723a62](https://github.com/istitutosuperioredisanita/sigla-main/commit/cec6dcfcd723a62) salvio_ciro *November 12, 2025*
+
+>**Sviluppo adeguamento Bonifico Estero Euro**
+>
+>[902d0084cd7de30](https://github.com/istitutosuperioredisanita/sigla-main/commit/902d0084cd7de30) salvio_ciro *November 12, 2025*
+
+>**Sviluppo adeguamento Bonifico Estero Euro**
+>
+>[4a422ad81fdc1bb](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a422ad81fdc1bb) salvio_ciro *November 12, 2025*
+
+>**Null pointer su fattura riga**
+>
+>[2f1be9db906d51f](https://github.com/istitutosuperioredisanita/sigla-main/commit/2f1be9db906d51f) salvio_ciro *November 12, 2025*
+
+>**Aggiunta configurazione per abilitare variazione in competenza anche su voci di partite di giro**
+>
+>[2cae080c03b0263](https://github.com/istitutosuperioredisanita/sigla-main/commit/2cae080c03b0263) salvio_ciro *November 12, 2025*
+
+>**Sviluppo adeguamento Bonifico Estero Euro**
+>
+>[1db63f9f5c3d3bd](https://github.com/istitutosuperioredisanita/sigla-main/commit/1db63f9f5c3d3bd) salvio_ciro *November 12, 2025*
+
+>**Fix anoamlia PRT_ELENCO_FATT_PER_FORNITORE**
+>
+>[44444539aa480d7](https://github.com/istitutosuperioredisanita/sigla-main/commit/44444539aa480d7) salvio_ciro *November 12, 2025*
+
+>**fix: link documentazione**
+>
+>[ad577e6c073b6b0](https://github.com/istitutosuperioredisanita/sigla-main/commit/ad577e6c073b6b0) mspasiano *November 07, 2025*
+
+>**fix: aggiornamento inventario non chiudeva l'iteratore remoto**
+>
+>[c3487f6a89ead8a](https://github.com/istitutosuperioredisanita/sigla-main/commit/c3487f6a89ead8a) Nome Cognome *November 06, 2025*
+
+>**fix: Dockerfile**
+>
+>[f5e6be0671b74cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/f5e6be0671b74cc) mspasiano *November 04, 2025*
+
+
+## Release 7.0.45  -- _November 04, 2025_ 
+**Changes**
+
+>**Eliminato dbms="oracle"**
+>
+>[aa7872b241b23e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa7872b241b23e8) salvio_ciro *November 04, 2025*
+
+>**new feature: comunicare alla PCC alcuni pagamenti di tipologia ‘NON COMMERCIALE’, attraverso il flusso SIOPE+**
+>
+>[85bbba3cba85f3e](https://github.com/istitutosuperioredisanita/sigla-main/commit/85bbba3cba85f3e) mspasiano *November 04, 2025*
+
+>**Fix errore Caricamento File Stipendi**
+>
+>[5ec06c466e46b16](https://github.com/istitutosuperioredisanita/sigla-main/commit/5ec06c466e46b16) salvio_ciro *October 31, 2025*
+
+>**autofattura-> prima di aprire la gestione alle note di credito con autofattura è necssario verificare l'xml generato**
+>
+>[95ac897dcf19954](https://github.com/istitutosuperioredisanita/sigla-main/commit/95ac897dcf19954) salvio_ciro *October 29, 2025*
+
+>**Bumped version to 7.0.44**
+>
+>[cba565c44f3b77f](https://github.com/istitutosuperioredisanita/sigla-main/commit/cba565c44f3b77f) dirgensa *October 23, 2025*
+
+
+## Release 7.0.44  -- _October 23, 2025_ 
+**Changes**
+
+>**Bumped version to 7.044**
+>
+>[ec2fd5d41c1c0dc](https://github.com/istitutosuperioredisanita/sigla-main/commit/ec2fd5d41c1c0dc) dirgensa *October 23, 2025*
+
+>**Abilitata la possibilita di cambiare il cambio p la valuta solo nel caso in cui per la stessa non sia già stata fatta la contabilizzazione dell'iva e non è stata ancora creata la lettera 1210**
+>
+>[d9a400fbe5eff09](https://github.com/istitutosuperioredisanita/sigla-main/commit/d9a400fbe5eff09) salvio_ciro *October 23, 2025*
+
+>**Aggiunto filtro su data acquisizione**
+>
+>[8d5d96b2c3fafe3](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d5d96b2c3fafe3) salvio_ciro *October 22, 2025*
+
+>**Fix: gestione tipo accessorio utilizzato il metodo isBeneAccessorio**
+>
+>[8798e82f5604e3c](https://github.com/istitutosuperioredisanita/sigla-main/commit/8798e82f5604e3c) salvio_ciro *October 22, 2025*
+
+>**Fix: gestione tipo accessorio**
+>
+>[235f1078ca455ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/235f1078ca455ee) salvio_ciro *October 22, 2025*
+
+>**Bumped version to 7.0.43**
+>
+>[97d6554b11b7a82](https://github.com/istitutosuperioredisanita/sigla-main/commit/97d6554b11b7a82) dirgensa *October 17, 2025*
+
+
+## Release 7.0.43  -- _October 17, 2025_ 
+**Changes**
+
+>**Fix: Anomalia Inserimento Tipo Norma Perla**
+>
+>[8780df34b0f898b](https://github.com/istitutosuperioredisanita/sigla-main/commit/8780df34b0f898b) salvio_ciro *October 17, 2025*
+
+>**Bumped version to 7.0.42**
+>
+>[399707a6f83a415](https://github.com/istitutosuperioredisanita/sigla-main/commit/399707a6f83a415) dirgensa *October 15, 2025*
+
+
+## Release 7.0.42  -- _October 15, 2025_ 
+**Changes**
+
+>**Fix: Gestione modalità di pagamento PagoPa per fatture da ordini**
+>
+>[4587ce8b5c220c2](https://github.com/istitutosuperioredisanita/sigla-main/commit/4587ce8b5c220c2) salvio_ciro *October 15, 2025*
+
+>**Fix: Anomalia gestione aumento valore , trasferimento e vendita per beni che sono classificati su categoria gruppi non più validi**
+>
+>[d46504b57890731](https://github.com/istitutosuperioredisanita/sigla-main/commit/d46504b57890731) salvio_ciro *October 15, 2025*
+
+>**Fix: Anomalia visualizzazione Unita Organizzativa di appartenenza per i dipendenti**
+>
+>[9b61b84fa70d871](https://github.com/istitutosuperioredisanita/sigla-main/commit/9b61b84fa70d871) salvio_ciro *October 15, 2025*
+
+>**Bumped version to 7.0.41**
+>
+>[c0ae671f894bdee](https://github.com/istitutosuperioredisanita/sigla-main/commit/c0ae671f894bdee) dirgensa *October 14, 2025*
+
+
+## Release 7.0.41  -- _October 14, 2025_ 
+**Changes**
+
+>**Fix: cancellazione del dettaglio solo quando è selezionato il fl da ordini**
+>
+>[01e4d584caa08a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/01e4d584caa08a9) salvio_ciro *October 14, 2025*
+
+>**Aggiunto messaggio di errore nel caso è selzionato da ordine ma non ci sono righe nel tab Ordini. In modifica prima dava errore di  "Vincolo di integrità referenziale violato"."**
+>
+>[4ff73a5cdc7eaef](https://github.com/istitutosuperioredisanita/sigla-main/commit/4ff73a5cdc7eaef) salvio_ciro *October 14, 2025*
+
+>**Bumped version to 7.0.40**
+>
+>[222b6e42db2926d](https://github.com/istitutosuperioredisanita/sigla-main/commit/222b6e42db2926d) dirgensa *October 14, 2025*
+
+
+## Release 7.0.40  -- _October 14, 2025_ 
+**Changes**
+
+>**Aggiunta fl_cancellato sulla tabella tipo_norma_perla**
+>
+>[2f0213b2516c8f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/2f0213b2516c8f9) salvio_ciro *October 14, 2025*
+
+>**Fix Visuliazzazione garfica dell'informazione Codice Unità Organizzativa di Appartenenza per i soli dipendenti**
+>
+>[42aceff5f98a12d](https://github.com/istitutosuperioredisanita/sigla-main/commit/42aceff5f98a12d) salvio_ciro *October 14, 2025*
+
+>**Aggiunta informazione Codice Unità Organizzativa di Appartenenza per i soli dipendenti**
+>
+>[97bbcedb8109272](https://github.com/istitutosuperioredisanita/sigla-main/commit/97bbcedb8109272) salvio_ciro *October 14, 2025*
+
+>**Bumped version to 7.0.39**
+>
+>[1b02829bdd25aa9](https://github.com/istitutosuperioredisanita/sigla-main/commit/1b02829bdd25aa9) dirgensa *October 03, 2025*
+
+
+## Release 7.0.39  -- _October 03, 2025_ 
+**Changes**
+
+>**Modifica ordine menù delle funzionalità per i residui degli accertamenti e obbligazioni**
+>
+>[eb9cd375bfb5562](https://github.com/istitutosuperioredisanita/sigla-main/commit/eb9cd375bfb5562) salvio_ciro *October 03, 2025*
+
+>**modifica DDL per la vista V_CONS_SALDI_RESIDUI_ENT + aggiunti 2 accessi sotto Accertamenti-Consultazioni: dettagli delle entrate residue e i dettagli delle modifiche sugli accertamenti (visualizzazione, stampa e download excel)**
+>
+>[5a3ee2019104738](https://github.com/istitutosuperioredisanita/sigla-main/commit/5a3ee2019104738) davide.mirra *October 03, 2025*
+
+>**creazione DDL per la vista V_CONS_SALDI_RESIDUI_SPE_DET + aggiunti 2 accessi sotto Impegni-Consultazioni: dettagli delle spese residue e i dettagli delle modifiche sulle obbligazioni (visualizzazioni, stampa e download excel)**
+>
+>[faf976dd5457697](https://github.com/istitutosuperioredisanita/sigla-main/commit/faf976dd5457697) davide.mirra *October 03, 2025*
+
+>**Eliminato il codice del gruppo Iva dalla descrizione Totale Gruppo....**
+>
+>[16ec237debefdea](https://github.com/istitutosuperioredisanita/sigla-main/commit/16ec237debefdea) salvio_ciro *October 03, 2025*
+
+>**Bumped version to 7.0.38**
+>
+>[13ae44bd8fce4b7](https://github.com/istitutosuperioredisanita/sigla-main/commit/13ae44bd8fce4b7) dirgensa *September 30, 2025*
+
+
+## Release 7.0.38  -- _September 30, 2025_ 
+**Changes**
+
+>**Implementazione invio dati Dichiarazione Intento SDI**
+>
+>[2d0298d78cd757a](https://github.com/istitutosuperioredisanita/sigla-main/commit/2d0298d78cd757a) salvio_ciro *September 30, 2025*
+
+>**Fix upload View scad voce e accer voce**
+>
+>[8265bc6b61f5356](https://github.com/istitutosuperioredisanita/sigla-main/commit/8265bc6b61f5356) salvio_ciro *September 24, 2025*
+
+>**Bumped version to 7.0.37**
+>
+>[78af3393d60f7a5](https://github.com/istitutosuperioredisanita/sigla-main/commit/78af3393d60f7a5) dirgensa *September 23, 2025*
+
+
+## Release 7.0.37  -- _September 23, 2025_ 
+**Changes**
+
+>**Menù replace CNR con ISS**
+>
+>[5b5a5f4c8090d0c](https://github.com/istitutosuperioredisanita/sigla-main/commit/5b5a5f4c8090d0c) salvio_ciro *September 23, 2025*
+
+>**Bumped version to 7.0.36**
+>
+>[92a0391958d2e66](https://github.com/istitutosuperioredisanita/sigla-main/commit/92a0391958d2e66) dirgensa *September 23, 2025*
+
+
+## Release 7.0.36  -- _September 23, 2025_ 
+**Changes**
+
+>**Test push**
+>
+>[d110a83b0399cba](https://github.com/istitutosuperioredisanita/sigla-main/commit/d110a83b0399cba) salvio_ciro *September 23, 2025*
+
+>**visualizza ultimo mandato associato a fattura passiva**
+>
+>[330576427a2528a](https://github.com/istitutosuperioredisanita/sigla-main/commit/330576427a2528a) davide.mirra *September 23, 2025*
+
+>**Eliminati codice commentato**
+>
+>[f32fef2a53729f6](https://github.com/istitutosuperioredisanita/sigla-main/commit/f32fef2a53729f6) salvio_ciro *September 22, 2025*
+
+>**Gestione Associazione CDR e gestione controlli passaggio in definitiva**
+>
+>[d8a4d331e9aed06](https://github.com/istitutosuperioredisanita/sigla-main/commit/d8a4d331e9aed06) salvio_ciro *September 22, 2025*
+
+>**Bumped version to 7.0.35**
+>
+>[4dd88a76e654bfa](https://github.com/istitutosuperioredisanita/sigla-main/commit/4dd88a76e654bfa) dirgensa *September 19, 2025*
+
+
+## Release 7.0.35  -- _September 19, 2025_ 
+**Changes**
+
+>**Fix registro inventario per i beni migrati**
+>
+>[11ba99eb2752c21](https://github.com/istitutosuperioredisanita/sigla-main/commit/11ba99eb2752c21) salvio_ciro *September 19, 2025*
+
+>**Bumped version to 7.0.34**
+>
+>[a459652fe519746](https://github.com/istitutosuperioredisanita/sigla-main/commit/a459652fe519746) dirgensa *September 19, 2025*
+
+
+## Release 7.0.34  -- _September 19, 2025_ 
+**Changes**
+
+>**Download Stampa Reversale da Documentale**
+>
+>[0dd144f3b3cca0a](https://github.com/istitutosuperioredisanita/sigla-main/commit/0dd144f3b3cca0a) salvio_ciro *September 19, 2025*
+
+>**Modificato CNR a ISS**
+>
+>[0213f757335344f](https://github.com/istitutosuperioredisanita/sigla-main/commit/0213f757335344f) salvio_ciro *September 19, 2025*
+
+>**Fix associzione fattura**
+>
+>[ea1a83d50c29cc1](https://github.com/istitutosuperioredisanita/sigla-main/commit/ea1a83d50c29cc1) salvio_ciro *September 19, 2025*
+
+>**Aggiunti controlli esistenza per i Iban e indirizzo_swift**
+>
+>[487f9136e635413](https://github.com/istitutosuperioredisanita/sigla-main/commit/487f9136e635413) raffaele.pagano *September 19, 2025*
+
+>**Bumped version to 7.0.33**
+>
+>[c08b1c92fe99298](https://github.com/istitutosuperioredisanita/sigla-main/commit/c08b1c92fe99298) dirgensa *September 17, 2025*
+
+
+## Release 7.0.33  -- _September 16, 2025_ 
+**Changes**
+
+>**fix: settato ammontare totale raggruppato per ogni codice CORI e arrotondamento a 2 cifre decimali**
+>
+>[4b5be6b319a44f8](https://github.com/istitutosuperioredisanita/sigla-main/commit/4b5be6b319a44f8) davide.mirra *September 16, 2025*
+
+>**Bumped version to 7.0.32**
+>
+>[73ff5708e21c2fc](https://github.com/istitutosuperioredisanita/sigla-main/commit/73ff5708e21c2fc) dirgensa *September 15, 2025*
+
+
+## Release 7.0.32  -- _September 15, 2025_ 
+**Changes**
+
+>**Bumped version to 7.0.31**
+>
+>[ca8cf058db58b62](https://github.com/istitutosuperioredisanita/sigla-main/commit/ca8cf058db58b62) dirgensa *September 15, 2025*
+
+>**FLUSSO STIPENDI - eliminato metodo non utilizzato**
+>
+>[a4e70cc4160a6bf](https://github.com/istitutosuperioredisanita/sigla-main/commit/a4e70cc4160a6bf) tomada_valentina *September 15, 2025*
+
+>**Gestione MultiClassificazioni - Consultazione**
+>
+>[c36636cd512781f](https://github.com/istitutosuperioredisanita/sigla-main/commit/c36636cd512781f) raffaele.pagano *September 11, 2025*
+
+>**SCARICO INVENTARIO - Scarico definitivo se movimento di Dismissione**
+>
+>[720af008371e04a](https://github.com/istitutosuperioredisanita/sigla-main/commit/720af008371e04a) tomada_valentina *September 09, 2025*
+
+>**SCARICO MAGAZZINO - bene scaricato per movimento dismissione**
+>
+>[ccc92263ee5b373](https://github.com/istitutosuperioredisanita/sigla-main/commit/ccc92263ee5b373) tomada_valentina *July 08, 2025*
+
+>**SCARICO INVENTARIO - scarico definitivo se movimento dismissione**
+>
+>[444f9e223f7eaa6](https://github.com/istitutosuperioredisanita/sigla-main/commit/444f9e223f7eaa6) tomada_valentina *June 26, 2025*
+
+
+## Release 7.0.31  -- _September 15, 2025_ 
+**Changes**
+
+>**Gestione MultiClassificazioni - Consultazione**
+>
+>[ebefde02b56c4f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/ebefde02b56c4f9) raffaele.pagano *September 15, 2025*
+
+>**Bumped version to 7.0.30**
+>
+>[506c97a45f074ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/506c97a45f074ba) dirgensa *September 11, 2025*
+
+
+## Release 7.0.30  -- _September 11, 2025_ 
+**Changes**
+
+>**Fix issues Gestione Flussi Stipendi**
+>
+>[6ea15d6a1944558](https://github.com/istitutosuperioredisanita/sigla-main/commit/6ea15d6a1944558) salvio_ciro *September 11, 2025*
+
+>**Refactorinig metodi per gestione dati Excel**
+>
+>[8d3fc8fe5ce79e7](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d3fc8fe5ce79e7) salvio_ciro *September 10, 2025*
+
+>**FLUSSO STIPENDI - cancellazione flusso non liquidato**
+>
+>[de48df4f5c707e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/de48df4f5c707e8) tomada_valentina *September 09, 2025*
+
+>**Bumped version to 7.0.28**
+>
+>[02d7d7212c37117](https://github.com/istitutosuperioredisanita/sigla-main/commit/02d7d7212c37117) dirgensa *September 09, 2025*
+
+>**Fix Evasione Ordine per magazzini non di transito**
+>
+>[253a9921269a7ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/253a9921269a7ac) salvio_ciro *September 09, 2025*
+
+>**Ottimizzazione gestione**
+>
+>[ff1aa342f0effb1](https://github.com/istitutosuperioredisanita/sigla-main/commit/ff1aa342f0effb1) salvio_ciro *September 09, 2025*
+
+>**Fix Tests**
+>
+>[63db0f02e20774c](https://github.com/istitutosuperioredisanita/sigla-main/commit/63db0f02e20774c) raffaele.pagano *September 09, 2025*
+
+>**ottimizzato inserimento CRUD per coficori (con lambda) + fix bp: tolto il button Apri File e corretto reset bulk dopo salvataggio**
+>
+>[e147bc1ee0bbba8](https://github.com/istitutosuperioredisanita/sigla-main/commit/e147bc1ee0bbba8) davide.mirra *September 09, 2025*
+
+>**Refactory codice inserimento Stipendi Cofi Cori**
+>
+>[a0d2f89194bad18](https://github.com/istitutosuperioredisanita/sigla-main/commit/a0d2f89194bad18) salvio_ciro *September 09, 2025*
+
+>**Eliminato set Key**
+>
+>[97b38102f6579f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/97b38102f6579f7) salvio_ciro *September 09, 2025*
+
+>**Ottimizzazione gestione**
+>
+>[91a7e0445698664](https://github.com/istitutosuperioredisanita/sigla-main/commit/91a7e0445698664) salvio_ciro *September 09, 2025*
+
+>**Ottimizzazione gestione**
+>
+>[3c680538b2623e4](https://github.com/istitutosuperioredisanita/sigla-main/commit/3c680538b2623e4) salvio_ciro *September 09, 2025*
+
+>**Ottimizzioni caricamento file stipendi**
+>
+>[1585614d19fb715](https://github.com/istitutosuperioredisanita/sigla-main/commit/1585614d19fb715) salvio_ciro *September 09, 2025*
+
+>**Ottimizzioni caricamento file stipendi**
+>
+>[6e5afc079ac9337](https://github.com/istitutosuperioredisanita/sigla-main/commit/6e5afc079ac9337) salvio_ciro *September 09, 2025*
+
+>**Ottimizzazione gestione**
+>
+>[638c48702ee27f3](https://github.com/istitutosuperioredisanita/sigla-main/commit/638c48702ee27f3) salvio_ciro *September 09, 2025*
+
+>**Gestione MultiClassificazioni**
+>
+>[1449050cbc4a3cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/1449050cbc4a3cb) raffaele.pagano *September 08, 2025*
+
+>**Ottimizzazione gestione**
+>
+>[18c4cc6d9861a33](https://github.com/istitutosuperioredisanita/sigla-main/commit/18c4cc6d9861a33) salvio_ciro *September 08, 2025*
+
+>**ottimizzato inserimento CRUD per coficori (con lambda) + fix bp: tolto il button Apri File e corretto reset bulk dopo salvataggio**
+>
+>[ac01d7aac34a34e](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac01d7aac34a34e) davide.mirra *September 05, 2025*
+
+>**Refactory codice inserimento Stipendi Cofi Cori**
+>
+>[795e2530f682cc3](https://github.com/istitutosuperioredisanita/sigla-main/commit/795e2530f682cc3) salvio_ciro *September 05, 2025*
+
+>**Eliminato set Key**
+>
+>[92542eba4a3be29](https://github.com/istitutosuperioredisanita/sigla-main/commit/92542eba4a3be29) salvio_ciro *September 05, 2025*
+
+>**Aggiunta Causale Omaggio per lo stato non liquidabile**
+>
+>[33eefb299fab992](https://github.com/istitutosuperioredisanita/sigla-main/commit/33eefb299fab992) salvio_ciro *September 04, 2025*
+
+>**Aggiunta Causale Omaggio per lo stato non liquidabile**
+>
+>[aa4b856e254071e](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa4b856e254071e) salvio_ciro *September 04, 2025*
+
+>**Aggiunta Causale Omaggio per lo stato non liquidabile**
+>
+>[ec4d3504bf52cc2](https://github.com/istitutosuperioredisanita/sigla-main/commit/ec4d3504bf52cc2) salvio_ciro *September 03, 2025*
+
+>**Aggiunta Causale Omaggio per lo stato non liquidabile**
+>
+>[681afa534f629fe](https://github.com/istitutosuperioredisanita/sigla-main/commit/681afa534f629fe) salvio_ciro *September 03, 2025*
+
+>**fix name sheet1 LORDI**
+>
+>[566a38658e625bc](https://github.com/istitutosuperioredisanita/sigla-main/commit/566a38658e625bc) davide.mirra *September 03, 2025*
+
+>**inserimento e memorizzazione del file nel documentale AZURE**
+>
+>[a9acc38e10cbe31](https://github.com/istitutosuperioredisanita/sigla-main/commit/a9acc38e10cbe31) davide.mirra *September 03, 2025*
+
+>**Fix procedura ammortamento java. Eliminato gestione fl_totalmente_scaricato**
+>
+>[66652b5d8e94d1b](https://github.com/istitutosuperioredisanita/sigla-main/commit/66652b5d8e94d1b) salvio_ciro *September 02, 2025*
+
+>**Fix procedura ammortamento java. Eliminato gestione fl_totalmente_scaricato**
+> * (cherry picked from commit 1f3dfedca975e769536645d2667c9dcb4656f78c)
+>
+>[19a7fdde95a7115](https://github.com/istitutosuperioredisanita/sigla-main/commit/19a7fdde95a7115) salvio_ciro *September 02, 2025*
+
+>**rename statement**
+>
+>[cdcbd8b57fd8f3f](https://github.com/istitutosuperioredisanita/sigla-main/commit/cdcbd8b57fd8f3f) salvio_ciro *September 01, 2025*
+
+>**fix errore progressivo: aumentata la lunghezza mese (PK) da 2 a 5. Completato inserimento stipendi. Predisposta jsp,action,bp per upload singolo file (da gestire)**
+>
+>[6b37016a973f15e](https://github.com/istitutosuperioredisanita/sigla-main/commit/6b37016a973f15e) davide.mirra *September 01, 2025*
+
+>**rename statement**
+> * (cherry picked from commit f3a73c498cafc4103727f00fc83530ebe4cf1f5d)
+>
+>[4aee2031e18b7bb](https://github.com/istitutosuperioredisanita/sigla-main/commit/4aee2031e18b7bb) salvio_ciro *September 01, 2025*
+
+>**sviluppo nel component per inserisciStipendiCofiCoriCompleto (check)**
+>
+>[e9e41ebe9a507ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/e9e41ebe9a507ac) davide.mirra *August 29, 2025*
+
+>**aggiunto campo note per i Dati Contabili del Progetto e riportato nel file excel come colonna degli Accertamenti Scadenzario Voce**
+>
+>[1aeb31083e45f04](https://github.com/istitutosuperioredisanita/sigla-main/commit/1aeb31083e45f04) davide.mirra *August 29, 2025*
+
+>**Fix anomalia chiusura ammortamento aggiungo progressico in join**
+> * (cherry picked from commit da3aaab8bf8da780cc7dce93531ce629e84af826)
+>
+>[0b9f6e7c3cb6589](https://github.com/istitutosuperioredisanita/sigla-main/commit/0b9f6e7c3cb6589) salvio_ciro *August 28, 2025*
+
+>**doSalva nell'action, metodo nel bp che riempie il bulk dall'excel (2 sheets), logica nel component che effettua i controlli e operazioni CRUD sulle tabelle corrispondenti. stipendi_cofi e Stipendi_cofi_obb_scad (da testare/fixare errore creaConBulk), Stipendi_cofi_cori (da fare)**
+>
+>[fa8adfa21fb65c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/fa8adfa21fb65c1) davide.mirra *August 28, 2025*
+
+>**Fix anomalia sull'aggiornamento del prezzo unitario nel transito in fase di salvataggio della fattura passiva**
+> * (cherry picked from commit 2443f72243a08b9ee4f97042d12e767a33678d8d)
+>
+>[92b18bd8e7eded0](https://github.com/istitutosuperioredisanita/sigla-main/commit/92b18bd8e7eded0) salvio_ciro *August 27, 2025*
+
+>**disabilitato il blocco dell'importo per inventariazione beni da ordine**
+>
+>[598af46c9024f7e](https://github.com/istitutosuperioredisanita/sigla-main/commit/598af46c9024f7e) salvio_ciro *August 25, 2025*
+
+>**Ottimizzazione tempi di apertura dell'ordine. Modificato il caricamento degli allegati delle righe di un ordine.**
+>
+>[b30b3dba3717ed5](https://github.com/istitutosuperioredisanita/sigla-main/commit/b30b3dba3717ed5) salvio_ciro *August 25, 2025*
+
+>**Fix refactoring generazione movimenti magazzino per ottimizzazione tempi**
+>
+>[a3883f4a44f9ba7](https://github.com/istitutosuperioredisanita/sigla-main/commit/a3883f4a44f9ba7) salvio_ciro *August 25, 2025*
+
+>**Fix nome directory gestione allegati righe dell'ordine**
+>
+>[3f285e2dd3c0d7b](https://github.com/istitutosuperioredisanita/sigla-main/commit/3f285e2dd3c0d7b) salvio_ciro *August 22, 2025*
+
+>**Fix nome directory gestione allegati righe dell'ordine**
+>
+>[8258dcf80184351](https://github.com/istitutosuperioredisanita/sigla-main/commit/8258dcf80184351) salvio_ciro *August 22, 2025*
+
+>**Fix refactoring generazione movimenti magazzino per ottimizzazione tempi**
+>
+>[25363b271d335c7](https://github.com/istitutosuperioredisanita/sigla-main/commit/25363b271d335c7) salvio_ciro *August 22, 2025*
+
+>**INVENTARIO - bloccato prezzo unitario se inventariazione da ordine (configurazione_cnr)**
+>
+>[a35add90e048f03](https://github.com/istitutosuperioredisanita/sigla-main/commit/a35add90e048f03) tomada_valentina *August 22, 2025*
+
+>**Fix anaolia sulla lista dei movimenti annullabili**
+>
+>[74d5a48a14f486f](https://github.com/istitutosuperioredisanita/sigla-main/commit/74d5a48a14f486f) salvio_ciro *August 21, 2025*
+
+>**Fix anaolia sulla lista dei movimenti annullabili**
+>
+>[9094c40bd2cafec](https://github.com/istitutosuperioredisanita/sigla-main/commit/9094c40bd2cafec) salvio_ciro *August 21, 2025*
+
+>**Miglioramento dei tempi di esecuzione della registrazione e modifica di una fattura da ordine. Rivisto il aggiornaDatiInventario con l'introduzione della vista di dettaglio v_fatt_ordine_det**
+>
+>[07c80d67616c383](https://github.com/istitutosuperioredisanita/sigla-main/commit/07c80d67616c383) salvio_ciro *August 21, 2025*
+
+>**update id changelog xml e spostata classe bp in un'altra folder**
+>
+>[0fe79cdd9eaffcf](https://github.com/istitutosuperioredisanita/sigla-main/commit/0fe79cdd9eaffcf) davide.mirra *August 21, 2025*
+
+>**creazione accesso e business process per il caricamento del flusso stipendiale**
+>
+>[d269dd1e4019ba1](https://github.com/istitutosuperioredisanita/sigla-main/commit/d269dd1e4019ba1) davide.mirra *August 20, 2025*
+
+>**Controllo per evitare di inserire più volte in ass_inv_bene_fattura**
+>
+>[39e9aa16fa58c8b](https://github.com/istitutosuperioredisanita/sigla-main/commit/39e9aa16fa58c8b) salvio_ciro *August 14, 2025*
 
 >**Check null list**
 >
@@ -2675,26 +4231,9 @@
 >
 >[f35c28bb71ffbf2](https://github.com/istitutosuperioredisanita/sigla-main/commit/f35c28bb71ffbf2) salvio_ciro *August 14, 2025*
 
->**Fix refactoring generazione movimenti magazzino**
->
->[39ab0e325675efb](https://github.com/istitutosuperioredisanita/sigla-main/commit/39ab0e325675efb) salvio_ciro *August 14, 2025*
-
 >**Fix Associazione Riga Fattura con Inventario nel caso di fattura da ordine**
 >
 >[0f7e30714e3dcc2](https://github.com/istitutosuperioredisanita/sigla-main/commit/0f7e30714e3dcc2) salvio_ciro *August 13, 2025*
-
->**Aggiunto metodo caricoDaOrdineRigheEvase che esegue la movimentazione del magazzino per tutte le consegne dell'ordine. Ottimizzazione per evasioni di ordine con molte consegne**
->
->[77234816e146a99](https://github.com/istitutosuperioredisanita/sigla-main/commit/77234816e146a99) salvio_ciro *August 13, 2025*
-
->**Aggiunto il default che la quantità evase è uguale alla quantità della riga. Per evitare che per ordine grandi bisogna selezionare ogni riga.**
->
->[88f6a727381c690](https://github.com/istitutosuperioredisanita/sigla-main/commit/88f6a727381c690) salvio_ciro *August 13, 2025*
-
->**fix Riscontro valore-> aggiunti a OrdineAcqKey, OrdineAcqRigaKey e OrdineAcqConsegnaKey i metodi hashCode e equals**
-> * (cherry picked from commit e8a0fe97e05303863bc93b98d9c5e7f384c66372)
->
->[4e81f2215a527c5](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e81f2215a527c5) salvio_ciro *August 13, 2025*
 
 >**fix Riscontro valore-> aggiunti a OrdineAcqKey, OrdineAcqRigaKey e OrdineAcqConsegnaKey i metodi hashCode e equals**
 >
@@ -2703,14 +4242,6 @@
 >**aggiunto nuovo privilegio per l'abilitazione alla stampa del rendiconto progetto**
 >
 >[988af89407fb911](https://github.com/istitutosuperioredisanita/sigla-main/commit/988af89407fb911) davide.mirra *August 07, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[4cb35f3ce02c5ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/4cb35f3ce02c5ee) raffaele.pagano *August 05, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[e74a22d20eda9db](https://github.com/istitutosuperioredisanita/sigla-main/commit/e74a22d20eda9db) raffaele.pagano *August 05, 2025*
 
 >**Revert "STAMPA REND FINANZIARIO - modificata lunghezza colonna di TMP_STAMPA_RENDICONTO"**
 > * This reverts commit 2ed30bc4
@@ -2721,25 +4252,9 @@
 >
 >[b1b0ffa6c2dbf62](https://github.com/istitutosuperioredisanita/sigla-main/commit/b1b0ffa6c2dbf62) salvio_ciro *August 04, 2025*
 
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[33a6be1a0942449](https://github.com/istitutosuperioredisanita/sigla-main/commit/33a6be1a0942449) raffaele.pagano *August 01, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[fe633786c752964](https://github.com/istitutosuperioredisanita/sigla-main/commit/fe633786c752964) raffaele.pagano *July 26, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[aa8b3012d06fed3](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa8b3012d06fed3) raffaele.pagano *July 23, 2025*
-
 >**STAMPA REND FINANZIARIO - modificata lunghezza colonna di TMP_STAMPA_RENDICONTO**
 >
 >[2ed30bc49dca88c](https://github.com/istitutosuperioredisanita/sigla-main/commit/2ed30bc49dca88c) tomada_valentina *July 22, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[f83479a255f4be2](https://github.com/istitutosuperioredisanita/sigla-main/commit/f83479a255f4be2) raffaele.pagano *July 17, 2025*
 
 >**fix: selezionatore ad albero dei gruppi stampa perdeva la selezione del tipo bilancio durante il back**
 >
@@ -2769,26 +4284,6 @@
 >
 >[4250a9bc8af1783](https://github.com/istitutosuperioredisanita/sigla-main/commit/4250a9bc8af1783) salvio_ciro *July 15, 2025*
 
->**CONFRONTA COFE COFI - visualizzazione descrizioni e filtro ricerca**
->
->[ef156a933bb54ec](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef156a933bb54ec) tomada_valentina *July 14, 2025*
-
->**CONFRONTA COFE COFI - visualizzazione descrizioni e filtro ricerca**
->
->[13acdef0d3e3a98](https://github.com/istitutosuperioredisanita/sigla-main/commit/13acdef0d3e3a98) tomada_valentina *July 14, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[0f018f353b00e1d](https://github.com/istitutosuperioredisanita/sigla-main/commit/0f018f353b00e1d) raffaele.pagano *July 12, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[92c1c74af61cdd0](https://github.com/istitutosuperioredisanita/sigla-main/commit/92c1c74af61cdd0) raffaele.pagano *July 10, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[fd4d0399ceb7955](https://github.com/istitutosuperioredisanita/sigla-main/commit/fd4d0399ceb7955) raffaele.pagano *July 09, 2025*
-
 >**Aggiunta Causale In Attesa di Inventario per lo stato non liquidabile**
 > * (cherry picked from commit a7250306eaef995dcae24a13f28cc2228d6423c4)
 >
@@ -2811,21 +4306,9 @@
 >
 >[d6adc51644ae718](https://github.com/istitutosuperioredisanita/sigla-main/commit/d6adc51644ae718) tomada_valentina *July 08, 2025*
 
->**SCARICO MAGAZZINO - bene scaricato per movimento dismissione**
->
->[ccc92263ee5b373](https://github.com/istitutosuperioredisanita/sigla-main/commit/ccc92263ee5b373) tomada_valentina *July 08, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[962d30a5abe3eb7](https://github.com/istitutosuperioredisanita/sigla-main/commit/962d30a5abe3eb7) raffaele.pagano *July 06, 2025*
-
 >**fix: release build [ci skip]**
 >
 >[aa1fa94ce1e6843](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa1fa94ce1e6843) mspasiano *July 04, 2025*
-
->**Bumped version to 7.0.14**
->
->[08e9aa8c1638110](https://github.com/istitutosuperioredisanita/sigla-main/commit/08e9aa8c1638110) dirgensa *July 04, 2025*
 
 >**Fix Anomalia creazione Automatica nota di credito per rifiuto da SDI**
 >
@@ -2855,14 +4338,6 @@
 >
 >[4bf11b6bd9bb503](https://github.com/istitutosuperioredisanita/sigla-main/commit/4bf11b6bd9bb503) salvio_ciro *June 30, 2025*
 
->**fix error view**
->
->[56db785fda0b67f](https://github.com/istitutosuperioredisanita/sigla-main/commit/56db785fda0b67f) davide.mirra *June 30, 2025*
-
->**aggiunta campi nuovi (flag e importi) a view e stored procedure, aggiunta al tab del consuntivo missione i totali di spese tracciate/non tracciate**
->
->[a93c0e495ee6ae2](https://github.com/istitutosuperioredisanita/sigla-main/commit/a93c0e495ee6ae2) davide.mirra *June 30, 2025*
-
 >**ORDINI - Cambio stato possibile solo dopo contabilizzazione**
 >
 >[d65170baa508996](https://github.com/istitutosuperioredisanita/sigla-main/commit/d65170baa508996) tomada_valentina *June 27, 2025*
@@ -2887,30 +4362,6 @@
 >
 >[85851d787d31498](https://github.com/istitutosuperioredisanita/sigla-main/commit/85851d787d31498) mspasiano *June 26, 2025*
 
->**rename file liquidbase**
->
->[9a19e2bac64baf3](https://github.com/istitutosuperioredisanita/sigla-main/commit/9a19e2bac64baf3) davide.mirra *June 26, 2025*
-
->**SCARICO INVENTARIO - scarico definitivo se movimento dismissione**
->
->[444f9e223f7eaa6](https://github.com/istitutosuperioredisanita/sigla-main/commit/444f9e223f7eaa6) tomada_valentina *June 26, 2025*
-
->**fix name spese tracc/no tracc**
->
->[b5dca53df4ee878](https://github.com/istitutosuperioredisanita/sigla-main/commit/b5dca53df4ee878) davide.mirra *June 25, 2025*
-
->**aggiunto flag spesa tracciata per i dettagli spese delle missioni e implementata logica al momento dell'inserimento in SIGLA**
->
->[84418c28a9ca961](https://github.com/istitutosuperioredisanita/sigla-main/commit/84418c28a9ca961) davide.mirra *June 25, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[d2307900ea05ccf](https://github.com/istitutosuperioredisanita/sigla-main/commit/d2307900ea05ccf) raffaele.pagano *June 24, 2025*
-
->**Bumped version to 7.0.11**
->
->[d1603f8b961b9a1](https://github.com/istitutosuperioredisanita/sigla-main/commit/d1603f8b961b9a1) dirgensa *June 23, 2025*
-
 >**Eliminato la definizione del metodo gestioneStampaOrdine**
 >
 >[b0aba5b656a6bf7](https://github.com/istitutosuperioredisanita/sigla-main/commit/b0aba5b656a6bf7) salvio_ciro *June 23, 2025*
@@ -2918,10 +4369,6 @@
 >**new feature: aggiunto il terzo alla consultazione dei dati PCC**
 >
 >[88f6a20abe25b4d](https://github.com/istitutosuperioredisanita/sigla-main/commit/88f6a20abe25b4d) mspasiano *June 23, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[d1f3527f30812ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/d1f3527f30812ee) raffaele.pagano *June 21, 2025*
 
 >**new feature: aggiunto il terzo alla consultazione dei dati PCC**
 >
@@ -2934,10 +4381,6 @@
 >**In caso di uo ente in scrivania, ora è possibile visualizzare la fattura collegata al documento elettronico.**
 >
 >[15d0c32e369392f](https://github.com/istitutosuperioredisanita/sigla-main/commit/15d0c32e369392f) mspasiano *June 20, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[d570c5afc912c3c](https://github.com/istitutosuperioredisanita/sigla-main/commit/d570c5afc912c3c) raffaele.pagano *June 20, 2025*
 
 >**rename ds_procedura**
 >
@@ -2972,14 +4415,6 @@
 >
 >[4512c68b05dbaa0](https://github.com/istitutosuperioredisanita/sigla-main/commit/4512c68b05dbaa0) tomada_valentina *June 17, 2025*
 
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[5fae17aacbb6c95](https://github.com/istitutosuperioredisanita/sigla-main/commit/5fae17aacbb6c95) raffaele.pagano *June 16, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[1c02fc9b59b207c](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c02fc9b59b207c) raffaele.pagano *June 16, 2025*
-
 >**AMMORTAMENTO BENI - gestione toolbar**
 >
 >[3009603554c40c3](https://github.com/istitutosuperioredisanita/sigla-main/commit/3009603554c40c3) tomada_valentina *June 16, 2025*
@@ -2995,10 +4430,6 @@
 >**Fix scadenza per la nota di credito automatica**
 >
 >[045eee9c403e9d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/045eee9c403e9d3) salvio_ciro *June 16, 2025*
-
->**Bumped version to 7.0.8**
->
->[6c759222ff43e40](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c759222ff43e40) dirgensa *June 12, 2025*
 
 >**new feature: Build and Push Container to ghcr.io**
 >
@@ -3049,10 +4480,6 @@
 >
 >[2a289ca441bcc32](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a289ca441bcc32) tomada_valentina *May 26, 2025*
 
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[8d4579d1edd6047](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d4579d1edd6047) raffaele.pagano *May 26, 2025*
-
 >**fix: aggiunte informazioni ulteriori alla vista per i controlli PCC, abilitato il filtro per UO in scrivania**
 >
 >[495984984ce432d](https://github.com/istitutosuperioredisanita/sigla-main/commit/495984984ce432d) mspasiano *May 25, 2025*
@@ -3081,14 +4508,6 @@
 >
 >[3f0fad8508a3cf6](https://github.com/istitutosuperioredisanita/sigla-main/commit/3f0fad8508a3cf6) salvio_ciro *May 21, 2025*
 
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[4e383d2444a86ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e383d2444a86ba) raffaele.pagano *May 20, 2025*
-
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[9427d894fdedce8](https://github.com/istitutosuperioredisanita/sigla-main/commit/9427d894fdedce8) raffaele.pagano *May 20, 2025*
-
 >**Rename Log Rest Service e configurazione application**
 > * it.cnr.contab.web.rest.resource.util.JaxRsLogFilter:
 > * level: INFO
@@ -3107,19 +4526,11 @@
 
 >**Aggiornato fl_dismesso con fl_totalmente_scaricato**
 >
->[69e878ffdab5921](https://github.com/istitutosuperioredisanita/sigla-main/commit/69e878ffdab5921) salvio_ciro *May 15, 2025*
-
->**Aggiornato fl_dismesso con fl_totalmente_scaricato**
->
 >[561b77b70b27508](https://github.com/istitutosuperioredisanita/sigla-main/commit/561b77b70b27508) salvio_ciro *May 15, 2025*
 
 >**Push**
 >
 >[56985717f9352e1](https://github.com/istitutosuperioredisanita/sigla-main/commit/56985717f9352e1) salvio_ciro *May 14, 2025*
-
->**Fix anomalia NON_ACQUISITO in distinta**
->
->[a65dc663436926a](https://github.com/istitutosuperioredisanita/sigla-main/commit/a65dc663436926a) salvio_ciro *May 14, 2025*
 
 >**Fix anomalia NON_ACQUISITO in distinta**
 >
@@ -3132,14 +4543,6 @@
 >**Push fix e implementazione versione 2.0**
 >
 >[c65a3f11b7b3660](https://github.com/istitutosuperioredisanita/sigla-main/commit/c65a3f11b7b3660) salvio_ciro *May 09, 2025*
-
->**Aggiunta l'informazione data_cancellazione nella lista dei valori ritornati dal rest per categoria/Gruppo invent**
->
->[a0a5abe0a76f48b](https://github.com/istitutosuperioredisanita/sigla-main/commit/a0a5abe0a76f48b) salvio_ciro *May 06, 2025*
-
->**Aggiunta l'informazione fl_valido nella lista dei valori ritornati dal rest per Beni e Servizio i valori fl_valido e ti_bene_servizio**
->
->[6490f458e20c1d5](https://github.com/istitutosuperioredisanita/sigla-main/commit/6490f458e20c1d5) salvio_ciro *May 06, 2025*
 
 >**Aggiunta l'informazione data_cancellazione nella lista dei valori ritornati dal rest per categoria/Gruppo invent**
 >
@@ -3161,10 +4564,6 @@
 >
 >[a798504689408ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/a798504689408ac) tomada_valentina *May 05, 2025*
 
->**Modifiche per attivazione contabilità economica separata dalla contabilità finanziaria**
->
->[c7803f54c66b294](https://github.com/istitutosuperioredisanita/sigla-main/commit/c7803f54c66b294) raffaele.pagano *April 29, 2025*
-
 >**fix report stampa sintetica progetti**
 >
 >[6471000fb883170](https://github.com/istitutosuperioredisanita/sigla-main/commit/6471000fb883170) davide.mirra *April 29, 2025*
@@ -3172,10 +4571,6 @@
 >**fix report stampa sintetica progetti**
 >
 >[eebf24e29c63a55](https://github.com/istitutosuperioredisanita/sigla-main/commit/eebf24e29c63a55) davide.mirra *April 29, 2025*
-
->**Fix gestione eccezione quando non viene settato il responsabile della GAE**
->
->[7ec43b1305ed4da](https://github.com/istitutosuperioredisanita/sigla-main/commit/7ec43b1305ed4da) salvio_ciro *April 28, 2025*
 
 >**Fix gestione eccezione quando non viene settato il responsabile della GAE**
 >
@@ -3191,27 +4586,11 @@
 
 >**Aggiunto Rest Service per Categoria Gruppo Invent**
 >
->[a70619dfa481ed9](https://github.com/istitutosuperioredisanita/sigla-main/commit/a70619dfa481ed9) salvio_ciro *April 24, 2025*
-
->**Aggiunto Rest Service per Categoria Gruppo Invent**
->
 >[42ba9591db9bf5c](https://github.com/istitutosuperioredisanita/sigla-main/commit/42ba9591db9bf5c) salvio_ciro *April 24, 2025*
 
 >**Aggiunto Rest Service per Categoria Gruppo Invent**
 >
 >[b6e0e28d6807c20](https://github.com/istitutosuperioredisanita/sigla-main/commit/b6e0e28d6807c20) salvio_ciro *April 24, 2025*
-
->**fix**
->
->[4a3070fde402977](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a3070fde402977) davide.mirra *April 17, 2025*
-
->**fix commenti eliminati**
->
->[07d1c2fe19874cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/07d1c2fe19874cb) davide.mirra *April 17, 2025*
-
->**fix associazione beni accesori a beni principali registrati**
->
->[902519b404c1072](https://github.com/istitutosuperioredisanita/sigla-main/commit/902519b404c1072) davide.mirra *April 17, 2025*
 
 >**fix**
 >
@@ -3228,18 +4607,6 @@
 >**fix associazione beni accesori a beni principali registrati**
 >
 >[2a7d1471bbf51c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a7d1471bbf51c1) davide.mirra *April 16, 2025*
-
->**fix inventariazione corretta per beni accessori contestuali**
->
->[7e38114f06b4aec](https://github.com/istitutosuperioredisanita/sigla-main/commit/7e38114f06b4aec) davide.mirra *April 16, 2025*
-
->**fix inventariazione corretta per beni accessori contestuali con più beni principali**
->
->[661c5b32d106546](https://github.com/istitutosuperioredisanita/sigla-main/commit/661c5b32d106546) davide.mirra *April 16, 2025*
-
->**fix: Cancellazione di un documento di storno**
->
->[8e070d0025809d8](https://github.com/istitutosuperioredisanita/sigla-main/commit/8e070d0025809d8) mspasiano *April 14, 2025*
 
 >**fix: Cancellazione di un documento di storno**
 >
@@ -3261,14 +4628,6 @@
 >
 >[12829e9565c9559](https://github.com/istitutosuperioredisanita/sigla-main/commit/12829e9565c9559) tomada_valentina *April 11, 2025*
 
->**fix nullpointer nr_inventario al save se flaggato fl_accessorio_contestuale e fix etichetta duplicata**
->
->[20b20cd8eac1e55](https://github.com/istitutosuperioredisanita/sigla-main/commit/20b20cd8eac1e55) davide.mirra *April 10, 2025*
-
->**fix autocomplete etichetta anche quando è flaggato fl_accessorio_contestuale**
->
->[2a1a43b14b61dfc](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a1a43b14b61dfc) davide.mirra *April 10, 2025*
-
 >**AMMORTAMENTO BENI - procedura JAVA nuova vista**
 >
 >[75f980f07ce90ce](https://github.com/istitutosuperioredisanita/sigla-main/commit/75f980f07ce90ce) tomada_valentina *April 10, 2025*
@@ -3285,30 +4644,10 @@
 >
 >[19193e65707c532](https://github.com/istitutosuperioredisanita/sigla-main/commit/19193e65707c532) tomada_valentina *April 08, 2025*
 
->**Fix report sintetico progretti**
->
->[8005a75a356c03e](https://github.com/istitutosuperioredisanita/sigla-main/commit/8005a75a356c03e) salvio_ciro *April 07, 2025*
-
 >**Fix aggiunta vista V_CONS_REG_IVA utilizzare per le estrazioni dei registri iva e lista documenti( attivi e passivi)**
 > * (cherry picked from commit 0e602763aaaacdd6ee9556d9ac78b5535e6af6ab)
 >
 >[4c4cac03d7caf0a](https://github.com/istitutosuperioredisanita/sigla-main/commit/4c4cac03d7caf0a) salvio_ciro *April 07, 2025*
-
->**Fix aggiunta vista V_CONS_REG_IVA utilizzare per le estrazioni dei registri iva e lista documenti( attivi e passivi)**
->
->[0e602763aaaacdd](https://github.com/istitutosuperioredisanita/sigla-main/commit/0e602763aaaacdd) salvio_ciro *April 07, 2025*
-
->**Gestione tipo movimento carica inventario da Ordini**
->
->[b013212f7b24f3f](https://github.com/istitutosuperioredisanita/sigla-main/commit/b013212f7b24f3f) salvio_ciro *April 07, 2025*
-
->**fix**
->
->[8b24430bb6ea094](https://github.com/istitutosuperioredisanita/sigla-main/commit/8b24430bb6ea094) davide.mirra *April 07, 2025*
-
->**fix etichetta disabilitata e auto-compilata se flag bene accessorio (Y). fix messaggio errore etichetta esistente con check sul progressivo**
->
->[6f385620720050d](https://github.com/istitutosuperioredisanita/sigla-main/commit/6f385620720050d) davide.mirra *April 07, 2025*
 
 >**Gestione tipo movimento carica inventario da Ordini**
 >
@@ -3325,14 +4664,6 @@
 >**fix etichetta disabilitata e auto-compilata se flag bene accessorio (Y). fix messaggio errore etichetta esistente con check sul progressivo**
 >
 >[9c4e90e834c025e](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c4e90e834c025e) davide.mirra *April 03, 2025*
-
->**Possibilità di colleggare nota di credito a fatture dalle funzionalità di fatturazione elettroniche quando non è attiva la gestione del non registrabilità**
->
->[2b1ec43bc46beb4](https://github.com/istitutosuperioredisanita/sigla-main/commit/2b1ec43bc46beb4) salvio_ciro *April 01, 2025*
-
->**Restore 1210 per EURO**
->
->[33be759ffbe4204](https://github.com/istitutosuperioredisanita/sigla-main/commit/33be759ffbe4204) salvio_ciro *April 01, 2025*
 
 >**Restore 1210 per EURO**
 >
@@ -3364,6 +4695,720 @@
 >
 >[532f3b9a178c720](https://github.com/istitutosuperioredisanita/sigla-main/commit/532f3b9a178c720) salvio_ciro *March 27, 2025*
 
+>**modifiche ammortamento java**
+>
+>[6855de10b5f28f5](https://github.com/istitutosuperioredisanita/sigla-main/commit/6855de10b5f28f5) salvio_ciro *March 19, 2025*
+
+
+## Release 7.0.28  -- _September 09, 2025_ 
+**Changes**
+
+>**Fix Evasione Ordine per magazzini non di transito**
+>
+>[1c101b0eafd6d0e](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c101b0eafd6d0e) salvio_ciro *September 09, 2025*
+
+>**Fix procedura ammortamento java. Eliminato gestione fl_totalmente_scaricato**
+>
+>[51ba07256413882](https://github.com/istitutosuperioredisanita/sigla-main/commit/51ba07256413882) salvio_ciro *September 03, 2025*
+
+>**Bumped version to 7.0.27**
+>
+>[22d6215a6963085](https://github.com/istitutosuperioredisanita/sigla-main/commit/22d6215a6963085) dirgensa *September 03, 2025*
+
+
+## Release 7.0.27  -- _September 03, 2025_ 
+**Changes**
+
+>**Aggiunta Causale Omaggio per lo stato non liquidabile**
+>
+>[611f74a5de1ca55](https://github.com/istitutosuperioredisanita/sigla-main/commit/611f74a5de1ca55) salvio_ciro *September 03, 2025*
+
+>**Bumped version to 7.0.26**
+>
+>[bd62d09ac216a7a](https://github.com/istitutosuperioredisanita/sigla-main/commit/bd62d09ac216a7a) dirgensa *September 02, 2025*
+
+
+## Release 7.0.26  -- _September 02, 2025_ 
+**Changes**
+
+>**Fix procedura ammortamento java. Eliminato gestione fl_totalmente_scaricato**
+>
+>[1f3dfedca975e76](https://github.com/istitutosuperioredisanita/sigla-main/commit/1f3dfedca975e76) salvio_ciro *September 02, 2025*
+
+>**rename statement**
+>
+>[f3a73c498cafc41](https://github.com/istitutosuperioredisanita/sigla-main/commit/f3a73c498cafc41) salvio_ciro *September 01, 2025*
+
+>**Fix anomalia chiusura ammortamento aggiungo progressico in join**
+>
+>[da3aaab8bf8da78](https://github.com/istitutosuperioredisanita/sigla-main/commit/da3aaab8bf8da78) salvio_ciro *August 28, 2025*
+
+>**Bumped version to 7.0.25**
+>
+>[d954d7cce1bd44d](https://github.com/istitutosuperioredisanita/sigla-main/commit/d954d7cce1bd44d) dirgensa *August 27, 2025*
+
+
+## Release 7.0.25  -- _August 27, 2025_ 
+**Changes**
+
+>**Bumped version to 7.0.24**
+>
+>[576c2ffb09939b8](https://github.com/istitutosuperioredisanita/sigla-main/commit/576c2ffb09939b8) dirgensa *August 27, 2025*
+
+>**Fix anomalia sull'aggiornamento del prezzo unitario nel transito in fase di salvataggio della fattura passiva**
+> * (cherry picked from commit 2443f72243a08b9ee4f97042d12e767a33678d8d)
+>
+>[22244c3d9091c9b](https://github.com/istitutosuperioredisanita/sigla-main/commit/22244c3d9091c9b) salvio_ciro *August 27, 2025*
+
+>**AMMORTAMENTO BENI - verifica pg_job is null**
+>
+>[e7a151b39cfc5db](https://github.com/istitutosuperioredisanita/sigla-main/commit/e7a151b39cfc5db) tomada_valentina *August 26, 2025*
+
+>**aggiunto nuovo privilegio per l'abilitazione alla stampa del rendiconto progetto**
+>
+>[a9a5afb754530d6](https://github.com/istitutosuperioredisanita/sigla-main/commit/a9a5afb754530d6) davide.mirra *August 25, 2025*
+
+>**test push e merge**
+>
+>[56aa0091897543f](https://github.com/istitutosuperioredisanita/sigla-main/commit/56aa0091897543f) davide.mirra *August 25, 2025*
+
+>**fix report stampa sintetica progetti**
+>
+>[cfc488eb6152a2e](https://github.com/istitutosuperioredisanita/sigla-main/commit/cfc488eb6152a2e) davide.mirra *August 25, 2025*
+
+>**fix report stampa sintetica progetti**
+>
+>[401f64e7f067468](https://github.com/istitutosuperioredisanita/sigla-main/commit/401f64e7f067468) davide.mirra *August 25, 2025*
+
+>**AMMORTAMENTO BENE-Fix import e aggiunto metodo isInteger**
+>
+>[10cf978691952ab](https://github.com/istitutosuperioredisanita/sigla-main/commit/10cf978691952ab) salvio_ciro *August 25, 2025*
+
+>**AMMORTAMENTO BENE-Eliminato definizioni duplicate**
+>
+>[0aa7226e10da0ef](https://github.com/istitutosuperioredisanita/sigla-main/commit/0aa7226e10da0ef) salvio_ciro *August 25, 2025*
+
+>**AMMORTAMENTO BENI - gestione toolbar**
+>
+>[aded11970e5875a](https://github.com/istitutosuperioredisanita/sigla-main/commit/aded11970e5875a) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - gestione beni senza tipo ammortamento**
+>
+>[2f0509be6615f7b](https://github.com/istitutosuperioredisanita/sigla-main/commit/2f0509be6615f7b) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - chiusura inventario**
+>
+>[b9e5142175367da](https://github.com/istitutosuperioredisanita/sigla-main/commit/b9e5142175367da) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - chiusura inventario**
+>
+>[57e8a5bdac30a8f](https://github.com/istitutosuperioredisanita/sigla-main/commit/57e8a5bdac30a8f) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - chiusura inventario**
+>
+>[74d2f151a905223](https://github.com/istitutosuperioredisanita/sigla-main/commit/74d2f151a905223) tomada_valentina *August 25, 2025*
+
+>**Aggiunta import import java.sql.SQLException;**
+>
+>[04098413c8acd5b](https://github.com/istitutosuperioredisanita/sigla-main/commit/04098413c8acd5b) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - procedura BATCH JAVA**
+>
+>[2a19bf6c9a91393](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a19bf6c9a91393) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - procedura BATCH JAVA**
+>
+>[e469caefcbe19b7](https://github.com/istitutosuperioredisanita/sigla-main/commit/e469caefcbe19b7) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - procedura BATCH JAVA**
+>
+>[5f098831c54baad](https://github.com/istitutosuperioredisanita/sigla-main/commit/5f098831c54baad) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - procedura BATCH JAVA**
+>
+>[dde5dfcbcf99641](https://github.com/istitutosuperioredisanita/sigla-main/commit/dde5dfcbcf99641) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - procedura BATCH JAVA**
+>
+>[87c541d8224e75c](https://github.com/istitutosuperioredisanita/sigla-main/commit/87c541d8224e75c) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - procedura JAVA**
+>
+>[b4bd44e9715a0c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/b4bd44e9715a0c1) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - procedura JAVA nuova vista**
+>
+>[9136d86e87608c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/9136d86e87608c9) tomada_valentina *August 25, 2025*
+
+>**AMMORTAMENTO BENI - procedura JAVA nuova vista**
+>
+>[3427796f3a53ebb](https://github.com/istitutosuperioredisanita/sigla-main/commit/3427796f3a53ebb) tomada_valentina *August 25, 2025*
+
+
+## Release 7.0.24  -- _August 27, 2025_ 
+**Changes**
+
+>**Bumped version to 7.024**
+>
+>[54a92feaefef173](https://github.com/istitutosuperioredisanita/sigla-main/commit/54a92feaefef173) dirgensa *August 27, 2025*
+
+>**Fix anomalia sull'aggiornamento del prezzo unitario nel transito in fase di salvataggio della fattura passiva**
+>
+>[2443f72243a08b9](https://github.com/istitutosuperioredisanita/sigla-main/commit/2443f72243a08b9) salvio_ciro *August 27, 2025*
+
+>**Bumped version to 7.0.23**
+>
+>[64cf6e783b4b336](https://github.com/istitutosuperioredisanita/sigla-main/commit/64cf6e783b4b336) dirgensa *August 25, 2025*
+
+
+## Release 7.0.23  -- _August 25, 2025_ 
+**Changes**
+
+>**Aggiunta import import java.sql.SQLException;**
+>
+>[1739a4301114ff0](https://github.com/istitutosuperioredisanita/sigla-main/commit/1739a4301114ff0) salvio_ciro *August 25, 2025*
+
+>**Eliminato commento vecchia chiamata metodo caricoDaOrdine di MovimentiMagComponent**
+>
+>[4170f7dade7fb8d](https://github.com/istitutosuperioredisanita/sigla-main/commit/4170f7dade7fb8d) salvio_ciro *August 25, 2025*
+
+>**CONSEGNA ORDINE - controllo sulla quantità intera se bene inventariabile**
+>
+>[662b78aa527ca2e](https://github.com/istitutosuperioredisanita/sigla-main/commit/662b78aa527ca2e) tomada_valentina *August 25, 2025*
+
+>**CONSEGNA ORDINE - controllo sulla quantità minima 1 in consegna ordine**
+>
+>[bd5ca1b9738736b](https://github.com/istitutosuperioredisanita/sigla-main/commit/bd5ca1b9738736b) tomada_valentina *August 25, 2025*
+
+>**Fix refactoring generazione movimenti magazzino per ottimizzazione tempi**
+>
+>[b1178e56edfbac7](https://github.com/istitutosuperioredisanita/sigla-main/commit/b1178e56edfbac7) salvio_ciro *August 25, 2025*
+
+>**Fix nome directory gestione allegati righe dell'ordine**
+>
+>[71bfb70032c2e3f](https://github.com/istitutosuperioredisanita/sigla-main/commit/71bfb70032c2e3f) salvio_ciro *August 25, 2025*
+
+>**Fix nome directory gestione allegati righe dell'ordine**
+>
+>[1605d9bf06e0066](https://github.com/istitutosuperioredisanita/sigla-main/commit/1605d9bf06e0066) salvio_ciro *August 25, 2025*
+
+>**Fix refactoring generazione movimenti magazzino per ottimizzazione tempi**
+>
+>[c4867d0707eb37e](https://github.com/istitutosuperioredisanita/sigla-main/commit/c4867d0707eb37e) salvio_ciro *August 25, 2025*
+
+>**Ottimizzazione tempi di apertura dell'ordine. Modificato il caricamento degli allegati delle righe di un ordine.**
+>
+>[47e7a741c946e1e](https://github.com/istitutosuperioredisanita/sigla-main/commit/47e7a741c946e1e) salvio_ciro *August 25, 2025*
+
+>**disabilitato il blocco dell'importo per inventariazione beni da ordine**
+>
+>[d9dc3b68965f3c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/d9dc3b68965f3c9) salvio_ciro *August 25, 2025*
+
+>**INVENTARIO - bloccato prezzo unitario se inventariazione da ordine (configurazione_cnr)**
+>
+>[d6d39199d445a73](https://github.com/istitutosuperioredisanita/sigla-main/commit/d6d39199d445a73) tomada_valentina *August 25, 2025*
+
+>**Miglioramento dei tempi di esecuzione della registrazione e modifica di una fattura da ordine. Rivisto il aggiornaDatiInventario con l'introduzione della vista di dettaglio v_fatt_ordine_det**
+>
+>[6d77887f27efdf3](https://github.com/istitutosuperioredisanita/sigla-main/commit/6d77887f27efdf3) salvio_ciro *August 25, 2025*
+
+>**Controllo per evitare di inserire più volte in ass_inv_bene_fattura**
+>
+>[a786734c9713faf](https://github.com/istitutosuperioredisanita/sigla-main/commit/a786734c9713faf) salvio_ciro *August 25, 2025*
+
+>**Check null list**
+>
+>[47df12280f8c9f6](https://github.com/istitutosuperioredisanita/sigla-main/commit/47df12280f8c9f6) salvio_ciro *August 25, 2025*
+
+>**Fix refactoring generazione movimenti magazzino**
+>
+>[6c297337d8a8070](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c297337d8a8070) salvio_ciro *August 25, 2025*
+
+>**Aggiunto metodo caricoDaOrdineRigheEvase che esegue la movimentazione del magazzino per tutte le consegne dell'ordine. Ottimizzazione per evasioni di ordine con molte consegne**
+>
+>[807dec7b4807c42](https://github.com/istitutosuperioredisanita/sigla-main/commit/807dec7b4807c42) salvio_ciro *August 25, 2025*
+
+>**Aggiunto il default che la quantità evase è uguale alla quantità della riga. Per evitare che per ordine grandi bisogna selezionare ogni riga.**
+>
+>[05ec32e40f97241](https://github.com/istitutosuperioredisanita/sigla-main/commit/05ec32e40f97241) salvio_ciro *August 25, 2025*
+
+>**Fix anaolia sulla lista dei movimenti annullabili**
+>
+>[3ccff846d4f936c](https://github.com/istitutosuperioredisanita/sigla-main/commit/3ccff846d4f936c) salvio_ciro *August 21, 2025*
+
+>**Fix anaolia sulla lista dei movimenti annullabili**
+>
+>[a73afbfee431b96](https://github.com/istitutosuperioredisanita/sigla-main/commit/a73afbfee431b96) salvio_ciro *August 21, 2025*
+
+>**Bumped version to 7.0.22**
+>
+>[d7e76009420b6f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/d7e76009420b6f7) dirgensa *August 13, 2025*
+
+
+## Release 7.0.22  -- _August 13, 2025_ 
+**Changes**
+
+>**Fix Associazione Riga Fattura con Inventario nel caso di fattura da ordine**
+>
+>[a41ecee23ba545a](https://github.com/istitutosuperioredisanita/sigla-main/commit/a41ecee23ba545a) salvio_ciro *August 13, 2025*
+
+>**Bumped version to 7.0.21**
+>
+>[2206ec461790934](https://github.com/istitutosuperioredisanita/sigla-main/commit/2206ec461790934) dirgensa *August 13, 2025*
+
+
+## Release 7.0.21  -- _August 13, 2025_ 
+**Changes**
+
+>**fix Riscontro valore-> aggiunti a OrdineAcqKey, OrdineAcqRigaKey e OrdineAcqConsegnaKey i metodi hashCode e equals**
+>
+>[e8a0fe97e053038](https://github.com/istitutosuperioredisanita/sigla-main/commit/e8a0fe97e053038) salvio_ciro *August 13, 2025*
+
+>**Bumped version to 7.0.20**
+>
+>[46c1244c5320172](https://github.com/istitutosuperioredisanita/sigla-main/commit/46c1244c5320172) dirgensa *August 04, 2025*
+
+
+## Release 7.0.20  -- _August 04, 2025_ 
+**Changes**
+
+>**modificata lunghezza colonna cd_livello della tabella  TMP_STAMPA_RENDICONTO da Varchar2(5) a Varchar2(30(**
+>
+>[d1aeb80a84b1da7](https://github.com/istitutosuperioredisanita/sigla-main/commit/d1aeb80a84b1da7) salvio_ciro *August 04, 2025*
+
+>**Bumped version to 7.0.19**
+>
+>[6fcfa18cf1f465d](https://github.com/istitutosuperioredisanita/sigla-main/commit/6fcfa18cf1f465d) dirgensa *August 04, 2025*
+
+
+## Release 7.0.19  -- _July 17, 2025_ 
+**Changes**
+
+>**fix: selezionatore ad albero dei gruppi stampa perdeva la selezione del tipo bilancio durante il back**
+>
+>[8557af4a8aeed99](https://github.com/istitutosuperioredisanita/sigla-main/commit/8557af4a8aeed99) mspasiano *July 17, 2025*
+
+>**Bumped version to 7.0.18**
+>
+>[266f1f292cd5b83](https://github.com/istitutosuperioredisanita/sigla-main/commit/266f1f292cd5b83) dirgensa *July 17, 2025*
+
+
+## Release 7.0.18  -- _July 16, 2025_ 
+**Changes**
+
+>**Fix anomalia beni accessori non con la stessa categoria/gruppo ma con la stessa categoria**
+>
+>[390f4fbc2e16088](https://github.com/istitutosuperioredisanita/sigla-main/commit/390f4fbc2e16088) salvio_ciro *July 16, 2025*
+
+>**Bumped version to 7.0.17**
+>
+>[59914278b7a6fd5](https://github.com/istitutosuperioredisanita/sigla-main/commit/59914278b7a6fd5) dirgensa *July 16, 2025*
+
+
+## Release 7.0.17  -- _July 16, 2025_ 
+**Changes**
+
+>**Modifica stato ordine. Lo stato alla firma è aggiunto solo quando lo stato è contabilizzato**
+>
+>[d62e9734299323d](https://github.com/istitutosuperioredisanita/sigla-main/commit/d62e9734299323d) salvio_ciro *July 16, 2025*
+
+>**Modificato ordine creazione/aggiornamento viste V_CONFRONTA_COSTI_COGE_COFI e V_COGE_COSTI_BY_COFI**
+>
+>[c400e777ffd25f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/c400e777ffd25f9) salvio_ciro *July 15, 2025*
+
+>**CONFRONTA COFE COFI - visualizzazione descrizioni e filtro ricerca**
+>
+>[57dd26de6c3c6c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/57dd26de6c3c6c1) tomada_valentina *July 15, 2025*
+
+>**CONFRONTA COFE COFI - visualizzazione descrizioni e filtro ricerca**
+>
+>[b87bb047ea526a6](https://github.com/istitutosuperioredisanita/sigla-main/commit/b87bb047ea526a6) tomada_valentina *July 15, 2025*
+
+>**Bumped version to 7.0.16**
+>
+>[6b8966f656ce5ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/6b8966f656ce5ba) dirgensa *July 09, 2025*
+
+
+## Release 7.0.16  -- _July 09, 2025_ 
+**Changes**
+
+>**Aggiunta Causale In Attesa di Inventario per lo stato non liquidabile**
+>
+>[a7250306eaef995](https://github.com/istitutosuperioredisanita/sigla-main/commit/a7250306eaef995) salvio_ciro *July 09, 2025*
+
+>**fix: fatture collegate a compensi annullati**
+>
+>[60c3a6fb9b745ff](https://github.com/istitutosuperioredisanita/sigla-main/commit/60c3a6fb9b745ff) mspasiano *July 09, 2025*
+
+>**Bumped version to 7.0.15**
+>
+>[5d2ee83751a6cd4](https://github.com/istitutosuperioredisanita/sigla-main/commit/5d2ee83751a6cd4) dirgensa *July 09, 2025*
+
+
+## Release 7.0.15  -- _July 09, 2025_ 
+**Changes**
+
+>**Fix Anomalia check beni inventariati**
+>
+>[c2aeff579e95965](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2aeff579e95965) salvio_ciro *July 09, 2025*
+
+>**fix: aggiunte note di credito collegate solo in economica e non in finanziaria**
+>
+>[10839b12a86a18e](https://github.com/istitutosuperioredisanita/sigla-main/commit/10839b12a86a18e) mspasiano *July 09, 2025*
+
+>**Bumped version to 7.0.14**
+>
+>[08e9aa8c1638110](https://github.com/istitutosuperioredisanita/sigla-main/commit/08e9aa8c1638110) dirgensa *July 04, 2025*
+
+
+## Release 7.0.14  -- _July 04, 2025_ 
+**Changes**
+
+>**Fix Anomalia creazione Automatica nota di credito per rifiuto da SDI**
+>
+>[d68492a6dab87d0](https://github.com/istitutosuperioredisanita/sigla-main/commit/d68492a6dab87d0) salvio_ciro *July 04, 2025*
+
+>**upgrade version of jada artifact**
+>
+>[d0cee2d23f853c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/d0cee2d23f853c1) mspasiano *July 04, 2025*
+
+>**Bumped version to 7.0.13**
+>
+>[3966e1220458d6d](https://github.com/istitutosuperioredisanita/sigla-main/commit/3966e1220458d6d) dirgensa *July 03, 2025*
+
+
+## Release 7.0.13  -- _July 03, 2025_ 
+**Changes**
+
+>**Fix issue on Confronta Costi Coge Cofi**
+>
+>[3aa970d339d55c5](https://github.com/istitutosuperioredisanita/sigla-main/commit/3aa970d339d55c5) salvio_ciro *July 03, 2025*
+
+>**Bumped version to 7.0.12**
+>
+>[7e9bed079e49e07](https://github.com/istitutosuperioredisanita/sigla-main/commit/7e9bed079e49e07) dirgensa *June 30, 2025*
+
+
+## Release 7.0.12  -- _June 30, 2025_ 
+**Changes**
+
+>**Delete blank line**
+>
+>[d0824f344339f10](https://github.com/istitutosuperioredisanita/sigla-main/commit/d0824f344339f10) salvio_ciro *June 30, 2025*
+
+>**Filtro distinte per dt_invio valorizzata**
+>
+>[d57ce9fcafbe674](https://github.com/istitutosuperioredisanita/sigla-main/commit/d57ce9fcafbe674) salvio_ciro *June 30, 2025*
+
+>**Filtro sono le distinte xml firmate**
+>
+>[7b9e2926f92161b](https://github.com/istitutosuperioredisanita/sigla-main/commit/7b9e2926f92161b) salvio_ciro *June 30, 2025*
+
+>**Aggiunto Log Batch**
+>
+>[2addbadcf8db9cd](https://github.com/istitutosuperioredisanita/sigla-main/commit/2addbadcf8db9cd) salvio_ciro *June 30, 2025*
+
+>**Creazione file zip e salvataggio su documentale**
+>
+>[f160a0fbe87de54](https://github.com/istitutosuperioredisanita/sigla-main/commit/f160a0fbe87de54) salvio_ciro *June 30, 2025*
+
+>**Inizio Sviluppo Batch per documentazione Sostitutiva**
+>
+>[0bda7bc0be24360](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bda7bc0be24360) salvio_ciro *June 30, 2025*
+
+>**Filtro distinte per dt_invio valorizzata**
+>
+>[8da3b9e9a45b097](https://github.com/istitutosuperioredisanita/sigla-main/commit/8da3b9e9a45b097) salvio_ciro *June 30, 2025*
+
+>**ORDINI - Cambio stato possibile solo dopo contabilizzazione**
+>
+>[589014d7120417a](https://github.com/istitutosuperioredisanita/sigla-main/commit/589014d7120417a) tomada_valentina *June 30, 2025*
+
+>**Filtro sono le distinte xml firmate**
+>
+>[cc1413227dc50bc](https://github.com/istitutosuperioredisanita/sigla-main/commit/cc1413227dc50bc) salvio_ciro *June 27, 2025*
+
+>**Bumped version to 7.0.11**
+>
+>[d1603f8b961b9a1](https://github.com/istitutosuperioredisanita/sigla-main/commit/d1603f8b961b9a1) dirgensa *June 23, 2025*
+
+
+## Release 7.0.11  -- _June 23, 2025_ 
+**Changes**
+
+>**Revert "revert version 7.0.10-SNAPSHOT"**
+> * This reverts commit cec1af8de2ca50f302329ecb356765258863cd4e.
+>
+>[4a83662dafb5d88](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a83662dafb5d88) salvio_ciro *June 23, 2025*
+
+
+## Release 7.0.10  -- _June 23, 2025_ 
+**Changes**
+
+>**revert version 7.0.10-SNAPSHOT**
+>
+>[cec1af8de2ca50f](https://github.com/istitutosuperioredisanita/sigla-main/commit/cec1af8de2ca50f) salvio_ciro *June 23, 2025*
+
+>**remove file stampa inventario**
+>
+>[46250a0b1f3c2d8](https://github.com/istitutosuperioredisanita/sigla-main/commit/46250a0b1f3c2d8) salvio_ciro *June 23, 2025*
+
+>**Bumped version to 7.0.10**
+>
+>[f152c80187fdca0](https://github.com/istitutosuperioredisanita/sigla-main/commit/f152c80187fdca0) dirgensa *June 23, 2025*
+
+>**new feature: aggiunto il terzo alla consultazione dei dati PCC**
+>
+>[9c527090d74b1ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c527090d74b1ba) mspasiano *June 20, 2025*
+
+>**fix: controlli pcc fatture pagate con più righe legate alla stessa riga di mandato**
+>
+>[00641b9438b5e5a](https://github.com/istitutosuperioredisanita/sigla-main/commit/00641b9438b5e5a) mspasiano *June 20, 2025*
+
+>**In caso di uo ente in scrivania, ora è possibile visualizzare la fattura collegata al documento elettronico.**
+>
+>[2a7a800888a2dfb](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a7a800888a2dfb) mspasiano *June 20, 2025*
+
+>**rename ds_procedura**
+>
+>[d0cd2a0ed12fad5](https://github.com/istitutosuperioredisanita/sigla-main/commit/d0cd2a0ed12fad5) salvio_ciro *June 20, 2025*
+
+>**Create Job per controllo congruenza Dati**
+>
+>[0bf2bdc74326b02](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bf2bdc74326b02) salvio_ciro *June 20, 2025*
+
+>**Bumped version to 7.0.9**
+>
+>[19a85dc18416cc3](https://github.com/istitutosuperioredisanita/sigla-main/commit/19a85dc18416cc3) dirgensa *June 17, 2025*
+
+
+## Release 7.0.9  -- _June 17, 2025_ 
+**Changes**
+
+>**Spostati definizione della funzione Consultazione confronta costi coge con cofi da consultazioni.xml a config01.xml**
+>
+>[c87902a0c086913](https://github.com/istitutosuperioredisanita/sigla-main/commit/c87902a0c086913) salvio_ciro *June 17, 2025*
+
+>**Consultazione confronta costi coge con cofi**
+>
+>[29b3d1033f0c7df](https://github.com/istitutosuperioredisanita/sigla-main/commit/29b3d1033f0c7df) salvio_ciro *June 17, 2025*
+
+>**Consultazione confronta costi coge con cofi**
+>
+>[1afad39fc55f692](https://github.com/istitutosuperioredisanita/sigla-main/commit/1afad39fc55f692) salvio_ciro *June 17, 2025*
+
+>**Fix scadenza per la nota di credito automatica**
+>
+>[85a9851d7a238fc](https://github.com/istitutosuperioredisanita/sigla-main/commit/85a9851d7a238fc) salvio_ciro *June 17, 2025*
+
+>**Bumped version to 7.0.8**
+>
+>[6c759222ff43e40](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c759222ff43e40) dirgensa *June 12, 2025*
+
+
+## Release 7.0.8  -- _June 12, 2025_ 
+**Changes**
+
+>**Update release.yml**
+>
+>[cb54e667f65f7b0](https://github.com/istitutosuperioredisanita/sigla-main/commit/cb54e667f65f7b0) Marco Spasiano *June 12, 2025*
+
+>**Update maven.yml**
+>
+>[8553dd89818998f](https://github.com/istitutosuperioredisanita/sigla-main/commit/8553dd89818998f) Marco Spasiano *June 12, 2025*
+
+>**Bumped version to 7.0.7**
+>
+>[a7f786c3082aa43](https://github.com/istitutosuperioredisanita/sigla-main/commit/a7f786c3082aa43) dirgensa *June 12, 2025*
+
+
+## Release 7.0.7  -- _June 12, 2025_ 
+**Changes**
+
+>**new feature: Build and Push Container to ghcr.io**
+>
+>[4619f9a5a7576fa](https://github.com/istitutosuperioredisanita/sigla-main/commit/4619f9a5a7576fa) mspasiano *June 12, 2025*
+
+>**Bumped version to 7.0.6**
+>
+>[4794ca7b90713bf](https://github.com/istitutosuperioredisanita/sigla-main/commit/4794ca7b90713bf) dirgensa *June 11, 2025*
+
+
+## Release 7.0.6  -- _June 11, 2025_ 
+**Changes**
+
+>**Fix valore residuo da ammortizzare per beni totalmente scaricati**
+>
+>[ed8055cc5eaf6d4](https://github.com/istitutosuperioredisanita/sigla-main/commit/ed8055cc5eaf6d4) salvio_ciro *June 11, 2025*
+
+>**Bumped version to 7.0.5**
+>
+>[86a8250e947d336](https://github.com/istitutosuperioredisanita/sigla-main/commit/86a8250e947d336) dirgensa *June 10, 2025*
+
+
+## Release 7.0.5  -- _June 10, 2025_ 
+**Changes**
+
+>**Update a N il flag che attiva il controlla dei beni inventariati per le fatture da ordine in stato liquidabile**
+>
+>[784ece0ed4ae93c](https://github.com/istitutosuperioredisanita/sigla-main/commit/784ece0ed4ae93c) salvio_ciro *June 10, 2025*
+
+>**Come da richiesta eliminato il prefisso 0201 dal codice commessa Convenzione quando c'è l'ordine elettronico**
+>
+>[660de5a0b68ec75](https://github.com/istitutosuperioredisanita/sigla-main/commit/660de5a0b68ec75) salvio_ciro *June 10, 2025*
+
+>**Aggiunta configurazione affinchè una fattura da ordine puo assumere lo stato liquidabile se e soltanto si tutte i beni soggetti a invetariazione siano stati inventariati o annullati dal transito**
+>
+>[5b8fdab3791b81f](https://github.com/istitutosuperioredisanita/sigla-main/commit/5b8fdab3791b81f) salvio_ciro *June 10, 2025*
+
+>**Bumped version to 7.0.4**
+>
+>[53fea186d817585](https://github.com/istitutosuperioredisanita/sigla-main/commit/53fea186d817585) dirgensa *June 03, 2025*
+
+
+## Release 7.0.4  -- _May 30, 2025_ 
+**Changes**
+
+>**fix: importo lordo siope**
+>
+>[27bc852b1333ad0](https://github.com/istitutosuperioredisanita/sigla-main/commit/27bc852b1333ad0) mspasiano *May 30, 2025*
+
+>**fix: Eliminato il controllo che il mandato sia legato ad una reversale iva**
+>
+>[2210c280166aad3](https://github.com/istitutosuperioredisanita/sigla-main/commit/2210c280166aad3) mspasiano *May 30, 2025*
+
+>**Bumped version to 7.0.3**
+>
+>[745a2b0d40ebea0](https://github.com/istitutosuperioredisanita/sigla-main/commit/745a2b0d40ebea0) dirgensa *May 25, 2025*
+
+
+## Release 7.0.3  -- _May 25, 2025_ 
+**Changes**
+
+>**fix: pom version on release**
+>
+>[696f553a1ab37b0](https://github.com/istitutosuperioredisanita/sigla-main/commit/696f553a1ab37b0) mspasiano *May 25, 2025*
+
+
+## Release 7.0.2  -- _May 25, 2025_ 
+**Changes**
+
+>**fix: pom version on release**
+>
+>[eeb6023898cfd5c](https://github.com/istitutosuperioredisanita/sigla-main/commit/eeb6023898cfd5c) mspasiano *May 25, 2025*
+
+
+## Release 7.0.1  -- _May 25, 2025_ 
+**Changes**
+
+>**fix: aggiunte informazioni ulteriori alla vista per i controlli PCC, abilitato il filtro per UO in scrivania**
+>
+>[3a9ee1d84d3847b](https://github.com/istitutosuperioredisanita/sigla-main/commit/3a9ee1d84d3847b) mspasiano *May 25, 2025*
+
+>**Eliminata distinct dalla VIEW PCC**
+>
+>[5688433264a8e85](https://github.com/istitutosuperioredisanita/sigla-main/commit/5688433264a8e85) mspasiano *May 23, 2025*
+
+>**Bumped version to 7.0.0**
+>
+>[8d7c3112e8d23bb](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d7c3112e8d23bb) dirgensa *May 22, 2025*
+
+
+## Release 7.0.0  -- _May 22, 2025_ 
+**Changes**
+
+>**Aggiunta la release build**
+>
+>[405192c99d6a831](https://github.com/istitutosuperioredisanita/sigla-main/commit/405192c99d6a831) mspasiano *May 22, 2025*
+
+>**Aggiunte informazioni ulteriori alla vista per i controlli PCC, abilitato il filtro per UO in scrivania**
+>
+>[a7eaaf5c5161df2](https://github.com/istitutosuperioredisanita/sigla-main/commit/a7eaaf5c5161df2) mspasiano *May 22, 2025*
+
+>**Aggiornato fl_dismesso con fl_totalmente_scaricato**
+>
+>[69e878ffdab5921](https://github.com/istitutosuperioredisanita/sigla-main/commit/69e878ffdab5921) salvio_ciro *May 15, 2025*
+
+>**Fix anomalia NON_ACQUISITO in distinta**
+>
+>[a65dc663436926a](https://github.com/istitutosuperioredisanita/sigla-main/commit/a65dc663436926a) salvio_ciro *May 14, 2025*
+
+>**Aggiunta l'informazione data_cancellazione nella lista dei valori ritornati dal rest per categoria/Gruppo invent**
+>
+>[a0a5abe0a76f48b](https://github.com/istitutosuperioredisanita/sigla-main/commit/a0a5abe0a76f48b) salvio_ciro *May 06, 2025*
+
+>**Aggiunta l'informazione fl_valido nella lista dei valori ritornati dal rest per Beni e Servizio i valori fl_valido e ti_bene_servizio**
+>
+>[6490f458e20c1d5](https://github.com/istitutosuperioredisanita/sigla-main/commit/6490f458e20c1d5) salvio_ciro *May 06, 2025*
+
+>**Fix gestione eccezione quando non viene settato il responsabile della GAE**
+>
+>[7ec43b1305ed4da](https://github.com/istitutosuperioredisanita/sigla-main/commit/7ec43b1305ed4da) salvio_ciro *April 28, 2025*
+
+>**Aggiunto Rest Service per Categoria Gruppo Invent**
+>
+>[a70619dfa481ed9](https://github.com/istitutosuperioredisanita/sigla-main/commit/a70619dfa481ed9) salvio_ciro *April 24, 2025*
+
+>**fix**
+>
+>[4a3070fde402977](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a3070fde402977) davide.mirra *April 17, 2025*
+
+>**fix commenti eliminati**
+>
+>[07d1c2fe19874cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/07d1c2fe19874cb) davide.mirra *April 17, 2025*
+
+>**fix associazione beni accesori a beni principali registrati**
+>
+>[902519b404c1072](https://github.com/istitutosuperioredisanita/sigla-main/commit/902519b404c1072) davide.mirra *April 17, 2025*
+
+>**fix inventariazione corretta per beni accessori contestuali**
+>
+>[7e38114f06b4aec](https://github.com/istitutosuperioredisanita/sigla-main/commit/7e38114f06b4aec) davide.mirra *April 16, 2025*
+
+>**fix inventariazione corretta per beni accessori contestuali con più beni principali**
+>
+>[661c5b32d106546](https://github.com/istitutosuperioredisanita/sigla-main/commit/661c5b32d106546) davide.mirra *April 16, 2025*
+
+>**fix: Cancellazione di un documento di storno**
+>
+>[8e070d0025809d8](https://github.com/istitutosuperioredisanita/sigla-main/commit/8e070d0025809d8) mspasiano *April 14, 2025*
+
+>**fix nullpointer nr_inventario al save se flaggato fl_accessorio_contestuale e fix etichetta duplicata**
+>
+>[20b20cd8eac1e55](https://github.com/istitutosuperioredisanita/sigla-main/commit/20b20cd8eac1e55) davide.mirra *April 10, 2025*
+
+>**fix autocomplete etichetta anche quando è flaggato fl_accessorio_contestuale**
+>
+>[2a1a43b14b61dfc](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a1a43b14b61dfc) davide.mirra *April 10, 2025*
+
+>**Fix report sintetico progretti**
+>
+>[8005a75a356c03e](https://github.com/istitutosuperioredisanita/sigla-main/commit/8005a75a356c03e) salvio_ciro *April 07, 2025*
+
+>**Fix aggiunta vista V_CONS_REG_IVA utilizzare per le estrazioni dei registri iva e lista documenti( attivi e passivi)**
+>
+>[0e602763aaaacdd](https://github.com/istitutosuperioredisanita/sigla-main/commit/0e602763aaaacdd) salvio_ciro *April 07, 2025*
+
+>**Gestione tipo movimento carica inventario da Ordini**
+>
+>[b013212f7b24f3f](https://github.com/istitutosuperioredisanita/sigla-main/commit/b013212f7b24f3f) salvio_ciro *April 07, 2025*
+
+>**fix**
+>
+>[8b24430bb6ea094](https://github.com/istitutosuperioredisanita/sigla-main/commit/8b24430bb6ea094) davide.mirra *April 07, 2025*
+
+>**fix etichetta disabilitata e auto-compilata se flag bene accessorio (Y). fix messaggio errore etichetta esistente con check sul progressivo**
+>
+>[6f385620720050d](https://github.com/istitutosuperioredisanita/sigla-main/commit/6f385620720050d) davide.mirra *April 07, 2025*
+
+>**Possibilità di colleggare nota di credito a fatture dalle funzionalità di fatturazione elettroniche quando non è attiva la gestione del non registrabilità**
+>
+>[2b1ec43bc46beb4](https://github.com/istitutosuperioredisanita/sigla-main/commit/2b1ec43bc46beb4) salvio_ciro *April 01, 2025*
+
+>**Restore 1210 per EURO**
+>
+>[33be759ffbe4204](https://github.com/istitutosuperioredisanita/sigla-main/commit/33be759ffbe4204) salvio_ciro *April 01, 2025*
+
 >**Fix Anomalia Estrazione PCC**
 >
 >[71d8028f48d18c2](https://github.com/istitutosuperioredisanita/sigla-main/commit/71d8028f48d18c2) salvio_ciro *March 27, 2025*
@@ -3374,7 +5419,7 @@
 
 >**aggiunta clausola sull'esercizio e sulla uo di contesto per l'estrazione dei registri iva (doc. attivi/passivi)**
 > * # Conflicts:
-> * #&#9;sigla-ejb/src/main/java/it/cnr/contab/gestiva00/core/bulk/V_cons_reg_ivaHome.java
+> * #	sigla-ejb/src/main/java/it/cnr/contab/gestiva00/core/bulk/V_cons_reg_ivaHome.java
 >
 >[ab8784d87d960c7](https://github.com/istitutosuperioredisanita/sigla-main/commit/ab8784d87d960c7) davide.mirra *March 24, 2025*
 
@@ -3389,10 +5434,6 @@
 >**Fix cancellazione economica con anno contabile chiuso**
 >
 >[2e698104be3adcd](https://github.com/istitutosuperioredisanita/sigla-main/commit/2e698104be3adcd) raffaele.pagano *March 19, 2025*
-
->**modifiche ammortamento java**
->
->[6855de10b5f28f5](https://github.com/istitutosuperioredisanita/sigla-main/commit/6855de10b5f28f5) salvio_ciro *March 19, 2025*
 
 >**fix: NPE**
 >
@@ -3575,11 +5616,6 @@
 >
 >[afd2cb1b00c500d](https://github.com/istitutosuperioredisanita/sigla-main/commit/afd2cb1b00c500d) salvio_ciro *March 03, 2025*
 
->**Revert "Refactoring V_terzo_persona_fisica"**
-> * This reverts commit 548befe0b1438b298564441dc1e4c2697689d68d.
->
->[90b675bd975ab52](https://github.com/istitutosuperioredisanita/sigla-main/commit/90b675bd975ab52) salvio_ciro *March 03, 2025*
-
 >**implementazione nuovo accesso Dettagli Registri Iva**
 >
 >[5094ef54ba9f783](https://github.com/istitutosuperioredisanita/sigla-main/commit/5094ef54ba9f783) davide.mirra *March 03, 2025*
@@ -3600,10 +5636,6 @@
 >**fix anomaliA stampa mandato**
 >
 >[6c955b0aa793b77](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c955b0aa793b77) salvio_ciro *February 26, 2025*
-
->**Refactoring V_terzo_persona_fisica**
->
->[548befe0b1438b2](https://github.com/istitutosuperioredisanita/sigla-main/commit/548befe0b1438b2) salvio_ciro *February 26, 2025*
 
 >**Test per controllo scritture contabili: implementazione nuovi test**
 >
@@ -4729,11 +6761,6 @@
 >
 >[1d99a9f74451123](https://github.com/istitutosuperioredisanita/sigla-main/commit/1d99a9f74451123) salvio_ciro *October 04, 2024*
 
->**Revert "Eliminato la selezione sulla consultazione dello scadenzario Obbligazioni"**
-> * This reverts commit 6241a4dd85c02c7697b47d04507c1cc02fac26f8.
->
->[7f29588e6bf2537](https://github.com/istitutosuperioredisanita/sigla-main/commit/7f29588e6bf2537) salvio_ciro *October 03, 2024*
-
 >**Sviluppo Conto Giudiziale**
 >
 >[32a8221f47742d0](https://github.com/istitutosuperioredisanita/sigla-main/commit/32a8221f47742d0) salvio_ciro *October 03, 2024*
@@ -4753,10 +6780,6 @@
 >**Sviluppo Conto Giudiziale**
 >
 >[c40dd93e7b56877](https://github.com/istitutosuperioredisanita/sigla-main/commit/c40dd93e7b56877) salvio_ciro *October 02, 2024*
-
->**Eliminato la selezione sulla consultazione dello scadenzario Obbligazioni**
->
->[6241a4dd85c02c7](https://github.com/istitutosuperioredisanita/sigla-main/commit/6241a4dd85c02c7) salvio_ciro *October 01, 2024*
 
 >**Fix anomalie Autofatture**
 >
@@ -6066,18 +8089,9 @@
 >
 >[dd166861843a469](https://github.com/istitutosuperioredisanita/sigla-main/commit/dd166861843a469) marco.spasiano *April 05, 2024*
 
->**Revert "Rimosso il not null del terzo su SALDO COGE"**
-> * This reverts commit 01511a6a85ba1b603b5e3a9916080f5627379b7d.
->
->[d3422a1c122c722](https://github.com/istitutosuperioredisanita/sigla-main/commit/d3422a1c122c722) marco.spasiano *April 05, 2024*
-
 >**Rimosso il not null del terzo su SALDO COGE**
 >
 >[36cdeea549f14a0](https://github.com/istitutosuperioredisanita/sigla-main/commit/36cdeea549f14a0) marco.spasiano *April 05, 2024*
-
->**Rimosso il not null del terzo su SALDO COGE**
->
->[01511a6a85ba1b6](https://github.com/istitutosuperioredisanita/sigla-main/commit/01511a6a85ba1b6) marco.spasiano *April 05, 2024*
 
 >**modificato il tipo per gli importi**
 >
@@ -6159,18 +8173,9 @@
 >
 >[1c13968fc2784ae](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c13968fc2784ae) tomada_valentina *March 29, 2024*
 
->**Revert "CHIUSURA MAGAZZINO - gestione chiusura definitiva"**
-> * This reverts commit 54d78d48a4a8e9f29fdc869f779b73c48aec014f.
->
->[4c66fa89a7fdd6b](https://github.com/istitutosuperioredisanita/sigla-main/commit/4c66fa89a7fdd6b) tomada_valentina *March 29, 2024*
-
 >**CHIUSURA MAGAZZINO - gestione chiusura definitiva**
 >
 >[77531e129edf4da](https://github.com/istitutosuperioredisanita/sigla-main/commit/77531e129edf4da) tomada_valentina *March 29, 2024*
-
->**CHIUSURA MAGAZZINO - gestione chiusura definitiva**
->
->[54d78d48a4a8e9f](https://github.com/istitutosuperioredisanita/sigla-main/commit/54d78d48a4a8e9f) tomada_valentina *March 29, 2024*
 
 >**CHIUSURA MAGAZZINO - gestione chiusura definitiva**
 >
@@ -6188,18 +8193,9 @@
 >
 >[7fdd7b2ac9c1561](https://github.com/istitutosuperioredisanita/sigla-main/commit/7fdd7b2ac9c1561) salvio_ciro *March 29, 2024*
 
->**Revert "Rendiconto Finanziario: gestione annullamento partite di giro residue"**
-> * This reverts commit 54a6fce3ca793aa7b842911448cc72e1395b5134.
->
->[bbd7da86d84d221](https://github.com/istitutosuperioredisanita/sigla-main/commit/bbd7da86d84d221) salvio_ciro *March 29, 2024*
-
 >**chiusura inventario**
 >
 >[b1d07cb7df1dc17](https://github.com/istitutosuperioredisanita/sigla-main/commit/b1d07cb7df1dc17) salvio_ciro *March 29, 2024*
-
->**Rendiconto Finanziario: gestione annullamento partite di giro residue**
->
->[54a6fce3ca793aa](https://github.com/istitutosuperioredisanita/sigla-main/commit/54a6fce3ca793aa) raffaelepagano *March 28, 2024*
 
 >**chiusura inventario**
 >
@@ -7316,7 +9312,7 @@
 >[7093db3581fd0ff](https://github.com/istitutosuperioredisanita/sigla-main/commit/7093db3581fd0ff) tomada_valentina *September 11, 2023*
 
 >**Fix per generazione mandati documenti 1210 con riga IVA( Ritenute) gestite con creazione mandato manuale e non con reversale Vincolata( la banca non accetta reversali vincolate a mandanto per chiusura sospesi 1210).**
-> * Resta da fare la messa in configurazione per abilitare tale comportamento e il controllo sulla creazione della Distinta di pagamento che sul&#39;invio di un mandato legato a righe 1210 siano presenti anche i mandati per il pagamento delle ritenute( IVA)
+> * Resta da fare la messa in configurazione per abilitare tale comportamento e il controllo sulla creazione della Distinta di pagamento che sul&#x27;invio di un mandato legato a righe 1210 siano presenti anche i mandati per il pagamento delle ritenute( IVA)
 >
 >[1831542cf47ed84](https://github.com/istitutosuperioredisanita/sigla-main/commit/1831542cf47ed84) salvio_ciro *September 06, 2023*
 
@@ -7633,7 +9629,7 @@
 >[969d60dfb2d5af9](https://github.com/istitutosuperioredisanita/sigla-main/commit/969d60dfb2d5af9) Piergiorgio Faraglia *June 05, 2023*
 
 >**WA Pago PA su Fatture Passiva. Al momento, in attesa dell'implementazione definitiva, abbiamo valorizzato il numero Avviso con la stringa "numeroAvvisoFattura" e il Codice Identificativo Ente con la stringa "codiceIdentificaEntePagoPa".**
-> * Per poterle inviare in banca vanno modificati a mano gli xml da firmare e inviare in banca sostituendo alle due stringe il numero dell&#39;avviso e il codice ente corretti
+> * Per poterle inviare in banca vanno modificati a mano gli xml da firmare e inviare in banca sostituendo alle due stringe il numero dell&#x27;avviso e il codice ente corretti
 >
 >[69a6cf5badf4a44](https://github.com/istitutosuperioredisanita/sigla-main/commit/69a6cf5badf4a44) salvio_ciro *June 05, 2023*
 
@@ -8455,15 +10451,6 @@
 >
 >[ecd1f882c836772](https://github.com/istitutosuperioredisanita/sigla-main/commit/ecd1f882c836772) marco.spasiano *January 20, 2023*
 
->**Revert "Nel caso di evasione di quantita inferiori non modifica più l'ordine in caso di arrototndamenti ma scarica sull'ultima consegna creata."**
-> * This reverts commit 72c7218ad339ba33804c5daf71f5eb2601c4c882.
->
->[4b7f12f14f25cc6](https://github.com/istitutosuperioredisanita/sigla-main/commit/4b7f12f14f25cc6) marco.spasiano *January 20, 2023*
-
->**Nel caso di evasione di quantita inferiori non modifica più l'ordine in caso di arrototndamenti ma scarica sull'ultima consegna creata.**
->
->[72c7218ad339ba3](https://github.com/istitutosuperioredisanita/sigla-main/commit/72c7218ad339ba3) marco.spasiano *January 20, 2023*
-
 >**Nel caso di evasione di quantita inferiori non modifica più l'ordine in caso di arrototndamenti ma scarica sull'ultima consegna creata.**
 >
 >[e70712537e231ec](https://github.com/istitutosuperioredisanita/sigla-main/commit/e70712537e231ec) marco.spasiano *January 19, 2023*
@@ -8967,7 +10954,7 @@
 >**Aggiunti due nuovi accessi per Flusso Ordinativi:**
 > * - DOCINTCASFLUORDINABI
 > * - DOCINTCASFLUORDINABT
-> * e la gestione delle mappe di creazione di una nuova distinta per banca tesoriere o banca d&#39;italia.
+> * e la gestione delle mappe di creazione di una nuova distinta per banca tesoriere o banca d&#x27;italia.
 >
 >[5c3aa421af56c44](https://github.com/istitutosuperioredisanita/sigla-main/commit/5c3aa421af56c44) marco.spasiano *November 25, 2022*
 
@@ -9734,6 +11721,66 @@
 >**Bump poi from 3.17 to 4.1.1 in /sigla-ejb**
 >
 >[db2e276e12b1f83](https://github.com/istitutosuperioredisanita/sigla-main/commit/db2e276e12b1f83) marco.spasiano *September 19, 2022*
+
+>**Bump gson from 2.8.5 to 2.8.9 in /sigla-web #93**
+>
+>[db6dfc4cdcf8c29](https://github.com/istitutosuperioredisanita/sigla-main/commit/db6dfc4cdcf8c29) marco.spasiano *September 19, 2022*
+
+>**Bump gson from 2.8.5 to 2.8.9 in /sigla-ejb #94**
+>
+>[7056dc5c3eec802](https://github.com/istitutosuperioredisanita/sigla-main/commit/7056dc5c3eec802) marco.spasiano *September 19, 2022*
+
+>**Bump poi from 3.17 to 4.1.1 in /sigla-ejb #96**
+>
+>[279a961e5f34465](https://github.com/istitutosuperioredisanita/sigla-main/commit/279a961e5f34465) marco.spasiano *September 19, 2022*
+
+>**Bump poi from 3.17 to 4.1.1 in /sigla-web #97**
+>
+>[21c6a6a52408cb5](https://github.com/istitutosuperioredisanita/sigla-main/commit/21c6a6a52408cb5) marco.spasiano *September 19, 2022*
+
+>**Bump commons-email from 1.3.3 to 1.5 in /sigla-web #98**
+>
+>[706b174c625b65c](https://github.com/istitutosuperioredisanita/sigla-main/commit/706b174c625b65c) marco.spasiano *September 19, 2022*
+
+>**Bump commons-email from 1.4 to 1.5 in /sigla-ejb #99**
+>
+>[3b4cbffb35112d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/3b4cbffb35112d3) marco.spasiano *September 19, 2022*
+
+>**Bump postgresql from 42.3.3 to 42.4.1 in /sigla-backend #101**
+>
+>[70e09af06e5c5bf](https://github.com/istitutosuperioredisanita/sigla-main/commit/70e09af06e5c5bf) marco.spasiano *September 19, 2022*
+
+>**Bump poi from 3.17 to 4.1.1 in /sigla-ejb #96**
+>
+>[d8b071ff711e2e1](https://github.com/istitutosuperioredisanita/sigla-main/commit/d8b071ff711e2e1) marco.spasiano *September 19, 2022*
+
+>**Bump gson from 2.8.5 to 2.8.9 in /sigla-web #93**
+>
+>[ac75c23430dbc04](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac75c23430dbc04) marco.spasiano *September 19, 2022*
+
+>**Bump gson from 2.8.5 to 2.8.9 in /sigla-ejb #94**
+>
+>[941a7ec690ee224](https://github.com/istitutosuperioredisanita/sigla-main/commit/941a7ec690ee224) marco.spasiano *September 19, 2022*
+
+>**Bump poi from 3.17 to 4.1.1 in /sigla-ejb #96**
+>
+>[128385ecf68a294](https://github.com/istitutosuperioredisanita/sigla-main/commit/128385ecf68a294) marco.spasiano *September 19, 2022*
+
+>**Bump poi from 3.17 to 4.1.1 in /sigla-web #97**
+>
+>[86640142b7c349a](https://github.com/istitutosuperioredisanita/sigla-main/commit/86640142b7c349a) marco.spasiano *September 19, 2022*
+
+>**Bump commons-email from 1.3.3 to 1.5 in /sigla-web #98**
+>
+>[e05d249d9822c8f](https://github.com/istitutosuperioredisanita/sigla-main/commit/e05d249d9822c8f) marco.spasiano *September 19, 2022*
+
+>**Bump commons-email from 1.4 to 1.5 in /sigla-ejb #99**
+>
+>[642d5d69945d0cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/642d5d69945d0cb) marco.spasiano *September 19, 2022*
+
+>**Bump postgresql from 42.3.3 to 42.4.1 in /sigla-backend #101**
+>
+>[74d0ae22929335f](https://github.com/istitutosuperioredisanita/sigla-main/commit/74d0ae22929335f) marco.spasiano *September 19, 2022*
 
 >**New Feature: Partitario per Terzo**
 >
@@ -10559,18 +12606,18 @@
 >**Rimossa la volorizzazione della data scadenza pagamento per gli F24EP**
 > * Dalle specifiche SIOPE+ risulta:
 > * 4.9 Data di effettuazione del pagamento
-> * L&#39;ente può dare disposizioni circa la data di effettuazione del pagamento compilando uno dei due
+> * L&#x27;ente può dare disposizioni circa la data di effettuazione del pagamento compilando uno dei due
 > * campi &lt;data_esecuzione_pagamento&gt; oppure &lt;data_scadenza_pagamento&gt;, che sono tra loro
 > * alternativi.
 > * Linee guida per l’emissione degli Ordinativi di Pagamento e
 > * Incasso (OPI) gestiti attraverso il Sistema SIOPE+
 > * versione 1.5.1.a - Aprile 2020 Pag. 49 di 74
-> * L&#39;ente avvalora il campo &lt;data_esecuzione_pagamento&gt; se intende ordinare perentoriamente la
+> * L&#x27;ente avvalora il campo &lt;data_esecuzione_pagamento&gt; se intende ordinare perentoriamente la
 > * data nella quale deve essere estinto il mandato, nella consapevolezza dei tempi necessari al
 > * perfezionamento del pagamento nei confronti del creditore.
-> * L&#39;ente avvalora il campo &lt;data_scadenza_pagamento&gt; nel caso in cui intenda indicare la data nella
+> * L&#x27;ente avvalora il campo &lt;data_scadenza_pagamento&gt; nel caso in cui intenda indicare la data nella
 > * quale deve essere ragionevolmente assicurata la disponibilità al beneficiario, affidando alla
-> * valutazione della BT la scelta della data di addebitamento all&#39;ente stesso.
+> * valutazione della BT la scelta della data di addebitamento all&#x27;ente stesso.
 >
 >[ed97189899dc684](https://github.com/istitutosuperioredisanita/sigla-main/commit/ed97189899dc684) marco.spasiano *May 09, 2022*
 
@@ -11418,13 +13465,13 @@
 > * Bisogna solo consentire il collegamento del campo natura ai codici IVA con aliquota:
 > * Ad esempio al codice IVA 22%RC6 collegheremo la natura N6.6.
 > * In fase di registrazione fattura per il dettaglio con NATURA N6.6 si potrà scegliere il codice IVA RC6NFE attualmente collegato alla natura N6.6 (per fatture ISTITUZIONALI), e il codice 22%RC6 (per fatture commerciali).
-> * Successivamente ogni qual volta si riceve una fattura passiva da fornitore italiano con valorizzato solamente l&#39;imponibile e valorizzato il campo Natura Iva con natura  N6.6 (come nell&#39;esempio della fattura suddetta),nella simulazione di registrazione di una fattura passiva italiana , quando l&#39;utente seleziona il tipo Commerciale la procedura da&#39; la possibilità all&#39;utente stesso di flaggare il campo &quot;Autofattura&quot; e di selezionare il sezionale &quot;Registro Iva Ordinario Acquisti&quot;.
+> * Successivamente ogni qual volta si riceve una fattura passiva da fornitore italiano con valorizzato solamente l&#x27;imponibile e valorizzato il campo Natura Iva con natura  N6.6 (come nell&#x27;esempio della fattura suddetta),nella simulazione di registrazione di una fattura passiva italiana , quando l&#x27;utente seleziona il tipo Commerciale la procedura da&#x27; la possibilità all&#x27;utente stesso di flaggare il campo &quot;Autofattura&quot; e di selezionare il sezionale &quot;Registro Iva Ordinario Acquisti&quot;.
 > * Ogni qualvolta si registra una fattura con natura N6.6 (il nostro caso di esempio), se si indica Commerciale si potrà scegliere tutti i codici IVA con percentuale specificata collegati a questa natura.
 > * In questi casi l’utente sceglierà (scelta già consentita) di emettere autofattura. Il registro resta quello proposto oggi quando si sceglie ‘Autofattura’.
-> * l&#39;utente durante la registrazione della fattura, nel folder Dettagli, dovrà  inserire la voce iva (ad esempio codice iva 22%RC6 - utilizzabile solamente per acquisti in attività commerciale da operatori economici
-> * nazionali) per procedere alla generazione di un&#39;autofattura che dovrà essere registrata sia nel registro iva vendite (REgistro Iva vendita Autofatture)che nel registro iva acquisti (Registro Iva Ordinario Acquisti).
+> * l&#x27;utente durante la registrazione della fattura, nel folder Dettagli, dovrà  inserire la voce iva (ad esempio codice iva 22%RC6 - utilizzabile solamente per acquisti in attività commerciale da operatori economici
+> * nazionali) per procedere alla generazione di un&#x27;autofattura che dovrà essere registrata sia nel registro iva vendite (REgistro Iva vendita Autofatture)che nel registro iva acquisti (Registro Iva Ordinario Acquisti).
 > * La scelta del codice IVA avviene come indicato al punto 1. I registri dovrebbero già essere quelli corretti (per il caso autofattura).
-> * Riguardo alla quadratura che la procedura effettua tra imponibile + iva e il totale del documento in testata, in questo caso il sistema dovrà consentire di salvare la fattura anche se l&#39;importo della fattura in testata è pari solo all&#39;imponibile (ovviamente indicheremo dettagliatamente tutti i codici iva che hanno questa gestione).
+> * Riguardo alla quadratura che la procedura effettua tra imponibile + iva e il totale del documento in testata, in questo caso il sistema dovrà consentire di salvare la fattura anche se l&#x27;importo della fattura in testata è pari solo all&#x27;imponibile (ovviamente indicheremo dettagliatamente tutti i codici iva che hanno questa gestione).
 > * Nel caso di ‘Autofattura’ con cod. natura su fatt. elettronica e aliquota IVA in fase di registrazione, le quadrature rispetto alla fattura elettronica saranno effettuate solo per l’imponibile.
 >
 >[c0aea06b2704cce](https://github.com/istitutosuperioredisanita/sigla-main/commit/c0aea06b2704cce) marco.spasiano *December 14, 2021*
@@ -11433,13 +13480,13 @@
 > * Bisogna solo consentire il collegamento del campo natura ai codici IVA con aliquota:
 > * Ad esempio al codice IVA 22%RC6 collegheremo la natura N6.6.
 > * In fase di registrazione fattura per il dettaglio con NATURA N6.6 si potrà scegliere il codice IVA RC6NFE attualmente collegato alla natura N6.6 (per fatture ISTITUZIONALI), e il codice 22%RC6 (per fatture commerciali).
-> * Successivamente ogni qual volta si riceve una fattura passiva da fornitore italiano con valorizzato solamente l&#39;imponibile e valorizzato il campo Natura Iva con natura  N6.6 (come nell&#39;esempio della fattura suddetta),nella simulazione di registrazione di una fattura passiva italiana , quando l&#39;utente seleziona il tipo Commerciale la procedura da&#39; la possibilità all&#39;utente stesso di flaggare il campo &quot;Autofattura&quot; e di selezionare il sezionale &quot;Registro Iva Ordinario Acquisti&quot;.
+> * Successivamente ogni qual volta si riceve una fattura passiva da fornitore italiano con valorizzato solamente l&#x27;imponibile e valorizzato il campo Natura Iva con natura  N6.6 (come nell&#x27;esempio della fattura suddetta),nella simulazione di registrazione di una fattura passiva italiana , quando l&#x27;utente seleziona il tipo Commerciale la procedura da&#x27; la possibilità all&#x27;utente stesso di flaggare il campo &quot;Autofattura&quot; e di selezionare il sezionale &quot;Registro Iva Ordinario Acquisti&quot;.
 > * Ogni qualvolta si registra una fattura con natura N6.6 (il nostro caso di esempio), se si indica Commerciale si potrà scegliere tutti i codici IVA con percentuale specificata collegati a questa natura.
 > * In questi casi l’utente sceglierà (scelta già consentita) di emettere autofattura. Il registro resta quello proposto oggi quando si sceglie ‘Autofattura’.
-> * l&#39;utente durante la registrazione della fattura, nel folder Dettagli, dovrà  inserire la voce iva (ad esempio codice iva 22%RC6 - utilizzabile solamente per acquisti in attività commerciale da operatori economici
-> * nazionali) per procedere alla generazione di un&#39;autofattura che dovrà essere registrata sia nel registro iva vendite (REgistro Iva vendita Autofatture)che nel registro iva acquisti (Registro Iva Ordinario Acquisti).
+> * l&#x27;utente durante la registrazione della fattura, nel folder Dettagli, dovrà  inserire la voce iva (ad esempio codice iva 22%RC6 - utilizzabile solamente per acquisti in attività commerciale da operatori economici
+> * nazionali) per procedere alla generazione di un&#x27;autofattura che dovrà essere registrata sia nel registro iva vendite (REgistro Iva vendita Autofatture)che nel registro iva acquisti (Registro Iva Ordinario Acquisti).
 > * La scelta del codice IVA avviene come indicato al punto 1. I registri dovrebbero già essere quelli corretti (per il caso autofattura).
-> * Riguardo alla quadratura che la procedura effettua tra imponibile + iva e il totale del documento in testata, in questo caso il sistema dovrà consentire di salvare la fattura anche se l&#39;importo della fattura in testata è pari solo all&#39;imponibile (ovviamente indicheremo dettagliatamente tutti i codici iva che hanno questa gestione).
+> * Riguardo alla quadratura che la procedura effettua tra imponibile + iva e il totale del documento in testata, in questo caso il sistema dovrà consentire di salvare la fattura anche se l&#x27;importo della fattura in testata è pari solo all&#x27;imponibile (ovviamente indicheremo dettagliatamente tutti i codici iva che hanno questa gestione).
 > * Nel caso di ‘Autofattura’ con cod. natura su fatt. elettronica e aliquota IVA in fase di registrazione, le quadrature rispetto alla fattura elettronica saranno effettuate solo per l’imponibile.
 >
 >[0c7f152593c7384](https://github.com/istitutosuperioredisanita/sigla-main/commit/0c7f152593c7384) marco.spasiano *December 14, 2021*
@@ -11580,6 +13627,10 @@
 >
 >[aef33b4fa13dcba](https://github.com/istitutosuperioredisanita/sigla-main/commit/aef33b4fa13dcba) marco.spasiano *November 22, 2021*
 
+>**Aggiunto il CUP alla consultazione REST dei progetti Issue #82**
+>
+>[c2f5eb0a27db548](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2f5eb0a27db548) marco.spasiano *November 22, 2021*
+
 >**FIX controllo numero conto per TABA con espressione regolare ^[0-9]{7}**
 >
 >[267908914e8c57f](https://github.com/istitutosuperioredisanita/sigla-main/commit/267908914e8c57f) marco.spasiano *November 22, 2021*
@@ -11611,6 +13662,10 @@
 >**Fix pagoPA**
 >
 >[1ed47a75aad4ab8](https://github.com/istitutosuperioredisanita/sigla-main/commit/1ed47a75aad4ab8) gianfranco.gasparro *November 15, 2021*
+
+>**Aggiunto il CUP alla consultazione REST dei progetti Issue #82**
+>
+>[22bfc45d10ca8eb](https://github.com/istitutosuperioredisanita/sigla-main/commit/22bfc45d10ca8eb) marco.spasiano *November 15, 2021*
 
 >**FIX controllo numero conto per TABA con espressione regolare ^[0-9]{7}**
 >
@@ -11897,6 +13952,14 @@
 >
 >[49fe8b6ab8978ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/49fe8b6ab8978ba) valerio.diego *October 05, 2021*
 
+>**Closed issue #89**
+>
+>[bc83dc64f375c6a](https://github.com/istitutosuperioredisanita/sigla-main/commit/bc83dc64f375c6a) marco.spasiano *October 05, 2021*
+
+>**Closed issue #89**
+>
+>[aabb7df92d8353e](https://github.com/istitutosuperioredisanita/sigla-main/commit/aabb7df92d8353e) marco.spasiano *October 05, 2021*
+
 >**Aggiornato dbchangelog con cancellazione delle tabelle scadenzario_dottorati, scadenzario_dottorati_rata, tipocorso_dottorati**
 > * TODO: fare la compilazione automatica per pgBanca, inserire cdCds cdUnitaOrganizzativa ed Esercizio in automatico
 >
@@ -12081,6 +14144,10 @@
 >
 >[ebf9ffabd664713](https://github.com/istitutosuperioredisanita/sigla-main/commit/ebf9ffabd664713) tomada_valentina *September 21, 2021*
 
+>**Closed issue #87**
+>
+>[44e36589190faac](https://github.com/istitutosuperioredisanita/sigla-main/commit/44e36589190faac) marco.spasiano *September 21, 2021*
+
 >**Add textTruncate on ColumnFieldProperty for Bulk Contratto**
 >
 >[92b2d2236f6d25a](https://github.com/istitutosuperioredisanita/sigla-main/commit/92b2d2236f6d25a) marco.spasiano *September 21, 2021*
@@ -12088,6 +14155,27 @@
 >**Progetto Anagrafico - validazione**
 >
 >[37698076dcdcda8](https://github.com/istitutosuperioredisanita/sigla-main/commit/37698076dcdcda8) tomada_valentina *September 21, 2021*
+
+>**CVE-2012-0881**
+> * Vulnerable versions: &lt; 2.12.0
+> * Patched version: 2.12.0
+> * Apache Xerces2 Java Parser before 2.12.0 allows remote attackers to cause a denial of service (CPU consumption) via a crafted message to an XML service, which triggers hash table collisions.
+>
+>[0bef658cf345ac6](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bef658cf345ac6) marco.spasiano *September 20, 2021*
+
+>**CVE-2020-25633**
+> * Vulnerable versions: &lt;&#x3D; 4.5.6.Final
+> * Patched version: 4.5.7.Final
+> * A flaw was found in RESTEasy client in all versions of RESTEasy up to 4.5.6.Final. It may allow client users to obtain the server&#x27;s potentially sensitive information when the server got WebApplicationException from the RESTEasy client call. The highest threat from this vulnerability is to data confidentiality.
+>
+>[ba16f17ac109a18](https://github.com/istitutosuperioredisanita/sigla-main/commit/ba16f17ac109a18) marco.spasiano *September 20, 2021*
+
+>**CVE-2020-13956**
+> * Vulnerable versions: &lt; 4.5.13
+> * Patched version: 4.5.13
+> * Apache HttpClient versions prior to version 4.5.13 and 5.0.3 can misinterpret malformed authority component in request URIs passed to the library as java.net.URI object and pick the wrong target host for request execution.
+>
+>[d985eb7ff33ba3a](https://github.com/istitutosuperioredisanita/sigla-main/commit/d985eb7ff33ba3a) marco.spasiano *September 20, 2021*
 
 >**Obbligazione Pluriennale - modifica Primary Key**
 >
@@ -12118,20 +14206,20 @@
 >[527d9878ba18238](https://github.com/istitutosuperioredisanita/sigla-main/commit/527d9878ba18238) tomada_valentina *September 17, 2021*
 
 >**Add method for create PEC MAIL with parameter:**
-> * pec.host.name=
-> * pec.host.sslSmtpPort=
-> * pec.host.sSLOnConnect=
-> * pec.host.smtpPort=
-> * pec.host.startTLSEnabled=
+> * pec.host.name&#x3D;
+> * pec.host.sslSmtpPort&#x3D;
+> * pec.host.sSLOnConnect&#x3D;
+> * pec.host.smtpPort&#x3D;
+> * pec.host.startTLSEnabled&#x3D;
 >
 >[0ee8baeeeaf362a](https://github.com/istitutosuperioredisanita/sigla-main/commit/0ee8baeeeaf362a) marco.spasiano *September 16, 2021*
 
 >**Add method for create PEC MAIL with parameter:**
-> * pec.host.name=
-> * pec.host.sslSmtpPort=
-> * pec.host.sSLOnConnect=
-> * pec.host.smtpPort=
-> * pec.host.startTLSEnabled=
+> * pec.host.name&#x3D;
+> * pec.host.sslSmtpPort&#x3D;
+> * pec.host.sSLOnConnect&#x3D;
+> * pec.host.smtpPort&#x3D;
+> * pec.host.startTLSEnabled&#x3D;
 >
 >[3094b10599c02d5](https://github.com/istitutosuperioredisanita/sigla-main/commit/3094b10599c02d5) marco.spasiano *September 16, 2021*
 
@@ -12320,7 +14408,7 @@
 >[2d3d426ba9d571c](https://github.com/istitutosuperioredisanita/sigla-main/commit/2d3d426ba9d571c) cirosalvio *August 27, 2021*
 
 >**Disabled modifica beneServizio e UnitaMisura quando la quantità ordinata è maggiore di zero**
-> * Disabled categoria_gruppo quando l&#39;importo ordinato è maggiore di zero
+> * Disabled categoria_gruppo quando l&#x27;importo ordinato è maggiore di zero
 >
 >[8819233d4545b70](https://github.com/istitutosuperioredisanita/sigla-main/commit/8819233d4545b70) cirosalvio *August 26, 2021*
 
@@ -12506,6 +14594,10 @@
 > * TODO: mettere le textbox con i veri dati nelle jsp
 >
 >[962973b362651cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/962973b362651cc) valerio.diego *July 29, 2021*
+
+>**FIX ORA-00907 on search incarichi**
+>
+>[ca865b2c45b22d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/ca865b2c45b22d3) marco.spasiano *July 28, 2021*
 
 >**Refactor generator class**
 >
@@ -12755,6 +14847,10 @@
 >
 >[362806bcd2ab572](https://github.com/istitutosuperioredisanita/sigla-main/commit/362806bcd2ab572) gianfranco.gasparro *June 29, 2021*
 
+>**Closed Issue #80**
+>
+>[c45b43db2000f28](https://github.com/istitutosuperioredisanita/sigla-main/commit/c45b43db2000f28) marco.spasiano *June 25, 2021*
+
 >**Aggiunto bottone per la contabilizzazione economica**
 >
 >[a865045dbbda27e](https://github.com/istitutosuperioredisanita/sigla-main/commit/a865045dbbda27e) marco.spasiano *June 21, 2021*
@@ -12858,6 +14954,13 @@
 >**Change email message to error on log**
 >
 >[c6c3ce13deb3890](https://github.com/istitutosuperioredisanita/sigla-main/commit/c6c3ce13deb3890) marco.spasiano *May 31, 2021*
+
+>**CVE-2021-29425**
+> * Vulnerable versions: &lt; 2.7
+> * Patched version: 2.7
+> * In Apache Commons IO before 2.7, When invoking the method FileNameUtils.normalize with an improper input string, like &quot;//../foo&quot;, or &quot;\..\foo&quot;, the result would be the same value, thus possibly providing access to files in the parent directory, but not further above (thus &quot;limited&quot; path traversal), if the calling code would use the result to construct a path value.
+>
+>[fc9d14eb7fd77ca](https://github.com/istitutosuperioredisanita/sigla-main/commit/fc9d14eb7fd77ca) marco.spasiano *May 31, 2021*
 
 >**aggiunto 3 campi come richiesto dalla Rapallini in anagrafica_dottorati**
 >
@@ -13753,6 +15856,10 @@
 >
 >[f0bbff4405e7961](https://github.com/istitutosuperioredisanita/sigla-main/commit/f0bbff4405e7961) patriziavillani *February 12, 2021*
 
+>**FIX Creazione procedura batch per aggiornamento coordinate bancarie dipendenti NSIP. Modificata per Bonifici Esteri. Resolve issue #64**
+>
+>[9e55a4c389c5efb](https://github.com/istitutosuperioredisanita/sigla-main/commit/9e55a4c389c5efb) raffaele.pagano *February 11, 2021*
+
 >**Update inventario.rst**
 >
 >[16197ca20d94f15](https://github.com/istitutosuperioredisanita/sigla-main/commit/16197ca20d94f15) patriziavillani *February 11, 2021*
@@ -13788,6 +15895,10 @@
 >**Inizio integrazione ACE**
 >
 >[3198c3d4bfc4966](https://github.com/istitutosuperioredisanita/sigla-main/commit/3198c3d4bfc4966) gianfranco.gasparro *February 08, 2021*
+
+>**Consultazione Variazioni: aggiunto filtro per tipologia variazioni. Resolve issue #63**
+>
+>[31bccf7daa383dc](https://github.com/istitutosuperioredisanita/sigla-main/commit/31bccf7daa383dc) raffaele.pagano *February 08, 2021*
 
 >**FIX error on compile**
 >
@@ -13825,9 +15936,25 @@
 >
 >[9239d72c0ddfec1](https://github.com/istitutosuperioredisanita/sigla-main/commit/9239d72c0ddfec1) raffaele.pagano *February 01, 2021*
 
+>**Creazione procedura batch per aggiornamento coordinate bancarie dipendenti NSIP. Resolve issue #64**
+>
+>[32afa9f04a51998](https://github.com/istitutosuperioredisanita/sigla-main/commit/32afa9f04a51998) raffaele.pagano *January 29, 2021*
+
 >**Controllati i valori per la predisposizione dei documenti 1210**
 >
 >[b8b688223c102c3](https://github.com/istitutosuperioredisanita/sigla-main/commit/b8b688223c102c3) marco.spasiano *January 29, 2021*
+
+>**Aggiunta la possibilità di allegare un file simultaneamente a più mandati o reversali con una selezione multipla, e chiusa la issue #61 .**
+>
+>[2bd9a63a6c5ec40](https://github.com/istitutosuperioredisanita/sigla-main/commit/2bd9a63a6c5ec40) marco.spasiano *January 29, 2021*
+
+>**Creazione procedura batch per aggiornamento coordinate bancarie dipendenti NSIP. Resolve issue #64**
+>
+>[a1dc3432fb57313](https://github.com/istitutosuperioredisanita/sigla-main/commit/a1dc3432fb57313) raffaele.pagano *January 28, 2021*
+
+>**Creazione procedura batch per aggiornamento coordinate bancarie dipendenti NSIP. Resolve issue #64**
+>
+>[ae863f224a1d819](https://github.com/istitutosuperioredisanita/sigla-main/commit/ae863f224a1d819) raffaele.pagano *January 28, 2021*
 
 >**Modifiche per adeguamento tracciato esterometro**
 >
@@ -13916,6 +16043,10 @@
 >**FIX Stampa Bilancio**
 >
 >[4496d8a8d99c2a0](https://github.com/istitutosuperioredisanita/sigla-main/commit/4496d8a8d99c2a0) raffaele.pagano *December 09, 2020*
+
+>**Closed ISSUE #51**
+>
+>[b0ce7325d36b35d](https://github.com/istitutosuperioredisanita/sigla-main/commit/b0ce7325d36b35d) marco.spasiano *December 09, 2020*
 
 >**Eliminata la ricerca dello stato del documeno di variazione nel caso del CdS Ente**
 >
@@ -14285,6 +16416,10 @@
 >
 >[d96d47b5f54d6c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/d96d47b5f54d6c9) patriziavillani *November 13, 2020*
 
+>**Update applicazione-parziale-del-disciplinare-art.-14-comma-2.rst**
+>
+>[8701305c35ea385](https://github.com/istitutosuperioredisanita/sigla-main/commit/8701305c35ea385) patriziavillani *November 13, 2020*
+
 >**Update le-tipologie-di-rapporti-esclusi.rst**
 >
 >[8b132edde287bc7](https://github.com/istitutosuperioredisanita/sigla-main/commit/8b132edde287bc7) patriziavillani *November 13, 2020*
@@ -14552,6 +16687,10 @@
 >**Update premessa-e-ambito-di-applicazione.rst**
 >
 >[f1409e476d8333f](https://github.com/istitutosuperioredisanita/sigla-main/commit/f1409e476d8333f) patriziavillani *November 02, 2020*
+
+>**Update applicazione-parziale-del-disciplinare-art.-14-comma-2.rst**
+>
+>[228b3ba051fdfb2](https://github.com/istitutosuperioredisanita/sigla-main/commit/228b3ba051fdfb2) patriziavillani *November 02, 2020*
 
 >**Update index.rst**
 >
@@ -15129,6 +17268,10 @@
 >
 >[217751fa8db09ab](https://github.com/istitutosuperioredisanita/sigla-main/commit/217751fa8db09ab) gianfranco.gasparro *August 04, 2020*
 
+>**Update db.changelog-5.0.0.xml**
+>
+>[2bba35c767f06d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/2bba35c767f06d3) PAGANO RAFFAELE *August 04, 2020*
+
 >**Aggiunto campo numero inventario iniziale**
 >
 >[e16ddc472f6ce3d](https://github.com/istitutosuperioredisanita/sigla-main/commit/e16ddc472f6ce3d) gianfranco.gasparro *August 04, 2020*
@@ -15465,9 +17608,21 @@
 >
 >[7ef8a5305e45816](https://github.com/istitutosuperioredisanita/sigla-main/commit/7ef8a5305e45816) cirosalvio *April 01, 2020*
 
+>**Fix tests. Issue #7**
+>
+>[fc1741b6101a381](https://github.com/istitutosuperioredisanita/sigla-main/commit/fc1741b6101a381) raffaele.pagano *April 01, 2020*
+
+>**Fix tests. Issue #7**
+>
+>[bb0088a421243a1](https://github.com/istitutosuperioredisanita/sigla-main/commit/bb0088a421243a1) raffaele.pagano *April 01, 2020*
+
 >**Rimodulazione Progetti: in fase di modifica della data di inizio/fine/proroga progetto il controllo di esistenza di obbligazioni con data coerente ai nuovi valori viene effettuata limitatamente alle obbligazioni di importo positivo.**
 >
 >[31cdb45c476d22b](https://github.com/istitutosuperioredisanita/sigla-main/commit/31cdb45c476d22b) raffaele.pagano *April 01, 2020*
+
+>**La soluzione consiste nel visualizzare i file presenti non solo nella cartella del progetto della attuale UO Coordinatrice ma anche di quelli eventuali presenti nelle cartelle progetto delle altre Uo partecipanti, tra le quali figurano anche le vecchie UO Coordinatrici. Resolve issue #7**
+>
+>[7363c4510a4851f](https://github.com/istitutosuperioredisanita/sigla-main/commit/7363c4510a4851f) raffaele.pagano *April 01, 2020*
 
 >**deleted the json object**
 >
@@ -15973,6 +18128,10 @@
 >
 >[4a1b50589c968b5](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a1b50589c968b5) patriziavillani *February 26, 2020*
 
+>**Variazioni di bilancio: estesa la possibilità di trasferire fondi su GAE Natura 6 di progetti attivi su progetti della Ragioneria (gestione attiva solo per variazioni alla Ragioneria) - Issue: #14**
+>
+>[fc303d2924c0ea1](https://github.com/istitutosuperioredisanita/sigla-main/commit/fc303d2924c0ea1) raffaele.pagano *February 26, 2020*
+
 >**Update progetto.rst**
 >
 >[0b42ebc39bb395e](https://github.com/istitutosuperioredisanita/sigla-main/commit/0b42ebc39bb395e) patriziavillani *February 26, 2020*
@@ -16061,6 +18220,10 @@
 >
 >[9ba91cc0284fa63](https://github.com/istitutosuperioredisanita/sigla-main/commit/9ba91cc0284fa63) marco.spasiano *February 24, 2020*
 
+>**FIX businessProcess name closed issue #13**
+>
+>[afd4579129e98e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/afd4579129e98e8) marco.spasiano *February 24, 2020*
+
 >**Fix anomalie varie emerse durante la demo**
 >
 >[03cb5a00f998fa3](https://github.com/istitutosuperioredisanita/sigla-main/commit/03cb5a00f998fa3) gianfranco.gasparro *February 24, 2020*
@@ -16072,6 +18235,10 @@
 >**Add release version on docs conf.py**
 >
 >[edd80c7723b9bac](https://github.com/istitutosuperioredisanita/sigla-main/commit/edd80c7723b9bac) marco.spasiano *February 24, 2020*
+
+>**Lista anni su impegni residui impropri issue #11**
+>
+>[992bcacb71ff93f](https://github.com/istitutosuperioredisanita/sigla-main/commit/992bcacb71ff93f) marco.spasiano *February 24, 2020*
 
 >**Permesso inserimento di missioni di 2 anni precedenti**
 >
@@ -16216,6 +18383,10 @@
 >**Create gestione_utenze.rst**
 >
 >[cf5fe463fa7e248](https://github.com/istitutosuperioredisanita/sigla-main/commit/cf5fe463fa7e248) patriziavillani *February 17, 2020*
+
+>**Controllo IBAN per modalità di pagamento Terzi closed Issue #6**
+>
+>[7a09e5b2c962a68](https://github.com/istitutosuperioredisanita/sigla-main/commit/7a09e5b2c962a68) marco.spasiano *February 17, 2020*
 
 >**Gestione Conti su Ordini**
 >
@@ -16693,14 +18864,6 @@
 >
 >[09b45ee512dca6f](https://github.com/istitutosuperioredisanita/sigla-main/commit/09b45ee512dca6f) patriziavillani *January 30, 2020*
 
->**Fix Rimodulazione Progetti: limitato il controllo di chiusura del bilancio, necessario per proporre rimodulazioni anche su voci economiche presenti in bilancio, ai soli CDS partecipanti al progetto oggetto di modifica.**
->
->[8c97430cd21542f](https://github.com/istitutosuperioredisanita/sigla-main/commit/8c97430cd21542f) raffaele.pagano *January 30, 2020*
-
->**Variazioni Bilancio Residuo: aggiunto tasto che consente di riportare una variazione residua dallo stato Approvato allo stato Definitivo. Il tasto è visibile solo per cds abilitati ad approvare ed utenti di tipo Supervisore.**
->
->[f9f2141d16226fb](https://github.com/istitutosuperioredisanita/sigla-main/commit/f9f2141d16226fb) raffaele.pagano *January 30, 2020*
-
 >**Commit and Push Ordmag ISS functionality**
 >
 >[610ae883002cbbd](https://github.com/istitutosuperioredisanita/sigla-main/commit/610ae883002cbbd) ciro.salvio *January 27, 2020*
@@ -16712,2367 +18875,6 @@
 >**Commit and Push Ordmag ISS functionality**
 >
 >[614bfa1d5d62d93](https://github.com/istitutosuperioredisanita/sigla-main/commit/614bfa1d5d62d93) ciro.salvio *January 27, 2020*
-
->**BUG nella generazione del flusso SIOPE+, quando per lo stesso codice SIOPE ci sono due CUP diversi**
->
->[ac2dc8dd79abf7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac2dc8dd79abf7c) marco.spasiano *January 27, 2020*
-
->**Add docs for Sphinx**
->
->[7076399a6e4050a](https://github.com/istitutosuperioredisanita/sigla-main/commit/7076399a6e4050a) marco.spasiano *January 27, 2020*
-
->**Add docs for Sphinx**
->
->[fa81e934353da3d](https://github.com/istitutosuperioredisanita/sigla-main/commit/fa81e934353da3d) marco.spasiano *January 25, 2020*
-
->**Add docs for Sphinx**
->
->[1e52fe949fa39f6](https://github.com/istitutosuperioredisanita/sigla-main/commit/1e52fe949fa39f6) marco.spasiano *January 25, 2020*
-
->**Modify Changelog**
->
->[e0aa2e8f4d84cef](https://github.com/istitutosuperioredisanita/sigla-main/commit/e0aa2e8f4d84cef) marco.spasiano *January 25, 2020*
-
->**Add docs for Sphinx**
->
->[a8ade95e9c7cc62](https://github.com/istitutosuperioredisanita/sigla-main/commit/a8ade95e9c7cc62) marco.spasiano *January 25, 2020*
-
->**Modify Changelog**
->
->[0bfa62040d78a67](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bfa62040d78a67) marco.spasiano *January 25, 2020*
-
->**Add docs for Sphinx**
->
->[8efd88161db60df](https://github.com/istitutosuperioredisanita/sigla-main/commit/8efd88161db60df) marco.spasiano *January 25, 2020*
-
->**Ripristinate Modifiche per Gestione Ordini**
->
->[8440e12bcff5c96](https://github.com/istitutosuperioredisanita/sigla-main/commit/8440e12bcff5c96) gianfranco.gasparro *January 24, 2020*
-
->**Fix Variazioni Bilancio Residuo: corretta controllo su disponibilità Piano Economico Progetto e visualizzazione voci movimentate non associate in caso di accesso da anno successivo a quello del piano economico.**
->
->[ac9722860ec6952](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac9722860ec6952) raffaele.pagano *January 22, 2020*
-
->**Fix Variazioni Bilancio Residuo: corretta controllo su disponibilità Piano Economico Progetto.**
->
->[e79f3b9c133ad6d](https://github.com/istitutosuperioredisanita/sigla-main/commit/e79f3b9c133ad6d) raffaele.pagano *January 22, 2020*
-
->**Fix Variazioni Bilancio Residuo: corretta controllo su disponibilità Piano Economico Progetto.**
->
->[d227d80037e17a0](https://github.com/istitutosuperioredisanita/sigla-main/commit/d227d80037e17a0) raffaele.pagano *January 22, 2020*
-
->**Ingrandito campo a 100 caratteri per inserimento email per fatturazione elettronica**
->
->[e3af1ed5393b4db](https://github.com/istitutosuperioredisanita/sigla-main/commit/e3af1ed5393b4db) gianfranco.gasparro *January 21, 2020*
-
->**Corretta valorizzazione dati incasso su generico e reversale. Ricalcolato importo accertamento per compensazioni**
->
->[0f6a16ee4631e9a](https://github.com/istitutosuperioredisanita/sigla-main/commit/0f6a16ee4631e9a) gianfranco.gasparro *January 21, 2020*
-
->**Nascosta TAB di abilitazione Ordini nel caso di Gestione Ordini non Attiva**
->
->[9d40e70503dbadd](https://github.com/istitutosuperioredisanita/sigla-main/commit/9d40e70503dbadd) gianfranco.gasparro *January 20, 2020*
-
->**FIX test**
->
->[474a262960da9f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/474a262960da9f9) marco.spasiano *January 20, 2020*
-
->**FIX test**
->
->[8b697d5d120ebda](https://github.com/istitutosuperioredisanita/sigla-main/commit/8b697d5d120ebda) marco.spasiano *January 20, 2020*
-
->**FIX test**
->
->[26e87aba85863a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/26e87aba85863a9) marco.spasiano *January 20, 2020*
-
->**FIX gitlabci m2 cache**
->
->[24605d07a7b3393](https://github.com/istitutosuperioredisanita/sigla-main/commit/24605d07a7b3393) marco.spasiano *January 20, 2020*
-
->**funzioni ordini e magazzini - Add qta_carico_lotto a tipo_movimento_mag - qta_carico_lotto not null**
->
->[2654e93510972fb](https://github.com/istitutosuperioredisanita/sigla-main/commit/2654e93510972fb) marco.spasiano *January 20, 2020*
-
-
-### GitHub #101 
-
->**Bump postgresql from 42.3.3 to 42.4.1 in /sigla-backend #101**
->
->[70e09af06e5c5bf](https://github.com/istitutosuperioredisanita/sigla-main/commit/70e09af06e5c5bf) marco.spasiano *September 19, 2022*
-
->**Bump postgresql from 42.3.3 to 42.4.1 in /sigla-backend #101**
->
->[74d0ae22929335f](https://github.com/istitutosuperioredisanita/sigla-main/commit/74d0ae22929335f) marco.spasiano *September 19, 2022*
-
-
-### GitHub [#11](https://github.com/istitutosuperioredisanita/sigla-main/pull/11) New Releas CNR
-
->**Lista anni su impegni residui impropri issue #11**
->
->[992bcacb71ff93f](https://github.com/istitutosuperioredisanita/sigla-main/commit/992bcacb71ff93f) marco.spasiano *February 24, 2020*
-
-
-### GitHub [#13](https://github.com/istitutosuperioredisanita/sigla-main/pull/13) New Commits CNR
-
->**FIX businessProcess name closed issue #13**
->
->[afd4579129e98e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/afd4579129e98e8) marco.spasiano *February 24, 2020*
-
-
-### GitHub [#14](https://github.com/istitutosuperioredisanita/sigla-main/pull/14) New commits CNR
-
->**Variazioni di bilancio: estesa la possibilità di trasferire fondi su GAE Natura 6 di progetti attivi su progetti della Ragioneria (gestione attiva solo per variazioni alla Ragioneria) - Issue: #14**
->
->[fc303d2924c0ea1](https://github.com/istitutosuperioredisanita/sigla-main/commit/fc303d2924c0ea1) raffaele.pagano *February 26, 2020*
-
-
-### GitHub #32117 
-
->**fix: issue #32117 di Spring Framework. A partire da Spring 6.1, se il codice è compilato senza il flag -parameters, l'espressione SpEL { #param1, #param2 } nella chiave di @Cacheable smette di funzionare correttamente: i parametri vengono risolti a null, e quindi la chiave diventa un ArrayList di null. Il risultato è che tutte le invocazioni successive restituiscono silenziosamente il risultato della prima, ignorando i valori reali dei parametri**
->
->[108f07cdf44ee20](https://github.com/istitutosuperioredisanita/sigla-main/commit/108f07cdf44ee20) mspasiano *May 26, 2026*
-
-
-### GitHub #51 
-
->**Closed ISSUE #51**
->
->[b0ce7325d36b35d](https://github.com/istitutosuperioredisanita/sigla-main/commit/b0ce7325d36b35d) marco.spasiano *December 09, 2020*
-
-
-### GitHub [#6](https://github.com/istitutosuperioredisanita/sigla-main/pull/6) Merge CNR to ISS
-
->**Controllo IBAN per modalità di pagamento Terzi closed Issue #6**
->
->[7a09e5b2c962a68](https://github.com/istitutosuperioredisanita/sigla-main/commit/7a09e5b2c962a68) marco.spasiano *February 17, 2020*
-
-
-### GitHub #61 
-
->**Aggiunta la possibilità di allegare un file simultaneamente a più mandati o reversali con una selezione multipla, e chiusa la issue #61 .**
->
->[2bd9a63a6c5ec40](https://github.com/istitutosuperioredisanita/sigla-main/commit/2bd9a63a6c5ec40) marco.spasiano *January 29, 2021*
-
-
-### GitHub #63 
-
->**Consultazione Variazioni: aggiunto filtro per tipologia variazioni. Resolve issue #63**
->
->[31bccf7daa383dc](https://github.com/istitutosuperioredisanita/sigla-main/commit/31bccf7daa383dc) raffaele.pagano *February 08, 2021*
-
-
-### GitHub #64 
-
->**FIX Creazione procedura batch per aggiornamento coordinate bancarie dipendenti NSIP. Modificata per Bonifici Esteri. Resolve issue #64**
->
->[9e55a4c389c5efb](https://github.com/istitutosuperioredisanita/sigla-main/commit/9e55a4c389c5efb) raffaele.pagano *February 11, 2021*
-
->**Creazione procedura batch per aggiornamento coordinate bancarie dipendenti NSIP. Resolve issue #64**
->
->[32afa9f04a51998](https://github.com/istitutosuperioredisanita/sigla-main/commit/32afa9f04a51998) raffaele.pagano *January 29, 2021*
-
->**Creazione procedura batch per aggiornamento coordinate bancarie dipendenti NSIP. Resolve issue #64**
->
->[a1dc3432fb57313](https://github.com/istitutosuperioredisanita/sigla-main/commit/a1dc3432fb57313) raffaele.pagano *January 28, 2021*
-
->**Creazione procedura batch per aggiornamento coordinate bancarie dipendenti NSIP. Resolve issue #64**
->
->[ae863f224a1d819](https://github.com/istitutosuperioredisanita/sigla-main/commit/ae863f224a1d819) raffaele.pagano *January 28, 2021*
-
-
-### GitHub [#7](https://github.com/istitutosuperioredisanita/sigla-main/pull/7) Fix
-
->**Fix tests. Issue #7**
->
->[fc1741b6101a381](https://github.com/istitutosuperioredisanita/sigla-main/commit/fc1741b6101a381) raffaele.pagano *April 01, 2020*
-
->**Fix tests. Issue #7**
->
->[bb0088a421243a1](https://github.com/istitutosuperioredisanita/sigla-main/commit/bb0088a421243a1) raffaele.pagano *April 01, 2020*
-
->**La soluzione consiste nel visualizzare i file presenti non solo nella cartella del progetto della attuale UO Coordinatrice ma anche di quelli eventuali presenti nelle cartelle progetto delle altre Uo partecipanti, tra le quali figurano anche le vecchie UO Coordinatrici. Resolve issue #7**
->
->[7363c4510a4851f](https://github.com/istitutosuperioredisanita/sigla-main/commit/7363c4510a4851f) raffaele.pagano *April 01, 2020*
-
-
-### GitHub #80 
-
->**Closed Issue #80**
->
->[c45b43db2000f28](https://github.com/istitutosuperioredisanita/sigla-main/commit/c45b43db2000f28) marco.spasiano *June 25, 2021*
-
-
-### GitHub #82 
-
->**Aggiunto il CUP alla consultazione REST dei progetti Issue #82**
->
->[c2f5eb0a27db548](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2f5eb0a27db548) marco.spasiano *November 22, 2021*
-
->**Aggiunto il CUP alla consultazione REST dei progetti Issue #82**
->
->[22bfc45d10ca8eb](https://github.com/istitutosuperioredisanita/sigla-main/commit/22bfc45d10ca8eb) marco.spasiano *November 15, 2021*
-
-
-### GitHub #87 
-
->**Closed issue #87**
->
->[44e36589190faac](https://github.com/istitutosuperioredisanita/sigla-main/commit/44e36589190faac) marco.spasiano *September 21, 2021*
-
-
-### GitHub #89 
-
->**Closed issue #89**
->
->[bc83dc64f375c6a](https://github.com/istitutosuperioredisanita/sigla-main/commit/bc83dc64f375c6a) marco.spasiano *October 05, 2021*
-
->**Closed issue #89**
->
->[aabb7df92d8353e](https://github.com/istitutosuperioredisanita/sigla-main/commit/aabb7df92d8353e) marco.spasiano *October 05, 2021*
-
-
-### GitHub #93 
-
->**Bump gson from 2.8.5 to 2.8.9 in /sigla-web #93**
->
->[db6dfc4cdcf8c29](https://github.com/istitutosuperioredisanita/sigla-main/commit/db6dfc4cdcf8c29) marco.spasiano *September 19, 2022*
-
->**Bump gson from 2.8.5 to 2.8.9 in /sigla-web #93**
->
->[ac75c23430dbc04](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac75c23430dbc04) marco.spasiano *September 19, 2022*
-
-
-### GitHub #94 
-
->**Bump gson from 2.8.5 to 2.8.9 in /sigla-ejb #94**
->
->[7056dc5c3eec802](https://github.com/istitutosuperioredisanita/sigla-main/commit/7056dc5c3eec802) marco.spasiano *September 19, 2022*
-
->**Bump gson from 2.8.5 to 2.8.9 in /sigla-ejb #94**
->
->[941a7ec690ee224](https://github.com/istitutosuperioredisanita/sigla-main/commit/941a7ec690ee224) marco.spasiano *September 19, 2022*
-
-
-### GitHub #96 
-
->**Bump poi from 3.17 to 4.1.1 in /sigla-ejb #96**
->
->[279a961e5f34465](https://github.com/istitutosuperioredisanita/sigla-main/commit/279a961e5f34465) marco.spasiano *September 19, 2022*
-
->**Bump poi from 3.17 to 4.1.1 in /sigla-ejb #96**
->
->[d8b071ff711e2e1](https://github.com/istitutosuperioredisanita/sigla-main/commit/d8b071ff711e2e1) marco.spasiano *September 19, 2022*
-
->**Bump poi from 3.17 to 4.1.1 in /sigla-ejb #96**
->
->[128385ecf68a294](https://github.com/istitutosuperioredisanita/sigla-main/commit/128385ecf68a294) marco.spasiano *September 19, 2022*
-
-
-### GitHub #97 
-
->**Bump poi from 3.17 to 4.1.1 in /sigla-web #97**
->
->[21c6a6a52408cb5](https://github.com/istitutosuperioredisanita/sigla-main/commit/21c6a6a52408cb5) marco.spasiano *September 19, 2022*
-
->**Bump poi from 3.17 to 4.1.1 in /sigla-web #97**
->
->[86640142b7c349a](https://github.com/istitutosuperioredisanita/sigla-main/commit/86640142b7c349a) marco.spasiano *September 19, 2022*
-
-
-### GitHub #98 
-
->**Bump commons-email from 1.3.3 to 1.5 in /sigla-web #98**
->
->[706b174c625b65c](https://github.com/istitutosuperioredisanita/sigla-main/commit/706b174c625b65c) marco.spasiano *September 19, 2022*
-
->**Bump commons-email from 1.3.3 to 1.5 in /sigla-web #98**
->
->[e05d249d9822c8f](https://github.com/istitutosuperioredisanita/sigla-main/commit/e05d249d9822c8f) marco.spasiano *September 19, 2022*
-
-
-### GitHub #99 
-
->**Bump commons-email from 1.4 to 1.5 in /sigla-ejb #99**
->
->[3b4cbffb35112d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/3b4cbffb35112d3) marco.spasiano *September 19, 2022*
-
->**Bump commons-email from 1.4 to 1.5 in /sigla-ejb #99**
->
->[642d5d69945d0cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/642d5d69945d0cb) marco.spasiano *September 19, 2022*
-
-
-### Jira CVE-2012 
-
->**CVE-2012-0881**
-> * Vulnerable versions: &lt; 2.12.0
-> * Patched version: 2.12.0
-> * Apache Xerces2 Java Parser before 2.12.0 allows remote attackers to cause a denial of service (CPU consumption) via a crafted message to an XML service, which triggers hash table collisions.
->
->[0bef658cf345ac6](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bef658cf345ac6) marco.spasiano *September 20, 2021*
-
-
-### Jira CVE-2020 
-
->**CVE-2020-25633**
-> * Vulnerable versions: &lt;= 4.5.6.Final
-> * Patched version: 4.5.7.Final
-> * A flaw was found in RESTEasy client in all versions of RESTEasy up to 4.5.6.Final. It may allow client users to obtain the server&#39;s potentially sensitive information when the server got WebApplicationException from the RESTEasy client call. The highest threat from this vulnerability is to data confidentiality.
->
->[ba16f17ac109a18](https://github.com/istitutosuperioredisanita/sigla-main/commit/ba16f17ac109a18) marco.spasiano *September 20, 2021*
-
->**CVE-2020-13956**
-> * Vulnerable versions: &lt; 4.5.13
-> * Patched version: 4.5.13
-> * Apache HttpClient versions prior to version 4.5.13 and 5.0.3 can misinterpret malformed authority component in request URIs passed to the library as java.net.URI object and pick the wrong target host for request execution.
->
->[d985eb7ff33ba3a](https://github.com/istitutosuperioredisanita/sigla-main/commit/d985eb7ff33ba3a) marco.spasiano *September 20, 2021*
-
-
-### Jira CVE-2021 
-
->**CVE-2021-29425**
-> * Vulnerable versions: &lt; 2.7
-> * Patched version: 2.7
-> * In Apache Commons IO before 2.7, When invoking the method FileNameUtils.normalize with an improper input string, like &quot;//../foo&quot;, or &quot;\..\foo&quot;, the result would be the same value, thus possibly providing access to files in the parent directory, but not further above (thus &quot;limited&quot; path traversal), if the calling code would use the result to construct a path value.
->
->[fc9d14eb7fd77ca](https://github.com/istitutosuperioredisanita/sigla-main/commit/fc9d14eb7fd77ca) marco.spasiano *May 31, 2021*
-
-
-### Jira ORA-00907 
-
->**FIX ORA-00907 on search incarichi**
->
->[ca865b2c45b22d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/ca865b2c45b22d3) marco.spasiano *July 28, 2021*
-
-
-### Jira ORA-20020 
-
->**fix error Caused by: oracle.jdbc.OracleDatabaseException: ORA-20020: Conto ep non trovato:-**
->
->[5b01e558f8d0396](https://github.com/istitutosuperioredisanita/sigla-main/commit/5b01e558f8d0396) salvio_ciro *March 13, 2026*
-
-
-### Jira changelog-5 
-
->**Update db.changelog-5.0.0.xml**
->
->[2bba35c767f06d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/2bba35c767f06d3) PAGANO RAFFAELE *August 04, 2020*
-
-
-### Jira comma-2 
-
->**Update applicazione-parziale-del-disciplinare-art.-14-comma-2.rst**
->
->[8701305c35ea385](https://github.com/istitutosuperioredisanita/sigla-main/commit/8701305c35ea385) patriziavillani *November 13, 2020*
-
->**Update applicazione-parziale-del-disciplinare-art.-14-comma-2.rst**
->
->[228b3ba051fdfb2](https://github.com/istitutosuperioredisanita/sigla-main/commit/228b3ba051fdfb2) patriziavillani *November 02, 2020*
-
-
-## Release 8.0.23  -- _August 07, 2026_ 
-**Changes**
-
->**fix: connessioni verso il DB non chiuse e che saturano il pool - aggiornato driver Oracle a ojdbc11 23.26.2.0.0 e aggiunto validazione connessioni per risolvere SQLRecoverableException a scadenza sessione**
->
->[e8c55893dcb3270](https://github.com/istitutosuperioredisanita/sigla-main/commit/e8c55893dcb3270) marco.spasiano *August 07, 2026*
-
->**Bumped version to 8.0.22**
->
->[e21fd0c98abb531](https://github.com/istitutosuperioredisanita/sigla-main/commit/e21fd0c98abb531) dirgensa *August 06, 2026*
-
-
-## Release 8.0.22  -- _August 06, 2026_ 
-**Changes**
-
->**fix: connessioni verso il DB non chiuse e che saturano il pool**
->
->[5e0c243af08e3fd](https://github.com/istitutosuperioredisanita/sigla-main/commit/5e0c243af08e3fd) marco.spasiano *August 06, 2026*
-
->**Bumped version to 8.0.21**
->
->[023af677c14b215](https://github.com/istitutosuperioredisanita/sigla-main/commit/023af677c14b215) dirgensa *August 05, 2026*
-
-
-## Release 8.0.21  -- _August 05, 2026_ 
-**Changes**
-
->**fix: connessioni verso il DB non chiuse e che saturano il pool**
->
->[44b3a71cd879f5f](https://github.com/istitutosuperioredisanita/sigla-main/commit/44b3a71cd879f5f) marco.spasiano *August 05, 2026*
-
->**fix: NPE**
->
->[bbb0399880026ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/bbb0399880026ee) marco.spasiano *August 05, 2026*
-
->**Bumped version to 8.0.20**
->
->[e1d61f2f5073105](https://github.com/istitutosuperioredisanita/sigla-main/commit/e1d61f2f5073105) dirgensa *August 04, 2026*
-
-
-## Release 8.0.20  -- _August 04, 2026_ 
-**Changes**
-
->**Aggiunta la chiusura dello statement nel metodo isEsercizioCoepChiusoFor**
->
->[c1faea1d8517874](https://github.com/istitutosuperioredisanita/sigla-main/commit/c1faea1d8517874) csalvio *August 04, 2026*
-
->**Bumped version to 8.0.19**
->
->[250c4c123b07599](https://github.com/istitutosuperioredisanita/sigla-main/commit/250c4c123b07599) dirgensa *August 04, 2026*
-
-
-## Release 8.0.19  -- _August 04, 2026_ 
-**Changes**
-
->**Gestione Abilitazione Firma Ordine**
->
->[d3e3c7757eab233](https://github.com/istitutosuperioredisanita/sigla-main/commit/d3e3c7757eab233) csalvio *August 04, 2026*
-
->**Fix errore passaggi di stato dell'ordine in funzione se è o meno attiva la firma dell'ordine**
->
->[6e91b3149a4780c](https://github.com/istitutosuperioredisanita/sigla-main/commit/6e91b3149a4780c) csalvio *August 04, 2026*
-
->**Gestione Abilitazione Firma Ordine**
->
->[bd96fec805180b1](https://github.com/istitutosuperioredisanita/sigla-main/commit/bd96fec805180b1) csalvio *August 04, 2026*
-
->**Aggiornata la gestione di CODICE_AUT_AREE ("Accordi senza contributo aggiuntivo"): tipo finanziamento sempre selezionabile, date progetto obbligatorie e rimozione della gestione degli importi finanziato/cofinanziato.**
->
->[6ac672ae8f190b8](https://github.com/istitutosuperioredisanita/sigla-main/commit/6ac672ae8f190b8) davide-mirra *July 22, 2026*
-
->**Fix:Inserimento Esercizio Progetto Padre quello del progetto che si sta ribaltando solo se pg_progetto_padre è non null altriment null**
->
->[afce135d5ff1aa1](https://github.com/istitutosuperioredisanita/sigla-main/commit/afce135d5ff1aa1) csalvio *July 14, 2026*
-
->**Bumped version to 8.0.18**
->
->[390dda673d646b3](https://github.com/istitutosuperioredisanita/sigla-main/commit/390dda673d646b3) dirgensa *July 13, 2026*
-
-
-## Release 8.0.18  -- _July 13, 2026_ 
-**Changes**
-
->**SCARICO INVENTARIO - fix query ammortamento e aggiornamento vista**
->
->[488e4e5d1a09034](https://github.com/istitutosuperioredisanita/sigla-main/commit/488e4e5d1a09034) tomada_valentina *July 13, 2026*
-
->**Aggiunta la generazione automatica dei report tra gli allegati**
->
->[056a24353573a48](https://github.com/istitutosuperioredisanita/sigla-main/commit/056a24353573a48) csalvio *July 13, 2026*
-
->**Gestione Stato Inviato**
->
->[1f7ae69527531f1](https://github.com/istitutosuperioredisanita/sigla-main/commit/1f7ae69527531f1) csalvio *July 09, 2026*
-
->**Bumped version to 8.0.17**
->
->[de707392c90a5bd](https://github.com/istitutosuperioredisanita/sigla-main/commit/de707392c90a5bd) dirgensa *June 30, 2026*
-
-
-## Release 8.0.17  -- _June 30, 2026_ 
-**Changes**
-
->**new feature: in caso di utente supervisore possono essere modificati i conti anche ad esercizio chiuso**
->
->[4e7bb07f1df1d08](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e7bb07f1df1d08) marco.spasiano *June 30, 2026*
-
->**Bumped version to 8.0.16**
->
->[a09dec065151690](https://github.com/istitutosuperioredisanita/sigla-main/commit/a09dec065151690) dirgensa *June 26, 2026*
-
-
-## Release 8.0.16  -- _June 26, 2026_ 
-**Changes**
-
->**Fix set Imponibile**
->
->[262f63eb225705c](https://github.com/istitutosuperioredisanita/sigla-main/commit/262f63eb225705c) csalvio *June 26, 2026*
-
->**Force build and tests**
->
->[206be7435861faf](https://github.com/istitutosuperioredisanita/sigla-main/commit/206be7435861faf) csalvio *June 26, 2026*
-
->**Fix calcolo importo unitario per fattura associate a Ordini di tipo Commerciale**
->
->[95b449a38c33efc](https://github.com/istitutosuperioredisanita/sigla-main/commit/95b449a38c33efc) csalvio *June 26, 2026*
-
->**Elimanato il tab richieste dall'evasione ordine**
->
->[2922a2fea940c7a](https://github.com/istitutosuperioredisanita/sigla-main/commit/2922a2fea940c7a) csalvio *June 24, 2026*
-
->**Bumped version to 8.0.15**
->
->[2fb8a11dc1b8613](https://github.com/istitutosuperioredisanita/sigla-main/commit/2fb8a11dc1b8613) dirgensa *June 24, 2026*
-
-
-## Release 8.0.15  -- _June 24, 2026_ 
-**Changes**
-
->**Modificato il messaggio di errore quando entrambi gli importi parzialeAnno e totaleAnno sono diversi da zero**
->
->[abeccaed512be88](https://github.com/istitutosuperioredisanita/sigla-main/commit/abeccaed512be88) csalvio *June 24, 2026*
-
->**Modificato il comportamento: se il record per l'anno esiste lo apre in modifica è non è possibile selezionare nuovo. Se non è presente è adesso possibile lanciare la crezione dei file Accrual.**
->
->[aad7efd746a5a7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/aad7efd746a5a7c) csalvio *June 24, 2026*
-
->**Aggiornata a dipendeza di xbrl-accrual alla versione chiusa 1.0.0**
->
->[58fccce28277221](https://github.com/istitutosuperioredisanita/sigla-main/commit/58fccce28277221) csalvio *June 23, 2026*
-
->**Eliminato codice che generava tre file separati**
->
->[2a1b08562ddcfe9](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a1b08562ddcfe9) csalvio *June 23, 2026*
-
->**Bumped version to 8.0.14**
->
->[ffedb7736b6ca85](https://github.com/istitutosuperioredisanita/sigla-main/commit/ffedb7736b6ca85) dirgensa *June 23, 2026*
-
-
-## Release 8.0.14  -- _June 23, 2026_ 
-**Changes**
-
->**Bumped version to 8.0.13**
->
->[3e9ba8781ac9b0c](https://github.com/istitutosuperioredisanita/sigla-main/commit/3e9ba8781ac9b0c) dirgensa *June 23, 2026*
-
-
-## Release 8.0.13  -- _June 23, 2026_ 
-**Changes**
-
->**fix: abilitata gestione valori negativo**
->
->[610e5b5c5178aa5](https://github.com/istitutosuperioredisanita/sigla-main/commit/610e5b5c5178aa5) csalvio *June 23, 2026*
-
->**eliminati spazi**
->
->[f21ee2c12c75485](https://github.com/istitutosuperioredisanita/sigla-main/commit/f21ee2c12c75485) csalvio *June 23, 2026*
-
->**Bumped version to 8.0.12**
->
->[9c10173ac51a5e4](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c10173ac51a5e4) dirgensa *June 23, 2026*
-
-
-## Release 8.0.12  -- _June 23, 2026_ 
-**Changes**
-
->**[skip ci] modifica per generare il file zip con nome aaaannnnnnnnnnnnnnnnnnXXXXYYY.zip  come da documentazione che contiene un solo file xbrl con prefisso aaaannnnnnnnnnnnnnnnnnXXXXYYY dovve aaaa è l'anno nnnnnnnnnnnnnnnnnn e il codice bdap dell'ente e XXXXYYY pee la sperimentazione sempre RENDSKA**
->
->[d113b16072706b2](https://github.com/istitutosuperioredisanita/sigla-main/commit/d113b16072706b2) csalvio *June 23, 2026*
-
->**Bumped version to 8.0.11**
->
->[c350a907a727548](https://github.com/istitutosuperioredisanita/sigla-main/commit/c350a907a727548) dirgensa *June 22, 2026*
-
-
-## Release 8.0.11  -- _June 22, 2026_ 
-**Changes**
-
->**[skip ci] configuraro InstantContextXbrl per stato patrimoniale e schema aggiuntivo e corretto nome metodo getCodiceBdapEnte**
->
->[d4ef2de9f74b6d2](https://github.com/istitutosuperioredisanita/sigla-main/commit/d4ef2de9f74b6d2) csalvio *June 22, 2026*
-
->**[skip ci] configuraro InstantContextXbrl per stato patrimoniale e schema aggiuntivo**
->
->[eeef1278f6278c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/eeef1278f6278c1) csalvio *June 22, 2026*
-
->**Bumped version to 8.0.10**
->
->[6c3354f935d479a](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c3354f935d479a) dirgensa *June 22, 2026*
-
-
-## Release 8.0.10  -- _June 22, 2026_ 
-**Changes**
-
->**fix:Nome File Zip e reload in edit post creazione file accrual**
->
->[fafb19bd933085e](https://github.com/istitutosuperioredisanita/sigla-main/commit/fafb19bd933085e) csalvio *June 22, 2026*
-
->**Riattivati i test**
->
->[ddbf0fc7d64c268](https://github.com/istitutosuperioredisanita/sigla-main/commit/ddbf0fc7d64c268) csalvioiss *June 22, 2026*
-
->**Bumped version to 8.0.9**
->
->[3982767edbbb87f](https://github.com/istitutosuperioredisanita/sigla-main/commit/3982767edbbb87f) dirgensa *June 22, 2026*
-
-
-## Release 8.0.9  -- _June 22, 2026_ 
-**Changes**
-
->**Fix errore**
->
->[eb09ee77b9a76f0](https://github.com/istitutosuperioredisanita/sigla-main/commit/eb09ee77b9a76f0) csalvio *June 22, 2026*
-
->**Restore generazione Stato Patrimnoniale e schema aggiuntivo**
->
->[67c4fd4ccdaf029](https://github.com/istitutosuperioredisanita/sigla-main/commit/67c4fd4ccdaf029) csalvio *June 22, 2026*
-
->**Update maven.yml**
->
->[1f093b6f68b3f70](https://github.com/istitutosuperioredisanita/sigla-main/commit/1f093b6f68b3f70) csalvioiss *June 22, 2026*
-
->**Eliminato il dettaglio conto dalle riclassificazioni**
->
->[17284a918c2dd34](https://github.com/istitutosuperioredisanita/sigla-main/commit/17284a918c2dd34) csalvio *June 22, 2026*
-
->**Bumped version to 8.0.8**
->
->[b0e1e2d143174c5](https://github.com/istitutosuperioredisanita/sigla-main/commit/b0e1e2d143174c5) dirgensa *June 22, 2026*
-
-
-## Release 8.0.8  -- _June 22, 2026_ 
-**Changes**
-
->**Aumentata la dimensione della lunghezza a 50 della colonna nomeTassAccrual**
->
->[2020c2f1875b0ce](https://github.com/istitutosuperioredisanita/sigla-main/commit/2020c2f1875b0ce) csalvio *June 22, 2026*
-
->**Bumped version to 8.0.7**
->
->[251d8e7398d4734](https://github.com/istitutosuperioredisanita/sigla-main/commit/251d8e7398d4734) dirgensa *June 22, 2026*
-
-
-## Release 8.0.7  -- _June 22, 2026_ 
-**Changes**
-
->**Revert modifica**
->
->[a264eeb78298791](https://github.com/istitutosuperioredisanita/sigla-main/commit/a264eeb78298791) csalvio *June 22, 2026*
-
->**Aggiunta configurazione CNR per Accrual**
->
->[a6329ab996e3f04](https://github.com/istitutosuperioredisanita/sigla-main/commit/a6329ab996e3f04) csalvio *June 22, 2026*
-
->**Aggiunta configurazione codice BDAP per XBRL Accrual**
->
->[464d7b8fda3e2cd](https://github.com/istitutosuperioredisanita/sigla-main/commit/464d7b8fda3e2cd) csalvio *June 22, 2026*
-
->**Aggiunta gestione AccrualXbrException**
->
->[c2add86b0dc8f10](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2add86b0dc8f10) csalvio *June 22, 2026*
-
->**Bumped version to 8.0.6**
->
->[a140395f3793cb1](https://github.com/istitutosuperioredisanita/sigla-main/commit/a140395f3793cb1) dirgensa *June 19, 2026*
-
-
-## Release 8.0.6  -- _June 19, 2026_ 
-**Changes**
-
->**Accrual Salvataggio File in Storage**
->
->[3637780802fde10](https://github.com/istitutosuperioredisanita/sigla-main/commit/3637780802fde10) csalvio *June 19, 2026*
-
->**Bumped version to 8.0.5**
->
->[c2de649ad10f8a4](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2de649ad10f8a4) dirgensa *June 19, 2026*
-
-
-## Release 8.0.5  -- _June 19, 2026_ 
-**Changes**
-
->**Fix invio annullamento per mandato Banca D'Italia caso non multibeneficiario**
->
->[c23f423d44d57f5](https://github.com/istitutosuperioredisanita/sigla-main/commit/c23f423d44d57f5) csalvio *June 19, 2026*
-
->**Bumped version to 8.0.4**
->
->[4db706f011b838a](https://github.com/istitutosuperioredisanita/sigla-main/commit/4db706f011b838a) dirgensa *June 18, 2026*
-
-
-## Release 8.0.4  -- _June 18, 2026_ 
-**Changes**
-
->**Aggiunto add_cnr_gruppo_ep_nome_tass_accrual**
->
->[4a5b02e632dea1d](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a5b02e632dea1d) csalvio *June 18, 2026*
-
->**gestita visibilità colonna NOME_TASS_ACCRUAL se selezionato come tipo bilancio ACCRUAL/ACCRUAL-AGG e fix width colonna checkbox dei dettagli doc. trasporto/rientro**
->
->[2cc280e0ce27d13](https://github.com/istitutosuperioredisanita/sigla-main/commit/2cc280e0ce27d13) davide-mirra *June 18, 2026*
-
->**Sviluppo creazione file zip con i file xbrl**
->
->[aac159697b44ea3](https://github.com/istitutosuperioredisanita/sigla-main/commit/aac159697b44ea3) csalvio *June 18, 2026*
-
->**Sviluppo creazione file zip con i file xb**
->
->[2a6d73b125d8dfb](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a6d73b125d8dfb) csalvio *June 18, 2026*
-
->**Gestione Nome Tassonomia ACCRULA**
->
->[7c049342d761041](https://github.com/istitutosuperioredisanita/sigla-main/commit/7c049342d761041) csalvio *June 18, 2026*
-
->**Aggiunto campo NOME_TASS_ACCRUAL su CNR_GRUPPO_EP**
->
->[7a2e747e8bf8459](https://github.com/istitutosuperioredisanita/sigla-main/commit/7a2e747e8bf8459) csalvio *June 18, 2026*
-
->**aggiunta la colonna tassonomia accrual sul bilancio riclassificato**
->
->[7c3f166ea1fcdf4](https://github.com/istitutosuperioredisanita/sigla-main/commit/7c3f166ea1fcdf4) salvio_ciro *June 18, 2026*
-
->**Implementazione Accrual**
->
->[5729bf605c81cba](https://github.com/istitutosuperioredisanita/sigla-main/commit/5729bf605c81cba) csalvio *June 18, 2026*
-
->**Primo commit per gestione Contabilità Accrual MEF**
-> * - Aggiunti changelog Liquibase per tabella ACCRUAL e configurazione menu/accessi
-> * - Aggiunto AccrualBulk con dizionario stati e supporto al path documentale
-> * - Aggiunti CRUDAccrualMefBP e CRUDAccrualMefAction con tab Modulo e Allegati
-> * - Aggiunta gestione allegati dedicata per Accrual con tipologie XBRL ZIP e Altro
-> * - Aggiunta validazione file XBRL ZIP come archivio ZIP contenente almeno un file .xbrl
-> * - Configurate voci menu Visualizzazione e Gestione sotto Consuntivo
->
->[42f2013343f2414](https://github.com/istitutosuperioredisanita/sigla-main/commit/42f2013343f2414) mirra_davide *June 18, 2026*
-
->**Fix invio annullamento per mandato Banca D'Italia**
->
->[34d50d1c99c0486](https://github.com/istitutosuperioredisanita/sigla-main/commit/34d50d1c99c0486) csalvio *June 18, 2026*
-
->**Bumped version to 8.0.3**
->
->[d1fa1bcc576e17a](https://github.com/istitutosuperioredisanita/sigla-main/commit/d1fa1bcc576e17a) dirgensa *June 16, 2026*
-
-
-## Release 8.0.3  -- _June 16, 2026_ 
-**Changes**
-
->**new feature: add session destroy endpoint**
-> * Add POST /session/destroy endpoint to invalidate the current
-> * HttpSession, to be called by the frontend on tab close
-> * (beforeunload) for proactive server-side session cleanup.
->
->[28e63d7031bf4a2](https://github.com/istitutosuperioredisanita/sigla-main/commit/28e63d7031bf4a2) marco.spasiano *June 16, 2026*
-
->**Bumped version to 8.0.2**
->
->[e67ae160c8f263f](https://github.com/istitutosuperioredisanita/sigla-main/commit/e67ae160c8f263f) dirgensa *June 11, 2026*
-
-
-## Release 8.0.2  -- _June 11, 2026_ 
-**Changes**
-
->**add: Docker image tagging with fixed "release" tag alongside versioned tag**
->
->[6dc3ab121da815b](https://github.com/istitutosuperioredisanita/sigla-main/commit/6dc3ab121da815b) marco.spasiano *June 11, 2026*
-
->**Fix BASIC auth popup on session expiry: set FORM as first mechanism in sigla-http-auth factory, BASIC with silent=true as fallback.**
->
->[b8829a6e2b966e9](https://github.com/istitutosuperioredisanita/sigla-main/commit/b8829a6e2b966e9) marco.spasiano *June 11, 2026*
-
->**fix(test): suppress Liquibase INFO logs during Arquillian tests**
->
->[6bc651362dad4cf](https://github.com/istitutosuperioredisanita/sigla-main/commit/6bc651362dad4cf) marco.spasiano *June 09, 2026*
-
->**Bumped version to 8.0.1**
->
->[1fec6862d99986f](https://github.com/istitutosuperioredisanita/sigla-main/commit/1fec6862d99986f) dirgensa *June 08, 2026*
-
-
-## Release 8.0.1  -- _June 08, 2026_ 
-**Changes**
-
->**fix: basic authenitcation mechanism**
->
->[804e34580d06f6e](https://github.com/istitutosuperioredisanita/sigla-main/commit/804e34580d06f6e) csalvio *June 08, 2026*
-
->**new feature: rimozione del vincolo sul bilancio IRES ed estese le funzionalità di riclassificazione, aggiunto anche il campo note e modificata la stampa dello stato patrimoniale [ci skip]**
->
->[d33ae384245c00e](https://github.com/istitutosuperioredisanita/sigla-main/commit/d33ae384245c00e) marco.spasiano *June 04, 2026*
-
->**add: upgrade version of jada**
->
->[60862d51506b165](https://github.com/istitutosuperioredisanita/sigla-main/commit/60862d51506b165) mspasiano *June 04, 2026*
-
->**new feature: rimozione del vincolo sul bilancio IRES ed estese le funzionalità di riclassificazione**
->
->[145d186495207a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/145d186495207a9) mspasiano *June 04, 2026*
-
->**new feature: rimozione del vincolo sul bilancio IRES ed estese le funzionalità di riclassificazione, aggiunto anche il campo note e modificata la stampa dello stato patrimoniale**
->
->[d67a7863d7409cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/d67a7863d7409cc) mspasiano *June 04, 2026*
-
->**new feature: rimozione del vincolo sul bilancio IRES ed estese le funzionalità di riclassificazione**
->
->[5a3f1a969dfb89c](https://github.com/istitutosuperioredisanita/sigla-main/commit/5a3f1a969dfb89c) mspasiano *June 04, 2026*
-
-
-## Release 8.0.0  -- _May 26, 2026_ 
-**Changes**
-
->**Aggiunto gestione tabella tipo_prestazione compenso**
->
->[25dc4061dbaf583](https://github.com/istitutosuperioredisanita/sigla-main/commit/25dc4061dbaf583) salvio_ciro *May 26, 2026*
-
->**Update maven.yml**
->
->[374bea3bbc2e2ec](https://github.com/istitutosuperioredisanita/sigla-main/commit/374bea3bbc2e2ec) dirgensa *May 25, 2026*
-
->**Update maven.yml**
->
->[a460b20cfbca097](https://github.com/istitutosuperioredisanita/sigla-main/commit/a460b20cfbca097) dirgensa *May 25, 2026*
-
-
-### GitHub #32117 
-
->**fix: issue #32117 di Spring Framework. A partire da Spring 6.1, se il codice è compilato senza il flag -parameters, l'espressione SpEL { #param1, #param2 } nella chiave di @Cacheable smette di funzionare correttamente: i parametri vengono risolti a null, e quindi la chiave diventa un ArrayList di null. Il risultato è che tutte le invocazioni successive restituiscono silenziosamente il risultato della prima, ignorando i valori reali dei parametri**
->
->[d3c1e09c3e98ba6](https://github.com/istitutosuperioredisanita/sigla-main/commit/d3c1e09c3e98ba6) mspasiano *May 26, 2026*
-
-
-## Release 7.0.67  -- _March 12, 2026_ 
-**Changes**
-
->**Abilita il check Studio Associato sull'anagrafica anche per le persone fisiche**
->
->[bfa01d88820b566](https://github.com/istitutosuperioredisanita/sigla-main/commit/bfa01d88820b566) salvio_ciro *March 12, 2026*
-
->**Bumped version to 7.0.66**
->
->[1d498e126e6ab83](https://github.com/istitutosuperioredisanita/sigla-main/commit/1d498e126e6ab83) dirgensa *March 12, 2026*
-
-
-## Release 7.0.66  -- _March 12, 2026_ 
-**Changes**
-
->**Gestione del Bollo Rivalsa -2 euro a compensazione del bollo di 2 euro che per viene assolto dall'ente e non imputato al debitore**
->
->[9ba73b51804ab88](https://github.com/istitutosuperioredisanita/sigla-main/commit/9ba73b51804ab88) salvio_ciro *March 12, 2026*
-
->**Bumped version to 7.0.65**
->
->[77acdc5bf866799](https://github.com/istitutosuperioredisanita/sigla-main/commit/77acdc5bf866799) dirgensa *March 10, 2026*
-
-
-## Release 7.0.65  -- _March 10, 2026_ 
-**Changes**
-
->**Modificato il controllo sul valore unitario al momento dell'inventariazione permettendo il valore zero**
->
->[5168f22fe2db804](https://github.com/istitutosuperioredisanita/sigla-main/commit/5168f22fe2db804) salvio_ciro *March 10, 2026*
-
-
-## Release 7.0.64  -- _February 23, 2026_ 
-**Changes**
-
->**NOTA DI CREDITO ATTIVA - Fix su BP in controlli onChange**
->
->[bb45c73d3843673](https://github.com/istitutosuperioredisanita/sigla-main/commit/bb45c73d3843673) tomada_valentina *February 23, 2026*
-
->**-fix valorizzazione utente che ha fatto la chiusura anno inventario**
->
->[90519de1be2d8d6](https://github.com/istitutosuperioredisanita/sigla-main/commit/90519de1be2d8d6) salvio_ciro *February 17, 2026*
-
->**Bumped version to 7.0.63**
->
->[9fa7758dad62aa2](https://github.com/istitutosuperioredisanita/sigla-main/commit/9fa7758dad62aa2) dirgensa *February 16, 2026*
-
-
-## Release 7.0.63  -- _February 16, 2026_ 
-**Changes**
-
->**-fix importo iva unitaria su lotto**
->
->[c2ec89c03fb1ca4](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2ec89c03fb1ca4) salvio_ciro *February 16, 2026*
-
->**-Fix anomalie riscontro a valore nel campo Importo Unitario veniva inserito il valore dell'iva**
-> * -Eliminato DULA dallo statment statmentCreazioneMovimentoChiusuraMagazzino
->
->[9b412b77ac25e84](https://github.com/istitutosuperioredisanita/sigla-main/commit/9b412b77ac25e84) salvio_ciro *February 16, 2026*
-
->**Eliminato da ContrattoMaggioliResource l'override del metodo recuperoDatiContratto**
->
->[7ffee8968a64c53](https://github.com/istitutosuperioredisanita/sigla-main/commit/7ffee8968a64c53) salvio_ciro *February 16, 2026*
-
->**Bumped version to 7.0.62**
->
->[0e4a6d8da5c1b17](https://github.com/istitutosuperioredisanita/sigla-main/commit/0e4a6d8da5c1b17) dirgensa *February 03, 2026*
-
-
-## Release 7.0.62  -- _February 03, 2026_ 
-**Changes**
-
->**Fix su Numeratore Buoni di Carico e Scarico**
->
->[cd16178439ac149](https://github.com/istitutosuperioredisanita/sigla-main/commit/cd16178439ac149) salvio_ciro *February 03, 2026*
-
->**Bumped version to 7.0.61**
->
->[fb0f61f11000c7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/fb0f61f11000c7c) dirgensa *February 03, 2026*
-
-
-## Release 7.0.61  -- _February 03, 2026_ 
-**Changes**
-
->**Dimensione input text ds_riga**
->
->[2dbfcfa638c3c86](https://github.com/istitutosuperioredisanita/sigla-main/commit/2dbfcfa638c3c86) salvio_ciro *February 03, 2026*
-
->**Aggiunta aggiornamento quota di avanzo anno precedente**
->
->[5820eeffa6ee6fb](https://github.com/istitutosuperioredisanita/sigla-main/commit/5820eeffa6ee6fb) salvio_ciro *February 03, 2026*
-
->**fix gestione configurazione CNR**
-> * Scdenzario Voce
->
->[42a83dd74f7e2c8](https://github.com/istitutosuperioredisanita/sigla-main/commit/42a83dd74f7e2c8) tomada_valentina *January 30, 2026*
-
->**Bumped version to 7.0.60**
->
->[fca93e81c789987](https://github.com/istitutosuperioredisanita/sigla-main/commit/fca93e81c789987) dirgensa *January 29, 2026*
-
-
-## Release 7.0.60  -- _January 29, 2026_ 
-**Changes**
-
->**Impegni/Accertamenti pluriennali - spostamento voci di menù impegni\accertamenti da stampa a consultazione**
->
->[b5ebfca8e3ca637](https://github.com/istitutosuperioredisanita/sigla-main/commit/b5ebfca8e3ca637) massimiliano.digregorio *January 29, 2026*
-
->**CONFIGURAZIONE CNR - Fix ricerca obbligatoria per esercizio**
->
->[6a385fbec5f56c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/6a385fbec5f56c1) tomada_valentina *January 28, 2026*
-
->**CONFIGURAZIONE CNR - fix per ricerca**
->
->[c70e2243dc48999](https://github.com/istitutosuperioredisanita/sigla-main/commit/c70e2243dc48999) tomada_valentina *January 28, 2026*
-
->**CONFIGURAZIONE CNR - gestione parti variabili**
->
->[0661db9ce6d155c](https://github.com/istitutosuperioredisanita/sigla-main/commit/0661db9ce6d155c) tomada_valentina *January 28, 2026*
-
->**Configurazione CNR**
-> * Predisposizione per visualizzazione e modifica
->
->[aa5894c32fad89c](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa5894c32fad89c) Lucattini Stefano *January 28, 2026*
-
->**Configurazione CNR**
-> * Predisposizione per visualizzazione e modifica
->
->[6982a79215f3018](https://github.com/istitutosuperioredisanita/sigla-main/commit/6982a79215f3018) Lucattini Stefano *January 28, 2026*
-
->**Gestione configurazione cnr**
->
->[2a175d8112e6932](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a175d8112e6932) salvio_ciro *January 28, 2026*
-
->**Gestione configurazione cnr**
->
->[65563026c4c64c7](https://github.com/istitutosuperioredisanita/sigla-main/commit/65563026c4c64c7) Lucattini Stefano *January 28, 2026*
-
->**Configurazione CNR**
-> * Nuova voce per la gestione delle variabili della tabella
->
->[1988280982ae453](https://github.com/istitutosuperioredisanita/sigla-main/commit/1988280982ae453) Lucattini Stefano *January 28, 2026*
-
->**Consultazione configurazione CNR**
->
->[479d8cb0bb35344](https://github.com/istitutosuperioredisanita/sigla-main/commit/479d8cb0bb35344) massimiliano.digregorio *January 28, 2026*
-
->**Impegni pluriennali e accertamenti Pluriennali**
->
->[658aa2db12733b2](https://github.com/istitutosuperioredisanita/sigla-main/commit/658aa2db12733b2) salvio_ciro *January 28, 2026*
-
->**Impegni/Accertamenti pluriennali - definizione campi griglia**
->
->[5d2b44b4526eb52](https://github.com/istitutosuperioredisanita/sigla-main/commit/5d2b44b4526eb52) massimiliano.digregorio *January 28, 2026*
-
->**Impegni pluriennali/accertamenti - mod filtro**
->
->[17cdf03e3e98256](https://github.com/istitutosuperioredisanita/sigla-main/commit/17cdf03e3e98256) massimiliano.digregorio *January 28, 2026*
-
->**Nuova stampa accertamenti pluriennali voce**
->
->[8262c186fe06b66](https://github.com/istitutosuperioredisanita/sigla-main/commit/8262c186fe06b66) Lucattini Stefano *January 28, 2026*
-
->**Impegni pluriennali - Impostazione ricerca**
->
->[e16b53990236e70](https://github.com/istitutosuperioredisanita/sigla-main/commit/e16b53990236e70) massimiliano.digregorio *January 28, 2026*
-
->**Impegni pluriennali - setting iniziale action-bp-bulkinfo**
->
->[18563d85874dc0a](https://github.com/istitutosuperioredisanita/sigla-main/commit/18563d85874dc0a) massimiliano.digregorio *January 28, 2026*
-
->**Impegni pluriennali - setting iniziale action-bp-bulkinfo**
->
->[1cc6647d2c24d6a](https://github.com/istitutosuperioredisanita/sigla-main/commit/1cc6647d2c24d6a) massimiliano.digregorio *January 28, 2026*
-
->**Preparazione accesso per impegni pluriennali (voci)**
->
->[43b7f2fb6ceaa36](https://github.com/istitutosuperioredisanita/sigla-main/commit/43b7f2fb6ceaa36) massimiliano.digregorio *January 28, 2026*
-
->**PROGETTO - deselezione flag autorimodulazione se AREA008 e progetto annuale**
->
->[836dc6fa4fe8abf](https://github.com/istitutosuperioredisanita/sigla-main/commit/836dc6fa4fe8abf) tomada_valentina *January 28, 2026*
-
-
-## Release 7.0.59  -- _January 23, 2026_ 
-**Changes**
-
->**new feature: aggiunta nuova consultazione dello scadenzario impegni per le informazioni sull'ordinato ed evaso**
->
->[47316f6bb7cdc8f](https://github.com/istitutosuperioredisanita/sigla-main/commit/47316f6bb7cdc8f) mspasiano *January 23, 2026*
-
->**Bumped version to 7.0.58**
->
->[b94ba5ab63c38d5](https://github.com/istitutosuperioredisanita/sigla-main/commit/b94ba5ab63c38d5) dirgensa *January 20, 2026*
-
-
-## Release 7.0.58  -- _January 20, 2026_ 
-**Changes**
-
->**new feature: resa possibile la cancellazione di modifiche agli accertamenti residui**
->
->[1598a20b5ca3c4c](https://github.com/istitutosuperioredisanita/sigla-main/commit/1598a20b5ca3c4c) salvio_ciro *January 20, 2026*
-
->**Fix issue cancellazione dettaglio di una modifica quando viene cancellata la modifica. ELiminava solo la testata**
->
->[737e92b4e2bbc78](https://github.com/istitutosuperioredisanita/sigla-main/commit/737e92b4e2bbc78) salvio_ciro *January 20, 2026*
-
->**Fix messaggistica**
->
->[06f4b279a701d28](https://github.com/istitutosuperioredisanita/sigla-main/commit/06f4b279a701d28) salvio_ciro *January 20, 2026*
-
->**V_CONS_SCAD_OBBL_VOCE**
->
->[ff338407637654f](https://github.com/istitutosuperioredisanita/sigla-main/commit/ff338407637654f) salvio_ciro *January 20, 2026*
-
->**Fix estrazione Scandenziario Voce**
->
->[ee86b29916694f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/ee86b29916694f7) salvio_ciro *January 20, 2026*
-
->**Bumped version to 7.0.57**
->
->[74b8b574890eb88](https://github.com/istitutosuperioredisanita/sigla-main/commit/74b8b574890eb88) dirgensa *January 19, 2026*
-
-
-## Release 7.0.57  -- _January 19, 2026_ 
-**Changes**
-
->**new feature: aggiunte le informazioni sull'ordinato ed evaso alla stampa dello scadenzario impegni e alla consultazione**
->
->[a182e1193922d06](https://github.com/istitutosuperioredisanita/sigla-main/commit/a182e1193922d06) mspasiano *January 19, 2026*
-
->**new feature: aggiunte le informazioni sull'ordinato ed evaso alla stampa dello scadenzario impegni**
->
->[5f3e18d4193b02d](https://github.com/istitutosuperioredisanita/sigla-main/commit/5f3e18d4193b02d) mspasiano *January 19, 2026*
-
->**Bumped version to 7.0.56**
->
->[605d1d9ee626bd2](https://github.com/istitutosuperioredisanita/sigla-main/commit/605d1d9ee626bd2) dirgensa *January 16, 2026*
-
-
-## Release 7.0.56  -- _January 16, 2026_ 
-**Changes**
-
->**Fix anomali registrazione Fattura:**
-> * -getsione inizializzazione Numerazione_coge_coan
-> * -gestione Rowrapper quando inventario per l&#39;esercizio è ancora chiuso
->
->[346e389182965a2](https://github.com/istitutosuperioredisanita/sigla-main/commit/346e389182965a2) salvio_ciro *January 16, 2026*
-
->**Bumped version to 7.0.55**
->
->[2dc8142dc8c1e38](https://github.com/istitutosuperioredisanita/sigla-main/commit/2dc8142dc8c1e38) dirgensa *January 15, 2026*
-
-
-## Release 7.0.55  -- _January 15, 2026_ 
-**Changes**
-
->**BUONO CARICO SCARICO - Fix tipo movimenti in modifica Carichi da Ordine**
->
->[b94b394d9b5491a](https://github.com/istitutosuperioredisanita/sigla-main/commit/b94b394d9b5491a) tomada_valentina *January 15, 2026*
-
->**ASS PARTITE DI GIRO - visualizzazione correlazione E/S**
->
->[dae1fd301c28d39](https://github.com/istitutosuperioredisanita/sigla-main/commit/dae1fd301c28d39) tomada_valentina *January 12, 2026*
-
->**Bumped version to 7.0.54**
->
->[009f40a88aadb76](https://github.com/istitutosuperioredisanita/sigla-main/commit/009f40a88aadb76) dirgensa *January 08, 2026*
-
-
-## Release 7.0.54  -- _January 08, 2026_ 
-**Changes**
-
->**Update maven.yml**
->
->[4af57834fbe8db6](https://github.com/istitutosuperioredisanita/sigla-main/commit/4af57834fbe8db6) Marco Spasiano *January 08, 2026*
-
->**Update docs.yml**
->
->[e565e8e75469eb2](https://github.com/istitutosuperioredisanita/sigla-main/commit/e565e8e75469eb2) Marco Spasiano *January 08, 2026*
-
->**Sviluppo flussi di cassa**
->
->[69d82670324d586](https://github.com/istitutosuperioredisanita/sigla-main/commit/69d82670324d586) salvio_ciro *January 08, 2026*
-
->**FLUSSI CASSA - gestione estrazione rendiconto**
->
->[abb2d4250afed5b](https://github.com/istitutosuperioredisanita/sigla-main/commit/abb2d4250afed5b) tomada_valentina *January 08, 2026*
-
->**FLUSSO CASSA - implementazione filtro livello**
->
->[d215d222f9022b3](https://github.com/istitutosuperioredisanita/sigla-main/commit/d215d222f9022b3) tomada_valentina *January 08, 2026*
-
->**FLUSSO CASSA - implementazione filtro trimestre**
->
->[6d8e58d8cb0e86a](https://github.com/istitutosuperioredisanita/sigla-main/commit/6d8e58d8cb0e86a) tomada_valentina *January 08, 2026*
-
->**Sviluppo flussi di cassa**
->
->[ee4edfa60d9bc9c](https://github.com/istitutosuperioredisanita/sigla-main/commit/ee4edfa60d9bc9c) salvio_ciro *January 08, 2026*
-
->**Sviluppo flussi di cassa**
->
->[b2e049d4837073f](https://github.com/istitutosuperioredisanita/sigla-main/commit/b2e049d4837073f) salvio_ciro *January 08, 2026*
-
->**Sviluppo flussi di cassa**
->
->[e991ef73c4910af](https://github.com/istitutosuperioredisanita/sigla-main/commit/e991ef73c4910af) salvio_ciro *January 08, 2026*
-
->**Sviluppo flussi di cassa**
->
->[fad3e8add801ee4](https://github.com/istitutosuperioredisanita/sigla-main/commit/fad3e8add801ee4) salvio_ciro *January 08, 2026*
-
->**Sviluppo flussi di cassa**
->
->[b7d3314bd673d72](https://github.com/istitutosuperioredisanita/sigla-main/commit/b7d3314bd673d72) salvio_ciro *January 08, 2026*
-
->**FLUSSO CASSA - implementazione voce di menu e funzionalità**
->
->[003f31ecb4a5d39](https://github.com/istitutosuperioredisanita/sigla-main/commit/003f31ecb4a5d39) tomada_valentina *January 08, 2026*
-
->**FLUSSO CASSA - implementazione voce di menu e funzionalità**
->
->[591bb3d3762e74d](https://github.com/istitutosuperioredisanita/sigla-main/commit/591bb3d3762e74d) tomada_valentina *January 08, 2026*
-
->**FLUSSO CASSA - implementazione voce di menu e funzionalità**
->
->[856f48d74e6da1d](https://github.com/istitutosuperioredisanita/sigla-main/commit/856f48d74e6da1d) tomada_valentina *January 08, 2026*
-
->**Bumped version to 7.0.53**
->
->[cdbe6576b2cf12b](https://github.com/istitutosuperioredisanita/sigla-main/commit/cdbe6576b2cf12b) dirgensa *January 08, 2026*
-
-
-## Release 7.0.53  -- _January 08, 2026_ 
-**Changes**
-
->**Bumped version to 7.0.52**
->
->[8d5e634aeb80e3f](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d5e634aeb80e3f) dirgensa *January 07, 2026*
-
->**Resa possibile la registrazione di una nota di debito nell'anno precedente rispetto alla configurazione 130_REG_FATT_PAS**
->
->[d9d61bf85e66e16](https://github.com/istitutosuperioredisanita/sigla-main/commit/d9d61bf85e66e16) salvio_ciro *January 07, 2026*
-
-
-## Release 7.0.52  -- _January 02, 2026_ 
-**Changes**
-
->**Aggiunto nuova colonna TIPO sul ribaltamento PARAMETRI_LIVELLI_EP**
->
->[3980599216227af](https://github.com/istitutosuperioredisanita/sigla-main/commit/3980599216227af) salvio_ciro *January 02, 2026*
-
->**Bumped version to 7.0.51**
->
->[ab49e079b082084](https://github.com/istitutosuperioredisanita/sigla-main/commit/ab49e079b082084) dirgensa *December 22, 2025*
-
-
-## Release 7.0.51  -- _December 22, 2025_ 
-**Changes**
-
->**ANNULLA MOVIMENTO MAG - FIX verifica bene inventariato**
->
->[86e8a1b58799471](https://github.com/istitutosuperioredisanita/sigla-main/commit/86e8a1b58799471) tomada_valentina *December 22, 2025*
-
->**new feature: resa possibile la cancellazione di modifiche agli impegni residui**
->
->[4f265a79f15fd44](https://github.com/istitutosuperioredisanita/sigla-main/commit/4f265a79f15fd44) mspasiano *December 22, 2025*
-
->**new feature: resa possibile la cancellazione di modifiche agli impegni residui**
->
->[1bd2405a4fc96ed](https://github.com/istitutosuperioredisanita/sigla-main/commit/1bd2405a4fc96ed) mspasiano *December 22, 2025*
-
->**new feature: resa possibile la cancellazione di modifiche agli impegni residui**
->
->[47a1d514cfac590](https://github.com/istitutosuperioredisanita/sigla-main/commit/47a1d514cfac590) mspasiano *December 22, 2025*
-
->**Bumped version to 7.0.50**
->
->[285b001935bd114](https://github.com/istitutosuperioredisanita/sigla-main/commit/285b001935bd114) dirgensa *December 15, 2025*
-
-
-## Release 7.0.50  -- _December 10, 2025_ 
-**Changes**
-
->**Fix insert into PARAMETRI_LIVELLI_EP**
->
->[1a1a91d181cbf23](https://github.com/istitutosuperioredisanita/sigla-main/commit/1a1a91d181cbf23) salvio_ciro *December 10, 2025*
-
-
-## Release 7.0.49  -- _November 27, 2025_ 
-**Changes**
-
->**Fix gestione Bic per multibeneficiari**
->
->[83f12b0ad707c46](https://github.com/istitutosuperioredisanita/sigla-main/commit/83f12b0ad707c46) salvio_ciro *November 27, 2025*
-
->**Bumped version to 7.0.48**
->
->[43f567cea5d39ed](https://github.com/istitutosuperioredisanita/sigla-main/commit/43f567cea5d39ed) dirgensa *November 27, 2025*
-
-
-## Release 7.0.48  -- _November 26, 2025_ 
-**Changes**
-
->**MANDATO - Fix lettura doc passivi associati inserita order by per leggere prima la ND e poi la NC**
->
->[d4d49f09ab88392](https://github.com/istitutosuperioredisanita/sigla-main/commit/d4d49f09ab88392) tomada_valentina *November 26, 2025*
-
->**Bumped version to 7.0.47**
->
->[662de0c561fc41d](https://github.com/istitutosuperioredisanita/sigla-main/commit/662de0c561fc41d) dirgensa *November 24, 2025*
-
-
-## Release 7.0.47  -- _November 24, 2025_ 
-**Changes**
-
->**Fix Predisposizoione Autofattura**
->
->[7aabc7ed74dbf51](https://github.com/istitutosuperioredisanita/sigla-main/commit/7aabc7ed74dbf51) salvio_ciro *November 24, 2025*
-
->**Fix predisposizione Lettera 1210**
->
->[26342986fbe2155](https://github.com/istitutosuperioredisanita/sigla-main/commit/26342986fbe2155) salvio_ciro *November 21, 2025*
-
->**AUTOFATTURA - pulsante visualizzazione in Fattura Passiva**
->
->[1253cf9b3ea5e9d](https://github.com/istitutosuperioredisanita/sigla-main/commit/1253cf9b3ea5e9d) tomada_valentina *November 20, 2025*
-
->**AUTOFATTURA - pulsante visualizzazione in Fattura Passiva**
->
->[707666fba0be5ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/707666fba0be5ac) tomada_valentina *November 20, 2025*
-
-
-## Release 7.0.46  -- _November 12, 2025_ 
-**Changes**
-
->**Fix Ricerca Contratto e fix Passaggio ordine in firma**
->
->[4eecbd3f79d959a](https://github.com/istitutosuperioredisanita/sigla-main/commit/4eecbd3f79d959a) salvio_ciro *November 12, 2025*
-
->**Fix Tipo Attivita Ordine con tipo attivita isituzionale/coomerciale Numeratore**
->
->[160098107631877](https://github.com/istitutosuperioredisanita/sigla-main/commit/160098107631877) salvio_ciro *November 12, 2025*
-
->**Fix Ricerca Contratto e fix Passaggio ordine in firma**
->
->[2c4d937d5a3ca50](https://github.com/istitutosuperioredisanita/sigla-main/commit/2c4d937d5a3ca50) salvio_ciro *November 12, 2025*
-
->**Sviluppo adeguamento Bonifico Estero Euro**
->
->[1fd96300e4f677d](https://github.com/istitutosuperioredisanita/sigla-main/commit/1fd96300e4f677d) salvio_ciro *November 12, 2025*
-
->**Sviluppo adeguamento Bonifico Estero Euro**
->
->[cec6dcfcd723a62](https://github.com/istitutosuperioredisanita/sigla-main/commit/cec6dcfcd723a62) salvio_ciro *November 12, 2025*
-
->**Sviluppo adeguamento Bonifico Estero Euro**
->
->[902d0084cd7de30](https://github.com/istitutosuperioredisanita/sigla-main/commit/902d0084cd7de30) salvio_ciro *November 12, 2025*
-
->**Sviluppo adeguamento Bonifico Estero Euro**
->
->[4a422ad81fdc1bb](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a422ad81fdc1bb) salvio_ciro *November 12, 2025*
-
->**Null pointer su fattura riga**
->
->[2f1be9db906d51f](https://github.com/istitutosuperioredisanita/sigla-main/commit/2f1be9db906d51f) salvio_ciro *November 12, 2025*
-
->**Aggiunta configurazione per abilitare variazione in competenza anche su voci di partite di giro**
->
->[2cae080c03b0263](https://github.com/istitutosuperioredisanita/sigla-main/commit/2cae080c03b0263) salvio_ciro *November 12, 2025*
-
->**Sviluppo adeguamento Bonifico Estero Euro**
->
->[1db63f9f5c3d3bd](https://github.com/istitutosuperioredisanita/sigla-main/commit/1db63f9f5c3d3bd) salvio_ciro *November 12, 2025*
-
->**Fix anoamlia PRT_ELENCO_FATT_PER_FORNITORE**
->
->[44444539aa480d7](https://github.com/istitutosuperioredisanita/sigla-main/commit/44444539aa480d7) salvio_ciro *November 12, 2025*
-
->**fix: link documentazione**
->
->[ad577e6c073b6b0](https://github.com/istitutosuperioredisanita/sigla-main/commit/ad577e6c073b6b0) mspasiano *November 07, 2025*
-
->**fix: aggiornamento inventario non chiudeva l'iteratore remoto**
->
->[c3487f6a89ead8a](https://github.com/istitutosuperioredisanita/sigla-main/commit/c3487f6a89ead8a) Nome Cognome *November 06, 2025*
-
->**fix: Dockerfile**
->
->[f5e6be0671b74cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/f5e6be0671b74cc) mspasiano *November 04, 2025*
-
-
-## Release 7.0.45  -- _November 04, 2025_ 
-**Changes**
-
->**Eliminato dbms="oracle"**
->
->[aa7872b241b23e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa7872b241b23e8) salvio_ciro *November 04, 2025*
-
->**new feature: comunicare alla PCC alcuni pagamenti di tipologia ‘NON COMMERCIALE’, attraverso il flusso SIOPE+**
->
->[85bbba3cba85f3e](https://github.com/istitutosuperioredisanita/sigla-main/commit/85bbba3cba85f3e) mspasiano *November 04, 2025*
-
->**Fix errore Caricamento File Stipendi**
->
->[5ec06c466e46b16](https://github.com/istitutosuperioredisanita/sigla-main/commit/5ec06c466e46b16) salvio_ciro *October 31, 2025*
-
-
-## Release 7.0.44  -- _October 23, 2025_ 
-**Changes**
-
->**Bumped version to 7.044**
->
->[ec2fd5d41c1c0dc](https://github.com/istitutosuperioredisanita/sigla-main/commit/ec2fd5d41c1c0dc) dirgensa *October 23, 2025*
-
->**Abilitata la possibilita di cambiare il cambio p la valuta solo nel caso in cui per la stessa non sia già stata fatta la contabilizzazione dell'iva e non è stata ancora creata la lettera 1210**
->
->[d9a400fbe5eff09](https://github.com/istitutosuperioredisanita/sigla-main/commit/d9a400fbe5eff09) salvio_ciro *October 23, 2025*
-
->**Aggiunto filtro su data acquisizione**
->
->[8d5d96b2c3fafe3](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d5d96b2c3fafe3) salvio_ciro *October 22, 2025*
-
->**Fix: gestione tipo accessorio utilizzato il metodo isBeneAccessorio**
->
->[8798e82f5604e3c](https://github.com/istitutosuperioredisanita/sigla-main/commit/8798e82f5604e3c) salvio_ciro *October 22, 2025*
-
->**Fix: gestione tipo accessorio**
->
->[235f1078ca455ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/235f1078ca455ee) salvio_ciro *October 22, 2025*
-
->**Bumped version to 7.0.43**
->
->[97d6554b11b7a82](https://github.com/istitutosuperioredisanita/sigla-main/commit/97d6554b11b7a82) dirgensa *October 17, 2025*
-
-
-## Release 7.0.43  -- _October 17, 2025_ 
-**Changes**
-
->**Fix: Anomalia Inserimento Tipo Norma Perla**
->
->[8780df34b0f898b](https://github.com/istitutosuperioredisanita/sigla-main/commit/8780df34b0f898b) salvio_ciro *October 17, 2025*
-
->**Bumped version to 7.0.42**
->
->[399707a6f83a415](https://github.com/istitutosuperioredisanita/sigla-main/commit/399707a6f83a415) dirgensa *October 15, 2025*
-
-
-## Release 7.0.42  -- _October 15, 2025_ 
-**Changes**
-
->**Fix: Gestione modalità di pagamento PagoPa per fatture da ordini**
->
->[4587ce8b5c220c2](https://github.com/istitutosuperioredisanita/sigla-main/commit/4587ce8b5c220c2) salvio_ciro *October 15, 2025*
-
->**Fix: Anomalia gestione aumento valore , trasferimento e vendita per beni che sono classificati su categoria gruppi non più validi**
->
->[d46504b57890731](https://github.com/istitutosuperioredisanita/sigla-main/commit/d46504b57890731) salvio_ciro *October 15, 2025*
-
->**Fix: Anomalia visualizzazione Unita Organizzativa di appartenenza per i dipendenti**
->
->[9b61b84fa70d871](https://github.com/istitutosuperioredisanita/sigla-main/commit/9b61b84fa70d871) salvio_ciro *October 15, 2025*
-
->**Bumped version to 7.0.41**
->
->[c0ae671f894bdee](https://github.com/istitutosuperioredisanita/sigla-main/commit/c0ae671f894bdee) dirgensa *October 14, 2025*
-
-
-## Release 7.0.41  -- _October 14, 2025_ 
-**Changes**
-
->**Fix: cancellazione del dettaglio solo quando è selezionato il fl da ordini**
->
->[01e4d584caa08a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/01e4d584caa08a9) salvio_ciro *October 14, 2025*
-
->**Aggiunto messaggio di errore nel caso è selzionato da ordine ma non ci sono righe nel tab Ordini. In modifica prima dava errore di  "Vincolo di integrità referenziale violato"."**
->
->[4ff73a5cdc7eaef](https://github.com/istitutosuperioredisanita/sigla-main/commit/4ff73a5cdc7eaef) salvio_ciro *October 14, 2025*
-
->**Bumped version to 7.0.40**
->
->[222b6e42db2926d](https://github.com/istitutosuperioredisanita/sigla-main/commit/222b6e42db2926d) dirgensa *October 14, 2025*
-
-
-## Release 7.0.40  -- _October 14, 2025_ 
-**Changes**
-
->**Aggiunta fl_cancellato sulla tabella tipo_norma_perla**
->
->[2f0213b2516c8f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/2f0213b2516c8f9) salvio_ciro *October 14, 2025*
-
->**Fix Visuliazzazione garfica dell'informazione Codice Unità Organizzativa di Appartenenza per i soli dipendenti**
->
->[42aceff5f98a12d](https://github.com/istitutosuperioredisanita/sigla-main/commit/42aceff5f98a12d) salvio_ciro *October 14, 2025*
-
->**Aggiunta informazione Codice Unità Organizzativa di Appartenenza per i soli dipendenti**
->
->[97bbcedb8109272](https://github.com/istitutosuperioredisanita/sigla-main/commit/97bbcedb8109272) salvio_ciro *October 14, 2025*
-
->**Bumped version to 7.0.39**
->
->[1b02829bdd25aa9](https://github.com/istitutosuperioredisanita/sigla-main/commit/1b02829bdd25aa9) dirgensa *October 03, 2025*
-
-
-## Release 7.0.39  -- _October 03, 2025_ 
-**Changes**
-
->**Modifica ordine menù delle funzionalità per i residui degli accertamenti e obbligazioni**
->
->[eb9cd375bfb5562](https://github.com/istitutosuperioredisanita/sigla-main/commit/eb9cd375bfb5562) salvio_ciro *October 03, 2025*
-
->**modifica DDL per la vista V_CONS_SALDI_RESIDUI_ENT + aggiunti 2 accessi sotto Accertamenti-Consultazioni: dettagli delle entrate residue e i dettagli delle modifiche sugli accertamenti (visualizzazione, stampa e download excel)**
->
->[5a3ee2019104738](https://github.com/istitutosuperioredisanita/sigla-main/commit/5a3ee2019104738) davide.mirra *October 03, 2025*
-
->**creazione DDL per la vista V_CONS_SALDI_RESIDUI_SPE_DET + aggiunti 2 accessi sotto Impegni-Consultazioni: dettagli delle spese residue e i dettagli delle modifiche sulle obbligazioni (visualizzazioni, stampa e download excel)**
->
->[faf976dd5457697](https://github.com/istitutosuperioredisanita/sigla-main/commit/faf976dd5457697) davide.mirra *October 03, 2025*
-
->**Eliminato il codice del gruppo Iva dalla descrizione Totale Gruppo....**
->
->[16ec237debefdea](https://github.com/istitutosuperioredisanita/sigla-main/commit/16ec237debefdea) salvio_ciro *October 03, 2025*
-
->**Bumped version to 7.0.38**
->
->[13ae44bd8fce4b7](https://github.com/istitutosuperioredisanita/sigla-main/commit/13ae44bd8fce4b7) dirgensa *September 30, 2025*
-
-
-## Release 7.0.38  -- _September 30, 2025_ 
-**Changes**
-
->**Implementazione invio dati Dichiarazione Intento SDI**
->
->[2d0298d78cd757a](https://github.com/istitutosuperioredisanita/sigla-main/commit/2d0298d78cd757a) salvio_ciro *September 30, 2025*
-
->**Fix upload View scad voce e accer voce**
->
->[8265bc6b61f5356](https://github.com/istitutosuperioredisanita/sigla-main/commit/8265bc6b61f5356) salvio_ciro *September 24, 2025*
-
->**Bumped version to 7.0.37**
->
->[78af3393d60f7a5](https://github.com/istitutosuperioredisanita/sigla-main/commit/78af3393d60f7a5) dirgensa *September 23, 2025*
-
-
-## Release 7.0.37  -- _September 23, 2025_ 
-**Changes**
-
->**Menù replace CNR con ISS**
->
->[5b5a5f4c8090d0c](https://github.com/istitutosuperioredisanita/sigla-main/commit/5b5a5f4c8090d0c) salvio_ciro *September 23, 2025*
-
->**Bumped version to 7.0.36**
->
->[92a0391958d2e66](https://github.com/istitutosuperioredisanita/sigla-main/commit/92a0391958d2e66) dirgensa *September 23, 2025*
-
-
-## Release 7.0.36  -- _September 23, 2025_ 
-**Changes**
-
->**Test push**
->
->[d110a83b0399cba](https://github.com/istitutosuperioredisanita/sigla-main/commit/d110a83b0399cba) salvio_ciro *September 23, 2025*
-
->**visualizza ultimo mandato associato a fattura passiva**
->
->[330576427a2528a](https://github.com/istitutosuperioredisanita/sigla-main/commit/330576427a2528a) davide.mirra *September 23, 2025*
-
->**Eliminati codice commentato**
->
->[f32fef2a53729f6](https://github.com/istitutosuperioredisanita/sigla-main/commit/f32fef2a53729f6) salvio_ciro *September 22, 2025*
-
->**Gestione Associazione CDR e gestione controlli passaggio in definitiva**
->
->[d8a4d331e9aed06](https://github.com/istitutosuperioredisanita/sigla-main/commit/d8a4d331e9aed06) salvio_ciro *September 22, 2025*
-
->**Bumped version to 7.0.35**
->
->[4dd88a76e654bfa](https://github.com/istitutosuperioredisanita/sigla-main/commit/4dd88a76e654bfa) dirgensa *September 19, 2025*
-
-
-## Release 7.0.35  -- _September 19, 2025_ 
-**Changes**
-
->**Fix registro inventario per i beni migrati**
->
->[11ba99eb2752c21](https://github.com/istitutosuperioredisanita/sigla-main/commit/11ba99eb2752c21) salvio_ciro *September 19, 2025*
-
->**Bumped version to 7.0.34**
->
->[a459652fe519746](https://github.com/istitutosuperioredisanita/sigla-main/commit/a459652fe519746) dirgensa *September 19, 2025*
-
-
-## Release 7.0.34  -- _September 19, 2025_ 
-**Changes**
-
->**Download Stampa Reversale da Documentale**
->
->[0dd144f3b3cca0a](https://github.com/istitutosuperioredisanita/sigla-main/commit/0dd144f3b3cca0a) salvio_ciro *September 19, 2025*
-
->**Modificato CNR a ISS**
->
->[0213f757335344f](https://github.com/istitutosuperioredisanita/sigla-main/commit/0213f757335344f) salvio_ciro *September 19, 2025*
-
->**Fix associzione fattura**
->
->[ea1a83d50c29cc1](https://github.com/istitutosuperioredisanita/sigla-main/commit/ea1a83d50c29cc1) salvio_ciro *September 19, 2025*
-
->**Aggiunti controlli esistenza per i Iban e indirizzo_swift**
->
->[487f9136e635413](https://github.com/istitutosuperioredisanita/sigla-main/commit/487f9136e635413) raffaele.pagano *September 19, 2025*
-
->**Bumped version to 7.0.33**
->
->[c08b1c92fe99298](https://github.com/istitutosuperioredisanita/sigla-main/commit/c08b1c92fe99298) dirgensa *September 17, 2025*
-
-
-## Release 7.0.33  -- _September 16, 2025_ 
-**Changes**
-
->**fix: settato ammontare totale raggruppato per ogni codice CORI e arrotondamento a 2 cifre decimali**
->
->[4b5be6b319a44f8](https://github.com/istitutosuperioredisanita/sigla-main/commit/4b5be6b319a44f8) davide.mirra *September 16, 2025*
-
->**Bumped version to 7.0.32**
->
->[73ff5708e21c2fc](https://github.com/istitutosuperioredisanita/sigla-main/commit/73ff5708e21c2fc) dirgensa *September 15, 2025*
-
-
-## Release 7.0.32  -- _September 15, 2025_ 
-**Changes**
-
->**Bumped version to 7.0.31**
->
->[ca8cf058db58b62](https://github.com/istitutosuperioredisanita/sigla-main/commit/ca8cf058db58b62) dirgensa *September 15, 2025*
-
-
-## Release 7.0.31  -- _September 15, 2025_ 
-**Changes**
-
->**Gestione MultiClassificazioni - Consultazione**
->
->[ebefde02b56c4f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/ebefde02b56c4f9) raffaele.pagano *September 15, 2025*
-
-
-## Release 7.0.30  -- _September 11, 2025_ 
-**Changes**
-
->**Fix issues Gestione Flussi Stipendi**
->
->[6ea15d6a1944558](https://github.com/istitutosuperioredisanita/sigla-main/commit/6ea15d6a1944558) salvio_ciro *September 11, 2025*
-
->**Refactorinig metodi per gestione dati Excel**
->
->[8d3fc8fe5ce79e7](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d3fc8fe5ce79e7) salvio_ciro *September 10, 2025*
-
->**FLUSSO STIPENDI - cancellazione flusso non liquidato**
->
->[de48df4f5c707e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/de48df4f5c707e8) tomada_valentina *September 09, 2025*
-
->**Bumped version to 7.0.28**
->
->[02d7d7212c37117](https://github.com/istitutosuperioredisanita/sigla-main/commit/02d7d7212c37117) dirgensa *September 09, 2025*
-
->**Fix Evasione Ordine per magazzini non di transito**
->
->[253a9921269a7ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/253a9921269a7ac) salvio_ciro *September 09, 2025*
-
->**Ottimizzazione gestione**
->
->[ff1aa342f0effb1](https://github.com/istitutosuperioredisanita/sigla-main/commit/ff1aa342f0effb1) salvio_ciro *September 09, 2025*
-
->**Fix Tests**
->
->[63db0f02e20774c](https://github.com/istitutosuperioredisanita/sigla-main/commit/63db0f02e20774c) raffaele.pagano *September 09, 2025*
-
->**ottimizzato inserimento CRUD per coficori (con lambda) + fix bp: tolto il button Apri File e corretto reset bulk dopo salvataggio**
->
->[e147bc1ee0bbba8](https://github.com/istitutosuperioredisanita/sigla-main/commit/e147bc1ee0bbba8) davide.mirra *September 09, 2025*
-
->**Refactory codice inserimento Stipendi Cofi Cori**
->
->[a0d2f89194bad18](https://github.com/istitutosuperioredisanita/sigla-main/commit/a0d2f89194bad18) salvio_ciro *September 09, 2025*
-
->**Eliminato set Key**
->
->[97b38102f6579f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/97b38102f6579f7) salvio_ciro *September 09, 2025*
-
->**Ottimizzazione gestione**
->
->[91a7e0445698664](https://github.com/istitutosuperioredisanita/sigla-main/commit/91a7e0445698664) salvio_ciro *September 09, 2025*
-
->**Ottimizzazione gestione**
->
->[3c680538b2623e4](https://github.com/istitutosuperioredisanita/sigla-main/commit/3c680538b2623e4) salvio_ciro *September 09, 2025*
-
->**Ottimizzioni caricamento file stipendi**
->
->[1585614d19fb715](https://github.com/istitutosuperioredisanita/sigla-main/commit/1585614d19fb715) salvio_ciro *September 09, 2025*
-
->**Ottimizzioni caricamento file stipendi**
->
->[6e5afc079ac9337](https://github.com/istitutosuperioredisanita/sigla-main/commit/6e5afc079ac9337) salvio_ciro *September 09, 2025*
-
->**Ottimizzazione gestione**
->
->[638c48702ee27f3](https://github.com/istitutosuperioredisanita/sigla-main/commit/638c48702ee27f3) salvio_ciro *September 09, 2025*
-
->**Gestione MultiClassificazioni**
->
->[1449050cbc4a3cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/1449050cbc4a3cb) raffaele.pagano *September 08, 2025*
-
->**Ottimizzazione gestione**
->
->[18c4cc6d9861a33](https://github.com/istitutosuperioredisanita/sigla-main/commit/18c4cc6d9861a33) salvio_ciro *September 08, 2025*
-
->**ottimizzato inserimento CRUD per coficori (con lambda) + fix bp: tolto il button Apri File e corretto reset bulk dopo salvataggio**
->
->[ac01d7aac34a34e](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac01d7aac34a34e) davide.mirra *September 05, 2025*
-
->**Refactory codice inserimento Stipendi Cofi Cori**
->
->[795e2530f682cc3](https://github.com/istitutosuperioredisanita/sigla-main/commit/795e2530f682cc3) salvio_ciro *September 05, 2025*
-
->**Eliminato set Key**
->
->[92542eba4a3be29](https://github.com/istitutosuperioredisanita/sigla-main/commit/92542eba4a3be29) salvio_ciro *September 05, 2025*
-
->**Aggiunta Causale Omaggio per lo stato non liquidabile**
->
->[33eefb299fab992](https://github.com/istitutosuperioredisanita/sigla-main/commit/33eefb299fab992) salvio_ciro *September 04, 2025*
-
->**Aggiunta Causale Omaggio per lo stato non liquidabile**
->
->[aa4b856e254071e](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa4b856e254071e) salvio_ciro *September 04, 2025*
-
->**Aggiunta Causale Omaggio per lo stato non liquidabile**
->
->[ec4d3504bf52cc2](https://github.com/istitutosuperioredisanita/sigla-main/commit/ec4d3504bf52cc2) salvio_ciro *September 03, 2025*
-
->**Aggiunta Causale Omaggio per lo stato non liquidabile**
->
->[681afa534f629fe](https://github.com/istitutosuperioredisanita/sigla-main/commit/681afa534f629fe) salvio_ciro *September 03, 2025*
-
->**fix name sheet1 LORDI**
->
->[566a38658e625bc](https://github.com/istitutosuperioredisanita/sigla-main/commit/566a38658e625bc) davide.mirra *September 03, 2025*
-
->**inserimento e memorizzazione del file nel documentale AZURE**
->
->[a9acc38e10cbe31](https://github.com/istitutosuperioredisanita/sigla-main/commit/a9acc38e10cbe31) davide.mirra *September 03, 2025*
-
->**Fix procedura ammortamento java. Eliminato gestione fl_totalmente_scaricato**
->
->[66652b5d8e94d1b](https://github.com/istitutosuperioredisanita/sigla-main/commit/66652b5d8e94d1b) salvio_ciro *September 02, 2025*
-
->**Fix procedura ammortamento java. Eliminato gestione fl_totalmente_scaricato**
-> * (cherry picked from commit 1f3dfedca975e769536645d2667c9dcb4656f78c)
->
->[19a7fdde95a7115](https://github.com/istitutosuperioredisanita/sigla-main/commit/19a7fdde95a7115) salvio_ciro *September 02, 2025*
-
->**rename statement**
->
->[cdcbd8b57fd8f3f](https://github.com/istitutosuperioredisanita/sigla-main/commit/cdcbd8b57fd8f3f) salvio_ciro *September 01, 2025*
-
->**fix errore progressivo: aumentata la lunghezza mese (PK) da 2 a 5. Completato inserimento stipendi. Predisposta jsp,action,bp per upload singolo file (da gestire)**
->
->[6b37016a973f15e](https://github.com/istitutosuperioredisanita/sigla-main/commit/6b37016a973f15e) davide.mirra *September 01, 2025*
-
->**rename statement**
-> * (cherry picked from commit f3a73c498cafc4103727f00fc83530ebe4cf1f5d)
->
->[4aee2031e18b7bb](https://github.com/istitutosuperioredisanita/sigla-main/commit/4aee2031e18b7bb) salvio_ciro *September 01, 2025*
-
->**sviluppo nel component per inserisciStipendiCofiCoriCompleto (check)**
->
->[e9e41ebe9a507ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/e9e41ebe9a507ac) davide.mirra *August 29, 2025*
-
->**aggiunto campo note per i Dati Contabili del Progetto e riportato nel file excel come colonna degli Accertamenti Scadenzario Voce**
->
->[1aeb31083e45f04](https://github.com/istitutosuperioredisanita/sigla-main/commit/1aeb31083e45f04) davide.mirra *August 29, 2025*
-
->**Fix anomalia chiusura ammortamento aggiungo progressico in join**
-> * (cherry picked from commit da3aaab8bf8da780cc7dce93531ce629e84af826)
->
->[0b9f6e7c3cb6589](https://github.com/istitutosuperioredisanita/sigla-main/commit/0b9f6e7c3cb6589) salvio_ciro *August 28, 2025*
-
->**doSalva nell'action, metodo nel bp che riempie il bulk dall'excel (2 sheets), logica nel component che effettua i controlli e operazioni CRUD sulle tabelle corrispondenti. stipendi_cofi e Stipendi_cofi_obb_scad (da testare/fixare errore creaConBulk), Stipendi_cofi_cori (da fare)**
->
->[fa8adfa21fb65c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/fa8adfa21fb65c1) davide.mirra *August 28, 2025*
-
->**Fix anomalia sull'aggiornamento del prezzo unitario nel transito in fase di salvataggio della fattura passiva**
-> * (cherry picked from commit 2443f72243a08b9ee4f97042d12e767a33678d8d)
->
->[92b18bd8e7eded0](https://github.com/istitutosuperioredisanita/sigla-main/commit/92b18bd8e7eded0) salvio_ciro *August 27, 2025*
-
->**disabilitato il blocco dell'importo per inventariazione beni da ordine**
->
->[598af46c9024f7e](https://github.com/istitutosuperioredisanita/sigla-main/commit/598af46c9024f7e) salvio_ciro *August 25, 2025*
-
->**Ottimizzazione tempi di apertura dell'ordine. Modificato il caricamento degli allegati delle righe di un ordine.**
->
->[b30b3dba3717ed5](https://github.com/istitutosuperioredisanita/sigla-main/commit/b30b3dba3717ed5) salvio_ciro *August 25, 2025*
-
->**Fix refactoring generazione movimenti magazzino per ottimizzazione tempi**
->
->[a3883f4a44f9ba7](https://github.com/istitutosuperioredisanita/sigla-main/commit/a3883f4a44f9ba7) salvio_ciro *August 25, 2025*
-
->**Fix nome directory gestione allegati righe dell'ordine**
->
->[3f285e2dd3c0d7b](https://github.com/istitutosuperioredisanita/sigla-main/commit/3f285e2dd3c0d7b) salvio_ciro *August 22, 2025*
-
->**Fix nome directory gestione allegati righe dell'ordine**
->
->[8258dcf80184351](https://github.com/istitutosuperioredisanita/sigla-main/commit/8258dcf80184351) salvio_ciro *August 22, 2025*
-
->**Fix refactoring generazione movimenti magazzino per ottimizzazione tempi**
->
->[25363b271d335c7](https://github.com/istitutosuperioredisanita/sigla-main/commit/25363b271d335c7) salvio_ciro *August 22, 2025*
-
->**INVENTARIO - bloccato prezzo unitario se inventariazione da ordine (configurazione_cnr)**
->
->[a35add90e048f03](https://github.com/istitutosuperioredisanita/sigla-main/commit/a35add90e048f03) tomada_valentina *August 22, 2025*
-
->**Fix anaolia sulla lista dei movimenti annullabili**
->
->[74d5a48a14f486f](https://github.com/istitutosuperioredisanita/sigla-main/commit/74d5a48a14f486f) salvio_ciro *August 21, 2025*
-
->**Fix anaolia sulla lista dei movimenti annullabili**
->
->[9094c40bd2cafec](https://github.com/istitutosuperioredisanita/sigla-main/commit/9094c40bd2cafec) salvio_ciro *August 21, 2025*
-
->**Miglioramento dei tempi di esecuzione della registrazione e modifica di una fattura da ordine. Rivisto il aggiornaDatiInventario con l'introduzione della vista di dettaglio v_fatt_ordine_det**
->
->[07c80d67616c383](https://github.com/istitutosuperioredisanita/sigla-main/commit/07c80d67616c383) salvio_ciro *August 21, 2025*
-
->**update id changelog xml e spostata classe bp in un'altra folder**
->
->[0fe79cdd9eaffcf](https://github.com/istitutosuperioredisanita/sigla-main/commit/0fe79cdd9eaffcf) davide.mirra *August 21, 2025*
-
->**creazione accesso e business process per il caricamento del flusso stipendiale**
->
->[d269dd1e4019ba1](https://github.com/istitutosuperioredisanita/sigla-main/commit/d269dd1e4019ba1) davide.mirra *August 20, 2025*
-
-
-## Release 7.0.28  -- _September 09, 2025_ 
-**Changes**
-
->**Fix Evasione Ordine per magazzini non di transito**
->
->[1c101b0eafd6d0e](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c101b0eafd6d0e) salvio_ciro *September 09, 2025*
-
->**Fix procedura ammortamento java. Eliminato gestione fl_totalmente_scaricato**
->
->[51ba07256413882](https://github.com/istitutosuperioredisanita/sigla-main/commit/51ba07256413882) salvio_ciro *September 03, 2025*
-
->**Bumped version to 7.0.27**
->
->[22d6215a6963085](https://github.com/istitutosuperioredisanita/sigla-main/commit/22d6215a6963085) dirgensa *September 03, 2025*
-
-
-## Release 7.0.27  -- _September 03, 2025_ 
-**Changes**
-
->**Aggiunta Causale Omaggio per lo stato non liquidabile**
->
->[611f74a5de1ca55](https://github.com/istitutosuperioredisanita/sigla-main/commit/611f74a5de1ca55) salvio_ciro *September 03, 2025*
-
->**Bumped version to 7.0.26**
->
->[bd62d09ac216a7a](https://github.com/istitutosuperioredisanita/sigla-main/commit/bd62d09ac216a7a) dirgensa *September 02, 2025*
-
-
-## Release 7.0.26  -- _September 02, 2025_ 
-**Changes**
-
->**Fix procedura ammortamento java. Eliminato gestione fl_totalmente_scaricato**
->
->[1f3dfedca975e76](https://github.com/istitutosuperioredisanita/sigla-main/commit/1f3dfedca975e76) salvio_ciro *September 02, 2025*
-
->**rename statement**
->
->[f3a73c498cafc41](https://github.com/istitutosuperioredisanita/sigla-main/commit/f3a73c498cafc41) salvio_ciro *September 01, 2025*
-
-
-## Release 7.0.25  -- _August 27, 2025_ 
-**Changes**
-
->**Bumped version to 7.0.24**
->
->[576c2ffb09939b8](https://github.com/istitutosuperioredisanita/sigla-main/commit/576c2ffb09939b8) dirgensa *August 27, 2025*
-
->**Fix anomalia sull'aggiornamento del prezzo unitario nel transito in fase di salvataggio della fattura passiva**
-> * (cherry picked from commit 2443f72243a08b9ee4f97042d12e767a33678d8d)
->
->[22244c3d9091c9b](https://github.com/istitutosuperioredisanita/sigla-main/commit/22244c3d9091c9b) salvio_ciro *August 27, 2025*
-
->**Fix anomalia sull'aggiornamento del prezzo unitario nel transito in fase di salvataggio della fattura passiva**
->
->[2443f72243a08b9](https://github.com/istitutosuperioredisanita/sigla-main/commit/2443f72243a08b9) salvio_ciro *August 27, 2025*
-
->**AMMORTAMENTO BENI - verifica pg_job is null**
->
->[e7a151b39cfc5db](https://github.com/istitutosuperioredisanita/sigla-main/commit/e7a151b39cfc5db) tomada_valentina *August 26, 2025*
-
->**aggiunto nuovo privilegio per l'abilitazione alla stampa del rendiconto progetto**
->
->[a9a5afb754530d6](https://github.com/istitutosuperioredisanita/sigla-main/commit/a9a5afb754530d6) davide.mirra *August 25, 2025*
-
->**test push e merge**
->
->[56aa0091897543f](https://github.com/istitutosuperioredisanita/sigla-main/commit/56aa0091897543f) davide.mirra *August 25, 2025*
-
->**fix report stampa sintetica progetti**
->
->[cfc488eb6152a2e](https://github.com/istitutosuperioredisanita/sigla-main/commit/cfc488eb6152a2e) davide.mirra *August 25, 2025*
-
->**fix report stampa sintetica progetti**
->
->[401f64e7f067468](https://github.com/istitutosuperioredisanita/sigla-main/commit/401f64e7f067468) davide.mirra *August 25, 2025*
-
->**AMMORTAMENTO BENE-Fix import e aggiunto metodo isInteger**
->
->[10cf978691952ab](https://github.com/istitutosuperioredisanita/sigla-main/commit/10cf978691952ab) salvio_ciro *August 25, 2025*
-
->**AMMORTAMENTO BENE-Eliminato definizioni duplicate**
->
->[0aa7226e10da0ef](https://github.com/istitutosuperioredisanita/sigla-main/commit/0aa7226e10da0ef) salvio_ciro *August 25, 2025*
-
->**AMMORTAMENTO BENI - gestione toolbar**
->
->[aded11970e5875a](https://github.com/istitutosuperioredisanita/sigla-main/commit/aded11970e5875a) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - gestione beni senza tipo ammortamento**
->
->[2f0509be6615f7b](https://github.com/istitutosuperioredisanita/sigla-main/commit/2f0509be6615f7b) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - chiusura inventario**
->
->[b9e5142175367da](https://github.com/istitutosuperioredisanita/sigla-main/commit/b9e5142175367da) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - chiusura inventario**
->
->[57e8a5bdac30a8f](https://github.com/istitutosuperioredisanita/sigla-main/commit/57e8a5bdac30a8f) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - chiusura inventario**
->
->[74d2f151a905223](https://github.com/istitutosuperioredisanita/sigla-main/commit/74d2f151a905223) tomada_valentina *August 25, 2025*
-
->**Aggiunta import import java.sql.SQLException;**
->
->[04098413c8acd5b](https://github.com/istitutosuperioredisanita/sigla-main/commit/04098413c8acd5b) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - procedura BATCH JAVA**
->
->[2a19bf6c9a91393](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a19bf6c9a91393) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - procedura BATCH JAVA**
->
->[e469caefcbe19b7](https://github.com/istitutosuperioredisanita/sigla-main/commit/e469caefcbe19b7) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - procedura BATCH JAVA**
->
->[5f098831c54baad](https://github.com/istitutosuperioredisanita/sigla-main/commit/5f098831c54baad) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - procedura BATCH JAVA**
->
->[dde5dfcbcf99641](https://github.com/istitutosuperioredisanita/sigla-main/commit/dde5dfcbcf99641) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - procedura BATCH JAVA**
->
->[87c541d8224e75c](https://github.com/istitutosuperioredisanita/sigla-main/commit/87c541d8224e75c) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - procedura JAVA**
->
->[b4bd44e9715a0c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/b4bd44e9715a0c1) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - procedura JAVA nuova vista**
->
->[9136d86e87608c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/9136d86e87608c9) tomada_valentina *August 25, 2025*
-
->**AMMORTAMENTO BENI - procedura JAVA nuova vista**
->
->[3427796f3a53ebb](https://github.com/istitutosuperioredisanita/sigla-main/commit/3427796f3a53ebb) tomada_valentina *August 25, 2025*
-
->**Bumped version to 7.0.23**
->
->[64cf6e783b4b336](https://github.com/istitutosuperioredisanita/sigla-main/commit/64cf6e783b4b336) dirgensa *August 25, 2025*
-
-
-## Release 7.0.24  -- _August 27, 2025_ 
-**Changes**
-
->**Bumped version to 7.024**
->
->[54a92feaefef173](https://github.com/istitutosuperioredisanita/sigla-main/commit/54a92feaefef173) dirgensa *August 27, 2025*
-
-
-## Release 7.0.23  -- _August 25, 2025_ 
-**Changes**
-
->**Aggiunta import import java.sql.SQLException;**
->
->[1739a4301114ff0](https://github.com/istitutosuperioredisanita/sigla-main/commit/1739a4301114ff0) salvio_ciro *August 25, 2025*
-
->**Eliminato commento vecchia chiamata metodo caricoDaOrdine di MovimentiMagComponent**
->
->[4170f7dade7fb8d](https://github.com/istitutosuperioredisanita/sigla-main/commit/4170f7dade7fb8d) salvio_ciro *August 25, 2025*
-
->**CONSEGNA ORDINE - controllo sulla quantità intera se bene inventariabile**
->
->[662b78aa527ca2e](https://github.com/istitutosuperioredisanita/sigla-main/commit/662b78aa527ca2e) tomada_valentina *August 25, 2025*
-
->**CONSEGNA ORDINE - controllo sulla quantità minima 1 in consegna ordine**
->
->[bd5ca1b9738736b](https://github.com/istitutosuperioredisanita/sigla-main/commit/bd5ca1b9738736b) tomada_valentina *August 25, 2025*
-
->**Fix refactoring generazione movimenti magazzino per ottimizzazione tempi**
->
->[b1178e56edfbac7](https://github.com/istitutosuperioredisanita/sigla-main/commit/b1178e56edfbac7) salvio_ciro *August 25, 2025*
-
->**Fix nome directory gestione allegati righe dell'ordine**
->
->[71bfb70032c2e3f](https://github.com/istitutosuperioredisanita/sigla-main/commit/71bfb70032c2e3f) salvio_ciro *August 25, 2025*
-
->**Fix nome directory gestione allegati righe dell'ordine**
->
->[1605d9bf06e0066](https://github.com/istitutosuperioredisanita/sigla-main/commit/1605d9bf06e0066) salvio_ciro *August 25, 2025*
-
->**Fix refactoring generazione movimenti magazzino per ottimizzazione tempi**
->
->[c4867d0707eb37e](https://github.com/istitutosuperioredisanita/sigla-main/commit/c4867d0707eb37e) salvio_ciro *August 25, 2025*
-
->**Ottimizzazione tempi di apertura dell'ordine. Modificato il caricamento degli allegati delle righe di un ordine.**
->
->[47e7a741c946e1e](https://github.com/istitutosuperioredisanita/sigla-main/commit/47e7a741c946e1e) salvio_ciro *August 25, 2025*
-
->**disabilitato il blocco dell'importo per inventariazione beni da ordine**
->
->[d9dc3b68965f3c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/d9dc3b68965f3c9) salvio_ciro *August 25, 2025*
-
->**INVENTARIO - bloccato prezzo unitario se inventariazione da ordine (configurazione_cnr)**
->
->[d6d39199d445a73](https://github.com/istitutosuperioredisanita/sigla-main/commit/d6d39199d445a73) tomada_valentina *August 25, 2025*
-
->**Miglioramento dei tempi di esecuzione della registrazione e modifica di una fattura da ordine. Rivisto il aggiornaDatiInventario con l'introduzione della vista di dettaglio v_fatt_ordine_det**
->
->[6d77887f27efdf3](https://github.com/istitutosuperioredisanita/sigla-main/commit/6d77887f27efdf3) salvio_ciro *August 25, 2025*
-
->**Controllo per evitare di inserire più volte in ass_inv_bene_fattura**
->
->[a786734c9713faf](https://github.com/istitutosuperioredisanita/sigla-main/commit/a786734c9713faf) salvio_ciro *August 25, 2025*
-
->**Check null list**
->
->[47df12280f8c9f6](https://github.com/istitutosuperioredisanita/sigla-main/commit/47df12280f8c9f6) salvio_ciro *August 25, 2025*
-
->**Fix refactoring generazione movimenti magazzino**
->
->[6c297337d8a8070](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c297337d8a8070) salvio_ciro *August 25, 2025*
-
->**Aggiunto metodo caricoDaOrdineRigheEvase che esegue la movimentazione del magazzino per tutte le consegne dell'ordine. Ottimizzazione per evasioni di ordine con molte consegne**
->
->[807dec7b4807c42](https://github.com/istitutosuperioredisanita/sigla-main/commit/807dec7b4807c42) salvio_ciro *August 25, 2025*
-
->**Aggiunto il default che la quantità evase è uguale alla quantità della riga. Per evitare che per ordine grandi bisogna selezionare ogni riga.**
->
->[05ec32e40f97241](https://github.com/istitutosuperioredisanita/sigla-main/commit/05ec32e40f97241) salvio_ciro *August 25, 2025*
-
->**Fix anaolia sulla lista dei movimenti annullabili**
->
->[3ccff846d4f936c](https://github.com/istitutosuperioredisanita/sigla-main/commit/3ccff846d4f936c) salvio_ciro *August 21, 2025*
-
->**Fix anaolia sulla lista dei movimenti annullabili**
->
->[a73afbfee431b96](https://github.com/istitutosuperioredisanita/sigla-main/commit/a73afbfee431b96) salvio_ciro *August 21, 2025*
-
->**Bumped version to 7.0.22**
->
->[d7e76009420b6f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/d7e76009420b6f7) dirgensa *August 13, 2025*
-
-
-## Release 7.0.22  -- _August 13, 2025_ 
-**Changes**
-
->**Fix Associazione Riga Fattura con Inventario nel caso di fattura da ordine**
->
->[a41ecee23ba545a](https://github.com/istitutosuperioredisanita/sigla-main/commit/a41ecee23ba545a) salvio_ciro *August 13, 2025*
-
->**Bumped version to 7.0.21**
->
->[2206ec461790934](https://github.com/istitutosuperioredisanita/sigla-main/commit/2206ec461790934) dirgensa *August 13, 2025*
-
-
-## Release 7.0.21  -- _August 13, 2025_ 
-**Changes**
-
->**fix Riscontro valore-> aggiunti a OrdineAcqKey, OrdineAcqRigaKey e OrdineAcqConsegnaKey i metodi hashCode e equals**
->
->[e8a0fe97e053038](https://github.com/istitutosuperioredisanita/sigla-main/commit/e8a0fe97e053038) salvio_ciro *August 13, 2025*
-
->**Bumped version to 7.0.20**
->
->[46c1244c5320172](https://github.com/istitutosuperioredisanita/sigla-main/commit/46c1244c5320172) dirgensa *August 04, 2025*
-
-
-## Release 7.0.20  -- _August 04, 2025_ 
-**Changes**
-
->**modificata lunghezza colonna cd_livello della tabella  TMP_STAMPA_RENDICONTO da Varchar2(5) a Varchar2(30(**
->
->[d1aeb80a84b1da7](https://github.com/istitutosuperioredisanita/sigla-main/commit/d1aeb80a84b1da7) salvio_ciro *August 04, 2025*
-
->**Bumped version to 7.0.19**
->
->[6fcfa18cf1f465d](https://github.com/istitutosuperioredisanita/sigla-main/commit/6fcfa18cf1f465d) dirgensa *August 04, 2025*
-
-
-## Release 7.0.19  -- _July 17, 2025_ 
-**Changes**
-
->**fix: selezionatore ad albero dei gruppi stampa perdeva la selezione del tipo bilancio durante il back**
->
->[8557af4a8aeed99](https://github.com/istitutosuperioredisanita/sigla-main/commit/8557af4a8aeed99) mspasiano *July 17, 2025*
-
->**Bumped version to 7.0.18**
->
->[266f1f292cd5b83](https://github.com/istitutosuperioredisanita/sigla-main/commit/266f1f292cd5b83) dirgensa *July 17, 2025*
-
-
-## Release 7.0.18  -- _July 16, 2025_ 
-**Changes**
-
->**Fix anomalia beni accessori non con la stessa categoria/gruppo ma con la stessa categoria**
->
->[390f4fbc2e16088](https://github.com/istitutosuperioredisanita/sigla-main/commit/390f4fbc2e16088) salvio_ciro *July 16, 2025*
-
->**Bumped version to 7.0.17**
->
->[59914278b7a6fd5](https://github.com/istitutosuperioredisanita/sigla-main/commit/59914278b7a6fd5) dirgensa *July 16, 2025*
-
-
-## Release 7.0.17  -- _July 16, 2025_ 
-**Changes**
-
->**Modifica stato ordine. Lo stato alla firma è aggiunto solo quando lo stato è contabilizzato**
->
->[d62e9734299323d](https://github.com/istitutosuperioredisanita/sigla-main/commit/d62e9734299323d) salvio_ciro *July 16, 2025*
-
->**Modificato ordine creazione/aggiornamento viste V_CONFRONTA_COSTI_COGE_COFI e V_COGE_COSTI_BY_COFI**
->
->[c400e777ffd25f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/c400e777ffd25f9) salvio_ciro *July 15, 2025*
-
->**CONFRONTA COFE COFI - visualizzazione descrizioni e filtro ricerca**
->
->[57dd26de6c3c6c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/57dd26de6c3c6c1) tomada_valentina *July 15, 2025*
-
->**CONFRONTA COFE COFI - visualizzazione descrizioni e filtro ricerca**
->
->[b87bb047ea526a6](https://github.com/istitutosuperioredisanita/sigla-main/commit/b87bb047ea526a6) tomada_valentina *July 15, 2025*
-
->**Bumped version to 7.0.16**
->
->[6b8966f656ce5ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/6b8966f656ce5ba) dirgensa *July 09, 2025*
-
-
-## Release 7.0.16  -- _July 09, 2025_ 
-**Changes**
-
->**Aggiunta Causale In Attesa di Inventario per lo stato non liquidabile**
->
->[a7250306eaef995](https://github.com/istitutosuperioredisanita/sigla-main/commit/a7250306eaef995) salvio_ciro *July 09, 2025*
-
->**fix: fatture collegate a compensi annullati**
->
->[60c3a6fb9b745ff](https://github.com/istitutosuperioredisanita/sigla-main/commit/60c3a6fb9b745ff) mspasiano *July 09, 2025*
-
->**Bumped version to 7.0.15**
->
->[5d2ee83751a6cd4](https://github.com/istitutosuperioredisanita/sigla-main/commit/5d2ee83751a6cd4) dirgensa *July 09, 2025*
-
-
-## Release 7.0.15  -- _July 09, 2025_ 
-**Changes**
-
->**Fix Anomalia check beni inventariati**
->
->[c2aeff579e95965](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2aeff579e95965) salvio_ciro *July 09, 2025*
-
->**fix: aggiunte note di credito collegate solo in economica e non in finanziaria**
->
->[10839b12a86a18e](https://github.com/istitutosuperioredisanita/sigla-main/commit/10839b12a86a18e) mspasiano *July 09, 2025*
-
-
-## Release 7.0.14  -- _July 04, 2025_ 
-**Changes**
-
->**Fix Anomalia creazione Automatica nota di credito per rifiuto da SDI**
->
->[d68492a6dab87d0](https://github.com/istitutosuperioredisanita/sigla-main/commit/d68492a6dab87d0) salvio_ciro *July 04, 2025*
-
->**upgrade version of jada artifact**
->
->[d0cee2d23f853c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/d0cee2d23f853c1) mspasiano *July 04, 2025*
-
->**Bumped version to 7.0.13**
->
->[3966e1220458d6d](https://github.com/istitutosuperioredisanita/sigla-main/commit/3966e1220458d6d) dirgensa *July 03, 2025*
-
-
-## Release 7.0.13  -- _July 03, 2025_ 
-**Changes**
-
->**Fix issue on Confronta Costi Coge Cofi**
->
->[3aa970d339d55c5](https://github.com/istitutosuperioredisanita/sigla-main/commit/3aa970d339d55c5) salvio_ciro *July 03, 2025*
-
->**Bumped version to 7.0.12**
->
->[7e9bed079e49e07](https://github.com/istitutosuperioredisanita/sigla-main/commit/7e9bed079e49e07) dirgensa *June 30, 2025*
-
-
-## Release 7.0.12  -- _June 30, 2025_ 
-**Changes**
-
->**Delete blank line**
->
->[d0824f344339f10](https://github.com/istitutosuperioredisanita/sigla-main/commit/d0824f344339f10) salvio_ciro *June 30, 2025*
-
->**Filtro distinte per dt_invio valorizzata**
->
->[d57ce9fcafbe674](https://github.com/istitutosuperioredisanita/sigla-main/commit/d57ce9fcafbe674) salvio_ciro *June 30, 2025*
-
->**Filtro sono le distinte xml firmate**
->
->[7b9e2926f92161b](https://github.com/istitutosuperioredisanita/sigla-main/commit/7b9e2926f92161b) salvio_ciro *June 30, 2025*
-
->**Aggiunto Log Batch**
->
->[2addbadcf8db9cd](https://github.com/istitutosuperioredisanita/sigla-main/commit/2addbadcf8db9cd) salvio_ciro *June 30, 2025*
-
->**Creazione file zip e salvataggio su documentale**
->
->[f160a0fbe87de54](https://github.com/istitutosuperioredisanita/sigla-main/commit/f160a0fbe87de54) salvio_ciro *June 30, 2025*
-
->**Inizio Sviluppo Batch per documentazione Sostitutiva**
->
->[0bda7bc0be24360](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bda7bc0be24360) salvio_ciro *June 30, 2025*
-
->**Filtro distinte per dt_invio valorizzata**
->
->[8da3b9e9a45b097](https://github.com/istitutosuperioredisanita/sigla-main/commit/8da3b9e9a45b097) salvio_ciro *June 30, 2025*
-
->**ORDINI - Cambio stato possibile solo dopo contabilizzazione**
->
->[589014d7120417a](https://github.com/istitutosuperioredisanita/sigla-main/commit/589014d7120417a) tomada_valentina *June 30, 2025*
-
->**Filtro sono le distinte xml firmate**
->
->[cc1413227dc50bc](https://github.com/istitutosuperioredisanita/sigla-main/commit/cc1413227dc50bc) salvio_ciro *June 27, 2025*
-
-
-## Release 7.0.11  -- _June 23, 2025_ 
-**Changes**
-
->**Revert "revert version 7.0.10-SNAPSHOT"**
-> * This reverts commit cec1af8de2ca50f302329ecb356765258863cd4e.
->
->[4a83662dafb5d88](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a83662dafb5d88) salvio_ciro *June 23, 2025*
-
-
-## Release 7.0.10  -- _June 23, 2025_ 
-**Changes**
-
->**revert version 7.0.10-SNAPSHOT**
->
->[cec1af8de2ca50f](https://github.com/istitutosuperioredisanita/sigla-main/commit/cec1af8de2ca50f) salvio_ciro *June 23, 2025*
-
->**remove file stampa inventario**
->
->[46250a0b1f3c2d8](https://github.com/istitutosuperioredisanita/sigla-main/commit/46250a0b1f3c2d8) salvio_ciro *June 23, 2025*
-
->**Bumped version to 7.0.10**
->
->[f152c80187fdca0](https://github.com/istitutosuperioredisanita/sigla-main/commit/f152c80187fdca0) dirgensa *June 23, 2025*
-
->**new feature: aggiunto il terzo alla consultazione dei dati PCC**
->
->[9c527090d74b1ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c527090d74b1ba) mspasiano *June 20, 2025*
-
->**fix: controlli pcc fatture pagate con più righe legate alla stessa riga di mandato**
->
->[00641b9438b5e5a](https://github.com/istitutosuperioredisanita/sigla-main/commit/00641b9438b5e5a) mspasiano *June 20, 2025*
-
->**In caso di uo ente in scrivania, ora è possibile visualizzare la fattura collegata al documento elettronico.**
->
->[2a7a800888a2dfb](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a7a800888a2dfb) mspasiano *June 20, 2025*
-
->**rename ds_procedura**
->
->[d0cd2a0ed12fad5](https://github.com/istitutosuperioredisanita/sigla-main/commit/d0cd2a0ed12fad5) salvio_ciro *June 20, 2025*
-
->**Create Job per controllo congruenza Dati**
->
->[0bf2bdc74326b02](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bf2bdc74326b02) salvio_ciro *June 20, 2025*
-
->**Bumped version to 7.0.9**
->
->[19a85dc18416cc3](https://github.com/istitutosuperioredisanita/sigla-main/commit/19a85dc18416cc3) dirgensa *June 17, 2025*
-
-
-## Release 7.0.9  -- _June 17, 2025_ 
-**Changes**
-
->**Spostati definizione della funzione Consultazione confronta costi coge con cofi da consultazioni.xml a config01.xml**
->
->[c87902a0c086913](https://github.com/istitutosuperioredisanita/sigla-main/commit/c87902a0c086913) salvio_ciro *June 17, 2025*
-
->**Consultazione confronta costi coge con cofi**
->
->[29b3d1033f0c7df](https://github.com/istitutosuperioredisanita/sigla-main/commit/29b3d1033f0c7df) salvio_ciro *June 17, 2025*
-
->**Consultazione confronta costi coge con cofi**
->
->[1afad39fc55f692](https://github.com/istitutosuperioredisanita/sigla-main/commit/1afad39fc55f692) salvio_ciro *June 17, 2025*
-
->**Fix scadenza per la nota di credito automatica**
->
->[85a9851d7a238fc](https://github.com/istitutosuperioredisanita/sigla-main/commit/85a9851d7a238fc) salvio_ciro *June 17, 2025*
-
-
-## Release 7.0.8  -- _June 12, 2025_ 
-**Changes**
-
->**Update release.yml**
->
->[cb54e667f65f7b0](https://github.com/istitutosuperioredisanita/sigla-main/commit/cb54e667f65f7b0) Marco Spasiano *June 12, 2025*
-
->**Update maven.yml**
->
->[8553dd89818998f](https://github.com/istitutosuperioredisanita/sigla-main/commit/8553dd89818998f) Marco Spasiano *June 12, 2025*
-
->**Bumped version to 7.0.7**
->
->[a7f786c3082aa43](https://github.com/istitutosuperioredisanita/sigla-main/commit/a7f786c3082aa43) dirgensa *June 12, 2025*
-
-
-## Release 7.0.7  -- _June 12, 2025_ 
-**Changes**
-
->**new feature: Build and Push Container to ghcr.io**
->
->[4619f9a5a7576fa](https://github.com/istitutosuperioredisanita/sigla-main/commit/4619f9a5a7576fa) mspasiano *June 12, 2025*
-
->**Bumped version to 7.0.6**
->
->[4794ca7b90713bf](https://github.com/istitutosuperioredisanita/sigla-main/commit/4794ca7b90713bf) dirgensa *June 11, 2025*
-
-
-## Release 7.0.6  -- _June 11, 2025_ 
-**Changes**
-
->**Fix valore residuo da ammortizzare per beni totalmente scaricati**
->
->[ed8055cc5eaf6d4](https://github.com/istitutosuperioredisanita/sigla-main/commit/ed8055cc5eaf6d4) salvio_ciro *June 11, 2025*
-
->**Bumped version to 7.0.5**
->
->[86a8250e947d336](https://github.com/istitutosuperioredisanita/sigla-main/commit/86a8250e947d336) dirgensa *June 10, 2025*
-
-
-## Release 7.0.5  -- _June 10, 2025_ 
-**Changes**
-
->**Update a N il flag che attiva il controlla dei beni inventariati per le fatture da ordine in stato liquidabile**
->
->[784ece0ed4ae93c](https://github.com/istitutosuperioredisanita/sigla-main/commit/784ece0ed4ae93c) salvio_ciro *June 10, 2025*
-
->**Come da richiesta eliminato il prefisso 0201 dal codice commessa Convenzione quando c'è l'ordine elettronico**
->
->[660de5a0b68ec75](https://github.com/istitutosuperioredisanita/sigla-main/commit/660de5a0b68ec75) salvio_ciro *June 10, 2025*
-
->**Aggiunta configurazione affinchè una fattura da ordine puo assumere lo stato liquidabile se e soltanto si tutte i beni soggetti a invetariazione siano stati inventariati o annullati dal transito**
->
->[5b8fdab3791b81f](https://github.com/istitutosuperioredisanita/sigla-main/commit/5b8fdab3791b81f) salvio_ciro *June 10, 2025*
-
->**Bumped version to 7.0.4**
->
->[53fea186d817585](https://github.com/istitutosuperioredisanita/sigla-main/commit/53fea186d817585) dirgensa *June 03, 2025*
-
-
-## Release 7.0.4  -- _May 30, 2025_ 
-**Changes**
-
->**fix: importo lordo siope**
->
->[27bc852b1333ad0](https://github.com/istitutosuperioredisanita/sigla-main/commit/27bc852b1333ad0) mspasiano *May 30, 2025*
-
->**fix: Eliminato il controllo che il mandato sia legato ad una reversale iva**
->
->[2210c280166aad3](https://github.com/istitutosuperioredisanita/sigla-main/commit/2210c280166aad3) mspasiano *May 30, 2025*
-
->**Bumped version to 7.0.3**
->
->[745a2b0d40ebea0](https://github.com/istitutosuperioredisanita/sigla-main/commit/745a2b0d40ebea0) dirgensa *May 25, 2025*
-
-
-## Release 7.0.3  -- _May 25, 2025_ 
-**Changes**
-
->**fix: pom version on release**
->
->[696f553a1ab37b0](https://github.com/istitutosuperioredisanita/sigla-main/commit/696f553a1ab37b0) mspasiano *May 25, 2025*
-
-
-## Release 7.0.2  -- _May 25, 2025_ 
-**Changes**
-
->**fix: pom version on release**
->
->[eeb6023898cfd5c](https://github.com/istitutosuperioredisanita/sigla-main/commit/eeb6023898cfd5c) mspasiano *May 25, 2025*
-
-
-## Release 7.0.1  -- _May 25, 2025_ 
-**Changes**
-
->**fix: aggiunte informazioni ulteriori alla vista per i controlli PCC, abilitato il filtro per UO in scrivania**
->
->[3a9ee1d84d3847b](https://github.com/istitutosuperioredisanita/sigla-main/commit/3a9ee1d84d3847b) mspasiano *May 25, 2025*
-
->**Eliminata distinct dalla VIEW PCC**
->
->[5688433264a8e85](https://github.com/istitutosuperioredisanita/sigla-main/commit/5688433264a8e85) mspasiano *May 23, 2025*
-
->**Bumped version to 7.0.0**
->
->[8d7c3112e8d23bb](https://github.com/istitutosuperioredisanita/sigla-main/commit/8d7c3112e8d23bb) dirgensa *May 22, 2025*
-
-
-## Release 7.0.0  -- _May 22, 2025_ 
-**Changes**
-
->**Aggiunta la release build**
->
->[405192c99d6a831](https://github.com/istitutosuperioredisanita/sigla-main/commit/405192c99d6a831) mspasiano *May 22, 2025*
-
->**Aggiunte informazioni ulteriori alla vista per i controlli PCC, abilitato il filtro per UO in scrivania**
->
->[a7eaaf5c5161df2](https://github.com/istitutosuperioredisanita/sigla-main/commit/a7eaaf5c5161df2) mspasiano *May 22, 2025*
 
 
 ## Release 6.1.21  -- _February 03, 2020_ 
@@ -19162,6 +18964,14 @@
 >
 >[7448493da93d92b](https://github.com/istitutosuperioredisanita/sigla-main/commit/7448493da93d92b) raffaele.pagano *January 30, 2020*
 
+>**Fix Rimodulazione Progetti: limitato il controllo di chiusura del bilancio, necessario per proporre rimodulazioni anche su voci economiche presenti in bilancio, ai soli CDS partecipanti al progetto oggetto di modifica.**
+>
+>[8c97430cd21542f](https://github.com/istitutosuperioredisanita/sigla-main/commit/8c97430cd21542f) raffaele.pagano *January 30, 2020*
+
+>**Variazioni Bilancio Residuo: aggiunto tasto che consente di riportare una variazione residua dallo stato Approvato allo stato Definitivo. Il tasto è visibile solo per cds abilitati ad approvare ed utenti di tipo Supervisore.**
+>
+>[f9f2141d16226fb](https://github.com/istitutosuperioredisanita/sigla-main/commit/f9f2141d16226fb) raffaele.pagano *January 30, 2020*
+
 
 ## Release 6.1.17  -- _January 28, 2020_ 
 **Changes**
@@ -19186,9 +18996,81 @@
 >
 >[1e19a2872db4624](https://github.com/istitutosuperioredisanita/sigla-main/commit/1e19a2872db4624) marco.spasiano *January 27, 2020*
 
+
+## Release 6.1.15  -- _January 27, 2020_ 
+**Changes**
+
 >**FIX nel caso di Flusso SIOPE+ rifiutato, aggiunta la possibilità di reinviarlo generando nuovamente il flusso**
 >
 >[50a1defb6001be8](https://github.com/istitutosuperioredisanita/sigla-main/commit/50a1defb6001be8) marco.spasiano *January 27, 2020*
+
+
+## Release 6.1.14  -- _January 27, 2020_ 
+**Changes**
+
+>**BUG nella generazione del flusso SIOPE+, quando per lo stesso codice SIOPE ci sono due CUP diversi**
+>
+>[ac2dc8dd79abf7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac2dc8dd79abf7c) marco.spasiano *January 27, 2020*
+
+>**Add docs for Sphinx**
+>
+>[7076399a6e4050a](https://github.com/istitutosuperioredisanita/sigla-main/commit/7076399a6e4050a) marco.spasiano *January 27, 2020*
+
+>**Add docs for Sphinx**
+>
+>[fa81e934353da3d](https://github.com/istitutosuperioredisanita/sigla-main/commit/fa81e934353da3d) marco.spasiano *January 25, 2020*
+
+
+## Release 6.1.13  -- _January 25, 2020_ 
+**Changes**
+
+>**Add docs for Sphinx**
+>
+>[1e52fe949fa39f6](https://github.com/istitutosuperioredisanita/sigla-main/commit/1e52fe949fa39f6) marco.spasiano *January 25, 2020*
+
+>**Modify Changelog**
+>
+>[e0aa2e8f4d84cef](https://github.com/istitutosuperioredisanita/sigla-main/commit/e0aa2e8f4d84cef) marco.spasiano *January 25, 2020*
+
+>**Add docs for Sphinx**
+>
+>[a8ade95e9c7cc62](https://github.com/istitutosuperioredisanita/sigla-main/commit/a8ade95e9c7cc62) marco.spasiano *January 25, 2020*
+
+>**Modify Changelog**
+>
+>[0bfa62040d78a67](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bfa62040d78a67) marco.spasiano *January 25, 2020*
+
+>**Add docs for Sphinx**
+>
+>[8efd88161db60df](https://github.com/istitutosuperioredisanita/sigla-main/commit/8efd88161db60df) marco.spasiano *January 25, 2020*
+
+>**Ripristinate Modifiche per Gestione Ordini**
+>
+>[8440e12bcff5c96](https://github.com/istitutosuperioredisanita/sigla-main/commit/8440e12bcff5c96) gianfranco.gasparro *January 24, 2020*
+
+>**Fix Variazioni Bilancio Residuo: corretta controllo su disponibilità Piano Economico Progetto e visualizzazione voci movimentate non associate in caso di accesso da anno successivo a quello del piano economico.**
+>
+>[ac9722860ec6952](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac9722860ec6952) raffaele.pagano *January 22, 2020*
+
+>**Fix Variazioni Bilancio Residuo: corretta controllo su disponibilità Piano Economico Progetto.**
+>
+>[e79f3b9c133ad6d](https://github.com/istitutosuperioredisanita/sigla-main/commit/e79f3b9c133ad6d) raffaele.pagano *January 22, 2020*
+
+>**Fix Variazioni Bilancio Residuo: corretta controllo su disponibilità Piano Economico Progetto.**
+>
+>[d227d80037e17a0](https://github.com/istitutosuperioredisanita/sigla-main/commit/d227d80037e17a0) raffaele.pagano *January 22, 2020*
+
+>**Ingrandito campo a 100 caratteri per inserimento email per fatturazione elettronica**
+>
+>[e3af1ed5393b4db](https://github.com/istitutosuperioredisanita/sigla-main/commit/e3af1ed5393b4db) gianfranco.gasparro *January 21, 2020*
+
+>**Corretta valorizzazione dati incasso su generico e reversale. Ricalcolato importo accertamento per compensazioni**
+>
+>[0f6a16ee4631e9a](https://github.com/istitutosuperioredisanita/sigla-main/commit/0f6a16ee4631e9a) gianfranco.gasparro *January 21, 2020*
+
+>**Nascosta TAB di abilitazione Ordini nel caso di Gestione Ordini non Attiva**
+>
+>[9d40e70503dbadd](https://github.com/istitutosuperioredisanita/sigla-main/commit/9d40e70503dbadd) gianfranco.gasparro *January 20, 2020*
 
 
 ## Release 6.1.11  -- _January 20, 2020_ 
@@ -19201,6 +19083,26 @@
 >**FIX test**
 >
 >[6c067f8a634ce35](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c067f8a634ce35) marco.spasiano *January 20, 2020*
+
+>**FIX test**
+>
+>[474a262960da9f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/474a262960da9f9) marco.spasiano *January 20, 2020*
+
+>**FIX test**
+>
+>[8b697d5d120ebda](https://github.com/istitutosuperioredisanita/sigla-main/commit/8b697d5d120ebda) marco.spasiano *January 20, 2020*
+
+>**FIX test**
+>
+>[26e87aba85863a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/26e87aba85863a9) marco.spasiano *January 20, 2020*
+
+>**FIX gitlabci m2 cache**
+>
+>[24605d07a7b3393](https://github.com/istitutosuperioredisanita/sigla-main/commit/24605d07a7b3393) marco.spasiano *January 20, 2020*
+
+>**funzioni ordini e magazzini - Add qta_carico_lotto a tipo_movimento_mag - qta_carico_lotto not null**
+>
+>[2654e93510972fb](https://github.com/istitutosuperioredisanita/sigla-main/commit/2654e93510972fb) marco.spasiano *January 20, 2020*
 
 
 ## Release 6.1.10  -- _January 18, 2020_ 
@@ -19398,6 +19300,10 @@
 >
 >[f55f98126ca2a88](https://github.com/istitutosuperioredisanita/sigla-main/commit/f55f98126ca2a88) raffaele.pagano *January 13, 2020*
 
+>**Consentita la modifica della data di pagamento richiesta su mandati anche quando il mandato è già predisposto - Issue: #22**
+>
+>[72b373f7c766c63](https://github.com/istitutosuperioredisanita/sigla-main/commit/72b373f7c766c63) raffaele.pagano *January 10, 2020*
+
 >**upgrade version of jada [ci skip]**
 >
 >[b99f2eec2f3d4c3](https://github.com/istitutosuperioredisanita/sigla-main/commit/b99f2eec2f3d4c3) marco.spasiano *January 10, 2020*
@@ -19405,13 +19311,6 @@
 >**FIX dependency of slf4j-api [ci skip]**
 >
 >[b16487593c89b0f](https://github.com/istitutosuperioredisanita/sigla-main/commit/b16487593c89b0f) marco.spasiano *January 10, 2020*
-
-
-### GitHub [#22](https://github.com/istitutosuperioredisanita/sigla-main/pull/22) Allineamento Master CNR
-
->**Consentita la modifica della data di pagamento richiesta su mandati anche quando il mandato è già predisposto - Issue: #22**
->
->[72b373f7c766c63](https://github.com/istitutosuperioredisanita/sigla-main/commit/72b373f7c766c63) raffaele.pagano *January 10, 2020*
 
 
 ## Release 6.1.2  -- _January 09, 2020_ 
@@ -19457,6 +19356,30 @@
 >
 >[3aea5c0ac8a45a6](https://github.com/istitutosuperioredisanita/sigla-main/commit/3aea5c0ac8a45a6) gianfranco.gasparro *December 27, 2019*
 
+
+## Release 6.1.1  -- _December 23, 2019_ 
+**Changes**
+
+>**Change label for button Variazione Mandato**
+>
+>[f839f3455ab9a5c](https://github.com/istitutosuperioredisanita/sigla-main/commit/f839f3455ab9a5c) marco.spasiano *December 23, 2019*
+
+>**Il CUP viene inserito nella causale quando il Mandato viene creato, non viene modificata la causale all'atto dell'invio a SIOPE+**
+>
+>[da48d7f1afe5554](https://github.com/istitutosuperioredisanita/sigla-main/commit/da48d7f1afe5554) marco.spasiano *December 23, 2019*
+
+>**Cambiato il filtro sull'oggetto della PEC**
+>
+>[0d60fa38354f93a](https://github.com/istitutosuperioredisanita/sigla-main/commit/0d60fa38354f93a) marco.spasiano *December 23, 2019*
+
+>**Cambiato controllo per abilitazione alle Variazioni**
+>
+>[698d848add73d20](https://github.com/istitutosuperioredisanita/sigla-main/commit/698d848add73d20) marco.spasiano *December 23, 2019*
+
+>**FIX aggiornamento mandato per la giornaliera di cassa**
+>
+>[8627f9ed0a3bbee](https://github.com/istitutosuperioredisanita/sigla-main/commit/8627f9ed0a3bbee) marco.spasiano *December 23, 2019*
+
 >**Fix modifiche liquidazione CORI per doppia SAC**
 >
 >[e82f17c6eee710a](https://github.com/istitutosuperioredisanita/sigla-main/commit/e82f17c6eee710a) gianfranco.gasparro *December 23, 2019*
@@ -19484,30 +19407,6 @@
 >**Rimodulazione progetti: data la possibilità di associare sulle variazioni di competenza della UO Ente le rimodulazioni di qualsiasi UO. [ci skip]**
 >
 >[4739f1b05c07a89](https://github.com/istitutosuperioredisanita/sigla-main/commit/4739f1b05c07a89) raffaele.pagano *December 18, 2019*
-
-
-## Release 6.1.1  -- _December 23, 2019_ 
-**Changes**
-
->**Change label for button Variazione Mandato**
->
->[f839f3455ab9a5c](https://github.com/istitutosuperioredisanita/sigla-main/commit/f839f3455ab9a5c) marco.spasiano *December 23, 2019*
-
->**Il CUP viene inserito nella causale quando il Mandato viene creato, non viene modificata la causale all'atto dell'invio a SIOPE+**
->
->[da48d7f1afe5554](https://github.com/istitutosuperioredisanita/sigla-main/commit/da48d7f1afe5554) marco.spasiano *December 23, 2019*
-
->**Cambiato il filtro sull'oggetto della PEC**
->
->[0d60fa38354f93a](https://github.com/istitutosuperioredisanita/sigla-main/commit/0d60fa38354f93a) marco.spasiano *December 23, 2019*
-
->**Cambiato controllo per abilitazione alle Variazioni**
->
->[698d848add73d20](https://github.com/istitutosuperioredisanita/sigla-main/commit/698d848add73d20) marco.spasiano *December 23, 2019*
-
->**FIX aggiornamento mandato per la giornaliera di cassa**
->
->[8627f9ed0a3bbee](https://github.com/istitutosuperioredisanita/sigla-main/commit/8627f9ed0a3bbee) marco.spasiano *December 23, 2019*
 
 
 ## Release 6.1.0  -- _December 17, 2019_ 
@@ -19577,6 +19476,10 @@
 >
 >[45b3b2e787aa22c](https://github.com/istitutosuperioredisanita/sigla-main/commit/45b3b2e787aa22c) marco.spasiano *December 13, 2019*
 
+
+## Release 6.0.29  -- _December 13, 2019_ 
+**Changes**
+
 >**Add log config on project stages**
 >
 >[f8babfea2424a0e](https://github.com/istitutosuperioredisanita/sigla-main/commit/f8babfea2424a0e) marco.spasiano *December 13, 2019*
@@ -19593,6 +19496,10 @@
 >
 >[30dff5c8ff13bd1](https://github.com/istitutosuperioredisanita/sigla-main/commit/30dff5c8ff13bd1) raffaele.pagano *December 12, 2019*
 
+
+## Release 6.0.28  -- _December 13, 2019_ 
+**Changes**
+
 >**Nuova Stampa Bilancio Pluriennale**
 >
 >[74b7739b335ad64](https://github.com/istitutosuperioredisanita/sigla-main/commit/74b7739b335ad64) raffaele.pagano *December 12, 2019*
@@ -19600,6 +19507,10 @@
 
 ## Release 6.0.27  -- _December 12, 2019_ 
 **Changes**
+
+>**FIX ORA-01722: numero non valido**
+>
+>[c9515b2403bbbf3](https://github.com/istitutosuperioredisanita/sigla-main/commit/c9515b2403bbbf3) marco.spasiano *December 12, 2019*
 
 >**Fix Assegni di ricerca: non consentiva di apportare variazioni - ritornava errore InputStream in assenza di file da allegare.**
 >
@@ -19616,21 +19527,6 @@
 >**Resize column cms-node-ref per integrazione con azure**
 >
 >[707295660e4d11a](https://github.com/istitutosuperioredisanita/sigla-main/commit/707295660e4d11a) raffaele.pagano *December 09, 2019*
-
->**Configurazione CNR: gestita, per determinate configurazioni, la contemporanea presenza in tabella sia di record con esercizio 0 che di record con esercizio valido. Gestione aggiornata per variabili: CDR_PERSONALE,CDR_SERVIZIO_ENTE,UO_ACCREDITAMENTO_SAC,UO_DISTINTA_TUTTA_SAC,UO_RAGIONERIA,UO_VERSAMENTO_CORI,UO_VERSAMENTO_CORI_CONTO_BI,UO_VERSAMENTO_CORI_TUTTA_SAC,UO_VERSAMENTO_IVA**
->
->[dbc0e6de2753cab](https://github.com/istitutosuperioredisanita/sigla-main/commit/dbc0e6de2753cab) raffaele.pagano *December 05, 2019*
-
->**FIX slf4j-api exclusion [ci skip]**
->
->[5d9a8dd3383775f](https://github.com/istitutosuperioredisanita/sigla-main/commit/5d9a8dd3383775f) marco.spasiano *December 04, 2019*
-
-
-### Jira ORA-01722 
-
->**FIX ORA-01722: numero non valido**
->
->[c9515b2403bbbf3](https://github.com/istitutosuperioredisanita/sigla-main/commit/c9515b2403bbbf3) marco.spasiano *December 12, 2019*
 
 
 ## Release 6.0.26  -- _December 09, 2019_ 
@@ -19676,6 +19572,14 @@
 >
 >[5af788c4503c476](https://github.com/istitutosuperioredisanita/sigla-main/commit/5af788c4503c476) marco.spasiano *December 06, 2019*
 
+>**Configurazione CNR: gestita, per determinate configurazioni, la contemporanea presenza in tabella sia di record con esercizio 0 che di record con esercizio valido. Gestione aggiornata per variabili: CDR_PERSONALE,CDR_SERVIZIO_ENTE,UO_ACCREDITAMENTO_SAC,UO_DISTINTA_TUTTA_SAC,UO_RAGIONERIA,UO_VERSAMENTO_CORI,UO_VERSAMENTO_CORI_CONTO_BI,UO_VERSAMENTO_CORI_TUTTA_SAC,UO_VERSAMENTO_IVA**
+>
+>[dbc0e6de2753cab](https://github.com/istitutosuperioredisanita/sigla-main/commit/dbc0e6de2753cab) raffaele.pagano *December 05, 2019*
+
+>**FIX slf4j-api exclusion [ci skip]**
+>
+>[5d9a8dd3383775f](https://github.com/istitutosuperioredisanita/sigla-main/commit/5d9a8dd3383775f) marco.spasiano *December 04, 2019*
+
 
 ## Release 6.0.22  -- _December 02, 2019_ 
 **Changes**
@@ -19692,51 +19596,6 @@
 >
 >[cbbfa0563a5b099](https://github.com/istitutosuperioredisanita/sigla-main/commit/cbbfa0563a5b099) marco.spasiano *December 02, 2019*
 
->**Gestione flusso SIOPE+ per Sostituzione Mandato**
->
->[7404a9c34104942](https://github.com/istitutosuperioredisanita/sigla-main/commit/7404a9c34104942) marco.spasiano *November 29, 2019*
-
->**Fix Assegni di ricerca: non consentiva di apportare variazioni per maternità e/o adeguamento incremento aliquote - ritornava errore InputStream in assenza di file da allegare.**
->
->[4647dd520ce78cd](https://github.com/istitutosuperioredisanita/sigla-main/commit/4647dd520ce78cd) raffaele.pagano *November 28, 2019*
-
->**Fix Rimodulazione: corretto controllo di allineamento variazione con rimodulazione.**
->
->[4e7cf7c96576247](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e7cf7c96576247) raffaele.pagano *November 27, 2019*
-
->**Bug Rimodulazione: corretto controllo di allineamento variazione con rimodulazione.**
->
->[879c77368f7b63a](https://github.com/istitutosuperioredisanita/sigla-main/commit/879c77368f7b63a) raffaele.pagano *November 26, 2019*
-
->**Bug Rimodulazione: non visualizzava nelle variazioni le voci di bilancio che con la rimodulazione erano state scollegate dal progetto ma che, avendo stanziamenti, dovevano essere azzerati tramite la variazione stessa.**
->
->[f7052badac2441c](https://github.com/istitutosuperioredisanita/sigla-main/commit/f7052badac2441c) raffaele.pagano *November 26, 2019*
-
->**Corretta anomalia di mancato salvataggio del nome del file di invio a SDI**
->
->[78f81269b5090fa](https://github.com/istitutosuperioredisanita/sigla-main/commit/78f81269b5090fa) gianfranco.gasparro *November 25, 2019*
-
-
-### GitHub [#23](https://github.com/istitutosuperioredisanita/sigla-main/pull/23) Upgrade version of storage cloud
-
->**Fix creazione impegni di competenza. Il controllo che verifica la presenza di disponibità residue non teneva conto anche delle somme vincolate ad accertamenti inesigibili - Issue: #23**
->
->[7dca132512a6443](https://github.com/istitutosuperioredisanita/sigla-main/commit/7dca132512a6443) raffaele.pagano *November 27, 2019*
-
-
-### GitHub [#24](https://github.com/istitutosuperioredisanita/sigla-main/pull/24) Allineamento Versione Economica CNR
-
->**Aggiunto sulle variazioni di bilancio la Finalità 'Personale - Compensi incentivanti' e la finalità 'Personale - Variazioni in deroga' - Issue: #24**
->
->[52ace29493bc82b](https://github.com/istitutosuperioredisanita/sigla-main/commit/52ace29493bc82b) raffaele.pagano *November 27, 2019*
-
-
-### GitHub [#25](https://github.com/istitutosuperioredisanita/sigla-main/pull/25) Allineamento CNR
-
->**Consentita la possibilità di selezionare la tipologia di reversale condizionandola alla presenza del privilegio REVINC associato all'utente - Issue: #25**
->
->[8151c23a184a75a](https://github.com/istitutosuperioredisanita/sigla-main/commit/8151c23a184a75a) raffaele.pagano *November 27, 2019*
-
 
 ## Release 6.0.21  -- _November 29, 2019_ 
 **Changes**
@@ -19745,12 +19604,21 @@
 >
 >[abcbe321e10509b](https://github.com/istitutosuperioredisanita/sigla-main/commit/abcbe321e10509b) gianfranco.gasparro *November 29, 2019*
 
-
-### GitHub [#24](https://github.com/istitutosuperioredisanita/sigla-main/pull/24) Allineamento Versione Economica CNR
-
 >**Sostituita sulle variazioni di bilancio la Finalità 'Personale - Variazioni in deroga' con 'Trasferimenti alla Ragioneria'- Issue: #24**
 >
 >[dd94d15e5a2aa28](https://github.com/istitutosuperioredisanita/sigla-main/commit/dd94d15e5a2aa28) raffaele.pagano *November 29, 2019*
+
+
+## Release 6.0.20  -- _November 29, 2019_ 
+**Changes**
+
+>**Gestione flusso SIOPE+ per Sostituzione Mandato**
+>
+>[7404a9c34104942](https://github.com/istitutosuperioredisanita/sigla-main/commit/7404a9c34104942) marco.spasiano *November 29, 2019*
+
+>**Fix Assegni di ricerca: non consentiva di apportare variazioni per maternità e/o adeguamento incremento aliquote - ritornava errore InputStream in assenza di file da allegare.**
+>
+>[4647dd520ce78cd](https://github.com/istitutosuperioredisanita/sigla-main/commit/4647dd520ce78cd) raffaele.pagano *November 28, 2019*
 
 
 ## Release 6.0.19  -- _November 28, 2019_ 
@@ -19772,6 +19640,34 @@
 >
 >[055680c1fb5bc97](https://github.com/istitutosuperioredisanita/sigla-main/commit/055680c1fb5bc97) raffaele.pagano *November 28, 2019*
 
+>**Fix Rimodulazione: corretto controllo di allineamento variazione con rimodulazione.**
+>
+>[4e7cf7c96576247](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e7cf7c96576247) raffaele.pagano *November 27, 2019*
+
+>**Fix creazione impegni di competenza. Il controllo che verifica la presenza di disponibità residue non teneva conto anche delle somme vincolate ad accertamenti inesigibili - Issue: #23**
+>
+>[7dca132512a6443](https://github.com/istitutosuperioredisanita/sigla-main/commit/7dca132512a6443) raffaele.pagano *November 27, 2019*
+
+>**Consentita la possibilità di selezionare la tipologia di reversale condizionandola alla presenza del privilegio REVINC associato all'utente - Issue: #25**
+>
+>[8151c23a184a75a](https://github.com/istitutosuperioredisanita/sigla-main/commit/8151c23a184a75a) raffaele.pagano *November 27, 2019*
+
+>**Aggiunto sulle variazioni di bilancio la Finalità 'Personale - Compensi incentivanti' e la finalità 'Personale - Variazioni in deroga' - Issue: #24**
+>
+>[52ace29493bc82b](https://github.com/istitutosuperioredisanita/sigla-main/commit/52ace29493bc82b) raffaele.pagano *November 27, 2019*
+
+>**Bug Rimodulazione: corretto controllo di allineamento variazione con rimodulazione.**
+>
+>[879c77368f7b63a](https://github.com/istitutosuperioredisanita/sigla-main/commit/879c77368f7b63a) raffaele.pagano *November 26, 2019*
+
+>**Bug Rimodulazione: non visualizzava nelle variazioni le voci di bilancio che con la rimodulazione erano state scollegate dal progetto ma che, avendo stanziamenti, dovevano essere azzerati tramite la variazione stessa.**
+>
+>[f7052badac2441c](https://github.com/istitutosuperioredisanita/sigla-main/commit/f7052badac2441c) raffaele.pagano *November 26, 2019*
+
+>**Corretta anomalia di mancato salvataggio del nome del file di invio a SDI**
+>
+>[78f81269b5090fa](https://github.com/istitutosuperioredisanita/sigla-main/commit/78f81269b5090fa) gianfranco.gasparro *November 25, 2019*
+
 
 ## Release 6.0.18  -- _November 22, 2019_ 
 **Changes**
@@ -19780,14 +19676,6 @@
 >
 >[2c658a181d03e0f](https://github.com/istitutosuperioredisanita/sigla-main/commit/2c658a181d03e0f) marco.spasiano *November 22, 2019*
 
->**Cancellazione PEC Variazioni al PdG cambiato Subject Term**
->
->[9afe3b12a9ab090](https://github.com/istitutosuperioredisanita/sigla-main/commit/9afe3b12a9ab090) marco.spasiano *November 21, 2019*
-
->**Bug Distinta Cassiere: corretto controllo sullo scostamento SIOPE**
->
->[e56fd7a1754e688](https://github.com/istitutosuperioredisanita/sigla-main/commit/e56fd7a1754e688) raffaele.pagano *November 21, 2019*
-
 
 ## Release 6.0.17  -- _November 22, 2019_ 
 **Changes**
@@ -19795,6 +19683,18 @@
 >**Bug Distinta Cassiere: corretto controllo sullo scostamento SIOPE**
 >
 >[b223701bddd5ccb](https://github.com/istitutosuperioredisanita/sigla-main/commit/b223701bddd5ccb) raffaele.pagano *November 22, 2019*
+
+
+## Release 6.0.16  -- _November 21, 2019_ 
+**Changes**
+
+>**Cancellazione PEC Variazioni al PdG cambiato Subject Term**
+>
+>[9afe3b12a9ab090](https://github.com/istitutosuperioredisanita/sigla-main/commit/9afe3b12a9ab090) marco.spasiano *November 21, 2019*
+
+>**Bug Distinta Cassiere: corretto controllo sullo scostamento SIOPE**
+>
+>[e56fd7a1754e688](https://github.com/istitutosuperioredisanita/sigla-main/commit/e56fd7a1754e688) raffaele.pagano *November 21, 2019*
 
 
 ## Release 6.0.15  -- _November 20, 2019_ 
@@ -19983,7 +19883,7 @@
 
 >**Modifiche varie piano economico:**
 > * -Variazioni: consentito il trasferimento di fondi da GAE natura 6 ad Aree;
-> * -Allegati: tolta la possibilità all&#39;utente di associare alla rimodulazione file di tipo generati automaticamente dalla procedura.
+> * -Allegati: tolta la possibilità all&#x27;utente di associare alla rimodulazione file di tipo generati automaticamente dalla procedura.
 > * -Risoluzione Anomalie Varie
 >
 >[7f5a14c2d52ba44](https://github.com/istitutosuperioredisanita/sigla-main/commit/7f5a14c2d52ba44) raffaele.pagano *October 18, 2019*
@@ -20020,7 +19920,7 @@
 > * 1) Aggiunto il campo annotazioni ad uso esclusivo della UO Ente.
 > * 2) Aggiunto il campo motivo rifiuto utilizzato dalla UO Ente per comunicazioni.
 > * 3) Aggiunto il campo di storicizzazione della data in cui la rimodulazione diviene definitiva.
-> * 4) Data la possibilità di visualizzare rimodulazioni approvate e respinte per consentire all&#39;utente di visualizzare gli allegati e/o i motivi dell&#39;eventuale rifiuto.
+> * 4) Data la possibilità di visualizzare rimodulazioni approvate e respinte per consentire all&#x27;utente di visualizzare gli allegati e/o i motivi dell&#x27;eventuale rifiuto.
 > * 5) Risoluzione anomalie minime.
 >
 >[b90fc1365cc15b8](https://github.com/istitutosuperioredisanita/sigla-main/commit/b90fc1365cc15b8) raffaele.pagano *October 10, 2019*
@@ -23274,6 +23174,14 @@
 >
 >[1a693b2d0d052a0](https://github.com/istitutosuperioredisanita/sigla-main/commit/1a693b2d0d052a0) raffaele.pagano *January 18, 2019*
 
+>**FIX java.sql.SQLSyntaxErrorException: ORA-01722: numero non valido**
+>
+>[ba1f344b857c2a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/ba1f344b857c2a9) marco.spasiano *January 18, 2019*
+
+>**FIX java.sql.SQLSyntaxErrorException: ORA-01722: numero non valido**
+>
+>[5812cb0b76e3140](https://github.com/istitutosuperioredisanita/sigla-main/commit/5812cb0b76e3140) marco.spasiano *January 18, 2019*
+
 >**FIX toDo documenti non acquisiti**
 >
 >[789f3ff1a1a2753](https://github.com/istitutosuperioredisanita/sigla-main/commit/789f3ff1a1a2753) marco.spasiano *January 18, 2019*
@@ -23450,6 +23358,14 @@
 >
 >[33ace2237b9c2e7](https://github.com/istitutosuperioredisanita/sigla-main/commit/33ace2237b9c2e7) raffaele.pagano *January 14, 2019*
 
+>**Update db.changelog-5.0.0.xml**
+>
+>[a54d5d1bb694d03](https://github.com/istitutosuperioredisanita/sigla-main/commit/a54d5d1bb694d03) GASPARRO GIANFRANCO *January 14, 2019*
+
+>**Update db.changelog-5.0.0.xml**
+>
+>[536ec1b327dfcbe](https://github.com/istitutosuperioredisanita/sigla-main/commit/536ec1b327dfcbe) GASPARRO GIANFRANCO *January 14, 2019*
+
 >**Piano Economico: controllo si cambio date**
 >
 >[a8aa430ed6e15bb](https://github.com/istitutosuperioredisanita/sigla-main/commit/a8aa430ed6e15bb) raffaele.pagano *January 14, 2019*
@@ -23457,6 +23373,14 @@
 >**Piano Economico: controllo si cambio date**
 >
 >[16848f72f4913cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/16848f72f4913cc) raffaele.pagano *January 14, 2019*
+
+>**Update db.changelog-5.0.0.xml**
+>
+>[7d24c0710abbe0b](https://github.com/istitutosuperioredisanita/sigla-main/commit/7d24c0710abbe0b) GASPARRO GIANFRANCO *January 14, 2019*
+
+>**Update db.changelog-5.0.0.xml**
+>
+>[6d3ed67c948cc3a](https://github.com/istitutosuperioredisanita/sigla-main/commit/6d3ed67c948cc3a) GASPARRO GIANFRANCO *January 14, 2019*
 
 >**Gestito caso di lista CIG su uo diversa da quella del contratto collegato all'obbligazione**
 >
@@ -24182,6 +24106,14 @@
 >
 >[0a696c082eed389](https://github.com/istitutosuperioredisanita/sigla-main/commit/0a696c082eed389) marco.spasiano *December 17, 2018*
 
+>**Update db.changelog-5.0.0.xml**
+>
+>[ff2674b269ee9cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/ff2674b269ee9cb) GASPARRO GIANFRANCO *December 13, 2018*
+
+>**Update db.changelog-5.0.0.xml**
+>
+>[a090b10fdb4e292](https://github.com/istitutosuperioredisanita/sigla-main/commit/a090b10fdb4e292) GASPARRO GIANFRANCO *December 13, 2018*
+
 >**Rilascio servizio REST per aggiornamento dati terzo relativi alla fatturazione elettronica**
 >
 >[f5d8c1f22bc9f8f](https://github.com/istitutosuperioredisanita/sigla-main/commit/f5d8c1f22bc9f8f) Gianfranco Gasparro *December 13, 2018*
@@ -24351,16 +24283,16 @@
 >[9ddb0f840ff061c](https://github.com/istitutosuperioredisanita/sigla-main/commit/9ddb0f840ff061c) rosangela.pucciarelli *November 26, 2018*
 
 >**Abilitazioni ulteriori alla modifica di fatture passive elettroniche - (Accesso 'AMMFATTURDOCSFATPASA') -Collacchi/Gregori/Serra**
-> * -&#9;Possibilità di modificare la natura nel riepilogativo iva
-> * -&#9;eliminando l’allegato “comunicazione di non registrabilità ”  e salvando , la fattura diventa di nuovo registrabile
-> * -&#9;ATTENZIONE –(Eliminato blocco)  Fatture con tributi emesse dopo il 13/07/2018 con split, visto il caso Università con ENPAV, che deve rimanere con Split
+> * -	Possibilità di modificare la natura nel riepilogativo iva
+> * -	eliminando l’allegato “comunicazione di non registrabilità ”  e salvando , la fattura diventa di nuovo registrabile
+> * -	ATTENZIONE –(Eliminato blocco)  Fatture con tributi emesse dopo il 13/07/2018 con split, visto il caso Università con ENPAV, che deve rimanere con Split
 >
 >[ec861f6140423ad](https://github.com/istitutosuperioredisanita/sigla-main/commit/ec861f6140423ad) rosangela.pucciarelli *November 23, 2018*
 
 >**Abilitazioni ulteriori alla modifica di fatture passive elettroniche - (Accesso 'AMMFATTURDOCSFATPASA') -Collacchi/Gregori/Serra**
-> * -&#9;Possibilità di modificare la natura nel riepilogativo iva
-> * -&#9;eliminando l’allegato “comunicazione di non registrabilità ”  e salvando , la fattura diventa di nuovo registrabile
-> * -&#9;ATTENZIONE –(Eliminato blocco)  Fatture con tributi emesse dopo il 13/07/2018 con split, visto il caso Università con ENPAV, che deve rimanere con Split
+> * -	Possibilità di modificare la natura nel riepilogativo iva
+> * -	eliminando l’allegato “comunicazione di non registrabilità ”  e salvando , la fattura diventa di nuovo registrabile
+> * -	ATTENZIONE –(Eliminato blocco)  Fatture con tributi emesse dopo il 13/07/2018 con split, visto il caso Università con ENPAV, che deve rimanere con Split
 >
 >[2cf5b27382def2c](https://github.com/istitutosuperioredisanita/sigla-main/commit/2cf5b27382def2c) rosangela.pucciarelli *November 23, 2018*
 
@@ -26406,6 +26338,14 @@
 >
 >[40f0b7c59a432a1](https://github.com/istitutosuperioredisanita/sigla-main/commit/40f0b7c59a432a1) marco.spasiano *March 19, 2018*
 
+>**FIX encoding UTF-8**
+>
+>[9e372370e7d9dbd](https://github.com/istitutosuperioredisanita/sigla-main/commit/9e372370e7d9dbd) marco.spasiano *March 19, 2018*
+
+>**FIX encoding UTF-8**
+>
+>[76db8957b0b6be0](https://github.com/istitutosuperioredisanita/sigla-main/commit/76db8957b0b6be0) marco.spasiano *March 19, 2018*
+
 >**FIX cancellazione allegato**
 >
 >[f56c36423e8c9db](https://github.com/istitutosuperioredisanita/sigla-main/commit/f56c36423e8c9db) marco.spasiano *March 15, 2018*
@@ -26782,6 +26722,14 @@
 >
 >[9dab412c67c9d7e](https://github.com/istitutosuperioredisanita/sigla-main/commit/9dab412c67c9d7e) Pagano *February 22, 2018*
 
+>**FIX UTF-8 e entry duplicata nello zip**
+>
+>[7f6318c7fadccfd](https://github.com/istitutosuperioredisanita/sigla-main/commit/7f6318c7fadccfd) marco.spasiano *February 22, 2018*
+
+>**FIX UTF-8 e entry duplicata nello zip**
+>
+>[2318c68198fcc89](https://github.com/istitutosuperioredisanita/sigla-main/commit/2318c68198fcc89) marco.spasiano *February 22, 2018*
+
 >**Gestione Variazioni Personale**
 >
 >[2e7f3de54665a85](https://github.com/istitutosuperioredisanita/sigla-main/commit/2e7f3de54665a85) Pagano *February 21, 2018*
@@ -26797,6 +26745,14 @@
 >**Gestione Bollo Virtuale**
 >
 >[a43b7ae16d465b7](https://github.com/istitutosuperioredisanita/sigla-main/commit/a43b7ae16d465b7) Pagano *February 21, 2018*
+
+>**FIX encoding to UTF-8**
+>
+>[9207da50da9dab7](https://github.com/istitutosuperioredisanita/sigla-main/commit/9207da50da9dab7) marco.spasiano *February 21, 2018*
+
+>**FIX encoding to UTF-8**
+>
+>[464b9948a084d3c](https://github.com/istitutosuperioredisanita/sigla-main/commit/464b9948a084d3c) marco.spasiano *February 21, 2018*
 
 >**Modifiche per anomalie segnalate**
 >
@@ -26821,6 +26777,14 @@
 >**FIX test**
 >
 >[b393314558c122c](https://github.com/istitutosuperioredisanita/sigla-main/commit/b393314558c122c) marco.spasiano *February 20, 2018*
+
+>**change encoding to UTF-8**
+>
+>[aef8eda3a30af59](https://github.com/istitutosuperioredisanita/sigla-main/commit/aef8eda3a30af59) marco.spasiano *February 20, 2018*
+
+>**change encoding to UTF-8**
+>
+>[6ed308740a0f6d6](https://github.com/istitutosuperioredisanita/sigla-main/commit/6ed308740a0f6d6) marco.spasiano *February 20, 2018*
 
 >**FIX /GestioneUtenteBP/CRUDFatturaPassivaBP/CRUDNotaDiCreditoBP java.lang.NullPointerException at it.cnr.contab.docamm00.actions.CRUDNotaDiCreditoAction.doSelezionaDettaglioPerNdC(CRUDNotaDiCreditoAction.java:1573)**
 >
@@ -29182,13 +29146,13 @@
 
 >**Risoluzioni anomalia controllo conti**
 > * Risoluzioni anomalie mappa conto ep
-> * Consentito con determinato accesso di bypassare il controllo sull&#39;esigibilita iva sui dettagli negativi
+> * Consentito con determinato accesso di bypassare il controllo sull&#x27;esigibilita iva sui dettagli negativi
 >
 >[de07be410f59e79](https://github.com/istitutosuperioredisanita/sigla-main/commit/de07be410f59e79) rosangela.pucciarelli *October 06, 2017*
 
 >**Risoluzioni anomalia controllo conti**
 > * Risoluzioni anomalie mappa conto ep
-> * Consentito con determinato accesso di bypassare il controllo sull&#39;esigibilita iva sui dettagli negativi
+> * Consentito con determinato accesso di bypassare il controllo sull&#x27;esigibilita iva sui dettagli negativi
 >
 >[8a60ca3b5feecfb](https://github.com/istitutosuperioredisanita/sigla-main/commit/8a60ca3b5feecfb) rosangela.pucciarelli *October 06, 2017*
 
@@ -30760,6 +30724,14 @@
 >
 >[2ec15c6de6c5498](https://github.com/istitutosuperioredisanita/sigla-main/commit/2ec15c6de6c5498) Gianfranco Gasparro *May 16, 2017*
 
+>**Closed issue  #11**
+>
+>[ef3acb020058c9d](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef3acb020058c9d) marco.spasiano *May 15, 2017*
+
+>**Closed issue  #11**
+>
+>[a8464179c373193](https://github.com/istitutosuperioredisanita/sigla-main/commit/a8464179c373193) marco.spasiano *May 15, 2017*
+
 >**FIX creazione LoginBP**
 >
 >[ef6cb7250e8562a](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef6cb7250e8562a) marco.spasiano *May 15, 2017*
@@ -31774,13 +31746,13 @@
 
 >**Blocco utilizzo modalità F24EP da utenti NON supervisori**
 > * Ripristinato invio PEC Firma variazioni pdg
-> * Gestita apertura file con carattere &quot;&#39;&quot; nel nome file
+> * Gestita apertura file con carattere &quot;&#x27;&quot; nel nome file
 >
 >[8ff47ffa25af104](https://github.com/istitutosuperioredisanita/sigla-main/commit/8ff47ffa25af104) rosangela.pucciarelli *January 30, 2017*
 
 >**Blocco utilizzo modalità F24EP da utenti NON supervisori**
 > * Ripristinato invio PEC Firma variazioni pdg
-> * Gestita apertura file con carattere &quot;&#39;&quot; nel nome file
+> * Gestita apertura file con carattere &quot;&#x27;&quot; nel nome file
 >
 >[8651bbd29b421a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/8651bbd29b421a9) rosangela.pucciarelli *January 30, 2017*
 
@@ -32272,26 +32244,26 @@
 
 >**- Nuova consultazione Doc attivi da riscontrare**
 > * - Blocco chiusura spese Fondo economale senza reintegro(configurazione_cnr
-> * CD_CHIAVE_PRIMARIA = &#39;FONDO_ECONOMALE&#39; attivo con val01=&#39;S&#39;)
+> * CD_CHIAVE_PRIMARIA &#x3D; &#x27;FONDO_ECONOMALE&#x27; attivo con val01&#x3D;&#x27;S&#x27;)
 > * - ripristino lista mesi per liquidazione iva di dicembre da rieseguire a gennaio
 >
 >[d3dee38c7b463af](https://github.com/istitutosuperioredisanita/sigla-main/commit/d3dee38c7b463af) rosangela.pucciarelli *November 17, 2016*
 
 >**- Nuova consultazione Doc attivi da riscontrare**
 > * - Blocco chiusura spese Fondo economale senza reintegro(configurazione_cnr
-> * CD_CHIAVE_PRIMARIA = &#39;FONDO_ECONOMALE&#39; attivo con val01=&#39;S&#39;)
+> * CD_CHIAVE_PRIMARIA &#x3D; &#x27;FONDO_ECONOMALE&#x27; attivo con val01&#x3D;&#x27;S&#x27;)
 > * - ripristino lista mesi per liquidazione iva di dicembre da rieseguire a gennaio
 >
 >[68d67ad4a7942fe](https://github.com/istitutosuperioredisanita/sigla-main/commit/68d67ad4a7942fe) rosangela.pucciarelli *November 17, 2016*
 
 >**- Nuova consultazione Doc attivi da riscontrare**
-> * - Blocco chiusura spese Fondo economale senza reintegro(configurazione_cnr CD_CHIAVE_PRIMARIA=&#39;FONDO_ECONOMALE&#39; attivo con val01=&#39;S&#39;)
+> * - Blocco chiusura spese Fondo economale senza reintegro(configurazione_cnr CD_CHIAVE_PRIMARIA&#x3D;&#x27;FONDO_ECONOMALE&#x27; attivo con val01&#x3D;&#x27;S&#x27;)
 > * - ripristino lista mesi per liquidazione iva di dicembre da rieseguire a gennaio
 >
 >[85c6576d3fd9a80](https://github.com/istitutosuperioredisanita/sigla-main/commit/85c6576d3fd9a80) rosangela.pucciarelli *November 17, 2016*
 
 >**- Nuova consultazione Doc attivi da riscontrare**
-> * - Blocco chiusura spese Fondo economale senza reintegro(configurazione_cnr CD_CHIAVE_PRIMARIA=&#39;FONDO_ECONOMALE&#39; attivo con val01=&#39;S&#39;)
+> * - Blocco chiusura spese Fondo economale senza reintegro(configurazione_cnr CD_CHIAVE_PRIMARIA&#x3D;&#x27;FONDO_ECONOMALE&#x27; attivo con val01&#x3D;&#x27;S&#x27;)
 > * - ripristino lista mesi per liquidazione iva di dicembre da rieseguire a gennaio
 >
 >[579bd6ee8b80726](https://github.com/istitutosuperioredisanita/sigla-main/commit/579bd6ee8b80726) rosangela.pucciarelli *November 17, 2016*
@@ -32873,7 +32845,7 @@
 > * -Impedito collegamento a mandati/reversali in tesoreria unica dei sospesi non ente (999)
 > * -Consentito modifica documento generico passivo con 1210 in stato trasmesso
 > * -Consentita registrazione nota credito anche senza riferimenti alla fattura collegata - se presenti e riconosciuti sono stati considerati –
-> * altrimenti viene recuperata l&#39;ultima fattura registrata per lo stesso fornitore/uo
+> * altrimenti viene recuperata l&#x27;ultima fattura registrata per lo stesso fornitore/uo
 >
 >[f00d4e8d7be8240](https://github.com/istitutosuperioredisanita/sigla-main/commit/f00d4e8d7be8240) rosangela.pucciarelli *September 22, 2016*
 
@@ -32888,7 +32860,7 @@
 > * -Impedito collegamento a mandati/reversali in tesoreria unica dei sospesi non ente (999)
 > * -Consentito modifica documento generico passivo con 1210 in stato trasmesso
 > * -Consentita registrazione nota credito anche senza riferimenti alla fattura collegata - se presenti e riconosciuti sono stati considerati –
-> * altrimenti viene recuperata l&#39;ultima fattura registrata per lo stesso fornitore/uo
+> * altrimenti viene recuperata l&#x27;ultima fattura registrata per lo stesso fornitore/uo
 >
 >[d85ca101693353d](https://github.com/istitutosuperioredisanita/sigla-main/commit/d85ca101693353d) rosangela.pucciarelli *September 22, 2016*
 
@@ -32910,7 +32882,7 @@
 > * -Modificata consultazione Fondo economale
 > * -Impedito collegamento a mandati/reversali in tesoreria unica dei sospesi non ente (999)
 > * -Consentito modifica righe documento generico con 1210 in stato trasmesso
-> * -Consentita registrazione nota credito anche senza riferimenti alla fattura collegata - se presenti e riconosciuti sono stati considerati - altrimenti viene recuperata l&#39;ultima fattura registrata per lo stesso fornitore/uo
+> * -Consentita registrazione nota credito anche senza riferimenti alla fattura collegata - se presenti e riconosciuti sono stati considerati - altrimenti viene recuperata l&#x27;ultima fattura registrata per lo stesso fornitore/uo
 >
 >[7e1a250b91ee877](https://github.com/istitutosuperioredisanita/sigla-main/commit/7e1a250b91ee877) rosangela.pucciarelli *September 22, 2016*
 
@@ -32924,7 +32896,7 @@
 > * -Modificata consultazione Fondo economale
 > * -Impedito collegamento a mandati/reversali in tesoreria unica dei sospesi non ente (999)
 > * -Consentito modifica righe documento generico con 1210 in stato trasmesso
-> * -Consentita registrazione nota credito anche senza riferimenti alla fattura collegata - se presenti e riconosciuti sono stati considerati - altrimenti viene recuperata l&#39;ultima fattura registrata per lo stesso fornitore/uo
+> * -Consentita registrazione nota credito anche senza riferimenti alla fattura collegata - se presenti e riconosciuti sono stati considerati - altrimenti viene recuperata l&#x27;ultima fattura registrata per lo stesso fornitore/uo
 >
 >[5e3f195593b74f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/5e3f195593b74f7) rosangela.pucciarelli *September 22, 2016*
 
@@ -33787,28 +33759,28 @@
 >[36f5e5462d18106](https://github.com/istitutosuperioredisanita/sigla-main/commit/36f5e5462d18106) rosangela.pucciarelli *June 24, 2016*
 
 >**-	Possibilità di creare Nota Credito/Debito su fatture non riportate**
-> * -&#9;Possibilità di creare Nota Credito/Debito su fatture con lettera 1210
-> * -&#9;Possibilità di creare lettera 1210 su fatture con Nota Credito/Debito
-> * -&#9;Ripristinato blocco inserimento fatture passive con competenza anno precedente non oltre il termine in configurazione
-> * -&#9;Inserito blocco per limitare utilizzo del bene_servizio ‘21’- arrotondamenti, sulle righe di fattura con importo inferiore ad -1/1 euro
-> * -&#9;Modificando le modalità/coordinate  di pagamento delle fatture in fase di inserimento della fattura elettronica in testata vengono  riportate sui dettagli!
-> * -&#9;Modificata mappa dei Sospesi CNR per consentire la selezione per stato dei sospesi e visualizzare l’importo associato.
-> * -&#9;Modificata mappa dei Sospesi/Riscontri per visualizzare in fase di ricerca lo stato dei sospesi e l’importo associato.
-> * -&#9;Possibilità di registrare le NC elettroniche che arrivano con il segno negativo!
-> * -&#9;Inserito controllo nella creazione delle reversali che le Fatture e le NC attive devono avere le stesse modalità di pagamento, per l’invio in banca la loro diversità ci ha creato dei problemi
+> * -	Possibilità di creare Nota Credito/Debito su fatture con lettera 1210
+> * -	Possibilità di creare lettera 1210 su fatture con Nota Credito/Debito
+> * -	Ripristinato blocco inserimento fatture passive con competenza anno precedente non oltre il termine in configurazione
+> * -	Inserito blocco per limitare utilizzo del bene_servizio ‘21’- arrotondamenti, sulle righe di fattura con importo inferiore ad -1/1 euro
+> * -	Modificando le modalità/coordinate  di pagamento delle fatture in fase di inserimento della fattura elettronica in testata vengono  riportate sui dettagli!
+> * -	Modificata mappa dei Sospesi CNR per consentire la selezione per stato dei sospesi e visualizzare l’importo associato.
+> * -	Modificata mappa dei Sospesi/Riscontri per visualizzare in fase di ricerca lo stato dei sospesi e l’importo associato.
+> * -	Possibilità di registrare le NC elettroniche che arrivano con il segno negativo!
+> * -	Inserito controllo nella creazione delle reversali che le Fatture e le NC attive devono avere le stesse modalità di pagamento, per l’invio in banca la loro diversità ci ha creato dei problemi
 >
 >[97ff9457b5f2de3](https://github.com/istitutosuperioredisanita/sigla-main/commit/97ff9457b5f2de3) rosangela.pucciarelli *June 24, 2016*
 
 >**-	Possibilità di creare Nota Credito/Debito su fatture non riportate**
-> * -&#9;Possibilità di creare Nota Credito/Debito su fatture con lettera 1210
-> * -&#9;Possibilità di creare lettera 1210 su fatture con Nota Credito/Debito
-> * -&#9;Ripristinato blocco inserimento fatture passive con competenza anno precedente non oltre il termine in configurazione
-> * -&#9;Inserito blocco per limitare utilizzo del bene_servizio ‘21’- arrotondamenti, sulle righe di fattura con importo inferiore ad -1/1 euro
-> * -&#9;Modificando le modalità/coordinate  di pagamento delle fatture in fase di inserimento della fattura elettronica in testata vengono  riportate sui dettagli!
-> * -&#9;Modificata mappa dei Sospesi CNR per consentire la selezione per stato dei sospesi e visualizzare l’importo associato.
-> * -&#9;Modificata mappa dei Sospesi/Riscontri per visualizzare in fase di ricerca lo stato dei sospesi e l’importo associato.
-> * -&#9;Possibilità di registrare le NC elettroniche che arrivano con il segno negativo!
-> * -&#9;Inserito controllo nella creazione delle reversali che le Fatture e le NC attive devono avere le stesse modalità di pagamento, per l’invio in banca la loro diversità ci ha creato dei problemi
+> * -	Possibilità di creare Nota Credito/Debito su fatture con lettera 1210
+> * -	Possibilità di creare lettera 1210 su fatture con Nota Credito/Debito
+> * -	Ripristinato blocco inserimento fatture passive con competenza anno precedente non oltre il termine in configurazione
+> * -	Inserito blocco per limitare utilizzo del bene_servizio ‘21’- arrotondamenti, sulle righe di fattura con importo inferiore ad -1/1 euro
+> * -	Modificando le modalità/coordinate  di pagamento delle fatture in fase di inserimento della fattura elettronica in testata vengono  riportate sui dettagli!
+> * -	Modificata mappa dei Sospesi CNR per consentire la selezione per stato dei sospesi e visualizzare l’importo associato.
+> * -	Modificata mappa dei Sospesi/Riscontri per visualizzare in fase di ricerca lo stato dei sospesi e l’importo associato.
+> * -	Possibilità di registrare le NC elettroniche che arrivano con il segno negativo!
+> * -	Inserito controllo nella creazione delle reversali che le Fatture e le NC attive devono avere le stesse modalità di pagamento, per l’invio in banca la loro diversità ci ha creato dei problemi
 >
 >[8a6aa3160485a22](https://github.com/istitutosuperioredisanita/sigla-main/commit/8a6aa3160485a22) rosangela.pucciarelli *June 24, 2016*
 
@@ -34735,13 +34707,13 @@
 >[3a301483b52232d](https://github.com/istitutosuperioredisanita/sigla-main/commit/3a301483b52232d) rpucciarelli *March 02, 2016*
 
 >**Rendere visibili agli Istituti le Reversali da firmare (reversali  a regolamento di sospeso: ti_reversale = 'S' emesse sulla UO 999.000 e con cd_cds_origine dell’Istituto).**
-> * Anche in questo caso non deve essere consentita l&#39;apposizione della firma se la reversale non è completamente associata al codice siope.
+> * Anche in questo caso non deve essere consentita l&#x27;apposizione della firma se la reversale non è completamente associata al codice siope.
 > * Queste reversali possono essere firmate sia dagli Istituti che dalla UO 999 (ad oggi la sola abilitata a firmarli).
 >
 >[6bbc89a424d9a31](https://github.com/istitutosuperioredisanita/sigla-main/commit/6bbc89a424d9a31) mspasiano *March 02, 2016*
 
 >**Rendere visibili agli Istituti le Reversali da firmare (reversali  a regolamento di sospeso: ti_reversale = 'S' emesse sulla UO 999.000 e con cd_cds_origine dell’Istituto).**
-> * Anche in questo caso non deve essere consentita l&#39;apposizione della firma se la reversale non è completamente associata al codice siope.
+> * Anche in questo caso non deve essere consentita l&#x27;apposizione della firma se la reversale non è completamente associata al codice siope.
 > * Queste reversali possono essere firmate sia dagli Istituti che dalla UO 999 (ad oggi la sola abilitata a firmarli).
 >
 >[0ebd99a55a9805b](https://github.com/istitutosuperioredisanita/sigla-main/commit/0ebd99a55a9805b) mspasiano *March 02, 2016*
@@ -35146,14 +35118,14 @@
 
 >**sul documento 1210, quando si crea la lettera, bisogna proporre in automatico nella sezione: ‘Del relativo ammontare/controvalore**
 > * ci darete debito nel’ il ceck sulla riga: nostro conto in
-> * Inoltre bisogna proporre in automatico non modificabile il Conto CNR, nel campo Numero Conto (da prendere nella tabella CONFIGURAZIONE_CNR, ESERCIZIO=0, CD_CHIAVE_PRIMARIA=’CONTO_CORRENTE_SPECIALE’, il valore del campo VAL03). Il conto CNR è sempre lo stesso: 218150.
+> * Inoltre bisogna proporre in automatico non modificabile il Conto CNR, nel campo Numero Conto (da prendere nella tabella CONFIGURAZIONE_CNR, ESERCIZIO&#x3D;0, CD_CHIAVE_PRIMARIA&#x3D;’CONTO_CORRENTE_SPECIALE’, il valore del campo VAL03). Il conto CNR è sempre lo stesso: 218150.
 > * Inoltre dovresti aggiungere il bottone di consultazione contabili sulle reversali;
 >
 >[d347ad94a7f7b56](https://github.com/istitutosuperioredisanita/sigla-main/commit/d347ad94a7f7b56) mspasiano *February 05, 2016*
 
 >**sul documento 1210, quando si crea la lettera, bisogna proporre in automatico nella sezione: ‘Del relativo ammontare/controvalore**
 > * ci darete debito nel’ il ceck sulla riga: nostro conto in
-> * Inoltre bisogna proporre in automatico non modificabile il Conto CNR, nel campo Numero Conto (da prendere nella tabella CONFIGURAZIONE_CNR, ESERCIZIO=0, CD_CHIAVE_PRIMARIA=’CONTO_CORRENTE_SPECIALE’, il valore del campo VAL03). Il conto CNR è sempre lo stesso: 218150.
+> * Inoltre bisogna proporre in automatico non modificabile il Conto CNR, nel campo Numero Conto (da prendere nella tabella CONFIGURAZIONE_CNR, ESERCIZIO&#x3D;0, CD_CHIAVE_PRIMARIA&#x3D;’CONTO_CORRENTE_SPECIALE’, il valore del campo VAL03). Il conto CNR è sempre lo stesso: 218150.
 > * Inoltre dovresti aggiungere il bottone di consultazione contabili sulle reversali;
 >
 >[37a1c9638aa8d9d](https://github.com/istitutosuperioredisanita/sigla-main/commit/37a1c9638aa8d9d) mspasiano *February 05, 2016*
@@ -35869,13 +35841,13 @@
 >[9e03759e7dcff29](https://github.com/istitutosuperioredisanita/sigla-main/commit/9e03759e7dcff29) mspasiano *November 25, 2015*
 
 >**Modifiche agli accertamenti residui,**
-> * reso possibile l&#39;aggiunta di un file.
+> * reso possibile l&#x27;aggiunta di un file.
 > * Aggiornato framework alla 2.3.2
 >
 >[e63dfed9770ca5a](https://github.com/istitutosuperioredisanita/sigla-main/commit/e63dfed9770ca5a) mspasiano *November 24, 2015*
 
 >**Modifiche agli accertamenti residui,**
-> * reso possibile l&#39;aggiunta di un file.
+> * reso possibile l&#x27;aggiunta di un file.
 > * Aggiornato framework alla 2.3.2
 >
 >[c999f539b7ec0b5](https://github.com/istitutosuperioredisanita/sigla-main/commit/c999f539b7ec0b5) mspasiano *November 24, 2015*
@@ -36151,7 +36123,7 @@
 > * capita quando ti posizioni sulla tab ‘riferimento acquisto’  prima di salvare una modifica.
 > * Prova SDI: 5509838. Vai sulla Tab riferimento acquisto, posizionati sulla prima riga di dettaglio, poi vai sulla tab ‘Dati generali del documento’ e metti l’importo che ora è modificabile. Se salvi ti esce l’errore da eliminare ;
 > * 2.       Per la notifica della mail inviata quando arriva una fattura passiva o quando viene accettata/rifiutata una fattura attiva bisogna modificare l’oggetto della mail aggiungendo anche la UO (Il messaggio va bene com’è solo nell’oggetto oltre all’identificativo SDI si aggiunge UO: Codice della UO di destinazione o di emissione).
-> * 3.       Prevedere nuova tipologia  allegato per gli ‘Allegati aggiunti’ del documento elettronico: ‘Comunicazione di non registrabilità’ usabile solo nel caso di decorrenza termini (FL_decorrenza_termini=’S’).
+> * 3.       Prevedere nuova tipologia  allegato per gli ‘Allegati aggiunti’ del documento elettronico: ‘Comunicazione di non registrabilità’ usabile solo nel caso di decorrenza termini (FL_decorrenza_termini&#x3D;’S’).
 > * Questa tipologia deve prevedere: aggiornamento ad ‘S’ del campo FL_IRREGESTRABILE. Rendere non più modificabile il documento elettronico dopo l’aggiornamento di questo flag.
 > * BUG sui contratti definitivi sul documentale
 >
@@ -36162,7 +36134,7 @@
 > * capita quando ti posizioni sulla tab ‘riferimento acquisto’  prima di salvare una modifica.
 > * Prova SDI: 5509838. Vai sulla Tab riferimento acquisto, posizionati sulla prima riga di dettaglio, poi vai sulla tab ‘Dati generali del documento’ e metti l’importo che ora è modificabile. Se salvi ti esce l’errore da eliminare ;
 > * 2.       Per la notifica della mail inviata quando arriva una fattura passiva o quando viene accettata/rifiutata una fattura attiva bisogna modificare l’oggetto della mail aggiungendo anche la UO (Il messaggio va bene com’è solo nell’oggetto oltre all’identificativo SDI si aggiunge UO: Codice della UO di destinazione o di emissione).
-> * 3.       Prevedere nuova tipologia  allegato per gli ‘Allegati aggiunti’ del documento elettronico: ‘Comunicazione di non registrabilità’ usabile solo nel caso di decorrenza termini (FL_decorrenza_termini=’S’).
+> * 3.       Prevedere nuova tipologia  allegato per gli ‘Allegati aggiunti’ del documento elettronico: ‘Comunicazione di non registrabilità’ usabile solo nel caso di decorrenza termini (FL_decorrenza_termini&#x3D;’S’).
 > * Questa tipologia deve prevedere: aggiornamento ad ‘S’ del campo FL_IRREGESTRABILE. Rendere non più modificabile il documento elettronico dopo l’aggiornamento di questo flag.
 > * BUG sui contratti definitivi sul documentale
 >
@@ -36535,12 +36507,12 @@
 >[2cde4e11fcda025](https://github.com/istitutosuperioredisanita/sigla-main/commit/2cde4e11fcda025) mspasiano *June 19, 2015*
 
 >**- Corretta anomalia di mancata lettura del messaggio di rifiuto delle fatture;**
-> * - Aggiunto il riferimento ordine sulla descrizione nell&#39;invio delle fatture attive a SDI
+> * - Aggiunto il riferimento ordine sulla descrizione nell&#x27;invio delle fatture attive a SDI
 >
 >[fadd81cfafa4873](https://github.com/istitutosuperioredisanita/sigla-main/commit/fadd81cfafa4873) gianfranco.gasparro *June 05, 2015*
 
 >**- Corretta anomalia di mancata lettura del messaggio di rifiuto delle fatture;**
-> * - Aggiunto il riferimento ordine sulla descrizione nell&#39;invio delle fatture attive a SDI
+> * - Aggiunto il riferimento ordine sulla descrizione nell&#x27;invio delle fatture attive a SDI
 >
 >[35ae5486aef442d](https://github.com/istitutosuperioredisanita/sigla-main/commit/35ae5486aef442d) gianfranco.gasparro *June 05, 2015*
 
@@ -36599,16 +36571,16 @@
 >[5e9c37103442f1b](https://github.com/istitutosuperioredisanita/sigla-main/commit/5e9c37103442f1b) mdurso *May 25, 2015*
 
 >**Modifiche varie fatturazione elettronica attiva:**
-> * - Gestito invio e-mail agli utenti nel caso di esito positivo/negativo dell&#39;invio della fattura attiva a SDI;
+> * - Gestito invio e-mail agli utenti nel caso di esito positivo/negativo dell&#x27;invio della fattura attiva a SDI;
 > * - Spostata creazione nota di credito automatica dalla mancata consegna alla mancata recapitabilità
-> * - Aggiunto sulla fattura attiva l&#39;identificativo SDI
+> * - Aggiunto sulla fattura attiva l&#x27;identificativo SDI
 >
 >[dc2ee43d70f917e](https://github.com/istitutosuperioredisanita/sigla-main/commit/dc2ee43d70f917e) gianfranco.gasparro *May 25, 2015*
 
 >**Modifiche varie fatturazione elettronica attiva:**
-> * - Gestito invio e-mail agli utenti nel caso di esito positivo/negativo dell&#39;invio della fattura attiva a SDI;
+> * - Gestito invio e-mail agli utenti nel caso di esito positivo/negativo dell&#x27;invio della fattura attiva a SDI;
 > * - Spostata creazione nota di credito automatica dalla mancata consegna alla mancata recapitabilità
-> * - Aggiunto sulla fattura attiva l&#39;identificativo SDI
+> * - Aggiunto sulla fattura attiva l&#x27;identificativo SDI
 >
 >[5368f807437cf41](https://github.com/istitutosuperioredisanita/sigla-main/commit/5368f807437cf41) gianfranco.gasparro *May 25, 2015*
 
@@ -37052,6 +37024,14 @@
 >
 >[0b0d3dea6e8d91e](https://github.com/istitutosuperioredisanita/sigla-main/commit/0b0d3dea6e8d91e) gianfranco.gasparro *April 23, 2015*
 
+>**BUG enconding UTF-8**
+>
+>[fb4b665e648e133](https://github.com/istitutosuperioredisanita/sigla-main/commit/fb4b665e648e133) mspasiano *April 23, 2015*
+
+>**BUG enconding UTF-8**
+>
+>[74eba0eac66abd1](https://github.com/istitutosuperioredisanita/sigla-main/commit/74eba0eac66abd1) mspasiano *April 23, 2015*
+
 >**Anomalia crezione Nota Credito automatica con Split Payment**
 >
 >[a04361d11167c76](https://github.com/istitutosuperioredisanita/sigla-main/commit/a04361d11167c76) rpucciarelli *April 23, 2015*
@@ -37139,6 +37119,22 @@
 >**BUG Vari**
 >
 >[9822f3fb16d3422](https://github.com/istitutosuperioredisanita/sigla-main/commit/9822f3fb16d3422) mspasiano *April 17, 2015*
+
+>**BUG encoding UTF-8**
+>
+>[742c04722346532](https://github.com/istitutosuperioredisanita/sigla-main/commit/742c04722346532) mspasiano *April 17, 2015*
+
+>**BUG encoding UTF-8**
+>
+>[73e14d37b65ddc2](https://github.com/istitutosuperioredisanita/sigla-main/commit/73e14d37b65ddc2) mspasiano *April 17, 2015*
+
+>**BUG encoding UTF-8**
+>
+>[e1e4e77feae42c2](https://github.com/istitutosuperioredisanita/sigla-main/commit/e1e4e77feae42c2) mspasiano *April 17, 2015*
+
+>**BUG encoding UTF-8**
+>
+>[1ca5be4adc547aa](https://github.com/istitutosuperioredisanita/sigla-main/commit/1ca5be4adc547aa) mspasiano *April 17, 2015*
 
 >**BUG Vari**
 >
@@ -37556,9 +37552,21 @@
 >
 >[9fb0e5fbef9dc22](https://github.com/istitutosuperioredisanita/sigla-main/commit/9fb0e5fbef9dc22) mdurso *April 02, 2015*
 
+>**BUG sui documenti elettronici con piu righe di fattura**
+>
+>[355b9690a575950](https://github.com/istitutosuperioredisanita/sigla-main/commit/355b9690a575950) mdurso *April 02, 2015*
+
 >**Inserita validazione al salvataggio definitivo**
 >
 >[e2622346269f75c](https://github.com/istitutosuperioredisanita/sigla-main/commit/e2622346269f75c) rpucciarelli *April 02, 2015*
+
+>**Inserita validazione al salvataggio definitivo**
+>
+>[e0303da3a0ac6e4](https://github.com/istitutosuperioredisanita/sigla-main/commit/e0303da3a0ac6e4) rpucciarelli *April 02, 2015*
+
+>**Gestiti i file fatturapa firmati internamente**
+>
+>[d5e8a349efab8f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/d5e8a349efab8f7) mspasiano *April 01, 2015*
 
 >**Gestiti i file fatturapa firmati internamente**
 >
@@ -37566,11 +37574,23 @@
 
 >**Cambiata nome della folder su alfresco e trunc di tutti i BigDecimal**
 >
+>[ee224422d4beb48](https://github.com/istitutosuperioredisanita/sigla-main/commit/ee224422d4beb48) mspasiano *April 01, 2015*
+
+>**Cambiata nome della folder su alfresco e trunc di tutti i BigDecimal**
+>
 >[82a9db619b4c4b6](https://github.com/istitutosuperioredisanita/sigla-main/commit/82a9db619b4c4b6) mspasiano *April 01, 2015*
 
 >**BUG trunc di arrotondamento**
 >
+>[95691dfa8c3d82a](https://github.com/istitutosuperioredisanita/sigla-main/commit/95691dfa8c3d82a) mspasiano *April 01, 2015*
+
+>**BUG trunc di arrotondamento**
+>
 >[23b2d6a796cbc0b](https://github.com/istitutosuperioredisanita/sigla-main/commit/23b2d6a796cbc0b) mspasiano *April 01, 2015*
+
+>**BUG sull'encoding di un file firmato**
+>
+>[7d7fd883dba0a19](https://github.com/istitutosuperioredisanita/sigla-main/commit/7d7fd883dba0a19) mspasiano *April 01, 2015*
 
 >**BUG sull'encoding di un file firmato**
 >
@@ -37580,13 +37600,29 @@
 >
 >[439362c1967e589](https://github.com/istitutosuperioredisanita/sigla-main/commit/439362c1967e589) mdurso *April 01, 2015*
 
+>**BugID: 1367 - Fatturazione elettronica**
+>
+>[17c49d5cc9a955f](https://github.com/istitutosuperioredisanita/sigla-main/commit/17c49d5cc9a955f) mdurso *April 01, 2015*
+
 >**BUG sulle fatture collegate ad una nota senza il numero linea**
 >
 >[875b49449519186](https://github.com/istitutosuperioredisanita/sigla-main/commit/875b49449519186) mspasiano *March 31, 2015*
 
+>**BUG sulle fatture collegate ad una nota senza il numero linea**
+>
+>[61d9e601a196e1b](https://github.com/istitutosuperioredisanita/sigla-main/commit/61d9e601a196e1b) mspasiano *March 31, 2015*
+
 >**BugID: 1367 - Fatturazione elettronica**
 >
 >[31a33b6ba5d762e](https://github.com/istitutosuperioredisanita/sigla-main/commit/31a33b6ba5d762e) rpucciarelli *March 31, 2015*
+
+>**BugID: 1367 - Fatturazione elettronica**
+>
+>[28ee03b8513fa52](https://github.com/istitutosuperioredisanita/sigla-main/commit/28ee03b8513fa52) rpucciarelli *March 31, 2015*
+
+>**Fatturazione elettronica risoluzione BUG**
+>
+>[7fad2541365d254](https://github.com/istitutosuperioredisanita/sigla-main/commit/7fad2541365d254) mspasiano *March 31, 2015*
 
 >**Fatturazione elettronica risoluzione BUG**
 >
@@ -37596,13 +37632,29 @@
 >
 >[b1372989a6d461e](https://github.com/istitutosuperioredisanita/sigla-main/commit/b1372989a6d461e) rpucciarelli *March 31, 2015*
 
+>**Fatturazione elettronica eliminata obbligatorietà data e numero protocollo alla luce della nuova modalita di attribuzione del progr_univoco**
+>
+>[03529315fef64f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/03529315fef64f9) rpucciarelli *March 31, 2015*
+
 >**BugID: 1367 - Fatturazione elettronica**
 >
 >[cf13b8bcab0fde1](https://github.com/istitutosuperioredisanita/sigla-main/commit/cf13b8bcab0fde1) mdurso *March 31, 2015*
 
+>**BugID: 1367 - Fatturazione elettronica**
+>
+>[a792ca2d643c708](https://github.com/istitutosuperioredisanita/sigla-main/commit/a792ca2d643c708) mdurso *March 31, 2015*
+
 >**Fatturazione elettronica**
 >
 >[d4b305988540929](https://github.com/istitutosuperioredisanita/sigla-main/commit/d4b305988540929) mspasiano *March 31, 2015*
+
+>**Fatturazione elettronica**
+>
+>[0995b40f3a96fea](https://github.com/istitutosuperioredisanita/sigla-main/commit/0995b40f3a96fea) mspasiano *March 31, 2015*
+
+>**Fatturazione elettronica**
+>
+>[b9c9b2ba3bdc81d](https://github.com/istitutosuperioredisanita/sigla-main/commit/b9c9b2ba3bdc81d) mspasiano *March 31, 2015*
 
 >**Fatturazione elettronica**
 >
@@ -37612,9 +37664,21 @@
 >
 >[86306e8077b17a3](https://github.com/istitutosuperioredisanita/sigla-main/commit/86306e8077b17a3) mspasiano *March 31, 2015*
 
+>**Fatturazione elettronica**
+>
+>[254866638fb002f](https://github.com/istitutosuperioredisanita/sigla-main/commit/254866638fb002f) mspasiano *March 31, 2015*
+
+>**BUG sugli importi troncati a due decimali**
+>
+>[742a0d65938d9f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/742a0d65938d9f9) mspasiano *March 31, 2015*
+
 >**BUG sugli importi troncati a due decimali**
 >
 >[2de9eccc4162ce7](https://github.com/istitutosuperioredisanita/sigla-main/commit/2de9eccc4162ce7) mspasiano *March 31, 2015*
+
+>**BUG su decrypt password**
+>
+>[c401572ca99e1e9](https://github.com/istitutosuperioredisanita/sigla-main/commit/c401572ca99e1e9) mspasiano *March 30, 2015*
 
 >**BUG su decrypt password**
 >
@@ -37624,17 +37688,37 @@
 >
 >[c4a730c9ef02b21](https://github.com/istitutosuperioredisanita/sigla-main/commit/c4a730c9ef02b21) mspasiano *March 30, 2015*
 
+>**BUG for decrypt password**
+>
+>[94a75987ad6c8b8](https://github.com/istitutosuperioredisanita/sigla-main/commit/94a75987ad6c8b8) mspasiano *March 30, 2015*
+
 >**Fatturazione elettronica gestione mail di avviso**
 >
 >[c2e9b734b18540a](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2e9b734b18540a) mspasiano *March 30, 2015*
+
+>**Fatturazione elettronica gestione mail di avviso**
+>
+>[7c19b597c7197ab](https://github.com/istitutosuperioredisanita/sigla-main/commit/7c19b597c7197ab) mspasiano *March 30, 2015*
 
 >**BugID: 1367 - Fatturazione elettronica**
 >
 >[395ce45b8d841bd](https://github.com/istitutosuperioredisanita/sigla-main/commit/395ce45b8d841bd) mdurso *March 30, 2015*
 
+>**BugID: 1367 - Fatturazione elettronica**
+>
+>[366a85c0f34d15e](https://github.com/istitutosuperioredisanita/sigla-main/commit/366a85c0f34d15e) mdurso *March 30, 2015*
+
+>**Fatturazione elettronica gestione mail di avviso**
+>
+>[7955e54ffae9462](https://github.com/istitutosuperioredisanita/sigla-main/commit/7955e54ffae9462) mspasiano *March 30, 2015*
+
 >**Fatturazione elettronica gestione mail di avviso**
 >
 >[38524d423208ce9](https://github.com/istitutosuperioredisanita/sigla-main/commit/38524d423208ce9) mspasiano *March 30, 2015*
+
+>**BugID: 1367 - Fatturazione elettronica**
+>
+>[89023143309d91a](https://github.com/istitutosuperioredisanita/sigla-main/commit/89023143309d91a) mdurso *March 30, 2015*
 
 >**BugID: 1367 - Fatturazione elettronica**
 >
@@ -37644,17 +37728,33 @@
 >
 >[a750995ffdf239e](https://github.com/istitutosuperioredisanita/sigla-main/commit/a750995ffdf239e) mspasiano *March 30, 2015*
 
+>**Fatturazione elettronica gestione mail di avviso**
+>
+>[4e5e0491475d0c8](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e5e0491475d0c8) mspasiano *March 30, 2015*
+
 >**Fatturazione elettronica**
 >
 >[ef57eadef498e28](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef57eadef498e28) mspasiano *March 30, 2015*
+
+>**Fatturazione elettronica**
+>
+>[2402aa1e863f1e4](https://github.com/istitutosuperioredisanita/sigla-main/commit/2402aa1e863f1e4) mspasiano *March 30, 2015*
 
 >**Eliminato Blocco creazione più terzi per le UO - eliminato controllo terzo unico per UO**
 >
 >[f1fe4ce58034cfe](https://github.com/istitutosuperioredisanita/sigla-main/commit/f1fe4ce58034cfe) rpucciarelli *March 27, 2015*
 
+>**Eliminato Blocco creazione più terzi per le UO - eliminato controllo terzo unico per UO**
+>
+>[40672ca39c2011d](https://github.com/istitutosuperioredisanita/sigla-main/commit/40672ca39c2011d) rpucciarelli *March 27, 2015*
+
 >**Eliminato Blocco creazione più terzi per le UO**
 >
 >[d33bf700c95a2fc](https://github.com/istitutosuperioredisanita/sigla-main/commit/d33bf700c95a2fc) rpucciarelli *March 25, 2015*
+
+>**Eliminato Blocco creazione più terzi per le UO**
+>
+>[901e508ef996126](https://github.com/istitutosuperioredisanita/sigla-main/commit/901e508ef996126) rpucciarelli *March 25, 2015*
 
 >**BugID: 1362 WS di ricerca terzi con ampliamento dei dati restituti**
 >
@@ -37662,26 +37762,57 @@
 
 >**BugID: 1362 WS di ricerca terzi con ampliamento dei dati restituti**
 >
+>[9e165cf46eb3ae7](https://github.com/istitutosuperioredisanita/sigla-main/commit/9e165cf46eb3ae7) rpucciarelli *March 20, 2015*
+
+>**BugID: 1362 WS di ricerca terzi con ampliamento dei dati restituti**
+>
 >[42479839b9d827a](https://github.com/istitutosuperioredisanita/sigla-main/commit/42479839b9d827a) rpucciarelli *March 19, 2015*
+
+>**BugID: 1362 WS di ricerca terzi con ampliamento dei dati restituti**
+>
+>[2e3ec51cc369988](https://github.com/istitutosuperioredisanita/sigla-main/commit/2e3ec51cc369988) rpucciarelli *March 19, 2015*
 
 >**BugID: 1362 WS di ricerca terzi con ampliamento dei dati restituti**
 >
 >[d399d040a855b9b](https://github.com/istitutosuperioredisanita/sigla-main/commit/d399d040a855b9b) rpucciarelli *March 18, 2015*
 
+>**BugID: 1362 WS di ricerca terzi con ampliamento dei dati restituti**
+>
+>[957f94cd1914d25](https://github.com/istitutosuperioredisanita/sigla-main/commit/957f94cd1914d25) rpucciarelli *March 18, 2015*
+
 >**- Anomalia non valorizzata data approvazione formale**
-> * - Abilitato bottone salva nel caso di &#39;999&#39; e privilegio abilitatoModificaDescVariazioni per consentire il salvataggio del cambio di stato invio
+> * - Abilitato bottone salva nel caso di &#x27;999&#x27; e privilegio abilitatoModificaDescVariazioni per consentire il salvataggio del cambio di stato invio
+>
+>[e54f7c0e7abf462](https://github.com/istitutosuperioredisanita/sigla-main/commit/e54f7c0e7abf462) rpucciarelli *March 13, 2015*
+
+>**- Anomalia non valorizzata data approvazione formale**
+> * - Abilitato bottone salva nel caso di &#x27;999&#x27; e privilegio abilitatoModificaDescVariazioni per consentire il salvataggio del cambio di stato invio
 >
 >[79e602efefc2f24](https://github.com/istitutosuperioredisanita/sigla-main/commit/79e602efefc2f24) rpucciarelli *March 13, 2015*
 
 >**- Anomalia non valorizzata data approvazione formale**
-> * - Abilitato bottone salva nel caso di &#39;999&#39; e privilegio abilitatoModificaDescVariazioni per consentire il salvataggio del cambio di stato invio
+> * - Abilitato bottone salva nel caso di &#x27;999&#x27; e privilegio abilitatoModificaDescVariazioni per consentire il salvataggio del cambio di stato invio
+>
+>[a82931193b8645b](https://github.com/istitutosuperioredisanita/sigla-main/commit/a82931193b8645b) rpucciarelli *March 13, 2015*
+
+>**- Anomalia non valorizzata data approvazione formale**
+> * - Abilitato bottone salva nel caso di &#x27;999&#x27; e privilegio abilitatoModificaDescVariazioni per consentire il salvataggio del cambio di stato invio
 >
 >[5a2ea0eff55917b](https://github.com/istitutosuperioredisanita/sigla-main/commit/5a2ea0eff55917b) rpucciarelli *March 13, 2015*
 
 >**- Anomalia non valorizzata data approvazione formale**
-> * - Abilitato bottone salva nel caso di &#39;999&#39; e privilegio abilitatoModificaDescVariazioni per consentire il salvataggio del cambio di stato invio
+> * - Abilitato bottone salva nel caso di &#x27;999&#x27; e privilegio abilitatoModificaDescVariazioni per consentire il salvataggio del cambio di stato invio
+>
+>[3ce82bb29708705](https://github.com/istitutosuperioredisanita/sigla-main/commit/3ce82bb29708705) rpucciarelli *March 11, 2015*
+
+>**- Anomalia non valorizzata data approvazione formale**
+> * - Abilitato bottone salva nel caso di &#x27;999&#x27; e privilegio abilitatoModificaDescVariazioni per consentire il salvataggio del cambio di stato invio
 >
 >[201e1e9c0d9aa3c](https://github.com/istitutosuperioredisanita/sigla-main/commit/201e1e9c0d9aa3c) rpucciarelli *March 11, 2015*
+
+>**BugID: 1345 Nuovo Piani dei Conti . Modifiche strutturali Associazione Categoria Inventario- Voce**
+>
+>[f5fb80728722881](https://github.com/istitutosuperioredisanita/sigla-main/commit/f5fb80728722881) rpucciarelli *March 06, 2015*
 
 >**BugID: 1345 Nuovo Piani dei Conti . Modifiche strutturali Associazione Categoria Inventario- Voce**
 >
@@ -37691,21 +37822,45 @@
 >
 >[82e1f20d56baf7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/82e1f20d56baf7c) rpucciarelli *March 06, 2015*
 
+>**BugID: 1345 Nuovo Piani dei Conti . Modifiche strutturali Associazione Categoria Inventario- Voce**
+>
+>[673cb5e018ca511](https://github.com/istitutosuperioredisanita/sigla-main/commit/673cb5e018ca511) rpucciarelli *March 06, 2015*
+
 >**BugID: 1361 Gestione Split Payment**
 >
 >[b05cfae8947f352](https://github.com/istitutosuperioredisanita/sigla-main/commit/b05cfae8947f352) rpucciarelli *March 06, 2015*
+
+>**BugID: 1361 Gestione Split Payment**
+>
+>[996463c19e8ca2f](https://github.com/istitutosuperioredisanita/sigla-main/commit/996463c19e8ca2f) rpucciarelli *March 06, 2015*
 
 >**Abilitata possibilità da cdr di primo livello di vedere tutte le gae del cds**
 >
 >[9f381e6e367d23a](https://github.com/istitutosuperioredisanita/sigla-main/commit/9f381e6e367d23a) rpucciarelli *March 06, 2015*
 
+>**Abilitata possibilità da cdr di primo livello di vedere tutte le gae del cds**
+>
+>[57c41b57cebc391](https://github.com/istitutosuperioredisanita/sigla-main/commit/57c41b57cebc391) rpucciarelli *March 06, 2015*
+
 >**BugID: 1253 Flusso ordinativi BNL - sembra che gli importi debbano essere indicati sempre con i decimali**
 >
 >[15605aaba357ccc](https://github.com/istitutosuperioredisanita/sigla-main/commit/15605aaba357ccc) rpucciarelli *March 03, 2015*
 
+>**BugID: 1253 Flusso ordinativi BNL - sembra che gli importi debbano essere indicati sempre con i decimali**
+>
+>[01b38eb786de378](https://github.com/istitutosuperioredisanita/sigla-main/commit/01b38eb786de378) rpucciarelli *March 03, 2015*
+
 >**Anomalia fatture Promiscue**
 >
 >[6ed0006aefc6bab](https://github.com/istitutosuperioredisanita/sigla-main/commit/6ed0006aefc6bab) rpucciarelli *March 02, 2015*
+
+>**Anomalia fatture Promiscue**
+>
+>[30b47d35c3b2559](https://github.com/istitutosuperioredisanita/sigla-main/commit/30b47d35c3b2559) rpucciarelli *March 02, 2015*
+
+>**BugID: 1361 Gestione Split Payment**
+>
+>[d5c1dcd8c85c357](https://github.com/istitutosuperioredisanita/sigla-main/commit/d5c1dcd8c85c357) rpucciarelli *March 02, 2015*
 
 >**BugID: 1361 Gestione Split Payment**
 >
@@ -37715,13 +37870,29 @@
 >
 >[65b0e798c60a96d](https://github.com/istitutosuperioredisanita/sigla-main/commit/65b0e798c60a96d) rpucciarelli *March 02, 2015*
 
+>**Anomalia fatture Promiscue**
+>
+>[10406fc713b9959](https://github.com/istitutosuperioredisanita/sigla-main/commit/10406fc713b9959) rpucciarelli *March 02, 2015*
+
 >**BugID: 1362 WS di ricerca terzi con ampliamento dei dati restituti**
 >
 >[ce58a27d4ff4933](https://github.com/istitutosuperioredisanita/sigla-main/commit/ce58a27d4ff4933) rpucciarelli *February 26, 2015*
 
+>**BugID: 1362 WS di ricerca terzi con ampliamento dei dati restituti**
+>
+>[05dd3b3eba0c99e](https://github.com/istitutosuperioredisanita/sigla-main/commit/05dd3b3eba0c99e) rpucciarelli *February 26, 2015*
+
 >**BugID: 1358 Aggiunti campi al servizio REST delle GAE**
 >
 >[6c1151dba4eb93d](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c1151dba4eb93d) gianfranco.gasparro *February 20, 2015*
+
+>**BugID: 1358 Aggiunti campi al servizio REST delle GAE**
+>
+>[07c1dc56cc6446f](https://github.com/istitutosuperioredisanita/sigla-main/commit/07c1dc56cc6446f) gianfranco.gasparro *February 20, 2015*
+
+>**BugID: 1360 Adeguato programma alla versione 1.1 della fatturazione elettronica con split Payment**
+>
+>[f62220b7a8f2864](https://github.com/istitutosuperioredisanita/sigla-main/commit/f62220b7a8f2864) gianfranco.gasparro *February 20, 2015*
 
 >**BugID: 1360 Adeguato programma alla versione 1.1 della fatturazione elettronica con split Payment**
 >
@@ -37729,7 +37900,15 @@
 
 >**Anomalia segnalazione hd 49785 - mancato ordinamento dati**
 >
+>[dac2c0fe39144ca](https://github.com/istitutosuperioredisanita/sigla-main/commit/dac2c0fe39144ca) rpucciarelli *February 18, 2015*
+
+>**Anomalia segnalazione hd 49785 - mancato ordinamento dati**
+>
 >[a3b9fe790e7414e](https://github.com/istitutosuperioredisanita/sigla-main/commit/a3b9fe790e7414e) rpucciarelli *February 18, 2015*
+
+>**FIX URL per la firma remota delle fatture**
+>
+>[3ccad27c23396ab](https://github.com/istitutosuperioredisanita/sigla-main/commit/3ccad27c23396ab) mspasiano *February 18, 2015*
 
 >**FIX URL per la firma remota delle fatture**
 >
@@ -37737,7 +37916,15 @@
 
 >**BUG su restore simple document is not the latest version**
 >
+>[9001f2f60fc0c29](https://github.com/istitutosuperioredisanita/sigla-main/commit/9001f2f60fc0c29) mspasiano *February 18, 2015*
+
+>**BUG su restore simple document is not the latest version**
+>
 >[54104211547c38f](https://github.com/istitutosuperioredisanita/sigla-main/commit/54104211547c38f) mspasiano *February 18, 2015*
+
+>**BUG su restore simple document is not the latest version**
+>
+>[d443181f9ddc0d7](https://github.com/istitutosuperioredisanita/sigla-main/commit/d443181f9ddc0d7) mspasiano *February 18, 2015*
 
 >**BUG su restore simple document is not the latest version**
 >
@@ -37745,7 +37932,15 @@
 
 >**BUG su restore simple document is not the latest version**
 >
+>[37f20b24c51c983](https://github.com/istitutosuperioredisanita/sigla-main/commit/37f20b24c51c983) mspasiano *February 18, 2015*
+
+>**BUG su restore simple document is not the latest version**
+>
 >[0aae36a463b5f09](https://github.com/istitutosuperioredisanita/sigla-main/commit/0aae36a463b5f09) mspasiano *February 18, 2015*
+
+>**Anomalia stampa reversali segnalazione Hd 49315**
+>
+>[6c6cf006ff69943](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c6cf006ff69943) rpucciarelli *January 30, 2015*
 
 >**Anomalia stampa reversali segnalazione Hd 49315**
 >
@@ -37755,9 +37950,21 @@
 >
 >[9426bb5ef8c33bc](https://github.com/istitutosuperioredisanita/sigla-main/commit/9426bb5ef8c33bc) gianfranco.gasparro *January 29, 2015*
 
+>**BugID: 1360 Adeguato programma alla versione 1.1 della fatturazione elettronica**
+>
+>[20442192b6cd1b4](https://github.com/istitutosuperioredisanita/sigla-main/commit/20442192b6cd1b4) gianfranco.gasparro *January 29, 2015*
+
 >**BugID: 1359 Risolta Anomalia sulla gestione dei trovati. Una property SPRING non veniva instanziata correttamente e sbagliava il recupero della URL dell'applicativo dei trovati**
 >
 >[3d4ca0533c47d58](https://github.com/istitutosuperioredisanita/sigla-main/commit/3d4ca0533c47d58) gianfranco.gasparro *January 29, 2015*
+
+>**BugID: 1359 Risolta Anomalia sulla gestione dei trovati. Una property SPRING non veniva instanziata correttamente e sbagliava il recupero della URL dell'applicativo dei trovati**
+>
+>[15095c65f0b94a3](https://github.com/istitutosuperioredisanita/sigla-main/commit/15095c65f0b94a3) gianfranco.gasparro *January 29, 2015*
+
+>**BugID: 1358 Creati e/o modificati una serie di Servizi REST per Integrazione con Gestione Missioni**
+>
+>[80521f533d3835b](https://github.com/istitutosuperioredisanita/sigla-main/commit/80521f533d3835b) gianfranco.gasparro *January 29, 2015*
 
 >**BugID: 1358 Creati e/o modificati una serie di Servizi REST per Integrazione con Gestione Missioni**
 >
@@ -37769,11 +37976,27 @@
 
 >**FIX sui contratti**
 >
+>[242be59af8cae9e](https://github.com/istitutosuperioredisanita/sigla-main/commit/242be59af8cae9e) mspasiano *January 28, 2015*
+
+>**FIX sui contratti**
+>
 >[d01d16b5292e4d0](https://github.com/istitutosuperioredisanita/sigla-main/commit/d01d16b5292e4d0) mspasiano *January 28, 2015*
+
+>**FIX sui contratti**
+>
+>[6d3d46a1b71f09c](https://github.com/istitutosuperioredisanita/sigla-main/commit/6d3d46a1b71f09c) mspasiano *January 28, 2015*
 
 >**FIX sulle query CMIS**
 >
 >[f10d4f7eef1a820](https://github.com/istitutosuperioredisanita/sigla-main/commit/f10d4f7eef1a820) mspasiano *January 28, 2015*
+
+>**FIX sulle query CMIS**
+>
+>[8f67eddf2717c60](https://github.com/istitutosuperioredisanita/sigla-main/commit/8f67eddf2717c60) mspasiano *January 28, 2015*
+
+>**FIX sulle query CMIS**
+>
+>[c123d44d12cbc6e](https://github.com/istitutosuperioredisanita/sigla-main/commit/c123d44d12cbc6e) mspasiano *January 28, 2015*
 
 >**FIX sulle query CMIS**
 >
@@ -37785,7 +38008,19 @@
 
 >**FIX sulle query CMIS**
 >
+>[439b843ef132d85](https://github.com/istitutosuperioredisanita/sigla-main/commit/439b843ef132d85) mspasiano *January 28, 2015*
+
+>**FIX sulle query CMIS**
+>
 >[7bc8e1ee0e36350](https://github.com/istitutosuperioredisanita/sigla-main/commit/7bc8e1ee0e36350) mspasiano *January 28, 2015*
+
+>**FIX sulle query CMIS**
+>
+>[068ad1d9c3805ec](https://github.com/istitutosuperioredisanita/sigla-main/commit/068ad1d9c3805ec) mspasiano *January 28, 2015*
+
+>**FIX sulle query CMIS**
+>
+>[df291a43fa19e2e](https://github.com/istitutosuperioredisanita/sigla-main/commit/df291a43fa19e2e) mspasiano *January 28, 2015*
 
 >**FIX sulle query CMIS**
 >
@@ -37795,9 +38030,21 @@
 >
 >[eb94a46fec25ac8](https://github.com/istitutosuperioredisanita/sigla-main/commit/eb94a46fec25ac8) mspasiano *January 27, 2015*
 
+>**FIX sui contratti**
+>
+>[2a88c3247929f8c](https://github.com/istitutosuperioredisanita/sigla-main/commit/2a88c3247929f8c) mspasiano *January 27, 2015*
+
 >**BugID: 1345 Nuovo Piani dei Conti**
 >
 >[f0b7b487a480fdb](https://github.com/istitutosuperioredisanita/sigla-main/commit/f0b7b487a480fdb) rpucciarelli *January 27, 2015*
+
+>**BugID: 1345 Nuovo Piani dei Conti**
+>
+>[4d6648c77563603](https://github.com/istitutosuperioredisanita/sigla-main/commit/4d6648c77563603) rpucciarelli *January 27, 2015*
+
+>**FIX Aspect**
+>
+>[8e46af3f8b806bf](https://github.com/istitutosuperioredisanita/sigla-main/commit/8e46af3f8b806bf) mspasiano *January 27, 2015*
 
 >**FIX Aspect**
 >
@@ -37805,7 +38052,15 @@
 
 >**BugID: 1345 Nuovo Piani dei Conti**
 >
+>[dcbe602aef31dda](https://github.com/istitutosuperioredisanita/sigla-main/commit/dcbe602aef31dda) rpucciarelli *January 26, 2015*
+
+>**BugID: 1345 Nuovo Piani dei Conti**
+>
 >[2258617215ac6cf](https://github.com/istitutosuperioredisanita/sigla-main/commit/2258617215ac6cf) rpucciarelli *January 26, 2015*
+
+>**BugID: 1345 Nuovo Piani dei Conti**
+>
+>[ba1ece4a59c2c52](https://github.com/istitutosuperioredisanita/sigla-main/commit/ba1ece4a59c2c52) rpucciarelli *January 26, 2015*
 
 >**BugID: 1345 Nuovo Piani dei Conti**
 >
@@ -37813,7 +38068,15 @@
 
 >**FIX SessionTrace**
 >
+>[b2f2a8402e652be](https://github.com/istitutosuperioredisanita/sigla-main/commit/b2f2a8402e652be) mspasiano *January 26, 2015*
+
+>**FIX SessionTrace**
+>
 >[9b7ee770e2263e0](https://github.com/istitutosuperioredisanita/sigla-main/commit/9b7ee770e2263e0) mspasiano *January 26, 2015*
+
+>**FIX Document is not the latest version!**
+>
+>[022037e7b01c83e](https://github.com/istitutosuperioredisanita/sigla-main/commit/022037e7b01c83e) mspasiano *January 26, 2015*
 
 >**FIX Document is not the latest version!**
 >
@@ -37825,7 +38088,19 @@
 
 >**FIX Document is not the latest version!**
 >
+>[0bab9d609fc96e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/0bab9d609fc96e8) mspasiano *January 26, 2015*
+
+>**FIX Document is not the latest version!**
+>
+>[8b7aeb6f342b1e6](https://github.com/istitutosuperioredisanita/sigla-main/commit/8b7aeb6f342b1e6) mspasiano *January 26, 2015*
+
+>**FIX Document is not the latest version!**
+>
 >[7fa3bb14721bdbe](https://github.com/istitutosuperioredisanita/sigla-main/commit/7fa3bb14721bdbe) mspasiano *January 26, 2015*
+
+>**FIX Aspect**
+>
+>[e6a1e1760598274](https://github.com/istitutosuperioredisanita/sigla-main/commit/e6a1e1760598274) mspasiano *January 26, 2015*
 
 >**FIX Aspect**
 >
@@ -37835,9 +38110,21 @@
 >
 >[f320ecdcd2644a4](https://github.com/istitutosuperioredisanita/sigla-main/commit/f320ecdcd2644a4) mspasiano *January 26, 2015*
 
+>**FIX value**
+>
+>[ef0efab97823b58](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef0efab97823b58) mspasiano *January 26, 2015*
+
+>**downgrade commons-io alla versione 2.2**
+>
+>[943ad7402ea32ad](https://github.com/istitutosuperioredisanita/sigla-main/commit/943ad7402ea32ad) mspasiano *January 26, 2015*
+
 >**downgrade commons-io alla versione 2.2**
 >
 >[6cbd405f5391f06](https://github.com/istitutosuperioredisanita/sigla-main/commit/6cbd405f5391f06) mspasiano *January 26, 2015*
+
+>**downgrade commons-io alla versione 2.2**
+>
+>[f8aee35b4a45325](https://github.com/istitutosuperioredisanita/sigla-main/commit/f8aee35b4a45325) mspasiano *January 26, 2015*
 
 >**downgrade commons-io alla versione 2.2**
 >
@@ -37847,6 +38134,14 @@
 >
 >[b9bf6d82f72c768](https://github.com/istitutosuperioredisanita/sigla-main/commit/b9bf6d82f72c768) mspasiano *January 26, 2015*
 
+>**FIX document.getPropertyValue(SiglaCMISService.PROPERTY_DESCRIPTION)**
+>
+>[96b4a8630e2f0ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/96b4a8630e2f0ac) mspasiano *January 26, 2015*
+
+>**FIX CmisContentAlreadyExistsException**
+>
+>[530cf83377242f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/530cf83377242f7) mspasiano *January 26, 2015*
+
 >**FIX CmisContentAlreadyExistsException**
 >
 >[034ee93e04ebdaa](https://github.com/istitutosuperioredisanita/sigla-main/commit/034ee93e04ebdaa) mspasiano *January 26, 2015*
@@ -37855,112 +38150,1844 @@
 >
 >[dd03576146e1a50](https://github.com/istitutosuperioredisanita/sigla-main/commit/dd03576146e1a50) mspasiano *January 23, 2015*
 
-
-### GitHub [#11](https://github.com/istitutosuperioredisanita/sigla-main/pull/11) New Releas CNR
-
->**Closed issue  #11**
+>**Upgrade to CMIS 1.1**
 >
->[ef3acb020058c9d](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef3acb020058c9d) marco.spasiano *May 15, 2017*
+>[1e6ba3a5d7c07f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/1e6ba3a5d7c07f9) mspasiano *January 23, 2015*
 
->**Closed issue  #11**
+>**BugID: 1345 Nuovo Piani dei Conti  - voci di entrata su partite di giro**
 >
->[a8464179c373193](https://github.com/istitutosuperioredisanita/sigla-main/commit/a8464179c373193) marco.spasiano *May 15, 2017*
+>[eb8408ca51e454c](https://github.com/istitutosuperioredisanita/sigla-main/commit/eb8408ca51e454c) rpucciarelli *January 23, 2015*
 
-
-### Jira ORA-01722 
-
->**FIX java.sql.SQLSyntaxErrorException: ORA-01722: numero non valido**
+>**BugID: 1345 Nuovo Piani dei Conti  - Controllo supervisore pre modifica impegni con voci da azzerare**
 >
->[ba1f344b857c2a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/ba1f344b857c2a9) marco.spasiano *January 18, 2019*
+>[8b56f381277bd82](https://github.com/istitutosuperioredisanita/sigla-main/commit/8b56f381277bd82) rpucciarelli *January 20, 2015*
 
->**FIX java.sql.SQLSyntaxErrorException: ORA-01722: numero non valido**
+>**BugID: 1345 Nuovo Piani dei Conti - SOSPESA Verifica Voce dell'impegno con voce presente su CATEGORIA_GRUPPO_VOCE, perchè impossibilita di gestita la situazione mista delle voci del 2015, inoltre per il 2016 bisogna considerare che viene recuperata la voce dalle categoria padre(livello 0)**
 >
->[5812cb0b76e3140](https://github.com/istitutosuperioredisanita/sigla-main/commit/5812cb0b76e3140) marco.spasiano *January 18, 2019*
+>[3edf867f09c64b8](https://github.com/istitutosuperioredisanita/sigla-main/commit/3edf867f09c64b8) rpucciarelli *January 15, 2015*
 
-
-### Jira UTF-8 
-
->**FIX encoding UTF-8**
+>**BugID: 1356 - Rientro dei lavoratori**
 >
->[9e372370e7d9dbd](https://github.com/istitutosuperioredisanita/sigla-main/commit/9e372370e7d9dbd) marco.spasiano *March 19, 2018*
+>[644b19e4127709f](https://github.com/istitutosuperioredisanita/sigla-main/commit/644b19e4127709f) mdurso *January 15, 2015*
 
->**FIX encoding UTF-8**
+>**BugID: 1345 Nuovo Piani dei Conti**
 >
->[76db8957b0b6be0](https://github.com/istitutosuperioredisanita/sigla-main/commit/76db8957b0b6be0) marco.spasiano *March 19, 2018*
+>[80e10e99247e232](https://github.com/istitutosuperioredisanita/sigla-main/commit/80e10e99247e232) rpucciarelli *January 15, 2015*
 
->**FIX UTF-8 e entry duplicata nello zip**
+>**BugID: 1345 Nuovo Piani dei Conti - Cambiata selezione cdr nel pannello degli accertamenti, non più possibile mancando la uo su voce_f per le entrate**
 >
->[7f6318c7fadccfd](https://github.com/istitutosuperioredisanita/sigla-main/commit/7f6318c7fadccfd) marco.spasiano *February 22, 2018*
+>[d7eff1545f2b1cd](https://github.com/istitutosuperioredisanita/sigla-main/commit/d7eff1545f2b1cd) rpucciarelli *January 14, 2015*
 
->**FIX UTF-8 e entry duplicata nello zip**
+>**BugID: 1340 Certificazione dei crediti - Aggiornamento stato liquidazione in creazione sempre possibile**
 >
->[2318c68198fcc89](https://github.com/istitutosuperioredisanita/sigla-main/commit/2318c68198fcc89) marco.spasiano *February 22, 2018*
+>[f07fd567f32797f](https://github.com/istitutosuperioredisanita/sigla-main/commit/f07fd567f32797f) rpucciarelli *January 09, 2015*
 
->**FIX encoding to UTF-8**
+>**BugID: 1340 Certificazione dei crediti - Aggiornamento stato liquidazione post ribaltamento, in quanto viene automaticamente inibita qualsiasi modifica sui documenti ribaltati**
 >
->[9207da50da9dab7](https://github.com/istitutosuperioredisanita/sigla-main/commit/9207da50da9dab7) marco.spasiano *February 21, 2018*
+>[53d5982b2604af8](https://github.com/istitutosuperioredisanita/sigla-main/commit/53d5982b2604af8) rpucciarelli *January 09, 2015*
 
->**FIX encoding to UTF-8**
+>**BugID: 1345 Nuovo Piani dei Conti**
 >
->[464b9948a084d3c](https://github.com/istitutosuperioredisanita/sigla-main/commit/464b9948a084d3c) marco.spasiano *February 21, 2018*
+>[2c6e39cf925abe0](https://github.com/istitutosuperioredisanita/sigla-main/commit/2c6e39cf925abe0) rpucciarelli *January 08, 2015*
 
->**change encoding to UTF-8**
+>**Rese non modificabili coordinate bancarie**
 >
->[aef8eda3a30af59](https://github.com/istitutosuperioredisanita/sigla-main/commit/aef8eda3a30af59) marco.spasiano *February 20, 2018*
+>[344095471c188e0](https://github.com/istitutosuperioredisanita/sigla-main/commit/344095471c188e0) rpucciarelli *January 07, 2015*
 
->**change encoding to UTF-8**
+>**BugID: 1345 Nuovo Piani dei Conti**
 >
->[6ed308740a0f6d6](https://github.com/istitutosuperioredisanita/sigla-main/commit/6ed308740a0f6d6) marco.spasiano *February 20, 2018*
+>[aafb40be9194932](https://github.com/istitutosuperioredisanita/sigla-main/commit/aafb40be9194932) rpucciarelli *January 07, 2015*
 
->**BUG enconding UTF-8**
+>**WS Brevetti: Gestito caso di recupero della nota di credito per la fattura passiva/attiva**
 >
->[fb4b665e648e133](https://github.com/istitutosuperioredisanita/sigla-main/commit/fb4b665e648e133) mspasiano *April 23, 2015*
+>[ab7cafcca849066](https://github.com/istitutosuperioredisanita/sigla-main/commit/ab7cafcca849066) gianfranco.gasparro *December 30, 2014*
 
->**BUG enconding UTF-8**
+>**BugID: 1347 Eliminata la possibilità di firma di più fatture elettroniche**
 >
->[74eba0eac66abd1](https://github.com/istitutosuperioredisanita/sigla-main/commit/74eba0eac66abd1) mspasiano *April 23, 2015*
+>[f93471001a8f56b](https://github.com/istitutosuperioredisanita/sigla-main/commit/f93471001a8f56b) gianfranco.gasparro *December 30, 2014*
 
->**BUG encoding UTF-8**
+>**BugID: 1350 Gestione numero seriale in inventario per l'hardware obbligatorio**
 >
->[742c04722346532](https://github.com/istitutosuperioredisanita/sigla-main/commit/742c04722346532) mspasiano *April 17, 2015*
+>[8f9ed68725fbec8](https://github.com/istitutosuperioredisanita/sigla-main/commit/8f9ed68725fbec8) rpucciarelli *December 17, 2014*
 
->**BUG encoding UTF-8**
+>**BugID: 1348 WS - finanziamenti esterni ricerca Gae associati a Modulo**
 >
->[73e14d37b65ddc2](https://github.com/istitutosuperioredisanita/sigla-main/commit/73e14d37b65ddc2) mspasiano *April 17, 2015*
+>[61bae7a3289254c](https://github.com/istitutosuperioredisanita/sigla-main/commit/61bae7a3289254c) rpucciarelli *December 17, 2014*
 
->**BUG encoding UTF-8**
+>**BugID: 1253 Flusso ordinativi BNL**
 >
->[e1e4e77feae42c2](https://github.com/istitutosuperioredisanita/sigla-main/commit/e1e4e77feae42c2) mspasiano *April 17, 2015*
+>[60fae5e2d68e291](https://github.com/istitutosuperioredisanita/sigla-main/commit/60fae5e2d68e291) rpucciarelli *December 11, 2014*
 
->**BUG encoding UTF-8**
+>**BugID: 1344 Anagrafica - Inibita creazione nuovo terzo per persone fisiche**
 >
->[1ca5be4adc547aa](https://github.com/istitutosuperioredisanita/sigla-main/commit/1ca5be4adc547aa) mspasiano *April 17, 2015*
+>[b798c9782b7472a](https://github.com/istitutosuperioredisanita/sigla-main/commit/b798c9782b7472a) rpucciarelli *December 05, 2014*
 
-
-### Jira changelog-5 
-
->**Update db.changelog-5.0.0.xml**
+>**BugID: 1345 Nuovo Piani dei Conti**
 >
->[a54d5d1bb694d03](https://github.com/istitutosuperioredisanita/sigla-main/commit/a54d5d1bb694d03) GASPARRO GIANFRANCO *January 14, 2019*
+>[bf51ef9539155f1](https://github.com/istitutosuperioredisanita/sigla-main/commit/bf51ef9539155f1) rpucciarelli *November 26, 2014*
 
->**Update db.changelog-5.0.0.xml**
+>**Aggiunta possibiltà di non selezionare gruppi negativi selezionando i bottoni f24 e f24prev**
 >
->[536ec1b327dfcbe](https://github.com/istitutosuperioredisanita/sigla-main/commit/536ec1b327dfcbe) GASPARRO GIANFRANCO *January 14, 2019*
+>[ebcbdd72fca089a](https://github.com/istitutosuperioredisanita/sigla-main/commit/ebcbdd72fca089a) rpucciarelli *November 06, 2014*
 
->**Update db.changelog-5.0.0.xml**
+>**Resa modificabile la data proroga sul repertorio contratti anche se Definitivo, aggiunti cig e cup come columnFieldProperty**
 >
->[7d24c0710abbe0b](https://github.com/istitutosuperioredisanita/sigla-main/commit/7d24c0710abbe0b) GASPARRO GIANFRANCO *January 14, 2019*
+>[9c252f416375da9](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c252f416375da9) rpucciarelli *October 30, 2014*
 
->**Update db.changelog-5.0.0.xml**
+>**WS Brevetti: Gestito caso di recupero della nota di credito per la fattura attiva**
 >
->[6d3ed67c948cc3a](https://github.com/istitutosuperioredisanita/sigla-main/commit/6d3ed67c948cc3a) GASPARRO GIANFRANCO *January 14, 2019*
+>[4bc640231996dda](https://github.com/istitutosuperioredisanita/sigla-main/commit/4bc640231996dda) gianfranco.gasparro *October 30, 2014*
 
->**Update db.changelog-5.0.0.xml**
+>**BugID: 1345 Nuovo Piani dei Conti**
 >
->[ff2674b269ee9cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/ff2674b269ee9cb) GASPARRO GIANFRANCO *December 13, 2018*
+>[81c337fda055e98](https://github.com/istitutosuperioredisanita/sigla-main/commit/81c337fda055e98) rpucciarelli *October 29, 2014*
 
->**Update db.changelog-5.0.0.xml**
+>**BugID: 1343 Aggiunto dipartimento di afferenze su parametri_cds**
 >
->[a090b10fdb4e292](https://github.com/istitutosuperioredisanita/sigla-main/commit/a090b10fdb4e292) GASPARRO GIANFRANCO *December 13, 2018*
+>[795eb0c00c8932f](https://github.com/istitutosuperioredisanita/sigla-main/commit/795eb0c00c8932f) rpucciarelli *October 29, 2014*
+
+>**Gestione Brevetti: Aggiunta gestione della validità dei trovati in inserimento/modifica. Se il trovato è già indicato viene visualizzato anche se non è più valido, nel caso di modifica/inserimento del trovato vengono accettati solo trovati validi.**
+>
+>[ae7289af7c8ec61](https://github.com/istitutosuperioredisanita/sigla-main/commit/ae7289af7c8ec61) gianfranco.gasparro *October 29, 2014*
+
+>**Gestione Brevetti: Aggiunta gestione della validità dei trovati in inserimento/modifica. Se il trovato è già indicato viene visualizzato anche se non è più valido, nel caso di modifica/inserimento del trovato vengono accettati solo trovati validi.**
+>
+>[5c04a815131018e](https://github.com/istitutosuperioredisanita/sigla-main/commit/5c04a815131018e) gianfranco.gasparro *October 29, 2014*
+
+>**Corretta visualizzazione dei campi del trovato in caso di ricerca/modifica**
+>
+>[402e7358127883d](https://github.com/istitutosuperioredisanita/sigla-main/commit/402e7358127883d) gianfranco.gasparro *October 28, 2014*
+
+>**BugID: 1346 - Missioni estere con diaria**
+>
+>[182b99c90dd0306](https://github.com/istitutosuperioredisanita/sigla-main/commit/182b99c90dd0306) mdurso *October 21, 2014*
+
+>**Eliminato per creazione cartelle errate**
+>
+>[743fa4fc01860a8](https://github.com/istitutosuperioredisanita/sigla-main/commit/743fa4fc01860a8) rpucciarelli *October 21, 2014*
+
+>**BugID:1340 Certificazione dei crediti - Eliminata possibilità di non inserire obbligatoriamente l'inventariazione nel caso di Note credito**
+> * ........
+>
+>[793c7d405908d08](https://github.com/istitutosuperioredisanita/sigla-main/commit/793c7d405908d08) rpucciarelli *October 17, 2014*
+
+>**BugID: 1344 Anagrafica - Inserito controllo lunghezza codice fiscale per Persone Fisiche Italiane**
+>
+>[9d4ff0d6685e464](https://github.com/istitutosuperioredisanita/sigla-main/commit/9d4ff0d6685e464) rpucciarelli *October 17, 2014*
+
+>**BugID: 1337 Modifiche Decreto legge 24/04/2014 n.66 Art.42 - Registro unico delle Fatture - valorizzazione automatica data scadenza nelle NC**
+>
+>[6cd909d9e0b9d13](https://github.com/istitutosuperioredisanita/sigla-main/commit/6cd909d9e0b9d13) rpucciarelli *October 07, 2014*
+
+>**Fatturazione Elettronica: Corretto messaggio di errore nel caso di assenza del codice fiscale del cliente sulla fattura**
+>
+>[701ca082c9110f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/701ca082c9110f9) gianfranco.gasparro *October 02, 2014*
+
+>**Fatturazione Elettronica: Corretto controllo su presenza del codice fiscale del cliente sulla fattura**
+>
+>[5e0b9883294a250](https://github.com/istitutosuperioredisanita/sigla-main/commit/5e0b9883294a250) gianfranco.gasparro *October 02, 2014*
+
+>**Anomalie Generici passivi ente**
+> * - In cancellazione non veniva aggiornato correttamente l&#x27;importo collegato a documenti Amministrativi,
+> * - Nella creazione del mandato venivano recuperati  quelli collegati alla stesso scadenzario (non ancora liquidabili) come doc passivi collegati essendo non selezionabili.
+>
+>[d8f6b8412e9f97f](https://github.com/istitutosuperioredisanita/sigla-main/commit/d8f6b8412e9f97f) rpucciarelli *September 29, 2014*
+
+>**BugID: 1340 Certificazione dei crediti - Possibilità di non inserire obbligatoriamente l'inventariazione nel caso di fatture non ancora liquidabili**
+> * ........
+>
+>[c921c2f5824d0e4](https://github.com/istitutosuperioredisanita/sigla-main/commit/c921c2f5824d0e4) rpucciarelli *September 29, 2014*
+
+>**BugID: 1340 Certificazione dei crediti - Aggiunta gestione stato liquidazione - inserito codice pcc su terzo uo - Pissibilità di inserire importi negativi nelle fattura passiva**
+> * ........
+>
+>[262e9df4fab1cb5](https://github.com/istitutosuperioredisanita/sigla-main/commit/262e9df4fab1cb5) rpucciarelli *September 22, 2014*
+
+>**BugID: 1340 Certificazione dei crediti - Aggiunta gestione stato liquidazione - inserito codice pcc su terzo uo - Possibilità di inserire importi negativi nelle fattura passiva**
+>
+>[6d7b29ada79bda0](https://github.com/istitutosuperioredisanita/sigla-main/commit/6d7b29ada79bda0) rpucciarelli *September 16, 2014*
+
+>**BugID: 1253 Flusso ordinativi BNL**
+>
+>[c8d8b7308bab63c](https://github.com/istitutosuperioredisanita/sigla-main/commit/c8d8b7308bab63c) rpucciarelli *September 16, 2014*
+
+>**BugID: 1340 Certificazione dei crediti - Aggiunta gestione stato liquidazione - inserito codice pcc su terzo uo - Possibilità di inserire importi negativi nelle fattura passiva**
+>
+>[9c8182021fa401f](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c8182021fa401f) rpucciarelli *September 16, 2014*
+
+>**Fatturazione Elettronica: Corretta anomalia verifica esigibilità differità**
+>
+>[b80eb1da22718e1](https://github.com/istitutosuperioredisanita/sigla-main/commit/b80eb1da22718e1) rpucciarelli *September 11, 2014*
+
+>**Fatturazione Elettronica: Risolte anomalie ricerca documenti**
+>
+>[f6fd8b41e15e00d](https://github.com/istitutosuperioredisanita/sigla-main/commit/f6fd8b41e15e00d) rpagano *September 09, 2014*
+
+>**BugID: 1253 Flusso ordinativi BNL - Modifiche per generare xml (NO sepa) - indirizzo beneficiario obbligatorio anche per bonifico ed eliminato tag stato beneficiario**
+>
+>[481449bf0e2e704](https://github.com/istitutosuperioredisanita/sigla-main/commit/481449bf0e2e704) rpucciarelli *September 08, 2014*
+
+>**BUG sul recupero del pdf della fattura dal documentale**
+>
+>[04944178995c4e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/04944178995c4e8) mspasiano *September 08, 2014*
+
+>**BugID: 1337 Modifiche Decreto legge 24/04/2014 n.66 Art.42 - Registro unico delle Fatture**
+>
+>[9c24d2b7ef03cac](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c24d2b7ef03cac) rpucciarelli *August 05, 2014*
+
+>**BugID: 1340 Certificazione dei crediti - reso modificabile codice iva per le note**
+>
+>[853b003ef62c1dd](https://github.com/istitutosuperioredisanita/sigla-main/commit/853b003ef62c1dd) rpucciarelli *July 25, 2014*
+
+>**BugID: 1340 Certificazione dei crediti**
+>
+>[f817c4557001434](https://github.com/istitutosuperioredisanita/sigla-main/commit/f817c4557001434) rpucciarelli *July 24, 2014*
+
+>**BugID: 1340 Certificazione dei crediti**
+>
+>[e611dec6d41a636](https://github.com/istitutosuperioredisanita/sigla-main/commit/e611dec6d41a636) rpucciarelli *July 23, 2014*
+
+>**Bug 1338: Creata nuova funzionalità: Consultazione Incarichi, Assegni di Ricerca, Borse di studio**
+>
+>[495898b34ae1b5e](https://github.com/istitutosuperioredisanita/sigla-main/commit/495898b34ae1b5e) gianfranco.gasparro *July 15, 2014*
+
+>**BugID: 1337 Modifiche Decreto legge 24/04/2014 n.66 Art.42 - Registro unico delle Fatture**
+>
+>[b8c268cd2b8b51b](https://github.com/istitutosuperioredisanita/sigla-main/commit/b8c268cd2b8b51b) rpucciarelli *June 30, 2014*
+
+>**Aggiunto metodo**
+> * public String toString() {
+> * return &quot;USER: &quot; + getUser();
+> * }
+>
+>[e9332aa63507227](https://github.com/istitutosuperioredisanita/sigla-main/commit/e9332aa63507227) mspasiano *June 29, 2014*
+
+>**BUG sulla lista dei messaggi non chiudeva mail il BP**
+>
+>[978a90b38e375e0](https://github.com/istitutosuperioredisanita/sigla-main/commit/978a90b38e375e0) mspasiano *June 27, 2014*
+
+>**Fatturazione Elettronica: Corretto recupero del codice amministrazione IPA nel caso di mancata valorizzazione del codice fiscale**
+>
+>[ee783d244c10e45](https://github.com/istitutosuperioredisanita/sigla-main/commit/ee783d244c10e45) gianfranco.gasparro *June 25, 2014*
+
+>**Fatturazione Elettronica: Corretta anomalia sul controllo per la fatturazione elettronica al salvataggio del terzo**
+>
+>[5f700601581783d](https://github.com/istitutosuperioredisanita/sigla-main/commit/5f700601581783d) gianfranco.gasparro *June 24, 2014*
+
+>**BUG sulla lista dei messaggi non chiudeva mail il BP**
+>
+>[ab23a8f6343c222](https://github.com/istitutosuperioredisanita/sigla-main/commit/ab23a8f6343c222) mspasiano *June 24, 2014*
+
+>**Modificata gestione trovato**
+>
+>[fc1af1575faaffe](https://github.com/istitutosuperioredisanita/sigla-main/commit/fc1af1575faaffe) gianfranco.gasparro *June 24, 2014*
+
+>**Modificata gestione trovato**
+>
+>[f566d5ee25fd019](https://github.com/istitutosuperioredisanita/sigla-main/commit/f566d5ee25fd019) gianfranco.gasparro *June 24, 2014*
+
+>**Gestione Trovati:**
+> * - Corretta anomalia sul recupero del capitolo per i trovati nel caso di emissione note di credito su fattura già pagate/incassate
+> * - Eliminato il file di properties e introdotta la gestione con Spring
+>
+>[33cf2cf4d743ad9](https://github.com/istitutosuperioredisanita/sigla-main/commit/33cf2cf4d743ad9) gianfranco.gasparro *June 24, 2014*
+
+>**Fatturazione Elettronica: Aggiunti campi per invio mail**
+>
+>[bb6ac565637fa1a](https://github.com/istitutosuperioredisanita/sigla-main/commit/bb6ac565637fa1a) gianfranco.gasparro *June 24, 2014*
+
+>**Fatturazione Elettronica: Risolte una serie di anomalie e completate alcune gestioni**
+> * BUG sulla toolbar della firma alle variazioni al piano di gestione Fatturazione Elettronica
+> * Fatturazione Elettronica: Risolte una serie di anomalie e completate alcune gestioni
+> * Fatturazione Elettronica: Creata funzionalità di visualizzazione delle fatture della fatturazione elettronica. Gestito il conto di contabilità speciale in Banca d&#x27;Italia nel file di invio
+> * Fatturazione Elettronica: Corretta anomalia di mancata visualizzazione del codice IPA nel caso di ingresso diretto nel terzo senza passare per l&#x27;anagrafica
+> * Fatturazione Elettronica: Corretto messaggio
+> * Fatturazione Elettronica: Corretta anomalia sul recupero del conto di contabilità speciale della Banca d&#x27;Italia
+> * Fatturazione Elettronica: Gestita la transazione per la protocollazione. corrette anomalie nell&#x27;estrazione di note di credito e aggiunta gestione stato consegnata a SDI
+> * Fatturazione Elettronica: Corretto recupero della data di avvio della fatturazione elettronica
+> * Fatturazione Elettronica: Corretto recupero del nome del file da inviare
+>
+>[730a3d575bde00e](https://github.com/istitutosuperioredisanita/sigla-main/commit/730a3d575bde00e) gianfranco.gasparro *June 24, 2014*
+
+>**Rename**
+>
+>[397f2b78ad3c4bd](https://github.com/istitutosuperioredisanita/sigla-main/commit/397f2b78ad3c4bd) gianfranco.gasparro *June 24, 2014*
+
+>**BugID: 1253 Flusso ordinativi BNL - Modifiche per generare xml non utilizzando sepa ma valorizzando la piazzatura obbligatoria per bonifico bancario**
+>
+>[0cea9c0f5224566](https://github.com/istitutosuperioredisanita/sigla-main/commit/0cea9c0f5224566) rpucciarelli *June 20, 2014*
+
+>**BUG sulla lista dei messaggi non chiudeva mail il BP**
+>
+>[a092fc93a9e0af3](https://github.com/istitutosuperioredisanita/sigla-main/commit/a092fc93a9e0af3) mspasiano *June 19, 2014*
+
+>**Aggiornata versione framework alla 2.1.0**
+> * Rilascio nuva funzionalità servizio REST per le Consultazioni
+>
+>[c9a632963ecc2d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/c9a632963ecc2d3) rpucciarelli *June 16, 2014*
+
+>**Chiuso il BusinessProcess dopo la ricerca degli incarichi per liberare le connessioni al DB**
+>
+>[da9e4bdef7f3ec1](https://github.com/istitutosuperioredisanita/sigla-main/commit/da9e4bdef7f3ec1) mspasiano *June 16, 2014*
+
+>**Mancava il filtro cig sui contratti**
+>
+>[a614d3a59b6906c](https://github.com/istitutosuperioredisanita/sigla-main/commit/a614d3a59b6906c) rpucciarelli *June 13, 2014*
+
+>**Mancava il filtro cig sui contratti**
+>
+>[ed9fdd7b22b83e2](https://github.com/istitutosuperioredisanita/sigla-main/commit/ed9fdd7b22b83e2) rpucciarelli *June 13, 2014*
+
+>**Corretta anomalia sul recupero del capitolo per i trovati nel caso di emissione note di credito su fattura già pagate/incassate**
+> * ........
+>
+>[61e48c53b982877](https://github.com/istitutosuperioredisanita/sigla-main/commit/61e48c53b982877) gianfranco.gasparro *June 13, 2014*
+
+>**Mancava il filtro cig sui contratti**
+>
+>[52d388a8a256b62](https://github.com/istitutosuperioredisanita/sigla-main/commit/52d388a8a256b62) rpucciarelli *June 13, 2014*
+
+>**Aggiornata versione framework alla 2.1.0**
+> * Rilascio nuva funzionalità servizio REST per le Consultazioni
+>
+>[b7770d2ffca596b](https://github.com/istitutosuperioredisanita/sigla-main/commit/b7770d2ffca596b) rpucciarelli *June 12, 2014*
+
+>**BUG sulla toolbar della firma alle variazioni al piano di gestione**
+>
+>[23555135f957542](https://github.com/istitutosuperioredisanita/sigla-main/commit/23555135f957542) mspasiano *June 11, 2014*
+
+>**Eliminato momentaneamente caricamento file properties**
+>
+>[b024b1e3e77de94](https://github.com/istitutosuperioredisanita/sigla-main/commit/b024b1e3e77de94) gianfranco.gasparro *June 10, 2014*
+
+>**BugID: 1320 - Risolta anomalia di mancato caricamente tabella INCARICHI_REPERTORIO_ANNO**
+>
+>[5c6e8c2a1a31846](https://github.com/istitutosuperioredisanita/sigla-main/commit/5c6e8c2a1a31846) rpagano *June 10, 2014*
+
+>**Ripristinato metodo erroneamente eliminato**
+>
+>[9be667bdff8189e](https://github.com/istitutosuperioredisanita/sigla-main/commit/9be667bdff8189e) gianfranco.gasparro *June 10, 2014*
+
+>**Aggiornato messaggio nella modifica dei terzi ora non è piu bloccante.**
+>
+>[83baf423a4d8676](https://github.com/istitutosuperioredisanita/sigla-main/commit/83baf423a4d8676) mspasiano *June 10, 2014*
+
+>**Aggiornato messaggio nella modifica dei terzi ora non è piu bloccante.**
+>
+>[fe4953f431260f4](https://github.com/istitutosuperioredisanita/sigla-main/commit/fe4953f431260f4) mspasiano *June 10, 2014*
+
+>**Corretti errori merge**
+>
+>[33d9c6bc3c8b0fd](https://github.com/istitutosuperioredisanita/sigla-main/commit/33d9c6bc3c8b0fd) gianfranco.gasparro *June 09, 2014*
+
+>**Modificata versione 1.6 JAVA messa per errore**
+>
+>[2bd83d019c268c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/2bd83d019c268c1) gianfranco.gasparro *June 09, 2014*
+
+>**Spostati xsd**
+>
+>[240f4ddf5f91abd](https://github.com/istitutosuperioredisanita/sigla-main/commit/240f4ddf5f91abd) gianfranco.gasparro *June 09, 2014*
+
+>**BugID: 1332 Modifiche Art.13 det TUIR - Gestione credito Irpef**
+>
+>[1b95402473e920a](https://github.com/istitutosuperioredisanita/sigla-main/commit/1b95402473e920a) rpucciarelli *May 26, 2014*
+
+>**BugID: 1332 Modifiche Art.13 det TUIR - Gestione credito Irpef**
+>
+>[f4d0061ca502043](https://github.com/istitutosuperioredisanita/sigla-main/commit/f4d0061ca502043) rpucciarelli *May 26, 2014*
+
+>**BugID: 1332 Modifiche Art.13 det TUIR - Gestione credito Irpef**
+>
+>[7b90cb625b882c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/7b90cb625b882c1) rpucciarelli *May 26, 2014*
+
+>**BugID: 1332 - Modifiche Art.13 det TUIR - Gestione credito Irpef**
+>
+>[385b21da1d736c0](https://github.com/istitutosuperioredisanita/sigla-main/commit/385b21da1d736c0) mdurso *May 26, 2014*
+
+>**BugID: 1331 Risoluzione anomalia codifica Riscontri inseriti manualmente**
+>
+>[078978d076d634b](https://github.com/istitutosuperioredisanita/sigla-main/commit/078978d076d634b) rpucciarelli *May 08, 2014*
+
+>**Soluzione anomalia "'" sostituito con " " nella descrizione del trasferimento, problema più volte riscontrato nel lanciare il job di trasferimento**
+>
+>[c158f18d2a33644](https://github.com/istitutosuperioredisanita/sigla-main/commit/c158f18d2a33644) rpucciarelli *May 07, 2014*
+
+>**Aggiunta nuova consultazione sulle Veriazioni in Competenza e in Residuo**
+>
+>[7d0bb5f8682901d](https://github.com/istitutosuperioredisanita/sigla-main/commit/7d0bb5f8682901d) mspasiano *May 07, 2014*
+
+>**Creata una stampa uscite in conto residui con raggruppamenti leggermente diversi  per esercizio/voce**
+>
+>[3657696a4ec0065](https://github.com/istitutosuperioredisanita/sigla-main/commit/3657696a4ec0065) rpucciarelli *April 15, 2014*
+
+>**Anomalia inizializzazione passivo ente in inserimento generico passivo**
+>
+>[343a19cef716873](https://github.com/istitutosuperioredisanita/sigla-main/commit/343a19cef716873) rpucciarelli *April 14, 2014*
+
+>**BugID: 1328 Consultazione Confronto entrate spese Complessiva**
+>
+>[18980b05df7585d](https://github.com/istitutosuperioredisanita/sigla-main/commit/18980b05df7585d) rpucciarelli *April 14, 2014*
+
+>**Aggiunta data scadenza come dato restitutito nella ricerca sulle fatture passiva**
+>
+>[200d99fcb59acf9](https://github.com/istitutosuperioredisanita/sigla-main/commit/200d99fcb59acf9) rpucciarelli *April 11, 2014*
+
+>**BugID: 1253 Flusso ordinativi BNL - Modifiche per generare xml - gestito inserimento nella causale delle reversali del cup**
+>
+>[1c1e87da9821185](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c1e87da9821185) rpucciarelli *April 08, 2014*
+
+>**Inserito ordinamento tipo trattamento**
+>
+>[ffb04b1e98ef346](https://github.com/istitutosuperioredisanita/sigla-main/commit/ffb04b1e98ef346) rpucciarelli *April 08, 2014*
+
+>**BugID: 1320 - Risolta anomalia inserimento terzi non persone fisiche**
+>
+>[93c04ccc70eacea](https://github.com/istitutosuperioredisanita/sigla-main/commit/93c04ccc70eacea) rpagano *April 01, 2014*
+
+>**BugID: 1320 - Risolta anomalia di mancato caricamente tabella INCARICHI_REPERTORIO_ANNO**
+>
+>[d98c75ab78eb563](https://github.com/istitutosuperioredisanita/sigla-main/commit/d98c75ab78eb563) rpagano *April 01, 2014*
+
+>**Anomalia stampa reversali da gestione e da lancio stampa considerato cd_cds_origine**
+>
+>[878c253c12ada87](https://github.com/istitutosuperioredisanita/sigla-main/commit/878c253c12ada87) rpucciarelli *March 31, 2014*
+
+>**Aggiunta autenticazione per il download dei file dal documentale**
+>
+>[b1e85942c96688f](https://github.com/istitutosuperioredisanita/sigla-main/commit/b1e85942c96688f) mspasiano *March 27, 2014*
+
+>**Anomalia creazione Anagrafica da fattura attiva con riporto non coerente alla tipologia della fattura**
+>
+>[0131ef2aa1a0141](https://github.com/istitutosuperioredisanita/sigla-main/commit/0131ef2aa1a0141) rpucciarelli *March 25, 2014*
+
+>**Data scadenza in inserimento fattura passiva obbligatoria - controllo valorizzazione data scadenza se precedentemente salvata**
+>
+>[88adfdba5795965](https://github.com/istitutosuperioredisanita/sigla-main/commit/88adfdba5795965) rpucciarelli *March 21, 2014*
+
+>**Data scadenza in inserimento fattura passiva obbligatoria**
+>
+>[0ac1e707a53cb12](https://github.com/istitutosuperioredisanita/sigla-main/commit/0ac1e707a53cb12) rpucciarelli *March 20, 2014*
+
+>**BugID: 1327 Consultazione Inventario per ricognizione**
+>
+>[0479833b51f77af](https://github.com/istitutosuperioredisanita/sigla-main/commit/0479833b51f77af) rpucciarelli *March 13, 2014*
+
+>**BugID: 1253 Flusso ordinativi BNL - Modifiche per generare xml**
+>
+>[4ae9c51201c730b](https://github.com/istitutosuperioredisanita/sigla-main/commit/4ae9c51201c730b) rpucciarelli *March 12, 2014*
+
+>**Risoluzione piccole anomalie - miglioramenti**
+>
+>[06e8d3a68811c5c](https://github.com/istitutosuperioredisanita/sigla-main/commit/06e8d3a68811c5c) rpucciarelli *March 05, 2014*
+
+>**BugID: 1326 - Inserito filtro per Uo nella stampa Mandati**
+>
+>[cb823418ec4faba](https://github.com/istitutosuperioredisanita/sigla-main/commit/cb823418ec4faba) rpucciarelli *February 27, 2014*
+
+>**BugID: 1325 Variazioni competenza**
+> * - Archiviazione data firma
+> * - Gestione visualizzazione anche della variazioni Approvate e approvate formali dalla mappa della predisposizione, per consentire di rivisualizzare la documentazione allegata
+> * - Da ente la ricerca sulla mappa di predisposizione recupera (di default) le variazioni firmate(per non appesantire), invece negli altri casi su tutte.
+>
+>[deed92727a4f8c3](https://github.com/istitutosuperioredisanita/sigla-main/commit/deed92727a4f8c3) rpucciarelli *February 27, 2014*
+
+>**aggiornamento server**
+>
+>[6d41ee7d7c5d57e](https://github.com/istitutosuperioredisanita/sigla-main/commit/6d41ee7d7c5d57e) rpucciarelli *February 24, 2014*
+
+>**Anomalia selezione codici iva**
+>
+>[7a336892afc9a82](https://github.com/istitutosuperioredisanita/sigla-main/commit/7a336892afc9a82) rpucciarelli *February 24, 2014*
+
+>**aggiornamento server**
+>
+>[0671da64ca5a3c6](https://github.com/istitutosuperioredisanita/sigla-main/commit/0671da64ca5a3c6) rpucciarelli *February 21, 2014*
+
+>**BugID: 1325 Variazioni competenza**
+> * - Archiviazione data firma
+> * - Gestione visualizzazione anche della variazioni Approvate e approvate formali dalla mappa della predisposizione, per consentire di rivisualizzare la documentazione allegata
+> * - Da ente la ricerca sulla mappa di predisposizione recupera (di default) le variazioni firmate(per non appesantire), invece negli altri casi su tutte.
+>
+>[f822eeec29edfc7](https://github.com/istitutosuperioredisanita/sigla-main/commit/f822eeec29edfc7) rpucciarelli *February 17, 2014*
+
+>**BugID: 1325 Variazioni competenza**
+> * - Archiviazione data firma
+> * - Gestione visualizzazione anche della variazioni Approvate e approvate formali dalla mappa della predisposizione, per consentire di rivisualizzare la documentazione allegata
+> * - Da ente la ricerca sulla mappa di predisposizione recupera (di default) le variazioni firmate(per non appesantire), invece negli altri casi su tutte.
+>
+>[658649c6393db7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/658649c6393db7c) rpucciarelli *February 14, 2014*
+
+>**Aggiunto filtro su anno di esercizio**
+>
+>[f14b4b63552e07f](https://github.com/istitutosuperioredisanita/sigla-main/commit/f14b4b63552e07f) gianfranco.gasparro *February 14, 2014*
+
+>**Corretto recupero dell'indirizzo dell'unita organizzativa in ricerca**
+>
+>[9e81faf29b4da2f](https://github.com/istitutosuperioredisanita/sigla-main/commit/9e81faf29b4da2f) gianfranco.gasparro *February 14, 2014*
+
+>**BugID: 1324 Nuova consultazione per Rendicontazione**
+>
+>[6af13cb052ab177](https://github.com/istitutosuperioredisanita/sigla-main/commit/6af13cb052ab177) rpucciarelli *February 13, 2014*
+
+>**BugID: 1324 Nuova consultazione per Rendicontazione**
+>
+>[8ddb2745a7ea2f5](https://github.com/istitutosuperioredisanita/sigla-main/commit/8ddb2745a7ea2f5) rpucciarelli *February 07, 2014*
+
+>**Anomalia controllo indicazione tipo gestione**
+>
+>[ed96b3700dcae1b](https://github.com/istitutosuperioredisanita/sigla-main/commit/ed96b3700dcae1b) rpucciarelli *January 21, 2014*
+
+>**BugID: 1253 Flusso ordinativi BNL - Modifiche per generare xml - eliminata la gestione data limite gestione siope_cup, va solamente per esercizio Controllo bic obbligatorio e strutturato anche per IT**
+> * ---------------------
+>
+>[da96686d3268b40](https://github.com/istitutosuperioredisanita/sigla-main/commit/da96686d3268b40) rpucciarelli *January 07, 2014*
+
+>**Risoluzione anomalia lancio stampa situazione di cassa consentita data fine superiore all'esercizio di scrivania per verificare i riscontri pervenuti successivamente**
+>
+>[7e66523d4003817](https://github.com/istitutosuperioredisanita/sigla-main/commit/7e66523d4003817) rpucciarelli *January 03, 2014*
+
+>**BugID: 1321 - Spesometro Creazione del flusso per l’invio dei dati richiesti in base all’art.21 del D.L. n°78/2010  convertito in L.n°122/2010 - Blacklist fiscalità speciali - Spesometro annuale**
+>
+>[ae56a8c1c417bff](https://github.com/istitutosuperioredisanita/sigla-main/commit/ae56a8c1c417bff) rpucciarelli *January 02, 2014*
+
+>**BugID: 1253 Flusso ordinativi BNL - Modifiche per generare xml - eliminata la gestione data limite gestione siope_cup, va solamente per esercizio Controllo bic obbligatorio e strutturato anche per IT**
+> * ---------------------
+>
+>[ba684b9f6a70e90](https://github.com/istitutosuperioredisanita/sigla-main/commit/ba684b9f6a70e90) rpucciarelli *January 02, 2014*
+
+>**BugID: 1253 Flusso ordinativi BNL - Modifiche per generare xml - eliminata la gestione data limite gestione siope_cup, va solamente per esercizio Controllo bic obbligatorio e strutturato anche per IT**
+> * ---------------------
+>
+>[788f84fc5000f6f](https://github.com/istitutosuperioredisanita/sigla-main/commit/788f84fc5000f6f) rpucciarelli *January 02, 2014*
+
+>**BugID: 1253 Flusso ordinativi BNL - Modifiche per generare xml**
+>
+>[096dde2d4cbd93f](https://github.com/istitutosuperioredisanita/sigla-main/commit/096dde2d4cbd93f) rpucciarelli *January 02, 2014*
+
+>**BugID: 1314 Pdgp 2014 -**
+> * - Controllo per le Gae di spesa della valorizzazione del codice Cofog per la predisposizione delle variazioni a stanziamento residuo leggendo l&#x27;assestato
+> * - Controllo valorizzazione  Cofog nelle variazioni a stanziamento residuo nell&#x27;approvazione per l&#x27;aggiornamento degli anni successivi se già effettuato il ribaltamento
+>
+>[c911b94d774e6fc](https://github.com/istitutosuperioredisanita/sigla-main/commit/c911b94d774e6fc) rpucciarelli *November 21, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[ec0018e0d4a145d](https://github.com/istitutosuperioredisanita/sigla-main/commit/ec0018e0d4a145d) rpucciarelli *November 13, 2013*
+
+>**BugID: 1314 Pdgp 2014**
+>
+>[38c76f69d8472cd](https://github.com/istitutosuperioredisanita/sigla-main/commit/38c76f69d8472cd) rpucciarelli *November 04, 2013*
+
+>**Anomialia segnala Daniela Castellet**
+>
+>[6ceeb5059d75432](https://github.com/istitutosuperioredisanita/sigla-main/commit/6ceeb5059d75432) rpucciarelli *October 16, 2013*
+
+>**Agiiunto controllo per la visibilità della contabile**
+>
+>[6a91c1a22e4221d](https://github.com/istitutosuperioredisanita/sigla-main/commit/6a91c1a22e4221d) mspasiano *September 25, 2013*
+
+>**BugID: 1167 - Seguito circolare 27/2013 reso Facoltativo Ambito Missione + Allineata funzione di estrazione singola F24 da Liquidazione**
+>
+>[0389bf0898ed78e](https://github.com/istitutosuperioredisanita/sigla-main/commit/0389bf0898ed78e) rpucciarelli *September 09, 2013*
+
+>**BugID: 1300 - Consultazione Storico GAE dei movimenti contabili di spesa dal 2005**
+>
+>[3fcfc1ef338e11b](https://github.com/istitutosuperioredisanita/sigla-main/commit/3fcfc1ef338e11b) rpucciarelli *September 09, 2013*
+
+>**BugID: 1167 - Seguito circolare 27/2013 reso Facoltativo Ambito Missione + Allineata funzione di estrazione singola F24 da Liquidazione**
+>
+>[c9bba0ca194004d](https://github.com/istitutosuperioredisanita/sigla-main/commit/c9bba0ca194004d) rpucciarelli *September 09, 2013*
+
+>**BugID: 1295 - Consultazione Contratti, con totali e dettaglio documenti amministrativi e contabili**
+>
+>[a99777860a96b9a](https://github.com/istitutosuperioredisanita/sigla-main/commit/a99777860a96b9a) rpucciarelli *September 09, 2013*
+
+>**BugID: 1296 Consultazione Accertamenti per Gae - aggiunto esercizio documento anche alla speculare per gli impegni**
+>
+>[f3bb94676ea3e75](https://github.com/istitutosuperioredisanita/sigla-main/commit/f3bb94676ea3e75) rpucciarelli *September 09, 2013*
+
+>**Anomalia recupero persone fisiche cessate**
+>
+>[47c48207a89d680](https://github.com/istitutosuperioredisanita/sigla-main/commit/47c48207a89d680) rpucciarelli *July 05, 2013*
+
+>**Eliminato controllo data fine non superiore a data odierna al lancio di alcune stampe**
+>
+>[1d1f0c3406dbc55](https://github.com/istitutosuperioredisanita/sigla-main/commit/1d1f0c3406dbc55) rpucciarelli *July 03, 2013*
+
+>**BugID: 777 - Gestione Accordi bilaterali - Modifica calcolo importi per stranieri**
+>
+>[5ad68251eda34ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/5ad68251eda34ba) rpagano *June 21, 2013*
+
+>**BugID: 760 - Correzione anomalia in fase di collegamento variazione generica**
+>
+>[8153ac3fc634e23](https://github.com/istitutosuperioredisanita/sigla-main/commit/8153ac3fc634e23) rpagano *June 20, 2013*
+
+>**BugID: 760 - Aggiunta variazione incarico per maternità**
+>
+>[614cb21ab45d9a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/614cb21ab45d9a9) rpagano *June 20, 2013*
+
+>**BugID: 676 - Aggiunte nuove informazioni richieste dal sistema PERLA**
+>
+>[dee4cc550c230e2](https://github.com/istitutosuperioredisanita/sigla-main/commit/dee4cc550c230e2) rpagano *June 20, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[cdfbab7172a507a](https://github.com/istitutosuperioredisanita/sigla-main/commit/cdfbab7172a507a) rpucciarelli *June 03, 2013*
+
+>**BugID: 1167 Reso Obbligatorio Ambito Missione**
+>
+>[1c7ca1d59122d8e](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c7ca1d59122d8e) rpucciarelli *May 28, 2013*
+
+>**BugID: 1174 Modifica consultazione Impegni gae e logica selezione Gae**
+>
+>[5388070f46f0856](https://github.com/istitutosuperioredisanita/sigla-main/commit/5388070f46f0856) rpucciarelli *May 16, 2013*
+
+>**BugID: 1167 Reso Obbligatorio Ambito Missione**
+>
+>[a2288a2c38918c4](https://github.com/istitutosuperioredisanita/sigla-main/commit/a2288a2c38918c4) rpucciarelli *May 16, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[a6da2db933b757c](https://github.com/istitutosuperioredisanita/sigla-main/commit/a6da2db933b757c) rpucciarelli *May 16, 2013*
+
+>**BugID: 1043 Conto Terzi**
+> * WS per Conto Terzi - aggiunto il filtro sul cdr assegnatario per le variazioni a residuo
+>
+>[63d73ecfa508c9e](https://github.com/istitutosuperioredisanita/sigla-main/commit/63d73ecfa508c9e) fgiardina *May 08, 2013*
+
+>**anomalia setOrderBy**
+>
+>[9b2f383f7a1452d](https://github.com/istitutosuperioredisanita/sigla-main/commit/9b2f383f7a1452d) rpucciarelli *May 06, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[4a9d5d3af7ef4a6](https://github.com/istitutosuperioredisanita/sigla-main/commit/4a9d5d3af7ef4a6) rpucciarelli *May 06, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[5c31fc00c12bee8](https://github.com/istitutosuperioredisanita/sigla-main/commit/5c31fc00c12bee8) rpucciarelli *May 03, 2013*
+
+>**BugID: 1043 Conto Terzi**
+> * WS per Conto Terzi
+> * Modificato ws per recupero variazioni residuo e competenza
+>
+>[307f7905c858056](https://github.com/istitutosuperioredisanita/sigla-main/commit/307f7905c858056) fgiardina *May 02, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18 - Correzione anomalia Alfresco**
+>
+>[bf1abfec9e4f705](https://github.com/istitutosuperioredisanita/sigla-main/commit/bf1abfec9e4f705) rpagano *April 30, 2013*
+
+>**BugID: 1146 Gestione delegato multiplo**
+>
+>[d7077cb71a8aa7e](https://github.com/istitutosuperioredisanita/sigla-main/commit/d7077cb71a8aa7e) rpucciarelli *April 30, 2013*
+
+>**BugID: 1059 - Gestito sdoppiamento fatture passive + risoluzione piccole anomalie**
+>
+>[a0ae7f1838a6f2a](https://github.com/istitutosuperioredisanita/sigla-main/commit/a0ae7f1838a6f2a) rpucciarelli *April 24, 2013*
+
+>**BugID: 1146 Gestione delegato multiplo**
+>
+>[84944c7641a2b51](https://github.com/istitutosuperioredisanita/sigla-main/commit/84944c7641a2b51) rpucciarelli *April 24, 2013*
+
+>**BugID: 1043 Conto Terzi**
+> * WS per Conto Terzi
+>
+>[02c65b3a10b3d42](https://github.com/istitutosuperioredisanita/sigla-main/commit/02c65b3a10b3d42) rpucciarelli *April 24, 2013*
+
+>**BugID: 1043 Conto Terzi**
+> * WS per Conto Terzi
+>
+>[ba2a741c70ffec5](https://github.com/istitutosuperioredisanita/sigla-main/commit/ba2a741c70ffec5) rpucciarelli *April 24, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18 - Gestione content type file e obbligatorietà su Responsabile**
+>
+>[eb1a4f6d18de306](https://github.com/istitutosuperioredisanita/sigla-main/commit/eb1a4f6d18de306) rpagano *April 24, 2013*
+
+>**BugID: 1043 Conto Terzi**
+> * WS per Conto Terzi
+>
+>[fd756d16ebd7634](https://github.com/istitutosuperioredisanita/sigla-main/commit/fd756d16ebd7634) rpucciarelli *April 24, 2013*
+
+>**Risoluzione piccole anomalie, miglioramenti**
+>
+>[94035c871540df4](https://github.com/istitutosuperioredisanita/sigla-main/commit/94035c871540df4) rpucciarelli *April 19, 2013*
+
+>**BugID: 1043 Conto Terzi**
+> * WS per Conto Terzi
+>
+>[e429282e14b4601](https://github.com/istitutosuperioredisanita/sigla-main/commit/e429282e14b4601) fgiardina *April 12, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[e4e79e986a9b881](https://github.com/istitutosuperioredisanita/sigla-main/commit/e4e79e986a9b881) rpucciarelli *April 11, 2013*
+
+>**Risoluzione piccole anomalie, miglioramenti**
+>
+>[b2793c69acde296](https://github.com/istitutosuperioredisanita/sigla-main/commit/b2793c69acde296) rpucciarelli *April 09, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[24449e8b2617945](https://github.com/istitutosuperioredisanita/sigla-main/commit/24449e8b2617945) rpucciarelli *March 28, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[a228611922303f6](https://github.com/istitutosuperioredisanita/sigla-main/commit/a228611922303f6) rpucciarelli *March 27, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[6f7a331a330819f](https://github.com/istitutosuperioredisanita/sigla-main/commit/6f7a331a330819f) mspasiano *March 22, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[2d542d2acb71bca](https://github.com/istitutosuperioredisanita/sigla-main/commit/2d542d2acb71bca) mspasiano *March 21, 2013*
+
+>**Anomalia Lancio Stampa ripartizione costi su GAE/Modulo/Commessa**
+>
+>[c452a90531df240](https://github.com/istitutosuperioredisanita/sigla-main/commit/c452a90531df240) rpucciarelli *March 18, 2013*
+
+>**BugID: 1058 Nuove consultazioni Cup mandati/reversali**
+>
+>[8bbbb1b43a0b928](https://github.com/istitutosuperioredisanita/sigla-main/commit/8bbbb1b43a0b928) rpucciarelli *March 15, 2013*
+
+>**BugID: 1059 - Gestito sdoppiamento fatture passive + risoluzione piccole anomalie**
+>
+>[0b9ff336e45b722](https://github.com/istitutosuperioredisanita/sigla-main/commit/0b9ff336e45b722) rpucciarelli *March 15, 2013*
+
+>**BugID: 1058 Nuove consultazioni Cup mandati/reversali**
+>
+>[7e39854b8c7fabc](https://github.com/istitutosuperioredisanita/sigla-main/commit/7e39854b8c7fabc) rpucciarelli *March 15, 2013*
+
+>**Risoluzione piccole anomalie - Anomalia abilitazioni Nc da fatture parzialmente riportate**
+>
+>[a3accfff75c02d9](https://github.com/istitutosuperioredisanita/sigla-main/commit/a3accfff75c02d9) rpucciarelli *March 15, 2013*
+
+>**Aggiornata la versione del framework a 2.0.3**
+>
+>[23e60d26edfe5c0](https://github.com/istitutosuperioredisanita/sigla-main/commit/23e60d26edfe5c0) mspasiano *March 13, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[108b86ba5fe52cf](https://github.com/istitutosuperioredisanita/sigla-main/commit/108b86ba5fe52cf) mspasiano *March 13, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[e1e6237e0fc7cf7](https://github.com/istitutosuperioredisanita/sigla-main/commit/e1e6237e0fc7cf7) mspasiano *March 11, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[e9c35d674140b9c](https://github.com/istitutosuperioredisanita/sigla-main/commit/e9c35d674140b9c) rpucciarelli *March 11, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[35395c23ead69ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/35395c23ead69ee) mspasiano *March 10, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[31695b2a91dbfec](https://github.com/istitutosuperioredisanita/sigla-main/commit/31695b2a91dbfec) mspasiano *March 10, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[48b7f37737cd7f6](https://github.com/istitutosuperioredisanita/sigla-main/commit/48b7f37737cd7f6) mspasiano *March 10, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[4de28a2b3c19bd4](https://github.com/istitutosuperioredisanita/sigla-main/commit/4de28a2b3c19bd4) mspasiano *March 09, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[b3afa838733e371](https://github.com/istitutosuperioredisanita/sigla-main/commit/b3afa838733e371) mspasiano *March 09, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[2f16c52da4778d1](https://github.com/istitutosuperioredisanita/sigla-main/commit/2f16c52da4778d1) mspasiano *March 09, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[316ca35c1d0ed25](https://github.com/istitutosuperioredisanita/sigla-main/commit/316ca35c1d0ed25) mspasiano *March 09, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[e76180ab57b2ba6](https://github.com/istitutosuperioredisanita/sigla-main/commit/e76180ab57b2ba6) mspasiano *March 09, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[ff3348b9b894575](https://github.com/istitutosuperioredisanita/sigla-main/commit/ff3348b9b894575) rpucciarelli *March 07, 2013*
+
+>**Consentito lo sdoppiamento delle righe di fattuta attiva anche se a 0, richiesta IIT**
+>
+>[8effc2197218dc3](https://github.com/istitutosuperioredisanita/sigla-main/commit/8effc2197218dc3) rpucciarelli *March 06, 2013*
+
+>**Passato il numero di Variazione al metodo findVariazioniSigned**
+>
+>[37532084e859e70](https://github.com/istitutosuperioredisanita/sigla-main/commit/37532084e859e70) mspasiano *March 05, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[1b91caef0a2483d](https://github.com/istitutosuperioredisanita/sigla-main/commit/1b91caef0a2483d) rpucciarelli *March 04, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[2ad933f433045db](https://github.com/istitutosuperioredisanita/sigla-main/commit/2ad933f433045db) mspasiano *February 21, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18 - Ricerca Incarichi e Contratto anche per terzo associato per lo gli studi associati**
+>
+>[f0c6886616c440b](https://github.com/istitutosuperioredisanita/sigla-main/commit/f0c6886616c440b) rpucciarelli *February 19, 2013*
+
+>**BugID: 779 - Tipo di prestazione su Compenso**
+>
+>[ff9172eadf040c7](https://github.com/istitutosuperioredisanita/sigla-main/commit/ff9172eadf040c7) mdurso *February 19, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18 - Anomalia estenzioni file su CMIS**
+>
+>[f90c2f19e4f3df8](https://github.com/istitutosuperioredisanita/sigla-main/commit/f90c2f19e4f3df8) rpagano *February 15, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18 - Gestione diverse tipologie BSTUDIO**
+>
+>[da53741d8ca4973](https://github.com/istitutosuperioredisanita/sigla-main/commit/da53741d8ca4973) rpagano *February 15, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18 - Anomalia file progetto e data stipula**
+>
+>[c7b2fe3503fe271](https://github.com/istitutosuperioredisanita/sigla-main/commit/c7b2fe3503fe271) rpagano *February 14, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[978faf4259abb5b](https://github.com/istitutosuperioredisanita/sigla-main/commit/978faf4259abb5b) mspasiano *February 14, 2013*
+
+>**Gestione delle Contabili BNL**
+>
+>[64934b3bd317e80](https://github.com/istitutosuperioredisanita/sigla-main/commit/64934b3bd317e80) mspasiano *February 13, 2013*
+
+>**Carichi familiari - inibito inserimento per uno stesso carico in un anno d'imposta già presente**
+>
+>[ae26e2c49795d17](https://github.com/istitutosuperioredisanita/sigla-main/commit/ae26e2c49795d17) mdurso *February 11, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[26ca97e9a15d700](https://github.com/istitutosuperioredisanita/sigla-main/commit/26ca97e9a15d700) rpagano *February 05, 2013*
+
+>**BugID: 777 - Gestione Accordi bilaterali - Errore in fase di selezione modalità di pagamento**
+>
+>[4183fdc8d7da423](https://github.com/istitutosuperioredisanita/sigla-main/commit/4183fdc8d7da423) rpagano *February 05, 2013*
+
+>**Anomalia formato importo**
+>
+>[b093033c739dcf4](https://github.com/istitutosuperioredisanita/sigla-main/commit/b093033c739dcf4) rpucciarelli *February 05, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[0944e39c489a7d0](https://github.com/istitutosuperioredisanita/sigla-main/commit/0944e39c489a7d0) rpagano *February 01, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18 - Ricerca Incarichi anche per terzo associato per lo gli studi associati**
+> * - Modifiche Articolo 18 - Abilitazione campi (Contratto e Incarico) nel caso di Modifica di Residui Propri nell&#x27;ottica della riduzione dell&#x27;importo soglia per l&#x27;obbligo di queste informazioni
+>
+>[558a6040d8609cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/558a6040d8609cc) rpucciarelli *February 01, 2013*
+
+>**BugID: 1045 - PDGP 2013-2015 - Verifica contributo all'attività ordinaria calcolato sulle entrate esterne - non per la SAC -**
+> * spostata la percentuale sull&#x27;elemento voce
+>
+>[729a4a2ef56a899](https://github.com/istitutosuperioredisanita/sigla-main/commit/729a4a2ef56a899) rpucciarelli *January 23, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[af7d5c6e0b12266](https://github.com/istitutosuperioredisanita/sigla-main/commit/af7d5c6e0b12266) mspasiano *January 22, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[5d0ae6c8944c010](https://github.com/istitutosuperioredisanita/sigla-main/commit/5d0ae6c8944c010) rpagano *January 22, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[11f3ea5a9ab25f5](https://github.com/istitutosuperioredisanita/sigla-main/commit/11f3ea5a9ab25f5) rpagano *January 22, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[4e539cd38bb231c](https://github.com/istitutosuperioredisanita/sigla-main/commit/4e539cd38bb231c) rpagano *January 22, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[9f3cd61d817f6eb](https://github.com/istitutosuperioredisanita/sigla-main/commit/9f3cd61d817f6eb) mspasiano *January 22, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[e022a874c33140c](https://github.com/istitutosuperioredisanita/sigla-main/commit/e022a874c33140c) rpagano *January 21, 2013*
+
+>**BugID: 779 - Tipo di prestazione su Compenso**
+>
+>[c87d9fd676da7c2](https://github.com/istitutosuperioredisanita/sigla-main/commit/c87d9fd676da7c2) mdurso *January 21, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[8a8ad2e4b665693](https://github.com/istitutosuperioredisanita/sigla-main/commit/8a8ad2e4b665693) rpagano *January 21, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[3ae8340a4472f5b](https://github.com/istitutosuperioredisanita/sigla-main/commit/3ae8340a4472f5b) rpagano *January 21, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[4864634c2dd0989](https://github.com/istitutosuperioredisanita/sigla-main/commit/4864634c2dd0989) rpagano *January 21, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[293565b50301d15](https://github.com/istitutosuperioredisanita/sigla-main/commit/293565b50301d15) rpagano *January 21, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[ac46949018728f3](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac46949018728f3) rpagano *January 21, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[73c1916221324a9](https://github.com/istitutosuperioredisanita/sigla-main/commit/73c1916221324a9) rpagano *January 21, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[46a94fb03c91a63](https://github.com/istitutosuperioredisanita/sigla-main/commit/46a94fb03c91a63) rpagano *January 21, 2013*
+
+>**BugID: 1056 - Piccole anomalie e modifiche**
+>
+>[7a06cdac3d4297e](https://github.com/istitutosuperioredisanita/sigla-main/commit/7a06cdac3d4297e) mincarnato *January 19, 2013*
+
+>**BugID: 779 - Tipo di prestazione su Compenso**
+>
+>[1fcafd52fefaf4a](https://github.com/istitutosuperioredisanita/sigla-main/commit/1fcafd52fefaf4a) mdurso *January 18, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[c746c3b29e5f65f](https://github.com/istitutosuperioredisanita/sigla-main/commit/c746c3b29e5f65f) rpucciarelli *January 18, 2013*
+
+>**Risoluzione piccole anomalie**
+>
+>[13accae751dc905](https://github.com/istitutosuperioredisanita/sigla-main/commit/13accae751dc905) rpucciarelli *January 18, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[9eb9f55982266af](https://github.com/istitutosuperioredisanita/sigla-main/commit/9eb9f55982266af) mspasiano *January 15, 2013*
+
+>**Anomalia**
+>
+>[dfbad10b836a094](https://github.com/istitutosuperioredisanita/sigla-main/commit/dfbad10b836a094) rpucciarelli *January 11, 2013*
+
+>**BugID: 777 - Gestione Accordi bilaterali**
+>
+>[a5c062e2571e2d2](https://github.com/istitutosuperioredisanita/sigla-main/commit/a5c062e2571e2d2) rpagano *January 11, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[491d6c0ed0adf93](https://github.com/istitutosuperioredisanita/sigla-main/commit/491d6c0ed0adf93) mspasiano *January 10, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[08f77f4aa8cb7fa](https://github.com/istitutosuperioredisanita/sigla-main/commit/08f77f4aa8cb7fa) mspasiano *January 09, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[415c8c58f52f162](https://github.com/istitutosuperioredisanita/sigla-main/commit/415c8c58f52f162) mspasiano *January 09, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[0009280ceabc39c](https://github.com/istitutosuperioredisanita/sigla-main/commit/0009280ceabc39c) mspasiano *January 08, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[e890f1712228d19](https://github.com/istitutosuperioredisanita/sigla-main/commit/e890f1712228d19) mspasiano *January 07, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[96f101a24c02ca0](https://github.com/istitutosuperioredisanita/sigla-main/commit/96f101a24c02ca0) mspasiano *January 05, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[e5b6fe3d39533db](https://github.com/istitutosuperioredisanita/sigla-main/commit/e5b6fe3d39533db) mspasiano *January 04, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[81b3450a9e0b4b5](https://github.com/istitutosuperioredisanita/sigla-main/commit/81b3450a9e0b4b5) mspasiano *January 03, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[80da5cff5a43b7f](https://github.com/istitutosuperioredisanita/sigla-main/commit/80da5cff5a43b7f) mspasiano *January 03, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[d9724899c5ae4ce](https://github.com/istitutosuperioredisanita/sigla-main/commit/d9724899c5ae4ce) mspasiano *January 02, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[a4f44088fd5f56b](https://github.com/istitutosuperioredisanita/sigla-main/commit/a4f44088fd5f56b) mspasiano *January 02, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18 - Abilitazione campi (Contratto e Incarico) nel caso di Modifica di Residui Propri nell'ottica della riduzione dell'importo soglia per l'obbligo di queste informazioni**
+>
+>[b6e66fa3ab08ffd](https://github.com/istitutosuperioredisanita/sigla-main/commit/b6e66fa3ab08ffd) rpucciarelli *January 02, 2013*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[2d17a82ef0afdaf](https://github.com/istitutosuperioredisanita/sigla-main/commit/2d17a82ef0afdaf) mspasiano *December 25, 2012*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[aff6a44ccb7ae86](https://github.com/istitutosuperioredisanita/sigla-main/commit/aff6a44ccb7ae86) mspasiano *December 23, 2012*
+
+>**Anomalia segnalazione Hd formato errato per il cambio**
+>
+>[946de83c2469a41](https://github.com/istitutosuperioredisanita/sigla-main/commit/946de83c2469a41) rpucciarelli *December 21, 2012*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[87f164247c5ca3e](https://github.com/istitutosuperioredisanita/sigla-main/commit/87f164247c5ca3e) mspasiano *December 20, 2012*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[b89d22a3b9aec12](https://github.com/istitutosuperioredisanita/sigla-main/commit/b89d22a3b9aec12) mspasiano *December 20, 2012*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[bc89b0426cdecb2](https://github.com/istitutosuperioredisanita/sigla-main/commit/bc89b0426cdecb2) mspasiano *December 20, 2012*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[5da617670b12495](https://github.com/istitutosuperioredisanita/sigla-main/commit/5da617670b12495) mspasiano *December 20, 2012*
+
+>**BugID: 1050 - Modifiche Articolo 18**
+>
+>[3db70d87c597c60](https://github.com/istitutosuperioredisanita/sigla-main/commit/3db70d87c597c60) mspasiano *December 20, 2012*
+
+>**BugID: 676 - Produzione file XML per sistema PERLA PA - Gestione Merge**
+>
+>[224c73861fa635d](https://github.com/istitutosuperioredisanita/sigla-main/commit/224c73861fa635d) rpagano *December 19, 2012*
+
+>**Gestite nel modello intra12, le fatture di san marino come extra ue**
+>
+>[d89d12246f76c56](https://github.com/istitutosuperioredisanita/sigla-main/commit/d89d12246f76c56) rpucciarelli *December 18, 2012*
+
+>**BugID: 1051 - Parametrizzazione data fine emissione liquidazione differita Fatture Passive**
+>
+>[03c14f1aef8104d](https://github.com/istitutosuperioredisanita/sigla-main/commit/03c14f1aef8104d) rpucciarelli *December 12, 2012*
+
+>**BugID: 1045 - PDGP 2013-2015 - Verifica contributo all'attività ordinaria calcolato sulle entrate esterne - non per la SAC -**
+> * spostata la percentuale sull&#x27;elemento voce
+>
+>[a0209b5ba1f6d92](https://github.com/istitutosuperioredisanita/sigla-main/commit/a0209b5ba1f6d92) rpucciarelli *November 16, 2012*
+
+>**Aggiornata versione CMISDL alla 2.0**
+>
+>[2d25435529e7f73](https://github.com/istitutosuperioredisanita/sigla-main/commit/2d25435529e7f73) mspasiano *November 06, 2012*
+
+>**BugID: 700 - Missioni Estere - Quota rimborso - Circolare 24/2011**
+>
+>[a3e7d339c67d4d0](https://github.com/istitutosuperioredisanita/sigla-main/commit/a3e7d339c67d4d0) mdurso *November 06, 2012*
+
+>**Aggiornata versione CMISDL alla 2.0**
+>
+>[b6aa2bcd0ed2859](https://github.com/istitutosuperioredisanita/sigla-main/commit/b6aa2bcd0ed2859) mspasiano *November 02, 2012*
+
+>**Aggiornata versione CMISDL alla 2.0**
+>
+>[1d2ead16dce8cb2](https://github.com/istitutosuperioredisanita/sigla-main/commit/1d2ead16dce8cb2) mspasiano *November 02, 2012*
+
+>**Aggiornata versione CMISDL alla 2.0**
+>
+>[532f7ca77702335](https://github.com/istitutosuperioredisanita/sigla-main/commit/532f7ca77702335) mspasiano *November 02, 2012*
+
+>**BugID: 1045 - PDGP 2013-2015 - Verifica contributo all'attività ordinaria calcolato sulle entrate esterne - non per la SAC**
+>
+>[4ebc11d39da5c5a](https://github.com/istitutosuperioredisanita/sigla-main/commit/4ebc11d39da5c5a) rpucciarelli *October 31, 2012*
+
+>**BugID: 1045 - PDGP 2013-2015 - Verifica contributo all'attività ordinaria calcolato sulle entrate esterne**
+>
+>[5209e4bfaaf8dc1](https://github.com/istitutosuperioredisanita/sigla-main/commit/5209e4bfaaf8dc1) rpucciarelli *October 31, 2012*
+
+>**Cambio versione jar org.apache.poi per utilizzo file Excel**
+>
+>[05c20cb8d54b9d1](https://github.com/istitutosuperioredisanita/sigla-main/commit/05c20cb8d54b9d1) rpucciarelli *October 30, 2012*
+
+>**BugID: 676 - Produzione file XML per sistema PERLA PA - Gestione Merge**
+>
+>[d83cfc24f66b3fb](https://github.com/istitutosuperioredisanita/sigla-main/commit/d83cfc24f66b3fb) rpagano *October 30, 2012*
+
+>**BugID: 481 - Firma digitale con invio PEC**
+>
+>[5f1dc62bd74e11d](https://github.com/istitutosuperioredisanita/sigla-main/commit/5f1dc62bd74e11d) mincarnato *October 30, 2012*
+
+>**BugID: 676 - Produzione file XML per sistema PERLA PA - Gestione Merge**
+>
+>[7f3890e130d523d](https://github.com/istitutosuperioredisanita/sigla-main/commit/7f3890e130d523d) rpagano *October 26, 2012*
+
+>**BugID: 773 - Firma Digitale, aggiornamento applet Actalis**
+>
+>[bb60f78c4645e9d](https://github.com/istitutosuperioredisanita/sigla-main/commit/bb60f78c4645e9d) mincarnato *October 24, 2012*
+
+>**BugID: 1045 - PDGP 2013-2015 - Accorpamento Dipartimenti**
+>
+>[2695267d22978e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/2695267d22978e8) rpucciarelli *October 15, 2012*
+
+>**BugID: 1045 - PDGP 2013-2015 - Accorpamento Dipartimenti**
+>
+>[6cbed02e8a4f179](https://github.com/istitutosuperioredisanita/sigla-main/commit/6cbed02e8a4f179) rpucciarelli *October 10, 2012*
+
+>**Anomalia Descrizione Uo su tabella Terzo non coerente con il campo descrittivo della tabella Unita Organizzativa**
+>
+>[b114ddb13904054](https://github.com/istitutosuperioredisanita/sigla-main/commit/b114ddb13904054) rpucciarelli *October 03, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[2fa3dbb1dacf0c4](https://github.com/istitutosuperioredisanita/sigla-main/commit/2fa3dbb1dacf0c4) mspasiano *September 28, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[da78d9bceb98ab5](https://github.com/istitutosuperioredisanita/sigla-main/commit/da78d9bceb98ab5) mspasiano *September 28, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[afc7deaa90c5a6c](https://github.com/istitutosuperioredisanita/sigla-main/commit/afc7deaa90c5a6c) mspasiano *September 28, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[1f27d5872337181](https://github.com/istitutosuperioredisanita/sigla-main/commit/1f27d5872337181) mspasiano *September 28, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[acc5592879d81b1](https://github.com/istitutosuperioredisanita/sigla-main/commit/acc5592879d81b1) mspasiano *September 27, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[4fff7f37c99173c](https://github.com/istitutosuperioredisanita/sigla-main/commit/4fff7f37c99173c) mspasiano *September 27, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[7fe7927c7642696](https://github.com/istitutosuperioredisanita/sigla-main/commit/7fe7927c7642696) mspasiano *September 27, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[c2e7bbca79053ef](https://github.com/istitutosuperioredisanita/sigla-main/commit/c2e7bbca79053ef) mspasiano *September 27, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[b8296fbc4693eaa](https://github.com/istitutosuperioredisanita/sigla-main/commit/b8296fbc4693eaa) mspasiano *September 27, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[2ea2f67ce75b507](https://github.com/istitutosuperioredisanita/sigla-main/commit/2ea2f67ce75b507) mspasiano *September 27, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[70b243ba2c5ed14](https://github.com/istitutosuperioredisanita/sigla-main/commit/70b243ba2c5ed14) mspasiano *September 27, 2012*
+
+>**Errore nell'archiviazione di allegati alla variazione**
+>
+>[5cacaefc17ab529](https://github.com/istitutosuperioredisanita/sigla-main/commit/5cacaefc17ab529) mspasiano *September 26, 2012*
+
+>**Modificato calcolo importo Obbligazioni non pagate, considerando l'importo collegato a documenti amministrativi**
+>
+>[fae9b031bd679ee](https://github.com/istitutosuperioredisanita/sigla-main/commit/fae9b031bd679ee) rpucciarelli *September 10, 2012*
+
+>**BugID: 1034  - l'INPGI dovrà essere versata con l'F24EP come gli altri enti previdenziali**
+>
+>[772ece071288ae0](https://github.com/istitutosuperioredisanita/sigla-main/commit/772ece071288ae0) rpucciarelli *August 10, 2012*
+
+>**Risoluzione Anomalie - Ordinamento - consentito inserimento AssTipoCORIEv per ti_appartenenza ='C', necessario per Liquidazione CORI da 999,**
+> * gestito annullamento Accertamento legato a Reversali di trasferimento ANNULLATE
+>
+>[acbb4dfa89a51ec](https://github.com/istitutosuperioredisanita/sigla-main/commit/acbb4dfa89a51ec) rpucciarelli *August 03, 2012*
+
+>**BugID: 978 - Le variazioni al bilancio di servizio, generate dai mandati di**
+> * regolarizzazione, ora vengono approvate automaticamente;
+> * Alcune tipologie di variazioni al bilancio di servizio, inserite/modifiche
+> * manualmente, prima venivano approvate erroneamente, senza previa verifica della
+> * quadratura.
+>
+>[349d41342106eb7](https://github.com/istitutosuperioredisanita/sigla-main/commit/349d41342106eb7) rpucciarelli *July 31, 2012*
+
+>**Modifica ai Bilaterali**
+>
+>[8eaf6228a47a787](https://github.com/istitutosuperioredisanita/sigla-main/commit/8eaf6228a47a787) mspasiano *July 25, 2012*
+
+>**Ampliata visualizzazione**
+>
+>[61bcc681380f807](https://github.com/istitutosuperioredisanita/sigla-main/commit/61bcc681380f807) rpucciarelli *July 20, 2012*
+
+>**BugID: 777 - Gestione Accordi bilaterali**
+>
+>[d8205e3f2954b02](https://github.com/istitutosuperioredisanita/sigla-main/commit/d8205e3f2954b02) rpagano *July 20, 2012*
+
+>**BugID: 1010 - Cambiato arrotondamento effettuato su Sigla in ROUND_HALF_UP**
+>
+>[388ef4049125bba](https://github.com/istitutosuperioredisanita/sigla-main/commit/388ef4049125bba) rpucciarelli *July 19, 2012*
+
+>**Anomalia ordinamento sezionali proposti dopo la copia del DB**
+>
+>[f69129a40a98a8b](https://github.com/istitutosuperioredisanita/sigla-main/commit/f69129a40a98a8b) rpucciarelli *July 12, 2012*
+
+>**Anomalia ordinamento sezionali proposti dopo la copia del DB**
+>
+>[eb3da8a8394b373](https://github.com/istitutosuperioredisanita/sigla-main/commit/eb3da8a8394b373) rpucciarelli *July 12, 2012*
+
+>**Anomalia dimensionamento cd_trattamento**
+>
+>[677474584b2935a](https://github.com/istitutosuperioredisanita/sigla-main/commit/677474584b2935a) rpucciarelli *July 09, 2012*
+
+>**BugID: 997 - Inserire controllo sulle righe di variazione sia in c/residui che in c/competenza. Evitare che per la stessa variazione vengono inserite più righe per la stessa**
+> * combinazione esercizio /(esercizio residuo) / cdr/ gae/ elemento_voce
+>
+>[891555b04451987](https://github.com/istitutosuperioredisanita/sigla-main/commit/891555b04451987) rpucciarelli *June 26, 2012*
+
+>**BugID: 917 - Modifica Web Services Fattura Attiva per gestione pagamento anticipato +**
+> * Modifica web services di Stampa per non utilizzare stampe interne, ma i print
+> * server
+>
+>[a5e6429e3d3bbc5](https://github.com/istitutosuperioredisanita/sigla-main/commit/a5e6429e3d3bbc5) rpucciarelli *June 26, 2012*
+
+>**BugID: 481 - Firma digitale con invio PEC**
+>
+>[2872578b4010fcd](https://github.com/istitutosuperioredisanita/sigla-main/commit/2872578b4010fcd) mincarnato *May 08, 2012*
+
+>**BugID: 677 - Inserimento di saldi a zero su approvazione variazioni bilancio di servizio - Refresh disponibilità al cambio esercizio residuo**
+>
+>[10355fdd43217b1](https://github.com/istitutosuperioredisanita/sigla-main/commit/10355fdd43217b1) rpucciarelli *April 12, 2012*
+
+>**Risoluzioni anomalie controllo quadratura generico entrata - inventario**
+>
+>[de0a87a649e3309](https://github.com/istitutosuperioredisanita/sigla-main/commit/de0a87a649e3309) rpucciarelli *April 04, 2012*
+
+>**BugID: 785 - Tassazione pignoramenti presso terzi**
+>
+>[f88849a5ed3e003](https://github.com/istitutosuperioredisanita/sigla-main/commit/f88849a5ed3e003) mdurso *April 02, 2012*
+
+>**Risoluzioni anomalie**
+>
+>[06eb0c4b842b83a](https://github.com/istitutosuperioredisanita/sigla-main/commit/06eb0c4b842b83a) rpucciarelli *March 29, 2012*
+
+>**BugID: 835 - Gestione delle nuove tabelle per Progetti Bandiera**
+>
+>[361cee7bc860dc3](https://github.com/istitutosuperioredisanita/sigla-main/commit/361cee7bc860dc3) rpucciarelli *March 28, 2012*
+
+>**BugID: 785 - Tassazione pignoramenti presso terzi**
+>
+>[1e0ffea3f45facd](https://github.com/istitutosuperioredisanita/sigla-main/commit/1e0ffea3f45facd) rpucciarelli *March 13, 2012*
+
+>**BugID: 785 - Tassazione pignoramenti presso terzi**
+>
+>[2c5d6b9c5c7e874](https://github.com/istitutosuperioredisanita/sigla-main/commit/2c5d6b9c5c7e874) mdurso *March 13, 2012*
+
+>**Disabilita valorizzazione della data fine rapporto**
+>
+>[914698010b57b26](https://github.com/istitutosuperioredisanita/sigla-main/commit/914698010b57b26) rpucciarelli *March 09, 2012*
+
+>**Anomalia aggiornamento ultimo accesso per utenze da amministratore**
+>
+>[52cd321613c17c6](https://github.com/istitutosuperioredisanita/sigla-main/commit/52cd321613c17c6) rpucciarelli *March 06, 2012*
+
+>**gestito il collegamento all'inventario anche per i generici di reintegro del fondo**
+>
+>[916527eaefe0520](https://github.com/istitutosuperioredisanita/sigla-main/commit/916527eaefe0520) rpucciarelli *February 29, 2012*
+
+>**BugID: 776 - Gestione Accessi**
+>
+>[4ac12557d6e6d8c](https://github.com/istitutosuperioredisanita/sigla-main/commit/4ac12557d6e6d8c) rpagano *February 16, 2012*
+
+>**Cambiata la query per le variazioni sul documentale.**
+>
+>[ce4fcefa27d3a59](https://github.com/istitutosuperioredisanita/sigla-main/commit/ce4fcefa27d3a59) mspasiano *February 14, 2012*
+
+>**Cambiata la query per le variazioni sul documentale.**
+>
+>[77fd972807ad344](https://github.com/istitutosuperioredisanita/sigla-main/commit/77fd972807ad344) mspasiano *February 14, 2012*
+
+>**BugID: 775 - Tracciabilità pagamenti superiori a 1000 euro**
+>
+>[164f79befe670aa](https://github.com/istitutosuperioredisanita/sigla-main/commit/164f79befe670aa) mdurso *January 31, 2012*
+
+>**BugID: 775 - Tracciabilità pagamenti superiori a 1000 euro**
+>
+>[cdbfd113e669a94](https://github.com/istitutosuperioredisanita/sigla-main/commit/cdbfd113e669a94) mdurso *January 31, 2012*
+
+>**BugID: 776 - Gestione Accessi**
+>
+>[eb0df5ad3cc8c7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/eb0df5ad3cc8c7c) rpagano *January 30, 2012*
+
+>**BugID: 773 - Firma Digitale, aggiornamento applet Actalis**
+>
+>[c03f58515d553ff](https://github.com/istitutosuperioredisanita/sigla-main/commit/c03f58515d553ff) mincarnato *January 25, 2012*
+
+>**BugID: 773 - Firma Digitale, aggiornamento applet Actalis**
+>
+>[81b8c13af6abad9](https://github.com/istitutosuperioredisanita/sigla-main/commit/81b8c13af6abad9) mincarnato *January 25, 2012*
+
+>**BugID: 773 - Firma Digitale, aggiornamento applet Actalis**
+>
+>[b75a861b97e99e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/b75a861b97e99e8) mincarnato *January 25, 2012*
+
+>**BugID: 773 - Firma Digitale, aggiornamento applet Actalis**
+>
+>[f5d6446f19ee64d](https://github.com/istitutosuperioredisanita/sigla-main/commit/f5d6446f19ee64d) mincarnato *January 24, 2012*
+
+>**BugID: 773 - Firma Digitale, aggiornamento applet Actalis**
+>
+>[38bbb746cceef96](https://github.com/istitutosuperioredisanita/sigla-main/commit/38bbb746cceef96) mincarnato *January 19, 2012*
+
+>**BugID: 772 - Risoluzione anomalia che consetiva di modificare la voce sul partite giro tronche**
+>
+>[a0d3b39a45a4552](https://github.com/istitutosuperioredisanita/sigla-main/commit/a0d3b39a45a4552) rpucciarelli *January 11, 2012*
+
+>**Consentita la conferma dell'invio separata per gestire caso in cui un solo flusso viene accettato**
+>
+>[32da36df2f1966b](https://github.com/istitutosuperioredisanita/sigla-main/commit/32da36df2f1966b) rpucciarelli *January 11, 2012*
+
+>**Consentito da uo ente il lancio della Stampa Elenco Fatture Attive/Passive per Cliente/Fornitore senza cds(Stani)**
+>
+>[4c61101edda89e0](https://github.com/istitutosuperioredisanita/sigla-main/commit/4c61101edda89e0) rpucciarelli *January 11, 2012*
+
+>**Modifica all'aggiornamento dei Progetti**
+>
+>[2ad7985633eb1a3](https://github.com/istitutosuperioredisanita/sigla-main/commit/2ad7985633eb1a3) mspasiano *January 10, 2012*
+
+>**Modifica all'aggiornamento dei Progetti**
+>
+>[b9da1aed89fc57c](https://github.com/istitutosuperioredisanita/sigla-main/commit/b9da1aed89fc57c) mspasiano *January 10, 2012*
+
+>**BugID: 769 - Adempimenti Circolare 45/2011- Abolizione richiesta annuale detrazioni per familiari a carico**
+>
+>[cd1e54559dbf211](https://github.com/istitutosuperioredisanita/sigla-main/commit/cd1e54559dbf211) rpucciarelli *December 13, 2011*
+
+>**Modifica alla servlet Expire**
+>
+>[560b75e12644cba](https://github.com/istitutosuperioredisanita/sigla-main/commit/560b75e12644cba) mspasiano *December 01, 2011*
+
+>**BugID: 759 - Modifica procedura stipendi mese dicembre - Modifica flusso Addizionali Comunali**
+>
+>[5e71f1776f850f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/5e71f1776f850f7) mdurso *November 24, 2011*
+
+>**BugID: 700 - Missioni Estere - Quota rimborso - Circolare 24/2011**
+>
+>[0c228e3b1dad18c](https://github.com/istitutosuperioredisanita/sigla-main/commit/0c228e3b1dad18c) mdurso *November 11, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[2d8c1a0344cbeb3](https://github.com/istitutosuperioredisanita/sigla-main/commit/2d8c1a0344cbeb3) mspasiano *November 10, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[d69f0cb2ae19f9d](https://github.com/istitutosuperioredisanita/sigla-main/commit/d69f0cb2ae19f9d) mspasiano *November 09, 2011*
+
+>**Soluzione anomalie, modificata gestione cancellazione del terzo anche senza riferimenti su altre tabelle, con l'indicazione della data fine rapporto**
+>
+>[63bdf98d247c602](https://github.com/istitutosuperioredisanita/sigla-main/commit/63bdf98d247c602) rpucciarelli *November 08, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[c7b877e1ad6497e](https://github.com/istitutosuperioredisanita/sigla-main/commit/c7b877e1ad6497e) mspasiano *November 06, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[0d5fab5d71bd152](https://github.com/istitutosuperioredisanita/sigla-main/commit/0d5fab5d71bd152) mspasiano *November 04, 2011*
+
+>**BugID: 700 - Missioni Estere - Quota rimborso - Circolare 24/2011**
+>
+>[745762e1fab1785](https://github.com/istitutosuperioredisanita/sigla-main/commit/745762e1fab1785) mdurso *October 25, 2011*
+
+>**BugID: 700 - Missioni Estere - Quota rimborso - Circolare 24/2011**
+>
+>[d71c4a0118b4ae0](https://github.com/istitutosuperioredisanita/sigla-main/commit/d71c4a0118b4ae0) mdurso *October 18, 2011*
+
+>**BugID: 700 - Missioni Estere - Quota rimborso - Circolare 24/2011**
+>
+>[d361369dbf2e9fc](https://github.com/istitutosuperioredisanita/sigla-main/commit/d361369dbf2e9fc) mdurso *October 07, 2011*
+
+>**BugID: 725 - Gestione nella liquidazione Iva, dell'iva dell'editoria**
+>
+>[f19968e76d619e9](https://github.com/istitutosuperioredisanita/sigla-main/commit/f19968e76d619e9) rpucciarelli *October 07, 2011*
+
+>**BugID: 714 - Imputazione Finanziaria Rapporto 13**
+>
+>[d5ebf66197bdf8d](https://github.com/istitutosuperioredisanita/sigla-main/commit/d5ebf66197bdf8d) rpagano *September 30, 2011*
+
+>**BugID: 700 - Missioni Estere - Quota rimborso - Circolare 24/2011**
+>
+>[21895a50653b461](https://github.com/istitutosuperioredisanita/sigla-main/commit/21895a50653b461) mdurso *September 30, 2011*
+
+>**Gestione dell'iva forzata nell'inserimento delle fatture attive da Web Services,**
+> * per arrotondamenti necessari con la nuova percentuale Iva
+>
+>[2fe1908b9bceb1c](https://github.com/istitutosuperioredisanita/sigla-main/commit/2fe1908b9bceb1c) rpucciarelli *September 28, 2011*
+
+>**BugID: 703 - Modifiche PDGP 2012 + Modifica controllo Limite Spesa**
+>
+>[c64a2e155ea324b](https://github.com/istitutosuperioredisanita/sigla-main/commit/c64a2e155ea324b) rpucciarelli *September 28, 2011*
+
+>**Soluzione anomalia recupero terzo non valido**
+>
+>[d698776a74969d2](https://github.com/istitutosuperioredisanita/sigla-main/commit/d698776a74969d2) rpucciarelli *September 27, 2011*
+
+>**BugID: 700 - Missioni Estere - Quota rimborso - Circolare 24/2011**
+>
+>[aa0155d4c4c079c](https://github.com/istitutosuperioredisanita/sigla-main/commit/aa0155d4c4c079c) mdurso *September 23, 2011*
+
+>**BugID: 700 - Missioni Estere - Quota rimborso - Circolare 24/2011**
+>
+>[39b741b63bcbc5f](https://github.com/istitutosuperioredisanita/sigla-main/commit/39b741b63bcbc5f) mdurso *September 23, 2011*
+
+>**BugID: 700 - Missioni Estere - Quota rimborso - Circolare 24/2011**
+>
+>[905f11249d268c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/905f11249d268c9) mdurso *September 23, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[deb1b451cc88b17](https://github.com/istitutosuperioredisanita/sigla-main/commit/deb1b451cc88b17) mspasiano *September 22, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[8f2e3607298f1c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/8f2e3607298f1c9) mspasiano *September 21, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[1c480599ae5395e](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c480599ae5395e) mspasiano *September 21, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[66ad73ce111e0e4](https://github.com/istitutosuperioredisanita/sigla-main/commit/66ad73ce111e0e4) mspasiano *September 21, 2011*
+
+>**BugID: 701 Errore Consultazione Gae Residui Spesa**
+> * Nell&#x27;impostazione del filtro sulla consultazione nel dettagio degli impegni andava in errore.
+> * era rimasto &quot;RIMASTI_DA_PAGARE&quot; anzichè &quot;RIMASTI_DA_PAGARE_PRO&quot;
+>
+>[290195e480d1699](https://github.com/istitutosuperioredisanita/sigla-main/commit/290195e480d1699) fgiardina *September 15, 2011*
+
+>**Soluzione anomalia recupero terzo non valido**
+>
+>[51ff608d1623953](https://github.com/istitutosuperioredisanita/sigla-main/commit/51ff608d1623953) rpucciarelli *September 07, 2011*
+
+>**BugID: 684**
+> * Porting JBOSS AS7
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;684
+>
+>[3266e123e5fd117](https://github.com/istitutosuperioredisanita/sigla-main/commit/3266e123e5fd117) mspasiano *September 02, 2011*
+
+>**BugID: 689 - Adeguamento 770/2011**
+>
+>[dd080b2c65a6ada](https://github.com/istitutosuperioredisanita/sigla-main/commit/dd080b2c65a6ada) mdurso *August 01, 2011*
+
+>**BugID: 687- Consentire utilizzo Impegni residui nella gestione del Fondo Economale**
+>
+>[816413666b9fd4b](https://github.com/istitutosuperioredisanita/sigla-main/commit/816413666b9fd4b) rpucciarelli *July 26, 2011*
+
+>**BugID: 686 - Consultazione scadenzario Accertamenti**
+>
+>[9114f6646445d11](https://github.com/istitutosuperioredisanita/sigla-main/commit/9114f6646445d11) rpucciarelli *July 26, 2011*
+
+>**BugID: 685 - Eliminare riferimenti specifici alla 999**
+>
+>[429642e845c6547](https://github.com/istitutosuperioredisanita/sigla-main/commit/429642e845c6547) rpucciarelli *July 26, 2011*
+
+>**BugID: 577 - Fatture Passive Commerciali di beni Extra Ue con merce  Intra Ue**
+>
+>[16157003431d63b](https://github.com/istitutosuperioredisanita/sigla-main/commit/16157003431d63b) rpucciarelli *July 26, 2011*
+
+>**BugID: 684**
+> * Porting JBOSS AS7
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;684
+>
+>[c63bc67a0a78d98](https://github.com/istitutosuperioredisanita/sigla-main/commit/c63bc67a0a78d98) mspasiano *July 20, 2011*
+
+>**BugID: 673 - Firma Digitale, download variazione**
+>
+>[93812f8c06afbe6](https://github.com/istitutosuperioredisanita/sigla-main/commit/93812f8c06afbe6) mincarnato *July 14, 2011*
+
+>**Anomalie consultazioni V_cons_pdgg_dipfo**
+>
+>[9b4cddad7a7b964](https://github.com/istitutosuperioredisanita/sigla-main/commit/9b4cddad7a7b964) rpucciarelli *July 12, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[85d1ddb7130dcf2](https://github.com/istitutosuperioredisanita/sigla-main/commit/85d1ddb7130dcf2) mspasiano *July 12, 2011*
+
+>**BugID: 677 Inserimento di saldi a zero su approvazione variazioni bilancio di servizio**
+> * In salvaDefinitivo è stata aggiunta la condizione sul crudStatus UNDEFINE per consentire
+> * di andare avanti nell&#x27;esecuzione poichè la riga della combinazione contabile mancante viene aggiunta
+> * nel package CNRCTB055. Non dà il messaggio di errore solo quando il crudStatus è NORMAL o
+> * UNDEFINE.
+>
+>[4b555c5d6eaef22](https://github.com/istitutosuperioredisanita/sigla-main/commit/4b555c5d6eaef22) fgiardina *July 12, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[3221331753dc1a1](https://github.com/istitutosuperioredisanita/sigla-main/commit/3221331753dc1a1) mspasiano *July 12, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[d7fd4625307febf](https://github.com/istitutosuperioredisanita/sigla-main/commit/d7fd4625307febf) mspasiano *July 12, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[efaec8750b69573](https://github.com/istitutosuperioredisanita/sigla-main/commit/efaec8750b69573) mspasiano *July 11, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[9ca6f7648e994ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/9ca6f7648e994ba) mspasiano *July 11, 2011*
+
+>**BugID: 673 - Firma Digitale, download variazione**
+>
+>[44567a8281f35c1](https://github.com/istitutosuperioredisanita/sigla-main/commit/44567a8281f35c1) mincarnato *July 08, 2011*
+
+>**BugID: 673 - 673: Firma Digitale, download variazione**
+>
+>[743af4cf6d0d66a](https://github.com/istitutosuperioredisanita/sigla-main/commit/743af4cf6d0d66a) mincarnato *July 07, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[b8c5858cb310a7b](https://github.com/istitutosuperioredisanita/sigla-main/commit/b8c5858cb310a7b) mspasiano *July 07, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[32f7df4676d4bef](https://github.com/istitutosuperioredisanita/sigla-main/commit/32f7df4676d4bef) mspasiano *July 07, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[fd4c93b8121f1de](https://github.com/istitutosuperioredisanita/sigla-main/commit/fd4c93b8121f1de) mspasiano *July 06, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[9fc65a32286b12d](https://github.com/istitutosuperioredisanita/sigla-main/commit/9fc65a32286b12d) mspasiano *July 06, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[13578d9398d267e](https://github.com/istitutosuperioredisanita/sigla-main/commit/13578d9398d267e) mspasiano *July 06, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[78ce359f9aac44b](https://github.com/istitutosuperioredisanita/sigla-main/commit/78ce359f9aac44b) mspasiano *July 05, 2011*
+
+>**BugID: 578 - Richiesta stampa Riepilogativa Iva ente Definitiva - con opzione Intero anno**
+>
+>[9047b4cd8704796](https://github.com/istitutosuperioredisanita/sigla-main/commit/9047b4cd8704796) rpucciarelli *July 04, 2011*
+
+>**Cambio etichetta estrazione Gla**
+>
+>[d68f68a9db04f0d](https://github.com/istitutosuperioredisanita/sigla-main/commit/d68f68a9db04f0d) rpucciarelli *July 04, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[ce6fe823f48fbd9](https://github.com/istitutosuperioredisanita/sigla-main/commit/ce6fe823f48fbd9) mspasiano *July 01, 2011*
+
+>**BugID: 573 - Firma Digitale, numero di registrazione su Segnatura.xml**
+>
+>[4bda4364c187557](https://github.com/istitutosuperioredisanita/sigla-main/commit/4bda4364c187557) mincarnato *June 24, 2011*
+
+>**BugID: 573 - Firma Digitale, numero di registrazione su Segnatura.xml**
+>
+>[f89f3022950cc87](https://github.com/istitutosuperioredisanita/sigla-main/commit/f89f3022950cc87) mincarnato *June 24, 2011*
+
+>**BugID: 636 - Anomalia selezione Elemento Voce su Variazione Stanziamento Residuo**
+>
+>[5d2f457867af551](https://github.com/istitutosuperioredisanita/sigla-main/commit/5d2f457867af551) rpucciarelli *June 23, 2011*
+
+>**BugID: 538 - Modifica Controllo presenza sul documentale per variazioni della sac**
+>
+>[7e16151ebeef974](https://github.com/istitutosuperioredisanita/sigla-main/commit/7e16151ebeef974) rpucciarelli *June 22, 2011*
+
+>**BugID: 539 - Controllo della Spesa - anomalia Respingi**
+>
+>[af038c68c2f9906](https://github.com/istitutosuperioredisanita/sigla-main/commit/af038c68c2f9906) rpucciarelli *June 21, 2011*
+
+>**non rilasciare**
+>
+>[4c906900d5ccadc](https://github.com/istitutosuperioredisanita/sigla-main/commit/4c906900d5ccadc) rpucciarelli *June 21, 2011*
+
+>**Errore nella jsp di archiviazione delle variazioni al PDG**
+>
+>[888980a0da721b2](https://github.com/istitutosuperioredisanita/sigla-main/commit/888980a0da721b2) mspasiano *June 15, 2011*
+
+>**BugID: 636 - Anomalia selezione Elemento Voce su Variazione Stanziamento Residuo**
+>
+>[a351a323ac35733](https://github.com/istitutosuperioredisanita/sigla-main/commit/a351a323ac35733) rpucciarelli *June 14, 2011*
+
+>**BugID: 661 - Modificata la durata massima delle missioni**
+>
+>[710d8b85e85fe63](https://github.com/istitutosuperioredisanita/sigla-main/commit/710d8b85e85fe63) rpucciarelli *June 10, 2011*
+
+>**BugID: 652 - Anomalia consultazioni Partite Giro**
+>
+>[b803217db576c36](https://github.com/istitutosuperioredisanita/sigla-main/commit/b803217db576c36) rpucciarelli *June 07, 2011*
+
+>**BugID: 620 - Gestione Trattamenti non visibili a tutti**
+>
+>[8f2e70b2a5d5bda](https://github.com/istitutosuperioredisanita/sigla-main/commit/8f2e70b2a5d5bda) mdurso *May 30, 2011*
+
+>**BugID: 647 - Cambiata gestione errori nel caricamento della addizionali comunali**
+>
+>[71e9fd9a7118202](https://github.com/istitutosuperioredisanita/sigla-main/commit/71e9fd9a7118202) rpucciarelli *May 27, 2011*
+
+>**BugID: 646 - Risoluzione anomalia Fattura Passiva DetailedRuntimeException**
+>
+>[87c3347609a14e2](https://github.com/istitutosuperioredisanita/sigla-main/commit/87c3347609a14e2) rpucciarelli *May 27, 2011*
+
+>**BugID: 645 Stampe in coda**
+>
+>[8dab7ef0fa245c7](https://github.com/istitutosuperioredisanita/sigla-main/commit/8dab7ef0fa245c7) fgiardina *May 24, 2011*
+
+>**BugID: 620 - Gestione Trattamenti non visibili a tutti**
+>
+>[5f644627cad14c8](https://github.com/istitutosuperioredisanita/sigla-main/commit/5f644627cad14c8) mdurso *May 18, 2011*
+
+>**Evitato Messaggio alert Cup per Mandati e reversali di regolarizzazione**
+>
+>[923e5ee0352692d](https://github.com/istitutosuperioredisanita/sigla-main/commit/923e5ee0352692d) rpucciarelli *May 13, 2011*
+
+>**Anomalia selezione cdr - (La SQLBuilder.setOrderby   nella stringa deve essere passato un solo campo alla volta)**
+>
+>[546af87bbebb176](https://github.com/istitutosuperioredisanita/sigla-main/commit/546af87bbebb176) rpucciarelli *May 13, 2011*
+
+>**BugID: 541 - Anomalie -piccole modifiche**
+>
+>[6f1ab4489210e10](https://github.com/istitutosuperioredisanita/sigla-main/commit/6f1ab4489210e10) rpucciarelli *May 06, 2011*
+
+>**BugID: 533 - Import iniziale**
+>
+>[7f90a0a9a4025ce](https://github.com/istitutosuperioredisanita/sigla-main/commit/7f90a0a9a4025ce) mincarnato *May 05, 2011*
+
+>**BugID: 533 - Import iniziale**
+>
+>[a1e686587c879bf](https://github.com/istitutosuperioredisanita/sigla-main/commit/a1e686587c879bf) mincarnato *May 05, 2011*
+
+>**BugID: 539 - Controllo della Spesa**
+>
+>[8b956bb74d7b98b](https://github.com/istitutosuperioredisanita/sigla-main/commit/8b956bb74d7b98b) rpucciarelli *April 29, 2011*
+
+>**BugID: 588 - Adempimenti per la comunicazioni delle operazioni con paesi Black list**
+>
+>[a8e33f73196e2f6](https://github.com/istitutosuperioredisanita/sigla-main/commit/a8e33f73196e2f6) rpucciarelli *April 15, 2011*
+
+>**BugID: 588 - Adempimenti per la comunicazioni delle operazioni con paesi Black list**
+>
+>[b5116c968e41982](https://github.com/istitutosuperioredisanita/sigla-main/commit/b5116c968e41982) rpucciarelli *April 15, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[2894fa411506a26](https://github.com/istitutosuperioredisanita/sigla-main/commit/2894fa411506a26) mspasiano *April 14, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[b9822e01666b9c6](https://github.com/istitutosuperioredisanita/sigla-main/commit/b9822e01666b9c6) mspasiano *April 14, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[b34a7e316d679ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/b34a7e316d679ac) mspasiano *April 13, 2011*
+
+>**BugID: 593**
+> * Integrazione SIGLA – SIPER
+> * https://scm.cedrc.cnr.it/bugzilla/show_bug.cgi?id&#x3D;593
+>
+>[2dc3f34596fed6c](https://github.com/istitutosuperioredisanita/sigla-main/commit/2dc3f34596fed6c) mspasiano *April 13, 2011*
+
+>**BugID: 541 - Anomalie -piccole modifiche**
+>
+>[f71484602f30a5f](https://github.com/istitutosuperioredisanita/sigla-main/commit/f71484602f30a5f) rpucciarelli *April 11, 2011*
+
+>**BugID: 573 - Firma Digitale, numero di registrazione su Segnatura.xml**
+>
+>[5cd0f4073ddec58](https://github.com/istitutosuperioredisanita/sigla-main/commit/5cd0f4073ddec58) mincarnato *April 01, 2011*
+
+>**BugID: 520 Mappa utente gestore**
+>
+>[e9f3dc6a13091e1](https://github.com/istitutosuperioredisanita/sigla-main/commit/e9f3dc6a13091e1) fgiardina *March 28, 2011*
+
+>**BugID: 520 Mappa utente gestore**
+>
+>[c8487ba6036eb74](https://github.com/istitutosuperioredisanita/sigla-main/commit/c8487ba6036eb74) fgiardina *March 28, 2011*
+
+>**BugID: 556 - CUD 2010 - Modifiche Conguaglio**
+>
+>[1ebaaedccf0a9dc](https://github.com/istitutosuperioredisanita/sigla-main/commit/1ebaaedccf0a9dc) mdurso *March 15, 2011*
+
+>**BugID: 450 Stampa Attività Sigla**
+>
+>[05d0333693d9d8c](https://github.com/istitutosuperioredisanita/sigla-main/commit/05d0333693d9d8c) fgiardina *March 14, 2011*
+
+>**BugID: 539 - Controllo della Spesa - Aggiunto stato invio - modifica causali variazioni respinte**
+>
+>[3af520f6480f406](https://github.com/istitutosuperioredisanita/sigla-main/commit/3af520f6480f406) rpucciarelli *March 11, 2011*
+
+>**BugID: 531 - Liquidazione F24EP dalla UO 999.000**
+>
+>[265b6c2586a02cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/265b6c2586a02cc) mdurso *March 09, 2011*
+
+>**BugID: 562 - Anomalia segnalazione Hd 31524 cambio email per i messaggi di approvazione delle variazioni**
+>
+>[09fd41e3a2abe60](https://github.com/istitutosuperioredisanita/sigla-main/commit/09fd41e3a2abe60) rpucciarelli *March 08, 2011*
+
+>**BugID: 561 - Gestione Incarichi**
+>
+>[e67b39a7ff627eb](https://github.com/istitutosuperioredisanita/sigla-main/commit/e67b39a7ff627eb) mdurso *March 07, 2011*
+
+>**BugID: 560 - Annullamento mandato**
+>
+>[bac6c67bfaa55ed](https://github.com/istitutosuperioredisanita/sigla-main/commit/bac6c67bfaa55ed) mdurso *March 07, 2011*
+
+>**Anomalia visualizzazione stampe Pubbliche**
+>
+>[ca891a781b30a68](https://github.com/istitutosuperioredisanita/sigla-main/commit/ca891a781b30a68) rpucciarelli *March 07, 2011*
+
+>**BugID: 538 - Modifica alle variazioni di competenza al Piano di Gestione - Consentita approvazione per uo della Sac**
+>
+>[21e2554f1d9c5db](https://github.com/istitutosuperioredisanita/sigla-main/commit/21e2554f1d9c5db) rpucciarelli *March 02, 2011*
+
+>**BugID: 558 - Firma digitale alle Variazioni al Piano di Gestione**
+>
+>[2f2cbd6dd407e5b](https://github.com/istitutosuperioredisanita/sigla-main/commit/2f2cbd6dd407e5b) mspasiano *March 02, 2011*
+
+>**BugID: 558 - Firma digitale alle Variazioni al Piano di Gestione**
+>
+>[b9bcca8352506c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/b9bcca8352506c9) mspasiano *March 02, 2011*
+
+>**BugID: 539 - Controllo della Spesa - spostato controllo e aggiornamento in fase di proposta def**
+>
+>[0630a64a9d78835](https://github.com/istitutosuperioredisanita/sigla-main/commit/0630a64a9d78835) rpucciarelli *March 01, 2011*
+
+>**BugID: 556 - CUD 2010 - Modifiche Conguaglio**
+>
+>[de960989a7f92e1](https://github.com/istitutosuperioredisanita/sigla-main/commit/de960989a7f92e1) mdurso *March 01, 2011*
+
+>**BugID: 557 - Modifica aggiornamento protocollo invio Intrastat ricevuta Agenzia delle Dogane**
+>
+>[ef1bed3a045d991](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef1bed3a045d991) rpucciarelli *March 01, 2011*
+
+>**BugID: 539 - Controllo della Spesa - spostato controllo e aggiornamento in fase di proposta def + Consultazione limiti per uo**
+>
+>[eda2a9391b8fd81](https://github.com/istitutosuperioredisanita/sigla-main/commit/eda2a9391b8fd81) rpucciarelli *March 01, 2011*
+
+>**BugID: 553 - Variazioni Bilancio Rif Prot.167/2010 Punto 4 e 7**
+>
+>[66456d6bd6062ec](https://github.com/istitutosuperioredisanita/sigla-main/commit/66456d6bd6062ec) rpucciarelli *February 22, 2011*
+
+>**BugID: 551 - Nuova consultazione dati intrastat inviati per UO**
+>
+>[e127c6c6628a881](https://github.com/istitutosuperioredisanita/sigla-main/commit/e127c6c6628a881) rpucciarelli *February 21, 2011*
+
+>**BugID: 545 Modifica alla Stampa ripartizione Costi**
+>
+>[048658cb10c9c26](https://github.com/istitutosuperioredisanita/sigla-main/commit/048658cb10c9c26) fgiardina *February 21, 2011*
+
+>**BugID: 551 - Nuova consultazione dati intrastat inviati per UO**
+>
+>[5b36f2b8dd3c3b4](https://github.com/istitutosuperioredisanita/sigla-main/commit/5b36f2b8dd3c3b4) rpucciarelli *February 21, 2011*
+
+>**BugID: 541 - Anomalia nel passaggio stato modulo, per controllo errato sulla ripartizione dei costi del personale controllo con mese = 0**
+> * Anomalia inserimento carichi familiari
+> * Elaborazione F24 di + liquidazioni
+> * Anomalia lancio ribaltamento su esercizio superiore all&#x27;ultimo ribaltato
+>
+>[dd237d900ccc9ba](https://github.com/istitutosuperioredisanita/sigla-main/commit/dd237d900ccc9ba) rpucciarelli *February 18, 2011*
+
+>**BugID: 541 - Anomalia nel passaggio stato modulo, per controllo errato sulla ripartizione dei costi del personale controllo con mese = 0**
+>
+>[ea75868b432f0cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/ea75868b432f0cb) rpucciarelli *February 08, 2011*
+
+>**BugID: 539 - Controllo della Spesa**
+>
+>[a29de94f73cb379](https://github.com/istitutosuperioredisanita/sigla-main/commit/a29de94f73cb379) rpucciarelli *February 04, 2011*
+
+>**BugID: 545 Modifica alla Stampa ripartizione Costi**
+>
+>[46437b6424a058e](https://github.com/istitutosuperioredisanita/sigla-main/commit/46437b6424a058e) fgiardina *February 04, 2011*
+
+>**BugID: 538 - Modifica alle variazioni di competenza al Piano di Gestione**
+>
+>[398d4de3f8a05d5](https://github.com/istitutosuperioredisanita/sigla-main/commit/398d4de3f8a05d5) rpucciarelli *February 03, 2011*
+
+>**BugID: 539 - Controllo della Spesa**
+>
+>[74109038178f13d](https://github.com/istitutosuperioredisanita/sigla-main/commit/74109038178f13d) rpucciarelli *February 03, 2011*
+
+>**BugID: 545 Modifica alla Stampa ripartizione Costi**
+>
+>[87a62242319412d](https://github.com/istitutosuperioredisanita/sigla-main/commit/87a62242319412d) fgiardina *February 03, 2011*
+
+>**BugID: 547 - Prova**
+>
+>[144fb1ab5644efd](https://github.com/istitutosuperioredisanita/sigla-main/commit/144fb1ab5644efd) mdurso *February 02, 2011*
+
+>**BugID: 545 Modifica alla Stampa ripartizione Costi**
+>
+>[80e0a105901da03](https://github.com/istitutosuperioredisanita/sigla-main/commit/80e0a105901da03) fgiardina *February 02, 2011*
+
+>**BugID: 541 - Anomalia nel passaggio stato modulo, per controllo errato sulla ripartizione dei costi del personale per le uo della sac**
+>
+>[2959ecd3e837aba](https://github.com/istitutosuperioredisanita/sigla-main/commit/2959ecd3e837aba) rpucciarelli *February 02, 2011*
+
+>**BugID: 541 - Anomalie**
+>
+>[23be2c4934b08e2](https://github.com/istitutosuperioredisanita/sigla-main/commit/23be2c4934b08e2) rpucciarelli *February 01, 2011*
+
+>**BugID: 533 - Import iniziale**
+>
+>[dfb390be24f338b](https://github.com/istitutosuperioredisanita/sigla-main/commit/dfb390be24f338b) mincarnato *January 25, 2011*
+
+>**BugID: 533 - Import iniziale**
+>
+>[7c78326a39ad7c6](https://github.com/istitutosuperioredisanita/sigla-main/commit/7c78326a39ad7c6) mincarnato *January 24, 2011*
+
+>**BugID: 533 - Import iniziale**
+>
+>[4ee4e7c03b272d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/4ee4e7c03b272d3) mincarnato *January 24, 2011*
+
+>**BugID: 533 - Import iniziale**
+>
+>[01101e17a2e0b59](https://github.com/istitutosuperioredisanita/sigla-main/commit/01101e17a2e0b59) mincarnato *January 24, 2011*
+
+>**BugID: 533 - Import iniziale**
+>
+>[8ffe23d35e76f5f](https://github.com/istitutosuperioredisanita/sigla-main/commit/8ffe23d35e76f5f) mincarnato *January 24, 2011*
+
+>**BugID: 533 - Import iniziale**
+>
+>[b4e81501a44a1cb](https://github.com/istitutosuperioredisanita/sigla-main/commit/b4e81501a44a1cb) mincarnato *January 14, 2011*
+
+>**Initial repository layout.**
+>
+>[b38d62c077c07a2](https://github.com/istitutosuperioredisanita/sigla-main/commit/b38d62c077c07a2) root *January 12, 2011*
 
 
