@@ -5,7 +5,7 @@ on:
   workflow_dispatch:      # per poterlo lanciare anche manualmente
 
 jobs:
-  publish:
+  integration-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read

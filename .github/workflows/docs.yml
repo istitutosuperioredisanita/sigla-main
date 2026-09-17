@@ -5,6 +5,10 @@ on:
       - master
     paths:
       - docs/**
+  workflow_run:
+    workflows: ["Release Packages"]
+    types:
+      - completed
   workflow_dispatch:  # parte anche su richiesta manuale
 
 env:
