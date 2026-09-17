@@ -66,7 +66,14 @@ public class ObbligazioneResHome extends ObbligazioneHome {
 	 * @param bulk <code>ObbligazioneResBulk</code> il contesto (obbligazione) in cui viene fatta la ricerca dell'elemento voce
 	 * @param home istanza di <code>Elemento_voceHome</code>
 	 * @param bulkClause <code>OggettoBulk</code> elemento voce su cui viene fatta la ricerca
-	 * @param clause <code>CompoundFindClause</code> le clausole della selezione
+	 * @param clause <code>CompoundFindClause</code> le clausole dellapublic SQLBuilder selectAllEqualsObbligazioniResByClause(ObbligazioneBulk bulk, ObbligazioneHome home, OggettoBulk bulkClause, CompoundFindClause clause) throws java.lang.reflect.InvocationTargetException, IllegalAccessException, it.cnr.jada.persistency.PersistencyException {
+		SQLBuilder sql = this.createSQLBuilder();
+		sql.addClause(FindClause.AND, "cd_cds", SQLBuilder.EQUALS, bulk.getCd_cds());
+		sql.addClause(FindClause.AND, "esercizio_originale", SQLBuilder.EQUALS, bulk.getEsercizio_originale());
+		sql.addClause(FindClause.AND, "pg_obbligazione", SQLBuilder.EQUALS, bulk.getPg_obbligazione());
+		sql.addClause(clause);
+		return sql;
+	} selezione
 	 *
 	 * @return sql il risultato della selezione
 	 *

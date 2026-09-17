@@ -30,6 +30,7 @@ import it.cnr.contab.doccont00.ejb.ObbligazioneResComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
+import it.cnr.contab.util00.bulk.storage.AllegatoParentBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Config;
@@ -399,31 +400,6 @@ public class CRUDObbligazioneResBP extends CRUDObbligazioneBP{
     			return "readonly";
     	return "archivioAllegati";
     }
-
-
-	private BulkList<AllegatoObbligazioneBulk> getAllegati(ActionContext context,ObbligazioneBulk oggettobulk ) throws BusinessProcessException {
-		RemoteIterator ri=  this.find(context, new CompoundFindClause(), new ObbligazioneResBulk(), oggettobulk, "allEqualsObbligazioniRes");
-		BulkList<AllegatoObbligazioneBulk> archivioAllegati = new BulkList<AllegatoObbligazioneBulk>();
-		try {
-			ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context, ri);
-			while (ri.hasMoreElements()) {
-				ObbligazioneBulk currObbligazione = (ObbligazioneBulk) ri.nextElement();
-
-				if (currObbligazione.getEsercizio().compareTo(oggettobulk.getEsercizio()) <= 0) {
-
-					currObbligazione = (ObbligazioneBulk) initializeModelForEditAllegati(context, currObbligazione);
-					for (AllegatoGenericoBulk allegatoGenericoBulk : currObbligazione.getArchivioAllegati())
-						((AllegatoObbligazioneBulk) allegatoGenericoBulk).setEsercizioDiAppartenenza(currObbligazione.getEsercizio());
-					archivioAllegati.addAll(currObbligazione.getArchivioAllegati());
-				}
-
-			}
-			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
-		}catch(java.rmi.RemoteException ex){
-			throw handleException(ex);
-		}
-		return archivioAllegati;
-	}
 	/**
 	 * Inizializza il modello per la modifica.
 	 * @param context Il contesto dell'azione
@@ -435,8 +411,25 @@ public class CRUDObbligazioneResBP extends CRUDObbligazioneBP{
 			ObbligazioneBulk oggettobulk = (ObbligazioneBulk)super.initializeModelForEdit(context, bulk);
 
 			if (isStatoVisibile()) {
-				BulkList<AllegatoObbligazioneBulk> archivioAllegati = new BulkList<AllegatoObbligazioneBulk>();
-					archivioAllegati.addAll(getAllegati(context, oggettobulk));
+				BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<AllegatoGenericoBulk>();
+				try	{
+					RemoteIterator ri = this.find(context, new CompoundFindClause(), new ObbligazioneResBulk(), oggettobulk, "allEqualsObbligazioniRes");
+					ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context, ri);
+					while (ri.hasMoreElements()) {
+						ObbligazioneResBulk currObbligazione = (ObbligazioneResBulk) ri.nextElement();
+						if (currObbligazione.getEsercizio().compareTo(oggettobulk.getEsercizio())<=0) {
+							currObbligazione = (ObbligazioneResBulk)initializeModelForEditAllegati(context, currObbligazione);
+							for (AllegatoGenericoBulk allegatoGenericoBulk : currObbligazione.getArchivioAllegati())
+								((AllegatoObbligazioneBulk)allegatoGenericoBulk).setEsercizioDiAppartenenza(currObbligazione.getEsercizio());
+							archivioAllegati.addAll(currObbligazione.getArchivioAllegati());
+						}
+					}
+					it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
+				}catch(java.rmi.RemoteException ex){
+					throw handleException(ex);
+				}
+	
+				((AllegatoParentBulk)oggettobulk).setArchivioAllegati(archivioAllegati);
 			}
 			
 			return oggettobulk;
