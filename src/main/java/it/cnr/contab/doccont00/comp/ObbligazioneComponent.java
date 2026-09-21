@@ -1304,7 +1304,7 @@ public ObbligazioneBulk confermaObbligazioneProvvisoria (UserContext aUC,Obbliga
 		}		
 
 		lockBulk( aUC, obbligazione );
-		validaObbligazioneDefinitiva(aUC,obbligazione);
+		//validaObbligazioneDefinitiva(aUC,obbligazione);
 		/*
 		if ( obbligazione.getFl_gara_in_corso()!=null && obbligazione.getFl_gara_in_corso().booleanValue()  )
 			throw new ApplicationException("Non e' possibile confermare un'impegno ("+obbligazione.getEsercizio()+"/"+obbligazione.getEsercizio_originale()+"/"+obbligazione.getPg_obbligazione()+") con gara di appalto in corso di espletamento.");
@@ -6066,10 +6066,71 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 				throw new ApplicationException("Attenzione: il campo MOTIVAZIONE è obbligatorio.");
 			}
 		}
-		if ( obbligazione.isDefinitiva())
-			validaObbligazioneDefinitiva(uc, obbligazione);
+		//if ( obbligazione.isDefinitiva())
+		//	validaObbligazioneDefinitiva(uc, obbligazione);
 	}
 	catch ( Exception e )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	{
 		throw handleException( e )	;
 	}	
