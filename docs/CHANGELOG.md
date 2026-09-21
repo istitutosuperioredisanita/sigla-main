@@ -1,3 +1,23 @@
+## Release 8.0.29  -- _September 21, 2026_ 
+**Changes**
+
+>**fix(docs): eliminata condizione sul push**
+>
+>[cbfbed8d773a89e](https://github.com/istitutosuperioredisanita/sigla-main/commit/cbfbed8d773a89e) marco.spasiano *September 21, 2026*
+
+>**Revert obbligatorietà contratto per obbligazioni nello stato definitivo**
+>
+>[49eba925e8a8e00](https://github.com/istitutosuperioredisanita/sigla-main/commit/49eba925e8a8e00) csalvio *September 21, 2026*
+
+>**Revert obbligatorietà contratto per obbligazioni nello stato definitivo**
+>
+>[e31ec3c5cd402b2](https://github.com/istitutosuperioredisanita/sigla-main/commit/e31ec3c5cd402b2) csalvio *September 21, 2026*
+
+>**Bumped version to 8.0.28**
+>
+>[63297449aefac80](https://github.com/istitutosuperioredisanita/sigla-main/commit/63297449aefac80) dirgensa *September 21, 2026*
+
+
 ## Release 8.0.28  -- _September 21, 2026_ 
 **Changes**
 
