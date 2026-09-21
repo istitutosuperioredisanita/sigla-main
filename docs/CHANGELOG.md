@@ -1,5 +1,26 @@
-##  Unreleased 
+## Release 8.0.28  -- _September 21, 2026_ 
 **Changes**
+
+>**Aggiunto controllo obbligatorietà contratto per obbligazioni nello stato definitivo**
+>
+>[568f448f667b49f](https://github.com/istitutosuperioredisanita/sigla-main/commit/568f448f667b49f) csalvio *September 21, 2026*
+
+>**Eliminazione spazie dal numero conto**
+>
+>[441db575fb21343](https://github.com/istitutosuperioredisanita/sigla-main/commit/441db575fb21343) csalvio *September 21, 2026*
+
+>**fix(docs): risolto crash Sphinx su transition markdown nel changelog**
+> * `- changelog.mustache: ogni riga del corpo commit è ora resa come`
+> * `code-span (&#x60;&#x60; &#x60;{{.}}&#x60; &#x60;&#x60;)`
+> * `- docs/CHANGELOG.md: rigenerato con il nuovo template (nessuna voce`
+> * `persa, solo escaping del contenuto esistente)`
+> * `- nightly_build.yml: rinominato il job da &#x27;publish&#x27; a`
+> * `&#x27;integration-test&#x27;`
+> * `- docs.yml: aggiunto trigger workflow_run sul completamento di`
+> * `&quot;Release Packages&quot;, cosicché la generazione della documentazione`
+> * `Sphinx parta automaticamente dopo ogni release`
+>
+>[5706c6b366e40bc](https://github.com/istitutosuperioredisanita/sigla-main/commit/5706c6b366e40bc) marco.spasiano *September 17, 2026*
 
 >**Bumped version to 8.0.27**
 >
