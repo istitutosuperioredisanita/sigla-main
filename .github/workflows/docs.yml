@@ -1,72 +1,109 @@
 name: sphinx
+
 on:
   push:
     branches:
       - master
     paths:
       - docs/**
+
   workflow_run:
     workflows: ["Release Packages"]
     types:
       - completed
-  workflow_dispatch:  # parte anche su richiesta manuale
+
+  workflow_dispatch:
 
 env:
   DEFAULT_BRANCH: "master"
-  #SPHINXOPTS: "-W --keep-going -T"
-  # ^-- If these SPHINXOPTS are enabled, then be strict about the builds and fail on any warnings
 
 jobs:
   build-and-deploy:
     name: Build and gh-pages
+
+    # workflow_run deve essere eseguito solo se Release Packages
+    # è terminato correttamente e sulla branch master.
+    if: |
+      github.event_name != 'workflow_run' ||
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'master'
+      )
+
     runs-on: ubuntu-latest
+
     steps:
-      # https://github.com/marketplace/actions/checkout
-      - uses: actions/checkout@v2
+
+      # ------------------------------------------------------------
+      # Checkout
+      # ------------------------------------------------------------
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'master' }}
 
-      # https://github.com/actions/setup-python
+      # ------------------------------------------------------------
+      # Python
+      # ------------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # LaTeX/PDF e EPUB richiedono texlive e strumenti correlati,
-      # che nel vecchio container erano già preinstallati
+      # ------------------------------------------------------------
+      # LaTeX / PDF / EPUB
+      # ------------------------------------------------------------
       - name: Install LaTeX and build tools
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-          texlive-latex-recommended \
-          texlive-latex-extra \
-          texlive-fonts-recommended \
-          texlive-fonts-extra \
-          texlive-lang-italian \
-          latexmk \
-          librsvg2-bin
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-fonts-extra \
+            texlive-lang-italian \
+            latexmk \
+            librsvg2-bin
 
-      # https://docs.github.com/en/actions/guides/building-and-testing-python#installing-dependencies
+      # ------------------------------------------------------------
+      # Python dependencies
+      # ------------------------------------------------------------
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
 
+      # ------------------------------------------------------------
+      # Debug
+      # ------------------------------------------------------------
       - name: Debugging information
         run: |
-          echo "github.ref:" ${{github.ref}}
-          echo "github.event_name:" ${{github.event_name}}
-          echo "github.head_ref:" ${{github.head_ref}}
-          echo "github.base_ref:" ${{github.base_ref}}
+          echo "github.ref: ${{ github.ref }}"
+          echo "github.event_name: ${{ github.event_name }}"
+          echo "github.head_ref: ${{ github.head_ref }}"
+          echo "github.base_ref: ${{ github.base_ref }}"
+
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            echo "workflow_run.head_branch: ${{ github.event.workflow_run.head_branch }}"
+            echo "workflow_run.head_sha: ${{ github.event.workflow_run.head_sha }}"
+            echo "workflow_run.conclusion: ${{ github.event.workflow_run.conclusion }}"
+          fi
+
           set -x
+
           git rev-parse --abbrev-ref HEAD
+          git rev-parse HEAD
           git branch
           git branch -a
           git remote -v
+
           python -V
           pip list --not-required
           pip list
 
-      # Build
+      # ------------------------------------------------------------
+      # Build Sphinx
+      # ------------------------------------------------------------
       - name: Build Sphinx docs
         run: |
           make html
@@ -75,62 +112,51 @@ jobs:
           make epub
           cp _build/epub/*.epub _build/html/
 
-      # The following supports building all branches and combining on
-      # gh-pages
-
-      # Clone and set up the old gh-pages branch
+      # ------------------------------------------------------------
+      # Clone existing gh-pages
+      # ------------------------------------------------------------
       - name: Clone old gh-pages
         run: |
           set -x
-          git fetch
-          ( git branch gh-pages remotes/origin/gh-pages && git clone . --branch=gh-pages _gh-pages/ ) || mkdir _gh-pages
-          rm -rf _gh-pages/.git/
-          mkdir -p _gh-pages/branch/
 
-      # If a push and default branch, copy build to _gh-pages/ as the "main"
-      # deployment.
-      - name: Copy new build (default branch)
+          git fetch origin gh-pages
+
+          git clone \
+            --branch gh-pages \
+            --single-branch \
+            . \
+            _gh-pages/ \
+            || mkdir -p _gh-pages
+
+          rm -rf _gh-pages/.git/
+
+      # ------------------------------------------------------------
+      # Copy documentation
+      #
+      # Solo master:
+      # la documentazione viene pubblicata nella root di gh-pages.
+      # ------------------------------------------------------------
+      - name: Copy new build
         run: |
           set -x
-          # Delete everything under _gh-pages/ that is from the
-          # primary branch deployment.  Eicludes the other branches
-          # _gh-pages/branch-* paths, and not including
-          # _gh-pages itself.
-          find _gh-pages/ -mindepth 1 ! -path '_gh-pages/branch*' -delete
+
+          # Elimina la precedente documentazione pubblicata
+          # mantenendo eventuali file necessari.
+          find _gh-pages/ -mindepth 1 -delete
+
+          # Copia la nuova documentazione HTML
           rsync -a _build/html/ _gh-pages/
 
-      # If a push and not on default branch, then copy the build to
-      # _gh-pages/branch/$brname (transforming '/' into '--')
-      - name: Copy new build (branch)
-        run: |
-          set -x
-          #brname=$(git rev-parse --abbrev-ref HEAD)
-          brname="${{github.ref}}"
-          brname="${brname##refs/heads/}"
-          brdir=${brname//\//--}   # replace '/' with '--'
-          rm -rf   _gh-pages/branch/${brdir}
-          rsync -a _build/dirhtml/ _gh-pages/branch/${brdir}
-
-      # Go through each branch in _gh-pages/branch/, if it's not a
-      # ref, then delete it.
-      - name: Delete old feature branches
-        run: |
-          set -x
-          for brdir in `ls _gh-pages/branch/` ; do
-              brname=${brdir//--/\/}   # replace '--' with '/'
-              if ! git show-ref remotes/origin/$brname ; then
-                  echo "Removing $brdir"
-                  rm -r _gh-pages/branch/$brdir/
-              fi
-          done
-
-      # Add the .nojekyll file
-      - name: nojekyll
+      # ------------------------------------------------------------
+      # Disable Jekyll
+      # ------------------------------------------------------------
+      - name: Add .nojekyll
         run: |
           touch _gh-pages/.nojekyll
 
+      # ------------------------------------------------------------
       # Deploy
-      # https://github.com/peaceiris/actions-gh-pages
+      # ------------------------------------------------------------
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
