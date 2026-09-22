@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html
+  {% if language is not none %} lang="{{ language }}"{% endif %}
+  data-content_root="{{ content_root }}"
+>
+{% include 'layouts/head.html' %}
+
+<body class="{{ site.css_theme }}" role="main">
+  {% include 'layouts/loader_show_script.html' %}
+  {% include 'layouts/header.html' %}
+
+	{% include 'layouts/templates.html' %}
+
+  <div id="main" role="main">
+    <div class="container-fluid container-fluid--desktop main-container">
+      <div class="row">
+        <nav class="col--nav">
+          {% include 'layouts/sidebar.html' %}
+          {% include 'layouts/sidebar_offcanvas.html' %}
+        </nav>
+        <div id="doc-content" class="col-content">
+          <!--<div class="doc-content__consultation">
+            <span class="it-icon-edit"></span>
+            {{ _(t.in_consultation) }}
+          </div>-->
+          {% if prev %}
+            <div class="footer-buttons footer-buttons--prev" role="navigation" aria-label="footer navigation">
+                <a href="{{ prev.link|e }}" class="" title="{{ prev.title|striptags|e }}" accesskey="p" rel="prev"> Torna a {{ prev.title }}</a>
+            </div>
+          {% endif %}
+          {% block body %}{% endblock %}
+          {% if next %}
+            <div class="footer-buttons footer-buttons--next" role="navigation" aria-label="footer navigation">
+                  <a href="{{ next.link|e }}" class="" title="{{ next.title|striptags|e }}" accesskey="n" rel="next">{{ next.title }}</a>
+              </div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+  </div>
+  {% include 'layouts/footer.html' %}
+  {% include 'layouts/l10n.html' %}
+  {% include 'layouts/scrolltop.html' %}
+  {% block scripts %}
+  {% include 'layouts/scripts.html' %}
+  {% endblock %}
+  {% if builder != 'readthedocssinglehtmllocalmedia' %}
+    {% include 'layouts/cookiebar.html' %}
+  {% endif %}
+  {% if docsitalia_data %}
+  {% include 'layouts/document_modals.html' %}
+  {% endif %}
+</body>
+</html>

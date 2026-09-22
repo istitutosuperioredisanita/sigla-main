@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sigla</artifactId>
     <packaging>war</packaging>
-    <version>8.0.23-SNAPSHOT</version>
+    <version>8.0.29-SNAPSHOT</version>
     <name>SIGLA</name>
     <parent>
         <artifactId>archetype</artifactId>
@@ -49,18 +49,17 @@
         <version.storage.cloud>3.0.1</version.storage.cloud>
         <jackson.version>2.10.3</jackson.version>
         <commons-io.version>2.7</commons-io.version>
-        <git.changelog.maven.plugin.version>1.61</git.changelog.maven.plugin.version>
+        <git.changelog.maven.plugin.version>2.3.0</git.changelog.maven.plugin.version>
 
-        <version.wildfly>38.0.0.Final</version.wildfly>
-        <version.wildfly.maven.plugin>6.0.0.Final</version.wildfly.maven.plugin>
-        <version.wildfly.datasources.galleon.pack>6.0.0.Final</version.wildfly.datasources.galleon.pack>
+        <version.wildfly>40.0.0.Final</version.wildfly>
+        <version.wildfly.maven.plugin>6.0.1.Final</version.wildfly.maven.plugin>
         <bootable.jar>false</bootable.jar>
 
         <version.junit>5.10.1</version.junit>
         <version.org.wildfly.arquillian>6.0.0.Alpha1</version.org.wildfly.arquillian>
         <version.org.jboss.arquillian.junit>1.7.2.Final</version.org.jboss.arquillian.junit>
 
-        <version.arquillian-graphene>3.0.0-alpha.4</version.arquillian-graphene>
+        <version.arquillian-graphene>3.0.1.Final</version.arquillian-graphene>
         <test.exclude.package>it/cnr/test/oracle/**</test.exclude.package>
 
         <cors.allow-origin>http://localhost:9000</cors.allow-origin>
@@ -194,9 +193,6 @@
                     <feature-packs>
                         <feature-pack>
                             <location>wildfly@maven(org.jboss.universe:community-universe)#${version.wildfly}</location>
-                        </feature-pack>
-                        <feature-pack>
-                            <location>org.wildfly:wildfly-datasources-galleon-pack:${version.wildfly.datasources.galleon.pack}</location>
                         </feature-pack>
                     </feature-packs>
                     <layers>
@@ -665,6 +661,12 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-devtools-v153</artifactId>
+            <version>4.49.0</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>

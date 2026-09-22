@@ -13,17 +13,10 @@
 #      You should have received a copy of the GNU Affero General Public License
 #      along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import docs_cnr_theme
+import docs_theme
 
-# Register the theme as an extension to generate a sitemap.xml
-# extensions.append('sphinx_material')
-from recommonmark.parser import CommonMarkParser
-source_parsers = {
-    '.md': CommonMarkParser,
-}
-
-project = 'Sistema Informativo Gestione Linee di Attività'
-release = '6.5.0'
+project = 'SIGLA'
+release = '8.0.29'
 author = u'Istituto Superiore di Sanità'
 
 show_authors = True
@@ -33,17 +26,18 @@ latex_documents = [
     ('index', 'Manuale-SIGLA.tex', project, author, 'manual'),
 ]
 latex_elements = {
-    'extraclassoptions': 'openany,oneside'
+    'extraclassoptions': 'openany,oneside',
+    'fontpkg': '',
 }
 epub_basename = u'Manuale-SIGLA'
 
-html_theme = "docs_cnr_theme"
-html_theme_path = [docs_cnr_theme.get_html_theme_path()]
+html_theme = "docs_theme"
+html_theme_path = [docs_theme.get_html_theme_path()]
 # These folders are copied to the documentation's HTML output
 html_static_path = ['_static']
 
 copyright = "2020 Istituto Superiore di Sanità"
-html_title = "Sistema Informativo Gestione Linee di Attività"
+html_title = "SIGLA"
 html_show_sourcelink = False
 html_favicon = "favicon.ico"
 html_logo = "logo.png"
@@ -54,7 +48,10 @@ language = "it"
 numfig = True
 # The master toctree document.
 master_doc = 'index'
-source_suffix = '.rst'
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
 # These folders are copied to the documentation's HTML output
 templates_path = ['_templates']
 
@@ -65,5 +62,6 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.ifconfig',
-    'docs_cnr_theme'
+    'myst_parser',
+    'docs_theme'
 ]

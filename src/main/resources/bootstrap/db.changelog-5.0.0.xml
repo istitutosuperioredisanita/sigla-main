@@ -6382,4 +6382,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : RAFFAELE PAGANO - ELIMINATA UNIQUE_KEY SU TABELLA PDG_MODULO_SPESE -->
     <include file="bootstrap/modify_table_pdg_modulo_spese.xml"/>
 
+    <!-- Autore : MARCO SPASIANO - AGGIUNTI ACCESSI PER LA CONFIGURAZIONE DELL'HELP ONLINE  -->
+    <include file="bootstrap/add_accessi_help.xml"/>
 </databaseChangeLog>
