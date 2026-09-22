@@ -39,6 +39,13 @@
 			enabledOnEdit="true"
 			label="Data Cancellazione" />
 	<fieldProperty
+			name="smartWorking"
+			property="smartWorking"
+			inputType="CHECKBOX"
+			enabledOnEdit="true"
+			nullable="false"
+			label="Smat Working" />
+	<fieldProperty
 			name="flAbilitaNote"
 			property="flAbilitaNote"
 			inputType="CHECKBOX"
@@ -59,6 +66,8 @@
 	<formFieldProperty
 			name="dtCancellazione" />
 	<formFieldProperty
+			name="smartWorking" />
+	<formFieldProperty
 			name="flAbilitaNote" />
 	<findFieldProperty
 			name="cdTipoTrasportoRientro" />
@@ -69,6 +78,8 @@
 	<findFieldProperty
 			name="dtCancellazione" />
 	<findFieldProperty
+			name="smartWorking" />
+	<findFieldProperty
 			name="flAbilitaNote" />
 	<columnFieldProperty
 			name="cdTipoTrasportoRientro" />
@@ -78,6 +89,8 @@
 			name="tiDocumento" />
 	<columnFieldProperty
 			name="dtCancellazione" />
+	<columnFieldProperty
+			name="smartWorking" />
 	<columnFieldProperty
 			name="flAbilitaNote" />
 </bulkInfo>

@@ -6384,4 +6384,6 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : MARCO SPASIANO - AGGIUNTI ACCESSI PER LA CONFIGURAZIONE DELL'HELP ONLINE  -->
     <include file="bootstrap/add_accessi_help.xml"/>
+    <!-- Autore : CIRO SALVIO - AGGIUNTA NUOVA COLONNA SMARTWORKIN  -->
+    <include file="bootstrap/add_column_smartworking_doc_t_r.xml"/>
 </databaseChangeLog>

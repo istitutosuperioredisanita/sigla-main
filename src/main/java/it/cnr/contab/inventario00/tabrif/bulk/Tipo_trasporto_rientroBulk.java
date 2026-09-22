@@ -66,8 +66,10 @@ public class Tipo_trasporto_rientroBulk extends Tipo_trasporto_rientroBase {
 	public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp, it.cnr.jada.action.ActionContext context) {
 		setTiDocumento(TIPO_TRASPORTO);
 		setFlAbilitaNote(Boolean.FALSE);
+		setSmartWorking(Boolean.FALSE);
 		return super.initializeForInsert(bp, context);
 	}
+
 
 	/**
 	 * Verifica se il tipo trasporto/rientro è cancellabile
@@ -102,5 +104,9 @@ public class Tipo_trasporto_rientroBulk extends Tipo_trasporto_rientroBase {
 	 */
 	public boolean isRientro() {
 		return TIPO_RIENTRO.equals(getTiDocumento());
+	}
+
+	public boolean isTipoSmartWorking() {
+		return getSmartWorking();
 	}
 }

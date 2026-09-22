@@ -1,7 +1,6 @@
 package it.cnr.contab.inventario01.bulk;
 
 import com.fasterxml.jackson.annotation.*;
-import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.anagraf00.core.bulk.V_persona_fisicaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
@@ -15,10 +14,7 @@ import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.StrServ;
 
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Testata del documento di Trasporto o Rientro beni inventariali.
@@ -532,9 +528,9 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     // =========================================================================
 
     public boolean isSmartworking() {
-        return getTipoMovimento() != null
-                && getTipoMovimento().getDsTipoTrasportoRientro() != null
-                && getTipoMovimento().getDsTipoTrasportoRientro().equalsIgnoreCase("SMARTWORKING");
+        return Optional.ofNullable(getTipoMovimento())
+                .map(Tipo_trasporto_rientroBulk::isTipoSmartWorking)
+                .orElse(false);
     }
 
     // =========================================================================

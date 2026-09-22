@@ -46,6 +46,14 @@
          </td>
        </tr>
        <tr>
+                <td>
+                 <% bp.getController().writeFormLabel(out,"smartWorking");%>
+                </td>
+                <td>
+                 <% bp.getController().writeFormInput(out,null,"smartWorking",bp.isFlAbilitaNoteReadonly(),null,null);%>
+                </td>
+              </tr>
+       <tr>
          <td>
           <% bp.getController().writeFormLabel(out,"flAbilitaNote");%>
          </td>
