@@ -1305,13 +1305,13 @@ public ObbligazioneBulk confermaObbligazioneProvvisoria (UserContext aUC,Obbliga
 
 		lockBulk( aUC, obbligazione );
 		//validaObbligazioneDefinitiva(aUC,obbligazione);
-		/*
+
 		if ( obbligazione.getFl_gara_in_corso()!=null && obbligazione.getFl_gara_in_corso().booleanValue()  )
 			throw new ApplicationException("Non e' possibile confermare un'impegno ("+obbligazione.getEsercizio()+"/"+obbligazione.getEsercizio_originale()+"/"+obbligazione.getPg_obbligazione()+") con gara di appalto in corso di espletamento.");
 		if ( obbligazione.getEsercizio().compareTo( obbligazione.getEsercizio_competenza()) != 0 )
 			throw new ApplicationException("Non e' possibile confermare un'impegno con esercizio di competenza successivo all'esercizio di scrivania");
 
-		 */
+
 		obbligazione.setStato_obbligazione( obbligazione.STATO_OBB_DEFINITIVO );
 		obbligazione.setUser( aUC.getUser());
 		updateBulk( aUC, obbligazione );
