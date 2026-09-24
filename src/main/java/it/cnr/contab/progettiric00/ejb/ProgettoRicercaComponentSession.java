@@ -18,6 +18,7 @@
 
 package it.cnr.contab.progettiric00.ejb;
 
+import it.cnr.contab.progettiric00.dto.RiportaProgettoDto;
 import jakarta.ejb.Remote;
 
 import it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk;
@@ -51,5 +52,6 @@ Pdg_esercizioBulk getPdgEsercizio(it.cnr.jada.UserContext param0) throws it.cnr.
 void removePianoEconomico(it.cnr.jada.UserContext param0,it.cnr.contab.progettiric00.core.bulk.ProgettoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.jada.bulk.OggettoBulk modificaConBulk(UserContext param0, it.cnr.jada.bulk.OggettoBulk param1, boolean param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 List<ProgettoBulk> getAllChildren(it.cnr.jada.UserContext param0, ProgettoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-    public List<V_saldi_piano_econom_progettoBulk> getPluriennaliProgettoPianoEco(UserContext userContext, Progetto_piano_economicoBulk bulk) throws ComponentException, PersistencyException, RemoteException;
+public List<V_saldi_piano_econom_progettoBulk> getPluriennaliProgettoPianoEco(UserContext userContext, Progetto_piano_economicoBulk bulk) throws ComponentException, PersistencyException, RemoteException;
+public void riportaInNuovoProgetto(UserContext userContext, List<RiportaProgettoDto> progettiDaRiportare,Integer nuovoEsercizio) throws ComponentException, PersistencyException, RemoteException;
 }

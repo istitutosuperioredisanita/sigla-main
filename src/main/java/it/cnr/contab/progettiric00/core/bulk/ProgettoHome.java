@@ -1213,4 +1213,19 @@ public class ProgettoHome extends BulkHome {
 			}
 		}
 	}
+	public ProgettoBulk selectProgettoDaCdProgetto( Integer esercizio,String cdProgetto) throws PersistencyException, IntrospectionException{
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class);
+		SQLBuilder sql = progettohome.createSQLBuilder();
+
+		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,esercizio);
+		sql.addSQLClause("AND","CD_PROGETTO",sql.EQUALS,cdProgetto);
+		sql.addSQLClause("AND","TIPO_FASE",sql.EQUALS,ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+
+		java.util.Collection coll = this.fetchAll(sql);
+		if (coll.size() != 1)
+			return null;
+
+		return  (ProgettoBulk)coll.iterator().next();
+
+	}
 }
