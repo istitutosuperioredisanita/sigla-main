@@ -20,6 +20,12 @@
       path="/CRUDProgettiRicercaAction" actionClass="it.cnr.contab.progettiric00.action.CRUDProgettoAction">
   </action>
 
+  <action
+          path="/RiportaProgettiRicercaAction" actionClass="it.cnr.jada.util.action.CRUDAction">
+  </action>
+
+
+
   <action 
       path="/CRUDRimodulaProgettiRicercaAction" actionClass="it.cnr.contab.progettiric00.action.CRUDRimodulaProgettoAction">
   </action>
@@ -83,6 +89,16 @@
     <init-param name="componentSessionName" value="CNRPROGETTIRIC00_EJB_RimodulaProgettoRicercaComponentSession"/>
 	<init-param name="defaultAction" value="CRUDRimodulaProgettiRicercaAction"/>
   </businessProcess>
+
+  <businessProcess
+          name="RiportaProgettiRicercaBP" className="it.cnr.contab.progettiric00.bp.RiportaProgettiRicercaBP">
+    <forward name="default" path="/progettiric00/riporta_progetti.jsp"/>
+    <init-param name="bulkClassName" value="it.cnr.contab.progettiric00.core.bulk.ProgettoBulk"/>
+    <init-param name="componentSessionName" value="CNRPROGETTIRIC00_EJB_ProgettoRicercaComponentSession"/>
+    <init-param name="defaultAction" value="RiportaProgettiRicercaAction"/>
+
+  </businessProcess>
+
   
   <businessProcess name="SelezionatoreRimodulazioneProgettoBP"
                      className="it.cnr.contab.progettiric00.bp.SelezionatoreRimodulazioneProgettoBP">
