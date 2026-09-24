@@ -1631,15 +1631,5 @@
         <dropDefaultValue tableName="log_registry" columnName="dacr"/>
         <dropDefaultValue tableName="log_registry" columnName="duva"/>
     </changeSet>
-    <changeSet author="sigla" id="1516802834820-145">
-        <addDefaultValue tableName="tipo_trasporto_rientro" columnName="dacr" defaultValueDate="${now}"/>
-        <addDefaultValue tableName="tipo_trasporto_rientro" columnName="duva" defaultValueDate="${now}"/>
 
-        <loadData commentLineStartsWith="#" encoding="UTF-8" file="bootstrap/csv/tipo_trasporto_rientro.csv" quotchar="&quot;" separator="," tableName="tipo_trasporto_rientro">
-            <column name="dt_tipo_norma" type="${date.type}"/>
-        </loadData>
-
-        <dropDefaultValue tableName="tipo_trasporto_rientro" columnName="dacr"/>
-        <dropDefaultValue tableName="tipo_trasporto_rientro" columnName="duva"/>
-    </changeSet>
 </databaseChangeLog>
