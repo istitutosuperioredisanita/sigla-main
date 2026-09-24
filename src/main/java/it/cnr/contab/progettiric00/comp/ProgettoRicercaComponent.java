@@ -45,6 +45,8 @@ import it.cnr.contab.prevent00.bulk.Voce_f_saldi_cdr_lineaHome;
 import it.cnr.contab.prevent00.bulk.Voce_f_saldi_cdr_lineaKey;
 import it.cnr.contab.prevent01.bulk.*;
 import it.cnr.contab.progettiric00.core.bulk.*;
+import it.cnr.contab.progettiric00.dto.RiportaProgettoDto;
+import it.cnr.contab.progettiric00.enumeration.StatoProgetto;
 import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
 import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
@@ -72,6 +74,7 @@ import it.cnr.jada.util.RemoteIterator;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -2516,6 +2519,128 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 		} catch (PersistencyException e) {
 			throw new ComponentException(e);
 		}
+	}
+
+	public void riportaInNuovoProgetto(UserContext userContext, List<RiportaProgettoDto> progettiDaRiportare,Integer esercizioNew) throws ComponentException, PersistencyException, IntrospectionException {
+
+		for(RiportaProgettoDto progettoDaRiportare : progettiDaRiportare) {
+
+			ProgettoHome progettoHome = (ProgettoHome) getHome(userContext, ProgettoBulk.class);
+			// verifico che il nuovo progetto non sia già presente
+			ProgettoBulk progettoPresenteInDb = progettoHome.selectProgettoDaCdProgetto(esercizioNew,progettoDaRiportare.getCdProgettoNew());
+
+			if(progettoPresenteInDb==null) {
+				ProgettoBulk bulk = new ProgettoBulk(progettoDaRiportare.getEsercizioEstrazione(), progettoDaRiportare.getPgProgettoOld(), ProgettoBulk.TIPO_FASE_NON_DEFINITA);
+				bulk = (ProgettoBulk) progettoHome.findByPrimaryKey(bulk);
+				if (bulk != null) {
+					getHomeCache(userContext).fetchAll(userContext);
+				}
+				bulk = initializePianoEconomico(userContext, bulk, true);
+
+				ProgettoBulk progettoNew = (ProgettoBulk) bulk.clone();
+				progettoNew = (ProgettoBulk) inizializzaBulkPerInserimento(userContext, progettoNew);
+				BulkList<Progetto_piano_economicoBulk> piecoNewList = progettoNew.getDettagliPianoEconomicoAnnoCorrente();
+				if(piecoNewList!=null){
+					for(Progetto_piano_economicoBulk piecoNew : piecoNewList){
+						piecoNew.setEsercizio_piano(esercizioNew);
+						piecoNew.setImSpesaFinanziatoRimodulato(new BigDecimal(0));
+						piecoNew.setImSpesaCofinanziatoRimodulato(new BigDecimal(0));
+						piecoNew.setImSpesaCofinanziatoRimodulatoPreDelete(new BigDecimal(0));
+						piecoNew.setImSpesaFinanziatoRimodulatoPreDelete(new BigDecimal(0));
+						piecoNew.setIm_entrata(new BigDecimal(0));
+						piecoNew.setIm_spesa_cofinanziato(new BigDecimal(0));
+						piecoNew.setIm_spesa_finanziato(new BigDecimal(0));
+
+						piecoNew.setDacr(new Timestamp(System.currentTimeMillis()));
+						piecoNew.setDuva(new Timestamp(System.currentTimeMillis()));
+						piecoNew.setUtcr(userContext.getUser());
+						piecoNew.setUtuv(userContext.getUser());
+						piecoNew.setUser(userContext.getUser());
+						piecoNew.setPg_ver_rec(1L);
+
+						piecoNew.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+
+						BulkList<Ass_progetto_piaeco_voceBulk> vociList = piecoNew.getVociBilancioAssociate();
+						BulkList<Ass_progetto_piaeco_voceBulk> vociNewList = new BulkList<>();
+						if(vociList!= null){
+							for(Ass_progetto_piaeco_voceBulk voce : vociList){
+
+								Ass_progetto_piaeco_voceBulk voceNew = new Ass_progetto_piaeco_voceBulk();
+
+								voceNew.setProgetto_piano_economico(piecoNew);
+
+								voceNew.setElemento_voce(voce.getElemento_voce());
+								voceNew.setCd_elemento_voce(voce.getCd_elemento_voce());
+								voceNew.setEsercizio_piano(esercizioNew);
+								voceNew.setEsercizio_voce(esercizioNew);
+								voceNew.setCd_unita_organizzativa(voce.getCd_unita_organizzativa());
+								voceNew.setTi_appartenenza(voce.getTi_appartenenza());
+								voceNew.setTi_gestione(voce.getTi_gestione());
+
+								voceNew.setImVarCofinanziatoRimodulato(new BigDecimal(0));
+								voceNew.setImVarFinanziatoRimodulato(new BigDecimal(0));
+								voceNew.setImVarCofinanziatoRimodulatoPreDelete(new BigDecimal(0));
+								voceNew.setImVarFinanziatoRimodulatoPreDelete(new BigDecimal(0));
+								voceNew.setSaldoEntrata(null);
+								voceNew.setSaldoSpesa(null);
+
+								voceNew.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+
+								vociNewList.add(voceNew);
+							}
+						}
+						piecoNew.setVociBilancioAssociate(null);
+						piecoNew.setVociBilancioAssociate(vociNewList);
+					}
+				}
+				progettoNew.setCd_progetto(progettoDaRiportare.getCdProgettoNew());
+
+				progettoNew.setEsercizio(esercizioNew);
+				progettoNew.setStato(ProgettoBulk.TIPO_STATO_PROPOSTA);
+
+				Timestamp data = Timestamp.valueOf(bulk.getOtherField().getDtFine().toLocalDateTime());
+				Timestamp nuovaData = Timestamp.valueOf(data.toLocalDateTime().plusYears(1));
+				progettoNew.getOtherField().setDtFine(nuovaData);
+
+				data = Timestamp.valueOf(bulk.getOtherField().getDtInizio().toLocalDateTime());
+				nuovaData = Timestamp.valueOf(data.toLocalDateTime().plusYears(1));
+				progettoNew.getOtherField().setDtInizio(nuovaData);
+
+				if (bulk.getOtherField().getDtProroga() != null) {
+					data = Timestamp.valueOf(bulk.getOtherField().getDtProroga().toLocalDateTime());
+					nuovaData = Timestamp.valueOf(data.toLocalDateTime().plusYears(1));
+					progettoNew.getOtherField().setDtProroga(nuovaData);
+				}
+				progettoNew.getOtherField().setImFinanziato(null);
+				progettoNew.getOtherField().setStato(StatoProgetto.STATO_INIZIALE.value());
+
+				if (progettoNew.getTipo_fase().equals(ProgettoBulk.TIPO_FASE_NON_DEFINITA)) {
+					progettoNew.setFl_gestione(true);
+					progettoNew.setFl_previsione(true);
+				}
+				if (progettoNew.getTipo_fase().equals(ProgettoBulk.TIPO_FASE_GESTIONE)) {
+					progettoNew.setFl_gestione(true);
+					progettoNew.setFl_previsione(false);
+				}
+				if (progettoNew.getTipo_fase().equals(ProgettoBulk.TIPO_FASE_PREVISIONE)) {
+					progettoNew.setFl_gestione(false);
+					progettoNew.setFl_previsione(true);
+				}
+
+
+				progettoNew.setDacr(new Timestamp(System.currentTimeMillis()));
+				progettoNew.setDuva(new Timestamp(System.currentTimeMillis()));
+				progettoNew.setUtcr(userContext.getUser());
+				progettoNew.setUtuv(userContext.getUser());
+				progettoNew.setUser(userContext.getUser());
+				progettoNew.setPg_ver_rec(1L);
+
+				progettoNew.setCrudStatus(OggettoBulk.TO_BE_CREATED);
+
+				creaConBulk(userContext, progettoNew);
+			}
+		}
+
 	}
 
 
