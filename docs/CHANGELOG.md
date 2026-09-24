@@ -1,3 +1,63 @@
+## Release 8.0.31  -- _September 24, 2026_ 
+**Changes**
+
+>**eliminato l'inzializzazione della tabella tipo_trasporto_rientro**
+>
+>[9c2e3d286f52324](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c2e3d286f52324) csalvio *September 24, 2026*
+
+>**fix: sphinx conditions [ci skip]**
+>
+>[7b09b3d21c28796](https://github.com/istitutosuperioredisanita/sigla-main/commit/7b09b3d21c28796) Marco Spasiano *September 24, 2026*
+
+>**RIPORTA PROGETTI - funzone che riporta progetti annuali esistenti, nell'anno di contesto**
+>
+>[37d80f256ec9b3e](https://github.com/istitutosuperioredisanita/sigla-main/commit/37d80f256ec9b3e) tomada_valentina *September 24, 2026*
+
+>**Bumped version to 8.0.30**
+>
+>[3fea92363b7249f](https://github.com/istitutosuperioredisanita/sigla-main/commit/3fea92363b7249f) dirgensa *September 24, 2026*
+
+>**ci: aggiunto workflow GitHub Actions per nightly build**
+> * `Schedulato ogni giorno alle 02:00 UTC (cron) sul branch &#x27;sviluppo&#x27;,`
+> * `lanciabile anche manualmente via workflow_dispatch. Esegue il checkout`
+> * `Java 21 (temurin) con cache Maven, poi mvn clean integration-test sui`
+> * `profili PROD.`
+>
+>[8a4d19f8eddc807](https://github.com/istitutosuperioredisanita/sigla-main/commit/8a4d19f8eddc807) marco.spasiano *September 16, 2026*
+
+>**upgrade: bump WildFly 38 -> 40, wildfly-maven-plugin 6.0.0 -> 6.0.1,**
+> * `git-changelog-maven-plugin 1.61 -&gt; 2.3.0, rimosso il feature-pack`
+> * `wildfly-datasources-galleon-pack (non più necessario), aggiunta`
+> * `dipendenza selenium-devtools-v153.`
+>
+>[49a77e7a4e627aa](https://github.com/istitutosuperioredisanita/sigla-main/commit/49a77e7a4e627aa) marco.spasiano *September 16, 2026*
+
+>**test(sigla): retry su StaleElementReferenceException e tuning ambiente test**
+> * `- Introduce doWriteIntoElement(...) come wrapper con retry (max 3 tentativi)`
+> * `attorno a getGrapheneElement(...).writeIntoElement(...), per gestire il`
+> * `caso in cui il DOM venga ricreato tra la localizzazione e la scrittura`
+> * `dell&#x27;elemento (submit/AJAX che rigenera il form). Sostituite tutte le`
+> * `chiamate dirette nei test CRUDOrdineAcqBP001-005.`
+> * `- findAndClickButton: non ignora più silenziosamente`
+> * `StaleElementReferenceException, ma ritenta localizzazione/click fino a`
+> * `3 volte prima di fallire, loggando ogni tentativo.`
+> * `- arquillian.xml: abilita reuseDriver, imposta chromeCapabilities`
+> * `(webSocketUrl:false, pageLoadStrategy:eager), riduce la window-size a`
+> * `1024x768 e aggiunge tuning del datasource H2 in-memory (LOG&#x3D;0,`
+> * `UNDO_LOG&#x3D;0, LOCK_MODE&#x3D;0, CACHE_SIZE, pool size min/max, disabilitata`
+> * `background-validation) per velocizzare l&#x27;avvio dei test.`
+>
+>[05e939f2fc72bd7](https://github.com/istitutosuperioredisanita/sigla-main/commit/05e939f2fc72bd7) marco.spasiano *September 16, 2026*
+
+>**add: aggiunto accesso alla maschera di configurazione dell'help online e aggiornata la versione a 3.0.1.Final di arquillian graphene**
+>
+>[a98089465368c8e](https://github.com/istitutosuperioredisanita/sigla-main/commit/a98089465368c8e) marco.spasiano *September 10, 2026*
+
+>**fix .filter(el->Optional.ofNullable(el.getEsercizio_accertamento()).isPresent()) nel caso di note di credito su 999. Caso nota di credito elettronica registrata senza accertamento e lo stesso viene inserito dopo la registrazione della nota di credito.**
+>
+>[f6953cd2fa61a5a](https://github.com/istitutosuperioredisanita/sigla-main/commit/f6953cd2fa61a5a) csalvio *September 07, 2026*
+
+
 ## Release 8.0.30  -- _September 23, 2026_ 
 **Changes**
 
