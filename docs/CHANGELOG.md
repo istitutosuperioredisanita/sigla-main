@@ -1,3 +1,62 @@
+## Release 8.0.30  -- _September 23, 2026_ 
+**Changes**
+
+>**Riattivato il controllo sull'obbligatorietà del contratto**
+>
+>[8ec2c4bbc8f1725](https://github.com/istitutosuperioredisanita/sigla-main/commit/8ec2c4bbc8f1725) csalvio *September 23, 2026*
+
+>**Update maven.yml**
+> * `Possibilità di lanciarlo manualmente`
+>
+>[e46714e55b27139](https://github.com/istitutosuperioredisanita/sigla-main/commit/e46714e55b27139) csalvioiss *September 23, 2026*
+
+>**-Aggiunta colonna boolean smartWorking per indicare le tipologie da usare per documenti di trasporto con finalità smart Working.**
+> * `-Aggiunto anche l&#x27;inserimento delle tipologie in tipo_trasporto_rientro`
+>
+>[aee0110b36d5979](https://github.com/istitutosuperioredisanita/sigla-main/commit/aee0110b36d5979) csalvio *September 22, 2026*
+
+>**fix(docs): eliminata condizione sul push**
+>
+>[d53a2ed2bc476ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/d53a2ed2bc476ac) marco.spasiano *September 21, 2026*
+
+>**Bumped version to 8.0.29**
+>
+>[e3ced13c1dbb8c6](https://github.com/istitutosuperioredisanita/sigla-main/commit/e3ced13c1dbb8c6) dirgensa *September 21, 2026*
+
+>**Revert obbligatorietà contratto per obbligazioni nello stato definitivo**
+> * `(cherry picked from commit e31ec3c5cd402b2a03141ff517955a19efe80d13)`
+>
+>[3f456abefb27bd3](https://github.com/istitutosuperioredisanita/sigla-main/commit/3f456abefb27bd3) csalvio *September 21, 2026*
+
+>**Aggiunto controllo obbligatorietà contratto per obbligazioni nello stato definitivo**
+>
+>[804bd2f6e8f0cd6](https://github.com/istitutosuperioredisanita/sigla-main/commit/804bd2f6e8f0cd6) csalvio *September 17, 2026*
+
+>**Eliminazione spazie dal numero conto**
+>
+>[538c610d7431fae](https://github.com/istitutosuperioredisanita/sigla-main/commit/538c610d7431fae) csalvio *September 17, 2026*
+
+>**Fix:Visualizzazione e gestione degli allegati delle obbligazioni residue**
+>
+>[5ea4e6ca0c2bcc2](https://github.com/istitutosuperioredisanita/sigla-main/commit/5ea4e6ca0c2bcc2) csalvio *September 17, 2026*
+
+>**Fix:Visualizzazione e gestione degli allegati delle obbligazioni residue**
+>
+>[ded0a4d26dd122c](https://github.com/istitutosuperioredisanita/sigla-main/commit/ded0a4d26dd122c) csalvio *September 17, 2026*
+
+>**Fix:Visualizzazione e gestione degli allegati delle obbligazioni residue**
+>
+>[f673c1b5be79137](https://github.com/istitutosuperioredisanita/sigla-main/commit/f673c1b5be79137) csalvio *September 17, 2026*
+
+>**Fix:Visualizzazione e gestione degli allegati delle obbligazioni residue**
+>
+>[3ca81e6e0e56dba](https://github.com/istitutosuperioredisanita/sigla-main/commit/3ca81e6e0e56dba) csalvio *September 16, 2026*
+
+>**fix .filter(el->Optional.ofNullable(el.getEsercizio_accertamento()).isPresent()) nel caso di note di credito su 999. Caso nota di credito elettronica registrata senza accertamento e lo stesso viene inserito dopo la registrazione della nota di credito.**
+>
+>[55fd0985b000df6](https://github.com/istitutosuperioredisanita/sigla-main/commit/55fd0985b000df6) csalvio *September 07, 2026*
+
+
 ## Release 8.0.29  -- _September 21, 2026_ 
 **Changes**
 

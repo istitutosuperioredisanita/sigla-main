@@ -16,7 +16,7 @@
 import docs_theme
 
 project = 'SIGLA'
-release = '8.0.29'
+release = '8.0.30'
 author = u'Istituto Superiore di Sanità'
 
 show_authors = True
