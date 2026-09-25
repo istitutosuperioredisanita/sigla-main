@@ -176,9 +176,11 @@ public class RiportaProgettiRicercaBP extends AllegatiCRUDBP<AllegatoGenericoBul
             File file = allegatoParentBulk.getArchivioAllegati().get(0).getFile();
 
             try (InputStream is = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
+                archiviaAllegati(context);
                 processElencoProgettiDaRiportare(context, allegatoParentBulk, is, file.getName());
                 setMessage("Progetti Caricati");
             }
+
 
         } catch (Exception e) {
             throw handleException(e);
