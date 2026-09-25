@@ -1,3 +1,23 @@
+## Release 8.0.32  -- _September 25, 2026_ 
+**Changes**
+
+>**RIPORTA PROGETTI - Salvataggio allegato elenco progetti da riportare storepath = RIPORTA_PROGETTO**
+>
+>[adf39028d15ac3d](https://github.com/istitutosuperioredisanita/sigla-main/commit/adf39028d15ac3d) tomada_valentina *September 25, 2026*
+
+>**RIPORTA PROGETTI - fix bulkClassName nella configurazione del business process RiportaProgettiRicercaBP**
+>
+>[598ac348ca9cb94](https://github.com/istitutosuperioredisanita/sigla-main/commit/598ac348ca9cb94) tomada_valentina *September 25, 2026*
+
+>**fix(ci): risolto changelog senza ultimo tag [ci skip]**
+>
+>[384c88e1311daf2](https://github.com/istitutosuperioredisanita/sigla-main/commit/384c88e1311daf2) Marco Spasiano *September 24, 2026*
+
+>**Bumped version to 8.0.31**
+>
+>[9ae5d60e14556e4](https://github.com/istitutosuperioredisanita/sigla-main/commit/9ae5d60e14556e4) dirgensa *September 24, 2026*
+
+
 ## Release 8.0.31  -- _September 24, 2026_ 
 **Changes**
 
