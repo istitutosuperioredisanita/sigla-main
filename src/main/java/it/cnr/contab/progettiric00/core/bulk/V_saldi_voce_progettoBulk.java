@@ -23,6 +23,8 @@
  */
 package it.cnr.contab.progettiric00.core.bulk;
 
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -36,11 +38,72 @@ import java.util.stream.Collectors;
  */
 public class V_saldi_voce_progettoBulk extends V_saldi_voce_progettoBase {
 	private static final long serialVersionUID = 5918224310476589096L;
+	private Elemento_voceBulk elemento_voce;
 
 	public V_saldi_voce_progettoBulk() {
 		super();
 	}
-	
+
+	public Elemento_voceBulk getElemento_voce() {
+		return elemento_voce;
+	}
+
+	public void setElemento_voce(Elemento_voceBulk elemento_voce) {
+		this.elemento_voce = elemento_voce;
+	}
+
+	@Override
+	public Integer getEsercizio_voce() {
+		Elemento_voceBulk elemento_voce = this.getElemento_voce();
+		if (elemento_voce == null)
+			return null;
+		return elemento_voce.getEsercizio();
+	}
+
+	@Override
+	public void setEsercizio_voce(Integer esercizio) {
+		this.getElemento_voce().setEsercizio(esercizio);
+	}
+
+	@Override
+	public String getTi_appartenenza() {
+		Elemento_voceBulk elemento_voce = this.getElemento_voce();
+		if (elemento_voce == null)
+			return null;
+		return elemento_voce.getTi_appartenenza();
+	}
+
+	@Override
+	public void setTi_appartenenza(String ti_appartenenza) {
+		this.getElemento_voce().setTi_appartenenza(ti_appartenenza);
+	}
+
+	@Override
+	public String getTi_gestione() {
+		Elemento_voceBulk elemento_voce = this.getElemento_voce();
+		if (elemento_voce == null)
+			return null;
+		return elemento_voce.getTi_gestione();
+	}
+
+	@Override
+	public void setTi_gestione(String ti_gestione) {
+		this.getElemento_voce().setTi_gestione(ti_gestione);
+	}
+
+	@Override
+	public String getCd_elemento_voce() {
+		Elemento_voceBulk elemento_voce = this.getElemento_voce();
+		if (elemento_voce == null)
+			return null;
+		return elemento_voce.getCd_elemento_voce();
+	}
+
+	@Override
+	public void setCd_elemento_voce(String cd_elemento_voce) {
+		this.getElemento_voce().setCd_elemento_voce(cd_elemento_voce);
+	}
+
 	/*
 	 * Ritorna l'assestato della quota finanziata calcolata da:
 	 * Stanziamento + Variazioni Positive - Variazioni Negative + Quote Ricevute

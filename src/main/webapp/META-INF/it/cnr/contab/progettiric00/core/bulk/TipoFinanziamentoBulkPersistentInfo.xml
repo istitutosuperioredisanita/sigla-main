@@ -22,4 +22,44 @@
 	<defaultColumnMap
 		tableName="TIPO_FINANZIAMENTO">
 	</defaultColumnMap>
+
+	<columnMap name="FONDI_FUNZIONAMENTO"
+			   tableName="TIPO_FINANZIAMENTO">
+		<columnMapping
+				columnName="ID"
+				propertyName="id"
+				sqlTypeName="DECIMAL"
+				columnSize="38"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="CODICE"
+				propertyName="codice"
+				sqlTypeName="VARCHAR"
+				columnSize="25"
+				nullable="false" />
+		<columnMapping
+				columnName="DESCRIZIONE"
+				propertyName="descrizione"
+				sqlTypeName="VARCHAR"
+				columnSize="1000"
+				nullable="false" />
+		<columnMapping
+				columnName="SUM(NVL(V_SALDI_PIANO_ECONOM_PROGETTO.IMPORTO_FIN,0) + NVL(V_SALDI_PIANO_ECONOM_PROGETTO.IMPORTO_COFIN,0)) IMPORTO_FINANZIATO"
+				propertyName="importoFinanziato"
+				columnSize="17"
+				columnScale="2"
+				count="true"/>
+		<columnMapping
+				columnName="SUM(NVL(V_SALDI_PIANO_ECONOM_PROGETTO.IMPACC_FIN,0) + (NVL(V_SALDI_PIANO_ECONOM_PROGETTO.TRASFPIU_FIN,0) - NVL(V_SALDI_PIANO_ECONOM_PROGETTO.TRASFMENO_FIN,0))) IMPORTO_UTILIZZATO"
+				propertyName="importoUtilizzato"
+				columnSize="17"
+				columnScale="2"
+				count="true"/>
+	</columnMap>
+	<persistentProperty
+			name="importoFinanziato" />
+	<persistentProperty
+			name="importoUtilizzato" />
+
 </SQLPersistentInfo>

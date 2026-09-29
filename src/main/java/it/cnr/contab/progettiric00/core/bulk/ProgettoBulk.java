@@ -180,6 +180,10 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 	private BulkList<ContrattoBulk> contratti = new BulkList<ContrattoBulk>();
 	private BulkList<Progetto_anagraficoBulk> anagraficheProgetto = new BulkList<Progetto_anagraficoBulk>();
 
+	private BigDecimal importoFinanziato;
+	private BigDecimal importoUtilizzato;
+
+
 	public ProgettoBulk() {
 		super();
 	}
@@ -1418,4 +1422,19 @@ public void setUnita_organizzativa(it.cnr.contab.config00.sto.bulk.Unita_organiz
 				this.getProgettopadre().getCd_progetto().equals(AREA_PROGETTUALE_FUNZIONAMENTO_UO);
 	}
 
+	public BigDecimal getImportoFinanziato() {
+		return importoFinanziato;
+	}
+
+	public void setImportoFinanziato(BigDecimal importoFinanziato) {
+		this.importoFinanziato = importoFinanziato;
+	}
+
+	public BigDecimal getImportoUtilizzato() {
+		return importoUtilizzato;
+	}
+
+	public void setImportoUtilizzato(BigDecimal importoUtilizzato) {
+		this.importoUtilizzato = importoUtilizzato;
+	}
 }

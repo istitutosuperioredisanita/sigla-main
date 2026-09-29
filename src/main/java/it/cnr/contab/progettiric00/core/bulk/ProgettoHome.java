@@ -18,9 +18,7 @@
 package it.cnr.contab.progettiric00.core.bulk;
 
 import java.math.BigDecimal;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import it.cnr.jada.persistency.sql.*;
@@ -1227,5 +1225,162 @@ public class ProgettoHome extends BulkHome {
 
 		return  (ProgettoBulk)coll.iterator().next();
 
+	}
+
+	public List<ProgettoBulk> findFondiFunzionamentoUO(UserContext userContext, Integer esercizio, String cdUnitaOrganizzativa) throws ComponentException, PersistencyException {
+		final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
+				"FONDI_FUNZIONAMENTO",
+				"PARAMETRI",
+				"*",
+				esercizio);
+		Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+		Configurazione_cnrBulk config = Optional.ofNullable(home.findByPrimaryKey(configurazioneCnrBulk))
+				.map(Configurazione_cnrBulk.class::cast)
+				.orElseGet(() -> {
+					configurazioneCnrBulk.setEsercizio(0);
+					try {
+						return (Configurazione_cnrBulk)home.findByPrimaryKey(configurazioneCnrBulk);
+					} catch (PersistencyException e) {
+						throw new RuntimeException(e);
+					}
+				});
+
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"FONDI_FUNZIONAMENTO");
+		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
+		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, cdUnitaOrganizzativa);
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.P_CD_PROGETTO", SQLBuilder.EQUALS, Optional.ofNullable(config).map(Configurazione_cnrBase::getVal01).orElse(null));
+		Optional.ofNullable(config)
+				.map(Configurazione_cnrBase::getVal02)
+				.map(s -> s.split(","))
+				.map(Arrays::asList)
+				.orElse(Collections.emptyList())
+				.forEach(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.NOT_EQUALS, s);
+				});
+		Optional.ofNullable(config)
+				.flatMap(c -> Optional.ofNullable(c.getVal03()))
+				.ifPresent(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+				});
+
+		Collection<ColumnMapping> columnMappings = progettohome.getColumnMap().getColumnMappings();
+		columnMappings
+				.stream()
+				.filter(columnMapping -> !columnMapping.isCount())
+				.map(ColumnMapping::getColumnName)
+				.map(s -> "V_PROGETTO_PADRE.".concat(s))
+				.forEach(sqlBuilder::addSQLGroupBy);
+
+		return fetchAll(sqlBuilder);
+	}
+
+	public List<ProgettoBulk> findFondiFunzionamentoTipoFinanziamento(UserContext userContext, Integer esercizio, String codice) throws ComponentException, PersistencyException {
+		final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
+				"FONDI_FUNZIONAMENTO",
+				"PARAMETRI",
+				"*",
+				esercizio);
+		Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+		Configurazione_cnrBulk config = Optional.ofNullable(home.findByPrimaryKey(configurazioneCnrBulk))
+				.map(Configurazione_cnrBulk.class::cast)
+				.orElseGet(() -> {
+					configurazioneCnrBulk.setEsercizio(0);
+					try {
+						return (Configurazione_cnrBulk)home.findByPrimaryKey(configurazioneCnrBulk);
+					} catch (PersistencyException e) {
+						throw new RuntimeException(e);
+					}
+				});
+
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"FONDI_FUNZIONAMENTO");
+		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
+		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
+		sqlBuilder.addTableToHeader("TIPO_FINANZIAMENTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ID_TIPO_FINANZIAMENTO", "TIPO_FINANZIAMENTO.ID");
+		sqlBuilder.addSQLClause(FindClause.AND, "TIPO_FINANZIAMENTO.CODICE", SQLBuilder.EQUALS, codice);
+
+		Optional.ofNullable(config)
+				.map(Configurazione_cnrBase::getVal03)
+				.map(s -> s.split(","))
+				.map(Arrays::asList)
+				.orElse(Collections.emptyList())
+				.forEach(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+				});
+
+		Collection<ColumnMapping> columnMappings = progettohome.getColumnMap().getColumnMappings();
+		columnMappings
+				.stream()
+				.filter(columnMapping -> !columnMapping.isCount())
+				.map(ColumnMapping::getColumnName)
+				.map(s -> "V_PROGETTO_PADRE.".concat(s))
+				.forEach(sqlBuilder::addSQLGroupBy);
+
+		return fetchAll(sqlBuilder);
+	}
+
+	public List<ProgettoBulk> findFondiFunzionamentoEnteFinanziatore(UserContext userContext, Integer esercizio, String cdTerzo) throws ComponentException, PersistencyException {
+		final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
+				"FONDI_FUNZIONAMENTO",
+				"PARAMETRI",
+				"*",
+				esercizio);
+		Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+		Configurazione_cnrBulk config = Optional.ofNullable(home.findByPrimaryKey(configurazioneCnrBulk))
+				.map(Configurazione_cnrBulk.class::cast)
+				.orElseGet(() -> {
+					configurazioneCnrBulk.setEsercizio(0);
+					try {
+						return (Configurazione_cnrBulk)home.findByPrimaryKey(configurazioneCnrBulk);
+					} catch (PersistencyException e) {
+						throw new RuntimeException(e);
+					}
+				});
+
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"FONDI_FUNZIONAMENTO");
+		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
+		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
+		sqlBuilder.addTableToHeader("PROGETTO_FINANZIATORE");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "PROGETTO_FINANZIATORE.PG_PROGETTO");
+		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_FINANZIATORE.CD_FINANZIATORE_TERZO", SQLBuilder.EQUALS, cdTerzo);
+
+		Optional.ofNullable(config)
+				.map(Configurazione_cnrBase::getVal03)
+				.map(s -> s.split(","))
+				.map(Arrays::asList)
+				.orElse(Collections.emptyList())
+				.forEach(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+				});
+
+		Collection<ColumnMapping> columnMappings = progettohome.getColumnMap().getColumnMappings();
+		columnMappings
+				.stream()
+				.filter(columnMapping -> !columnMapping.isCount())
+				.map(ColumnMapping::getColumnName)
+				.map(s -> "V_PROGETTO_PADRE.".concat(s))
+				.forEach(sqlBuilder::addSQLGroupBy);
+
+		return fetchAll(sqlBuilder);
 	}
 }

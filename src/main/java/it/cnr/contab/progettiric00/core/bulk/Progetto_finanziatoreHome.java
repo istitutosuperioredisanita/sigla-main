@@ -17,16 +17,26 @@
 
 package it.cnr.contab.progettiric00.core.bulk;
 
-import it.cnr.jada.bulk.*;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBase;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.ColumnMapping;
+import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.util.*;
 
 public class Progetto_finanziatoreHome extends BulkHome {
-public Progetto_finanziatoreHome(java.sql.Connection conn) {
-	super(Progetto_finanziatoreBulk.class,conn);
-}
-public Progetto_finanziatoreHome(java.sql.Connection conn,PersistentCache persistentCache) {
-	super(Progetto_finanziatoreBulk.class,conn,persistentCache);
-}
+    public Progetto_finanziatoreHome(java.sql.Connection conn) {
+        super(Progetto_finanziatoreBulk.class, conn);
+    }
+
+    public Progetto_finanziatoreHome(java.sql.Connection conn, PersistentCache persistentCache) {
+        super(Progetto_finanziatoreBulk.class, conn, persistentCache);
+    }
 }
