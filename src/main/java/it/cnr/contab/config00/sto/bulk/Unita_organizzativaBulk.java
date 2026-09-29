@@ -21,6 +21,7 @@ import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -35,6 +36,10 @@ public class Unita_organizzativaBulk extends Unita_organizzativaBase {
 	private BulkList associazioneUoArea = new BulkList();
 
 	private Area_scientificaBulk area_scientifica;
+
+	private BigDecimal importoFinanziato;
+	private BigDecimal importoUtilizzato;
+
 	public Unita_organizzativaBulk() {
 		super();
 		inizializza();
@@ -468,5 +473,21 @@ public class Unita_organizzativaBulk extends Unita_organizzativaBase {
 	public Ass_uo_areaBulk removeFromAssociazioneUoArea(int index) {
 		Ass_uo_areaBulk dett = (Ass_uo_areaBulk)getAssociazioneUoArea().remove(index);
 		return dett;
+	}
+
+	public BigDecimal getImportoFinanziato() {
+		return importoFinanziato;
+	}
+
+	public void setImportoFinanziato(BigDecimal importoFinanziato) {
+		this.importoFinanziato = importoFinanziato;
+	}
+
+	public BigDecimal getImportoUtilizzato() {
+		return importoUtilizzato;
+	}
+
+	public void setImportoUtilizzato(BigDecimal importoUtilizzato) {
+		this.importoUtilizzato = importoUtilizzato;
 	}
 }

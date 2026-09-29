@@ -20,11 +20,14 @@ package it.cnr.contab.anagraf00.core.bulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_modalita_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.compensi00.docs.bulk.V_terzo_per_compensoBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBase;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.pdg00.cdip.bulk.Stipendi_cofiBulk;
+import it.cnr.contab.progettiric00.core.bulk.ProgettoGestUoBulk;
+import it.cnr.contab.progettiric00.core.bulk.Progetto_finanziatoreBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
@@ -39,10 +42,7 @@ import it.cnr.jada.persistency.sql.*;
 
 import jakarta.ejb.RemoveException;
 import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class TerzoHome extends BulkHome {
     protected TerzoHome(Class clazz, java.sql.Connection conn) {
@@ -355,4 +355,55 @@ public class TerzoHome extends BulkHome {
         return (BancaBulk) result.get(0);
     }
 
+
+    public List<TerzoBulk> findFondiFunzionamentoEnteFinanziatore(UserContext userContext, Integer esercizio) throws ComponentException, PersistencyException {
+        final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
+                "FONDI_FUNZIONAMENTO",
+                "PARAMETRI",
+                "*",
+                esercizio);
+        Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+        Configurazione_cnrBulk config = Optional.ofNullable(home.findByPrimaryKey(configurazioneCnrBulk))
+                .map(Configurazione_cnrBulk.class::cast)
+                .orElseGet(() -> {
+                    configurazioneCnrBulk.setEsercizio(0);
+                    try {
+                        return (Configurazione_cnrBulk)home.findByPrimaryKey(configurazioneCnrBulk);
+                    } catch (PersistencyException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+        setColumnMap("FONDI_FUNZIONAMENTO");
+        SQLBuilder sqlBuilder = super.createSQLBuilder();
+        sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
+        sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
+        sqlBuilder.addTableToHeader("PROGETTO_FINANZIATORE");
+
+        sqlBuilder.addSQLJoin("PROGETTO_FINANZIATORE.PG_PROGETTO(+)", "V_PROGETTO_PADRE.PG_PROGETTO");
+        sqlBuilder.addSQLJoin("TERZO.CD_TERZO(+)", "PROGETTO_FINANZIATORE.CD_FINANZIATORE_TERZO");
+
+        sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+        sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
+
+        sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+        sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+
+        Optional.ofNullable(config)
+                .map(Configurazione_cnrBase::getVal03)
+                .map(s -> s.split(","))
+                .map(Arrays::asList)
+                .orElse(Collections.emptyList())
+                .forEach(s -> {
+                    sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+                });
+        sqlBuilder.addSQLGroupBy("TERZO.CD_TERZO");
+        sqlBuilder.addSQLGroupBy("TERZO.DENOMINAZIONE_SEDE");
+        sqlBuilder.addSQLGroupBy("TERZO.CD_ANAG");
+        sqlBuilder.addSQLGroupBy("TERZO.PG_COMUNE_SEDE");
+        sqlBuilder.addSQLGroupBy("TERZO.PG_RAPP_LEGALE");
+        sqlBuilder.addSQLGroupBy("TERZO.CD_UNITA_ORGANIZZATIVA");
+
+        return fetchAll(sqlBuilder);
+    }
 }
