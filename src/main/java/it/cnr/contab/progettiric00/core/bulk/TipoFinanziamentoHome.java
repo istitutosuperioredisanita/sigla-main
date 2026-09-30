@@ -71,7 +71,7 @@ public class TipoFinanziamentoHome extends BulkHome {
         }
     }
 
-    public List<TipoFinanziamentoBulk> findFondiFunzionamento(UserContext userContext, Integer esercizio) throws ComponentException, PersistencyException {
+    public List<TipoFinanziamentoBulk> findFondiFunzionamento(UserContext userContext, Integer esercizio, String uo) throws ComponentException, PersistencyException {
         final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
                 "FONDI_FUNZIONAMENTO",
                 "PARAMETRI",
@@ -107,6 +107,10 @@ public class TipoFinanziamentoHome extends BulkHome {
                 .orElse(Collections.emptyList())
                 .forEach(s -> {
                     sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+                });
+        Optional.ofNullable(uo)
+                .ifPresent(s -> {
+                    sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, s);
                 });
 
         Collection<ColumnMapping> columnMappings = getColumnMap().getColumnMappings();
