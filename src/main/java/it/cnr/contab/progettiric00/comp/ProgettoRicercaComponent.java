@@ -1530,9 +1530,12 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 
 			it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession configSession = (it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class);
 	   		BigDecimal annoFrom = configSession.getIm01(userContext, 0, null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO);
-	   		if (Optional.ofNullable(annoFrom).isPresent()) {
-		   		validaVociPianoEconomicoDecisionale(userContext, progetto, annoFrom.intValue());
-		   		validaVociPianoEconomicoGestionale(userContext, progetto, annoFrom.intValue());
+			if (Optional.ofNullable(annoFrom).isPresent()) {
+				Parametri_cnrBulk parCnr = Utility.createParametriCnrComponentSession().getParametriCnr(userContext, annoFrom.intValue());
+				if (!parCnr.getFl_pdg_calderone()) {
+					validaVociPianoEconomicoDecisionale(userContext, progetto, annoFrom.intValue());
+					validaVociPianoEconomicoGestionale(userContext, progetto, annoFrom.intValue());
+				}
 		   		validaSaldiPianoEconomico(userContext, progetto, annoFrom.intValue(), rimodulazione);
 		   		validaTipoFinanziamento(userContext, progetto, annoFrom.intValue());
 		   		validaQuadraturaPianoEconomico(userContext, progetto, annoFrom.intValue());
