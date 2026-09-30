@@ -22,7 +22,6 @@ import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
-import it.cnr.contab.progettiric00.core.bulk.Progetto_finanziatoreBulk;
 import it.cnr.contab.progettiric00.core.bulk.TipoFinanziamentoBulk;
 import it.cnr.contab.progettiric00.core.bulk.V_saldi_voce_progettoBulk;
 import it.cnr.contab.varstanz00.bulk.Var_stanz_resBulk;
@@ -125,13 +124,13 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
-    public Response fondiFunzionamentoTipoFinanziamento(@Context HttpServletRequest request, Integer esercizio) throws Exception {
+    public Response fondiFunzionamentoTipoFinanziamento(@Context HttpServletRequest request, Integer esercizio, String uo) throws Exception {
         logger.debug("REST request per fondi di funzionamento per tipo.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
         Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
         try {
             List<TipoFinanziamentoBulk> dati =
-                    crudComponentSession.find(userContext, TipoFinanziamentoBulk.class, "findFondiFunzionamento", userContext, esercizio);
+                    crudComponentSession.find(userContext, TipoFinanziamentoBulk.class, "findFondiFunzionamento", userContext, esercizio, uo);
             logger.debug("Fine REST per fondi di funzionamento per tipo.");
             return Response.ok(
                     dati
@@ -146,13 +145,13 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
-    public Response fondiFunzionamentoEnteFinanziatore(@Context HttpServletRequest request, Integer esercizio) throws Exception {
+    public Response fondiFunzionamentoEnteFinanziatore(@Context HttpServletRequest request, Integer esercizio, String uo) throws Exception {
         logger.debug("REST request per fondi di funzionamento per ente finanziatore.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
         Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
         try {
             List<TerzoBulk> dati =
-                    crudComponentSession.find(userContext, TerzoBulk.class, "findFondiFunzionamentoEnteFinanziatore", userContext, esercizio);
+                    crudComponentSession.find(userContext, TerzoBulk.class, "findFondiFunzionamentoEnteFinanziatore", userContext, esercizio, uo);
             logger.debug("Fine REST per fondi di funzionamento per ente finanziatore.");
             return Response.ok(
                     dati
@@ -189,14 +188,14 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
-    public Response fondiFunzionamentoDettaglioTipo(@Context HttpServletRequest request, Integer esercizio, String tipo) throws Exception {
+    public Response fondiFunzionamentoDettaglioTipo(@Context HttpServletRequest request, Integer esercizio, String tipo, String uo) throws Exception {
         logger.debug("REST request per fondi di funzionamento per UO.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
         Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
         Optional.ofNullable(tipo).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Unità Organizzativa obbligatorio."));
         try {
             List<ProgettoBulk> dati =
-                    crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoTipoFinanziamento", userContext, esercizio, tipo);
+                    crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoTipoFinanziamento", userContext, esercizio, tipo, uo);
             logger.debug("Fine REST per fondi di funzionamento per UO.");
             return Response.ok(
                     dati
@@ -211,14 +210,14 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
-    public Response fondiFunzionamentoDettaglioEnteFinanziatore(@Context HttpServletRequest request, Integer esercizio, String cdTerzo) throws Exception {
+    public Response fondiFunzionamentoDettaglioEnteFinanziatore(@Context HttpServletRequest request, Integer esercizio, String cdTerzo, String uo) throws Exception {
         logger.debug("REST request per fondi di funzionamento per UO.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
         Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
         Optional.ofNullable(cdTerzo).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Ente Finanziatore obbligatorio."));
         try {
             List<ProgettoBulk> dati =
-                    crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoEnteFinanziatore", userContext, esercizio, cdTerzo);
+                    crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoEnteFinanziatore", userContext, esercizio, cdTerzo, uo);
             logger.debug("Fine REST per fondi di funzionamento per UO.");
             return Response.ok(
                     dati

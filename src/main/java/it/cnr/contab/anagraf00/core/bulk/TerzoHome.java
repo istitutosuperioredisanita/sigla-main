@@ -43,6 +43,7 @@ import it.cnr.jada.persistency.sql.*;
 import jakarta.ejb.RemoveException;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TerzoHome extends BulkHome {
     protected TerzoHome(Class clazz, java.sql.Connection conn) {
@@ -356,7 +357,7 @@ public class TerzoHome extends BulkHome {
     }
 
 
-    public List<TerzoBulk> findFondiFunzionamentoEnteFinanziatore(UserContext userContext, Integer esercizio) throws ComponentException, PersistencyException {
+    public List<TerzoBulk> findFondiFunzionamentoEnteFinanziatore(UserContext userContext, Integer esercizio, String uo) throws ComponentException, PersistencyException {
         final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
                 "FONDI_FUNZIONAMENTO",
                 "PARAMETRI",
@@ -390,13 +391,17 @@ public class TerzoHome extends BulkHome {
         sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
 
         Optional.ofNullable(config)
-                .map(Configurazione_cnrBase::getVal03)
-                .map(s -> s.split(","))
-                .map(Arrays::asList)
-                .orElse(Collections.emptyList())
-                .forEach(s -> {
-                    sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
-                });
+            .map(Configurazione_cnrBase::getVal03)
+            .map(s -> s.split(","))
+            .map(Arrays::asList)
+            .orElse(Collections.emptyList())
+            .forEach(s -> {
+                sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+            });
+        Optional.ofNullable(uo)
+            .ifPresent(s -> {
+                sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, s);
+            });
         sqlBuilder.addSQLGroupBy("TERZO.CD_TERZO");
         sqlBuilder.addSQLGroupBy("TERZO.DENOMINAZIONE_SEDE");
         sqlBuilder.addSQLGroupBy("TERZO.CD_ANAG");
@@ -404,6 +409,17 @@ public class TerzoHome extends BulkHome {
         sqlBuilder.addSQLGroupBy("TERZO.PG_RAPP_LEGALE");
         sqlBuilder.addSQLGroupBy("TERZO.CD_UNITA_ORGANIZZATIVA");
 
-        return fetchAll(sqlBuilder);
+        List<TerzoBulk> result = fetchAll(sqlBuilder);
+        return result.stream().map(terzoBulk -> {
+            if(terzoBulk.getDenominazione_sede() == null) {
+                try {
+                    setColumnMap("default");
+                    return (TerzoBulk) findByPrimaryKey(terzoBulk);
+                } catch (PersistencyException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return terzoBulk;
+        }).collect(Collectors.toList());
     }
 }

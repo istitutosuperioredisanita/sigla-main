@@ -84,6 +84,7 @@ public class V_saldi_voce_progettoHome extends BulkHome {
 		setFetchPolicy("fetchElementoVoce");
 		SQLBuilder sql = this.createSQLBuilder();
 		sql.addTableToHeader("PROGETTO");
+		sql.addSQLJoin("V_SALDI_VOCE_PROGETTO.ESERCIZIO", "PROGETTO.ESERCIZIO");
 		sql.addSQLJoin("V_SALDI_VOCE_PROGETTO.PG_PROGETTO", "PROGETTO.PG_PROGETTO");
 		sql.addSQLClause(FindClause.AND, "PROGETTO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		sql.addSQLClause(FindClause.AND, "PROGETTO.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);

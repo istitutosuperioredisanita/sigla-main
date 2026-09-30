@@ -91,7 +91,9 @@ public interface ProgettoPianoEconomicoLocal {
     Response fondiFunzionamentoTipoFinanziamento(
             @Context HttpServletRequest request,
             @Parameter(description = "Esercizio", required = true)
-            @PathParam("esercizio") Integer esercizio
+            @PathParam("esercizio") Integer esercizio,
+            @Parameter(description = "Unità Organizzativa")
+            @QueryParam("uo") String uo
     ) throws Exception;
 
     @GET
@@ -111,7 +113,9 @@ public interface ProgettoPianoEconomicoLocal {
     Response fondiFunzionamentoEnteFinanziatore(
             @Context HttpServletRequest request,
             @Parameter(description = "Esercizio", required = true)
-            @PathParam("esercizio") Integer esercizio
+            @PathParam("esercizio") Integer esercizio,
+            @Parameter(description = "Unità Organizzativa")
+            @QueryParam("uo") String uo
     ) throws Exception;
 
     @GET
@@ -155,7 +159,9 @@ public interface ProgettoPianoEconomicoLocal {
             @Parameter(description = "Esercizio", required = true)
             @PathParam("esercizio") Integer esercizio,
             @Parameter(description = "Tipo Finanziamento", required = true)
-            @PathParam("tipo") String tipo
+            @PathParam("tipo") String tipo,
+            @Parameter(description = "Unità Organizzativa")
+            @QueryParam("uo") String uo
     ) throws Exception;
 
     @GET
@@ -177,7 +183,9 @@ public interface ProgettoPianoEconomicoLocal {
             @Parameter(description = "Esercizio", required = true)
             @PathParam("esercizio") Integer esercizio,
             @Parameter(description = "Ente FInanziatore", required = true)
-            @PathParam("cdTerzo") String cdTerzo
+            @PathParam("cdTerzo") String cdTerzo,
+            @Parameter(description = "Unità Organizzativa")
+            @QueryParam("uo") String uo
     ) throws Exception;
 
     @GET
