@@ -874,10 +874,7 @@ public class ProgettoHome extends BulkHome {
 									.findFirst()
 									.orElseGet(()->{
 										V_saldi_voce_progettoBulk saldoNew = new V_saldi_voce_progettoBulk();
-										saldoNew.setEsercizio_voce(voceAss.getEsercizio_voce());
-										saldoNew.setTi_appartenenza(voceAss.getTi_appartenenza());
-										saldoNew.setTi_gestione(voceAss.getTi_gestione());
-										saldoNew.setCd_elemento_voce(voceAss.getCd_elemento_voce());
+										saldoNew.setElemento_voce(voceAss.getElemento_voce());
 
 										saldoNew.setStanziamentoFin(BigDecimal.ZERO);
 										saldoNew.setVariapiuFin(BigDecimal.ZERO);
@@ -922,10 +919,7 @@ public class ProgettoHome extends BulkHome {
 									.findFirst()
 									.orElseGet(()->{
 										V_saldi_voce_progettoBulk saldoNew = new V_saldi_voce_progettoBulk();
-										saldoNew.setEsercizio_voce(voceAss.getEsercizio_voce());
-										saldoNew.setTi_appartenenza(voceAss.getTi_appartenenza());
-										saldoNew.setTi_gestione(voceAss.getTi_gestione());
-										saldoNew.setCd_elemento_voce(voceAss.getCd_elemento_voce());
+										saldoNew.setElemento_voce(voceAss.getElemento_voce());
 
 										saldoNew.setStanziamentoFin(BigDecimal.ZERO);
 										saldoNew.setVariapiuFin(BigDecimal.ZERO);

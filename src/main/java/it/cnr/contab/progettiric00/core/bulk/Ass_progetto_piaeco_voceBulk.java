@@ -268,10 +268,7 @@ public class Ass_progetto_piaeco_voceBulk extends Ass_progetto_piaeco_voceBase {
 						.findFirst()
 						.orElseGet(()->{
 							V_saldi_voce_progettoBulk saldoNew = new V_saldi_voce_progettoBulk();
-							saldoNew.setEsercizio_voce(this.getEsercizio_voce());
-							saldoNew.setTi_appartenenza(this.getTi_appartenenza());
-							saldoNew.setTi_gestione(this.getTi_gestione());
-							saldoNew.setCd_elemento_voce(this.getCd_elemento_voce());
+							saldoNew.setElemento_voce(this.getElemento_voce());
 
 							saldoNew.setStanziamentoFin(BigDecimal.ZERO);
 							saldoNew.setVariapiuFin(BigDecimal.ZERO);
