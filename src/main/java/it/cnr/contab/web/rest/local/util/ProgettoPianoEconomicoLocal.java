@@ -36,6 +36,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import java.util.List;
 import java.util.Map;
 
 @Local
@@ -203,6 +204,30 @@ public interface ProgettoPianoEconomicoLocal {
     )
     @RolesAllowed(value = {SIGLARoles.PROGETTI, SIGLARoles.SUPERVISORE})
     Response fondiFunzionamentoProgetto(
+            @Context HttpServletRequest request,
+            @Parameter(description = "Esercizio", required = true)
+            @PathParam("esercizio") Integer esercizio,
+            @Parameter(description = "Codice progetto", required = true)
+            @PathParam("cdProgetto") String cdProgetto,
+            @Parameter(description = "Lista degli elementi voce separati da ',' ")
+            @QueryParam("elementiVoce") String elementiVoce
+    ) throws Exception;
+
+    @GET
+    @Path("/piano-economico/{esercizio}/codice/{cdProgetto}")
+    @Operation(summary = "Piano economico nell'anno riferito al progetto indicato.",
+            description = "Accesso consentito solo alle utenze abilitate al ruolo PROGETTI oppure SUPERVISORE"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Map.class)
+            )
+    )
+    @RolesAllowed(value = {SIGLARoles.PROGETTI, SIGLARoles.SUPERVISORE})
+    Response pianoEconomicoProgetto(
             @Context HttpServletRequest request,
             @Parameter(description = "Esercizio", required = true)
             @PathParam("esercizio") Integer esercizio,
