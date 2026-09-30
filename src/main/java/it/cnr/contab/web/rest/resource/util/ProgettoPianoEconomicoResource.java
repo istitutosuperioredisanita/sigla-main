@@ -21,6 +21,7 @@ import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
+import it.cnr.contab.progettiric00.core.bulk.Ass_progetto_piaeco_voceBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.progettiric00.core.bulk.TipoFinanziamentoBulk;
 import it.cnr.contab.progettiric00.core.bulk.V_saldi_voce_progettoBulk;
@@ -43,10 +44,8 @@ import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -232,14 +231,14 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
-    public Response fondiFunzionamentoProgetto(@Context HttpServletRequest request, Integer esercizio, String cdProgetto) throws Exception {
+    public Response fondiFunzionamentoProgetto(@Context HttpServletRequest request, Integer esercizio, String cdProgetto, String elementiVoce) throws Exception {
         logger.debug("REST request per fondi di funzionamento per progetto.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
         Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
         Optional.ofNullable(cdProgetto).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Codice progetto obbligatorio."));
         try {
             List<V_saldi_voce_progettoBulk> dati =
-                    crudComponentSession.find(userContext, V_saldi_voce_progettoBulk.class, "findByCodiceProgetto", userContext, esercizio, cdProgetto);
+                    crudComponentSession.find(userContext, V_saldi_voce_progettoBulk.class, "findByCodiceProgetto", userContext, esercizio, cdProgetto, elementiVoce);
             logger.debug("Fine REST per fondi di funzionamento per progetto.");
             return Response.ok(
                     dati
@@ -253,4 +252,37 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
         }
     }
 
+    public record VocePianoEconomico(String codice, String descrizione) {}
+    public record GruppoVoce(String codice, String descrizione, List<String> elementiVoce) {}
+
+    @Override
+    public Response pianoEconomicoProgetto(@Context HttpServletRequest request, Integer esercizio, String cdProgetto) throws Exception {
+        logger.debug("REST request per piano economico del progetto.");
+        CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+        Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
+        Optional.ofNullable(cdProgetto).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Codice progetto obbligatorio."));
+        try {
+            List<Ass_progetto_piaeco_voceBulk> dati =
+                    crudComponentSession.find(userContext, Ass_progetto_piaeco_voceBulk.class, "findByCodiceProgetto", userContext, esercizio, cdProgetto);
+            logger.debug("Fine REST per fondi di funzionamento per progetto.");
+            Map<VocePianoEconomico, List<String>> mappa = dati.stream()
+                    .collect(Collectors.groupingBy(
+                            a -> new VocePianoEconomico(
+                                    a.getProgetto_piano_economico().getVoce_piano_economico().getCd_voce_piano(),
+                                    a.getProgetto_piano_economico().getVoce_piano_economico().getDs_voce_piano()
+                            ),
+                            Collectors.mapping(Ass_progetto_piaeco_voceBulk::getCd_elemento_voce, Collectors.toList())
+                    ));
+            return Response.ok(mappa.entrySet().stream()
+                    .map(entry -> new GruppoVoce(
+                            entry.getKey().codice(),
+                            entry.getKey().descrizione(),
+                            entry.getValue()
+                    ))
+                    .toList()).build();
+        } catch (Exception _ex) {
+            logger.error("REST request per fondi di funzionamento per progetto.ERROR: ", _ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Collections.singletonMap("ERROR", _ex)).build();
+        }
+    }
 }

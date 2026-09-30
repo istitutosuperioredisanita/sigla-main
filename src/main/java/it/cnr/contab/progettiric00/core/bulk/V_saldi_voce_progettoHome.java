@@ -23,7 +23,10 @@
  */
 package it.cnr.contab.progettiric00.core.bulk;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
@@ -80,7 +83,7 @@ public class V_saldi_voce_progettoHome extends BulkHome {
 		return fetchAll(sql);
 	}
 
-	public List<V_saldi_voce_progettoBulk> findByCodiceProgetto(UserContext context, Integer esercizio, String cdProgetto) throws PersistencyException {
+	public List<V_saldi_voce_progettoBulk> findByCodiceProgetto(UserContext context, Integer esercizio, String cdProgetto, String elementiVoce ) throws PersistencyException {
 		setFetchPolicy("fetchElementoVoce");
 		SQLBuilder sql = this.createSQLBuilder();
 		sql.addTableToHeader("PROGETTO");
@@ -89,6 +92,15 @@ public class V_saldi_voce_progettoHome extends BulkHome {
 		sql.addSQLClause(FindClause.AND, "PROGETTO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		sql.addSQLClause(FindClause.AND, "PROGETTO.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
 		sql.addSQLClause(FindClause.AND, "PROGETTO.CD_PROGETTO", SQLBuilder.EQUALS, cdProgetto);
+		sql.openParenthesis(FindClause.AND);
+		Optional.ofNullable(elementiVoce)
+				.map(s -> s.split(","))
+				.map(Arrays::asList)
+				.orElse(Collections.emptyList())
+				.forEach(s -> {
+						sql.addSQLClause(FindClause.OR, "V_SALDI_VOCE_PROGETTO.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, s);
+				});
+		sql.closeParenthesis();
 		List<V_saldi_voce_progettoBulk> result = fetchAll(sql);
 		getHomeCache().fetchAll(context);
 		return result;
