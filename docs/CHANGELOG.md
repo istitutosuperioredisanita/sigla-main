@@ -1,3 +1,23 @@
+## Release 8.0.33  -- _September 30, 2026_ 
+**Changes**
+
+>**Fix Eliminato controllo di quadratura tra progetto e previsione se attiva la gestione calderone**
+>
+>[a58bccfb504bc6f](https://github.com/istitutosuperioredisanita/sigla-main/commit/a58bccfb504bc6f) raffaele.pagano *September 30, 2026*
+
+>**Eliminato controllo di quadratura tra progetto e previsione se attiva la gestione calderone**
+>
+>[7f04ddb00ab7712](https://github.com/istitutosuperioredisanita/sigla-main/commit/7f04ddb00ab7712) raffaele.pagano *September 30, 2026*
+
+>**fix: the docs is always generated from the main branch [ci skip]**
+>
+>[9ac9fad01bef5d0](https://github.com/istitutosuperioredisanita/sigla-main/commit/9ac9fad01bef5d0) Marco Spasiano *September 28, 2026*
+
+>**Bumped version to 8.0.32**
+>
+>[9e6d497d193413b](https://github.com/istitutosuperioredisanita/sigla-main/commit/9e6d497d193413b) dirgensa *September 25, 2026*
+
+
 ## Release 8.0.32  -- _September 25, 2026_ 
 **Changes**
 
