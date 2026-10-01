@@ -257,15 +257,15 @@ public ProgettoRicercaComponent() {
 					  ((ProgettoBulk)bulk).getDettagliPartner_esterni().get(i).setCrudStatus(OggettoBulk.TO_BE_DELETED);
 				  }
 
-
-
 				  ProgettoBulk progettoPrev = (ProgettoBulk)getHome(aUC, ProgettoBulk.class).findByPrimaryKey(new ProgettoBulk(((ProgettoBulk)bulk).getEsercizio(), ((ProgettoBulk)bulk).getPg_progetto(), ProgettoBulk.TIPO_FASE_PREVISIONE));
 				  if (progettoPrev!=null)
-					  getHome(aUC, ProgettoBulk.class, "PROGETTO_SIP").delete(progettoPrev, aUC);
-	
+					  //Devo cancellare tutti i PROGETTO_SIP indipendetemente dall'anno la cosa meno indolore è una DELETE secca
+					  ((Progetto_sipHome)getHome(aUC, Progetto_sipBulk.class)).eliminaProgetti(aUC, progettoPrev.getPg_progetto());
+
 				  ProgettoBulk progettoGest = (ProgettoBulk)getHome(aUC, ProgettoBulk.class).findByPrimaryKey(new ProgettoBulk(((ProgettoBulk)bulk).getEsercizio(), ((ProgettoBulk)bulk).getPg_progetto(), ProgettoBulk.TIPO_FASE_GESTIONE));
 				  if (progettoGest!=null)
-					  getHome(aUC, ProgettoBulk.class, "PROGETTO_SIP").delete(progettoGest, aUC);
+					  //Devo cancellare tutti i PROGETTO_SIP indipendetemente dall'anno la cosa meno indolore è una DELETE secca
+					  ((Progetto_sipHome)getHome(aUC, Progetto_sipBulk.class)).eliminaProgetti(aUC, progettoGest.getPg_progetto());
 
 				  makeBulkListPersistent(aUC, ((ProgettoBulk)bulk).getDettagli());
 				  makeBulkListPersistent(aUC, ((ProgettoBulk)bulk).getDettagliPianoEconomicoTotale());
@@ -277,6 +277,7 @@ public ProgettoRicercaComponent() {
 					getHome(aUC, Progetto_other_fieldBulk.class).delete(((ProgettoBulk)bulk).getOtherField(), aUC);
 
 				  allineaAbilitazioniTerzoLivello(aUC, (ProgettoBulk)bulk);
+
 				}
 		   }catch(ComponentException ex) {
 		   		throw ex;
@@ -1302,7 +1303,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			if (Optional.ofNullable(oggettobulk)
 					.filter(ProgettoBulk.class::isInstance)
 					.map(ProgettoBulk.class::cast)
-					.filter(ProgettoBulk::isStatoPrgApprovato)
+					.filter(progettoBulk -> progettoBulk.isStatoPrgApprovato() && !progettoBulk.isFromAmministra())
 					.isPresent())
 				throw new ApplicationException("Operazione non possibile! Non è possibile eliminare un progetto approvato!");
 
@@ -1323,7 +1324,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			for (Progetto_uoBulk o : (Iterable<Progetto_uoBulk>) ((ProgettoBulk) oggettobulk).getDettagli()) {
 				validaCancellazioneUoAssociata(usercontext, (ProgettoBulk) oggettobulk, o);
 			}
-        }catch(Throwable throwable){
+        } catch(Throwable throwable){
             throw handleException(throwable);
         }
     }
@@ -2476,29 +2477,31 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			{
 				Progetto_other_fieldBulk otherField = progetto.getOtherField();
 				//cerco il primo tipo di finanziamento che non prevede il piano economico
-				Stream<TipoFinanziamentoBulk> finanzStream = ((List<TipoFinanziamentoBulk>)getHome(userContext, TipoFinanziamentoBulk.class).findAll()).stream().filter(TipoFinanziamentoBase::getFlAttivo);
+				List<TipoFinanziamentoBulk> finanzList = ((List<TipoFinanziamentoBulk>)getHome(userContext, TipoFinanziamentoBulk.class).findAll()).stream()
+						.filter(TipoFinanziamentoBase::getFlAttivo)
+						.toList();
 
 				TipoFinanziamentoBulk tipoFinanziamento = null;
 				if (Optional.ofNullable(otherField.getTipoFinanziamento()).flatMap(el->Optional.ofNullable(el.getCodice())).isPresent()) {
 					if (otherField.getTipoFinanziamento().isFinanziamento())
-						tipoFinanziamento = finanzStream.filter(TipoFinanziamentoBulk::isAttivitaCommercialePura).findFirst().orElse(null);
+						tipoFinanziamento = finanzList.stream().filter(TipoFinanziamentoBulk::isAttivitaCommercialePura).findFirst().orElse(null);
 					else if (otherField.getTipoFinanziamento().isFoeProgetti())
-						tipoFinanziamento = finanzStream.filter(TipoFinanziamentoBulk::isFoe).findFirst().orElse(null);
+						tipoFinanziamento = finanzList.stream().filter(TipoFinanziamentoBulk::isFoe).findFirst().orElse(null);
 					else if (otherField.getTipoFinanziamento().isAutofinanziamento())
-						tipoFinanziamento = finanzStream.filter(TipoFinanziamentoBulk::isAutofinanziamentoAree).findFirst().orElse(null);
+						tipoFinanziamento = finanzList.stream().filter(TipoFinanziamentoBulk::isAutofinanziamentoAree).findFirst().orElse(null);
 					else if (otherField.getTipoFinanziamento().isCofinanziamento())
-						tipoFinanziamento = finanzStream.filter(TipoFinanziamentoBulk::isAttivitaCommercialePura).findFirst().orElse(null);
+						tipoFinanziamento = finanzList.stream().filter(TipoFinanziamentoBulk::isAttivitaCommercialePura).findFirst().orElse(null);
 					else if (otherField.getTipoFinanziamento().isAttivitaCommercialeSub())
-						tipoFinanziamento = finanzStream.filter(TipoFinanziamentoBulk::isAttivitaCommercialePura).findFirst().orElse(null);
+						tipoFinanziamento = finanzList.stream().filter(TipoFinanziamentoBulk::isAttivitaCommercialePura).findFirst().orElse(null);
 				}
 				//Se il tipo di finanziamento non prevede inserimento in bilancio ma ci sono dati in bilancio allora seleziono un tipo di finanziamento che non prevede piano economico
 				//e prevede inserimento in bilancio
 				if (Optional.ofNullable(tipoFinanziamento).map(el->!el.getFlPrevEntSpesa()).orElse(Boolean.FALSE) && (entrateList.isEmpty() || speseList.isEmpty()))
-					tipoFinanziamento = finanzStream.filter(el->!el.getFlPianoEcoFin())
+					tipoFinanziamento = finanzList.stream().filter(el->!el.getFlPianoEcoFin())
 							.filter(TipoFinanziamentoBase::getFlPrevEntSpesa)
 							.findFirst().orElse(null);
 
-				otherField.setTipoFinanziamento(Optional.ofNullable(tipoFinanziamento).orElse(finanzStream.filter(el->!el.getFlPianoEcoFin())
+				otherField.setTipoFinanziamento(Optional.ofNullable(tipoFinanziamento).orElse(finanzList.stream().filter(el->!el.getFlPianoEcoFin())
 						.findFirst().orElse(null)));
 				otherField.setDtInizio(null);
 				otherField.setDtFine(null);
