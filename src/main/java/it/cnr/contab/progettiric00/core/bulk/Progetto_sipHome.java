@@ -30,6 +30,7 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.DetailedRuntimeException;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.Persistent;
@@ -38,6 +39,7 @@ import it.cnr.jada.persistency.sql.*;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 
 /**
@@ -222,4 +224,27 @@ public class Progetto_sipHome extends BulkHome {
 			progetto.setTipo_fase(ProgettoBulk.TIPO_FASE_PREVISIONE);
 		return findByPrimaryKey(persistent);
 	}
+
+	public void eliminaProgetti(UserContext userContext, Integer pgProgetto) throws ComponentException {
+		try {
+			LoggableStatement ps = new LoggableStatement(
+					getConnection(), "DELETE FROM "
+					+ it.cnr.jada.util.ejb.EJBCommonServices
+					.getDefaultSchema() + "PROGETTO_SIP"
+					+ " WHERE PG_PROGETTO = ?  ", true, this.getClass());
+			try {
+				ps.setObject(1, pgProgetto);
+				ps.executeUpdate();
+			} finally {
+				try {
+					ps.close();
+				} catch (java.sql.SQLException e) {
+				}
+			}
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

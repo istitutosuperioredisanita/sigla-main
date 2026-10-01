@@ -42,6 +42,12 @@ public class AmministraTestataProgettiRicercaBP extends TestataProgettiRicercaBP
     @Override
     public void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {
         super.basicEdit(actioncontext, oggettobulk, flag);
+        if (Optional.ofNullable(oggettobulk)
+                .filter(ProgettoBulk.class::isInstance)
+                .isPresent()) {
+            ((ProgettoBulk)oggettobulk).setFromAmministra(Boolean.TRUE);
+            setModel(actioncontext, oggettobulk);
+        }
         this.setStatus(EDIT);
     }
 
@@ -58,11 +64,16 @@ public class AmministraTestataProgettiRicercaBP extends TestataProgettiRicercaBP
         return newToolbar;
     }
 
+    @Override
+    public boolean isDeleteButtonHidden() {
+        return false;
+    }
+
     /*
-        Il bottone viene visualizzato solo se:
-        1) esiste piano economico
-        2) il progetto è in stato approvato
-     */
+            Il bottone viene visualizzato solo se:
+            1) esiste piano economico
+            2) il progetto è in stato approvato
+         */
     public boolean isRemovePianoEconomicoButtonHidden() {
         return Optional.ofNullable(this.getModel())
                 .filter(ProgettoBulk.class::isInstance)
