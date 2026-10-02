@@ -1245,10 +1245,10 @@ public class ProgettoHome extends BulkHome {
 
 		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"FONDI_FUNZIONAMENTO");
 		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
-		sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
+		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
 		sqlBuilder.addTableToHeader("PROGETTO_OTHER_FIELD");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_VOCE_PROGETTO.ESERCIZIO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_VOCE_PROGETTO.PG_PROGETTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
 		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
 
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
@@ -1275,6 +1275,9 @@ public class ProgettoHome extends BulkHome {
 		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.LESS_EQUALS, Timestamp.from(Year.of(esercizio).atMonth(Month.DECEMBER).atDay(31).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		Optional.ofNullable(voce)
 				.ifPresent(s -> {
+					sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
+					sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.ESERCIZIO", "V_PROGETTO_PADRE.ESERCIZIO");
+					sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.PG_PROGETTO", "V_PROGETTO_PADRE.PG_PROGETTO");
 					sqlBuilder.addSQLClause(FindClause.AND, "V_SALDI_VOCE_PROGETTO.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, s);
 				});
 
@@ -1309,10 +1312,10 @@ public class ProgettoHome extends BulkHome {
 
 		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"FONDI_FUNZIONAMENTO");
 		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
-		sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
+		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
 		sqlBuilder.addTableToHeader("TIPO_FINANZIAMENTO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_VOCE_PROGETTO.ESERCIZIO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_VOCE_PROGETTO.PG_PROGETTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
 
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
@@ -1364,69 +1367,16 @@ public class ProgettoHome extends BulkHome {
 
 		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"FONDI_FUNZIONAMENTO");
 		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
-		sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
+		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
 		sqlBuilder.addTableToHeader("TIPO_PROGETTO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_VOCE_PROGETTO.ESERCIZIO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_VOCE_PROGETTO.PG_PROGETTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
 
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
 
 		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.CD_TIPO_PROGETTO", "TIPO_PROGETTO.CD_TIPO_PROGETTO");
 		sqlBuilder.addSQLClause(FindClause.AND, "TIPO_PROGETTO.CD_TIPO_PROGETTO", SQLBuilder.EQUALS, codice);
-
-		Optional.ofNullable(config)
-				.map(Configurazione_cnrBase::getVal03)
-				.map(s -> s.split(","))
-				.map(Arrays::asList)
-				.orElse(Collections.emptyList())
-				.forEach(s -> {
-					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
-				});
-		Optional.ofNullable(uo)
-				.ifPresent(s -> {
-					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, s);
-				});
-
-		Collection<ColumnMapping> columnMappings = progettohome.getColumnMap().getColumnMappings();
-		columnMappings
-				.stream()
-				.filter(columnMapping -> !columnMapping.isCount())
-				.map(ColumnMapping::getColumnName)
-				.map(s -> "V_PROGETTO_PADRE.".concat(s))
-				.forEach(sqlBuilder::addSQLGroupBy);
-
-		return fetchAll(sqlBuilder);
-	}
-
-	public List<ProgettoBulk> findFondiFunzionamentoElementoVoce(UserContext userContext, Integer esercizio, String codice, String uo) throws ComponentException, PersistencyException {
-		final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
-				"FONDI_FUNZIONAMENTO",
-				"PARAMETRI",
-				"*",
-				esercizio);
-		Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
-		Configurazione_cnrBulk config = Optional.ofNullable(home.findByPrimaryKey(configurazioneCnrBulk))
-				.map(Configurazione_cnrBulk.class::cast)
-				.orElseGet(() -> {
-					configurazioneCnrBulk.setEsercizio(0);
-					try {
-						return (Configurazione_cnrBulk)home.findByPrimaryKey(configurazioneCnrBulk);
-					} catch (PersistencyException e) {
-						throw new RuntimeException(e);
-					}
-				});
-
-		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"FONDI_FUNZIONAMENTO");
-		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
-		sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_VOCE_PROGETTO.ESERCIZIO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_VOCE_PROGETTO.PG_PROGETTO");
-
-		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
-		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
-
-		sqlBuilder.addSQLClause(FindClause.AND, "V_SALDI_VOCE_PROGETTO.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, codice);
 
 		Optional.ofNullable(config)
 				.map(Configurazione_cnrBase::getVal03)
@@ -1472,10 +1422,10 @@ public class ProgettoHome extends BulkHome {
 
 		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"FONDI_FUNZIONAMENTO");
 		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
-		sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
+		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
 		sqlBuilder.addTableToHeader("PROGETTO_FINANZIATORE");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_VOCE_PROGETTO.ESERCIZIO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_VOCE_PROGETTO.PG_PROGETTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
 
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
