@@ -638,7 +638,7 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 		return sql;
 	}
 
-	public List<Unita_organizzativaBulk> findFondiFunzionamento(UserContext userContext, Integer esercizio, String cds) throws ComponentException, PersistencyException {
+	public List<Unita_organizzativaBulk> findFondiFunzionamento(UserContext userContext, Integer esercizio, String cds, String voce) throws ComponentException, PersistencyException {
 		final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
 				"FONDI_FUNZIONAMENTO",
 				"PARAMETRI",
@@ -659,12 +659,12 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 		setColumnMap("FONDI_FUNZIONAMENTO");
 		SQLBuilder sqlBuilder = super.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
-		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
+		sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
 		sqlBuilder.addTableToHeader("PROGETTO_OTHER_FIELD");
 
 		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_VOCE_PROGETTO.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_VOCE_PROGETTO.PG_PROGETTO");
 		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
 
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
@@ -691,6 +691,10 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 		Optional.ofNullable(cds)
 				.ifPresent(s -> {
 					sqlBuilder.addSQLClause(FindClause.AND, "V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_PADRE", SQLBuilder.EQUALS, s);
+				});
+		Optional.ofNullable(voce)
+				.ifPresent(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_SALDI_VOCE_PROGETTO.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, s);
 				});
 		Collection<ColumnMapping> columnMappings = getColumnMap().getColumnMappings();
 		columnMappings

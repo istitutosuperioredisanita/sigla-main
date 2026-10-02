@@ -27,6 +27,7 @@ import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
+import jakarta.persistence.Transient;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
@@ -73,6 +74,8 @@ public class Elemento_voceBulk extends Elemento_voceBase implements IVoceBilanci
 	private boolean isGestoreIstat;
 	protected Voce_piano_economico_prgBulk voce_piano_economico;
 	protected String cd_voce_piano_associato;
+	@Transient private BigDecimal importoFinanziato;
+	@Transient private BigDecimal importoUtilizzato;
 
 	/**
 	 * Questo campo viene valorizzato dalla view V_ELEMENTO_VOCE_ASSESTATO
@@ -554,5 +557,21 @@ public class Elemento_voceBulk extends Elemento_voceBase implements IVoceBilanci
 
 	public void setImporto_disponibile_bilancio(BigDecimal importo_disponibile_bilancio) {
 		this.importo_disponibile_bilancio = importo_disponibile_bilancio;
+	}
+
+	public BigDecimal getImportoFinanziato() {
+		return importoFinanziato;
+	}
+
+	public void setImportoFinanziato(BigDecimal importoFinanziato) {
+		this.importoFinanziato = importoFinanziato;
+	}
+
+	public BigDecimal getImportoUtilizzato() {
+		return importoUtilizzato;
+	}
+
+	public void setImportoUtilizzato(BigDecimal importoUtilizzato) {
+		this.importoUtilizzato = importoUtilizzato;
 	}
 }

@@ -73,7 +73,10 @@ public interface ProgettoPianoEconomicoLocal {
             @Parameter(description = "Esercizio", required = true)
             @PathParam("esercizio") Integer esercizio,
             @Parameter(description = "CdS - Centro di spesa")
-            @QueryParam("cds") String cds
+            @QueryParam("cds") String cds,
+            @Parameter(description = "Voce")
+            @QueryParam("voce") String voce
+
     ) throws Exception;
 
     @GET
@@ -120,6 +123,27 @@ public interface ProgettoPianoEconomicoLocal {
             @QueryParam("uo") String uo
     ) throws Exception;
 
+    @GET
+    @Path("/fondi-funzionamento/elemento-voce/{esercizio}")
+    @Operation(summary = "Analisi Fondi Funzionamento i dati mostrano la quota di funzionamento, comprensiva della quota per la sicurezza, assegnata ed utilizzata per ogni elemento voce nell'anno.",
+            description = "Accesso consentito solo alle utenze abilitate al ruolo PROGETTI oppure SUPERVISORE"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Map.class)
+            )
+    )
+    @RolesAllowed(value = {SIGLARoles.PROGETTI, SIGLARoles.SUPERVISORE})
+    Response fondiFunzionamentoElementoVoce(
+            @Context HttpServletRequest request,
+            @Parameter(description = "Esercizio", required = true)
+            @PathParam("esercizio") Integer esercizio,
+            @Parameter(description = "Unità Organizzativa")
+            @QueryParam("uo") String uo
+    ) throws Exception;
 
     @GET
     @Path("/fondi-funzionamento/ente-finanziatore/{esercizio}")
@@ -162,7 +186,9 @@ public interface ProgettoPianoEconomicoLocal {
             @Parameter(description = "Esercizio", required = true)
             @PathParam("esercizio") Integer esercizio,
             @Parameter(description = "Unità Organizzativa", required = true)
-            @PathParam("uo") String uo
+            @PathParam("uo") String uo,
+            @Parameter(description = "Voce")
+            @QueryParam("voce") String voce
     ) throws Exception;
 
     @GET
@@ -209,6 +235,30 @@ public interface ProgettoPianoEconomicoLocal {
             @PathParam("esercizio") Integer esercizio,
             @Parameter(description = "Tipo Progetto", required = true)
             @PathParam("tipo") String tipo,
+            @Parameter(description = "Unità Organizzativa")
+            @QueryParam("uo") String uo
+    ) throws Exception;
+
+    @GET
+    @Path("/fondi-funzionamento/elemento-voce/{esercizio}/{codice}")
+    @Operation(summary = "Analisi Fondi Funzionamento i dati mostrano la quota di funzionamento, comprensiva della quota per la sicurezza, assegnata ed utilizzata per ogni progetto nell'anno dell'elemento voce indicato.",
+            description = "Accesso consentito solo alle utenze abilitate al ruolo PROGETTI oppure SUPERVISORE"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Map.class)
+            )
+    )
+    @RolesAllowed(value = {SIGLARoles.PROGETTI, SIGLARoles.SUPERVISORE})
+    Response fondiFunzionamentoDettaglioElementoVoce(
+            @Context HttpServletRequest request,
+            @Parameter(description = "Esercizio", required = true)
+            @PathParam("esercizio") Integer esercizio,
+            @Parameter(description = "Elemento Voce", required = true)
+            @PathParam("codice") String codice,
             @Parameter(description = "Unità Organizzativa")
             @QueryParam("uo") String uo
     ) throws Exception;

@@ -26,6 +26,8 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import jakarta.persistence.Transient;
+
 @JsonInclude(value=Include.NON_NULL)
 public class Unita_organizzativaBulk extends Unita_organizzativaBase {
 	private CdsBulk unita_padre = new CdsBulk();
@@ -37,8 +39,8 @@ public class Unita_organizzativaBulk extends Unita_organizzativaBase {
 
 	private Area_scientificaBulk area_scientifica;
 
-	private BigDecimal importoFinanziato;
-	private BigDecimal importoUtilizzato;
+	@Transient private BigDecimal importoFinanziato;
+	@Transient private BigDecimal importoUtilizzato;
 
 	public Unita_organizzativaBulk() {
 		super();
