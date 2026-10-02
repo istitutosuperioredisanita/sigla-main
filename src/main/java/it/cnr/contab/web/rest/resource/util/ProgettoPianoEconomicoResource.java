@@ -25,6 +25,7 @@ import it.cnr.contab.progettiric00.core.bulk.Ass_progetto_piaeco_voceBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.progettiric00.core.bulk.TipoFinanziamentoBulk;
 import it.cnr.contab.progettiric00.core.bulk.V_saldi_voce_progettoBulk;
+import it.cnr.contab.progettiric00.tabrif.bulk.Tipo_progettoBulk;
 import it.cnr.contab.varstanz00.bulk.Var_stanz_resBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
@@ -45,7 +46,6 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -102,13 +102,13 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
-    public Response fondiFunzionamentoUO(@Context HttpServletRequest request, Integer esercizio) throws Exception {
+    public Response fondiFunzionamentoUO(@Context HttpServletRequest request, Integer esercizio, String cds) throws Exception {
         logger.debug("REST request per fondi di funzionamento per uo.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
         Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
         try {
             List<Unita_organizzativaBulk> dati =
-                    crudComponentSession.find(userContext, Unita_organizzativaBulk.class, "findFondiFunzionamento", userContext, esercizio);
+                    crudComponentSession.find(userContext, Unita_organizzativaBulk.class, "findFondiFunzionamento", userContext, esercizio, cds);
             logger.debug("Fine REST per fondi di funzionamento per uo.");
             return Response.ok(
                     dati
@@ -134,7 +134,28 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
             return Response.ok(
                     dati
                             .stream()
-                            .map(FondiFunzionamentoTipoDTO::new)
+                            .map(FondiFunzionamentoTipoFinanziamentoDTO::new)
+                            .collect(Collectors.toList())
+            ).build();
+        } catch (Exception _ex) {
+            logger.error("REST request per fondi di funzionamentoper tipo. ERROR: ", _ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Collections.singletonMap("ERROR", _ex)).build();
+        }
+    }
+
+    @Override
+    public Response fondiFunzionamentoTipoProgetto(@Context HttpServletRequest request, Integer esercizio, String uo) throws Exception {
+        logger.debug("REST request per fondi di funzionamento per tipo progetto.");
+        CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+        Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
+        try {
+            List<Tipo_progettoBulk> dati =
+                    crudComponentSession.find(userContext, Tipo_progettoBulk.class, "findFondiFunzionamento", userContext, esercizio, uo);
+            logger.debug("Fine REST per fondi di funzionamento per tipo.");
+            return Response.ok(
+                    dati
+                            .stream()
+                            .map(FondiFunzionamentoTipoProgettoDTO::new)
                             .collect(Collectors.toList())
             ).build();
         } catch (Exception _ex) {
@@ -187,7 +208,7 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
-    public Response fondiFunzionamentoDettaglioTipo(@Context HttpServletRequest request, Integer esercizio, String tipo, String uo) throws Exception {
+    public Response fondiFunzionamentoDettaglioTipoFinanziamento(@Context HttpServletRequest request, Integer esercizio, String tipo, String uo) throws Exception {
         logger.debug("REST request per fondi di funzionamento per UO.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
         Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
@@ -195,6 +216,28 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
         try {
             List<ProgettoBulk> dati =
                     crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoTipoFinanziamento", userContext, esercizio, tipo, uo);
+            logger.debug("Fine REST per fondi di funzionamento per UO.");
+            return Response.ok(
+                    dati
+                            .stream()
+                            .map(FondiFunzionamentoProgettoDTO::new)
+                            .collect(Collectors.toList())
+            ).build();
+        } catch (Exception _ex) {
+            logger.error("REST request per fondi di funzionamento per UO. ERROR: ", _ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Collections.singletonMap("ERROR", _ex)).build();
+        }
+    }
+
+    @Override
+    public Response fondiFunzionamentoDettaglioTipoProgetto(@Context HttpServletRequest request, Integer esercizio, String tipo, String uo) throws Exception {
+        logger.debug("REST request per fondi di funzionamento per UO.");
+        CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+        Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
+        Optional.ofNullable(tipo).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Unità Organizzativa obbligatorio."));
+        try {
+            List<ProgettoBulk> dati =
+                    crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoTipoProgetto", userContext, esercizio, tipo, uo);
             logger.debug("Fine REST per fondi di funzionamento per UO.");
             return Response.ok(
                     dati
