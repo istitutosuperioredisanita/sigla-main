@@ -36,7 +36,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.List;
 import java.util.Map;
 
 @Local
@@ -72,7 +71,9 @@ public interface ProgettoPianoEconomicoLocal {
     Response fondiFunzionamentoUO(
             @Context HttpServletRequest request,
             @Parameter(description = "Esercizio", required = true)
-            @PathParam("esercizio") Integer esercizio
+            @PathParam("esercizio") Integer esercizio,
+            @Parameter(description = "CdS - Centro di spesa")
+            @QueryParam("cds") String cds
     ) throws Exception;
 
     @GET
@@ -96,6 +97,29 @@ public interface ProgettoPianoEconomicoLocal {
             @Parameter(description = "Unità Organizzativa")
             @QueryParam("uo") String uo
     ) throws Exception;
+
+    @GET
+    @Path("/fondi-funzionamento/tipo-progetto/{esercizio}")
+    @Operation(summary = "Analisi Fondi Funzionamento i dati mostrano la quota di funzionamento, comprensiva della quota per la sicurezza, assegnata ed utilizzata per ogni tipo progetto nell'anno.",
+            description = "Accesso consentito solo alle utenze abilitate al ruolo PROGETTI oppure SUPERVISORE"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Map.class)
+            )
+    )
+    @RolesAllowed(value = {SIGLARoles.PROGETTI, SIGLARoles.SUPERVISORE})
+    Response fondiFunzionamentoTipoProgetto(
+            @Context HttpServletRequest request,
+            @Parameter(description = "Esercizio", required = true)
+            @PathParam("esercizio") Integer esercizio,
+            @Parameter(description = "Unità Organizzativa")
+            @QueryParam("uo") String uo
+    ) throws Exception;
+
 
     @GET
     @Path("/fondi-funzionamento/ente-finanziatore/{esercizio}")
@@ -155,11 +179,35 @@ public interface ProgettoPianoEconomicoLocal {
             )
     )
     @RolesAllowed(value = {SIGLARoles.PROGETTI, SIGLARoles.SUPERVISORE})
-    Response fondiFunzionamentoDettaglioTipo(
+    Response fondiFunzionamentoDettaglioTipoFinanziamento(
             @Context HttpServletRequest request,
             @Parameter(description = "Esercizio", required = true)
             @PathParam("esercizio") Integer esercizio,
             @Parameter(description = "Tipo Finanziamento", required = true)
+            @PathParam("tipo") String tipo,
+            @Parameter(description = "Unità Organizzativa")
+            @QueryParam("uo") String uo
+    ) throws Exception;
+
+    @GET
+    @Path("/fondi-funzionamento/tipo-progetto/{esercizio}/{tipo}")
+    @Operation(summary = "Analisi Fondi Funzionamento i dati mostrano la quota di funzionamento, comprensiva della quota per la sicurezza, assegnata ed utilizzata per ogni progetto nell'anno del tipo di progetto indicato.",
+            description = "Accesso consentito solo alle utenze abilitate al ruolo PROGETTI oppure SUPERVISORE"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Map.class)
+            )
+    )
+    @RolesAllowed(value = {SIGLARoles.PROGETTI, SIGLARoles.SUPERVISORE})
+    Response fondiFunzionamentoDettaglioTipoProgetto(
+            @Context HttpServletRequest request,
+            @Parameter(description = "Esercizio", required = true)
+            @PathParam("esercizio") Integer esercizio,
+            @Parameter(description = "Tipo Progetto", required = true)
             @PathParam("tipo") String tipo,
             @Parameter(description = "Unità Organizzativa")
             @QueryParam("uo") String uo

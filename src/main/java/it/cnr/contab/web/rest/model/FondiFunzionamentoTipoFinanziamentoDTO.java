@@ -23,10 +23,10 @@ import it.cnr.contab.progettiric00.core.bulk.TipoFinanziamentoBulk;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-public class FondiFunzionamentoTipoDTO {
+public class FondiFunzionamentoTipoFinanziamentoDTO {
     private final TipoFinanziamentoBulk tipoFinanziamentoBulk;
 
-    public FondiFunzionamentoTipoDTO(TipoFinanziamentoBulk tipoFinanziamentoBulk) {
+    public FondiFunzionamentoTipoFinanziamentoDTO(TipoFinanziamentoBulk tipoFinanziamentoBulk) {
         this.tipoFinanziamentoBulk = tipoFinanziamentoBulk;
     }
 
