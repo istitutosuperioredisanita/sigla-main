@@ -18,6 +18,7 @@
 package it.cnr.contab.web.rest.resource.util;
 
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.doccont00.ejb.SaldoComponentSession;
 import it.cnr.contab.pdg00.bulk.Pdg_variazioneBulk;
@@ -102,13 +103,13 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
-    public Response fondiFunzionamentoUO(@Context HttpServletRequest request, Integer esercizio, String cds) throws Exception {
+    public Response fondiFunzionamentoUO(@Context HttpServletRequest request, Integer esercizio, String cds, String voce) throws Exception {
         logger.debug("REST request per fondi di funzionamento per uo.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
         Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
         try {
             List<Unita_organizzativaBulk> dati =
-                    crudComponentSession.find(userContext, Unita_organizzativaBulk.class, "findFondiFunzionamento", userContext, esercizio, cds);
+                    crudComponentSession.find(userContext, Unita_organizzativaBulk.class, "findFondiFunzionamento", userContext, esercizio, cds, voce);
             logger.debug("Fine REST per fondi di funzionamento per uo.");
             return Response.ok(
                     dati
@@ -165,6 +166,27 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
+    public Response fondiFunzionamentoElementoVoce(@Context HttpServletRequest request, Integer esercizio, String uo) throws Exception {
+        logger.debug("REST request per fondi di funzionamento per elemento voce.");
+        CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+        Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
+        try {
+            List<Elemento_voceBulk> dati =
+                    crudComponentSession.find(userContext, Elemento_voceBulk.class, "findFondiFunzionamento", userContext, esercizio, uo);
+            logger.debug("Fine REST per fondi di funzionamento per tipo.");
+            return Response.ok(
+                    dati
+                            .stream()
+                            .map(FondiFunzionamentoElementoVoceDTO::new)
+                            .collect(Collectors.toList())
+            ).build();
+        } catch (Exception _ex) {
+            logger.error("REST request per fondi di funzionamentoper tipo. ERROR: ", _ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Collections.singletonMap("ERROR", _ex)).build();
+        }
+    }
+
+    @Override
     public Response fondiFunzionamentoEnteFinanziatore(@Context HttpServletRequest request, Integer esercizio, String uo) throws Exception {
         logger.debug("REST request per fondi di funzionamento per ente finanziatore.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
@@ -186,14 +208,14 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
     }
 
     @Override
-    public Response fondiFunzionamentoDettaglioUO(@Context HttpServletRequest request, Integer esercizio, String uo) throws Exception {
+    public Response fondiFunzionamentoDettaglioUO(@Context HttpServletRequest request, Integer esercizio, String uo, String voce) throws Exception {
         logger.debug("REST request per fondi di funzionamento per UO.");
         CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
         Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
         Optional.ofNullable(uo).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Unità Organizzativa obbligatorio."));
         try {
             List<ProgettoBulk> dati =
-                    crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoUO", userContext, esercizio, uo);
+                    crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoUO", userContext, esercizio, uo, voce);
             logger.debug("Fine REST per fondi di funzionamento per UO.");
             return Response.ok(
                     dati
@@ -238,6 +260,28 @@ public class ProgettoPianoEconomicoResource implements ProgettoPianoEconomicoLoc
         try {
             List<ProgettoBulk> dati =
                     crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoTipoProgetto", userContext, esercizio, tipo, uo);
+            logger.debug("Fine REST per fondi di funzionamento per UO.");
+            return Response.ok(
+                    dati
+                            .stream()
+                            .map(FondiFunzionamentoProgettoDTO::new)
+                            .collect(Collectors.toList())
+            ).build();
+        } catch (Exception _ex) {
+            logger.error("REST request per fondi di funzionamento per UO. ERROR: ", _ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Collections.singletonMap("ERROR", _ex)).build();
+        }
+    }
+
+    @Override
+    public Response fondiFunzionamentoDettaglioElementoVoce(@Context HttpServletRequest request, Integer esercizio, String codice, String uo) throws Exception {
+        logger.debug("REST request per fondi di funzionamento per UO.");
+        CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+        Optional.ofNullable(esercizio).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, esercizio obbligatorio."));
+        Optional.ofNullable(codice).orElseThrow(() -> new RestException(Response.Status.BAD_REQUEST, "Errore, Unità Organizzativa obbligatorio."));
+        try {
+            List<ProgettoBulk> dati =
+                    crudComponentSession.find(userContext, ProgettoBulk.class, "findFondiFunzionamentoElementoVoce", userContext, esercizio, codice, uo);
             logger.debug("Fine REST per fondi di funzionamento per UO.");
             return Response.ok(
                     dati

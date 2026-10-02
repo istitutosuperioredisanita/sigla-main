@@ -51,6 +51,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.si.spring.storage.StorageDriver;
+import jakarta.persistence.Transient;
 
 public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 
@@ -180,8 +181,8 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 	private BulkList<ContrattoBulk> contratti = new BulkList<ContrattoBulk>();
 	private BulkList<Progetto_anagraficoBulk> anagraficheProgetto = new BulkList<Progetto_anagraficoBulk>();
 
-	private BigDecimal importoFinanziato;
-	private BigDecimal importoUtilizzato;
+	@Transient private BigDecimal importoFinanziato;
+	@Transient private BigDecimal importoUtilizzato;
 
 	//Variabile utilizzata per sapere se la richiesta di creazione proviene da una mappa di tipo Amministra
 	private boolean fromAmministra = Boolean.FALSE;

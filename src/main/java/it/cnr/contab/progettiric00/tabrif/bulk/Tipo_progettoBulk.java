@@ -21,13 +21,14 @@ import it.cnr.jada.bulk.*;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.beans.*;
 import it.cnr.jada.persistency.sql.*;
+import jakarta.persistence.Transient;
 
 import java.math.BigDecimal;
 
 public class Tipo_progettoBulk extends Tipo_progettoBase {
 
-	private BigDecimal importoFinanziato;
-	private BigDecimal importoUtilizzato;
+	@Transient private BigDecimal importoFinanziato;
+	@Transient private BigDecimal importoUtilizzato;
 
 	public Tipo_progettoBulk() {
 	super();
