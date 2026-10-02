@@ -1,0 +1,17 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="sigla" id="1516802834820-147">
+        <addDefaultValue tableName="tipo_trasporto_rientro" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="tipo_trasporto_rientro" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData commentLineStartsWith="#" encoding="UTF-8"
+                  file="bootstrap/csv/tipo_trasporto_rientro.csv"
+                  quotchar="&quot;" separator="," tableName="tipo_trasporto_rientro"/>
+
+        <dropDefaultValue tableName="tipo_trasporto_rientro" columnName="dacr"/>
+        <dropDefaultValue tableName="tipo_trasporto_rientro" columnName="duva"/>
+    </changeSet>
+</databaseChangeLog>
