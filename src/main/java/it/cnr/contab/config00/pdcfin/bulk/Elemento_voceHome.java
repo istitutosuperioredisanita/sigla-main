@@ -20,6 +20,10 @@ package it.cnr.contab.config00.pdcfin.bulk;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Month;
+import java.time.Year;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -479,6 +483,7 @@ public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome
 		SQLBuilder sqlBuilder = super.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
 		sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
+
 		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.ESERCIZIO_VOCE", "ELEMENTO_VOCE.ESERCIZIO");
 		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.TI_APPARTENENZA", "ELEMENTO_VOCE.TI_APPARTENENZA");
 		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.TI_GESTIONE", "ELEMENTO_VOCE.TI_GESTIONE");
@@ -489,6 +494,21 @@ public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome
 
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.P_CD_PROGETTO", SQLBuilder.EQUALS, Optional.ofNullable(config).map(Configurazione_cnrBase::getVal01).orElse(null));
+		Optional.ofNullable(config)
+				.map(Configurazione_cnrBase::getVal02)
+				.map(s -> s.split(","))
+				.map(Arrays::asList)
+				.orElse(Collections.emptyList())
+				.forEach(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.NOT_EQUALS, s);
+				});
+		Optional.ofNullable(config)
+				.flatMap(c -> Optional.ofNullable(c.getVal03()))
+				.ifPresent(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+				});
 
 		Optional.ofNullable(config)
 				.map(Configurazione_cnrBase::getVal03)
