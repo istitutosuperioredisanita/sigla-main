@@ -102,6 +102,10 @@ CREATE OR REPLACE PROCEDURE SPG_MANDATO
 -- inserita modifica per eliminare i terzi delle unità organizzative eliminati filtro su dt_fine_rapporto
 -- Body:
 --
+-- Date: 06/10/2026
+-- Version: 1.21
+-- Gestione Codice Identificativo Ente PA e numero avvico Pago PA
+--
 (
  aCd_cds in varchar2,
  aEs in number,
@@ -198,7 +202,23 @@ begin
             aVar2 := aVar2 || ', Codice Identificativo Ente: '||codiceEntePAGOPA||', Numero avviso: '||numeroAvvisoPAGOPA;
 
        exception when NO_DATA_FOUND then
-        null;
+        begin
+             select distinct FATTURA_PASSIVA_RIGA.CODICE_IDENTIFICATIVO_ENTE_PAGOPA, FATTURA_PASSIVA_RIGA.NUMERO_AVVISO_PAGOPA into codiceEntePAGOPA, numeroAvvisoPAGOPA
+                from FATTURA_PASSIVA_RIGA, MANDATO_RIGA
+                where FATTURA_PASSIVA_RIGA.ESERCIZIO = MANDATO_RIGA.ESERCIZIO_DOC_AMM
+                  and FATTURA_PASSIVA_RIGA.CD_CDS = MANDATO_RIGA.CD_CDS_DOC_AMM
+                  and FATTURA_PASSIVA_RIGA.CD_UNITA_ORGANIZZATIVA = MANDATO_RIGA.CD_UO_DOC_AMM
+                  and fattura_passiva_riga.pg_fattura_passiva = MANDATO_RIGA.PG_DOC_AMM
+                  and mandato_riga.CD_TIPO_DOCUMENTO_AMM = 'FATTURA_P'
+                  and FATTURA_PASSIVA_RIGA.CODICE_IDENTIFICATIVO_ENTE_PAGOPA IS NOT NULL
+                  and FATTURA_PASSIVA_RIGA.NUMERO_AVVISO_PAGOPA IS NOT NULL
+                  and mandato_riga.CD_CDS =  aMan.CD_CDS
+                  and mandato_riga.ESERCIZIO = aMan.ESERCIZIO
+                  and mandato_riga.PG_MANDATO = aMan.PG_MANDATO;
+                   aVar2 := aVar2 || ', Codice Identificativo Ente: '||codiceEntePAGOPA||', Numero avviso: '||numeroAvvisoPAGOPA;
+                exception when NO_DATA_FOUND then
+                    null;
+                end;
        end;
    end if;
 
