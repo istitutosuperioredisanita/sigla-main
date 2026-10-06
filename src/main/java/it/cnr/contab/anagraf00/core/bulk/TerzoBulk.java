@@ -23,6 +23,7 @@ import it.cnr.contab.anagraf00.tabrif.bulk.Rif_termini_pagamentoBulk;
 import it.cnr.contab.anagraf00.tabter.bulk.ComuneBulk;
 import it.cnr.jada.bulk.BulkList;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,6 +78,10 @@ public class TerzoBulk extends TerzoBase {
     private java.lang.String partita_iva_anagrafico;
 
     private java.lang.String pecForRest;
+
+
+    private BigDecimal importoFinanziato;
+    private BigDecimal importoUtilizzato;
 
     public TerzoBulk() {
         super();
@@ -1015,5 +1020,21 @@ public class TerzoBulk extends TerzoBase {
 
     public void setPecForRest(java.lang.String pecForRest) {
         this.pecForRest = pecForRest;
+    }
+
+    public BigDecimal getImportoFinanziato() {
+        return importoFinanziato;
+    }
+
+    public void setImportoFinanziato(BigDecimal importoFinanziato) {
+        this.importoFinanziato = importoFinanziato;
+    }
+
+    public BigDecimal getImportoUtilizzato() {
+        return importoUtilizzato;
+    }
+
+    public void setImportoUtilizzato(BigDecimal importoUtilizzato) {
+        this.importoUtilizzato = importoUtilizzato;
     }
 }
