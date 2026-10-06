@@ -1243,7 +1243,7 @@ public class ProgettoHome extends BulkHome {
 					}
 				});
 
-		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"FONDI_FUNZIONAMENTO");
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,Optional.ofNullable(voce).isPresent() ? "FONDI_FUNZIONAMENTO_VOCE" : "FONDI_FUNZIONAMENTO");
 		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
 		sqlBuilder.addTableToHeader("PROGETTO_OTHER_FIELD");

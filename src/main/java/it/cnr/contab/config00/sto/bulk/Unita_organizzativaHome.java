@@ -655,8 +655,10 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
                         throw new RuntimeException(e);
                     }
                 });
-
-		setColumnMap("FONDI_FUNZIONAMENTO");
+		if (Optional.ofNullable(voce).isPresent())
+			setColumnMap("FONDI_FUNZIONAMENTO_VOCE");
+		else
+			setColumnMap("FONDI_FUNZIONAMENTO");
 		SQLBuilder sqlBuilder = super.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
 		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");

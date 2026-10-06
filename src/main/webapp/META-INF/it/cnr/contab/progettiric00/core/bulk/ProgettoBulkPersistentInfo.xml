@@ -258,6 +258,96 @@
 				columnScale="2"
 				count="true"/>
 	</columnMap>
+	<columnMap name="FONDI_FUNZIONAMENTO_VOCE"
+			   tableName="V_PROGETTO_PADRE">
+		<columnMapping
+				columnName="ESERCIZIO"
+				propertyName="esercizio"
+				sqlTypeName="DECIMAL"
+				columnSize="4"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="PG_PROGETTO"
+				propertyName="pg_progetto"
+				sqlTypeName="DECIMAL"
+				columnSize="10"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="TIPO_FASE"
+				propertyName="tipo_fase"
+				sqlTypeName="VARCHAR"
+				columnSize="1"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="CD_PROGETTO"
+				propertyName="cd_progetto"
+				sqlTypeName="VARCHAR"
+				columnSize="30"
+				nullable="false" />
+		<columnMapping
+				columnName="DS_PROGETTO"
+				propertyName="ds_progetto"
+				sqlTypeName="VARCHAR"
+				columnSize="400"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_DIVISA"
+				propertyName="divisa.cd_divisa"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="CD_UNITA_ORGANIZZATIVA"
+				propertyName="unita_organizzativa.cd_unita_organizzativa"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="CD_RESPONSABILE_TERZO"
+				propertyName="responsabile.cd_terzo"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="CD_TIPO_PROGETTO"
+				propertyName="tipo.cd_tipo_progetto"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="PG_PROGETTO_PADRE"
+				propertyName="progettopadre.pg_progetto"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="ESERCIZIO_PROGETTO_PADRE"
+				propertyName="progettopadre.esercizio"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="TIPO_FASE_PROGETTO_PADRE"
+				propertyName="progettopadre.tipo_fase"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="CD_DIPARTIMENTO"
+				propertyName="dipartimento.cd_dipartimento"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="CD_PROGRAMMA"
+				propertyName="pdgProgramma.cd_programma"/>
+		<columnMapping
+				columnName="CD_MISSIONE"
+				propertyName="pdgMissione.cd_missione"/>
+		<columnMapping
+				columnName="PG_PROGETTO_OTHER_FIELD"
+				propertyName="otherField.pg_progetto"/>
+		<columnMapping
+				columnName="SUM(NVL(V_SALDI_VOCE_PROGETTO.STANZIAMENTO_FIN,0) + NVL(V_SALDI_VOCE_PROGETTO.VARIAPIU_FIN,0) - NVL(V_SALDI_VOCE_PROGETTO.VARIAMENO_FIN,0) + NVL(V_SALDI_VOCE_PROGETTO.TRASFPIU_FIN,0) - NVL(V_SALDI_VOCE_PROGETTO.TRASFMENO_FIN,0) +
+				       			NVL(V_SALDI_VOCE_PROGETTO.STANZIAMENTO_COFIN,0) + NVL(V_SALDI_VOCE_PROGETTO.VARIAPIU_COFIN,0) - NVL(V_SALDI_VOCE_PROGETTO.VARIAMENO_COFIN,0) + NVL(V_SALDI_VOCE_PROGETTO.TRASFPIU_COFIN,0) - NVL(V_SALDI_VOCE_PROGETTO.TRASFMENO_COFIN,0)) IMPORTO_FINANZIATO"
+				propertyName="importoFinanziato"
+				columnSize="17"
+				columnScale="2"
+				count="true"/>
+		<columnMapping
+				columnName="SUM(NVL(V_SALDI_VOCE_PROGETTO.IMPACC_FIN,0) + (NVL(V_SALDI_VOCE_PROGETTO.TRASFPIU_FIN,0) - NVL(V_SALDI_VOCE_PROGETTO.TRASFMENO_FIN,0))) IMPORTO_UTILIZZATO"
+				propertyName="importoUtilizzato"
+				columnSize="17"
+				columnScale="2"
+				count="true"/>
+	</columnMap>
 
 
 	<persistentProperty
