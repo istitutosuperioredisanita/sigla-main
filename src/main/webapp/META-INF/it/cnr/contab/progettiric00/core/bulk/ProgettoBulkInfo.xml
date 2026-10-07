@@ -1389,6 +1389,8 @@
 			name="cd_unita_organizzativa"
 			label="UO Coordinatrice" />
 		<columnFieldProperty
+			name="cd_tipo_progetto" />
+		<columnFieldProperty
 			name="ds_progetto" />
 		<columnFieldProperty
 			name="dsTipoFinanziamentoOf" />
@@ -1636,6 +1638,8 @@
 		<findFieldProperty
 			name="cd_unita_organizzativa"
 			label="UO Coordinatrice"/>
+		<findFieldProperty
+			name="cd_tipo_progetto" />
 		<findFieldProperty
 			name="ds_progetto"
 			label="Descrizione Progetto"/>

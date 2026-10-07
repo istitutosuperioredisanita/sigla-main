@@ -294,7 +294,11 @@
 			<tr>
 			  	<td><% bp.getController().writeFormLabel(out,"ds_progetto");%></td>
 			  	<td colspan="3"><% bp.getController().writeFormInput( out, "default","ds_progetto", isROField,null,null); %></td>
-			</tr>	  	
+			</tr>
+            <tr>
+                <td><% bp.getController().writeFormLabel(out,"tipo");%></td>
+                <td colspan="3"><% bp.getController().writeFormInput( out, "default","tipo", isROField,null,null); %></td>
+            </tr>
 			<tr>
 			  	<td><% bp.getController().writeFormLabel(out,"find_dipartimento");%></td>
 			  	<td colspan="3"><% bp.getController().writeFormInput( out, "default","find_dipartimento", isROField,null,null); %></td>
