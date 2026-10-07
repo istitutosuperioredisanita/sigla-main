@@ -483,6 +483,7 @@ public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome
 		SQLBuilder sqlBuilder = super.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
 		sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
+		sqlBuilder.addTableToHeader("PROGETTO_OTHER_FIELD");
 
 		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.ESERCIZIO_VOCE", "ELEMENTO_VOCE.ESERCIZIO");
 		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.TI_APPARTENENZA", "ELEMENTO_VOCE.TI_APPARTENENZA");
@@ -491,6 +492,7 @@ public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome
 
 		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.ESERCIZIO", "V_PROGETTO_PADRE.ESERCIZIO");
 		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.PG_PROGETTO", "V_PROGETTO_PADRE.PG_PROGETTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
 
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
@@ -503,11 +505,6 @@ public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome
 				.orElse(Collections.emptyList())
 				.forEach(s -> {
 					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.NOT_EQUALS, s);
-				});
-		Optional.ofNullable(config)
-				.flatMap(c -> Optional.ofNullable(c.getVal03()))
-				.ifPresent(s -> {
-					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_PROGETTO", SQLBuilder.NOT_EQUALS, s);
 				});
 
 		Optional.ofNullable(config)
@@ -522,6 +519,10 @@ public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome
 				.ifPresent(s -> {
 					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, s);
 				});
+		//Inserisco il filtro sulla data di inizio del progetto che deve essere dell'esercizio
+		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.GREATER_EQUALS, Timestamp.from(Year.of(esercizio).atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.LESS_EQUALS, Timestamp.from(Year.of(esercizio).atMonth(Month.DECEMBER).atDay(31).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
 
 		Collection<ColumnMapping> columnMappings = getColumnMap().getColumnMappings();
 		columnMappings

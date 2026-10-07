@@ -683,10 +683,14 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 				sqlBuilder.addSQLClause(FindClause.AND, "V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.NOT_EQUALS, s);
 			});
 		Optional.ofNullable(config)
-				.flatMap(c -> Optional.ofNullable(c.getVal03()))
-				.ifPresent(s -> {
-					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_PROGETTO", SQLBuilder.NOT_EQUALS, s);
-				});
+			.map(Configurazione_cnrBase::getVal03)
+			.map(s -> s.split(","))
+			.map(Arrays::asList)
+			.orElse(Collections.emptyList())
+			.forEach(s -> {
+				sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+			});
+
 		//Inserisco il filtro sulla data di inizio del progetto che deve essere dell'esercizio
 		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.GREATER_EQUALS, Timestamp.from(Year.of(esercizio).atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.LESS_EQUALS, Timestamp.from(Year.of(esercizio).atMonth(Month.DECEMBER).atDay(31).atStartOfDay(ZoneId.systemDefault()).toInstant()));
