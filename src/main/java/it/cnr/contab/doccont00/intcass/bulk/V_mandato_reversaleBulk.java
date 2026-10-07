@@ -256,9 +256,9 @@ public class V_mandato_reversaleBulk extends V_mandato_reversaleBase implements 
 	}
 
 	public String getCMISFolderName() {
-		String suffix = getCd_tipo_documento_cont().equalsIgnoreCase(it.cnr.contab.doccont00.core.bulk.Numerazione_doc_contBulk.TIPO_MAN) ? "Mandato n." : "Reversale n.";
-		suffix = suffix.concat(String.valueOf(getPg_documento_cont()));
-		return suffix;
+		String suffix = it.cnr.contab.doccont00.core.bulk.Numerazione_doc_contBulk.TIPO_MAN.equalsIgnoreCase(getCd_tipo_documento_cont()) ? "Mandato n." : "Reversale n.";
+		String numeroDoc = getPg_documento_cont() != null ? String.valueOf(getPg_documento_cont()) : "";
+		return suffix.concat(numeroDoc);
 	}
 	
 	@Override

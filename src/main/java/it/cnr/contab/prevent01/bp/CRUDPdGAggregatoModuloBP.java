@@ -536,6 +536,9 @@ public class CRUDPdGAggregatoModuloBP extends it.cnr.jada.util.action.SimpleCRUD
 	 */
 	public boolean isGestionaleAccessibile() {
 		if (getCdrPdGP()!= null &&
+			(getCrudDettagli().getModel()!=null &&
+				(((Pdg_moduloBulk)getCrudDettagli().getModel()).getStato().equals(Pdg_moduloBulk.STATO_AG)) ||
+				 ((Pdg_moduloBulk)getCrudDettagli().getModel()).getStato().equals(Pdg_moduloBulk.STATO_CG)) &&
 			(getCdrPdGP().getStato().equals(Pdg_esercizioBulk.STATO_APERTURA_GESTIONALE_CDR) ||
 			 getCdrPdGP().getStato().equals(Pdg_esercizioBulk.STATO_CHIUSURA_GESTIONALE_CDR)))
 			return true;

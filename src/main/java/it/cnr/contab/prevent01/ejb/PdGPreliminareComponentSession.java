@@ -17,10 +17,14 @@
 
 package it.cnr.contab.prevent01.ejb;
 
+import it.cnr.jada.comp.ComponentException;
 import jakarta.ejb.Remote;
+
+import java.rmi.RemoteException;
 
 @Remote
 public interface PdGPreliminareComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
 it.cnr.jada.bulk.OggettoBulk cambiaStatoConBulk(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 it.cnr.jada.bulk.OggettoBulk riportaStatoPrecedenteConBulk(it.cnr.jada.UserContext param0,it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+void ribaltaSuCalderone(it.cnr.jada.UserContext param0) throws ComponentException, RemoteException;
 }

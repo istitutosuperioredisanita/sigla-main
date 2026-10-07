@@ -17,17 +17,22 @@
 
 package it.cnr.contab.config00.pdcfin.bulk;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Hashtable;
+import java.sql.Timestamp;
+import java.time.Month;
+import java.time.Year;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import it.cnr.contab.anagraf00.tabrif.bulk.Tipologie_istatBulk;
-import it.cnr.contab.config00.bulk.Codici_siopeBulk;
-import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
-import it.cnr.contab.config00.bulk.Parametri_cnrHome;
+import it.cnr.contab.config00.bulk.*;
 import it.cnr.contab.config00.pdcfin.cla.bulk.Classificazione_vociBulk;
 import it.cnr.contab.consultazioni.bulk.ConsultazioniRestHome;
 import it.cnr.contab.pdg01.bulk.Pdg_modulo_spese_gestBulk;
+import it.cnr.contab.progettiric00.core.bulk.ProgettoGestUoBulk;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
@@ -37,11 +42,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
-import it.cnr.jada.persistency.sql.PersistentHome;
-import it.cnr.jada.persistency.sql.SQLBuilder;
+import it.cnr.jada.persistency.sql.*;
 
 public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome {
 	private static java.util.Hashtable ti_appartenenzaKeys;
@@ -452,11 +453,89 @@ public class Elemento_voceHome extends BulkHome implements ConsultazioniRestHome
         return sql;
 	}
 
-	public java.util.List<Elemento_voceBulk> findElementoVociAssociate(Classificazione_vociBulk classificazione) throws IntrospectionException, PersistencyException {
+	public java.util.List<Elemento_voceBulk> findElementoVociAssociate(int esercizio, int idClass) throws IntrospectionException, PersistencyException {
     	Parametri_cnrHome parCnrhome = (Parametri_cnrHome)getHomeCache().getHome(Parametri_cnrBulk.class);
-    	Parametri_cnrBulk parCnrBulk = (Parametri_cnrBulk)parCnrhome.findByPrimaryKey(new Parametri_cnrBulk(classificazione.getEsercizio()));
+    	Parametri_cnrBulk parCnrBulk = (Parametri_cnrBulk)parCnrhome.findByPrimaryKey(new Parametri_cnrBulk(esercizio));
 
     	PersistentHome home = getHomeCache().getHome(Elemento_voceBulk.class);
-        return home.fetchAll(this.selectElementoVociAssociate(classificazione.getEsercizio(), parCnrBulk.getLivello_pdg_decis_spe(), classificazione.getId_classificazione()));
+        return home.fetchAll(this.selectElementoVociAssociate(esercizio, parCnrBulk.getLivello_pdg_decis_spe(), idClass));
     }
+
+	public List<Elemento_voceBulk> findFondiFunzionamento(UserContext userContext, Integer esercizio, String uo) throws ComponentException, PersistencyException {
+		final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
+				"FONDI_FUNZIONAMENTO",
+				"PARAMETRI",
+				"*",
+				esercizio);
+		Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+		Configurazione_cnrBulk config = Optional.ofNullable(home.findByPrimaryKey(configurazioneCnrBulk))
+				.map(Configurazione_cnrBulk.class::cast)
+				.orElseGet(() -> {
+					configurazioneCnrBulk.setEsercizio(0);
+					try {
+						return (Configurazione_cnrBulk)home.findByPrimaryKey(configurazioneCnrBulk);
+					} catch (PersistencyException e) {
+						throw new RuntimeException(e);
+					}
+				});
+
+		setColumnMap("FONDI_FUNZIONAMENTO");
+		SQLBuilder sqlBuilder = super.createSQLBuilder();
+		sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
+		sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
+		sqlBuilder.addTableToHeader("PROGETTO_OTHER_FIELD");
+
+		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.ESERCIZIO_VOCE", "ELEMENTO_VOCE.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.TI_APPARTENENZA", "ELEMENTO_VOCE.TI_APPARTENENZA");
+		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.TI_GESTIONE", "ELEMENTO_VOCE.TI_GESTIONE");
+		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.CD_ELEMENTO_VOCE", "ELEMENTO_VOCE.CD_ELEMENTO_VOCE");
+
+		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.ESERCIZIO", "V_PROGETTO_PADRE.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.PG_PROGETTO", "V_PROGETTO_PADRE.PG_PROGETTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.P_CD_PROGETTO", SQLBuilder.EQUALS, Optional.ofNullable(config).map(Configurazione_cnrBase::getVal01).orElse(null));
+		Optional.ofNullable(config)
+				.map(Configurazione_cnrBase::getVal02)
+				.map(s -> s.split(","))
+				.map(Arrays::asList)
+				.orElse(Collections.emptyList())
+				.forEach(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.NOT_EQUALS, s);
+				});
+
+		Optional.ofNullable(config)
+				.map(Configurazione_cnrBase::getVal03)
+				.map(s -> s.split(","))
+				.map(Arrays::asList)
+				.orElse(Collections.emptyList())
+				.forEach(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+				});
+		Optional.ofNullable(uo)
+				.ifPresent(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, s);
+				});
+		//Inserisco il filtro sulla data di inizio del progetto che deve essere dell'esercizio
+		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.GREATER_EQUALS, Timestamp.from(Year.of(esercizio).atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.LESS_EQUALS, Timestamp.from(Year.of(esercizio).atMonth(Month.DECEMBER).atDay(31).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+
+		Collection<ColumnMapping> columnMappings = getColumnMap().getColumnMappings();
+		columnMappings
+				.stream()
+				.filter(columnMapping -> !columnMapping.isCount())
+				.map(ColumnMapping::getColumnName)
+				.map(s -> "ELEMENTO_VOCE.".concat(s))
+				.forEach(sqlBuilder::addSQLGroupBy);
+		List<Elemento_voceBulk> list = fetchAll(sqlBuilder);
+		return list.stream().filter(e -> {
+			return e.getImportoFinanziato().compareTo(BigDecimal.ZERO) != 0;
+		}).toList();
+	}
+
+
 }

@@ -152,15 +152,40 @@ public class EsercizioBulk extends EsercizioBase {
     }
 
     /**
+     * Metodo che stabilisce se l'esercizio contabile corrente è in stato iniziale.
+     *
+     * @return boolean True se l'esercizio contabile in questione è in stato iniziale
+     */
+    public boolean isStatoIniziale() {
+        return STATO_INIZIALE.equals(this.getSt_apertura_chiusura());
+    }
+
+    /**
+     * Metodo che stabilisce se l'esercizio contabile corrente è in stato Pdg Aperto.
+     *
+     * @return boolean True se l'esercizio contabile in questione è in stato Pdg Aperto
+     */
+    public boolean isStatoPdgAperto() {
+        return STATO_PDG_APERTO.equals(this.getSt_apertura_chiusura());
+    }
+
+    /**
+     * Metodo che stabilisce se l'esercizio contabile corrente è in stato Aperto.
+     *
+     * @return boolean True se l'esercizio contabile in questione è in stato Aperto
+     */
+    public boolean isStatoAperto() {
+        return STATO_APERTO.equals(this.getSt_apertura_chiusura());
+    }
+
+    /**
      * Metodo che stabilisce se l'esercizio contabile corrente è stato chiuso.
      *
      * @return boolean True se l'esercizio contabile in questione è stato chiuso
      * in modo provvisorio o definitivo.
      */
-    public boolean isChiuso() {
-//	return (getSt_apertura_chiusura().equals( STATO_CHIUSO_DEF) || getSt_apertura_chiusura().equals( STATO_CHIUSO_PROV ));
-        return getSt_apertura_chiusura().equals(STATO_CHIUSO_DEF);
-
+    public boolean isStatoChiuso() {
+        return STATO_CHIUSO_DEF.equals(this.getSt_apertura_chiusura());
     }
 
     /**

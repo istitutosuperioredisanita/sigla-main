@@ -174,6 +174,9 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String SK_PROGETTO_PIANO_ECONOMICO = "PIANO_ECONOMICO";
     public final static String SK_NATURA_REIMPIEGO = "NATURA_REIMPIEGO";
     public final static String SK_ASS_PROGETTI_ANGAGRAFICO = "ASS_PROGETTI_ANGAGRAFICO";
+    public final static String SK_COFOG_DEFAULT = "COFOG_DEFAULT";
+    public final static String SK_PROGETTO_CALDERONE = "PROGETTO_CALDERONE";
+    public final static String SK_GAE_CALDERONE = "GAE_CALDERONE";
 
     public final static String PK_FLUSSO_ORDINATIVI = "FLUSSO_ORDINATIVI";
     public final static String SK_CODICE_ABI_BT = "CODICE_ABI_BT";
@@ -242,6 +245,8 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
 
 	public final static String PK_ACCERTAMENTI = "ACCERTAMENTI";
 	public final static String SK_ACCERTAMENTI_PLURIENNALI = "ACCERTAMENTI_PLURIENNALI";
+
+
 
     public final static String PK_INVENTARIO = "INVENTARIO";
     public final static String SK_GESTIONE_ETICHETTA_BENE = "GESTIONE_ETICHETTA_BENE";
@@ -395,7 +400,7 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     }
     public void caricaEsercizioList(UserContext usercontext) {
 
-        this.getEsercizioList().put(new Integer(0), new Integer(0));
+        this.getEsercizioList().put(Integer.valueOf(0), Integer.valueOf(0));
         Integer e = CNRUserContext.getEsercizio(usercontext).intValue();
         this.getEsercizioList().put(e, e);
     }

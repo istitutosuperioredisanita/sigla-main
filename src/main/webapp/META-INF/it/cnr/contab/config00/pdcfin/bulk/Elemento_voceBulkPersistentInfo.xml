@@ -147,6 +147,107 @@
 			nullable="true" />
 	</columnMap>
 
+	<columnMap name="FONDI_FUNZIONAMENTO"
+			   tableName="ELEMENTO_VOCE">
+		<columnMapping
+				columnName="ESERCIZIO"
+				propertyName="esercizio"
+				sqlTypeName="DECIMAL"
+				columnSize="4"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="CD_ELEMENTO_VOCE"
+				propertyName="cd_elemento_voce"
+				sqlTypeName="VARCHAR"
+				columnSize="20"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="TI_GESTIONE"
+				propertyName="ti_gestione"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="TI_APPARTENENZA"
+				propertyName="ti_appartenenza"
+				sqlTypeName="CHAR"
+				columnSize="1"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="DS_ELEMENTO_VOCE"
+				propertyName="ds_elemento_voce"
+				sqlTypeName="VARCHAR"
+				columnSize="300" />
+
+		<columnMapping
+				columnName="CD_ELEMENTO_PADRE"
+				propertyName="elemento_padre.cd_elemento_voce"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="ESERCIZIO_ELEMENTO_PADRE"
+				propertyName="elemento_padre.esercizio"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="TI_APPARTENENZA_ELEMENTO_PADRE"
+				propertyName="elemento_padre.ti_appartenenza"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="TI_GESTIONE_ELEMENTO_PADRE"
+				propertyName="elemento_padre.ti_gestione"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="CD_CAPOCONTO_FIN"
+				propertyName="capoconto_fin.cd_capoconto_fin"/>
+		<columnMapping
+				columnName="ESERCIZIO_CLA_E"
+				propertyName="classificazione_entrate.esercizio" />
+		<columnMapping
+				columnName="COD_CLA_E"
+				propertyName="classificazione_entrate.codice_cla_e" />
+		<columnMapping
+				columnName="ESERCIZIO_CLA_S"
+				propertyName="classificazione_spese.esercizio" />
+		<columnMapping
+				columnName="COD_CLA_S"
+				propertyName="classificazione_spese.codice_cla_s" />
+		<columnMapping
+				columnName="ID_CLASSIFICAZIONE"
+				propertyName="v_classificazione_voci.id_classificazione"
+				sqlTypeName="DECIMAL"
+				columnSize="7" />
+		<columnMapping
+				columnName="CD_UNITA_PIANO"
+				propertyName="voce_piano_economico.unita_organizzativa.cd_unita_organizzativa"
+				fetchOnly="false" />
+		<columnMapping
+				columnName="CD_VOCE_PIANO"
+				propertyName="voce_piano_economico.cd_voce_piano"
+				fetchOnly="false" />
+
+		<columnMapping
+				columnName="SUM(NVL(V_SALDI_VOCE_PROGETTO.STANZIAMENTO_FIN,0) + NVL(V_SALDI_VOCE_PROGETTO.VARIAPIU_FIN,0) - NVL(V_SALDI_VOCE_PROGETTO.VARIAMENO_FIN,0) + NVL(V_SALDI_VOCE_PROGETTO.TRASFPIU_FIN,0) - NVL(V_SALDI_VOCE_PROGETTO.TRASFMENO_FIN,0) +
+				       			NVL(V_SALDI_VOCE_PROGETTO.STANZIAMENTO_COFIN,0) + NVL(V_SALDI_VOCE_PROGETTO.VARIAPIU_COFIN,0) - NVL(V_SALDI_VOCE_PROGETTO.VARIAMENO_COFIN,0) + NVL(V_SALDI_VOCE_PROGETTO.TRASFPIU_COFIN,0) - NVL(V_SALDI_VOCE_PROGETTO.TRASFMENO_COFIN,0)) IMPORTO_FINANZIATO"
+				propertyName="importoFinanziato"
+				columnSize="17"
+				columnScale="2"
+				count="true"/>
+		<columnMapping
+				columnName="SUM(NVL(V_SALDI_VOCE_PROGETTO.IMPACC_FIN,0) + (NVL(V_SALDI_VOCE_PROGETTO.TRASFPIU_FIN,0) - NVL(V_SALDI_VOCE_PROGETTO.TRASFMENO_FIN,0))) IMPORTO_UTILIZZATO"
+				propertyName="importoUtilizzato"
+				columnSize="17"
+				columnScale="2"
+				count="true"/>
+	</columnMap>
+	<persistentProperty
+			name="importoFinanziato" />
+	<persistentProperty
+			name="importoUtilizzato" />
+
+
 	<persistentProperty
 		name="elemento_padre" />
 	<persistentProperty

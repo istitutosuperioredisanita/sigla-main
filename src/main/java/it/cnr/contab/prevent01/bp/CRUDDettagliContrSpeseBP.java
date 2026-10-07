@@ -203,12 +203,6 @@ public class CRUDDettagliContrSpeseBP extends SimpleCRUDBP {
 	}
 	public boolean isContrSpeseAggiornabile() {
 		Pdg_contrattazione_speseBulk bulk = (Pdg_contrattazione_speseBulk)getCrudDettagliContrSpese().getModel();
-		if (bulk!=null &&
-			bulk.getCdr()!=null &&
-			bulk.getCdr().getUnita_padre()!=null &&
-			bulk.getCdr().getUnita_padre().getCd_tipo_unita()!=null &&
-			bulk.getCdr().getUnita_padre().getCd_tipo_unita().equalsIgnoreCase( it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_SAC ))
-			return false;
 		return true;
 	}
     public boolean isFreeSearchButtonHidden()

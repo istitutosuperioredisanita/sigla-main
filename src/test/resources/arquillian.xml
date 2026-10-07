@@ -22,6 +22,8 @@
     </extension>
     <extension qualifier="webdriver">
         <property name="browser">chrome</property>
+        <property name="reuseDriver">true</property>
+        <property name="chromeCapabilities">{"webSocketUrl": false, "pageLoadStrategy": "eager"}</property>
         <property name="chromeArguments">
             --headless=new,
             --no-sandbox,
@@ -40,7 +42,7 @@
             --disable-renderer-backgrounding,
             --disable-backgrounding-occluded-windows,
             --blink-settings=imagesEnabled=false,
-            --window-size=1920,1080
+            --window-size=1024,768
         </property>
     </extension>
     <container qualifier="wildfly-bootable" default="true" >
@@ -59,9 +61,12 @@
                 -Dlogger.org.jboss.as.ejb3=WARNING
                 -Djava.net.preferIPv4Stack=true
                 -Dsigla.db.driver=h2
-                -Dsigla.db.url=jdbc:h2:mem:sigladb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+                -Dsigla.db.url=jdbc:h2:mem:sigladb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;LOG=0;UNDO_LOG=0;LOCK_MODE=0;CACHE_SIZE=65536;
                 -Dsigla.db.user=sa
                 -Dsigla.db.password=sa
+                -Dsigla.db.min-pool-size=2
+                -Dsigla.db.max-pool-size=10
+                -Dsigla.db.background-validation=false
                 -Dspring.profiles.active=liquibase-test
                 -Dliquibase.bootstrap.esercizio=2025
                 -Dcors.allow-origin=http://localhost:9000

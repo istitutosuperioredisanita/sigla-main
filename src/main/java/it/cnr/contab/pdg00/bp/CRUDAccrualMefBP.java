@@ -129,6 +129,11 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
     @Override
     protected String getStorePath(AccrualBulk accrual, boolean create)
             throws BusinessProcessException {
+
+        if (accrual == null) {
+            throw new BusinessProcessException("Modulo Accrual MEF non presente");
+        }
+
         return accrual.getStorePath().get(0);
     }
 

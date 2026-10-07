@@ -64,6 +64,8 @@ public class Parametri_cnrBase extends Parametri_cnrKey implements Keyed {
 	private Boolean fl_nuovo_pdg;
 	private Boolean fl_pdg_codlast;
 	private Boolean fl_pdg_contrattazione;
+	private Boolean fl_pdg_calderone;
+	private Boolean fl_pdg_calderone_rib;
 	private Boolean fl_pdg_quadra_fonti_esterne;
 	private java.sql.Timestamp data_attivazione_new_voce;
 	
@@ -396,7 +398,23 @@ public Boolean getFl_incarico() {
 	public void setFl_pdg_contrattazione(Boolean fl_pdg_contrattazione) {
 		this.fl_pdg_contrattazione = fl_pdg_contrattazione;
 	}
-	
+
+	public Boolean getFl_pdg_calderone() {
+		return fl_pdg_calderone;
+	}
+
+	public void setFl_pdg_calderone(Boolean fl_pdg_calderone) {
+		this.fl_pdg_calderone = fl_pdg_calderone;
+	}
+
+	public Boolean getFl_pdg_calderone_rib() {
+		return fl_pdg_calderone_rib;
+	}
+
+	public void setFl_pdg_calderone_rib(Boolean fl_pdg_calderone_rib) {
+		this.fl_pdg_calderone_rib = fl_pdg_calderone_rib;
+	}
+
 	public Boolean getFl_pdg_quadra_fonti_esterne() {
 		return fl_pdg_quadra_fonti_esterne;
 	}

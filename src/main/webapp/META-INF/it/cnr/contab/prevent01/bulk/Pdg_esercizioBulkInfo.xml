@@ -76,6 +76,26 @@
 		keysProperty="statoSenzaContrattazioneKeys"
 		enabledOnSearch="true"
 		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="statoConCalderone"
+		property="stato"
+		maxLength="2"
+		inputSize="2"
+		inputType="RADIOGROUP"
+		label="Stato del CdR"
+		keysProperty="statoConCalderoneKeys"
+		enabledOnSearch="true"
+		caseSensitiveSearch="false" />
+	<fieldProperty
+		name="statoConCalderoneRib"
+		property="stato"
+		maxLength="2"
+		inputSize="2"
+		inputType="RADIOGROUP"
+		label="Stato del CdR"
+		keysProperty="statoConCalderoneRibKeys"
+		enabledOnSearch="true"
+		caseSensitiveSearch="false" />
 
 	<formFieldProperty
 		name="esercizio" />
@@ -91,6 +111,14 @@
 		name="statoSenzaContrattazione"
 		readonlyProperty="ROStato"
 		 />
+	<formFieldProperty
+		name="statoConCalderone"
+		readonlyProperty="ROStato"
+	/>
+	<formFieldProperty
+		name="statoConCalderoneRib"
+		readonlyProperty="ROStato"
+	/>
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty

@@ -116,7 +116,7 @@ public class CRUDHelpBP extends SimpleCRUDBP {
                 .flatMap(helpBulk -> Optional.ofNullable(helpBulk.getHelpUrl()));
         if (helpURL.isPresent()) {
             Button buttonHelp = new Button(Config.getHandler().getProperties(getClass()), "CRUDToolbar.help");
-            buttonHelp.setHref("javascript:doHelp('".concat(helpBaseURL).concat(helpURL.get()).concat("')"));
+            buttonHelp.setHref("javascript:window.open('".concat(helpBaseURL).concat(helpURL.get()).concat("', 'Help', 'toolbar=no')"));
             buttons.add(buttonHelp);
         }
         super.writeToolbar(jspwriter, buttons.toArray(new Button[buttons.size()]));

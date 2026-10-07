@@ -97,11 +97,18 @@
 		formatName="it.cnr.contab.util.EuroPositivoFormat"
 		label="Importo approvato" />
 	<fieldProperty
-		name="importo_ripartito"
-		property="importo_ripartito"
+		name="importo_ripartito_fin"
+		property="importo_ripartito_fin"
 		inputType="ROTEXT"
 		formatName="it.cnr.contab.util.EuroPositivoFormat"
-		label="Importo ripartito" />
+		label="Importo Ripartito Fonti Interne" />
+	<fieldProperty
+		name="importo_ripartito_fes"
+		property="importo_ripartito_fes"
+		inputType="ROTEXT"
+		formatName="it.cnr.contab.util.EuroPositivoFormat"
+		label="Importo Ripartito Fonti Esterne" />
+
 	<formFieldProperty
 		name="esercizio" />
 	<formFieldProperty
@@ -121,7 +128,9 @@
 	<formFieldProperty
 		name="importo_approvato" />
 	<formFieldProperty
-		name="importo_ripartito" />
+		name="importo_ripartito_fin" />
+	<formFieldProperty
+		name="importo_ripartito_fes" />
 
 	<findFieldProperty
 		name="esercizio" />
@@ -145,17 +154,21 @@
 	<columnFieldProperty
 		name="importo_approvato" />
 	<columnFieldProperty
-		name="importo_ripartito" />
-		
+		name="importo_ripartito_fin" />
+	<columnFieldProperty
+		name="importo_ripartito_fes" />
+
 	<columnSet name="nuovoPdg">
 		<columnFieldProperty
 			name="cd_dipartimento" />
 		<columnFieldProperty
 			name="ds_dipartimento" />
 		<columnFieldProperty
-			name="importo_approvato" />
+			name="importo_ripartito_fin"
+			label="Totale Approvato Fonti Interne" />
 		<columnFieldProperty
-			name="importo_ripartito" />
+			name="importo_ripartito_fes"
+			label="Totale Approvato Fonti Esterne" />
 	</columnSet>
 	
 	<freeSearchSet name="nuovoPdg">

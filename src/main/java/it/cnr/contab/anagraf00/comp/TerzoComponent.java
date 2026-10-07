@@ -435,7 +435,7 @@ public class TerzoComponent extends UtilitaAnagraficaComponent implements ICRUDM
                                     cc = buf.toString();
                                 }
 
-                                banca.setNumero_conto(cc);
+                                banca.setNumero_conto(cc.trim());
                             }
                         }
                     }

@@ -63,6 +63,11 @@
 			%>
 			</td>
 		</tr>
+		<tr>
+			<td>
+				<%controller.writeFormField(out,"note");%>
+			</td>
+		</tr>
 	</table>
 	<table border="0" cellspacing="0" cellpadding="2" width="100%">
 		<tr>

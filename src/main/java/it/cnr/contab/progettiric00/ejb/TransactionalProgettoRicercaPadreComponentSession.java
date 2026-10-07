@@ -24,6 +24,7 @@ import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoBulk;
 import it.cnr.contab.progettiric00.core.bulk.V_saldi_piano_econom_progettoBulk;
 import it.cnr.contab.progettiric00.core.bulk.V_saldi_plurien_voce_progettoBulk;
+import it.cnr.contab.progettiric00.dto.RiportaProgettoDto;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -624,6 +625,26 @@ public it.cnr.jada.bulk.OggettoBulk modificaConBulk(it.cnr.jada.UserContext para
 			return (List<V_saldi_piano_econom_progettoBulk>)invoke("getPluriennaliProgettoPianoEco", new Object[]{
 					userContext,
 					bulk});
+		} catch (java.rmi.RemoteException e) {
+			throw e;
+		} catch (java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch (it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch (Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception", ex);
+			}
+		}
+	}
+
+	@Override
+	public void riportaInNuovoProgetto(UserContext userContext, List<RiportaProgettoDto> progettiDaRiportare,Integer nuovoEsercizio) throws ComponentException, PersistencyException, RemoteException {
+		try {
+			invoke("riportaInNuovoProgetto", new Object[]{
+					userContext,
+					progettiDaRiportare,
+					nuovoEsercizio});
 		} catch (java.rmi.RemoteException e) {
 			throw e;
 		} catch (java.lang.reflect.InvocationTargetException e) {

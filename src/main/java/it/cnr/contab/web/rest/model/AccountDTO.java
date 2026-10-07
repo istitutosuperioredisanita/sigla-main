@@ -20,9 +20,9 @@ package it.cnr.contab.web.rest.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.cnr.contab.utenze00.bulk.UtenteBulk;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -119,7 +119,10 @@ public class AccountDTO {
                 .flatMap(utente -> Optional.ofNullable(utente.getDt_ultima_var_password()))
                 .map(timestamp -> timestamp.toLocalDateTime().toLocalDate())
                 .map(localDate -> localDate.plusMonths(MONTH_EXPIRED))
-                .map(localDate -> localDate.isAfter(LocalDate.now(ZoneId.systemDefault())))
+                .map(localDate -> localDate.isAfter(EJBCommonServices.getServerDate()
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()))
                 .orElse(Boolean.TRUE);
     }
 
@@ -141,7 +144,10 @@ public class AccountDTO {
                 .flatMap(utente -> Optional.ofNullable(utente.getDt_ultimo_accesso()))
                 .map(timestamp -> timestamp.toLocalDateTime().toLocalDate())
                 .map(localDate -> localDate.plusMonths(MONTH_EXPIRED))
-                .map(localDate -> localDate.isBefore(LocalDate.now(ZoneId.systemDefault())))
+                .map(localDate -> localDate.isBefore(EJBCommonServices.getServerDate()
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()))
                 .orElse(Boolean.FALSE);
     }
 
@@ -149,7 +155,10 @@ public class AccountDTO {
         return !Optional.ofNullable(currentUser)
                 .flatMap(utente -> Optional.ofNullable(utente.getDt_fine_validita()))
                 .map(timestamp -> timestamp.toLocalDateTime().toLocalDate())
-                .map(localDate -> localDate.isBefore(LocalDate.now(ZoneId.systemDefault())))
+                .map(localDate -> localDate.isBefore(EJBCommonServices.getServerDate()
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()))
                 .orElse(Boolean.FALSE);
     }
 

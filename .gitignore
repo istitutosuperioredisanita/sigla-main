@@ -15,3 +15,5 @@ log
 /.run/
 .vscode/settings.json
 /sigla.log.*
+/src/test/resources/contratto*.pdf
+/.okhttpcache/*

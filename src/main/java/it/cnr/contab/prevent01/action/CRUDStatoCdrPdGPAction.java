@@ -23,6 +23,7 @@
  */
 package it.cnr.contab.prevent01.action;
 
+import it.cnr.contab.prevent01.bp.CRUDDettagliContrSpeseBP;
 import it.cnr.contab.prevent01.bp.CRUDStatoCdrPdGPBP;
 import it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_moduloBulk;
@@ -58,6 +59,17 @@ public class CRUDStatoCdrPdGPAction extends CRUDAction  {
 			CRUDStatoCdrPdGPBP bp = (CRUDStatoCdrPdGPBP) getBusinessProcess(context);
 			boolean modified = fillModel(context);
 			bp.cambiaStati(context, false);
+			return context.findDefaultForward();
+		} catch(Throwable e) {
+			return handleException(context,e);
+		}
+	}
+
+
+	public it.cnr.jada.action.Forward doRibaltaSuCalderone(ActionContext context) {
+		try {
+			CRUDStatoCdrPdGPBP bp = (CRUDStatoCdrPdGPBP)context.getBusinessProcess();
+			bp.ribaltaSuCalderone(context);
 			return context.findDefaultForward();
 		} catch(Throwable e) {
 			return handleException(context,e);

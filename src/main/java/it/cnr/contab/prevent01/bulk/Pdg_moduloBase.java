@@ -24,7 +24,8 @@ import it.cnr.jada.persistency.Keyed;
 public class Pdg_moduloBase extends Pdg_moduloKey implements Keyed {
 //    STATO CHAR(1)
 	private java.lang.String stato;
- 
+	private java.lang.String note;
+
 	public Pdg_moduloBase() {
 		super();
 	}
@@ -36,5 +37,13 @@ public class Pdg_moduloBase extends Pdg_moduloKey implements Keyed {
 	}
 	public void setStato(java.lang.String stato)  {
 		this.stato=stato;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
 	}
 }

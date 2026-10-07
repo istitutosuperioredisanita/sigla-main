@@ -17,7 +17,11 @@
 
 package it.cnr.contab.config00.sto.bulk;
 
+import it.cnr.contab.config00.bulk.Configurazione_cnrBase;
+import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
+import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.consultazioni.bulk.ConsultazioniRestHome;
+import it.cnr.contab.progettiric00.core.bulk.ProgettoGestUoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
@@ -29,7 +33,11 @@ import it.cnr.jada.persistency.sql.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.sql.Timestamp;
+import java.time.Month;
+import java.time.Year;
+import java.time.ZoneId;
+import java.util.*;
 
 /**
  * Home dell'unità organizzativa bulk
@@ -628,5 +636,83 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 		sql.addClause(FindClause.AND, "esercizio_inizio", SQLBuilder.LESS_EQUALS, CNRUserContext.getEsercizio(userContext));
 		sql.addClause(FindClause.AND, "esercizio_fine", SQLBuilder.GREATER_EQUALS, CNRUserContext.getEsercizio(userContext));
 		return sql;
+	}
+
+	public List<Unita_organizzativaBulk> findFondiFunzionamento(UserContext userContext, Integer esercizio, String cds, String voce) throws ComponentException, PersistencyException {
+		final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
+				"FONDI_FUNZIONAMENTO",
+				"PARAMETRI",
+				"*",
+                esercizio);
+		Configurazione_cnrHome home = (it.cnr.contab.config00.bulk.Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class);
+		Configurazione_cnrBulk config = Optional.ofNullable(home.findByPrimaryKey(configurazioneCnrBulk))
+				.map(Configurazione_cnrBulk.class::cast)
+				.orElseGet(() -> {
+					configurazioneCnrBulk.setEsercizio(0);
+                    try {
+                        return (Configurazione_cnrBulk)home.findByPrimaryKey(configurazioneCnrBulk);
+                    } catch (PersistencyException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+		if (Optional.ofNullable(voce).isPresent())
+			setColumnMap("FONDI_FUNZIONAMENTO_VOCE");
+		else
+			setColumnMap("FONDI_FUNZIONAMENTO");
+		SQLBuilder sqlBuilder = super.createSQLBuilder();
+		sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
+		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
+		sqlBuilder.addTableToHeader("PROGETTO_OTHER_FIELD");
+
+		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA");
+		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.ESERCIZIO", "V_PROGETTO_PADRE.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
+		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+
+		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.P_CD_PROGETTO", SQLBuilder.EQUALS, Optional.ofNullable(config).map(Configurazione_cnrBase::getVal01).orElse(null));
+		Optional.ofNullable(config)
+			.map(Configurazione_cnrBase::getVal02)
+			.map(s -> s.split(","))
+			.map(Arrays::asList)
+			.orElse(Collections.emptyList())
+			.forEach(s -> {
+				sqlBuilder.addSQLClause(FindClause.AND, "V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.NOT_EQUALS, s);
+			});
+		Optional.ofNullable(config)
+			.map(Configurazione_cnrBase::getVal03)
+			.map(s -> s.split(","))
+			.map(Arrays::asList)
+			.orElse(Collections.emptyList())
+			.forEach(s -> {
+				sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+			});
+
+		//Inserisco il filtro sulla data di inizio del progetto che deve essere dell'esercizio
+		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.GREATER_EQUALS, Timestamp.from(Year.of(esercizio).atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		sqlBuilder.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.LESS_EQUALS, Timestamp.from(Year.of(esercizio).atMonth(Month.DECEMBER).atDay(31).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+		Optional.ofNullable(cds)
+				.ifPresent(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_PADRE", SQLBuilder.EQUALS, s);
+				});
+		Optional.ofNullable(voce)
+				.ifPresent(s -> {
+					sqlBuilder.addTableToHeader("V_SALDI_VOCE_PROGETTO");
+					sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.ESERCIZIO", "V_PROGETTO_PADRE.ESERCIZIO");
+					sqlBuilder.addSQLJoin("V_SALDI_VOCE_PROGETTO.PG_PROGETTO", "V_PROGETTO_PADRE.PG_PROGETTO");
+					sqlBuilder.addSQLClause(FindClause.AND, "V_SALDI_VOCE_PROGETTO.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, s);
+				});
+		Collection<ColumnMapping> columnMappings = getColumnMap().getColumnMappings();
+		columnMappings
+				.stream()
+				.filter(columnMapping -> !columnMapping.isCount())
+				.map(ColumnMapping::getColumnName)
+				.map(s -> "V_UNITA_ORGANIZZATIVA_VALIDA.".concat(s))
+				.forEach(sqlBuilder::addSQLGroupBy);
+		return fetchAll(sqlBuilder);
 	}
 }

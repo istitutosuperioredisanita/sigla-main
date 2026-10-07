@@ -515,6 +515,10 @@ public class RuoloComponent extends it.cnr.jada.comp.CRUDComponent implements IC
         return controlloAbilitazione(userContext, PrivilegioBulk.ABILITA_SBLOCCO_IMPEGNO);
     }
 
+    public boolean hasPrivilegio(UserContext userContext, String cdPrivilegio) throws it.cnr.jada.comp.ComponentException {
+        return controlloAbilitazione(userContext, cdPrivilegio);
+    }
+
     public boolean controlloAbilitazione(UserContext userContext, String tipoAbilitazione) throws ComponentException {
         try {
             SQLBuilder sql = null;

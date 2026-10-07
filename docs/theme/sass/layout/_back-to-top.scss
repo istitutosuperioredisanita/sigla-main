@@ -1,0 +1,9 @@
+.return-to-top {
+  @include media-breakpoint-down(sm) {
+    bottom: 4rem;
+  }
+
+  i::before {
+    margin: 0;
+  }
+}

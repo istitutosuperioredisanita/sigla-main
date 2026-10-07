@@ -20,6 +20,12 @@
       path="/CRUDProgettiRicercaAction" actionClass="it.cnr.contab.progettiric00.action.CRUDProgettoAction">
   </action>
 
+  <action
+          path="/RiportaProgettiRicercaAction" actionClass="it.cnr.jada.util.action.CRUDAction">
+  </action>
+
+
+
   <action 
       path="/CRUDRimodulaProgettiRicercaAction" actionClass="it.cnr.contab.progettiric00.action.CRUDRimodulaProgettoAction">
   </action>
@@ -38,6 +44,10 @@
 
   <action 
       path="/CRUDCommessaWorkpackageAction" actionClass="it.cnr.contab.progettiric00.action.CRUDCommessaWorkpackageAction">
+  </action>
+
+  <action
+          path="/ConsultazioniAction" actionClass="it.cnr.jada.util.action.ConsultazioniAction">
   </action>
 
   <businessProcess
@@ -79,6 +89,16 @@
     <init-param name="componentSessionName" value="CNRPROGETTIRIC00_EJB_RimodulaProgettoRicercaComponentSession"/>
 	<init-param name="defaultAction" value="CRUDRimodulaProgettiRicercaAction"/>
   </businessProcess>
+
+  <businessProcess
+          name="RiportaProgettiRicercaBP" className="it.cnr.contab.progettiric00.bp.RiportaProgettiRicercaBP">
+    <forward name="default" path="/progettiric00/riporta_progetti.jsp"/>
+    <init-param name="bulkClassName" value="it.cnr.contab.util00.bulk.storage.AllegatoParentIBulk"/>
+    <init-param name="componentSessionName" value="CNRPROGETTIRIC00_EJB_ProgettoRicercaComponentSession"/>
+    <init-param name="defaultAction" value="RiportaProgettiRicercaAction"/>
+
+  </businessProcess>
+
   
   <businessProcess name="SelezionatoreRimodulazioneProgettoBP"
                      className="it.cnr.contab.progettiric00.bp.SelezionatoreRimodulazioneProgettoBP">
@@ -160,6 +180,23 @@
     <init-param name="componentSessionName" value="CNRPROGETTIRIC00_EJB_ConsProgEcoVociGaeComponentSession"/>
     <init-param name="defaultAction" value="ConsultazioniAction"/>
     <init-param name="multiSelezione" value="Y" />
+  </businessProcess>
+
+  <businessProcess name="ProgPadreDetBP" className="it.cnr.contab.progettiric00.consultazioni.bp.ProgPadreDetBP">
+    <forward name="default" path="/consultazioni/form_lista.jsp" />
+    <init-param name="bulkClassName" value="it.cnr.contab.progettiric00.consultazioni.bulk.Progetto_padre_detBulk" />
+    <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+    <init-param name="freeSearchSet" value="CERCA" />
+    <!--<init-param name="searchResultColumnSet" value="STAMPA" />-->
+    <init-param name="defaultAction" value="ConsultazioniAction" />
+  </businessProcess>
+
+  <businessProcess
+          name="EstrazioneCompletaProgettiBP" className="it.cnr.contab.progettiric00.consultazioni.bp.EstrazioneCompletaProgettiBP">
+    <forward name="default" path="/consultazioni/form_lista.jsp"/>
+    <init-param name="bulkClassName" value="it.cnr.contab.progettiric00.consultazioni.bulk.V_cons_est_progettiBulk"/>
+    <init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession"/>
+    <init-param name="defaultAction" value="ConsultazioniAction"/>
   </businessProcess>
 
 </action-mappings>

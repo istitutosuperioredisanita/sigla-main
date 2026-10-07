@@ -197,6 +197,7 @@ public class Fattura_passivaHome extends BulkHome {
         List<Integer> eserciziDoccont = null;
         if (fatturaPassiva instanceof Nota_di_creditoBulk && fatturaPassiva.getCd_cds().equals(aCdCdsEnte))
             eserciziDoccont = righeFattura.stream()
+                 .filter(el->Optional.ofNullable(el.getEsercizio_accertamento()).isPresent())
                 .map(Fattura_passiva_rigaBulk::getEsercizio_accertamento)
                 .distinct()
                 .collect(Collectors.toList());

@@ -51,6 +51,7 @@ import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationRuntimeException;
 import it.cnr.si.spring.storage.StorageDriver;
+import jakarta.persistence.Transient;
 
 public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 
@@ -179,6 +180,12 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 	private BulkList<Progetto_rimodulazioneBulk> rimodulazioni = new BulkList<Progetto_rimodulazioneBulk>();
 	private BulkList<ContrattoBulk> contratti = new BulkList<ContrattoBulk>();
 	private BulkList<Progetto_anagraficoBulk> anagraficheProgetto = new BulkList<Progetto_anagraficoBulk>();
+
+	@Transient private BigDecimal importoFinanziato;
+	@Transient private BigDecimal importoUtilizzato;
+
+	//Variabile utilizzata per sapere se la richiesta di creazione proviene da una mappa di tipo Amministra
+	private boolean fromAmministra = Boolean.FALSE;
 
 	public ProgettoBulk() {
 		super();
@@ -1418,4 +1425,27 @@ public void setUnita_organizzativa(it.cnr.contab.config00.sto.bulk.Unita_organiz
 				this.getProgettopadre().getCd_progetto().equals(AREA_PROGETTUALE_FUNZIONAMENTO_UO);
 	}
 
+	public BigDecimal getImportoFinanziato() {
+		return importoFinanziato;
+	}
+
+	public void setImportoFinanziato(BigDecimal importoFinanziato) {
+		this.importoFinanziato = importoFinanziato;
+	}
+
+	public BigDecimal getImportoUtilizzato() {
+		return importoUtilizzato;
+	}
+
+	public void setImportoUtilizzato(BigDecimal importoUtilizzato) {
+		this.importoUtilizzato = importoUtilizzato;
+	}
+
+	public boolean isFromAmministra() {
+		return fromAmministra;
+	}
+
+	public void setFromAmministra(boolean fromAmministra) {
+		this.fromAmministra = fromAmministra;
+	}
 }

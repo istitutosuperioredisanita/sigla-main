@@ -31,6 +31,9 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 
+import it.cnr.contab.config00.latt.bulk.CofogBulk;
+import it.cnr.contab.utenze00.bulk.PrivilegioBulk;
+import it.cnr.contab.utenze00.bulk.UtenteBulk;
 import jakarta.servlet.http.HttpSession;
 
 import jakarta.servlet.ServletException;
@@ -42,7 +45,6 @@ import it.cnr.contab.config00.ejb.Parametri_livelliComponentSession;
 import it.cnr.contab.config00.pdcfin.cla.bulk.V_classificazione_vociBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.pdg00.ejb.CostiDipendenteComponentSession;
-import it.cnr.contab.prevent01.bulk.Pdg_Modulo_EntrateBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_contrattazione_speseBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_moduloBulk;
@@ -52,21 +54,17 @@ import it.cnr.contab.prevent01.ejb.PdgContrSpeseComponentSession;
 import it.cnr.contab.prevent01.ejb.PdgModuloCostiComponentSession;
 import it.cnr.contab.progettiric00.bp.ProgettoPianoEconomicoVoceBilancioCRUDController;
 import it.cnr.contab.progettiric00.core.bulk.Ass_progetto_piaeco_voceBulk;
-import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_piano_economicoBulk;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_sipBulk;
 import it.cnr.contab.progettiric00.tabrif.bulk.Voce_piano_economico_prgBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
-import it.cnr.jada.action.BusinessProcess;
 import it.cnr.jada.action.BusinessProcessException;
-import it.cnr.jada.action.HttpActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.jada.util.action.SimpleCRUDBP;
 import it.cnr.jada.util.action.SimpleDetailCRUDController;
@@ -83,8 +81,17 @@ public class CRUDDettagliModuloCostiBP extends SimpleCRUDBP {
 
 	private Parametri_enteBulk parametriEnte;
 	private Unita_organizzativaBulk uoSrivania;
+	private boolean superUtente = Boolean.FALSE;
+
 	private CrudDettagliSpeseBP crudDettagliSpese = new CrudDettagliSpeseBP( "DettagliSpese", Pdg_modulo_speseBulk.class, "dettagliSpese", this) {
-	   protected void validate(ActionContext actioncontext, it.cnr.jada.bulk.OggettoBulk oggettobulk) throws it.cnr.jada.bulk.ValidationException {
+		@Override
+		public void add(ActionContext actioncontext, OggettoBulk oggettobulk) throws BusinessProcessException {
+			if (cofogDefault!=null)
+				((Pdg_modulo_speseBulk)oggettobulk).setCofog(cofogDefault);
+			super.add(actioncontext, oggettobulk);
+		}
+
+		protected void validate(ActionContext actioncontext, it.cnr.jada.bulk.OggettoBulk oggettobulk) throws it.cnr.jada.bulk.ValidationException {
 		   Pdg_modulo_speseBulk pdgModuloSpese = (Pdg_modulo_speseBulk)oggettobulk;
 		   if (getParametriEnte().getFl_prg_pianoeco() && 
 				!Optional.ofNullable(pdgModuloSpese.getVoce_piano_economico()).flatMap(el->Optional.ofNullable(el.getCd_voce_piano())).isPresent() &&
@@ -130,6 +137,8 @@ public class CRUDDettagliModuloCostiBP extends SimpleCRUDBP {
 	private Pdg_esercizioBulk pdg_esercizio;
 	private String descrizioneClassificazione;
 	private String descrizioneClassificazioneContrSpese;
+	private CofogBulk cofogDefault;
+
 	public CRUDDettagliModuloCostiBP() {
 		super();
 	}
@@ -151,7 +160,15 @@ public class CRUDDettagliModuloCostiBP extends SimpleCRUDBP {
 		anno_successivo = Integer.valueOf(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 1).toString();
 		anno_successivo_successivo = Integer.valueOf(CNRUserContext.getEsercizio(actioncontext.getUserContext()).intValue() + 2).toString();
 
-		Pdg_modulo_costiBulk pdg_modulo = new Pdg_modulo_costiBulk(getPdg_modulo());
+		try {
+			setSuperUtente(UtenteBulk.hasPrivilegio(actioncontext.getUserContext(), PrivilegioBulk.ABILITA_APPROVA_BILANCIO));
+			cofogDefault = Utility.createConfigurazioneCnrComponentSession().getCofogProgettoDefault(actioncontext.getUserContext(),
+					CNRUserContext.getEsercizio(actioncontext.getUserContext()));
+		} catch (ComponentException | RemoteException e) {
+			throw new BusinessProcessException(e);
+		}
+
+        Pdg_modulo_costiBulk pdg_modulo = new Pdg_modulo_costiBulk(getPdg_modulo());
 		PdgModuloCostiComponentSession session = (PdgModuloCostiComponentSession)createComponentSession();
 		try {
 			if (session.esisteBulk(actioncontext.getUserContext(),pdg_modulo)){
@@ -159,12 +176,11 @@ public class CRUDDettagliModuloCostiBP extends SimpleCRUDBP {
 				setStatus(EDIT);				
 			}
 			else
-				setModel(actioncontext,initializeModelForInsert(actioncontext,pdg_modulo));   
-		}catch (ComponentException e) {
-			throw new BusinessProcessException(e);
-		} catch (RemoteException e) {
+				setModel(actioncontext,initializeModelForInsert(actioncontext,pdg_modulo));
+		} catch (ComponentException | RemoteException e) {
 			throw new BusinessProcessException(e);
 		}
+
 		setUoSrivania(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(actioncontext));
 		setPdg_esercizio(cercaPdg_esercizio(actioncontext));
 		
@@ -502,9 +518,12 @@ public class CRUDDettagliModuloCostiBP extends SimpleCRUDBP {
 
 		hash.put(i++, new String[]{"tabTotali","<SPAN style='font : bold 13px;'>Totali</SPAN>","/prevent01/tab_modulo_totali.jsp" });
 		hash.put(i++, new String[]{"tabSpese","<SPAN style='font : bold 13px;'>Previsione di Impegno</SPAN>","/prevent01/tab_modulo_spese.jsp" });
-		hash.put(i++, new String[]{"tabRisorse","<SPAN style='font : bold 13px;'>Risorse provenienti da esercizi precedenti</SPAN>","/prevent01/tab_modulo_risorse.jsp" });
-		hash.put(i++, new String[]{"tabCosti","<SPAN style='font : bold 13px;'>Costi Generali e Figurativi</SPAN>","/prevent01/tab_modulo_costi.jsp" });
-		
+
+		if (this.isSuperUtente()) {
+			hash.put(i++, new String[]{"tabRisorse", "<SPAN style='font : bold 13px;'>Risorse provenienti da esercizi precedenti</SPAN>", "/prevent01/tab_modulo_risorse.jsp"});
+			hash.put(i++, new String[]{"tabCosti", "<SPAN style='font : bold 13px;'>Costi Generali e Figurativi</SPAN>", "/prevent01/tab_modulo_costi.jsp"});
+		}
+
 	    if (this.isFlNuovoPdg() && this.getParametriEnte().getFl_prg_pianoeco())
     		hash.put(i++, new String[]{"tabPianoEconomico","<SPAN style='font : bold 13px;'>Piano Economico</SPAN>","/prevent01/tab_modulo_piaeco.jsp" });
 
@@ -512,5 +531,13 @@ public class CRUDDettagliModuloCostiBP extends SimpleCRUDBP {
 		for (int j = 0; j < i; j++)
 			tabs[j]=new String[]{hash.get(j)[0],hash.get(j)[1],hash.get(j)[2]};
 		return tabs;
+	}
+
+	public boolean isSuperUtente(){
+		return superUtente;
+	}
+
+	private void setSuperUtente(boolean superUtente){
+		this.superUtente = superUtente;
 	}
 }

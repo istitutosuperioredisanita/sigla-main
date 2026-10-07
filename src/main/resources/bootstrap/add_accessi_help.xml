@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <property name="esercizio_successivo" value="to_number(to_char(SYSDATE, 'YYYY')) + 1" dbms="oracle"/>
+    <property name="esercizio_successivo" value="date_part('year', now()) + 1" dbms="postgresql"/>
+    <property name="esercizio_successivo" value="YEAR(CURRENT_DATE) + 1" dbms="h2"/>
+
+    <changeSet author="marco.spasiano" id="accessi_help">
+        <insert tableName="accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="SERVHELPONLINE"/>
+            <column name="ti_accesso" type="CHAR(1)" value=""/>
+            <column name="ds_accesso" type="VARCHAR(200)" value="Configurazione Help Online"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="ass_bp_accesso">
+            <column name="cd_accesso" type="VARCHAR(20)" value="SERVHELPONLINE"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDHelpBP"/>
+            <column name="ti_funzione" type="CHAR(1)" value="M"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+        <insert tableName="albero_main">
+            <column name="cd_nodo" type="VARCHAR(100)" value="0.SERV.HELPONLINE"/>
+            <column name="ds_nodo" type="VARCHAR(200)" value="Configurazione Help Online"/>
+            <column name="cd_accesso" type="VARCHAR(20)" value="SERVHELPONLINE"/>
+            <column name="business_process" type="VARCHAR(200)" value="CRUDHelpBP"/>
+            <column name="pg_ordinamento" type="BIGINT" value="90"/>
+            <column name="fl_terminale" type="CHAR(1)" value="Y"/>
+            <column name="livello" type="SMALLINT" value="2"/>
+            <column name="cd_proprio_nodo" type="VARCHAR(100)" value="HELPONLINE"/>
+            <column name="cd_nodo_padre" type="VARCHAR(100)" value="0.SERV"/>
+            <column name="duva" type="${date.type}" valueDate="${now}"/>
+            <column name="utuv" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="dacr" type="${date.type}" valueDate="${now}"/>
+            <column name="utcr" type="VARCHAR(20)" value="SYSTEM"/>
+            <column name="pg_ver_rec" type="BIGINT" value="0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

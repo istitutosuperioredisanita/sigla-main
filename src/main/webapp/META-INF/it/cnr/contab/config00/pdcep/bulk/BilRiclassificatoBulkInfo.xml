@@ -89,6 +89,7 @@
 		enabledOnView="true"
 		formatName = "it.cnr.contab.util.EuroFormat"
 		command="doOnChangeImportoFinale"
+		readonlyProperty="ROEnabledUpdatingInfo"
 		nullable="false"
 		label="Importo finale" />
 	<fieldProperty
@@ -121,6 +122,7 @@
 		enabledOnEdit="true"
 		enabledOnView="true"
 		command="doOnChangeNote"
+		readonlyProperty="ROEnabledUpdatingInfo"
 		label="Note" />
 
 	<form

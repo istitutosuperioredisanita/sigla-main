@@ -23,10 +23,14 @@
  */
 package it.cnr.contab.progettiric00.core.bulk;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
@@ -41,43 +45,64 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
  */
 public class V_saldi_voce_progettoHome extends BulkHome {
 	private static final long serialVersionUID = 5918224310476589096L;
-	
+
 	public V_saldi_voce_progettoHome(java.sql.Connection conn) {
-		super(V_saldi_voce_progettoBulk.class,conn);
-	}
-	
-	public V_saldi_voce_progettoHome(java.sql.Connection conn,PersistentCache persistentCache) {
-		super(V_saldi_voce_progettoBulk.class,conn,persistentCache);
+		super(V_saldi_voce_progettoBulk.class, conn);
 	}
 
-	public V_saldi_voce_progettoBulk cercaSaldoVoce(Ass_progetto_piaeco_voceBulk bulk) throws PersistencyException
-	{
-		SQLBuilder sql = this.createSQLBuilder();	
-		
-		sql.addSQLClause(FindClause.AND,"PG_PROGETTO",SQLBuilder.EQUALS,bulk.getPg_progetto());
-		sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS,bulk.getEsercizio_piano());
-		sql.addSQLClause(FindClause.AND,"ESERCIZIO_VOCE",SQLBuilder.EQUALS,bulk.getEsercizio_piano());
-		sql.addSQLClause(FindClause.AND,"TI_APPARTENENZA",SQLBuilder.EQUALS,bulk.getTi_appartenenza());
-		sql.addSQLClause(FindClause.AND,"TI_GESTIONE",SQLBuilder.EQUALS,bulk.getTi_gestione());
-	    sql.addSQLClause(FindClause.AND,"CD_ELEMENTO_VOCE",SQLBuilder.EQUALS,bulk.getCd_elemento_voce());
+	public V_saldi_voce_progettoHome(java.sql.Connection conn, PersistentCache persistentCache) {
+		super(V_saldi_voce_progettoBulk.class, conn, persistentCache);
+	}
+
+	public V_saldi_voce_progettoBulk cercaSaldoVoce(Ass_progetto_piaeco_voceBulk bulk) throws PersistencyException {
+		SQLBuilder sql = this.createSQLBuilder();
+
+		sql.addSQLClause(FindClause.AND, "PG_PROGETTO", SQLBuilder.EQUALS, bulk.getPg_progetto());
+		sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, bulk.getEsercizio_piano());
+		sql.addSQLClause(FindClause.AND, "ESERCIZIO_VOCE", SQLBuilder.EQUALS, bulk.getEsercizio_piano());
+		sql.addSQLClause(FindClause.AND, "TI_APPARTENENZA", SQLBuilder.EQUALS, bulk.getTi_appartenenza());
+		sql.addSQLClause(FindClause.AND, "TI_GESTIONE", SQLBuilder.EQUALS, bulk.getTi_gestione());
+		sql.addSQLClause(FindClause.AND, "CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, bulk.getCd_elemento_voce());
 
 		List<V_saldi_voce_progettoBulk> list = fetchAll(sql);
-		if (list!=null && !list.isEmpty())
+		if (list != null && !list.isEmpty())
 			return list.get(0);
 		return null;
 	}
-	
-	public List<V_saldi_voce_progettoBulk> cercaSaldoVoce(Integer pgProgetto) throws PersistencyException
-	{
+
+	public List<V_saldi_voce_progettoBulk> cercaSaldoVoce(Integer pgProgetto) throws PersistencyException {
 		SQLBuilder sql = this.createSQLBuilder();
 
-		BigDecimal annoFrom = ((Configurazione_cnrHome)getHomeCache().getHome(Configurazione_cnrBulk.class))
+		BigDecimal annoFrom = ((Configurazione_cnrHome) getHomeCache().getHome(Configurazione_cnrBulk.class))
 				.getConfigurazione(Integer.valueOf(0), null, Configurazione_cnrBulk.PK_GESTIONE_PROGETTI, Configurazione_cnrBulk.SK_PROGETTO_PIANO_ECONOMICO)
 				.getIm01();
 
-		sql.addSQLClause(FindClause.AND,"PG_PROGETTO",SQLBuilder.EQUALS,pgProgetto);
-		sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.GREATER_EQUALS,annoFrom);
+		sql.addSQLClause(FindClause.AND, "PG_PROGETTO", SQLBuilder.EQUALS, pgProgetto);
+		sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.GREATER_EQUALS, annoFrom);
 
 		return fetchAll(sql);
-	}	
+	}
+
+	public List<V_saldi_voce_progettoBulk> findByCodiceProgetto(UserContext context, Integer esercizio, String cdProgetto, String elementiVoce ) throws PersistencyException {
+		setFetchPolicy("fetchElementoVoce");
+		SQLBuilder sql = this.createSQLBuilder();
+		sql.addTableToHeader("PROGETTO");
+		sql.addSQLJoin("V_SALDI_VOCE_PROGETTO.ESERCIZIO", "PROGETTO.ESERCIZIO");
+		sql.addSQLJoin("V_SALDI_VOCE_PROGETTO.PG_PROGETTO", "PROGETTO.PG_PROGETTO");
+		sql.addSQLClause(FindClause.AND, "PROGETTO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+		sql.addSQLClause(FindClause.AND, "PROGETTO.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+		sql.addSQLClause(FindClause.AND, "PROGETTO.CD_PROGETTO", SQLBuilder.EQUALS, cdProgetto);
+		sql.openParenthesis(FindClause.AND);
+		Optional.ofNullable(elementiVoce)
+				.map(s -> s.split(","))
+				.map(Arrays::asList)
+				.orElse(Collections.emptyList())
+				.forEach(s -> {
+						sql.addSQLClause(FindClause.OR, "V_SALDI_VOCE_PROGETTO.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, s);
+				});
+		sql.closeParenthesis();
+		List<V_saldi_voce_progettoBulk> result = fetchAll(sql);
+		getHomeCache().fetchAll(context);
+		return result;
+	}
 }

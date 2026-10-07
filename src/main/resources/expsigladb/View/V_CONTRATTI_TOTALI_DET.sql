@@ -1027,6 +1027,7 @@ AS
                                obbligazione_scad_voce.cd_centro_responsabilita
                   AND linea_attivita.cd_linea_attivita =
                                       obbligazione_scad_voce.cd_linea_attivita
+                  AND  v.cd_tipo_documento_amm!='ORDINE'
              GROUP BY 'SPE',
                       obbligazione.esercizio_originale,
                       obbligazione.cd_terzo,

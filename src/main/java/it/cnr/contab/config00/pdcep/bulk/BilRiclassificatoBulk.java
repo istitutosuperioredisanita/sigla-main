@@ -5,6 +5,7 @@
 package it.cnr.contab.config00.pdcep.bulk;
 
 import it.cnr.contab.coepcoan00.core.bulk.Sezione;
+import it.cnr.contab.pdg00.bulk.AccrualBulk;
 
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -16,6 +17,16 @@ public class BilRiclassificatoBulk extends BilRiclassificatoBase {
 	 * [VOCE_EP ]
 	 **/
 	private ContoBulk voceEp =  new ContoBulk();
+
+	private AccrualBulk accrual = new AccrualBulk();
+
+	public AccrualBulk getAccrual() {
+		return accrual;
+	}
+
+	public void setAccrual(AccrualBulk accrual) {
+		this.accrual = accrual;
+	}
 
 	private List<TipoBilancioBulk> tipoBilanci;
 
@@ -98,4 +109,9 @@ public class BilRiclassificatoBulk extends BilRiclassificatoBase {
 	public void setTipo_bilancio(TipoBilancioBulk tipo_bilancio) {
 		this.tipo_bilancio = tipo_bilancio;
 	}
+
+	public boolean  isROEnabledUpdatingInfo(){
+		return  new TipoBilancioBulk(getCdTipoBilancio()).isTipoAccrual() && accrual.isInviato();
+	}
+
 }

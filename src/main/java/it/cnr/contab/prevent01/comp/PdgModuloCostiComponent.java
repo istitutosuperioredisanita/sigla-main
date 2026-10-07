@@ -425,41 +425,43 @@ public class PdgModuloCostiComponent extends CRUDComponent {
 			OggettoBulk oggettobulk) throws ComponentException {
 		Pdg_modulo_costiBulk bulk =null;
 		try {
-		Parametri_cnrBulk parCnr = Utility.createParametriCnrComponentSession().getParametriCnr(usercontext, CNRUserContext.getEsercizio(usercontext)); 
-		if (oggettobulk instanceof Pdg_modulo_costiBulk){
-			 bulk= (Pdg_modulo_costiBulk) oggettobulk;
-			for (Iterator i=bulk.getDettagliSpese().iterator();i.hasNext();){
-				 Pdg_modulo_speseBulk pdg_modulo_spese = (Pdg_modulo_speseBulk)i.next();
-				 if (pdg_modulo_spese!=null && parCnr.isCofogObbligatorio() && (pdg_modulo_spese.getCofog()==null||pdg_modulo_spese.getCd_cofog()==null)) 
-					 throw new ApplicationException("Non è possibile inserire la spesa senza indicare la classificazione Cofog.");
-				 if (pdg_modulo_spese!=null && parCnr.getFl_nuovo_pdg() && (pdg_modulo_spese.getPdgMissione()==null||pdg_modulo_spese.getCd_missione()==null)) 
-					 throw new ApplicationException("Non è possibile inserire la spesa senza indicare la missione.");
-				 if (pdg_modulo_spese.getClassificazione()!=null){
-					 if(pdg_modulo_spese.isPrevAnnoSucObb() && pdg_modulo_spese.getIm_spese_a2()==null)
-						 throw new ApplicationException("Non è possibile inserire la spesa senza indicare la previsione dell'anno successivo.");
-					 else
-						 if(!pdg_modulo_spese.isPrevAnnoSucObb() && pdg_modulo_spese.getIm_spese_a2()==null)
-							 pdg_modulo_spese.setIm_spese_a2(BigDecimal.ZERO);
-				 }
-			   	 if ((Optional.ofNullable(pdg_modulo_spese.getIm_spese_gest_decentrata_int()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)!=0 ||
-			   		  Optional.ofNullable(pdg_modulo_spese.getIm_spese_gest_decentrata_est()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)!=0) && 
-			   		 Optional.ofNullable(pdg_modulo_spese.getPdg_modulo_costi())
-		    				.flatMap(el->Optional.ofNullable(el.getPdg_modulo()))
-		    				.flatMap(el->Optional.ofNullable(el.getProgetto()))
-		    				.flatMap(el->Optional.ofNullable(el.getOtherField()))
-		    				.flatMap(el->Optional.ofNullable(el.getTipoFinanziamento()))
-		    				.flatMap(el->Optional.ofNullable(el.getFlPianoEcoFin()))
-		    				.orElseThrow(()->new RuntimeException("Errore in fase di ricerca tipo finanziamento associato al progetto. Aprire una segnalazione HelpDesk"))
-		    				.booleanValue() && 
-		    				!Optional.ofNullable(pdg_modulo_spese.getVoce_piano_economico())
-		    						 .flatMap(el->Optional.ofNullable(el.getCd_voce_piano()))
-		    						 .isPresent()) {
-					 throw new ApplicationException("Non è possibile inserire la spesa senza indicare la voce di piano economico associato al progetto.");
-		    	}
-			}
-		}
-		Utility.createSaldoComponentSession().checkDispPianoEconomicoProgetto(usercontext,bulk,false);
-		super.validaCreaModificaConBulk(usercontext, oggettobulk);
+			Parametri_cnrBulk parCnr = Utility.createParametriCnrComponentSession().getParametriCnr(usercontext, CNRUserContext.getEsercizio(usercontext));
+			if (oggettobulk instanceof Pdg_modulo_costiBulk){
+				 bulk= (Pdg_modulo_costiBulk) oggettobulk;
+				for (Iterator i=bulk.getDettagliSpese().iterator();i.hasNext();){
+					 Pdg_modulo_speseBulk pdg_modulo_spese = (Pdg_modulo_speseBulk)i.next();
+					 if (pdg_modulo_spese!=null && parCnr.isCofogObbligatorio() && (pdg_modulo_spese.getCofog()==null||pdg_modulo_spese.getCd_cofog()==null))
+						 throw new ApplicationException("Non è possibile inserire la spesa senza indicare la classificazione Cofog.");
+					 if (pdg_modulo_spese!=null && parCnr.getFl_nuovo_pdg() && (pdg_modulo_spese.getPdgMissione()==null||pdg_modulo_spese.getCd_missione()==null))
+						 throw new ApplicationException("Non è possibile inserire la spesa senza indicare la missione.");
+					 if (pdg_modulo_spese.getClassificazione()!=null){
+						 if(pdg_modulo_spese.isPrevAnnoSucObb() && pdg_modulo_spese.getIm_spese_a2()==null)
+							 throw new ApplicationException("Non è possibile inserire la spesa senza indicare la previsione dell'anno successivo.");
+						 else
+							 if(!pdg_modulo_spese.isPrevAnnoSucObb() && pdg_modulo_spese.getIm_spese_a2()==null)
+								 pdg_modulo_spese.setIm_spese_a2(BigDecimal.ZERO);
+					 }
+					 if ((Optional.ofNullable(pdg_modulo_spese.getIm_spese_gest_decentrata_int()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)!=0 ||
+						  Optional.ofNullable(pdg_modulo_spese.getIm_spese_gest_decentrata_est()).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO)!=0) &&
+						 Optional.ofNullable(pdg_modulo_spese.getPdg_modulo_costi())
+								.flatMap(el->Optional.ofNullable(el.getPdg_modulo()))
+								.flatMap(el->Optional.ofNullable(el.getProgetto()))
+								.flatMap(el->Optional.ofNullable(el.getOtherField()))
+								.flatMap(el->Optional.ofNullable(el.getTipoFinanziamento()))
+								.flatMap(el->Optional.ofNullable(el.getFlPianoEcoFin()))
+								.orElseThrow(()->new RuntimeException("Errore in fase di ricerca tipo finanziamento associato al progetto. Aprire una segnalazione HelpDesk"))
+								.booleanValue() &&
+								!Optional.ofNullable(pdg_modulo_spese.getVoce_piano_economico())
+										 .flatMap(el->Optional.ofNullable(el.getCd_voce_piano()))
+										 .isPresent()) {
+						 throw new ApplicationException("Non è possibile inserire la spesa senza indicare la voce di piano economico associato al progetto.");
+					}
+				}
+			} else
+				//CONTROLLO ELIMINATO per pdg_modulo_costi su richiesta Patrizia
+				Utility.createSaldoComponentSession().checkDispPianoEconomicoProgetto(usercontext,bulk,false);
+
+			super.validaCreaModificaConBulk(usercontext, oggettobulk);
 		} catch (RemoteException e) {
 			throw handleException(e);
 		}

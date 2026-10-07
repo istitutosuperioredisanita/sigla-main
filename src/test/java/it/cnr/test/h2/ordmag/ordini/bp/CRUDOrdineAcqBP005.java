@@ -24,9 +24,12 @@ import org.jboss.arquillian.graphene.GrapheneElement;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
-import org.wildfly.common.Assert;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 /**
  * Test di:
@@ -96,20 +99,20 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
         switchToFrameWorkspace();
 
         //Indico Unità Operativa: DRUE
-        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
         doClickButton("doSearch(main.findUnitaOperativaOrd)");
 
         //Indico Numeratore: DSA
-        getGrapheneElement("main.findNumerazioneOrd.cdNumeratore").writeIntoElement(CD_NUMERATORE);
+        doWriteIntoElement("main.findNumerazioneOrd.cdNumeratore", CD_NUMERATORE);
         doClickButton("doSearch(main.findNumerazioneOrd)");
 
         //Indico Contratto: 2025 1
-        getGrapheneElement("main.find_contratto.esercizio").writeIntoElement(CONTRATTO_ESERCIZIO);
-        getGrapheneElement("main.find_contratto.pg_contratto").writeIntoElement(CONTRATTO_NUMERO);
+        doWriteIntoElement("main.find_contratto.esercizio", CONTRATTO_ESERCIZIO);
+        doWriteIntoElement("main.find_contratto.pg_contratto", CONTRATTO_NUMERO);
         doClickButton("doSearch(main.find_contratto)");
 
         //Indico nota: Prova per documentazione
-        getGrapheneElement("main.nota").writeIntoElement("Prova per documentazione");
+        doWriteIntoElement("main.nota", "Prova per documentazione");
 
         //Passo sulla tab ‘Fornitore’ ed il terzo è proposto in automatico
         doClickButton("doTab('tab','tabOrdineFornitore')");
@@ -122,15 +125,15 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
         doClickButton("doAddToCRUD(main.Righe)");
 
         //Indico codice articolo: 191202
-        getGrapheneElement("main.Righe.findBeneServizio.cd_bene_servizio").writeIntoElement(BENE_SERVIZIO_CODICE_01);
+        doWriteIntoElement("main.Righe.findBeneServizio.cd_bene_servizio", BENE_SERVIZIO_CODICE_01);
         doClickButton("doSearch(main.Righe.findBeneServizio)");
 
         //Indico Quantità: 2
-        getGrapheneElement("main.Righe.dspQuantita").writeIntoElement("2");
+        doWriteIntoElement("main.Righe.dspQuantita", "2");
         doClickButton("doOnDspQuantitaChange");
 
         //Indico Prezzo: 200
-        getGrapheneElement("main.Righe.prezzoUnitario").writeIntoElement("200");
+        doWriteIntoElement("main.Righe.prezzoUnitario", "200");
         doClickButton("doOnImportoChange");
 
         //Lascio la proposta di ‘Tipo magazzino’ e ‘Data prevista consegna’
@@ -142,7 +145,7 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
 
         //Indico il codice magazzino: PT
         doClickButton("doBlankSearch(main.Righe.findMagazzino)");
-        getGrapheneElement("main.Righe.findMagazzino.cdMagazzino").writeIntoElement(CD_MAGAZZINO);
+        doWriteIntoElement("main.Righe.findMagazzino.cdMagazzino", CD_MAGAZZINO);
         doClickButton("doSearch(main.Righe.findMagazzino)");
 
         //Ritorno sulla prima tab ‘ordine d’acquisto’
@@ -194,7 +197,7 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
 
         //specifico solo la voce: 13017
         getGrapheneElement("main.find_elemento_voce.searchtool_cd_elemento_voce").clear();
-        getGrapheneElement("main.find_elemento_voce.searchtool_cd_elemento_voce").writeIntoElement("13017");
+        doWriteIntoElement("main.find_elemento_voce.searchtool_cd_elemento_voce", "13017");
         doClickButton("submitForm('doSearch(main.find_elemento_voce)')");
 
         //Entro su ‘disponibilità’
@@ -218,30 +221,30 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
 
     @Test
     @Order(3)
-    public void testEvasioneConsegna001() {
+    public void testEvasioneConsegna001() throws IOException {
         switchToFrameMenu();
         doSelezionaMenu(ORD_EVAORD);
 
         switchToFrameWorkspace();
 
         //Scelgo Unità operativa: DRUE
-        getGrapheneElement("main.findUnitaOperativaOrd.cdUnitaOperativa").writeIntoElement(CD_UNITA_OPERATIVA);
+        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
         doClickButton("doSearch(main.findUnitaOperativaOrd)");
 
         //Scelgo Magazzino: PT
         doClickButton("doBlankSearch(main.findMagazzino)");
-        getGrapheneElement("main.findMagazzino.cdMagazzino").writeIntoElement(CD_MAGAZZINO);
+        doWriteIntoElement("main.findMagazzino.cdMagazzino", CD_MAGAZZINO);
         doClickButton("doSearch(main.findMagazzino)");
 
         //Data Bolla: Oggi
-        getGrapheneElement("main.dataBolla").writeIntoElement(DATA_ODIERNA);
+        doWriteIntoElement("main.dataBolla", DATA_ODIERNA);
         doClickButton("doOnDtBollaChange");
 
         //Numero Bolla: 7
-        getGrapheneElement("main.numeroBolla").writeIntoElement("7");
+        doWriteIntoElement("main.numeroBolla", "7");
 
         //Data Consegna: Oggi
-        getGrapheneElement("main.dataConsegna").writeIntoElement(DATA_ODIERNA);
+        doWriteIntoElement("main.dataConsegna", DATA_ODIERNA);
         doClickButton("doOnDtConsegnaChange");
 
         //Eseguo la ricerca
@@ -267,12 +270,14 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
         String textAlert = handleTextAlert(browser);
         Assertions.assertEquals("Attenzione: è obbligatorio allegare il Documento di Trasporto (DDT).", textAlert);
 
-        File file = new File("src/test/resources/contratto.pdf");
+        File original = new File("src/test/resources/contratto.pdf");
+        File file = new File(original.getParentFile(), "contratto".concat(UUID.randomUUID().toString()).concat(".pdf"));
+        Files.copy(original.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         doClickButton("doTab('tab','tabAllegati')");
         doClickButton("doAddToCRUD(main.ArchivioAllegati)");
         Select select = new Select(getGrapheneElement("main.ArchivioAllegati.aspectName"));
         select.selectByValue("P:sigla_evasione_attachment:ddt");
-        getGrapheneElement("main.ArchivioAllegati.descrizione").writeIntoElement("TEST");
+        doWriteIntoElement("main.ArchivioAllegati.descrizione", "TEST");
         getGrapheneElement("main.ArchivioAllegati.file").sendKeys(file.getAbsolutePath());
         getTableRowElement("main.ArchivioAllegati", 0).click();
         doClickButton("doTab('tab','tabEvasioneConsegne')");
@@ -294,7 +299,7 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
         switchToFrameWorkspace();
 
         //Ricerco la fattura SDI: 90000000002
-        getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000007");
+        doWriteIntoElement("main.identificativoSdi", "90000000007");
 
         Select select = new Select(getGrapheneElement("main.statoDocumento"));
         select.selectByValue("");
@@ -316,7 +321,7 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
         //Verifico che fattura da Ordini=Si
         Assertions.assertTrue(getGrapheneElement("main.flDaOrdini").isSelected());
 
-        getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("RISCONTRO VALORE TEST");
+        doWriteIntoElement("main.ds_fattura_passiva", "RISCONTRO VALORE TEST");
 
         //Passo alla tab ‘ordini’
         doClickButton("doTab('tab','tabFatturaPassivaOrdini')");
@@ -382,7 +387,7 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
         switchToFrameWorkspace();
 
         //Ricerco la fattura SDI: 90000000003 - Nota Credito
-        getGrapheneElement("main.identificativoSdi").writeIntoElement("90000000008");
+        doWriteIntoElement("main.identificativoSdi", "90000000008");
 
         Select select = new Select(getGrapheneElement("main.statoDocumento"));
         select.selectByValue("");
@@ -397,7 +402,7 @@ public class CRUDOrdineAcqBP005 extends ActionDeployments {
         //Passo alla maschera di Registrazione Fattura
         getGrapheneElement("comando.doYes").click();
 
-        getGrapheneElement("main.ds_fattura_passiva").writeIntoElement("NOTA CREDITO DI ANNULLAMENTO FATTURA");
+        doWriteIntoElement("main.ds_fattura_passiva", "NOTA CREDITO DI ANNULLAMENTO FATTURA");
 
         //Passo alla tab ‘Dettaglio’
         doClickButton("doTab('tab','tabFatturaPassivaDettaglio')");

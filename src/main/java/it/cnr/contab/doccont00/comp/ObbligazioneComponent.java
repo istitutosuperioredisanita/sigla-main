@@ -69,7 +69,6 @@ import it.cnr.jada.util.DateUtils;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import it.cnr.si.spring.storage.StorageObject;
-import it.cnr.si.spring.storage.StoreService;
 import it.cnr.si.spring.storage.config.StoragePropertyNames;
 import jakarta.ejb.EJBException;
 import java.io.Serializable;
@@ -1239,6 +1238,30 @@ private CdrBulk cdrFromUserContext(UserContext userContext) throws ComponentExce
 		throw new ComponentException(e);
 	}
 }
+
+private void validaObbligazioneDefinitiva(UserContext aUC, ObbligazioneBulk obbligazione)throws ComponentException
+{
+	if ( obbligazione.getFl_gara_in_corso()!=null && obbligazione.getFl_gara_in_corso().booleanValue()  )
+		throw new ApplicationException("Non e' possibile confermare un'impegno ("+obbligazione.getEsercizio()+"/"+obbligazione.getEsercizio_originale()+"/"+obbligazione.getPg_obbligazione()+") con gara di appalto in corso di espletamento.");
+	if ( obbligazione.getPg_contratto()==null ){
+		if (obbligazione.getPg_contratto() == null) {
+			// caso di creazione obbligazione direttamente da altre funzionalita ( es. Documento Genercio, Fattura Attiva
+			if (obbligazione.getPg_obbligazione() == null) {
+				throw new ApplicationException(
+						"Non e' possibile creare un impegno senza contratto.");
+			}
+
+			throw new ApplicationException(
+					"Non e' possibile confermare un impegno ("
+							+ obbligazione.getEsercizio() + "/"
+							+ obbligazione.getEsercizio_originale() + "/"
+							+ obbligazione.getPg_obbligazione()
+							+ ") senza contratto.");
+		}
+	}
+	if ( obbligazione.getEsercizio().compareTo( obbligazione.getEsercizio_competenza()) != 0 )
+		throw new ApplicationException("Non e' possibile confermare un'impegno con esercizio di competenza successivo all'esercizio di scrivania");
+}
 /** 
   *  Lo stato dell'obbligazione è Provvisoria - esercizio ok
   *    PreCondition:
@@ -1281,10 +1304,14 @@ public ObbligazioneBulk confermaObbligazioneProvvisoria (UserContext aUC,Obbliga
 		}		
 
 		lockBulk( aUC, obbligazione );
+		//validaObbligazioneDefinitiva(aUC,obbligazione);
+
 		if ( obbligazione.getFl_gara_in_corso()!=null && obbligazione.getFl_gara_in_corso().booleanValue()  )
 			throw new ApplicationException("Non e' possibile confermare un'impegno ("+obbligazione.getEsercizio()+"/"+obbligazione.getEsercizio_originale()+"/"+obbligazione.getPg_obbligazione()+") con gara di appalto in corso di espletamento.");
 		if ( obbligazione.getEsercizio().compareTo( obbligazione.getEsercizio_competenza()) != 0 )
 			throw new ApplicationException("Non e' possibile confermare un'impegno con esercizio di competenza successivo all'esercizio di scrivania");
+
+
 		obbligazione.setStato_obbligazione( obbligazione.STATO_OBB_DEFINITIVO );
 		obbligazione.setUser( aUC.getUser());
 		updateBulk( aUC, obbligazione );
@@ -5995,6 +6022,16 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		return getHome(userContext, V_assestatoBulk.class).fetchAll( sql );
 	}
 
+	private boolean existAllegatoAutorizzativo( UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException {
+		if ( !Optional.ofNullable(obbligazione.getArchivioAllegati())
+				.filter(lista -> !lista.isEmpty())
+				.isPresent()) {
+			// nel caso provengo da un componente che ha letto solo l'obbligazione dal db quindi mi carico gli allegati
+			ObbligazioneService obbligazioneService = SpringUtil.getBean("obbligazioneService", ObbligazioneService.class);
+			obbligazioneService.findAllegati(obbligazione, Boolean.TRUE);
+		}
+		return obbligazione.existAllegatoAutorizzativo();
+	}
 	private void validaCampi(UserContext uc, ObbligazioneBulk obbligazione) throws ComponentException {
 	try {
 		// controlli di validazione del campo MOTIVAZIONE
@@ -6004,7 +6041,8 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 
 		if (!obbligazione.isObbligazioneResiduo() ){
 			// verifica obbligatoreta allegato atto di impegno
-			if ( Utility.createConfigurazioneCnrComponentSession().isMandatoryAllegatoAutorizzativoObb(uc,obbligazione) && ( !obbligazione.existAllegatoAutorizzativo()))
+			if ( Utility.createConfigurazioneCnrComponentSession().isEnabledAllegatiObbligazioni(uc)
+				&& Utility.createConfigurazioneCnrComponentSession().isMandatoryAllegatoAutorizzativoObb(uc,obbligazione) && ( !existAllegatoAutorizzativo( uc,obbligazione)))
 				throw new ApplicationException("Attenzione: Manca l'allegato Atto di Impegno Obbligatorio.");
 			if ( Utility.createConfigurazioneCnrComponentSession().isEnabledAllegatiObbligazioni(uc) )
 				// cos' da controllare che non ci siano due allegati di tipo atto di impegno
@@ -6028,8 +6066,71 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 				throw new ApplicationException("Attenzione: il campo MOTIVAZIONE è obbligatorio.");
 			}
 		}
+		//if ( obbligazione.isDefinitiva())
+		//	validaObbligazioneDefinitiva(uc, obbligazione);
 	}
 	catch ( Exception e )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	{
 		throw handleException( e )	;
 	}	

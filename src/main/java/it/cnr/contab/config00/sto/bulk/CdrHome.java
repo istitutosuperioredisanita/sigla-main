@@ -535,9 +535,10 @@ public class CdrHome extends BulkHome {
         Unita_organizzativa_enteBulk uoEnte = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class).findAll().get(0);
 
         if (!uoEnte.equalsByPrimaryKey(uo))
-            if (uo.getLivello().compareTo(Integer.valueOf(1)) == 0
+            if (!(uo.getLivello().compareTo(2) == 0 && uo.isUoCds()) &&
+                (uo.getLivello().compareTo(Integer.valueOf(1)) == 0
                     || uo.getCd_tipo_unita().equals(Tipo_unita_organizzativaHome.TIPO_UO_SAC)
-                    || uo.getCd_tipo_unita().equals(Tipo_unita_organizzativaHome.TIPO_UO_AREA)) {
+                    || uo.getCd_tipo_unita().equals(Tipo_unita_organizzativaHome.TIPO_UO_AREA))) {
                 sql.addSQLClause("AND", "V_CDR_VALIDO.cd_unita_organizzativa", SQLBuilder.EQUALS, uo.getCd_unita_organizzativa());
             } else {
                 sql.addSQLClause("AND", "V_CDR_VALIDO.livello", SQLBuilder.EQUALS, Integer.valueOf(1));

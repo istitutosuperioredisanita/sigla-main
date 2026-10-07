@@ -17,10 +17,19 @@
   -->
 
 <module xmlns="urn:jboss:module:1.0" name="com.oracle.jdbc">
-     <resources>
-        <resource-root path="ojdbc7-12.1.0.2.0.jar"/>
+    <resources>
+        <resource-root path="ojdbc11-23.26.2.0.0.jar"/>
+        <!-- Se scarichi anche orai18n.jar (charset NLS non standard) scommenta: -->
+        <!-- <resource-root path="orai18n-23.26.2.0.0.jar"/> -->
     </resources>
+
     <dependencies>
-        <module name="jakarta.transaction.api"/>
+        <module name="java.sql"/>
+        <module name="java.naming"/>
+        <module name="java.logging"/>
+        <module name="java.xml"/>
+        <module name="java.management"/>
+
+        <module name="jakarta.transaction.api" optional="true"/>
     </dependencies>
 </module>

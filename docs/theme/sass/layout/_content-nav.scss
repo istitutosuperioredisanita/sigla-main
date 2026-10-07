@@ -1,0 +1,111 @@
+.chapter-nav__list--hidden {
+  &:not(.show) {
+    @include media-breakpoint-down(md) {
+      display: none;
+    }
+  }
+
+  @include media-breakpoint-up(lg) {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.35s, opacity 0.35s;
+
+    &.active {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+.chapter-nav__list-wrap {
+  @include media-breakpoint-down(md) {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 4px;
+  }
+}
+
+.chapter-nav__wrap {
+  @include media-breakpoint-up(lg) {
+    position: absolute;
+    left: 2rem;
+    top: 1rem;
+  }
+}
+
+.chapter-link {
+  background: none;
+  border: none;
+  color: $blue;
+  padding: 0;
+  display: inline-block;
+  font-size: 0.9em;
+  font-weight: 400;
+  cursor: pointer;
+  vertical-align: middle;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.chapter-link__title {
+  float: left;
+}
+
+.chapter-link__counter {
+  margin-right: 0.3rem;
+  display: inline-block;
+  float: left;
+}
+
+.chapter-nav__list {
+  list-style-type: none;
+  margin-bottom: 0;
+  padding: 1rem;
+
+  @include media-breakpoint-up(lg) {
+    padding: 0;
+  }
+}
+
+.chapter-nav__title {
+  padding: 1rem;
+  color: $black;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-bottom: 1px $grey solid;
+
+  .title__chapter {
+    color: $grey-mid-01;
+  }
+
+  @include media-breakpoint-up(lg) {
+    display: none;
+  }
+}
+
+.chapter-nav__item:not(:last-child) {
+  margin-bottom: 1rem;
+
+  @include media-breakpoint-up(lg) {
+    margin-bottom: 0;
+  }
+}
+
+.chapter-nav__list--visible {
+  margin-top: 1rem;
+
+  @include media-breakpoint-up(lg) {
+    margin-top: -0.5rem;
+  }
+
+  .chapter-nav__item {
+    display: inline-block;
+
+    @include media-breakpoint-up(lg) {
+      display: block;
+    }
+  }
+}

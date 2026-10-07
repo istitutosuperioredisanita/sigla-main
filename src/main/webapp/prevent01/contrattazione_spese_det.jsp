@@ -30,10 +30,10 @@
 	</table>
 </div>
 <%
-	if (!bp.isFlNuovoPdg()) 
+	if (!bp.isFlNuovoPdg())
 	  controller_det.writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(Integer.valueOf(0))==0)?"csContrattazioneSenzaVoce":null,true,false,true,"100%","180px");
 	else
-	  controller_det.writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(Integer.valueOf(0))==0)?"csContrattazioneSenzaVoceNuovoPdg":null,true,false,true,"100%","180px");
+	  controller_det.writeHTMLTable(pageContext,(bp.getLivelloContrattazione().compareTo(Integer.valueOf(0))==0)?"csContrattazioneSenzaVoceNuovoPdg":null,true,false,true,"100%","50vh"); %>
 %>
 <div class="Group">
 	<table class="Panel" cellspacing="2">

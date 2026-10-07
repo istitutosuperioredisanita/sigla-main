@@ -276,7 +276,20 @@
 		name="fl_pdg_contrattazione"
 		property="fl_pdg_contrattazione"
 		inputType="CHECKBOX"
-		label="PDG: Gestione Contrattazione" />		
+		label="PDG: Gestione Contrattazione" />
+	<fieldProperty
+		name="fl_pdg_calderone"
+		property="fl_pdg_calderone"
+		inputType="CHECKBOX"
+		label="PDG: Gestione Progetto Calderone" />
+	<fieldProperty
+		name="fl_pdg_calderone_rib"
+		property="fl_pdg_calderone_rib"
+		inputType="CHECKBOX"
+		enabledOnEdit="false"
+		enabledOnInsert="false"
+		enabledOnSearch="false"
+		label="PDG: Progetto Calderone Ribaltato" />
 	<fieldProperty
 		name="fl_pdg_quadra_fonti_esterne"
 		property="fl_pdg_quadra_fonti_esterne"
@@ -323,8 +336,8 @@
 		name="fl_nuova_gestione_pg"
 		property="fl_nuova_gestione_pg"
 		inputType="CHECKBOX"
-		label="Nuova Gestione PGiro" />		
-		
+		label="Nuova Gestione PGiro" />
+
 	<formFieldProperty
 		name="esercizio" />
 	<formFieldProperty
@@ -408,6 +421,10 @@
 		name="fl_pdg_codlast"/>
 	<formFieldProperty
 		name="fl_pdg_contrattazione"/>
+	<formFieldProperty
+		name="fl_pdg_calderone"/>
+	<formFieldProperty
+		name="fl_pdg_calderone_rib"/>
 	<formFieldProperty
 		name="fl_pdg_quadra_fonti_esterne"/>
 	<formFieldProperty

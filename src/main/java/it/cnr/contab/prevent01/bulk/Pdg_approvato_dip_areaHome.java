@@ -98,7 +98,7 @@ public class Pdg_approvato_dip_areaHome extends BulkHome {
 		return dettHome.fetchAll(sql);
 	}
 
-	public BigDecimal calcolaTotaleApprovatoSpeseInterne( UserContext userContext, Pdg_approvato_dip_areaBulk appDipArea ) throws IntrospectionException,  PersistencyException 
+	public BigDecimal calcolaTotaleApprovatoSpeseInterne( UserContext userContext, Pdg_approvato_dip_areaBulk appDipArea ) throws IntrospectionException,  PersistencyException
 	{
 		BigDecimal impTotale = Utility.ZERO;
 		
@@ -107,6 +107,18 @@ public class Pdg_approvato_dip_areaHome extends BulkHome {
 			Pdg_contrattazione_speseBulk contrSpese = (Pdg_contrattazione_speseBulk) i.next();
 			impTotale = impTotale.add(Utility.nvl(contrSpese.getAppr_tot_spese_decentr_int()));
 	   	}
+		return impTotale;
+	}
+
+	public BigDecimal calcolaTotaleApprovatoSpeseEsterne( UserContext userContext, Pdg_approvato_dip_areaBulk appDipArea ) throws IntrospectionException,  PersistencyException
+	{
+		BigDecimal impTotale = Utility.ZERO;
+
+		for (java.util.Iterator i = findPdgContrattazioneSpeseDettagli(userContext,appDipArea).iterator(); i.hasNext();)
+		{
+			Pdg_contrattazione_speseBulk contrSpese = (Pdg_contrattazione_speseBulk) i.next();
+			impTotale = impTotale.add(Utility.nvl(contrSpese.getAppr_tot_spese_decentr_est()));
+		}
 		return impTotale;
 	}
 }

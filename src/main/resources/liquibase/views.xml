@@ -3234,4 +3234,8 @@
     <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-v-documenti_da_contabilizzare">
         <sqlFile dbms="oracle,h2" path="../expsigladb/View/V_DOCUMENTI_DA_CONTABILIZZARE.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+
+    <changeSet author="davide.mirra" runOnChange="true" id="create-view-V_CONS_EST_PROGETTI">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_EST_PROGETTI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 </databaseChangeLog>

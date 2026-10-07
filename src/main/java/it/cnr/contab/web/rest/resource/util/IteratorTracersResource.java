@@ -20,19 +20,19 @@ package it.cnr.contab.web.rest.resource.util;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.local.util.IteratorTracersLocal;
 import it.cnr.jada.util.ejb.EJBTracer;
+import jakarta.ejb.Stateless;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.Stateless;
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.format.DateTimeFormatter;
-import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Stateless
 public class IteratorTracersResource implements IteratorTracersLocal {
@@ -42,23 +42,81 @@ public class IteratorTracersResource implements IteratorTracersLocal {
         final Collection<EJBTracer.IteratorTracer> values = EJBTracer.getInstance()
                 .getTracers()
                 .values();
-        return Response.ok(Collections.singletonMap(values.size(),
-                values
-                        .parallelStream()
-                        .sorted((iteratorTracer, t1) -> iteratorTracer.getCreationDate().compareTo(t1.getCreationDate()))
-                        .map(iteratorTracer -> {
-                            return Stream.of(
-                                            new AbstractMap.SimpleEntry<>("date", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(iteratorTracer.getCreationDate())),
-                                            new AbstractMap.SimpleEntry<>("query", iteratorTracer.getQuery()),
-                                            new AbstractMap.SimpleEntry<>("user", iteratorTracer.getUserContext().getUser()),
-                                            new AbstractMap.SimpleEntry<>("esercizio", CNRUserContext.getEsercizio(iteratorTracer.getUserContext())),
-                                            new AbstractMap.SimpleEntry<>("cds", CNRUserContext.getCd_cds(iteratorTracer.getUserContext())),
-                                            new AbstractMap.SimpleEntry<>("uo", CNRUserContext.getCd_unita_organizzativa(iteratorTracer.getUserContext())),
-                                            new AbstractMap.SimpleEntry<>("cdr", CNRUserContext.getCd_cdr(iteratorTracer.getUserContext())),
-                                            new AbstractMap.SimpleEntry<>("sessionId", iteratorTracer.getUserContext().getSessionId()))
-                                    .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-                        })
-                        .collect(Collectors.toList()))
+
+        return Response.ok(
+                Collections.singletonMap(
+                        values.size(),
+                        values
+                                .parallelStream()
+                                .sorted((iteratorTracer, t1) ->
+                                        iteratorTracer.getCreationDate()
+                                                .compareTo(t1.getCreationDate()))
+                                .map(iteratorTracer -> {
+                                    final Map<String, Object> result = new LinkedHashMap<>();
+
+                                    result.put(
+                                            "date",
+                                            iteratorTracer.getCreationDate() != null
+                                                    ? DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                                                    .format(iteratorTracer.getCreationDate())
+                                                    : null
+                                    );
+
+                                    result.put(
+                                            "query",
+                                            iteratorTracer.getQuery()
+                                    );
+
+                                    result.put(
+                                            "user",
+                                            iteratorTracer.getUserContext() != null
+                                                    ? iteratorTracer.getUserContext().getUser()
+                                                    : null
+                                    );
+
+                                    result.put(
+                                            "esercizio",
+                                            iteratorTracer.getUserContext() != null
+                                                    ? CNRUserContext.getEsercizio(
+                                                    iteratorTracer.getUserContext())
+                                                    : null
+                                    );
+
+                                    result.put(
+                                            "cds",
+                                            iteratorTracer.getUserContext() != null
+                                                    ? CNRUserContext.getCd_cds(
+                                                    iteratorTracer.getUserContext())
+                                                    : null
+                                    );
+
+                                    result.put(
+                                            "uo",
+                                            iteratorTracer.getUserContext() != null
+                                                    ? CNRUserContext.getCd_unita_organizzativa(
+                                                    iteratorTracer.getUserContext())
+                                                    : null
+                                    );
+
+                                    result.put(
+                                            "cdr",
+                                            iteratorTracer.getUserContext() != null
+                                                    ? CNRUserContext.getCd_cdr(
+                                                    iteratorTracer.getUserContext())
+                                                    : null
+                                    );
+
+                                    result.put(
+                                            "sessionId",
+                                            iteratorTracer.getUserContext() != null
+                                                    ? iteratorTracer.getUserContext().getSessionId()
+                                                    : null
+                                    );
+
+                                    return result;
+                                })
+                                .collect(Collectors.toList())
+                )
         ).build();
     }
 }

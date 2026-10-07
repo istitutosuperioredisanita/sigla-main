@@ -11,8 +11,7 @@
 	SimpleDetailCRUDController controller = bp.getPianoEconomicoAnnoCorrente();
 	SimpleDetailCRUDController controllerVoci = bp.getPianoEconomicoVoceBilancioAnnoCorrente();
 %>
-
-<%	controller.writeHTMLTable(pageContext,"piano_economico1",false,false,false,"100%","100px"); %>
+<%	controller.writeHTMLTable(pageContext,"piano_economico1",false,false,false,"100%","30vh"); %>
 <table class="Panel">
   <TR>
   	<TD><% controller.writeFormLabel(out,"voce_piano");%></TD>

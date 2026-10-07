@@ -17,3 +17,4 @@ Queste sono solo alcune linee guida che ci aiutano a gestire la nostra applicazi
 * Fornisci una **descrizione** chiara di cosa va a modificare la pull request (bugfix o feature che sia).
 * Cerca di fare attenzione al tuo **diff**, evita di includere modifiche a file che non sono collegati alla pull request.
 * Assicurati che il tuo branch **compili localmente** prima di aprire una pull request.
+* commit per immagine

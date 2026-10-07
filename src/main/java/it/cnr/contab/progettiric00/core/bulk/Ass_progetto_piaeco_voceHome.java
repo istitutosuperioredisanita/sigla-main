@@ -81,4 +81,18 @@ public class Ass_progetto_piaeco_voceHome extends BulkHome {
 		}
 		return sql;
 	}
+
+	public List<Ass_progetto_piaeco_voceBulk> findByCodiceProgetto(UserContext context, Integer esercizio, String cdProgetto) throws PersistencyException {
+		SQLBuilder sql = this.createSQLBuilder();
+		sql.addTableToHeader("PROGETTO");
+		sql.addSQLJoin("ASS_PROGETTO_PIAECO_VOCE.ESERCIZIO_PIANO", "PROGETTO.ESERCIZIO");
+		sql.addSQLJoin("ASS_PROGETTO_PIAECO_VOCE.PG_PROGETTO", "PROGETTO.PG_PROGETTO");
+		sql.addSQLClause(FindClause.AND, "PROGETTO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+		sql.addSQLClause(FindClause.AND, "PROGETTO.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+		sql.addSQLClause(FindClause.AND, "PROGETTO.CD_PROGETTO", SQLBuilder.EQUALS, cdProgetto);
+		List<Ass_progetto_piaeco_voceBulk> result = fetchAll(sql);
+		getHomeCache().fetchAll(context);
+		return result;
+	}
+
 }

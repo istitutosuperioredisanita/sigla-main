@@ -16,6 +16,8 @@
  */
 
 package it.cnr.contab.progettiric00.ejb;
+import it.cnr.contab.progettiric00.dto.RiportaProgettoDto;
+import it.cnr.jada.persistency.IntrospectionException;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
@@ -396,5 +398,27 @@ public Pdg_esercizioBulk getPdgEsercizio(it.cnr.jada.UserContext param0) throws 
 			throw uncaughtError(userContext,componentObj,e);
 		}
 	}
+
+	@Override
+	public void riportaInNuovoProgetto(UserContext userContext, List<RiportaProgettoDto> progettiDaRiportare,Integer nuovoEsercizio) throws ComponentException, PersistencyException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			((ProgettoRicercaComponent)componentObj).riportaInNuovoProgetto(userContext,progettiDaRiportare,nuovoEsercizio);
+			component_invocation_succes(userContext,componentObj);
+
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		} catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 

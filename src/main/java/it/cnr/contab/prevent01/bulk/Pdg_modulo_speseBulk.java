@@ -508,6 +508,15 @@ public class Pdg_modulo_speseBulk extends Pdg_modulo_speseBase {
 	}
 	
 	public boolean isROVocePianoEconomico(){
-		return !Optional.ofNullable(this.getId_classificazione()).isPresent();
+		return Optional.ofNullable(this.getId_classificazione()).isEmpty() ||
+                Optional.ofNullable(this.getVoce_piano_economico()).isPresent();
+	}
+
+	public boolean isROMissione(){
+		return Optional.ofNullable(this.getPdgMissione()).isPresent();
+	}
+
+	public boolean isROCofog(){
+		return Optional.ofNullable(this.getCofog()).isPresent();
 	}
 }

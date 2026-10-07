@@ -206,6 +206,14 @@ public class ObbligazioneResBulk extends ObbligazioneBulk {
 				Collectors.joining(StorageDriver.SUFFIX)
 		);
 	}
+	@Override
+	public String getStorePath() {
+		return Arrays.asList(getBasePath(),
+				this.getCd_uo_origine() + "-" + this.getEsercizio_originale() + this.getPg_obbligazione()
+		).stream().collect(
+				Collectors.joining(StorageDriver.SUFFIX)
+		);
+	}
 
 	@Override
 	public String getCMISFolderName() {

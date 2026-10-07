@@ -86,6 +86,9 @@ public class ObbligazioneBulk extends ObbligazioneBase implements Cloneable, IDo
 	public final static String STATO_OBB_DEFINITIVO 	= "D";
 	public final static String STATO_OBB_STORNATO 		= "S";
 
+	public boolean isDefinitiva(){
+		return STATO_OBB_DEFINITIVO.equals(getStato_obbligazione());
+	}
 	public final static Dictionary stato_obbligazioneKeys;
 
 	static

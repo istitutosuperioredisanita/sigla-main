@@ -17,6 +17,8 @@ public class Tipo_trasporto_rientroBase extends Tipo_trasporto_rientroKey implem
 //    FL_ABILITA_NOTE CHAR(1) NOT NULL
 	private Boolean flAbilitaNote;
 
+	private Boolean smartWorking;
+
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
 	 * Table name: TIPO_TRASPORTO_RIENTRO
@@ -82,5 +84,13 @@ public class Tipo_trasporto_rientroBase extends Tipo_trasporto_rientroKey implem
 	 **/
 	public void setFlAbilitaNote(Boolean flAbilitaNote)  {
 		this.flAbilitaNote=flAbilitaNote;
+	}
+
+	public Boolean getSmartWorking() {
+		return smartWorking;
+	}
+
+	public void setSmartWorking(Boolean smartWorking) {
+		this.smartWorking = smartWorking;
 	}
 }

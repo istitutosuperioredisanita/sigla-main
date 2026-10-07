@@ -32,9 +32,15 @@ public class Pdg_esercizioBulk extends Pdg_esercizioBase {
 	private it.cnr.contab.config00.sto.bulk.CdrBulk cdr;
 
 	private static OrderedHashtable statoKeys;
+	private static OrderedHashtable statoConCalderoneKeys;
+	private static OrderedHashtable statoConCalderoneRibKeys;
 	private static OrderedHashtable statoSenzaContrattazioneKeys;
 	private static Hashtable prossimoStato;
 	private static Hashtable precedenteStato;
+	private static Hashtable prossimoStatoConCalderone;
+	private static Hashtable precedenteStatoConCalderone;
+	private static Hashtable prossimoStatoConCalderoneRib;
+	private static Hashtable precedenteStatoConCalderoneRib;
 	final public static String STATO_APERTURA_CDR 		= "AC";
 	final public static String STATO_PRECHIUSURA_CDR 	= "PC";
 	final public static String STATO_CHIUSURA_CDR 		= "CC";
@@ -75,7 +81,7 @@ public class Pdg_esercizioBulk extends Pdg_esercizioBase {
 		return prossimoStato;
 	}
 
-	public static java.util.Hashtable getPrecedenteStato() 
+	public static java.util.Hashtable getPrecedenteStato()
 	{
 		if (precedenteStato == null)
 		{
@@ -89,6 +95,54 @@ public class Pdg_esercizioBulk extends Pdg_esercizioBase {
 			precedenteStato.put( STATO_CHIUSURA_GESTIONALE_CDR, STATO_APERTURA_GESTIONALE_CDR );			
 		}	
 		return precedenteStato;
+	}
+
+	public static java.util.Hashtable getProssimoStatoConCalderone()
+	{
+		if (prossimoStatoConCalderone == null)
+		{
+			prossimoStatoConCalderone = new Hashtable();
+			prossimoStatoConCalderone.put( STATO_APERTURA_CDR, STATO_CHIUSURA_CDR );
+			prossimoStatoConCalderone.put( STATO_CHIUSURA_CDR, STATO_IN_ESAME_CDR );
+			prossimoStatoConCalderone.put( STATO_IN_ESAME_CDR, STATO_ESAMINATO_CDR );
+		}
+		return prossimoStatoConCalderone;
+	}
+
+	public static java.util.Hashtable getPrecedenteStatoConCalderone()
+	{
+		if (precedenteStatoConCalderone == null)
+		{
+			precedenteStatoConCalderone = new Hashtable();
+			precedenteStatoConCalderone.put( STATO_CHIUSURA_CDR, STATO_APERTURA_CDR );
+			precedenteStatoConCalderone.put( STATO_IN_ESAME_CDR, STATO_CHIUSURA_CDR );
+			precedenteStatoConCalderone.put( STATO_ESAMINATO_CDR, STATO_IN_ESAME_CDR );
+		}
+		return precedenteStatoConCalderone;
+	}
+
+	public static java.util.Hashtable getProssimoStatoConCalderoneRib()
+	{
+		if (prossimoStatoConCalderoneRib == null)
+		{
+			prossimoStatoConCalderoneRib = new Hashtable();
+			prossimoStatoConCalderoneRib.put( STATO_APERTURA_CDR, STATO_CHIUSURA_CDR );
+			prossimoStatoConCalderoneRib.put( STATO_CHIUSURA_CDR, STATO_APERTURA_GESTIONALE_CDR );
+			prossimoStatoConCalderoneRib.put( STATO_APERTURA_GESTIONALE_CDR, STATO_CHIUSURA_GESTIONALE_CDR );
+		}
+		return prossimoStatoConCalderoneRib;
+	}
+
+	public static java.util.Hashtable getPrecedenteStatoConCalderoneRib()
+	{
+		if (precedenteStatoConCalderoneRib == null)
+		{
+			precedenteStatoConCalderoneRib = new Hashtable();
+			precedenteStatoConCalderoneRib.put( STATO_CHIUSURA_CDR, STATO_APERTURA_CDR );
+			precedenteStatoConCalderoneRib.put( STATO_APERTURA_GESTIONALE_CDR, STATO_CHIUSURA_CDR );
+			precedenteStatoConCalderoneRib.put( STATO_CHIUSURA_GESTIONALE_CDR, STATO_APERTURA_GESTIONALE_CDR );
+		}
+		return precedenteStatoConCalderoneRib;
 	}
 
 	public OrderedHashtable getStatoKeys() {
@@ -118,6 +172,29 @@ public class Pdg_esercizioBulk extends Pdg_esercizioBase {
 		}
 		return statoSenzaContrattazioneKeys;
 	}
+	public OrderedHashtable getStatoConCalderoneKeys() {
+		if (statoConCalderoneKeys == null)
+		{
+			statoConCalderoneKeys = new OrderedHashtable();
+			statoConCalderoneKeys.put(STATO_APERTURA_CDR, "Apertura del CDR");
+			statoConCalderoneKeys.put(STATO_CHIUSURA_CDR, "Chiusura del CDR");
+			statoConCalderoneKeys.put(STATO_IN_ESAME_CDR, "In esame dal centro");
+			statoConCalderoneKeys.put(STATO_ESAMINATO_CDR, "Esaminato dal centro");
+		}
+		return statoConCalderoneKeys;
+	}
+	public OrderedHashtable getStatoConCalderoneRibKeys() {
+		if (statoConCalderoneRibKeys == null)
+		{
+			statoConCalderoneRibKeys = new OrderedHashtable();
+			statoConCalderoneRibKeys.put(STATO_ESAMINATO_CDR, "Esaminato dal centro");
+			statoConCalderoneRibKeys.put(STATO_APERTURA_CDR, "Apertura del CDR");
+			statoConCalderoneRibKeys.put(STATO_CHIUSURA_CDR, "Chiusura del CDR");
+			statoConCalderoneRibKeys.put(STATO_APERTURA_GESTIONALE_CDR, "Apertura Gestionale del CDR");
+			statoConCalderoneRibKeys.put(STATO_CHIUSURA_GESTIONALE_CDR, "Chiusura Gestionale del CDR");
+		}
+		return statoConCalderoneRibKeys;
+	}
 	public it.cnr.contab.config00.sto.bulk.CdrBulk getCdr() {
 		return cdr;
 	}
@@ -139,5 +216,17 @@ public class Pdg_esercizioBulk extends Pdg_esercizioBase {
 	public boolean isROStato()
 	{
 		return true;
+	}
+
+	public boolean isStatoChiusuraGestionaleCdr() {
+		return STATO_CHIUSURA_GESTIONALE_CDR.equals(this.getStato());
+	}
+
+	public boolean isStatoInEsameCdr() {
+		return STATO_IN_ESAME_CDR.equals(this.getStato());
+	}
+
+	public boolean isStatoEsaminatoCdr() {
+		return STATO_ESAMINATO_CDR.equals(this.getStato());
 	}
 }

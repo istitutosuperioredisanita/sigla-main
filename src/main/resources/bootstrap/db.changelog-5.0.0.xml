@@ -6367,5 +6367,31 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
     <!-- Autore : Davide Mirra - Aggiunta colonna dell'email del richiedente nei documenti Trasporto/Rientro -->
     <include file="/bootstrap/add_column_utente_remoto_request.xml"/>
 
+    <!-- Autore : Davide Mirra - Nuova consultazione Estrazione Completa Progetti -->
+    <include file="bootstrap/add_estrazione_completa_prog.xml"/>
+    <!-- Autore : Davide Mirra - Creazione indici per la consultazione Estrazione Completa Progetti -->
+    <include file="bootstrap/add_indexes_progetto.xml"/>
+    <!-- Autore : MASSIMILIANO DI GREGORIO - Nuova voce di menu per consultazione progetti padre det-->
+    <include file="bootstrap/add_accesso_consultazione_progetti_padre_det.xml"/>
+
+    <!-- Autore : RAFFAELE PAGANO - AGGIUNTO PARAMETRI NUOVI IN TABELLA CONFIGURAZIONE -->
+    <include file="bootstrap/add_configurazione_progetti_dati_default.xml"/>
+    <!-- Autore : RAFFAELE PAGANO - AGGIUNTO PARAMETRI NUOVI IN TABELLA CONFIGURAZIONE -->
+    <include file="bootstrap/add_column_on_pdg_modulo.xml"/>
+
+    <!-- Autore : RAFFAELE PAGANO - ELIMINATA UNIQUE_KEY SU TABELLA PDG_MODULO_SPESE -->
+    <include file="bootstrap/modify_table_pdg_modulo_spese.xml"/>
+    <!-- Autore : VALENTINA TOMADA - NUOVO ACCESSO PER RIPORTA PROGETTO -->
+    <include file="bootstrap/add_accesso_riporta_progetto.xml"/>
+
+    <!-- Autore : MARCO SPASIANO - AGGIUNTI ACCESSI PER LA CONFIGURAZIONE DELL'HELP ONLINE  -->
+    <include file="bootstrap/add_accessi_help.xml"/>
+    <!-- Autore : CIRO SALVIO - AGGIUNTA NUOVA COLONNA SMARTWORKIN  -->
+    <include file="bootstrap/add_column_smartworking_doc_t_r.xml"/>
+    <!-- Autore : MARCO SPASIANO - AGGIUNTI PARAMETRI PER LA CONFIGURAZIONE DEI GRAFICI  -->
+    <include file="bootstrap/add_configurazione_grafici.xml"/>
+
+    <!-- Autore : DAVIDE MIRRA - POPOLAMENTO DELLA TABELLA TIPOLOGICA TIPO TRASPORTO/RIENTRO  -->
+    <include file="bootstrap/load_tipo_trasporto_rientro.xml"/>
 
 </databaseChangeLog>

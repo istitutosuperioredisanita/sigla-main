@@ -12,7 +12,7 @@
 	CRUDDettagliModuloCostiBP bp = (CRUDDettagliModuloCostiBP)BusinessProcess.getBusinessProcess(request);
 	Progetto_sipBulk progetto = ((Pdg_modulo_costiBulk)bp.getModel()).getPdg_modulo().getProgetto();
 %>
-<% bp.getCrudDettagliSpese().writeHTMLTable(pageContext,(bp.isFlNuovoPdg()?"without_area":"default"),true,false,true,"100%","60vh");
+<% bp.getCrudDettagliSpese().writeHTMLTable(pageContext,(bp.isFlNuovoPdg()?"without_area":"default"),true,false,true,"100%","50vh");
 %>
 <table border="0" cellspacing="0" cellpadding="2" class="w-100">
 <tr>
@@ -58,11 +58,13 @@
 	  <td><% bp.getCrudDettagliSpese().writeFormInput(out,"tot_competenza_anno_in_corso");%></td>
 	</tr>	
 	<tr>
-	  <% bp.getCrudDettagliSpese().writeFormField(out,"im_spese_a2");%>
-	</tr>	
-	<tr>
-	  <% bp.getCrudDettagliSpese().writeFormField(out,"im_spese_a3");%>
-	</tr>	
+	  <td><span class="FormLabel font-weight-bold"><% bp.getCrudDettagliSpese().writeFormLabel(out,"im_spese_a2");%></span></td>
+	  <td><% bp.getCrudDettagliSpese().writeFormInput(out,null,"im_spese_a2",!bp.isSuperUtente(),null,null); %></td>
+	</tr>
+    <tr>
+	  <td><span class="FormLabel font-weight-bold"><% bp.getCrudDettagliSpese().writeFormLabel(out,"im_spese_a3");%></span></td>
+	  <td><% bp.getCrudDettagliSpese().writeFormInput(out,null,"im_spese_a3",!bp.isSuperUtente(),null,null); %></td>
+	</tr>
  <% if (!bp.isFlNuovoPdg()){%>
 	<tr>
 	  <% bp.getCrudDettagliSpese().writeFormField(out,"area");%>
@@ -86,24 +88,40 @@
  </td>
  
  <td align=middle valign=top class="w-25">
-  <table style="border-style: inset;" border="1" cellspacing="0" cellpadding="2" class="w-100 card">
-	<tr>
-	  <td colspan="3" align="center">&nbsp;</td>
-	</tr>	
-  
-	<tr>
-	  <td colspan="3" align="center"><span class="FormLabel font-weight-bold text-primary"><% bp.getCrudDettagliSpese().writeFormLabel(out,"label_previsione_assestata_impegno");%></span></td>
-	</tr>	
-	<tr>
-	  <td align="center"><% bp.getCrudDettagliSpese().writeFormLabel(out,"prev_ass_imp_int");%></td>
-	  <td align="center"><% bp.getCrudDettagliSpese().writeFormLabel(out,"prev_ass_imp_est");%></td>
-	  <td align="center"><% bp.getCrudDettagliSpese().writeFormLabel(out,"tot_prev_ass_imp");%></td>
-	</tr>	
-	<tr>
-	  <td><% bp.getCrudDettagliSpese().writeFormInput(out,"prev_ass_imp_int");%></td>
-	  <td><% bp.getCrudDettagliSpese().writeFormInput(out,"prev_ass_imp_est");%></td>
-	  <td><% bp.getCrudDettagliSpese().writeFormInput(out,"tot_prev_ass_imp");%></td>
-	</tr>	  
-  </table>    	
-</td></tr>  
+	 <table>
+		 <tr>
+			 <td>
+				 <table style="border-style: inset;" border="1" cellspacing="0" cellpadding="2" class="w-100 card">
+					 <tr>
+						 <td colspan="3" align="center">&nbsp;</td>
+					 </tr>
+
+					 <tr>
+						 <td colspan="3" align="center"><span class="FormLabel font-weight-bold text-primary"><% bp.getCrudDettagliSpese().writeFormLabel(out,"label_previsione_assestata_impegno");%></span></td>
+					 </tr>
+					 <tr>
+						 <td align="center"><% bp.getCrudDettagliSpese().writeFormLabel(out,"prev_ass_imp_int");%></td>
+						 <td align="center"><% bp.getCrudDettagliSpese().writeFormLabel(out,"prev_ass_imp_est");%></td>
+						 <td align="center"><% bp.getCrudDettagliSpese().writeFormLabel(out,"tot_prev_ass_imp");%></td>
+					 </tr>
+					 <tr>
+						 <td><% bp.getCrudDettagliSpese().writeFormInput(out,"prev_ass_imp_int");%></td>
+						 <td><% bp.getCrudDettagliSpese().writeFormInput(out,"prev_ass_imp_est");%></td>
+						 <td><% bp.getCrudDettagliSpese().writeFormInput(out,"tot_prev_ass_imp");%></td>
+					 </tr>
+				 </table>
+			 </td>
+		 </tr>
+		 	</br>
+		 </tr>
+		 <tr>
+			<td colspan="3" align="center">
+			  <span class="FormLabel font-weight-bold text-primary">
+				  <% bp.getCrudDettagliSpese().writeFormLabel(out,"note");%>
+			  </span>
+				<% bp.getCrudDettagliSpese().writeFormInput(out,"note");%>
+			</td>
+		</tr>
+	 </table>
+</td></tr>
 </table>

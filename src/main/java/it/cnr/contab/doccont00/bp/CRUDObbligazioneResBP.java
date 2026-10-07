@@ -413,12 +413,12 @@ public class CRUDObbligazioneResBP extends CRUDObbligazioneBP{
 			if (isStatoVisibile()) {
 				BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<AllegatoGenericoBulk>();
 				try	{
-					RemoteIterator ri = this.find(context, new CompoundFindClause(), new ObbligazioneBulk(), oggettobulk, "allEqualsObbligazioni");
+					RemoteIterator ri = this.find(context, new CompoundFindClause(), new ObbligazioneResBulk(), oggettobulk, "allEqualsObbligazioniRes");
 					ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context, ri);
 					while (ri.hasMoreElements()) {
-						ObbligazioneBulk currObbligazione = (ObbligazioneBulk) ri.nextElement();
+						ObbligazioneResBulk currObbligazione = (ObbligazioneResBulk) ri.nextElement();
 						if (currObbligazione.getEsercizio().compareTo(oggettobulk.getEsercizio())<=0) {
-							currObbligazione = (ObbligazioneBulk)initializeModelForEditAllegati(context, currObbligazione);
+							currObbligazione = (ObbligazioneResBulk)initializeModelForEditAllegati(context, currObbligazione);
 							for (AllegatoGenericoBulk allegatoGenericoBulk : currObbligazione.getArchivioAllegati())
 								((AllegatoObbligazioneBulk)allegatoGenericoBulk).setEsercizioDiAppartenenza(currObbligazione.getEsercizio());
 							archivioAllegati.addAll(currObbligazione.getArchivioAllegati());

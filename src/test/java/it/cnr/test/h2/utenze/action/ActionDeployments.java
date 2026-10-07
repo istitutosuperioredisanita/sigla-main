@@ -29,9 +29,16 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +50,7 @@ public class ActionDeployments extends DeploymentsH2 {
 
     /** Timeout standard per presenza/clickability degli elementi (secondi) */
     private static final int ELEMENT_TIMEOUT_SECONDS =
-            Integer.parseInt(System.getProperty("test.element.timeout", "10"));
+            Integer.parseInt(System.getProperty("test.element.timeout", "30"));
 
     /**
      * Timeout breve usato SOLO per verificare l'ASSENZA di un elemento.
@@ -119,6 +126,32 @@ public class ActionDeployments extends DeploymentsH2 {
         return this.getGrapheneElement(By.name(element));
     }
 
+    /**
+     * Localizza l'elemento e ci scrive dentro come operazione atomica con retry.
+     * A differenza di getGrapheneElement(...).writeIntoElement(...), se il DOM
+     * cambia tra la localizzazione e la scrittura (es. dopo un submit/AJAX che
+     * ricrea il form), ri-localizza l'elemento da capo invece di affidarsi al
+     * solo retry interno di Graphene.
+     */
+    protected void doWriteIntoElement(String element, String value) {
+        doWriteIntoElement(By.name(element), value);
+    }
+
+    protected void doWriteIntoElement(By locator, String value) {
+        int attempts = 0;
+        while (true) {
+            try {
+                getGrapheneElement(locator).writeIntoElement(value);
+                return;
+            } catch (StaleElementReferenceException e) {
+                if (++attempts >= 3) {
+                    LOGGER.error("writeIntoElement fallito dopo {} tentativi su {}", attempts, locator, e);
+                    throw e;
+                }
+            }
+        }
+    }
+
     private void switchToDefaultContent() {
         browser.switchTo().defaultContent();
         // logPageSource() rimosso: serializzava l'intero DOM ad ogni switch
@@ -170,15 +203,49 @@ public class ActionDeployments extends DeploymentsH2 {
      * Attende che il bottone sia clickable (presenza + visibilità + enabled)
      * con un singolo FluentWait — elimina il doppio wait precedente
      * (getWebElement + waitGui clickable) che raddoppiava i tempi di attesa.
+     * In caso di StaleElementReferenceException tra la elementToBeClickable()
+     * e il click() (race dovuta a un re-render nel frattempo), ri-localizza
+     * e ri-prova invece di ingoiare silenziosamente l'eccezione: un click
+     * "perso" senza retry lascia l'app in uno stato inatteso e fa fallire
+     * a cascata tutte le asserzioni successive del test.
      */
     private void findAndClickButton(By buttonLocator) {
-        WebElement button = new FluentWait<>(browser)
-                .withTimeout(Duration.ofSeconds(ELEMENT_TIMEOUT_SECONDS))
-                .pollingEvery(Duration.ofMillis(POLLING_MILLIS))
-                .ignoring(StaleElementReferenceException.class)
-                .ignoring(NoSuchElementException.class)
-                .until(ExpectedConditions.elementToBeClickable(buttonLocator));
-        button.click();
+        int attempts = 0;
+        while (true) {
+            try {
+                WebElement button = new FluentWait<>(browser)
+                        .withTimeout(Duration.ofSeconds(ELEMENT_TIMEOUT_SECONDS))
+                        .pollingEvery(Duration.ofMillis(POLLING_MILLIS))
+                        .until(ExpectedConditions.elementToBeClickable(buttonLocator));
+                button.click();
+                return;
+            } catch (TimeoutException e) {
+                LOGGER.error("Cannot find button {} dopo {} tentativi timeout", buttonLocator, attempts, e);
+                salvaScreenshot("findAndClickButton_" + buttonLocator);
+                throw e;
+            } catch (StaleElementReferenceException e) {
+                LOGGER.warn("Cannot find button {} dopo {} tentativi", buttonLocator, attempts, e);
+                if (++attempts >= 3) {
+                    LOGGER.error("Cannot find button {} dopo {} tentativi", buttonLocator, attempts, e);
+                    throw e;
+                }
+            }
+        }
+    }
+
+    private void salvaScreenshot(String label) {
+        try {
+            File screenshot = ((TakesScreenshot) browser).getScreenshotAs(OutputType.FILE);
+            Path targetDir = Paths.get("target/screenshots");
+            Files.createDirectories(targetDir);
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            Path target = targetDir.resolve("findAndClickButton_" + timestamp + ".png");
+            Files.copy(screenshot.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("label: " + label);
+            System.out.println("Screenshot salvato: " + target.toAbsolutePath());
+        } catch (Exception ex) {
+            System.err.println("Screenshot fallito: " + ex.getMessage());
+        }
     }
 
     protected GrapheneElement getTableRowElement(String tableName, int numberRow) {

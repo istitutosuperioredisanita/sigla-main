@@ -25,6 +25,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CRUDBP;
 
+import java.math.BigDecimal;
 import java.util.Dictionary;
 
 public class TipoFinanziamentoBulk extends TipoFinanziamentoBase {
@@ -43,6 +44,9 @@ public class TipoFinanziamentoBulk extends TipoFinanziamentoBase {
     public static final String CODICE_GEST = "GEST";
 
     public final static Dictionary codiceKeys;
+    private BigDecimal importoFinanziato;
+    private BigDecimal importoUtilizzato;
+
 
     static {
         codiceKeys = new it.cnr.jada.util.OrderedHashtable();
@@ -148,5 +152,21 @@ public class TipoFinanziamentoBulk extends TipoFinanziamentoBase {
 
     public boolean isDonazioni() {
         return TipoFinanziamentoBulk.CODICE_DON.equals(this.getCodice());
+    }
+
+    public BigDecimal getImportoFinanziato() {
+        return importoFinanziato;
+    }
+
+    public void setImportoFinanziato(BigDecimal importoFinanziato) {
+        this.importoFinanziato = importoFinanziato;
+    }
+
+    public BigDecimal getImportoUtilizzato() {
+        return importoUtilizzato;
+    }
+
+    public void setImportoUtilizzato(BigDecimal importoUtilizzato) {
+        this.importoUtilizzato = importoUtilizzato;
     }
 }

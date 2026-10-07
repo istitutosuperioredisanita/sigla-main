@@ -23,6 +23,8 @@ import jakarta.ejb.Remote;
 
 @Remote
 public interface RuoloComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
+    boolean hasPrivilegio(it.cnr.jada.UserContext param0, String cdPrivilegio) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
+
     boolean isCapoCommessa(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;
 
     boolean isAbilitatoApprovazioneBilancio(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException, java.rmi.RemoteException;

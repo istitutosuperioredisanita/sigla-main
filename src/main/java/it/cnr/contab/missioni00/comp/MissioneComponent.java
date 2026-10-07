@@ -3462,7 +3462,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
         sql.addParameter(nazione.getPg_nazione(), java.sql.Types.NUMERIC, 8);
         sql.addParameter(inquadramento, java.sql.Types.NUMERIC, 9);
         //sql.addParameter(missione.getDt_inizio_missione(), java.sql.Types.TIMESTAMP, 10);
-        sql.addParameter(dataTappa, java.sql.Types.TIMESTAMP, 10);
+        sql.addParameter(dataTappa, java.sql.Types.TIMESTAMP, 0);
 
         return sql;
     }
