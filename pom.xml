@@ -94,6 +94,17 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>github-workflow</id>
+            <name>GitHub Packages - workflow</name>
+            <url>https://maven.pkg.github.com/istitutosuperioredisanita/workflow-service</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
 
     </repositories>
     <dependencyManagement>
