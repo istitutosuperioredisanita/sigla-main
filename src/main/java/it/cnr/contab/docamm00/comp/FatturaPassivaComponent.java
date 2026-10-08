@@ -3672,11 +3672,18 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         ImportoOrdine importo = new ImportoOrdine();
         importo.setImponibile(fatturaOrdineBulk1.getImImponibile());
         importo.setImportoIvaInd(fatturaOrdineBulk1.getImIvaNd());
-        return importo.getPrezzoUnitario();//getPrezzoUnitarioFattura(importo);
+        return getPrezzoUnitarioFattura(importo,fatturaOrdineBulk.getFatturaPassivaRiga().getFattura_passiva());
     }
 
-    public BigDecimal getPrezzoUnitarioFattura(ImportoOrdine importo) {
-        return importo.getImponibile().add(Utility.nvl(importo.getImportoIvaInd()).add(Utility.nvl(importo.getArrAliIva())));
+    public BigDecimal getPrezzoUnitarioFattura(ImportoOrdine importo, Fattura_passivaBulk fatturaPassiva) {
+        BigDecimal imponibile = importo.getImponibile();
+        if (fatturaPassiva.isIstituzionale()) {
+            imponibile = imponibile.add(
+                    Utility.nvl(importo.getImportoIvaInd())
+                            .add(Utility.nvl(importo.getArrAliIva()))
+            );
+        }
+        return imponibile;
     }
 
     private void aggiornaMetadatiDocumentale(Fattura_passivaBulk fattura_passiva) throws ComponentException {
