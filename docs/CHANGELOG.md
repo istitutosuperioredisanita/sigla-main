@@ -1,3 +1,19 @@
+## Release 8.0.34  -- _October 08, 2026_ 
+**Changes**
+
+>**Fix Correzione del calcolo dell’importo per le righe delle fatture di tipo commerciale, utilizzato per aggiornare l’importo del bene nel transito, se non ancora stato inventariato, oppure direttamente nel bene, se già ventariato.**
+>
+>[13b8e62b4dcba7e](https://github.com/istitutosuperioredisanita/sigla-main/commit/13b8e62b4dcba7e) csalvio *October 08, 2026*
+
+>**Gestione codice identificativo Ente e numero avviso pagoPa per le fatture passive**
+>
+>[ef9a9aedac0b436](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef9a9aedac0b436) salvio_ciro *October 06, 2026*
+
+>**Bumped version to 8.0.33**
+>
+>[158db203bb0fc61](https://github.com/istitutosuperioredisanita/sigla-main/commit/158db203bb0fc61) dirgensa *September 30, 2026*
+
+
 ## Release 8.0.33  -- _September 30, 2026_ 
 **Changes**
 
