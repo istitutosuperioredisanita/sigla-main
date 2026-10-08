@@ -23,11 +23,10 @@
  */
 package it.cnr.contab.inventario01.comp;
 
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.coepcoan00.core.bulk.Chiusura_coepBase;
 import it.cnr.contab.coepcoan00.core.bulk.Chiusura_coepHome;
-import it.cnr.contab.anagraf00.core.bulk.*;
-import it.cnr.contab.anagraf00.ejb.AnagraficoComponentSession;
-import it.cnr.contab.anagraf00.ejb.TerzoComponentSession;
 import it.cnr.contab.config00.latt.bulk.WorkpackageBulk;
 import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.config00.sto.bulk.*;
@@ -61,8 +60,8 @@ import it.cnr.jada.persistency.sql.*;
 import it.cnr.jada.util.PropertyNames;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
-
 import jakarta.ejb.EJBException;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -801,12 +800,12 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 									importo.setImponibile(fatturaOrd.getImImponibile());
 									importo.setImportoIvaInd(fatturaOrd.getImIvaNd());
 
-									BigDecimal importoUnitarioFattura = fatturaPassivaComponent.getPrezzoUnitarioFattura(userContext,importo);
+									BigDecimal importoUnitarioFattura = fatturaPassivaComponent.getPrezzoUnitarioFattura(userContext,importo,fatturaOrd.getFatturaPassivaRiga().getFattura_passiva());
 									/*da verificare */
-									//if (bene.getValore_iniziale().compareTo(importoUnitarioFattura) != 0) {
-									//	bene.setValore_iniziale(importoUnitarioFattura);
-									//	bene.setToBeUpdated();
-									//}
+									if (bene.getValore_iniziale().compareTo(importoUnitarioFattura) != 0) {
+										bene.setValore_iniziale(importoUnitarioFattura);
+										bene.setToBeUpdated();
+									}
 									try {
 										Ass_inv_bene_fatturaBulk ass = new Ass_inv_bene_fatturaBulk();
 										ass.setRiga_fatt_pass((Fattura_passiva_rigaIBulk) fatturaOrd.getFatturaPassivaRiga());
