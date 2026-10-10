@@ -265,6 +265,12 @@ echo "Configurazione logging per debug..."
 # Configurazione Management
 /core-service=management/management-interface=http-interface:write-attribute(name=console-enabled, value=true)
 
+# ============================================================================
+# INFINISPAN: cache container 'server' (lookup JNDI java:jboss/infinispan/container/server)
+# Le cache applicative 'accessi' e 'tree' sono definite SOLO qui.
+# CacheConfiguration.java NON le ridefinisce (evita ISPN000453 al redeploy).
+# ============================================================================
+
 # 1. Crea il cache container 'server' (come richiesto dal lookup JNDI)
 /subsystem=infinispan/cache-container=server:add(marshaller=PROTOSTREAM, statistics-enabled=true)
 
@@ -274,16 +280,15 @@ echo "Configurazione logging per debug..."
 # 3. Imposta come default
 /subsystem=infinispan/cache-container=server:write-attribute(name=default-cache, value=default)
 
-# 4. Opzionale: Aggiungi altre cache se necessario
+# 4. Cache applicative (stessi parametri che prima stavano in CacheConfiguration.java:
+#    max 10000 entry, lifespan 1h, max-idle 30 min)
 /subsystem=infinispan/cache-container=server/local-cache=accessi:add(statistics-enabled=true)
-/subsystem=infinispan/cache-container=server/local-cache=accessi/component=transaction:add(mode=BATCH)
-/subsystem=infinispan/cache-container=server/local-cache=accessi/component=locking:add(isolation=REPEATABLE_READ)
-/subsystem=infinispan/cache-container=server/local-cache=accessi/component=expiration:add(max-idle=300000)
+/subsystem=infinispan/cache-container=server/local-cache=accessi/memory=heap:add(size=10000)
+/subsystem=infinispan/cache-container=server/local-cache=accessi/component=expiration:add(lifespan=3600000, max-idle=1800000)
 
 /subsystem=infinispan/cache-container=server/local-cache=tree:add(statistics-enabled=true)
-/subsystem=infinispan/cache-container=server/local-cache=tree/component=transaction:add(mode=BATCH)
-/subsystem=infinispan/cache-container=server/local-cache=tree/component=locking:add(isolation=REPEATABLE_READ)
-/subsystem=infinispan/cache-container=server/local-cache=tree/component=expiration:add(max-idle=300000)
+/subsystem=infinispan/cache-container=server/local-cache=tree/memory=heap:add(size=10000)
+/subsystem=infinispan/cache-container=server/local-cache=tree/component=expiration:add(lifespan=3600000, max-idle=1800000)
 
 
 # DISABILITA authorization solo dove c'è

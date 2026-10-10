@@ -18,6 +18,7 @@
 package it.cnr.contab.config;
 
 import jakarta.annotation.Resource;
+import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.spring.embedded.provider.SpringEmbeddedCacheManager;
 import org.slf4j.Logger;
@@ -27,8 +28,12 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.TimeUnit;
-
+/**
+ * Le cache "accessi" e "tree" sono definite nel subsystem infinispan di WildFly
+ * (cache-container "server", vedi configure-wildfly.cli).
+ * Il cache container appartiene al server e sopravvive ai redeploy, quindi qui
+ * NON si chiama defineConfiguration (ISPN000453 se la cache esiste già).
+ */
 @EnableCaching
 @Configuration
 public class CacheConfiguration {
@@ -38,24 +43,18 @@ public class CacheConfiguration {
     @Resource(lookup = "java:jboss/infinispan/container/server")
     private EmbeddedCacheManager cacheManager;
 
+    // I servizi delle cache del subsystem partono on-demand: il lookup del binding
+    // le avvia e le registra nel container prima che Spring crei il CacheManager.
+    // Se una cache manca nel CLI, il deploy fallisce qui con il nome del binding.
+    @Resource(lookup = "java:jboss/infinispan/cache/server/accessi")
+    private Cache<?, ?> accessi;
+
+    @Resource(lookup = "java:jboss/infinispan/cache/server/tree")
+    private Cache<?, ?> tree;
+
     @Bean
     public CacheManager cacheManager() {
-        // Define configuration for missing caches
-        org.infinispan.configuration.cache.Configuration config =
-                new org.infinispan.configuration.cache.ConfigurationBuilder()
-                        .memory()
-                        .maxCount(10000)
-                        .expiration()
-                        .lifespan(1, TimeUnit.HOURS)
-                        .maxIdle(30, TimeUnit.MINUTES)
-                        .encoding()
-                        .mediaType("application/x-java-object") // Use Java serialization
-                        .build();
-
-        // Define the cache if it doesn't exist
-        cacheManager.defineConfiguration("accessi", config);
-        cacheManager.defineConfiguration("tree", config);
-
+        LOG.info("Cache Infinispan disponibili: {}", cacheManager.getCacheConfigurationNames());
         return new SpringEmbeddedCacheManager(cacheManager);
     }
 
