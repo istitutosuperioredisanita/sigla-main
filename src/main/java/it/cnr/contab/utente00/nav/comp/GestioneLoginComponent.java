@@ -42,6 +42,8 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.PropertyNames;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.ejb.EJBCommonServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.io.Serializable;
@@ -64,6 +66,7 @@ public class GestioneLoginComponent
     public static final int VALIDA_FASE_INIZIALE_UTENTE_MULTIPLO = 3;
 
     public static final int VALIDA_FASE_SSO = 5;
+    private final Logger LOGGER = LoggerFactory.getLogger(GestioneLoginComponent.class);
 
     public GestioneLoginComponent() {
     }
@@ -880,8 +883,11 @@ public class GestioneLoginComponent
             // passata la validazione aggiorniamo la data ultimo accesso
             utenteReale.setDt_ultimo_accesso(currDate);
             utenteReale.setUser("LOGIN");
-            updateBulk(userContext, utenteReale);
-
+            try {
+                updateBulk(userContext, utenteReale);
+            } catch (ComponentException _ex) {
+                LOGGER.warn("Cannot update user {}", utenteReale.getUser());
+            }
             return utenteReale;
         } catch (Throwable e) {
             throw handleException(e);

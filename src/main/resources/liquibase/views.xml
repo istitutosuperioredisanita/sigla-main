@@ -3238,4 +3238,20 @@
     <changeSet author="davide.mirra" runOnChange="true" id="create-view-V_CONS_EST_PROGETTI">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_EST_PROGETTI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+
+    <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_ABIL_PROGETTI_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_ABIL_PROGETTI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+
+    <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_SALDI_PLURIENNALI_VOCE_PROGETTO_H2">
+        <sqlFile dbms="h2" path="../isssigladb/View/V_SALDI_PLURIENNALI_VOCE_PROGETTO_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+
+    <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_SALDI_PIANO_ECONOM_PROGETTO_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_SALDI_PIANO_ECONOM_PROGETTO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_CLASSIFICAZIONE_VOCI_ALL_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_CLASSIFICAZIONE_VOCI_ALL_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -272,7 +272,7 @@
 	<columnMap name="RIEPILOGO_STATO"
 			   tableName="V_CONTROLLI_PCC">
 		<columnMapping
-				columnName="TO_NUMBER(NVL(TO_CHAR(DATA_RICEZIONE,'YYYY'),ESERCIZIO)) ESERCIZIO"
+				columnName="CAST(COALESCE(EXTRACT(YEAR FROM DATA_RICEZIONE), CAST(ESERCIZIO AS INT)) AS INT) ESERCIZIO"
 				propertyName="riepilogo_stato_esercizio"
 				count="true"
 				sqlTypeName="DECIMAL"
@@ -283,7 +283,7 @@
 				count="true"
 				sqlTypeName="DECIMAL"/>
 		<columnMapping
-				columnName="SUM(NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA))) IMPORTO_RICEVUTE"
+				columnName="SUM(COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA)) IMPORTO_RICEVUTE"
 				propertyName="riepilogo_stato_importo_ricevute"
 				count="true"
 				columnSize="17"
@@ -294,7 +294,7 @@
 				count="true"
 				sqlTypeName="DECIMAL"/>
 		<columnMapping
-				columnName="SUM(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' THEN NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA)) ELSE 0 END) IMPORTO_REGISTRATE"
+				columnName="SUM(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' THEN COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA) ELSE 0 END) IMPORTO_REGISTRATE"
 				propertyName="riepilogo_stato_importo_registrate"
 				count="true"
 				columnSize="17"
@@ -305,7 +305,7 @@
 				count="true"
 				sqlTypeName="DECIMAL"/>
 		<columnMapping
-				columnName="SUM(CASE WHEN DT_EMISSIONE_MAN IS NOT NULL THEN NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA)) ELSE 0 END) IMPORTO_PAGATE"
+				columnName="SUM(CASE WHEN DT_EMISSIONE_MAN IS NOT NULL THEN COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA) ELSE 0 END) IMPORTO_PAGATE"
 				propertyName="riepilogo_stato_importo_pagate"
 				count="true"
 				columnSize="17"

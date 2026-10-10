@@ -24,6 +24,7 @@ package it.cnr.contab.utenze00.bulk;
  */
 import java.rmi.RemoteException;
 import java.util.Base64;
+import java.util.Optional;
 
 import jakarta.ejb.EJBException;
 
@@ -238,7 +239,7 @@ public class UtenteBulk extends UtenteBase {
 		this.dipartimento = dipartimento;
 	}
 	public String getCd_dipartimento() {
-		return getDipartimento().getCd_dipartimento();
+		return Optional.ofNullable(getDipartimento()).map(DipartimentoBulk::getCd_dipartimento).orElse(null);
 	}
 	public void setCd_dipartimento(String cd_dipartimento) {
 		getDipartimento().setCd_dipartimento(cd_dipartimento);
