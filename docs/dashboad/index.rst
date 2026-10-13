@@ -9,9 +9,11 @@ La funzionalità si riferisce ad un anno di gestione specifico, scelto all'acces
 
 **Assegnato nell'anno**
 
-Rappresenta l'importo assegnato di tutti i progetti nati nell'anno di gestione. E' un dato inserito in fase di creazione del singolo progetto che rappresenta fondamentalmente la **spesa** consentita da utilizzare per il progetto.
+Rappresenta l'importo assegnato di tutti i progetti dell'anno di gestione. E' un dato inserito in fase di creazione del singolo progetto che rappresenta fondamentalmente la **spesa** consentita da utilizzare per il progetto.
 
 **Utilizzato nell'anno**
+
+Rappresenta la somma dell'importo utilizzato (impegnato) di tutti i Progetti indicati al punto precedente. Naturalmente questo importo rappresenta una parte o tutto l'importo assegnato indicato al punto precedente.
 
 **Tempestività dei Pagamenti**
 
