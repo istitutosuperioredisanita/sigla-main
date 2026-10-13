@@ -1,3 +1,135 @@
+## Release 8.0.35  -- _October 13, 2026_ 
+**Changes**
+
+>**Fix aggiornaAnalitica sullo stato dell'ordine definitivo senza più distinzione alla Firma o definitivo per ordini mepa**
+>
+>[0c9b7fcda5da337](https://github.com/istitutosuperioredisanita/sigla-main/commit/0c9b7fcda5da337) csalvio *October 13, 2026*
+
+>**add: rst**
+>
+>[48dff1aab6e4286](https://github.com/istitutosuperioredisanita/sigla-main/commit/48dff1aab6e4286) marco.spasiano *October 13, 2026*
+
+>**Update index.rst**
+>
+>[5e897761109228f](https://github.com/istitutosuperioredisanita/sigla-main/commit/5e897761109228f) patriziavillani *October 13, 2026*
+
+>**Update index.rst**
+>
+>[9745bf6eae56d14](https://github.com/istitutosuperioredisanita/sigla-main/commit/9745bf6eae56d14) patriziavillani *October 13, 2026*
+
+>**Update index.rst**
+>
+>[df9bf7802263032](https://github.com/istitutosuperioredisanita/sigla-main/commit/df9bf7802263032) Marco Spasiano *October 13, 2026*
+
+>**fix: name**
+>
+>[f5aa48b2a3a1850](https://github.com/istitutosuperioredisanita/sigla-main/commit/f5aa48b2a3a1850) marco.spasiano *October 13, 2026*
+
+>**Update index.rst**
+>
+>[3b2df9d5086775b](https://github.com/istitutosuperioredisanita/sigla-main/commit/3b2df9d5086775b) patriziavillani *October 13, 2026*
+
+>**Update index.rst**
+>
+>[2d775d9f1467fb2](https://github.com/istitutosuperioredisanita/sigla-main/commit/2d775d9f1467fb2) patriziavillani *October 13, 2026*
+
+>**Delete docs/funzionalita_servizio/dashboard.rst**
+>
+>[c3efed75fc422bd](https://github.com/istitutosuperioredisanita/sigla-main/commit/c3efed75fc422bd) Marco Spasiano *October 13, 2026*
+
+>**Create index.rst**
+>
+>[f940e628fc3f255](https://github.com/istitutosuperioredisanita/sigla-main/commit/f940e628fc3f255) Marco Spasiano *October 13, 2026*
+
+>**Update dashboard.rst**
+>
+>[77eede686c02c08](https://github.com/istitutosuperioredisanita/sigla-main/commit/77eede686c02c08) patriziavillani *October 13, 2026*
+
+>**Update index.rst**
+>
+>[5463582705bc27a](https://github.com/istitutosuperioredisanita/sigla-main/commit/5463582705bc27a) patriziavillani *October 13, 2026*
+
+>**Rename cruscotto.rst to dashboard.rst**
+>
+>[a88f0bf715b79f7](https://github.com/istitutosuperioredisanita/sigla-main/commit/a88f0bf715b79f7) Marco Spasiano *October 13, 2026*
+
+>**Update cruscotto.rst**
+>
+>[71df71640f89a42](https://github.com/istitutosuperioredisanita/sigla-main/commit/71df71640f89a42) patriziavillani *October 13, 2026*
+
+>**Update cruscotto.rst**
+>
+>[475f4a44d11d179](https://github.com/istitutosuperioredisanita/sigla-main/commit/475f4a44d11d179) patriziavillani *October 13, 2026*
+
+>**Create cruscotto.rst**
+>
+>[8e62f7dfd300523](https://github.com/istitutosuperioredisanita/sigla-main/commit/8e62f7dfd300523) patriziavillani *October 13, 2026*
+
+>**add: aggiunti i test per i servizi della dashboard**
+>
+>[36c7316c44916ac](https://github.com/istitutosuperioredisanita/sigla-main/commit/36c7316c44916ac) marco.spasiano *October 13, 2026*
+
+>**fix: rimodulata la configurazione della cache per evitare la doppia creazione al redeploy**
+>
+>[9d00b54aec5f92e](https://github.com/istitutosuperioredisanita/sigla-main/commit/9d00b54aec5f92e) marco.spasiano *October 13, 2026*
+
+>**fix: aggiunto il tipo nella ricerca dei progetti**
+>
+>[7ccf6f482635b40](https://github.com/istitutosuperioredisanita/sigla-main/commit/7ccf6f482635b40) marco.spasiano *October 13, 2026*
+
+>**fix: rimodulati gli importi per voce**
+>
+>[65ec000d5defdda](https://github.com/istitutosuperioredisanita/sigla-main/commit/65ec000d5defdda) marco.spasiano *October 13, 2026*
+
+>**fix: rimodulati gli importi per voce**
+>
+>[cece2c9cf9aff11](https://github.com/istitutosuperioredisanita/sigla-main/commit/cece2c9cf9aff11) marco.spasiano *October 13, 2026*
+
+>**fix: rimodulati gli importi per voce**
+>
+>[b8adff044d2cc5a](https://github.com/istitutosuperioredisanita/sigla-main/commit/b8adff044d2cc5a) marco.spasiano *October 13, 2026*
+
+>**new feature: aggiunti i servizi per permettere l'analisi dei Fondi Funzionamento tramite grafici e tabelle nel cruscotto - aggiunto il servizio per voce**
+>
+>[e5aad7af37e8fa7](https://github.com/istitutosuperioredisanita/sigla-main/commit/e5aad7af37e8fa7) marco.spasiano *October 13, 2026*
+
+>**new feature: aggiunti i servizi per permettere l'analisi dei Fondi Funzionamento tramite grafici e tabelle nel cruscotto - aggiunto il servizio per voce**
+>
+>[ed5cf7976de50f9](https://github.com/istitutosuperioredisanita/sigla-main/commit/ed5cf7976de50f9) marco.spasiano *October 13, 2026*
+
+>**new feature: aggiunti i servizi per permettere l'analisi dei Fondi Funzionamento tramite grafici e tabelle nel cruscotto - aggiunto il servizio per voce**
+>
+>[a31971ae2fd635e](https://github.com/istitutosuperioredisanita/sigla-main/commit/a31971ae2fd635e) marco.spasiano *October 13, 2026*
+
+>**new feature: aggiunti i servizi per permettere l'analisi dei Fondi Funzionamento tramite grafici e tabelle nel cruscotto - aggiunta il servizio per tipo progetto**
+>
+>[60c146c7749d05e](https://github.com/istitutosuperioredisanita/sigla-main/commit/60c146c7749d05e) marco.spasiano *October 13, 2026*
+
+>**fix: cancellazione progetto dalla funzione di amministra**
+>
+>[a876aa9ef74420d](https://github.com/istitutosuperioredisanita/sigla-main/commit/a876aa9ef74420d) marco.spasiano *October 13, 2026*
+
+>**new feature: aggiunti i servizi per permettere l'analisi dei Fondi Funzionamento tramite grafici e tabelle nel cruscotto - aggiunta la selezione per voce del piano economico**
+>
+>[4788eec9e7cf961](https://github.com/istitutosuperioredisanita/sigla-main/commit/4788eec9e7cf961) marco.spasiano *October 13, 2026*
+
+>**fix: valorizzazione elemento voce sui saldi di progetto**
+>
+>[576c6d6a43c716e](https://github.com/istitutosuperioredisanita/sigla-main/commit/576c6d6a43c716e) marco.spasiano *October 13, 2026*
+
+>**new feature: aggiunti i servizi per permettere l'analisi dei Fondi Funzionamento tramite grafici e tabelle nel cruscotto - aggiunta la selezione per unità organizzativa**
+>
+>[cafe90c1c830249](https://github.com/istitutosuperioredisanita/sigla-main/commit/cafe90c1c830249) marco.spasiano *October 13, 2026*
+
+>**new feature: aggiunti i servizi per permettere l'analisi dei Fondi Funzionamento tramite grafici e tabelle nel cruscotto**
+>
+>[91425b17f616b22](https://github.com/istitutosuperioredisanita/sigla-main/commit/91425b17f616b22) marco.spasiano *October 13, 2026*
+
+>**Bumped version to 8.0.34**
+>
+>[e15b4a7a61ac776](https://github.com/istitutosuperioredisanita/sigla-main/commit/e15b4a7a61ac776) dirgensa *October 08, 2026*
+
+
 ## Release 8.0.34  -- _October 08, 2026_ 
 **Changes**
 
