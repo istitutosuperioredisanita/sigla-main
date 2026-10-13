@@ -50,6 +50,7 @@ Organizzato in questo modo il sistema prevede gestisce e controlla l’aspetto a
    documenti_contabili/index
    documenti_amministrativi/index
    contabilita_economica
+   dashboad
    api_rest
    
 .. toctree::
