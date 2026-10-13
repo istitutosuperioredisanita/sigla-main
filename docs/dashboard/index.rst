@@ -33,6 +33,4 @@ Rappresenta, per un CDS specifico (indicato nel grafico che segue: Trend Fondi d
 Rappresenta la somma delle Fatture elettroniche pagate nell'anno alla data di consultazione.
 Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture elettroniche ricevute (non si tiene conto di eventuali documenti generici, compensi o altre tipologie di documenti passivi). 
 
-**UO sotto soglia**
 
-**Fatture pagate nell'anno**
