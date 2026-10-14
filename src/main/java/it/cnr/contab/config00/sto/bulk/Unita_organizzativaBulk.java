@@ -42,6 +42,9 @@ public class Unita_organizzativaBulk extends Unita_organizzativaBase {
 	@Transient private BigDecimal importoFinanziato;
 	@Transient private BigDecimal importoUtilizzato;
 
+	@Transient private Long numeroBeni;
+	@Transient private BigDecimal totaleBeni;
+
 	public Unita_organizzativaBulk() {
 		super();
 		inizializza();
@@ -491,5 +494,21 @@ public class Unita_organizzativaBulk extends Unita_organizzativaBase {
 
 	public void setImportoUtilizzato(BigDecimal importoUtilizzato) {
 		this.importoUtilizzato = importoUtilizzato;
+	}
+
+	public Long getNumeroBeni() {
+		return numeroBeni;
+	}
+
+	public void setNumeroBeni(Long numeroBeni) {
+		this.numeroBeni = numeroBeni;
+	}
+
+	public BigDecimal getTotaleBeni() {
+		return totaleBeni;
+	}
+
+	public void setTotaleBeni(BigDecimal totaleBeni) {
+		this.totaleBeni = totaleBeni;
 	}
 }
