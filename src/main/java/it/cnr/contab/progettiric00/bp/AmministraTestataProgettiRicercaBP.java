@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (C) 2019  Consiglio Nazionale delle Ricerche
  *
  *     This program is free software: you can redistribute it and/or modify
@@ -42,11 +42,10 @@ public class AmministraTestataProgettiRicercaBP extends TestataProgettiRicercaBP
     @Override
     public void basicEdit(ActionContext actioncontext, OggettoBulk oggettobulk, boolean flag) throws BusinessProcessException {
         super.basicEdit(actioncontext, oggettobulk, flag);
-        if (Optional.ofNullable(oggettobulk)
+        if (Optional.ofNullable((ProgettoBulk) getModel())
                 .filter(ProgettoBulk.class::isInstance)
                 .isPresent()) {
-            ((ProgettoBulk)oggettobulk).setFromAmministra(Boolean.TRUE);
-            setModel(actioncontext, oggettobulk);
+            ((ProgettoBulk) getModel()).setFromAmministra(Boolean.TRUE);
         }
         this.setStatus(EDIT);
     }
