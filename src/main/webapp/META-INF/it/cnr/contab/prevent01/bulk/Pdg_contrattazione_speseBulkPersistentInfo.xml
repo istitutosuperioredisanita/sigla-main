@@ -43,6 +43,18 @@
 			columnName="CD_CDS_AREA"
 			propertyName="area.cd_unita_organizzativa"/>
 	</defaultColumnMap>
+
+	<columnMap name="PROGETTO_CODICE"
+			   extends="default"
+			   tableName="PDG_CONTRATTAZIONE_SPESE">
+		<columnMapping
+				columnName="PROGETTO.CD_PROGETTO"
+				propertyName="progetto.cd_progetto"
+				sqlTypeName="VARCHAR"
+				columnSize="30"
+				nullable="true"/>
+	</columnMap>
+
 	<persistentProperty
 		name="pdg_dip_area" />
 	<persistentProperty

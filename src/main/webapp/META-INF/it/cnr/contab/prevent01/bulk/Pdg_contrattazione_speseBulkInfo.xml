@@ -360,9 +360,8 @@
 	<findFieldProperty
 		name="cd_centro_responsabilita_search" />
 	<findFieldProperty
-		name="cd_progetto" />
-	<findFieldProperty
-		name="cd_classificazione" />
+		name="cd_progetto"
+		label="Progetto"/>
 	<findFieldProperty
 		name="tot_spese_decentr_int" />
 	<findFieldProperty
