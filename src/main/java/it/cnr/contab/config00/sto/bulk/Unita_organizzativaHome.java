@@ -640,9 +640,8 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 
 	public List<Unita_organizzativaBulk> findRegistroInventario(UserContext userContext, Integer esercizio, String cds) throws ComponentException, PersistencyException {
 		CdrBulk cdrEnte = ((CdrHome) getHomeCache().getHome(CdrBulk.class)).findCdrEnte(esercizio);
-		setColumnMap("REGISTRO_INVENTARIO");
-		setFetchPolicy("fetchUnitaPadre");
-		SQLBuilder sqlBuilder = super.createSQLBuilder();
+		PersistentHome home = getHomeCache().getHome(Unita_organizzativaBulk.class, "REGISTRO_INVENTARIO",  "fetchUnitaPadre");
+		SQLBuilder sqlBuilder = home.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO");
 		sqlBuilder.addTableToHeader("CDR");
 		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "CDR.CD_UNITA_ORGANIZZATIVA");
@@ -662,7 +661,7 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 				.forEach(sqlBuilder::addSQLGroupBy);
 		final List result = fetchAll(sqlBuilder);
 		getHomeCache().fetchAll(userContext);
-		return result;
+		return fetchAll(sqlBuilder);
 
 	}
 
@@ -683,11 +682,9 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
                         throw new RuntimeException(e);
                     }
                 });
-		if (Optional.ofNullable(voce).isPresent())
-			setColumnMap("FONDI_FUNZIONAMENTO_VOCE");
-		else
-			setColumnMap("FONDI_FUNZIONAMENTO");
-		SQLBuilder sqlBuilder = super.createSQLBuilder();
+		PersistentHome unitaOrganizzativaHome = getHomeCache().getHome(Unita_organizzativaBulk.class, Optional.ofNullable(voce).isPresent() ? "REGISTRO_INVENTARIO_VOCE" : "FONDI_FUNZIONAMENTO");
+
+		SQLBuilder sqlBuilder = unitaOrganizzativaHome.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
 		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
 		sqlBuilder.addTableToHeader("PROGETTO_OTHER_FIELD");
