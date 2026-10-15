@@ -682,7 +682,7 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
                         throw new RuntimeException(e);
                     }
                 });
-		PersistentHome unitaOrganizzativaHome = getHomeCache().getHome(Unita_organizzativaBulk.class, Optional.ofNullable(voce).isPresent() ? "REGISTRO_INVENTARIO_VOCE" : "FONDI_FUNZIONAMENTO");
+		PersistentHome unitaOrganizzativaHome = getHomeCache().getHome(Unita_organizzativaBulk.class, Optional.ofNullable(voce).isPresent() ? "FONDI_FUNZIONAMENTO_VOCE" : "FONDI_FUNZIONAMENTO");
 
 		SQLBuilder sqlBuilder = unitaOrganizzativaHome.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
