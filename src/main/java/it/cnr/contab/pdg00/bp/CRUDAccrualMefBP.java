@@ -684,7 +684,6 @@ public class CRUDAccrualMefBP extends AllegatiCRUDBP<AllegatoAccrualBulk, Accrua
         for ( AccrualReport report:reports){
             addFileReportToArchivioAllegati( context,accrualBulk,report);
         }
-        System.out.println("Ecco");
     }
     public void creaFileAccrual(ActionContext context,AccrualBulk accrualBulk) throws BusinessProcessException, ApplicationException {
 
