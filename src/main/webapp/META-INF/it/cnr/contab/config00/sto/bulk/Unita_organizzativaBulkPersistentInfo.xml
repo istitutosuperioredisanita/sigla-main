@@ -153,6 +153,55 @@
 				count="true"/>
 	</columnMap>
 
+	<columnMap name="REGISTRO_INVENTARIO"
+			   tableName="V_UNITA_ORGANIZZATIVA_VALIDA">
+		<columnMapping
+				columnName="CD_UNITA_PADRE"
+				propertyName="unita_padre.cd_unita_organizzativa"
+		/>
+		<columnMapping
+				columnName="CD_AREA_RICERCA"
+				propertyName="cds_area_ricerca.cd_unita_organizzativa"
+		/>
+		<columnMapping
+				columnName="CD_RESPONSABILE"
+				propertyName="responsabile.cd_terzo"
+		/>
+		<columnMapping
+				columnName="CD_RESPONSABILE_AMM"
+				propertyName="responsabile_amm.cd_terzo"
+		/>
+		<columnMapping
+				columnName="CD_AREA_SCIENTIFICA"
+				propertyName="area_scientifica.cd_area_scientifica"
+		/>
+		<columnMapping
+				columnName="CD_UNITA_ORGANIZZATIVA"
+				propertyName="cd_unita_organizzativa"
+				sqlTypeName="VARCHAR"
+				columnSize="30"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="DS_UNITA_ORGANIZZATIVA"
+				propertyName="ds_unita_organizzativa"
+				sqlTypeName="VARCHAR"
+				columnSize="300"
+				nullable="false" />
+		<columnMapping
+				columnName="COUNT(1) NUMERO_BENI"
+				propertyName="numeroBeni"
+				sqlTypeName="DECIMAL"
+				columnSize="22"
+				count="true"/>
+		<columnMapping
+				columnName="SUM(COALESCE(V_CONS_REGISTRO_INVENTARIO.VALORE_UNITARIO,0) + (COALESCE(V_CONS_REGISTRO_INVENTARIO.VARIAZIONE_PIU,0) - COALESCE(V_CONS_REGISTRO_INVENTARIO.VARIAZIONE_MENO,0))) TOTALE_BENI"
+				propertyName="totaleBeni"
+				columnSize="17"
+				columnScale="2"
+				count="true"/>
+	</columnMap>
+
 
 	<persistentProperty
 		name="unita_padre" />
@@ -161,7 +210,7 @@
 	<persistentProperty
 		name="responsabile" />
 	<persistentProperty
-		name="responsabile_amm" />				
+		name="responsabile_amm" />
 	<persistentProperty
 		name="area_scientifica" />
 
@@ -169,6 +218,11 @@
 			name="importoFinanziato" />
 	<persistentProperty
 			name="importoUtilizzato" />
+
+	<persistentProperty
+			name="numeroBeni" />
+	<persistentProperty
+			name="totaleBeni" />
 
 	<fetchPolicy
 		name="it.cnr.contab.utente00.nav.comp.GestioneLoginComponent.listaUOPerUtente">

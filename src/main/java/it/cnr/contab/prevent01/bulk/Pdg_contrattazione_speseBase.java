@@ -45,6 +45,8 @@ public class Pdg_contrattazione_speseBase extends Pdg_contrattazione_speseKey im
 	
 	private java.lang.Integer pg_dettaglio_dip;
 
+	private Boolean fl_approvato;
+
 	public Pdg_contrattazione_speseBase() {
 		super();
 	}
@@ -104,5 +106,13 @@ public class Pdg_contrattazione_speseBase extends Pdg_contrattazione_speseKey im
 	}
 	public void setPg_dettaglio_dip(java.lang.Integer pg_dettaglio_dip) {
 		this.pg_dettaglio_dip = pg_dettaglio_dip;
+	}
+
+	public Boolean getFl_approvato() {
+		return fl_approvato;
+	}
+
+	public void setFl_approvato(Boolean fl_approvato) {
+		this.fl_approvato = fl_approvato;
 	}
 }

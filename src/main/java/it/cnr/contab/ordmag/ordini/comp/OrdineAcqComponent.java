@@ -1003,8 +1003,8 @@ public class OrdineAcqComponent
         try {
             OrdineAcqBulk ordine = (OrdineAcqBulk) bulk;
             boolean isAttivaFinanziaria = Utility.createConfigurazioneCnrComponentSession().isAttivaFinanziaria(userContext, ordine.getEsercizio());
-            boolean aggiornaAnalitica = (ordine.isStatoAllaFirma() || (ordine.isOrdineMepa() && ordine.isStatoDefinitivo())) &&
-                    !ordine.getStato().equals(ordine.getStatoOriginale());
+            boolean aggiornaAnalitica = ordine.isStatoDefinitivo() &&
+                            !ordine.getStato().equals(ordine.getStatoOriginale());
             validaOrdine(userContext, ordine);
             controlliCambioStato(userContext, ordine);
             calcolaImportoOrdine(userContext, ordine);

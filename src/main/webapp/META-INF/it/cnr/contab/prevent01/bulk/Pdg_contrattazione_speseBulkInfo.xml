@@ -36,6 +36,13 @@
 		enabledOnSearch="true"
 		label="CdR" />
 	<fieldProperty
+		name="cd_centro_responsabilita_search"
+		property="cdr.cd_centro_responsabilita"
+		inputType="TEXT"
+		enabledOnFreeSearch="true"
+		enabledOnSearch="true"
+		label="CdR" />
+	<fieldProperty
 		name="ds_cdr"
 		property="cdr.ds_cdr"
 		inputType="TEXT"
@@ -277,6 +284,15 @@
 		formatName="it.cnr.contab.util.EuroPositivoFormat"
 		label="Differenza" />
 
+	<fieldProperty
+		name="fl_approvato"
+		property="fl_approvato"
+		inputType="CHECKBOX"
+		enabledOnFreeSearch="true"
+		enabledOnSearch="true"
+		label="Approvato" />
+
+
 	<formFieldProperty
 		name="appr_tot_spese_decentr_int_disabled"
 		label="Totale Approvato" />
@@ -288,6 +304,8 @@
 		name="esercizio" />
 	<formFieldProperty
 		name="cd_centro_responsabilita" />
+	<formFieldProperty
+		name="cd_centro_responsabilita_search" />
 	<formFieldProperty
 		name="cdr" />
 	<formFieldProperty
@@ -334,11 +352,13 @@
 		name="cd_cds_area" />
 	<formFieldProperty
 		name="ds_cds_area" />
-		
+	<formFieldProperty
+		name="fl_approvato" />
+
 	<findFieldProperty
 		name="esercizio" />
 	<findFieldProperty
-		name="cd_centro_responsabilita" />
+		name="cd_centro_responsabilita_search" />
 	<findFieldProperty
 		name="cd_progetto" />
 	<findFieldProperty
@@ -351,7 +371,9 @@
 		name="appr_tot_spese_decentr_int" />
 	<findFieldProperty
 		name="appr_tot_spese_decentr_est" />
-		
+	<findFieldProperty
+		name="fl_approvato" />
+
 	<columnFieldProperty
 		name="cd_classificazione"
 		descProperty="classificazione.ds_classificazione"
@@ -379,6 +401,8 @@
 		name="appr_tot_spese_decentr_est"
 		label="Totale Approvato"
 		headerLabel="Fonti Esterne" />
+	<columnFieldProperty
+		name="fl_approvato" />
 
 	<columnSet
         name="csContrattazioneSenzaVoce">
@@ -404,6 +428,8 @@
 			name="appr_tot_spese_decentr_est"
 			label="Totale Approvato"
 			headerLabel="Fonti Esterne" />
+		<columnFieldProperty
+			name="fl_approvato" />
 	</columnSet>
 
 	<columnSet
@@ -432,6 +458,8 @@
 			name="appr_tot_spese_decentr_est"
 			label="Totale Approvato"
 			headerLabel="Fonti Esterne" />
+		<columnFieldProperty
+			name="fl_approvato" />
 	</columnSet>
 
 	<columnSet

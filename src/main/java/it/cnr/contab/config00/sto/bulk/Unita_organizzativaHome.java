@@ -638,6 +638,33 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 		return sql;
 	}
 
+	public List<Unita_organizzativaBulk> findRegistroInventario(UserContext userContext, Integer esercizio, String cds) throws ComponentException, PersistencyException {
+		CdrBulk cdrEnte = ((CdrHome) getHomeCache().getHome(CdrBulk.class)).findCdrEnte(esercizio);
+		PersistentHome home = getHomeCache().getHome(Unita_organizzativaBulk.class, "REGISTRO_INVENTARIO",  "fetchUnitaPadre");
+		SQLBuilder sqlBuilder = home.createSQLBuilder();
+		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO");
+		sqlBuilder.addTableToHeader("CDR");
+		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "CDR.CD_UNITA_ORGANIZZATIVA");
+		sqlBuilder.addSQLJoin("CDR.CD_CENTRO_RESPONSABILITA", "COALESCE(V_CONS_REGISTRO_INVENTARIO.CD_UTILIZZATORE_CDR, '" + cdrEnte.getCd_centro_responsabilita() + "')");
+		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.ESERCIZIO", "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO");
+		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+		Optional.ofNullable(cds)
+				.ifPresent(s -> {
+					sqlBuilder.addSQLClause(FindClause.AND, "V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_PADRE", SQLBuilder.EQUALS, s);
+				});
+		Collection<ColumnMapping> columnMappings = getColumnMap().getColumnMappings();
+		columnMappings
+				.stream()
+				.filter(columnMapping -> !columnMapping.isCount())
+				.map(ColumnMapping::getColumnName)
+				.map(s -> "V_UNITA_ORGANIZZATIVA_VALIDA.".concat(s))
+				.forEach(sqlBuilder::addSQLGroupBy);
+		final List result = fetchAll(sqlBuilder);
+		getHomeCache().fetchAll(userContext);
+		return fetchAll(sqlBuilder);
+
+	}
+
 	public List<Unita_organizzativaBulk> findFondiFunzionamento(UserContext userContext, Integer esercizio, String cds, String voce) throws ComponentException, PersistencyException {
 		final Configurazione_cnrBulk configurazioneCnrBulk = new Configurazione_cnrBulk(
 				"FONDI_FUNZIONAMENTO",
@@ -655,11 +682,9 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
                         throw new RuntimeException(e);
                     }
                 });
-		if (Optional.ofNullable(voce).isPresent())
-			setColumnMap("FONDI_FUNZIONAMENTO_VOCE");
-		else
-			setColumnMap("FONDI_FUNZIONAMENTO");
-		SQLBuilder sqlBuilder = super.createSQLBuilder();
+		PersistentHome unitaOrganizzativaHome = getHomeCache().getHome(Unita_organizzativaBulk.class, Optional.ofNullable(voce).isPresent() ? "FONDI_FUNZIONAMENTO_VOCE" : "FONDI_FUNZIONAMENTO");
+
+		SQLBuilder sqlBuilder = unitaOrganizzativaHome.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_PROGETTO_PADRE");
 		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
 		sqlBuilder.addTableToHeader("PROGETTO_OTHER_FIELD");
