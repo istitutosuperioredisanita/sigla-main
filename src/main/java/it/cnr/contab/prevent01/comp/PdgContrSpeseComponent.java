@@ -108,11 +108,11 @@ public class PdgContrSpeseComponent extends CRUDComponent {
 			throw new ComponentException(e);
 		}		
 	}
-	public OggettoBulk inizializzaDettagliBulkPerModifica(UserContext usercontext,Contrattazione_speseVirtualBulk contr_spese, Pdg_approvato_dip_areaBulk pdg_dip_area)throws ComponentException {
+	public OggettoBulk inizializzaDettagliBulkPerModifica(UserContext usercontext,Contrattazione_speseVirtualBulk contr_spese, Pdg_approvato_dip_areaBulk pdg_dip_area, CompoundFindClause compoundFindClause)throws ComponentException {
 		try {
 			Contrattazione_speseVirtualBulk testata = contr_spese;
 			Pdg_contrattazione_speseHome pdgContrHome = (Pdg_contrattazione_speseHome)getHome(usercontext, Pdg_contrattazione_speseBulk.class);
-			testata.setDettagliContrSpese(new it.cnr.jada.bulk.BulkList(pdgContrHome.findPdgContrSpeseDettagli(usercontext, pdg_dip_area)));
+			testata.setDettagliContrSpese(new it.cnr.jada.bulk.BulkList(pdgContrHome.findPdgContrSpeseDettagli(usercontext, pdg_dip_area, compoundFindClause)));
 			getHomeCache(usercontext).fetchAll(usercontext);
 
 			return testata;
@@ -399,6 +399,10 @@ public class PdgContrSpeseComponent extends CRUDComponent {
 			if (!listaEsercizi.stream().allMatch(Pdg_esercizioBulk::isStatoInEsameCdr))
 				throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutti i CDS hanno il PDGP in stato 'In Esame del Centro'.");
 
+			List<Pdg_contrattazione_speseBulk> listaContr = findPdgContrattazione(userContext, CNRUserContext.getEsercizio(userContext));
+			if (!listaContr.stream().allMatch(Pdg_contrattazione_speseBulk::getFl_approvato))
+				throw new ApplicationException( "Lo stato non può essere aggiornato poichè non tutti i dettagli sono in stato 'Approvato'.");
+
 			controllaImportiFontiInterneApprovate(userContext);
 
 			Parametri_cnrHome parhome = (Parametri_cnrHome)getHome(userContext, Parametri_cnrBulk.class);
@@ -492,7 +496,7 @@ public class PdgContrSpeseComponent extends CRUDComponent {
 			throw handleException(e);
 		}
 	}
-	private java.util.List<Pdg_esercizioBulk> findPdgEsercizio(UserContext userContext ) throws ComponentException, PersistencyException, BusyResourceException, OutdatedResourceException {
+	private java.util.List<Pdg_esercizioBulk> findPdgEsercizio(UserContext userContext ) throws ComponentException, PersistencyException {
 		BulkHome home = getHome(userContext,Pdg_esercizioBulk.class);
 		SQLBuilder sql = home.createSQLBuilder();
 		sql.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,CNRUserContext.getEsercizio(userContext));
@@ -503,6 +507,12 @@ public class PdgContrSpeseComponent extends CRUDComponent {
 		SQLBuilder sql = home.createSQLBuilder();
 		sql.addSQLClause(FindClause.AND,"CD_CENTRO_RESPONSABILITA",SQLBuilder.EQUALS,pdg_esercizio.getCd_centro_responsabilita());
 		sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS,pdg_esercizio.getEsercizio());
+		return home.fetchAll(sql);
+	}
+	private java.util.List<Pdg_contrattazione_speseBulk> findPdgContrattazione(UserContext userContext, int esercizio) throws ComponentException, PersistencyException, BusyResourceException, OutdatedResourceException {
+		BulkHome home = getHome(userContext,Pdg_contrattazione_speseBulk.class);
+		SQLBuilder sql = home.createSQLBuilder();
+		sql.addSQLClause(FindClause.AND,"ESERCIZIO",SQLBuilder.EQUALS,esercizio);
 		return home.fetchAll(sql);
 	}
 }

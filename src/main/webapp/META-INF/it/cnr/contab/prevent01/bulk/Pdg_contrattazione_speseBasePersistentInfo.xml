@@ -110,6 +110,13 @@
 			sqlTypeName="DECIMAL"
 			columnSize="10"
 			nullable="true" />
+		<columnMapping
+			columnName="FL_APPROVATO"
+			propertyName="fl_approvato"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
 	</defaultColumnMap>
 	<persistentProperty
 		name="tot_spese_decentr_int" />
@@ -139,4 +146,6 @@
 		name="cd_dipartimento" />
 	<persistentProperty
 		name="pg_dettaglio_dip" />
+	<persistentProperty
+		name="fl_approvato" />
 </SQLPersistentInfo>
