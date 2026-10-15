@@ -275,7 +275,10 @@
 	<persistentProperty
 		name="im_prev_a2" />	
 	<persistentProperty
-		name="im_prev_a3" />		
+		name="im_prev_a3" />
+
+	<persistentProperty
+			name="note" />
 	<columnMap 
 	name="BASECDR"
 	tableName="V_CONS_PDG_ETR_BIL_IST_DIP_FO">
@@ -1020,6 +1023,23 @@
 			columnSize="250"
 			nullable="true" />
 	</columnMap>
+	<columnMap
+			name="SPECDRISTPROCOMMODLIV1LIV2LIV3DETNOTE"
+			tableName="V_CONS_PDG_SPE_BIL_IST_DIP_FO"
+			extends="SPECDRISTPROCOMMODLIV1LIV2LIV3DET" >
+		<columnMapping
+				columnName="DS_CLASSIFICAZIONE"
+				propertyName="ds_classificazione"
+				sqlTypeName="VARCHAR"
+				columnSize="250"
+				nullable="true" />
+		<columnMapping
+				columnName="NOTE"
+				propertyName="note"
+				sqlTypeName="VARCHAR"
+				columnSize="500"
+				nullable="true" />
+	</columnMap>
 
 <!-- Column Map per gestione Aree Progettuali -->
 	<columnMap 
@@ -1089,5 +1109,22 @@
 			sqlTypeName="VARCHAR"
 			columnSize="250"
 			nullable="true" />
+	</columnMap>
+	<columnMap
+			name="SPECDRISTPROCOMLIV1LIV2LIV3DETNOTE"
+			tableName="V_CONS_PDG_SPE_BIL_IST_DIP_FO"
+			extends="SPECDRISTPROCOMLIV1LIV2LIV3DET" >
+		<columnMapping
+				columnName="DS_CLASSIFICAZIONE"
+				propertyName="ds_classificazione"
+				sqlTypeName="VARCHAR"
+				columnSize="250"
+				nullable="true" />
+		<columnMapping
+				columnName="NOTE"
+				propertyName="note"
+				sqlTypeName="VARCHAR"
+				columnSize="500"
+				nullable="true" />
 	</columnMap>
 </SQLPersistentInfo>
