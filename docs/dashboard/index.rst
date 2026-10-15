@@ -59,10 +59,8 @@ Il grafico analizza i Fondi di Funzionamento di tutte le strutture dell'Ente, ra
 Vengono mostrati:
 
 - l'importo stanziato (stanziato di tutti i Progetti di funzionamento) relativo a tutte le strutture dell'Ente;
-- l'importo  utilizzato (impegnato di tutti i Progetti di funzionamento) relativo a tutte le strutture dell'Ente;
+- l'importo utilizzato (impegnato di tutti i Progetti di funzionamento) relativo a tutte le strutture dell'Ente;
 
 relativi al CDS e all'anno specifico.
 
-**Progetti per Tipo Finanziamento**
 
-Il grafico analizza gli importi , di tutte le strutture dell'Ente
