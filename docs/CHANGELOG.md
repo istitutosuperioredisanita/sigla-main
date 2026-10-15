@@ -1,3 +1,19 @@
+## Release 8.0.36  -- _October 14, 2026_ 
+**Changes**
+
+>**Fix visuliazzione Piano Economico per la funzionalità Amministra Progetti**
+>
+>[afa07d0d15bd5e8](https://github.com/istitutosuperioredisanita/sigla-main/commit/afa07d0d15bd5e8) csalvio *October 14, 2026*
+
+>**add: aggiunti i servizi rest per i cespiti**
+>
+>[5dc9848884f77db](https://github.com/istitutosuperioredisanita/sigla-main/commit/5dc9848884f77db) marco.spasiano *October 14, 2026*
+
+>**Bumped version to 8.0.35**
+>
+>[e5c0aaf0ac72c23](https://github.com/istitutosuperioredisanita/sigla-main/commit/e5c0aaf0ac72c23) dirgensa *October 13, 2026*
+
+
 ## Release 8.0.35  -- _October 13, 2026_ 
 **Changes**
 
