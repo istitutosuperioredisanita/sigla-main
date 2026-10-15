@@ -22,7 +22,9 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.Config;
 import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.jsp.Button;
 
 
 public class ConsPDGPDipSpeBP extends ConsPDGPDipBP {
@@ -43,4 +45,15 @@ public class ConsPDGPDipSpeBP extends ConsPDGPDipBP {
 			throw new BusinessProcessException(e);
 		}
 	}
+	public java.util.Vector addButtonsToToolbar(java.util.Vector listButton){
+		super.addButtonsToToolbar(listButton);
+
+		if (getLivelloConsultazione().equals(this.LIVELLO_DET)) {
+			Button button = new Button(Config.getHandler().getProperties(getClass()), "Toolbar.note");
+			button.setSeparator(true);
+			listButton.addElement(button);
+		}
+		return listButton;
+	}
+
 }

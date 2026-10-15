@@ -134,7 +134,11 @@ public class ConsPDGPDipComponent extends CRUDComponent {
 			if (pathDestinazione.indexOf(ConsPDGPDipBP.LIVELLO_DET)>=0){
 				addColumnDET(sql,tabAlias,livelloDestinazione.equals(ConsPDGPDipBP.LIVELLO_DET),true);
 				addColumnDET(sqlEsterna,tabAlias,livelloDestinazione.equals(ConsPDGPDipBP.LIVELLO_DET),false);
-			}	
+			}
+			if (pathDestinazione.indexOf(ConsPDGPDipBP.LIVELLO_NOTE)>=0){
+				addColumnNOTE(sql,tabAlias,livelloDestinazione.equals(ConsPDGPDipBP.LIVELLO_NOTE),true);
+				addColumnNOTE(sqlEsterna,tabAlias,livelloDestinazione.equals(ConsPDGPDipBP.LIVELLO_NOTE),false);
+			}
 		  if(!isUtenteEnte(userContext)){ 
 				CdrBulk cdrUtente = cdrFromUserContext(userContext);
 				
@@ -500,14 +504,37 @@ public class ConsPDGPDipComponent extends CRUDComponent {
 				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_classificazione"),isBaseSQL);
 				addColumn(sql,tabAlias.concat("DS_CLASSIFICAZIONE"),addDescrizione);
 				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("ds_classificazione"),isBaseSQL&&addDescrizione);
+
 			}	else
 			{
 				addColumn(sql,tabAlias.concat("CD_CLASSIFICAZIONE"),true);
 				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_classificazione"),isBaseSQL);
 				addColumn(sql,tabAlias.concat("DS_CLASSIFICAZIONE"),addDescrizione);
-				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("ds_classificazione"),isBaseSQL&&addDescrizione);	
+				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("ds_classificazione"),isBaseSQL&&addDescrizione);
 			}
 		}
+	private void addColumnNOTE(SQLBuilder sql, String tabAlias, boolean addDescrizione, boolean isBaseSQL){
+		tabAlias = getAlias(tabAlias);
+		if (tabAlias.indexOf("V_CONS_PDG_ETR_BIL_IST_DIP_FO")>=0){
+			addColumn(sql,tabAlias.concat("CD_TERZO_FINANZIATORE"),true);
+			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_terzo_finanziatore"),isBaseSQL);
+			addColumn(sql,tabAlias.concat("DS_DETTAGLIO"),true);
+			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("ds_dettaglio"),isBaseSQL);
+			addColumn(sql,tabAlias.concat("TOT_FINANZIAMENTO"),true);
+			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("tot_finanziamento"),isBaseSQL);
+			addColumn(sql,tabAlias.concat("CD_CLASSIFICAZIONE"),true);
+			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_classificazione"),isBaseSQL);
+			addColumn(sql,tabAlias.concat("DS_CLASSIFICAZIONE"),addDescrizione);
+			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("ds_classificazione"),isBaseSQL&&addDescrizione);
+		}	else
+		{
+			addColumn(sql,tabAlias.concat("NOTE"),true);
+			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("note"),isBaseSQL);
+			addColumn(sql,tabAlias.concat("DS_CLASSIFICAZIONE"),addDescrizione);
+			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("ds_classificazione"),isBaseSQL&&addDescrizione);
+
+		}
+	}
 		/**
 		 * Ritorna l'alias della tabella da aggiungere alle colonne di una select.
 		 * Viene verificato il parametro <alias> indicato
