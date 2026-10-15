@@ -30,6 +30,7 @@ import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.config00.sto.bulk.CdsBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
 import it.cnr.contab.prevent00.bulk.Voce_f_saldi_cmpBulk;
+import it.cnr.contab.progettiric00.core.bulk.ProgettoGestUoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
@@ -38,6 +39,8 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.PersistentHome;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 public class Pdg_contrattazione_speseHome extends BulkHome {
@@ -68,15 +71,23 @@ public class Pdg_contrattazione_speseHome extends BulkHome {
 		super.initializePrimaryKeyForInsert(usercontext, pdg_contrattazione_spese);
 	}
 
-	public java.util.Collection findPdgContrSpeseDettagli(UserContext userContext, Pdg_approvato_dip_areaBulk pdg_dip_area) throws IntrospectionException, PersistencyException {
-		PersistentHome dettHome = getHomeCache().getHome(Pdg_contrattazione_speseBulk.class);
+	public java.util.Collection findPdgContrSpeseDettagli(UserContext userContext, Pdg_approvato_dip_areaBulk pdg_dip_area, CompoundFindClause compoundFindClause) throws IntrospectionException, PersistencyException {
+		PersistentHome dettHome = getHomeCache().getHome(Pdg_contrattazione_speseBulk.class, "PROGETTO_CODICE");
 		SQLBuilder sql = dettHome.createSQLBuilder();
 		sql.addTableToHeader("V_CLASSIFICAZIONE_VOCI");
+		sql.addTableToHeader("PROGETTO");
+		sql.addSQLJoin("PDG_CONTRATTAZIONE_SPESE.ESERCIZIO_DIP", "PROGETTO.ESERCIZIO");
+		sql.addSQLJoin("PDG_CONTRATTAZIONE_SPESE.PG_PROGETTO", "PROGETTO.PG_PROGETTO");
+		sql.addSQLClause(FindClause.AND, "PROGETTO.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+
 		sql.addSQLJoin("PDG_CONTRATTAZIONE_SPESE.ID_CLASSIFICAZIONE","V_CLASSIFICAZIONE_VOCI.ID_CLASSIFICAZIONE (+)");
 		sql.addClause("AND","esercizio_dip",sql.EQUALS,pdg_dip_area.getEsercizio());
 		sql.addClause("AND","cd_dipartimento",sql.EQUALS,pdg_dip_area.getCd_dipartimento());
 		sql.addClause("AND","pg_dettaglio_dip",sql.EQUALS,pdg_dip_area.getPg_dettaglio());
-		sql.addOrderBy("V_CLASSIFICAZIONE_VOCI.cd_classificazione");	
+
+		if (compoundFindClause!=null)
+			sql.addClause( compoundFindClause );
+		sql.addOrderBy("V_CLASSIFICAZIONE_VOCI.cd_classificazione");
 		return dettHome.fetchAll(sql);
 	}
 
