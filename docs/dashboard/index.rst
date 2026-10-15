@@ -9,8 +9,8 @@ La funzionalità si riferisce ad un anno di gestione specifico, scelto all'acces
 
 La pagina presenta con serie di box riepilogativi e alcuni grafici principali.
 
-Box per indici riepilogativi
-----------------------------
+Box Indici riepilogativi
+------------------------
 
 **Assegnato nell'anno**
 
@@ -53,6 +53,7 @@ Vengono mostrati:
 relativi al CDS e all'anno specifico.
 
 **Progetti per Voce**
+
 Il grafico analizza i Fondi di Funzionamento di tutte le strutture dell'Ente, raggruppati per Voce di Bilancio.
 
 Vengono mostrati:
@@ -63,4 +64,5 @@ Vengono mostrati:
 relativi al CDS e all'anno specifico.
 
 **Progetti per Tipo Finanziamento**
-Il grafico analizza i Fondi di Funzionamento di tutte le strutture dell'Ente
+
+Il grafico analizza gli importi , di tutte le strutture dell'Ente
