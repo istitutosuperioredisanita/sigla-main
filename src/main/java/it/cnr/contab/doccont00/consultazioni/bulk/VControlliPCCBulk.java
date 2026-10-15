@@ -130,6 +130,8 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 	private BigDecimal riepilogo_stato_importo_registrate;
 	private Integer riepilogo_stato_num_pagate;
 	private BigDecimal riepilogo_stato_importo_pagate;
+	private Integer riepilogo_stato_num_stornate;
+	private BigDecimal riepilogo_stato_importo_stornate;
 
 
 	public static final java.util.Dictionary<String, String> tiStatoDocumentoKeys = DocumentoEleTestataBulk.tiStatoDocumentoKeys;
@@ -620,5 +622,21 @@ public class VControlliPCCBulk extends OggettoBulk implements Persistent {
 
 	public void setRiepilogo_stato_importo_pagate(BigDecimal riepilogo_stato_importo_pagate) {
 		this.riepilogo_stato_importo_pagate = riepilogo_stato_importo_pagate;
+	}
+
+	public Integer getRiepilogo_stato_num_stornate() {
+		return riepilogo_stato_num_stornate;
+	}
+
+	public void setRiepilogo_stato_num_stornate(Integer riepilogo_stato_num_stornate) {
+		this.riepilogo_stato_num_stornate = riepilogo_stato_num_stornate;
+	}
+
+	public BigDecimal getRiepilogo_stato_importo_stornate() {
+		return riepilogo_stato_importo_stornate;
+	}
+
+	public void setRiepilogo_stato_importo_stornate(BigDecimal riepilogo_stato_importo_stornate) {
+		this.riepilogo_stato_importo_stornate = riepilogo_stato_importo_stornate;
 	}
 }
