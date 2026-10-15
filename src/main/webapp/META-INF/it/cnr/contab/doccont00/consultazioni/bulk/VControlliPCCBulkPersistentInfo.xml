@@ -283,7 +283,7 @@
 				count="true"
 				sqlTypeName="DECIMAL"/>
 		<columnMapping
-				columnName="SUM(COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA)) IMPORTO_RICEVUTE"
+				columnName="SUM(CASE WHEN TIPO_DOCUMENTO != 'TD04' THEN COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA) ELSE 0 END) IMPORTO_RICEVUTE"
 				propertyName="riepilogo_stato_importo_ricevute"
 				count="true"
 				columnSize="17"
@@ -294,7 +294,7 @@
 				count="true"
 				sqlTypeName="DECIMAL"/>
 		<columnMapping
-				columnName="SUM(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' THEN COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA) ELSE 0 END) IMPORTO_REGISTRATE"
+				columnName="SUM(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' AND TIPO_DOCUMENTO != 'TD04' THEN COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA) ELSE 0 END) IMPORTO_REGISTRATE"
 				propertyName="riepilogo_stato_importo_registrate"
 				count="true"
 				columnSize="17"
