@@ -148,3 +148,4 @@ public class Pdg_contrattazione_speseHome extends BulkHome {
 		return calcolaTotalePropostoModificatoFI(userContext, pdg, null); 
 	}
 }
+

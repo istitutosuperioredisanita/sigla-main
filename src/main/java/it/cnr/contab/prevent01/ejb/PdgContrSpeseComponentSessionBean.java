@@ -20,17 +20,14 @@ import java.rmi.RemoteException;
 
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
-import it.cnr.contab.doccont00.comp.AccertamentoComponent;
 import it.cnr.contab.prevent01.bulk.Contrattazione_speseVirtualBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_approvato_dip_areaBulk;
-import it.cnr.contab.prevent01.comp.PdgAggregatoModuloComponent;
 import it.cnr.contab.prevent01.comp.PdgContrSpeseComponent;
 import it.cnr.jada.UserContext;
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ComponentException;
-import it.cnr.jada.comp.NoRollbackException;
 import it.cnr.jada.persistency.PersistencyException;
 
+import it.cnr.jada.persistency.sql.CompoundFindClause;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.*;
 @Stateless(name="CNRPREVENT01_EJB_PdgContrSpeseComponentSession")
@@ -40,10 +37,10 @@ public class PdgContrSpeseComponentSessionBean extends it.cnr.jada.ejb.CRUDCompo
 	componentObj = new it.cnr.contab.prevent01.comp.PdgContrSpeseComponent();
 }
 
-public it.cnr.jada.bulk.OggettoBulk inizializzaDettagliBulkPerModifica(it.cnr.jada.UserContext param0, Contrattazione_speseVirtualBulk param1, Pdg_approvato_dip_areaBulk param2) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
+public it.cnr.jada.bulk.OggettoBulk inizializzaDettagliBulkPerModifica(it.cnr.jada.UserContext param0, Contrattazione_speseVirtualBulk param1, Pdg_approvato_dip_areaBulk param2, CompoundFindClause param3) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
 	pre_component_invocation(param0,componentObj);
 	try {
-		it.cnr.jada.bulk.OggettoBulk result = ((PdgContrSpeseComponent)componentObj).inizializzaDettagliBulkPerModifica(param0,param1,param2);
+		it.cnr.jada.bulk.OggettoBulk result = ((PdgContrSpeseComponent)componentObj).inizializzaDettagliBulkPerModifica(param0,param1,param2, param3);
 		component_invocation_succes(param0,componentObj);
 		return result;
 	} catch(it.cnr.jada.comp.NoRollbackException e) {
