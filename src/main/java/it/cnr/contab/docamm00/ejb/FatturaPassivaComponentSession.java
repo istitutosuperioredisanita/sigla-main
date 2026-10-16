@@ -190,7 +190,7 @@ public interface FatturaPassivaComponentSession extends it.cnr.contab.docamm00.c
     Boolean  isCompilaFatturaVaziazione(UserContext userContext, DocumentoEleTestataBulk testataBulk) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
     java.util.List<FatturaOrdineBulk> findFatturaOrdini(it.cnr.jada.UserContext param0, it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk param1) throws it.cnr.jada.comp.ComponentException, it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException, java.rmi.RemoteException;
 
-    BigDecimal getPrezzoUnitarioFattura(UserContext param0,ImportoOrdine importo) throws RemoteException, ComponentException, PersistencyException, IntrospectionException;
+    BigDecimal getPrezzoUnitarioFattura(UserContext param0,ImportoOrdine importo, Fattura_passivaBulk fatturaPassiva) throws RemoteException, ComponentException, PersistencyException, IntrospectionException;
 
     AutofatturaBulk cercaAutoFattura(UserContext param0, Fattura_passivaBulk param1) throws RemoteException, ComponentException, PersistencyException, IntrospectionException;
 }

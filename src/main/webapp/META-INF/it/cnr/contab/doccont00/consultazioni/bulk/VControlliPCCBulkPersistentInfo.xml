@@ -272,29 +272,29 @@
 	<columnMap name="RIEPILOGO_STATO"
 			   tableName="V_CONTROLLI_PCC">
 		<columnMapping
-				columnName="TO_NUMBER(NVL(TO_CHAR(DATA_RICEZIONE,'YYYY'),ESERCIZIO)) ESERCIZIO"
+				columnName="CAST(COALESCE(EXTRACT(YEAR FROM DATA_RICEZIONE), CAST(ESERCIZIO AS INT)) AS INT) ESERCIZIO"
 				propertyName="riepilogo_stato_esercizio"
 				count="true"
 				sqlTypeName="DECIMAL"
 				columnSize="4"/>
 		<columnMapping
-				columnName="COUNT(1) NUM_RICEVUTE"
+				columnName="COUNT(CASE WHEN TIPO_DOCUMENTO != 'TD04' THEN 1 END) NUM_RICEVUTE"
 				propertyName="riepilogo_stato_num_ricevute"
 				count="true"
 				sqlTypeName="DECIMAL"/>
 		<columnMapping
-				columnName="SUM(NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA))) IMPORTO_RICEVUTE"
+				columnName="SUM(CASE WHEN TIPO_DOCUMENTO != 'TD04' THEN COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA) ELSE 0 END) IMPORTO_RICEVUTE"
 				propertyName="riepilogo_stato_importo_ricevute"
 				count="true"
 				columnSize="17"
 				columnScale="2"/>
 		<columnMapping
-				columnName="COUNT(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' THEN 1 END) NUM_REGISTRATE"
+				columnName="COUNT(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' AND TIPO_DOCUMENTO != 'TD04' THEN 1 END) NUM_REGISTRATE"
 				propertyName="riepilogo_stato_num_registrate"
 				count="true"
 				sqlTypeName="DECIMAL"/>
 		<columnMapping
-				columnName="SUM(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' THEN NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA)) ELSE 0 END) IMPORTO_REGISTRATE"
+				columnName="SUM(CASE WHEN STATO_DOCUMENTO = 'REGISTRATO' AND TIPO_DOCUMENTO != 'TD04' THEN COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA) ELSE 0 END) IMPORTO_REGISTRATE"
 				propertyName="riepilogo_stato_importo_registrate"
 				count="true"
 				columnSize="17"
@@ -305,11 +305,24 @@
 				count="true"
 				sqlTypeName="DECIMAL"/>
 		<columnMapping
-				columnName="SUM(CASE WHEN DT_EMISSIONE_MAN IS NOT NULL THEN NVL(IMPORTO_DOCUMENTO, (IMPONIBILE + IMPOSTA)) ELSE 0 END) IMPORTO_PAGATE"
+				columnName="SUM(CASE WHEN DT_EMISSIONE_MAN IS NOT NULL THEN COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA) ELSE 0 END) IMPORTO_PAGATE"
 				propertyName="riepilogo_stato_importo_pagate"
 				count="true"
 				columnSize="17"
 				columnScale="2"/>
+
+		<columnMapping
+				columnName="COUNT(CASE WHEN IM_TOTALE_NC = IMPONIBILE AND TIPO_DOCUMENTO != 'TD04' THEN 1 END) NUM_STORNATE"
+				propertyName="riepilogo_stato_num_stornate"
+				count="true"
+				sqlTypeName="DECIMAL"/>
+		<columnMapping
+				columnName="SUM(CASE WHEN IM_TOTALE_NC = IMPONIBILE AND TIPO_DOCUMENTO != 'TD04' THEN COALESCE(IMPORTO_DOCUMENTO, IMPONIBILE + IMPOSTA) ELSE 0 END) IMPORTO_STORNATE"
+				propertyName="riepilogo_stato_importo_stornate"
+				count="true"
+				columnSize="17"
+				columnScale="2"/>
+
 	</columnMap>
 	<persistentProperty
 			name="riepilogo_stato_esercizio"/>
@@ -325,6 +338,10 @@
 			name="riepilogo_stato_num_pagate"/>
 	<persistentProperty
 			name="riepilogo_stato_importo_pagate"/>
+	<persistentProperty
+			name="riepilogo_stato_num_stornate"/>
+	<persistentProperty
+			name="riepilogo_stato_importo_stornate"/>
 
 	<columnMap name="RIEPILOGO_STRUTTURA"
 			   tableName="V_CONTROLLI_PCC">

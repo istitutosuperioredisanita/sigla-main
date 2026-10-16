@@ -28,6 +28,8 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.util.action.CRUDAction;
 
+import java.util.Iterator;
+
 public class CRUDDettagliContrSpeseAction extends CRUDAction {
  
 	public Forward doTab(ActionContext context, String tabName, String pageName) 
@@ -132,6 +134,86 @@ public class CRUDDettagliContrSpeseAction extends CRUDAction {
 			return context.findDefaultForward();
 		} catch(Throwable e) {
 			return handleException(context,e);
+		}
+	}
+
+	public Forward doApprovaDettaglio(ActionContext context) {
+		try {
+			fillModel(context);
+			CRUDDettagliContrSpeseBP bp = (CRUDDettagliContrSpeseBP)getBusinessProcess(context);
+			if(bp.getCrudDettagliContrSpese().getSelection().isEmpty())
+			{
+				bp.setMessage(2, "E' necessario selezionare almeno un elemento");
+				return context.findDefaultForward();
+			} else
+			{
+				for (Iterator s = bp.getCrudDettagliContrSpese().getSelectedModels(context).iterator(); s.hasNext();) {
+					Pdg_contrattazione_speseBulk pdgCont = (Pdg_contrattazione_speseBulk)s.next();
+					pdgCont.setFl_approvato(Boolean.TRUE);
+					pdgCont.setToBeUpdated();
+				}
+			}
+			bp.setDirty(Boolean.TRUE);
+			return context.findDefaultForward();
+		}catch(java.lang.ClassCastException ex){
+			return context.findDefaultForward();
+		}catch(Throwable ex){
+			return handleException(context, ex);
+		}
+	}
+
+	public Forward doUndoApprovaDettaglio(ActionContext context) {
+		try {
+			fillModel(context);
+			CRUDDettagliContrSpeseBP bp = (CRUDDettagliContrSpeseBP)getBusinessProcess(context);
+			if(bp.getCrudDettagliContrSpese().getSelection().isEmpty())
+			{
+				bp.setMessage(2, "E' necessario selezionare almeno un elemento");
+				return context.findDefaultForward();
+			} else
+			{
+				for (Iterator s = bp.getCrudDettagliContrSpese().getSelectedModels(context).iterator(); s.hasNext();) {
+					Pdg_contrattazione_speseBulk pdgCont = (Pdg_contrattazione_speseBulk)s.next();
+					pdgCont.setFl_approvato(Boolean.FALSE);
+					pdgCont.setToBeUpdated();
+				}
+			}
+			bp.setDirty(Boolean.TRUE);
+			return context.findDefaultForward();
+		}catch(java.lang.ClassCastException ex){
+			return context.findDefaultForward();
+		}catch(Throwable ex){
+			return handleException(context, ex);
+		}
+	}
+
+	public it.cnr.jada.action.Forward doFilterCRUDMain_Dettagli(it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
+		try {
+			fillModel( context );
+			CRUDDettagliContrSpeseBP bp = (CRUDDettagliContrSpeseBP)context.getBusinessProcess();
+			if (bp.isDirty())
+			{
+				bp.setErrorMessage("Salvare le modifiche prima eseguire il comando richiesto.");
+				return context.findDefaultForward();
+			}
+			return filter(context, getController(context, "main.Dettagli"));
+		} catch (Exception exception) {
+			return handleException(context, exception);
+		}
+	}
+
+	public Forward doRemoveFilterCRUDMain_Dettagli(ActionContext context) {
+		try {
+			fillModel(context);
+			CRUDDettagliContrSpeseBP bp = (CRUDDettagliContrSpeseBP)context.getBusinessProcess();
+			if (bp.isDirty())
+			{
+				bp.setErrorMessage("Salvare le modifiche prima eseguire il comando richiesto.");
+				return context.findDefaultForward();
+			}
+			return removeFilter(context, getController(context, "main.Dettagli"));
+		} catch (Exception exception) {
+			return handleException(context, exception);
 		}
 	}
 }

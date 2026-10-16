@@ -25,7 +25,43 @@
 			columnName="CD_CATEGORIA_PADRE"
 			propertyName="nodoPadre.cd_categoria_gruppo" />				
 	</defaultColumnMap>
-	
+	<columnMap name="REGISTRO_INVENTARIO"
+			   tableName="CATEGORIA_GRUPPO_INVENT">
+		<columnMapping
+				columnName="CD_CATEGORIA_GRUPPO"
+				propertyName="cd_categoria_gruppo"
+				sqlTypeName="VARCHAR"
+				columnSize="10"
+				nullable="false"
+				primary="true" />
+		<columnMapping
+				columnName="DS_CATEGORIA_GRUPPO"
+				propertyName="ds_categoria_gruppo"
+				sqlTypeName="VARCHAR"
+				columnSize="100"
+				nullable="false" />
+		<columnMapping
+				columnName="CD_CATEGORIA_PADRE"
+				propertyName="nodoPadre.cd_categoria_gruppo" />
+		<columnMapping
+				columnName="COUNT(1) NUMERO_BENI"
+				propertyName="numeroBeni"
+				sqlTypeName="DECIMAL"
+				columnSize="22"
+				count="true"/>
+		<columnMapping
+				columnName="SUM(COALESCE(V_CONS_REGISTRO_INVENTARIO.VALORE_UNITARIO,0) + (COALESCE(V_CONS_REGISTRO_INVENTARIO.VARIAZIONE_PIU,0) - COALESCE(V_CONS_REGISTRO_INVENTARIO.VARIAZIONE_MENO,0))) TOTALE_BENI"
+				propertyName="totaleBeni"
+				columnSize="17"
+				columnScale="2"
+				count="true"/>
+	</columnMap>
+
+	<persistentProperty
+			name="numeroBeni" />
+	<persistentProperty
+			name="totaleBeni" />
+
 	<persistentProperty
 		name="nodoPadre" />
 	

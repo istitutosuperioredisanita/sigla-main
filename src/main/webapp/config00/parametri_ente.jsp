@@ -51,6 +51,7 @@
 
 		<TR><% bp.getController().writeFormField(out,"abil_progetto_strorg");%></TR>
 		<TR><% bp.getController().writeFormField(out,"fl_variazioni_trasferimento");%></TR>
+		<TR><% bp.getController().writeFormField(out,"fl_prg_pianoeco");%></TR>
 	</table>
 
 <%	bp.closeFormWindow(pageContext); %>

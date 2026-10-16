@@ -120,6 +120,8 @@ public class V_cons_pdgp_dipBulk extends OggettoBulk implements Persistent {
 	private java.math.BigDecimal imp_tot_comp_int;
 	
 	private java.math.BigDecimal imp_tot_comp_est;
+
+	private String note;
 		/**
 	 * @return
 	 */
@@ -792,4 +794,11 @@ public class V_cons_pdgp_dipBulk extends OggettoBulk implements Persistent {
 		pg_progetto = integer;
 	}
 
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
 }

@@ -1,23 +1,7 @@
-/*
- * Copyright (C) 2022  Consiglio Nazionale delle Ricerche
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as
- *     published by the Free Software Foundation, either version 3 of the
- *     License, or (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package it.cnr.contab.config;
 
 import jakarta.annotation.Resource;
+import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.spring.embedded.provider.SpringEmbeddedCacheManager;
 import org.slf4j.Logger;
@@ -27,8 +11,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.TimeUnit;
-
 @EnableCaching
 @Configuration
 public class CacheConfiguration {
@@ -36,27 +18,24 @@ public class CacheConfiguration {
     private final static Logger LOG = LoggerFactory.getLogger(CacheConfiguration.class);
 
     @Resource(lookup = "java:jboss/infinispan/container/server")
-    private EmbeddedCacheManager cacheManager;
+    private EmbeddedCacheManager wildflyCacheContainer;
+
+    @Resource(lookup = "java:jboss/infinispan/cache/server/accessi")
+    private Cache<?, ?> accessi;
+
+    @Resource(lookup = "java:jboss/infinispan/cache/server/tree")
+    private Cache<?, ?> tree;
 
     @Bean
     public CacheManager cacheManager() {
-        // Define configuration for missing caches
-        org.infinispan.configuration.cache.Configuration config =
-                new org.infinispan.configuration.cache.ConfigurationBuilder()
-                        .memory()
-                        .maxCount(10000)
-                        .expiration()
-                        .lifespan(1, TimeUnit.HOURS)
-                        .maxIdle(30, TimeUnit.MINUTES)
-                        .encoding()
-                        .mediaType("application/x-java-object") // Use Java serialization
-                        .build();
+        LOG.info("Inizializzazione SpringEmbeddedCacheManager (Infinispan 16.0.11) per Spring 7.");
 
-        // Define the cache if it doesn't exist
-        cacheManager.defineConfiguration("accessi", config);
-        cacheManager.defineConfiguration("tree", config);
+        if (wildflyCacheContainer != null) {
+            LOG.info("Cache registrate nel container di WildFly: {}", wildflyCacheContainer.getCacheConfigurationNames());
+            // Il costruttore ufficiale in Infinispan 16 accetta direttamente l'EmbeddedCacheManager
+            return new SpringEmbeddedCacheManager(wildflyCacheContainer);
+        }
 
-        return new SpringEmbeddedCacheManager(cacheManager);
+        throw new IllegalStateException("Impossibile recuperare il container JNDI 'java:jboss/infinispan/container/server'");
     }
-
 }

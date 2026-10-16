@@ -28,10 +28,11 @@ import it.cnr.jada.persistency.PersistencyException;
 
 import java.rmi.RemoteException;
 
+import it.cnr.jada.persistency.sql.CompoundFindClause;
 import jakarta.ejb.Remote;
 @Remote
 public interface PdgContrSpeseComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
-    OggettoBulk inizializzaDettagliBulkPerModifica(UserContext usercontext, Contrattazione_speseVirtualBulk contr_spese, Pdg_approvato_dip_areaBulk pdg_dip_area) throws ComponentException, RemoteException;
+    OggettoBulk inizializzaDettagliBulkPerModifica(UserContext usercontext, Contrattazione_speseVirtualBulk contr_spese, Pdg_approvato_dip_areaBulk pdg_dip_area, CompoundFindClause compoundFindClause) throws ComponentException, RemoteException;
     boolean isApprovatoDefinitivo(UserContext usercontext) throws ComponentException, RemoteException;
 	CdrBulk caricaCdrAfferenzaDaUo(UserContext userContext, Unita_organizzativaBulk uo) throws ComponentException, RemoteException, PersistencyException;
 	Integer livelloContrattazioneSpese(UserContext userContext) throws ComponentException, PersistencyException, RemoteException;

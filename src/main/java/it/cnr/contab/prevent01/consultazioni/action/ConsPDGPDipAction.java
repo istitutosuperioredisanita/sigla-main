@@ -92,6 +92,9 @@ public class ConsPDGPDipAction extends ConsultazioniAction {
 	public Forward doConsultaDettagli(ActionContext context) {
 		return doConsulta(context, ConsPDGPDipBP.LIVELLO_DET);
 	}
+	public Forward doConsultaNote(ActionContext context) {
+		return doConsulta(context, ConsPDGPDipBP.LIVELLO_NOTE);
+	}
 	public Forward doCloseForm(ActionContext context) throws BusinessProcessException {
 		Forward appoForward = super.doCloseForm(context);
 		if (context.getBusinessProcess() instanceof ConsPDGPDipBP) {

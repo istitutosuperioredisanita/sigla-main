@@ -57,6 +57,16 @@
     <include file="iss/oracle-sql4.xml"/>
 
     <!-- Dati di Test -->
+    <changeSet author="test" id="add-value-ruolo">
+        <addDefaultValue tableName="ruolo" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="ruolo" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="test/csv/ruolo.csv" tableName="ruolo"/>
+
+        <dropDefaultValue tableName="ruolo" columnName="dacr"/>
+        <dropDefaultValue tableName="ruolo" columnName="duva"/>
+    </changeSet>
+
     <changeSet author="test" id="create-user-test">
         <addDefaultValue tableName="utente" columnName="dacr" defaultValueDate="${now}"/>
         <addDefaultValue tableName="utente" columnName="duva" defaultValueDate="${now}"/>
@@ -1232,6 +1242,27 @@
         <dropDefaultValue tableName="inventario_beni" columnName="duva"/>
     </changeSet>
 
+    <changeSet author="test" id="create-voce_piano_economico_prg">
+        <addDefaultValue tableName="voce_piano_economico_prg" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="voce_piano_economico_prg" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="test/csv/voce_piano_economico_prg.csv" tableName="voce_piano_economico_prg"/>
+
+        <dropDefaultValue tableName="voce_piano_economico_prg" columnName="dacr"/>
+        <dropDefaultValue tableName="voce_piano_economico_prg" columnName="duva"/>
+    </changeSet>
+
+
+    <changeSet author="test" id="create-progetto_piano_economico">
+        <addDefaultValue tableName="progetto_piano_economico" columnName="dacr" defaultValueDate="${now}"/>
+        <addDefaultValue tableName="progetto_piano_economico" columnName="duva" defaultValueDate="${now}"/>
+
+        <loadData file="test/csv/progetto_piano_economico.csv" tableName="progetto_piano_economico"/>
+
+        <dropDefaultValue tableName="progetto_piano_economico" columnName="dacr"/>
+        <dropDefaultValue tableName="progetto_piano_economico" columnName="duva"/>
+    </changeSet>
+
     <changeSet author="test" id="recreate-sequence">
         <dropSequence sequenceName="cnrseq00_movimenti_mag"/>
         <createSequence sequenceName="cnrseq00_movimenti_mag" startValue="2"/>
@@ -1240,6 +1271,12 @@
         <sql>
             update elemento_voce
             set FL_MISSIONI_PRESIDENZA='N';
+        </sql>
+    </changeSet>
+    <changeSet author="test" id="sql-delete-configurazione-FONDI_FUNZIONAMENTO">
+        <sql>
+            delete configurazione_cnr
+            where cd_chiave_primaria='FONDI_FUNZIONAMENTO';
         </sql>
     </changeSet>
 </databaseChangeLog>

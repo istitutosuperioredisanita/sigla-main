@@ -52,6 +52,7 @@ public class ConsPDGPDipBP extends ConsultazioniBP {
 	public static final String LIVELLO_LIV2= "LIV2";
 	public static final String LIVELLO_LIV3= "LIV3";
 	public static final String LIVELLO_DET= "DET";
+	public static final String LIVELLO_NOTE= "NOTE";
 	
 	private String livelloConsultazione;
 	private String pathConsultazione;
@@ -129,11 +130,17 @@ public class ConsPDGPDipBP extends ConsultazioniBP {
 			 anno_corrente = CNRUserContext.getEsercizio(context.getUserContext()).toString();
 			 anno_successivo = Integer.valueOf(CNRUserContext.getEsercizio(context.getUserContext()).intValue() + 1).toString();
 			 anno_successivo_successivo = Integer.valueOf(CNRUserContext.getEsercizio(context.getUserContext()).intValue() + 2).toString();
-			
-			 
-		
-			   if (livello_destinazione.equals(this.LIVELLO_DET))
-				   setMultiSelection(false);
+
+			   if (this instanceof ConsPDGPDipSpeBP) {
+				   if (livello_destinazione.equals(this.LIVELLO_NOTE)) {
+					   setMultiSelection(false);
+				   }
+			   }
+			   else{
+				   if (livello_destinazione.equals(this.LIVELLO_DET)) {
+					   setMultiSelection(false);
+				   }
+			   }
 		   }catch(Throwable e) {
 			   throw new BusinessProcessException(e);
 		   }
@@ -237,6 +244,9 @@ public class ConsPDGPDipBP extends ConsultazioniBP {
 	   public boolean isPresenteDET() {
 		   return getPathConsultazione().indexOf(LIVELLO_DET)>=0;
 	   }
+		public boolean isPresenteNOTE() {
+		return getPathConsultazione().indexOf(LIVELLO_NOTE)>=0;
+	}
 	   /**
 		* Setta il titolo della mappa di consultazione (BulkInfo.setShortDescription e BulkInfo.setLongDescription)
 		* sulla base del path della consultazione
@@ -257,6 +267,7 @@ public class ConsPDGPDipBP extends ConsultazioniBP {
 			if (isPresenteLIV2()) title = title.concat("\\Categoria");
 			if (isPresenteLIV3()) title = title.concat("\\").concat(getDs_livello3());
 		   	if (isPresenteDET()) title = title.concat("\\Dettagli");
+		   if (isPresenteNOTE()) title = title.concat("\\Note");
 		   getBulkInfo().setShortDescription(title);
 		   if (this instanceof ConsPDGPDipEtrBP)
 			   getBulkInfo().setLongDescription("Riepilogo PDGP Entrate");

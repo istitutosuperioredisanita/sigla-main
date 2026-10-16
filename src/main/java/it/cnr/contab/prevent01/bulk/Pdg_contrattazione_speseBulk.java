@@ -131,7 +131,7 @@ public class Pdg_contrattazione_speseBulk extends Pdg_contrattazione_speseBase {
 	}
 	
 	public boolean isROrigadet() {
-		if (!isToBeCreated())
+		if (!isToBeCreated() && getCrudStatus() != UNDEFINED)
 			return true;
 		else
 			return false;

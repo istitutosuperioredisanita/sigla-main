@@ -68,10 +68,13 @@ public class VControlliPCCHome extends BulkHome {
 		Optional.ofNullable(uo).ifPresent(codice -> {
 			sqlBuilder.openParenthesis(FindClause.AND);
 			sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, codice);
-			sqlBuilder.addSQLClause(FindClause.OR, "CD_UO_CUU", SQLBuilder.EQUALS, codice);
+			sqlBuilder.openParenthesis(FindClause.OR);
+				sqlBuilder.addSQLClause(FindClause.AND, "CD_UNITA_ORGANIZZATIVA", SQLBuilder.ISNULL, null);
+				sqlBuilder.addSQLClause(FindClause.AND, "CD_UO_CUU", SQLBuilder.EQUALS, codice);
+			sqlBuilder.closeParenthesis();
 			sqlBuilder.closeParenthesis();
 		});
-		sqlBuilder.addSQLGroupBy("TO_NUMBER(NVL(TO_CHAR(DATA_RICEZIONE,'YYYY'),ESERCIZIO))");
+		sqlBuilder.addSQLGroupBy("CAST(COALESCE(EXTRACT(YEAR FROM DATA_RICEZIONE), CAST(ESERCIZIO AS INT)) AS INT)");
 		return fetchAll(sqlBuilder);
 	}
 
