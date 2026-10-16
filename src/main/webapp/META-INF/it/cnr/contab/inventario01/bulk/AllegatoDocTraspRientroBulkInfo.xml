@@ -4,12 +4,6 @@
         xmlns="https://contab.cnr.it/schema/SIGLA"
         xsi:schemaLocation="https://contab.cnr.it/schema/SIGLA https://contab.cnr.it/schema/SIGLA/BulkInfo_1_5.xsd">
 
-    <!--
-        aspectName: abilitato in inserimento, readonly su allegati già salvati
-        tramite readonlyProperty="allegatoEsistente".
-        enabledOnEdit="true" è necessario perché il BP è sempre in EDIT:
-        senza di esso JADA disabilita il campo su tutte le righe, anche le nuove.
-    -->
     <fieldProperty
             name="aspectName"
             property="aspectName"
@@ -23,10 +17,15 @@
             readonlyProperty="allegatoEsistente"
             label="Tipologia"/>
 
-    <!--
-        descrizione: sempre editabile, sia su allegati nuovi sia esistenti.
-        Nessun readonlyProperty.
-    -->
+
+    <fieldProperty
+            name="aspectNameLabel"
+            property="aspectNameLabel"
+            inputType="ROTEXT"
+            enabledOnInsert="false"
+            enabledOnEdit="false"
+            label="Tipologia"/>
+
     <fieldProperty
             name="descrizione"
             property="descrizione"
@@ -58,12 +57,6 @@
             label="Data"/>
 
     <form name="default">
-        <!--
-            aspectName: nessun override qui.
-            Il comportamento è già definito nel fieldProperty sopra:
-            - enabledOnEdit="true"  → JADA non lo blocca globalmente
-            - readonlyProperty      → readonly solo se allegatoEsistente=true
-        -->
         <formFieldProperty name="aspectName"/>
         <formFieldProperty name="nome"/>
         <formFieldProperty
@@ -75,7 +68,7 @@
     </form>
 
     <columnSet name="default">
-        <columnFieldProperty name="aspectName"/>
+        <columnFieldProperty name="aspectNameLabel"/>
         <columnFieldProperty name="nome"/>
         <columnFieldProperty name="descrizione"/>
         <columnFieldProperty name="utente"/>

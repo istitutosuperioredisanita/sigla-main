@@ -17,10 +17,16 @@ import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 
 public class Doc_trasporto_rientroHome extends BulkHome {
+
+    private static final String CONDITION_PK =
+            " WHERE PG_INVENTARIO = ? AND TI_DOCUMENTO = ? AND ESERCIZIO = ? AND PG_DOC_TRASPORTO_RIENTRO = ?";
 
     public Doc_trasporto_rientroHome(Connection conn) {
         super(Doc_trasporto_rientroBulk.class, conn);
@@ -38,19 +44,13 @@ public class Doc_trasporto_rientroHome extends BulkHome {
         super(class1, connection, persistentcache);
     }
 
-    /**
-     * Trova i tipi di movimento disponibili per un documento di trasporto/rientro
-     */
-    public Collection findTipoMovimenti(UserContext userContext, Doc_trasporto_rientroBulk docTR, Tipo_trasporto_rientroHome h,
-                                        Tipo_trasporto_rientroBulk clause)
+    public Collection findTipoMovimenti(UserContext userContext, Doc_trasporto_rientroBulk docTR,
+                                        Tipo_trasporto_rientroHome h, Tipo_trasporto_rientroBulk clause)
             throws PersistencyException, IntrospectionException {
         return h.findTipiPerDocumento(userContext, docTR.getTiDocumento());
     }
 
-    /**
-     * Inizializza la chiave primaria per l'inserimento di un nuovo documento
-     */
-    public void initializePrimaryKeyForInsert(it.cnr.jada.UserContext userContext, OggettoBulk bulk)
+    public void initializePrimaryKeyForInsert(UserContext userContext, OggettoBulk bulk)
             throws PersistencyException, ComponentException {
         try {
             Doc_trasporto_rientroBulk docTR = (Doc_trasporto_rientroBulk) bulk;
@@ -62,11 +62,7 @@ public class Doc_trasporto_rientroHome extends BulkHome {
         }
     }
 
-    /**
-     * Genera un nuovo progressivo per il documento
-     */
-    private Long generaPgProvv(it.cnr.jada.UserContext userContext, Doc_trasporto_rientroBulk docTR)
-            throws Exception {
+    private Long generaPgProvv(UserContext userContext, Doc_trasporto_rientroBulk docTR) throws Exception {
         NumerazioneTempDocTRComponentSession session = (NumerazioneTempDocTRComponentSession)
                 EJBCommonServices.createEJB("CNRINVENTARIO01_EJB_NumerazioneTempDocTRComponentSession",
                         NumerazioneTempDocTRComponentSession.class);
@@ -74,33 +70,21 @@ public class Doc_trasporto_rientroHome extends BulkHome {
     }
 
     @Override
-    public SQLBuilder selectByClause(CompoundFindClause compoundfindclause)
-            throws PersistencyException {
+    public SQLBuilder selectByClause(CompoundFindClause compoundfindclause) throws PersistencyException {
         SQLBuilder sqlbuilder = super.selectByClause(compoundfindclause);
         sqlbuilder.addOrderBy("ESERCIZIO desc,PG_DOC_TRASPORTO_RIENTRO desc");
-
         return sqlbuilder;
     }
 
-    /**
-     * Imposta il progressivo di un documento
-     */
-
-    public void inizializzaProgressivo(it.cnr.jada.UserContext userContext, Doc_trasporto_rientroBulk doc) throws BusyResourceException, PersistencyException, ComponentException {
-        Long result = (Long) findMax(doc, "pgDocTrasportoRientro", new Long(0), true);
-        doc.setPgDocTrasportoRientro(new Long(result.longValue() + 1));
+    public void inizializzaProgressivo(UserContext userContext, Doc_trasporto_rientroBulk doc)
+            throws BusyResourceException, PersistencyException, ComponentException {
+        Long result = (Long) findMax(doc, "pgDocTrasportoRientro", Long.valueOf(0), true);
+        doc.setPgDocTrasportoRientro(Long.valueOf(result.longValue() + 1));
     }
 
-
     /**
-     * Conferma un documento di trasporto rientro temporaneo (con progressivo negativo)
-     * creando una nuova versione con progressivo definitivo
-     *
-     * @param userContext
-     * @param docTemporaneo
-     * @param pg
-     * @throws IntrospectionException
-     * @throws PersistencyException
+     * Converte un documento temporaneo (PG negativo) in definitivo: copia testata e dettagli
+     * con il nuovo progressivo, poi elimina il temporaneo.
      */
     public void confirmDocTrasportoRientroTemporaneo(
             UserContext userContext,
@@ -108,127 +92,88 @@ public class Doc_trasporto_rientroHome extends BulkHome {
             Long pg)
             throws IntrospectionException, PersistencyException {
 
-        if (pg == null)
+        if (pg == null) {
             throw new PersistencyException("Impossibile ottenere un progressivo definitivo per il documento inserito!");
-
-        LoggableStatement ps = null;
-        java.io.StringWriter sql = new java.io.StringWriter();
-        java.io.PrintWriter pw = new java.io.PrintWriter(sql);
-        String condition = " WHERE PG_INVENTARIO = ? AND TI_DOCUMENTO = ? AND ESERCIZIO = ? AND PG_DOC_TRASPORTO_RIENTRO = ?";
-
-        try {
-            // ===== INSERT TESTATA CON NUOVO PROGRESSIVO =====
-            pw.write("INSERT INTO " + EJBCommonServices.getDefaultSchema() + getColumnMap().getTableName() + " (");
-            pw.write(getPersistenColumnNamesReplacingWith(this, null).toString());
-            pw.write(") SELECT ");
-            pw.write(getPersistenColumnNamesReplacingWith(
-                    this,
-                    new String[][]{{"PG_DOC_TRASPORTO_RIENTRO", "?"}}).toString());
-            pw.write(" FROM " + EJBCommonServices.getDefaultSchema() + getColumnMap().getTableName());
-            pw.write(condition);
-            pw.flush();
-
-            ps = new LoggableStatement(getConnection(), sql.toString(), true, this.getClass());
-            pw.close();
-            ps.setLong(1, pg.longValue());
-            ps.setInt(2, docTemporaneo.getPgInventario().intValue());
-            ps.setString(3, docTemporaneo.getTiDocumento());
-            ps.setInt(4, docTemporaneo.getEsercizio().intValue());
-            ps.setLong(5, docTemporaneo.getPgDocTrasportoRientro().longValue());
-
-            ps.execute();
-        } catch (java.sql.SQLException e) {
-            throw new PersistencyException(e);
-        } finally {
-            try {
-                ps.close();
-            } catch (java.sql.SQLException e) {
-            }
         }
 
-        try {
-            // ===== INSERT DETTAGLI CON NUOVO PROGRESSIVO =====
-            sql = new java.io.StringWriter();
-            pw = new java.io.PrintWriter(sql);
-            Doc_trasporto_rientro_dettHome dettHome = (Doc_trasporto_rientro_dettHome) getHomeCache().getHome(Doc_trasporto_rientro_dettBulk.class);
-            pw.write("INSERT INTO " + EJBCommonServices.getDefaultSchema() + dettHome.getColumnMap().getTableName() + " (");
-            pw.write(getPersistenColumnNamesReplacingWith(dettHome, null).toString());
-            pw.write(") SELECT ");
-            pw.write(getPersistenColumnNamesReplacingWith(
-                    dettHome,
-                    new String[][]{{"PG_DOC_TRASPORTO_RIENTRO", "?"}}).toString());
-            pw.write(" FROM " + EJBCommonServices.getDefaultSchema() + dettHome.getColumnMap().getTableName());
-            pw.write(condition);
-            pw.flush();
-            ps = new LoggableStatement(getConnection(), sql.toString(), true, this.getClass());
-            pw.close();
-            ps.setLong(1, pg.longValue());
-            ps.setInt(2, docTemporaneo.getPgInventario().intValue());
-            ps.setString(3, docTemporaneo.getTiDocumento());
-            ps.setInt(4, docTemporaneo.getEsercizio().intValue());
-            ps.setLong(5, docTemporaneo.getPgDocTrasportoRientro().longValue());
+        copiaConNuovoPg(this, docTemporaneo, pg);
 
-            ps.execute();
-        } catch (java.sql.SQLException e) {
-            throw new PersistencyException(e);
-        } finally {
-            try {
-                ps.close();
-            } catch (java.sql.SQLException e) {
-            }
-        }
+        Doc_trasporto_rientro_dettHome dettHome =
+                (Doc_trasporto_rientro_dettHome) getHomeCache().getHome(Doc_trasporto_rientro_dettBulk.class);
+        copiaConNuovoPg(dettHome, docTemporaneo, pg);
 
-        // ===== DELETE DOCUMENTO TEMPORANEO =====
         delete(docTemporaneo, userContext);
-
         docTemporaneo.setPgDocTrasportoRientro(pg);
     }
 
-    /**
-     * Metodo di utilità per costruire i nomi delle colonne con eventuali sostituzioni
-     *
-     * @param home
-     * @param fields
-     * @return
-     * @throws PersistencyException
-     */
-    private StringBuffer getPersistenColumnNamesReplacingWith(
-            BulkHome home,
-            String[][] fields)
-            throws PersistencyException {
+    /** Esegue INSERT ... SELECT copiando le righe del temporaneo con il nuovo PG. */
+    private void copiaConNuovoPg(BulkHome home, Doc_trasporto_rientroBulk docTemporaneo, Long pg)
+            throws PersistencyException, IntrospectionException {
 
-        java.io.StringWriter columns = new java.io.StringWriter();
+        String schema = EJBCommonServices.getDefaultSchema();
+        String tabella = schema + home.getColumnMap().getTableName();
 
-        if (home == null)
+        String sql = "INSERT INTO " + tabella + " (" + elencoColonne(home, null) + ") SELECT "
+                + elencoColonne(home, new String[][]{{"PG_DOC_TRASPORTO_RIENTRO", "?"}})
+                + " FROM " + tabella + CONDITION_PK;
+
+        LoggableStatement ps = null;
+        try {
+            ps = new LoggableStatement(getConnection(), sql, true, this.getClass());
+            ps.setLong(1, pg);
+            ps.setInt(2, docTemporaneo.getPgInventario().intValue());
+            ps.setString(3, docTemporaneo.getTiDocumento());
+            ps.setInt(4, docTemporaneo.getEsercizio().intValue());
+            ps.setLong(5, docTemporaneo.getPgDocTrasportoRientro());
+            ps.execute();
+        } catch (SQLException e) {
+            throw new PersistencyException(e);
+        } finally {
+            closeQuietly(ps);
+        }
+    }
+
+    private static void closeQuietly(LoggableStatement ps) {
+        try {
+            if (ps != null) {
+                ps.close();
+            }
+        } catch (SQLException ignored) {
+            // chiusura best-effort
+        }
+    }
+
+    /** Elenco colonne separate da virgola, con eventuali sostituzioni (nome → espressione). */
+    private String elencoColonne(BulkHome home, String[][] sostituzioni) throws PersistencyException {
+        if (home == null) {
             throw new PersistencyException("Impossibile ottenere la home per l'aggiornamento dei progressivi temporanei del documento!");
+        }
 
-        java.io.PrintWriter pw = new java.io.PrintWriter(columns);
-        String[] persistenColumns = home.getColumnMap().getColumnNames();
-        for (int i = 0; i < persistenColumns.length; i++) {
-            String columnName = persistenColumns[i];
-            if (fields != null) {
-                for (int j = 0; j < fields.length; j++) {
-                    String[] field = fields[j];
-                    if (columnName.equalsIgnoreCase(field[0])) {
-                        columnName = field[1];
+        String[] colonne = home.getColumnMap().getColumnNames();
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+
+        for (int i = 0; i < colonne.length; i++) {
+            String nome = colonne[i];
+            if (sostituzioni != null) {
+                for (String[] sostituzione : sostituzioni) {
+                    if (nome.equalsIgnoreCase(sostituzione[0])) {
+                        nome = sostituzione[1];
                         break;
                     }
                 }
             }
-            pw.print(columnName);
-            pw.print((i == persistenColumns.length - 1) ? "" : ", ");
+            pw.print(nome);
+            if (i < colonne.length - 1) {
+                pw.print(", ");
+            }
         }
         pw.close();
-        return columns.getBuffer();
+        return sw.toString();
     }
 
-    /**
-     * Trova il documento (Trasporto o Rientro) tramite chiave primaria.
-     */
     public Doc_trasporto_rientroBulk findDocTrasportoRientro(Doc_trasporto_rientroBulk chiave)
             throws PersistencyException {
         return (Doc_trasporto_rientroBulk) findByPrimaryKey(chiave);
     }
-
-
 }

@@ -949,4 +949,66 @@ public class DocTrasportoRientroComponentSessionBean
         }
     }
 
+    @Override
+    public RemoteIterator selectBeniPerInserimentoByClause(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            CompoundFindClause clauses)
+            throws ComponentException, RemoteException {
+
+        pre_component_invocation(userContext, componentObj);
+        try {
+            RemoteIterator result = ((DocTrasportoRientroComponent) componentObj)
+                    .selectBeniPerInserimentoByClause(userContext, doc, clauses);
+            component_invocation_succes(userContext, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (it.cnr.jada.comp.ComponentException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            throw uncaughtRuntimeException(userContext, componentObj, e);
+        } catch (Error e) {
+            throw uncaughtError(userContext, componentObj, e);
+        }
+    }
+
+    public String getEmailCreatore(UserContext param0, Doc_trasporto_rientroBulk param1)
+            throws ComponentException, RemoteException {
+        pre_component_invocation(param0, componentObj);
+        try {
+            String result = ((DocTrasportoRientroComponent) componentObj).getEmailCreatore(param0, param1);
+            component_invocation_succes(param0, componentObj);
+            return result;
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(param0, componentObj);
+            throw e;
+        } catch (ComponentException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (RuntimeException e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        } catch (Error e) {
+            component_invocation_failure(param0, componentObj);
+            throw e;
+        }
+    }
+
+    @Override
+    public void inviaNotifica(UserContext userContext, String subject, String body, List<String> destinatari) throws ComponentException, RemoteException {
+        pre_component_invocation(userContext, componentObj);
+        try {
+            ((DocTrasportoRientroComponent) componentObj).inviaNotifica(userContext, subject, body, destinatari);
+            component_invocation_succes(userContext, componentObj);
+        } catch (it.cnr.jada.comp.NoRollbackException e) {
+            component_invocation_succes(userContext, componentObj);
+            throw e;
+        } catch (ComponentException | Error | RuntimeException e) {
+            component_invocation_failure(userContext, componentObj);
+            throw e;
+        }
+    }
 }

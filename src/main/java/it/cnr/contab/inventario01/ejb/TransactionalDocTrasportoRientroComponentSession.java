@@ -505,17 +505,17 @@ public class TransactionalDocTrasportoRientroComponentSession
     public boolean isEsercizioCOEPChiuso(UserContext userContext) throws ComponentException, RemoteException {
         try {
 
-            return ((Boolean)invoke("isEsercizioCOEPChiuso",new Object[] {
+            return ((Boolean) invoke("isEsercizioCOEPChiuso", new Object[]{
                     userContext})).booleanValue();
-        } catch(java.rmi.RemoteException e) {
+        } catch (java.rmi.RemoteException e) {
             throw e;
-        } catch(java.lang.reflect.InvocationTargetException e) {
+        } catch (java.lang.reflect.InvocationTargetException e) {
             try {
                 throw e.getTargetException();
-            } catch(it.cnr.jada.comp.ComponentException ex) {
+            } catch (it.cnr.jada.comp.ComponentException ex) {
                 throw ex;
-            } catch(Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
             }
         }
     }
@@ -541,38 +541,38 @@ public class TransactionalDocTrasportoRientroComponentSession
         }
     }
 
-    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws RemoteException,it.cnr.jada.comp.ComponentException {
+    public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {
-            return (it.cnr.jada.bulk.OggettoBulk)invoke("inizializzaBulkPerStampa",new Object[] {
+            return (it.cnr.jada.bulk.OggettoBulk) invoke("inizializzaBulkPerStampa", new Object[]{
                     param0,
-                    param1 });
-        } catch(java.rmi.RemoteException e) {
+                    param1});
+        } catch (java.rmi.RemoteException e) {
             throw e;
-        } catch(java.lang.reflect.InvocationTargetException e) {
+        } catch (java.lang.reflect.InvocationTargetException e) {
             try {
                 throw e.getTargetException();
-            } catch(it.cnr.jada.comp.ComponentException ex) {
+            } catch (it.cnr.jada.comp.ComponentException ex) {
                 throw ex;
-            } catch(Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
             }
         }
     }
 
-    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0,it.cnr.jada.bulk.OggettoBulk param1) throws RemoteException,it.cnr.jada.comp.ComponentException {
+    public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext param0, it.cnr.jada.bulk.OggettoBulk param1) throws RemoteException, it.cnr.jada.comp.ComponentException {
         try {
-            return (it.cnr.jada.bulk.OggettoBulk)invoke("stampaConBulk",new Object[] {
+            return (it.cnr.jada.bulk.OggettoBulk) invoke("stampaConBulk", new Object[]{
                     param0,
-                    param1 });
-        } catch(java.rmi.RemoteException e) {
+                    param1});
+        } catch (java.rmi.RemoteException e) {
             throw e;
-        } catch(java.lang.reflect.InvocationTargetException e) {
+        } catch (java.lang.reflect.InvocationTargetException e) {
             try {
                 throw e.getTargetException();
-            } catch(it.cnr.jada.comp.ComponentException ex) {
+            } catch (it.cnr.jada.comp.ComponentException ex) {
                 throw ex;
-            } catch(Throwable ex) {
-                throw new java.rmi.RemoteException("Uncaugth exception",ex);
+            } catch (Throwable ex) {
+                throw new java.rmi.RemoteException("Uncaugth exception", ex);
             }
         }
     }
@@ -890,7 +890,7 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
     @Override
-    public List<Doc_trasporto_rientroBulk>  cercaDocumentiPerBene(
+    public List<Doc_trasporto_rientroBulk> cercaDocumentiPerBene(
             UserContext userContext,
             String tiDocumento,
             String stato,
@@ -898,7 +898,7 @@ public class TransactionalDocTrasportoRientroComponentSession
             Integer esercizio) throws ComponentException, RemoteException {
 
         try {
-            return (List<Doc_trasporto_rientroBulk> ) invoke("cercaDocumentiPerBene", new Object[]{
+            return (List<Doc_trasporto_rientroBulk>) invoke("cercaDocumentiPerBene", new Object[]{
                     userContext,
                     tiDocumento,
                     stato,
@@ -947,7 +947,7 @@ public class TransactionalDocTrasportoRientroComponentSession
         try {
             return (Doc_trasporto_rientroBulk) invoke(
                     "saveDocFromWS",
-                    new Object[]{ userContext, bulk });
+                    new Object[]{userContext, bulk});
 
         } catch (java.rmi.RemoteException e) {
             throw e;
@@ -1058,6 +1058,7 @@ public class TransactionalDocTrasportoRientroComponentSession
             }
         }
     }
+
     @Override
     public Doc_trasporto_rientroBulk findDocTrasportoRientro(
             UserContext userContext,
@@ -1095,6 +1096,77 @@ public class TransactionalDocTrasportoRientroComponentSession
             invoke("caricaAllegatiDocumento", new Object[]{
                     userContext,
                     doc
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public RemoteIterator selectBeniPerInserimentoByClause(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            CompoundFindClause clauses)
+            throws ComponentException, RemoteException {
+
+        try {
+            return (RemoteIterator) invoke("selectBeniPerInserimentoByClause", new Object[]{
+                    userContext,
+                    doc,
+                    clauses
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public String getEmailCreatore(UserContext userContext, Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException {
+
+        try {
+            return (String) invoke("getEmailCreatore", new Object[]{
+                    userContext,
+                    doc
+            });
+        } catch (java.rmi.RemoteException e) {
+            throw e;
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            try {
+                throw e.getTargetException();
+            } catch (ComponentException ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RemoteException("Uncaught exception", ex);
+            }
+        }
+    }
+
+    @Override
+    public void inviaNotifica(UserContext userContext, String subject, String body, List<String> destinatari) throws ComponentException, RemoteException {
+
+        try {
+            invoke("inviaNotifica", new Object[]{
+                    userContext,
+                    subject,
+                    body,
+                    destinatari
             });
         } catch (java.rmi.RemoteException e) {
             throw e;

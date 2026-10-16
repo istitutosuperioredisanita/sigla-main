@@ -6,11 +6,10 @@ import it.cnr.jada.UserContext;
 import it.iss.si.workflow.service.SignatureFlowService;
 import it.iss.si.workflow.service.SignatureFlowState;
 import it.iss.si.workflow.service.SignatureFlowStatus;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,9 @@ public class DocTraspRientCronService {
     private DocTraspRientFlowService flowService;
 
     @Autowired
+    private DocTraspRientNotificaService notificaService;
+
+    @Autowired
     private SignatureFlowService signatureFlowService;
 
     private UserContext userContext;
@@ -52,11 +54,10 @@ public class DocTraspRientCronService {
     }
 
     /**
-     * Metodo principale del job schedulato.
-     * Recupera tutti i documenti, filtra i duplicati basandosi sull'UUID per gestire
-     * le firme multiple a monte, logga i dati reali e avvia l’elaborazione a batch.
+     * Job schedulato: recupera i documenti in attesa di firma, rimuove i duplicati
+     * per UUID e avvia l'elaborazione a batch.
      */
-    @Scheduled(cron = "${doc.trasp.rient.happysign.timer.cron.expression:0 * * * * *}")
+    @Scheduled(cron = "${doc.trasp.rient.happysign.timer.cron.expression}")
     public void executeVerificaFirmeWorkflow() {
 
         long start = System.currentTimeMillis();
@@ -74,10 +75,11 @@ public class DocTraspRientCronService {
                 return;
             }
 
-            // Filtro a monte per tenere solo un record per ogni UUID (Risolve il conteggio dei duplicati)
+            // Un solo record per UUID (gestisce le righe duplicate a monte)
             Set<String> uuidVisti = new HashSet<>();
             List<Doc_trasporto_rientroBulk> documentiUnici = tuttiDocumenti.stream()
-                    .filter(doc -> doc.getUuidFlussoAutorizzativo() != null && !doc.getUuidFlussoAutorizzativo().trim().isEmpty())
+                    .filter(doc -> doc.getUuidFlussoAutorizzativo() != null
+                            && !doc.getUuidFlussoAutorizzativo().trim().isEmpty())
                     .filter(doc -> uuidVisti.add(doc.getUuidFlussoAutorizzativo()))
                     .collect(Collectors.toList());
 
@@ -86,12 +88,12 @@ public class DocTraspRientCronService {
                 return;
             }
 
-            // Ora stampa il numero reale e pulito (es: se erano 4 righe per 2 doc, stamperà 2)
             log.info("Documenti trovati: {}", documentiUnici.size());
 
             processaBatch(documentiUnici);
 
         } catch (Exception e) {
+
             log.error("Errore globale job SIGN_WORKFLOW T/R", e);
         }
 
@@ -99,10 +101,7 @@ public class DocTraspRientCronService {
         log.info("END SIGN_WORKFLOW T/R - durata={} ms", (end - start));
     }
 
-    /**
-     * Divide i documenti in blocchi (batch) per evitare sovraccarico su sistema e servizi esterni.
-     * Ogni batch viene processato sequenzialmente, mantenendo il controllo su memoria e performance.
-     */
+    /** Divide i documenti in blocchi per non sovraccaricare sistema e servizi esterni. */
     private void processaBatch(List<Doc_trasporto_rientroBulk> documenti) {
 
         int totale = documenti.size();
@@ -121,9 +120,8 @@ public class DocTraspRientCronService {
     }
 
     /**
-     * Gestisce il retry automatico per ogni documento.
-     * In caso di errore transient, ad esempio timeout SIGN_WORKFLOW, riprova fino a RETRY_MAX volte
-     * prima di fallire definitivamente.
+     * Retry automatico per errori transitori (es. timeout SIGN_WORKFLOW),
+     * fino a RETRY_MAX tentativi.
      */
     private void processaDocumentoConRetry(Doc_trasporto_rientroBulk doc) {
 
@@ -137,29 +135,21 @@ public class DocTraspRientCronService {
             } catch (Exception e) {
                 tentativi++;
 
-                log.warn(
-                        "Retry {} per documento pg={} errore={}",
-                        tentativi,
-                        safePg(doc),
-                        e.getMessage()
-                );
+                log.warn("Retry {} per documento pg={} errore={}",
+                        tentativi, safePg(doc), e.getMessage());
 
                 if (tentativi >= RETRY_MAX) {
-                    log.error(
-                            "Errore definitivo documento pg={}",
-                            safePg(doc),
-                            e
-                    );
+                    log.error("Errore definitivo documento pg={}", safePg(doc), e);
                 }
             }
         }
     }
 
     /**
-     * Controlla lo stato del documento su SIGN_WORKFLOW e instrada verso le azioni corrette:
-     * firmato -> aggiornamento documento,
-     * rifiutato -> gestione rifiuto,
-     * inviato -> in attesa.
+     * Controlla lo stato su SIGN_WORKFLOW e instrada:
+     * FIRMATO → aggiornamento documento + notifica firmato,
+     * RIFIUTATO/ANNULLATO → aggiornamento rifiuto + notifica rifiuto,
+     * INVIATO → in attesa.
      */
     private void verificaDocumento(Doc_trasporto_rientroBulk doc) throws Exception {
 
@@ -180,21 +170,15 @@ public class DocTraspRientCronService {
             return;
         }
 
-        log.info(
-                "Doc pg={} stato={} uuid={}",
-                doc.getPgDocTrasportoRientro(),
-                stato.state(),
-                uuid
-        );
+        log.info("Doc pg={} stato={} uuid={}", safePg(doc), stato.state(), uuid);
 
         if (SignatureFlowState.FIRMATO.equals(stato.state())) {
             byte[] pdf = signatureFlowService.getSignedDocument(uuid);
 
-            flowService.aggiornaDocumentoFirmato(
-                    userContext,
-                    doc,
-                    pdf
-            );
+            flowService.aggiornaDocumentoFirmato(userContext, doc, pdf);
+
+            // Dopo l'aggiornamento riuscito. La notifica gestisce internamente le proprie eccezioni.
+            notificaService.notificaFirmato(userContext, doc);
 
             log.info("Documento pg={} aggiornato come FIRMATO", safePg(doc));
             return;
@@ -203,17 +187,12 @@ public class DocTraspRientCronService {
         if (SignatureFlowState.RIFIUTATO.equals(stato.state())
                 || SignatureFlowState.ANNULLATO.equals(stato.state())) {
 
-            flowService.aggiornaDocumentoRifiutato(
-                    userContext,
-                    doc,
-                    stato.message()
-            );
+            flowService.aggiornaDocumentoRifiutato(userContext, doc, stato.message());
 
-            log.info(
-                    "Documento pg={} RIFIUTATO/ANNULLATO motivo={}",
-                    safePg(doc),
-                    stato.message()
-            );
+            notificaService.notificaRifiutato(userContext, doc, stato.message());
+
+            log.info("Documento pg={} RIFIUTATO/ANNULLATO motivo={}",
+                    safePg(doc), stato.message());
             return;
         }
 
@@ -222,10 +201,7 @@ public class DocTraspRientCronService {
         }
     }
 
-    /**
-     * Metodo di utilità per log safe.
-     * Evita NullPointerException quando il documento è nullo durante il logging.
-     */
+    /** Log sicuro: evita NullPointerException se il documento è nullo. */
     private Object safePg(Doc_trasporto_rientroBulk doc) {
         return doc != null ? doc.getPgDocTrasportoRientro() : "null";
     }

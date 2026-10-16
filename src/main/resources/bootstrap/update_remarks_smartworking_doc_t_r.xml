@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="davide.mirra" id="update_remarks_smartworking_doc_t_r">
+        <setColumnRemarks tableName="TIPO_TRASPORTO_RIENTRO"
+                          columnName="smartworking"
+                          remarks="Flag che indica la tipologia di documento e' per Smartworking. Dominio: Y = Tipo Smartworking, N = Non Smartworking"/>
+    </changeSet>
+</databaseChangeLog>

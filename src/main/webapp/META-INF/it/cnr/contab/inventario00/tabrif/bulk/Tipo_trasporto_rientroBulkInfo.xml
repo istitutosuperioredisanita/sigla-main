@@ -44,7 +44,7 @@
 			inputType="CHECKBOX"
 			enabledOnEdit="true"
 			nullable="false"
-			label="Smat Working" />
+			label="Smart Working" />
 	<fieldProperty
 			name="flAbilitaNote"
 			property="flAbilitaNote"

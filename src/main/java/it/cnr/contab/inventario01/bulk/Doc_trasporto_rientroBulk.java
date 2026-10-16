@@ -23,23 +23,9 @@ import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.StrServ;
 
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-/**
- * Testata del documento di Trasporto/Rientro beni inventariali.
- *
- * Gestisce:
- * - stato documento;
- * - tipo ritiro;
- * - dati firma;
- * - dettagli beni;
- * - allegati;
- * - campi REST transitori.
- */
+/** Testata del documento di Trasporto/Rientro beni inventariali. */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -91,13 +77,17 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     private TerzoBulk terzoIncRitiro;
     private TerzoBulk terzoRespDip;
     private TerzoBulk terzoSmartworking;
-
     private TerzoBulk consegnatario;
     private TerzoBulk delegato;
     private Unita_organizzativaBulk uo_consegnataria;
+    private V_persona_fisicaBulk personaFisicaResponsabile;
 
     private Collection tipoMovimenti;
     private PrimaryKeyHashtable accessoriContestualiHash;
+    private Collection condizioni;
+    private String cds_scrivania;
+    private String uo_scrivania;
+    private InventarioDocTRBulk bene;
 
     @JsonProperty("dettagli")
     private transient List<Map<String, Object>> restDettagli;
@@ -108,23 +98,12 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     private SimpleBulkList doc_trasporto_rientro_dettColl;
     private BulkList<AllegatoGenericoBulk> archivioAllegati = new BulkList<>();
 
-    private V_persona_fisicaBulk personaFisicaResponsabile;
-
-    private Collection condizioni;
-    private String cds_scrivania;
-    private String uo_scrivania;
-    private InventarioDocTRBulk bene;
-
     public Doc_trasporto_rientroBulk() {
         super();
     }
 
-    public Doc_trasporto_rientroBulk(
-            Long pgInventario,
-            String tiDocumento,
-            Integer esercizio,
-            Long pgDocTrasportoRientro) {
-
+    public Doc_trasporto_rientroBulk(Long pgInventario, String tiDocumento,
+                                     Integer esercizio, Long pgDocTrasportoRientro) {
         super(pgInventario, tiDocumento, esercizio, pgDocTrasportoRientro);
         setInventario(new Id_inventarioBulk(pgInventario));
     }
@@ -178,16 +157,13 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     }
 
     public String getCd_tipo_trasporto_rientro() {
-        return tipoMovimento == null
-                ? null
-                : tipoMovimento.getCdTipoTrasportoRientro();
+        return tipoMovimento == null ? null : tipoMovimento.getCdTipoTrasportoRientro();
     }
 
     public void setCd_tipo_trasporto_rientro(String cdTipoTrasportoRientro) {
         if (tipoMovimento == null) {
             tipoMovimento = new Tipo_trasporto_rientroBulk();
         }
-
         tipoMovimento.setCdTipoTrasportoRientro(cdTipoTrasportoRientro);
     }
 
@@ -197,23 +173,17 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public void setTerzoIncRitiro(TerzoBulk terzoIncRitiro) {
         this.terzoIncRitiro = terzoIncRitiro;
-
-        setCdTerzoIncaricato(
-                terzoIncRitiro == null ? null : terzoIncRitiro.getCd_terzo()
-        );
+        setCdTerzoIncaricato(terzoIncRitiro == null ? null : terzoIncRitiro.getCd_terzo());
     }
 
     @Override
     public Integer getCdTerzoIncaricato() {
-        return terzoIncRitiro != null
-                ? terzoIncRitiro.getCd_terzo()
-                : super.getCdTerzoIncaricato();
+        return terzoIncRitiro != null ? terzoIncRitiro.getCd_terzo() : super.getCdTerzoIncaricato();
     }
 
     @Override
     public void setCdTerzoIncaricato(Integer cdTerzoIncaricato) {
         super.setCdTerzoIncaricato(cdTerzoIncaricato);
-
         if (terzoIncRitiro != null && cdTerzoIncaricato != null) {
             terzoIncRitiro.setCd_terzo(cdTerzoIncaricato);
         }
@@ -225,16 +195,12 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public void setTerzoRespDip(TerzoBulk terzoRespDip) {
         this.terzoRespDip = terzoRespDip;
-
-        setCdTerzoResponsabile(
-                terzoRespDip == null ? null : terzoRespDip.getCd_terzo()
-        );
+        setCdTerzoResponsabile(terzoRespDip == null ? null : terzoRespDip.getCd_terzo());
     }
 
     @Override
     public void setCdTerzoResponsabile(Integer cdTerzoResponsabile) {
         super.setCdTerzoResponsabile(cdTerzoResponsabile);
-
         if (terzoRespDip != null && cdTerzoResponsabile != null) {
             terzoRespDip.setCd_terzo(cdTerzoResponsabile);
         }
@@ -282,9 +248,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     public void setPersonaFisicaResponsabile(V_persona_fisicaBulk personaFisicaResponsabile) {
         this.personaFisicaResponsabile = personaFisicaResponsabile;
-
-        if (personaFisicaResponsabile != null
-                && personaFisicaResponsabile.getCd_terzo() != null) {
+        if (personaFisicaResponsabile != null && personaFisicaResponsabile.getCd_terzo() != null) {
             setCdTerzoResponsabile(personaFisicaResponsabile.getCd_terzo());
         }
     }
@@ -369,7 +333,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         if (doc_trasporto_rientro_dettColl == null) {
             return null;
         }
-
         return (Doc_trasporto_rientro_dettBulk) doc_trasporto_rientro_dettColl.remove(index);
     }
 
@@ -378,15 +341,12 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         if (archivioAllegati == null) {
             archivioAllegati = new BulkList<>();
         }
-
         return archivioAllegati;
     }
 
     @Override
     public void setArchivioAllegati(BulkList<AllegatoGenericoBulk> archivioAllegati) {
-        this.archivioAllegati = archivioAllegati == null
-                ? new BulkList<>()
-                : archivioAllegati;
+        this.archivioAllegati = archivioAllegati == null ? new BulkList<>() : archivioAllegati;
     }
 
     @Override
@@ -394,7 +354,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         if (allegato != null) {
             getArchivioAllegati().add(allegato);
         }
-
         return getArchivioAllegati().size() - 1;
     }
 
@@ -418,20 +377,17 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
             stato.put(STATO_INVIATO, "Inviato In Firma");
             return stato;
         }
-
         if (isInviatoInFirma()) {
             stato.put(STATO_INVIATO, "Inviato In Firma");
             stato.put(STATO_DEFINITIVO, "Definitivo");
             stato.put(STATO_ANNULLATO, "Annullato");
             return stato;
         }
-
         if (isDefinitivo()) {
             stato.put(STATO_DEFINITIVO, "Definitivo");
             stato.put(STATO_ANNULLATO, "Annullato");
             return stato;
         }
-
         if (isAnnullato()) {
             stato.put(STATO_ANNULLATO, "Annullato");
             return stato;
@@ -441,7 +397,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         stato.put(STATO_INVIATO, "Inviato In Firma");
         stato.put(STATO_DEFINITIVO, "Definitivo");
         stato.put(STATO_ANNULLATO, "Annullato");
-
         return stato;
     }
 
@@ -449,7 +404,6 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         if (dictionary instanceof OrderedHashtable) {
             return (Dictionary) ((OrderedHashtable) dictionary).clone();
         }
-
         return dictionary;
     }
 
@@ -493,11 +447,9 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         if (Boolean.TRUE.equals(getFlIncaricato())) {
             return TIPO_RITIRO_INCARICATO;
         }
-
         if (Boolean.TRUE.equals(getFlVettore())) {
             return TIPO_RITIRO_VETTORE;
         }
-
         return null;
     }
 
@@ -544,24 +496,19 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     }
 
     public boolean hasDettagli() {
-        return doc_trasporto_rientro_dettColl != null
-                && !doc_trasporto_rientro_dettColl.isEmpty();
+        return doc_trasporto_rientro_dettColl != null && !doc_trasporto_rientro_dettColl.isEmpty();
     }
 
     public boolean isTemporaneo() {
-        return getPgDocTrasportoRientro() == null
-                || getPgDocTrasportoRientro() <= 0L;
+        return getPgDocTrasportoRientro() == null || getPgDocTrasportoRientro() <= 0L;
     }
 
     public boolean isNoteRitiroEnabled() {
         if (!hasTipoRitiroSelezionato() || tipoMovimento == null) {
             return false;
         }
-
         String descrizione = tipoMovimento.getDsTipoTrasportoRientro();
-
-        return "Sostituzione per".equals(descrizione)
-                || "Altro".equals(descrizione);
+        return "Sostituzione per".equals(descrizione) || "Altro".equals(descrizione);
     }
 
     public String getDocTrasportoRiferimento() {
@@ -576,10 +523,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
             return null;
         }
 
-        return primo.getEsercizioRif()
-                + "/"
-                + primo.getTiDocumentoRif()
-                + "/"
+        return primo.getEsercizioRif() + "/" + primo.getTiDocumentoRif() + "/"
                 + primo.getPgDocTrasportoRientroRif();
     }
 
@@ -588,11 +532,9 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
                 && getUuidFlussoAutorizzativo() == null
                 && getCdTerzoResponsabile() != null
                 && hasDettagli()
-                && (
-                isRitiroVettore()
-                        || isSmartworking()
-                        || (isRitiroIncaricato() && getCdTerzoIncaricato() != null)
-        );
+                && (isRitiroVettore()
+                || isSmartworking()
+                || (isRitiroIncaricato() && getCdTerzoIncaricato() != null));
     }
 
     public void inizializzaPerInvioFirma() {
@@ -660,9 +602,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
     }
 
     public boolean isAllegatiGestibiliDopoFirma() {
-        return hasDataFirmaValorizzata()
-                && !isDefinitivo()
-                && !isAnnullato();
+        return hasDataFirmaValorizzata() && !isDefinitivo() && !isAnnullato();
     }
 
     private Timestamp now() {
@@ -671,89 +611,51 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
 
     @Override
     public void validate() throws ValidationException {
-        validaCampoObbligatorio(
-                getDsDocTrasportoRientro(),
-                "la Descrizione del documento"
-        );
-
-        validaCampoObbligatorio(
-                getDataRegistrazione(),
-                "la Data " + (isTrasporto() ? "Trasporto" : "Rientro")
-        );
-
+        validaCampoObbligatorio(getDsDocTrasportoRientro(), "la Descrizione del documento");
+        validaCampoObbligatorio(getDataRegistrazione(),
+                "la Data " + (isTrasporto() ? "Trasporto" : "Rientro"));
         validaCampoObbligatorio(getTipoMovimento(), "il Tipo Movimento");
-
         super.validate();
     }
 
-    private void validaCampoObbligatorio(Object valore, String nomeCampo)
-            throws ValidationException {
-
-        if (valore == null) {
-            throw new ValidationException("Indicare " + nomeCampo + ".");
-        }
-
-        if (valore instanceof String && ((String) valore).trim().isEmpty()) {
+    private void validaCampoObbligatorio(Object valore, String nomeCampo) throws ValidationException {
+        if (valore == null || (valore instanceof String && ((String) valore).trim().isEmpty())) {
             throw new ValidationException("Indicare " + nomeCampo + ".");
         }
     }
 
     public boolean isSmartworking() {
-        return tipoMovimento != null
-                && tipoMovimento.getDsTipoTrasportoRientro() != null
-                && TIPO_MOVIMENTO_SMARTWORKING.equalsIgnoreCase(
-                tipoMovimento.getDsTipoTrasportoRientro().trim()
-        );
+        return Optional.ofNullable(getTipoMovimento())
+                .map(Tipo_trasporto_rientroBulk::isTipoSmartWorking)
+                .orElse(false);
     }
 
     public String constructCMISNomeFile() {
         Long pg = getPgDocTrasportoRientro();
-
-        if (pg == null) {
-            return "";
-        }
-
-        return StrServ.lpad(pg.toString(), 9, "0");
+        return pg == null ? "" : StrServ.lpad(pg.toString(), 9, "0");
     }
 
     public String recuperoIdDocAsString() {
         String tipoDocumento = getTiDocumento() == null
-                ? ""
-                : StrServ.replace(getTiDocumento(), ".", "");
-
-        String esercizio = getEsercizio() == null
-                ? ""
-                : getEsercizio().toString();
-
+                ? "" : StrServ.replace(getTiDocumento(), ".", "");
+        String esercizio = getEsercizio() == null ? "" : getEsercizio().toString();
         String pgInventario = getPgInventario() == null
-                ? ""
-                : StrServ.lpad(getPgInventario().toString(), 5);
-
+                ? "" : StrServ.lpad(getPgInventario().toString(), 5);
         String pgDocumento = getPgDocTrasportoRientro() == null
-                ? ""
-                : StrServ.lpad(getPgDocTrasportoRientro().toString(), 5);
+                ? "" : StrServ.lpad(getPgDocTrasportoRientro().toString(), 5);
 
         return tipoDocumento + esercizio + pgInventario + pgDocumento;
     }
 
     @Override
     public CompoundFindClause buildFindClauses(Boolean freeSearch) {
-        CompoundFindClause clauses =
-                getBulkInfo().buildFindClausesFrom(this, freeSearch);
-
+        CompoundFindClause clauses = getBulkInfo().buildFindClausesFrom(this, freeSearch);
         if (clauses == null) {
             clauses = new CompoundFindClause();
         }
-
         if (getTiDocumento() != null) {
-            clauses.addClause(
-                    "AND",
-                    "tiDocumento",
-                    SQLBuilder.EQUALS,
-                    getTiDocumento()
-            );
+            clauses.addClause("AND", "tiDocumento", SQLBuilder.EQUALS, getTiDocumento());
         }
-
         return clauses;
     }
 
@@ -762,11 +664,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         return pg != null && pg < 0L ? null : pg;
     }
 
+    /** Campo solo visualizzato: nessuna assegnazione. */
     public void setPgDocTrasportoRientroVisualizzato(Long value) {
-        // Campo solo visualizzato: nessuna assegnazione necessaria.
-    }
-
-    private boolean same(Object a, Object b) {
-        return Objects.equals(a, b);
     }
 }

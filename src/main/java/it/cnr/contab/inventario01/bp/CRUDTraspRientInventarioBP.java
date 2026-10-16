@@ -40,35 +40,16 @@ import org.springframework.web.context.WebApplicationContext;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static it.cnr.jada.bulk.OggettoBulk.isNullOrEmpty;
 
 /**
- * Business Process comune per documenti di Trasporto/Rientro beni inventariali.
- *
- * Gestisce:
- * - testata e dettagli;
- * - selezione beni/accessori;
- * - allegati;
- * - invio e completamento firma;
- * - salvataggio definitivo;
- * - stampa documento.
- *
- * Regola fondamentale:
- * dopo firma il documento può risultare "editable" solo per permettere
- * la gestione degli allegati, ma testata e dettagli devono restare bloccati.
+ * Business Process comune per documenti di Trasporto/Rientro beni inventariali:
+ * testata, dettagli, selezione beni/accessori, allegati, firma, salvataggio definitivo e stampa.
+ * <p>
+ * Dopo la firma il documento è modificabile solo lato allegati; testata e dettagli restano bloccati.
  */
 public abstract class CRUDTraspRientInventarioBP<
         T extends AllegatoDocTraspRientroBulk,
@@ -82,11 +63,12 @@ public abstract class CRUDTraspRientInventarioBP<
     private static final String CONFIG_COMPONENT_SESSION =
             "CNRCONFIG00_EJB_Configurazione_cnrComponentSession";
 
-    private static final String REPORT_DOC_TRASPORTO_RIENTRO =
-            "doc_trasporto_rientro.jasper";
+    private static final String REPORT_DOC_TRASPORTO_RIENTRO = "doc_trasporto_rientro.jasper";
 
     public static final String TRASPORTO = "T";
     public static final String RIENTRO = "R";
+
+    private static final int MAX_BENI_SELEZIONABILI = 100;
 
     private String tipo;
     private boolean isAmministratore;
@@ -101,19 +83,13 @@ public abstract class CRUDTraspRientInventarioBP<
     private boolean ultimaOperazioneEliminazione;
     private CompoundFindClause clauses;
 
-    /**
-     * Stato temporaneo della selezione ricorsiva dei beni con accessori.
-     */
+    /** Stato temporaneo della selezione dei beni con relativi accessori. */
     public static class PendingSelection {
 
         private final Map<InventarioDocTRBulk, List<InventarioDocTRBulk>> principaliConAccessori =
                 new LinkedHashMap<>();
-
-        private final List<InventarioDocTRBulk> accessori =
-                new ArrayList<>();
-
-        private final List<InventarioDocTRBulk> principaliSenza =
-                new ArrayList<>();
+        private final List<InventarioDocTRBulk> accessori = new ArrayList<>();
+        private final List<InventarioDocTRBulk> principaliSenza = new ArrayList<>();
 
         private OggettoBulk[] bulks;
         private BitSet oldSel;
@@ -197,31 +173,20 @@ public abstract class CRUDTraspRientInventarioBP<
     public abstract Class getDocumentoClassDett();
 
     @Override
-    protected void init(Config config, ActionContext context)
-            throws BusinessProcessException {
+    protected void init(Config config, ActionContext context) throws BusinessProcessException {
 
         setTipo(this instanceof CRUDTrasportoBeniInvBP ? TRASPORTO : RIENTRO);
-        setSearchResultColumnSet(getTipo());
-        setFreeSearchSet(getTipo());
-
         try {
-            setAmministratore(
-                    UtenteBulk.isAmministratoreInventario(context.getUserContext())
-            );
+            setAmministratore(UtenteBulk.isAmministratoreInventario(context.getUserContext()));
 
             Configurazione_cnrComponentSession confSession =
                     (Configurazione_cnrComponentSession) createComponentSession(
                             CONFIG_COMPONENT_SESSION,
-                            Configurazione_cnrComponentSession.class
-                    );
+                            Configurazione_cnrComponentSession.class);
 
-            boolean invioFirmaAttivo =
+            setGestioneInvioInFirmaAttiva(
                     isProfiloSpringIssAttivo()
-                            && confSession.isGestioneInvioInFirmaDocTRAttivo(
-                            context.getUserContext()
-                    );
-
-            setGestioneInvioInFirmaAttiva(invioFirmaAttivo);
+                            && confSession.isGestioneInvioInFirmaDocTRAttivo(context.getUserContext()));
 
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
@@ -232,8 +197,7 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     private boolean isProfiloSpringIssAttivo() {
-        WebApplicationContext springCtx =
-                ContextLoader.getCurrentWebApplicationContext();
+        WebApplicationContext springCtx = ContextLoader.getCurrentWebApplicationContext();
 
         return springCtx != null
                 && springCtx.getEnvironment() != null
@@ -248,16 +212,14 @@ public abstract class CRUDTraspRientInventarioBP<
             throws BusinessProcessException {
 
         bulk = super.initializeModelForInsert(context, bulk);
-
-        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
-        doc.setArchivioAllegati(new BulkList<>());
-
+        ((Doc_trasporto_rientroBulk) bulk).setArchivioAllegati(new BulkList<>());
         return bulk;
     }
 
-
     @Override
-    public void basicEdit(ActionContext context, OggettoBulk bulk, boolean doInitializeForEdit) throws BusinessProcessException {
+    public void basicEdit(ActionContext context, OggettoBulk bulk, boolean doInitializeForEdit)
+            throws BusinessProcessException {
+
         super.basicEdit(context, bulk, doInitializeForEdit);
 
         if (getStatus() != VIEW) {
@@ -280,7 +242,6 @@ public abstract class CRUDTraspRientInventarioBP<
     @Override
     public OggettoBulk initializeModelForEdit(ActionContext context, OggettoBulk bulk)
             throws BusinessProcessException {
-
         try {
             setAmministratore(UtenteBulk.isAmministratoreInventario(context.getUserContext()));
             return super.initializeModelForEdit(context, bulk);
@@ -290,22 +251,15 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     @Override
-    public OggettoBulk initializeModelForEditAllegati(
-            ActionContext context,
-            OggettoBulk bulk)
+    public OggettoBulk initializeModelForEditAllegati(ActionContext context, OggettoBulk bulk)
             throws BusinessProcessException {
-
-        if (isSkipAllegatiReload()) {
-            return bulk;
-        }
-
-        return super.initializeModelForEditAllegati(context, bulk);
+        return isSkipAllegatiReload()
+                ? bulk
+                : super.initializeModelForEditAllegati(context, bulk);
     }
 
     @Override
-    public void resetForSearch(ActionContext context)
-            throws BusinessProcessException {
-
+    public void resetForSearch(ActionContext context) throws BusinessProcessException {
         super.resetForSearch(context);
         resetTabs();
     }
@@ -325,9 +279,7 @@ public abstract class CRUDTraspRientInventarioBP<
             if ((isTabDettagli || isTabAllegati)
                     && doc != null
                     && doc.getCrudStatus() == OggettoBulk.UNDEFINED) {
-                setErrorMessage(
-                        "Non è possibile cambiare tab: in questa fase è consentita solo la ricerca."
-                );
+                setErrorMessage("Non è possibile cambiare tab: in questa fase è consentita solo la ricerca.");
                 return;
             }
 
@@ -355,7 +307,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
     private boolean validaAccessoTabAllegati(Doc_trasporto_rientroBulk doc) {
         if (!isAllegatiAccessibili()) {
-            setErrorMessage("Il tab Allegati sarà disponibile solo dopo la firma del documento.");
+            setErrorMessage("Il tab Allegati sarà disponibile solo dopo l'invio del documento in firma.");
             return false;
         }
 
@@ -373,16 +325,11 @@ public abstract class CRUDTraspRientInventarioBP<
         }
 
         for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
-            if (obj instanceof Doc_trasporto_rientro_dettBulk) {
-                Doc_trasporto_rientro_dettBulk dett =
-                        (Doc_trasporto_rientro_dettBulk) obj;
-
-                if (dett.getCrudStatus() == OggettoBulk.NORMAL) {
-                    return true;
-                }
+            if (obj instanceof Doc_trasporto_rientro_dettBulk
+                    && ((Doc_trasporto_rientro_dettBulk) obj).getCrudStatus() == OggettoBulk.NORMAL) {
+                return true;
             }
         }
-
         return false;
     }
 
@@ -446,13 +393,9 @@ public abstract class CRUDTraspRientInventarioBP<
         return getDoc() != null && getDoc().isFirmatoDaCompletare();
     }
 
-    /**
-     * Indica se testata e dettagli sono bloccati.
-     * Non usarlo per stabilire se gli allegati sono modificabili.
-     */
+    /** Testata e dettagli sono bloccati. Non usarlo per decidere la modificabilità degli allegati. */
     public boolean isTestataEDettagliBloccati() {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null) {
             return false;
         }
@@ -465,28 +408,37 @@ public abstract class CRUDTraspRientInventarioBP<
                 || doc.isInviatoInFirma();
     }
 
-    /**
-     * Wrapper mantenuto per compatibilità con JSP/properties.
-     */
+    /** Wrapper per compatibilità con JSP/properties. */
     public boolean isDocumentoNonModificabile() {
         return isTestataEDettagliBloccati();
     }
 
-    /**
-     * Wrapper mantenuto per compatibilità con JSP/properties.
-     */
+    /** Wrapper per compatibilità con JSP/properties. */
     public boolean isTestataODettagliNonModificabili() {
         return isTestataEDettagliBloccati();
     }
 
     public boolean isDettagliModificabili() {
-        return !isTestataEDettagliBloccati()
-                && (isEditing() || isInserting());
+        return !isTestataEDettagliBloccati() && (isEditing() || isInserting());
     }
 
     @Override
     protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
-        return isAllegatiModificabili();
+        if (!isAllegatiModificabili()) return false;
+        // Il FIRMATO già archiviato non può essere eliminato: il documento deve restare firmato
+        if (allegato != null
+                && allegato.getCrudStatus() != OggettoBulk.TO_BE_CREATED
+                && isAllegatoFirmato(allegato)) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isAllegatoFirmato(AllegatoGenericoBulk allegato) {
+        if (!(allegato instanceof AllegatoDocTraspRientroBulk)) return false;
+        String aspectFirmato = getAspectFirmato(getDoc());
+        return aspectFirmato != null
+                && aspectFirmato.equals(((AllegatoDocTraspRientroBulk) allegato).getAspectName());
     }
 
     public boolean isTipoRitiroVisible() {
@@ -498,21 +450,15 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     public boolean isDestinazioneVisible() {
-        return hasValidModel()
-                && !isSmartworking()
-                && getDoc().hasTipoRitiroSelezionato();
+        return hasValidModel() && !isSmartworking() && getDoc().hasTipoRitiroSelezionato();
     }
 
     public boolean isAssegnatarioVisible() {
-        return hasValidModel()
-                && !isSmartworking()
-                && getDoc().isRitiroIncaricato();
+        return hasValidModel() && !isSmartworking() && getDoc().isRitiroIncaricato();
     }
 
     public boolean isNominativoVettoreVisible() {
-        return hasValidModel()
-                && !isSmartworking()
-                && getDoc().isNominativoVettoreVisible();
+        return hasValidModel() && !isSmartworking() && getDoc().isNominativoVettoreVisible();
     }
 
     public boolean isNoteAbilitate() {
@@ -523,9 +469,7 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     public boolean isStatoVisible() {
-        return hasValidModel()
-                && getDoc().getStato() != null
-                && !isInserting();
+        return hasValidModel() && getDoc().getStato() != null && !isInserting();
     }
 
     public boolean isNoteVisible() {
@@ -555,7 +499,6 @@ public abstract class CRUDTraspRientInventarioBP<
     @Override
     public boolean isDeleteButtonHidden() {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null) {
             return false;
         }
@@ -591,11 +534,8 @@ public abstract class CRUDTraspRientInventarioBP<
 
         for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
             if (obj instanceof DocumentoTrasportoDettBulk) {
-                DocumentoTrasportoDettBulk dettaglio =
-                        (DocumentoTrasportoDettBulk) obj;
-
                 DocumentoRientroDettBulk rientroDett =
-                        dettaglio.getDocRientroDettRif();
+                        ((DocumentoTrasportoDettBulk) obj).getDocRientroDettRif();
 
                 if (rientroDett != null
                         && rientroDett.getDoc_trasporto_rientro() != null
@@ -604,7 +544,6 @@ public abstract class CRUDTraspRientInventarioBP<
                 }
             }
         }
-
         return false;
     }
 
@@ -615,11 +554,9 @@ public abstract class CRUDTraspRientInventarioBP<
 
     public boolean isStampaDocButtonHidden() {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null || doc.getPgDocTrasportoRientro() == null) {
             return true;
         }
-
         return !getMainTabName().equals(getTab("tab"));
     }
 
@@ -629,21 +566,18 @@ public abstract class CRUDTraspRientInventarioBP<
 
     private boolean hasAllegatoFirmato() {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null || doc.getArchivioAllegati() == null) {
             return false;
         }
 
         String aspectFirmatoAtteso = getAspectFirmato(doc);
-
         if (aspectFirmatoAtteso == null) {
             return false;
         }
 
         for (Object obj : doc.getArchivioAllegati()) {
             if (obj instanceof AllegatoDocTraspRientroBulk) {
-                AllegatoDocTraspRientroBulk allegato =
-                        (AllegatoDocTraspRientroBulk) obj;
+                AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) obj;
 
                 if (aspectFirmatoAtteso.equals(allegato.getAspectName())
                         && (OggettoBulk.NORMAL == allegato.getCrudStatus() || isEditing())) {
@@ -651,7 +585,6 @@ public abstract class CRUDTraspRientInventarioBP<
                 }
             }
         }
-
         return false;
     }
 
@@ -659,21 +592,16 @@ public abstract class CRUDTraspRientInventarioBP<
         if (doc instanceof DocumentoTrasportoBulk) {
             return AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
         }
-
         if (doc instanceof DocumentoRientroBulk) {
             return AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
         }
-
         return null;
     }
 
     @Override
-    protected void initializePrintBP(
-            ActionContext context,
-            AbstractPrintBP abstractPrintBP) {
-
+    protected void initializePrintBP(ActionContext context, AbstractPrintBP abstractPrintBP) {
         OfflineReportPrintBP printbp = (OfflineReportPrintBP) abstractPrintBP;
-        printbp.setReportName("/cnrdocamm/docamm/doc_trasporto_rientro.jasper");
+        printbp.setReportName("/cnrdocamm/docamm/" + REPORT_DOC_TRASPORTO_RIENTRO);
 
         Doc_trasporto_rientroBulk doc = Optional.ofNullable(getModel())
                 .filter(Doc_trasporto_rientroBulk.class::isInstance)
@@ -683,16 +611,10 @@ public abstract class CRUDTraspRientInventarioBP<
         addPrintParam(printbp, "esercizio", doc.getEsercizio(), Integer.class);
         addPrintParam(printbp, "pg_inventario", doc.getPgInventario(), Long.class);
         addPrintParam(printbp, "ti_documento", doc.getTiDocumento(), String.class);
-        addPrintParam(printbp, "pg_doc_trasporto_rientro",
-                doc.getPgDocTrasportoRientro(), Long.class);
+        addPrintParam(printbp, "pg_doc_trasporto_rientro", doc.getPgDocTrasportoRientro(), Long.class);
     }
 
-    private void addPrintParam(
-            OfflineReportPrintBP printbp,
-            String nome,
-            Object valore,
-            Class<?> type) {
-
+    private void addPrintParam(OfflineReportPrintBP printbp, String nome, Object valore, Class<?> type) {
         Print_spooler_paramBulk param = new Print_spooler_paramBulk();
         param.setNomeParam(nome);
         param.setValoreParam(valore == null ? null : valore.toString());
@@ -702,8 +624,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
     @Override
     protected Button[] createToolbar() {
-        Properties props =
-                it.cnr.jada.util.Config.getHandler().getProperties(getClass());
+        Properties props = it.cnr.jada.util.Config.getHandler().getProperties(getClass());
 
         return Stream.concat(
                 Arrays.stream(super.createToolbar()),
@@ -735,12 +656,8 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     protected final RemoteDetailCRUDController dettBeniController =
-            new RemoteDetailCRUDController(
-                    "DettBeniController",
-                    InventarioDocTRBulk.class,
-                    "",
-                    COMPONENT_SESSION,
-                    this) {
+            new RemoteDetailCRUDController("DettBeniController", InventarioDocTRBulk.class, "",
+                    COMPONENT_SESSION, this) {
 
                 public String getName() {
                     return getDettagliControllerName();
@@ -755,7 +672,6 @@ public abstract class CRUDTraspRientInventarioBP<
                             throw new RuntimeException("Errore caricamento dettagli beni", e);
                         }
                     }
-
                     return new EmptyRemoteIterator();
                 }
 
@@ -764,9 +680,7 @@ public abstract class CRUDTraspRientInventarioBP<
                         throws ValidationException, BusinessProcessException {
 
                     if (isTestataEDettagliBloccati()) {
-                        throw new ValidationException(
-                                "Impossibile modificare i beni del documento in questo stato."
-                        );
+                        throw new ValidationException("Impossibile modificare i beni del documento in questo stato.");
                     }
 
                     eliminaTuttiBeniDaDettagli(context);
@@ -778,9 +692,7 @@ public abstract class CRUDTraspRientInventarioBP<
                         throws BusinessProcessException {
 
                     if (isTestataEDettagliBloccati()) {
-                        throw new BusinessProcessException(
-                                "Impossibile modificare i beni del documento in questo stato."
-                        );
+                        throw new BusinessProcessException("Impossibile modificare i beni del documento in questo stato.");
                     }
 
                     try {
@@ -791,7 +703,6 @@ public abstract class CRUDTraspRientInventarioBP<
                         } else {
                             setPendingDelete(ps);
                         }
-
                     } catch (ComponentException | RemoteException e) {
                         throw handleException(e);
                     }
@@ -799,12 +710,8 @@ public abstract class CRUDTraspRientInventarioBP<
             };
 
     protected final RemoteDetailCRUDController editDettController =
-            new RemoteDetailCRUDController(
-                    "editDettController",
-                    getDocumentoClassDett(),
-                    "",
-                    COMPONENT_SESSION,
-                    this) {
+            new RemoteDetailCRUDController("editDettController", getDocumentoClassDett(), "",
+                    COMPONENT_SESSION, this) {
 
                 public String getName() {
                     return getEditDettagliControllerName();
@@ -819,7 +726,6 @@ public abstract class CRUDTraspRientInventarioBP<
                             throw new RuntimeException("Errore caricamento dettagli modifica", e);
                         }
                     }
-
                     return new EmptyRemoteIterator();
                 }
             };
@@ -838,12 +744,8 @@ public abstract class CRUDTraspRientInventarioBP<
                 continue;
             }
 
-            List<InventarioDocTRBulk> accessori =
-                    getComp().cercaBeniAccessoriNeiDettagliSalvati(
-                            context.getUserContext(),
-                            getDoc(),
-                            bene
-                    );
+            List<InventarioDocTRBulk> accessori = getComp().cercaBeniAccessoriNeiDettagliSalvati(
+                    context.getUserContext(), getDoc(), bene);
 
             if (accessori != null && !accessori.isEmpty()) {
                 ps.principaliConAccessori.put(bene, accessori);
@@ -851,23 +753,15 @@ public abstract class CRUDTraspRientInventarioBP<
                 ps.principaliSenza.add(bene);
             }
         }
-
         return ps;
     }
 
     protected RemoteIterator selectEditDettaglibyClause(ActionContext context)
             throws BusinessProcessException {
-
         try {
             CompoundFindClause filters = getEditDettController().getFilter();
-
             return getComp().selectEditDettagliTrasporto(
-                    context.getUserContext(),
-                    getDoc(),
-                    getDocumentoClassDett(),
-                    filters
-            );
-
+                    context.getUserContext(), getDoc(), getDocumentoClassDett(), filters);
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
@@ -875,27 +769,34 @@ public abstract class CRUDTraspRientInventarioBP<
 
     public RemoteIterator selectDettaglibyClause(ActionContext context)
             throws BusinessProcessException {
-
         try {
             return getComp().selectBeniAssociatiByClause(
-                    context.getUserContext(),
-                    getDoc(),
-                    InventarioDocTRBulk.class
-            );
-
+                    context.getUserContext(), getDoc(), InventarioDocTRBulk.class);
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
     }
 
-    public void inviaAllaFirma(ActionContext context)
+    /** Beni candidati all'inserimento, senza clausole di ricerca aggiuntive. */
+    public RemoteIterator selectBeniCandidatiByClause(ActionContext context, CompoundFindClause clauses)
             throws BusinessProcessException {
+        try {
+            return getComp().selectBeniPerInserimentoByClause(context.getUserContext(), getDoc(), clauses);
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
 
+    /** Columnset dei beni (InventarioDocTRBulk) per la griglia del selezionatore. */
+    public String getColumnSetSelezionatore() {
+        return TRASPORTO.equals(getTipo()) ? "righeTrasporto" : "righeRientro";
+    }
+
+    public void inviaAllaFirma(ActionContext context) throws BusinessProcessException {
         try {
             fillModel(context);
 
             Doc_trasporto_rientroBulk doc = getDoc();
-
             if (doc == null) {
                 throw new BusinessProcessException("Documento non presente.");
             }
@@ -913,14 +814,15 @@ public abstract class CRUDTraspRientInventarioBP<
             validaStatoPerFirma();
 
             Doc_trasporto_rientroBulk docFirmabile =
-                    getComp().inviaDocumentoAllaFirma(
-                            context.getUserContext(),
-                            doc
-                    );
+                    getComp().inviaDocumentoAllaFirma(context.getUserContext(), doc);
+
+            // Ricarica dallo storage il _DAFIRMARE appena archiviato.
+            // La lista va svuotata: initializeModelForEditAllegati aggiunge senza pulire e duplicherebbe.
+            docFirmabile.setArchivioAllegati(new BulkList<>());
+            docFirmabile = (Doc_trasporto_rientroBulk) initializeModelForEditAllegati(context, docFirmabile);
 
             setModel(context, docFirmabile);
             setStatus(VIEW);
-
             commitUserTransaction();
 
             setMessage("Documento inviato alla firma con successo. UUID: "
@@ -929,54 +831,35 @@ public abstract class CRUDTraspRientInventarioBP<
         } catch (ComponentException | RemoteException e) {
             rollbackUserTransaction();
             throw handleException(e);
-
         } catch (BusinessProcessException e) {
             rollbackUserTransaction();
             throw e;
-
         } catch (Exception e) {
             rollbackUserTransaction();
             throw handleException(e);
         }
     }
 
-    private void validaStatoPerFirma()
-            throws BusinessProcessException {
-
+    private void validaStatoPerFirma() throws BusinessProcessException {
         Doc_trasporto_rientroBulk doc = getDoc();
 
         if (doc == null) {
             throw new BusinessProcessException("Documento non presente");
         }
-
         if (doc.isAnnullato()) {
-            throw new BusinessProcessException(
-                    "Impossibile inviare in firma un documento annullato"
-            );
+            throw new BusinessProcessException("Impossibile inviare in firma un documento annullato");
         }
-
         if (!doc.isInserito()) {
-            throw new BusinessProcessException(
-                    "Il documento deve essere in stato 'Inserito' per essere inviato in firma"
-            );
+            throw new BusinessProcessException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
         }
-
         if (!doc.isInviabileAllaFirma()) {
-            throw new BusinessProcessException(
-                    "Documento non completo per l'invio in firma"
-            );
+            throw new BusinessProcessException("Documento non completo per l'invio in firma");
         }
     }
 
-    public void annullaDoc(ActionContext context)
-            throws BusinessProcessException {
-
+    public void annullaDoc(ActionContext context) throws BusinessProcessException {
         try {
-            Doc_trasporto_rientroBulk doc =
-                    getComp().annullaDocumento(
-                            context.getUserContext(),
-                            getDoc()
-                    );
+            Doc_trasporto_rientroBulk doc = getComp().annullaDocumento(context.getUserContext(), getDoc());
 
             setModel(context, doc);
             commitUserTransaction();
@@ -994,9 +877,7 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     @Override
-    public void clearSelection(ActionContext context)
-            throws BusinessProcessException {
-
+    public void clearSelection(ActionContext context) throws BusinessProcessException {
         try {
             annullaModificaComponente(context);
         } catch (ComponentException | RemoteException e) {
@@ -1009,23 +890,16 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     @Override
-    public BitSet getSelection(
-            ActionContext context,
-            OggettoBulk[] bulks,
-            BitSet currentSelection)
+    public BitSet getSelection(ActionContext context, OggettoBulk[] bulks, BitSet currentSelection)
             throws BusinessProcessException {
-
         return currentSelection;
     }
 
     @Override
-    public void initializeSelection(ActionContext context)
-            throws BusinessProcessException {
-
+    public void initializeSelection(ActionContext context) throws BusinessProcessException {
         if (isTestataEDettagliBloccati()) {
             return;
         }
-
         try {
             inizializzaSelezioneComponente(context);
         } catch (ComponentException | RemoteException e) {
@@ -1034,9 +908,7 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     @Override
-    public void selectAll(ActionContext context)
-            throws BusinessProcessException {
-
+    public void selectAll(ActionContext context) throws BusinessProcessException {
         if (isTestataEDettagliBloccati()) {
             throw new BusinessProcessException("Impossibile modificare il documento");
         }
@@ -1045,27 +917,13 @@ public abstract class CRUDTraspRientInventarioBP<
             Doc_trasporto_rientroBulk doc = getDoc();
             boolean isTrasporto = doc instanceof DocumentoTrasportoBulk;
 
-            List<InventarioDocTRBulk> beniFiltrati =
-                    getComp().caricaBeniPerInserimento(
-                            context.getUserContext(),
-                            doc,
-                            getClauses(),
-                            isTrasporto
-                    );
+            List<InventarioDocTRBulk> beniFiltrati = getComp().caricaBeniPerInserimento(
+                    context.getUserContext(), doc, getClauses(), isTrasporto);
 
             validaMassimoBeni(beniFiltrati);
 
-            getComp().validaBeniNonInAltriDocumenti(
-                    context.getUserContext(),
-                    doc,
-                    beniFiltrati
-            );
-
-            getComp().selezionaTuttiBeni(
-                    context.getUserContext(),
-                    doc,
-                    getClauses()
-            );
+            getComp().validaBeniNonInAltriDocumenti(context.getUserContext(), doc, beniFiltrati);
+            getComp().selezionaTuttiBeni(context.getUserContext(), doc, getClauses());
 
             setClauses(null);
             getDettBeniController().resync(context);
@@ -1076,49 +934,31 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     @Override
-    public BitSet setSelection(
-            ActionContext context,
-            OggettoBulk[] bulks,
-            BitSet oldSelection,
-            BitSet newSelection)
+    public BitSet setSelection(ActionContext context, OggettoBulk[] bulks,
+                               BitSet oldSelection, BitSet newSelection)
             throws BusinessProcessException {
 
         if (isTestataEDettagliBloccati()) {
-            throw new BusinessProcessException(
-                    "Impossibile modificare i beni del documento in questo stato."
-            );
+            throw new BusinessProcessException("Impossibile modificare i beni del documento in questo stato.");
         }
 
         try {
             fillModel(context);
 
-            PendingSelection ps =
-                    creaPendingAdd(context, bulks, oldSelection, newSelection);
-
-            List<InventarioDocTRBulk> beniDaValidare =
-                    raccogliBeniDaValidare(ps);
+            PendingSelection ps = creaPendingAdd(context, bulks, oldSelection, newSelection);
+            List<InventarioDocTRBulk> beniDaValidare = raccogliBeniDaValidare(ps);
 
             validaMassimoBeni(beniDaValidare);
 
             if (!beniDaValidare.isEmpty()) {
-                getComp().validaBeniNonInAltriDocumenti(
-                        context.getUserContext(),
-                        getDoc(),
-                        beniDaValidare
-                );
+                getComp().validaBeniNonInAltriDocumenti(context.getUserContext(), getDoc(), beniDaValidare);
             }
 
             if (ps.getPrincipaliConAccessori().isEmpty()) {
                 if (!ps.isEmpty()) {
-                    modificaBeniConAccessoriComponente(
-                            context,
-                            bulks,
-                            oldSelection,
-                            newSelection
-                    );
+                    modificaBeniConAccessoriComponente(context, bulks, oldSelection, newSelection);
                     setModel(context, getDoc());
                 }
-
                 return newSelection;
             }
 
@@ -1127,40 +967,31 @@ public abstract class CRUDTraspRientInventarioBP<
 
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
-
         } catch (FillException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private PendingSelection creaPendingAdd(
-            ActionContext context,
-            OggettoBulk[] bulks,
-            BitSet oldSelection,
-            BitSet newSelection)
+    private PendingSelection creaPendingAdd(ActionContext context, OggettoBulk[] bulks,
+                                            BitSet oldSelection, BitSet newSelection)
             throws ComponentException, RemoteException, BusinessProcessException {
 
         PendingSelection ps = new PendingSelection();
         ps.bulks = bulks;
         ps.oldSel = oldSelection != null ? (BitSet) oldSelection.clone() : new BitSet();
         ps.newSel = newSelection != null ? (BitSet) newSelection.clone() : new BitSet();
-        ps.selectionAccumulata =
-                oldSelection != null ? (BitSet) oldSelection.clone() : new BitSet();
+        ps.selectionAccumulata = oldSelection != null ? (BitSet) oldSelection.clone() : new BitSet();
 
         if (oldSelection == null || newSelection == null) {
             return ps;
         }
 
         for (int i = 0; i < bulks.length; i++) {
-            if (oldSelection.get(i) == newSelection.get(i)) {
+            if (oldSelection.get(i) == newSelection.get(i) || !newSelection.get(i)) {
                 continue;
             }
 
             InventarioDocTRBulk bene = (InventarioDocTRBulk) bulks[i];
-
-            if (!newSelection.get(i)) {
-                continue;
-            }
 
             if (bene.isBeneAccessorio()) {
                 ps.accessori.add(bene);
@@ -1175,27 +1006,17 @@ public abstract class CRUDTraspRientInventarioBP<
                 ps.principaliSenza.add(bene);
             }
         }
-
         return ps;
     }
 
-    private List<InventarioDocTRBulk> cercaAccessoriPerBene(
-            ActionContext context,
-            InventarioDocTRBulk bene)
+    private List<InventarioDocTRBulk> cercaAccessoriPerBene(ActionContext context, InventarioDocTRBulk bene)
             throws ComponentException, RemoteException, BusinessProcessException {
 
         if (getDoc() instanceof DocumentoRientroBulk) {
             return getComp().cercaBeniAccessoriPresentinelTrasportoOriginale(
-                    context.getUserContext(),
-                    bene,
-                    getDoc()
-            );
+                    context.getUserContext(), bene, getDoc());
         }
-
-        return getComp().cercaBeniAccessoriAssociati(
-                context.getUserContext(),
-                bene
-        );
+        return getComp().cercaBeniAccessoriAssociati(context.getUserContext(), bene);
     }
 
     private List<InventarioDocTRBulk> raccogliBeniDaValidare(PendingSelection ps) {
@@ -1206,46 +1027,36 @@ public abstract class CRUDTraspRientInventarioBP<
 
         for (Map.Entry<InventarioDocTRBulk, List<InventarioDocTRBulk>> entry
                 : ps.getPrincipaliConAccessori().entrySet()) {
-
             beni.add(entry.getKey());
-
             if (entry.getValue() != null) {
                 beni.addAll(entry.getValue());
             }
         }
-
         return beni;
     }
 
-    private void validaMassimoBeni(List<InventarioDocTRBulk> beni)
-            throws ApplicationException {
-
-        if (beni != null && beni.size() > 100) {
+    private void validaMassimoBeni(List<InventarioDocTRBulk> beni) throws ApplicationException {
+        if (beni != null && beni.size() > MAX_BENI_SELEZIONABILI) {
             throw new ApplicationException(
-                    "Impossibile selezionare più di 100 beni contemporaneamente"
-            );
+                    "Impossibile selezionare più di " + MAX_BENI_SELEZIONABILI + " beni contemporaneamente");
         }
     }
 
     public InventarioDocTRBulk getBenePrincipaleCorrente(boolean isEliminazione) {
         PendingSelection ps = isEliminazione ? pendingDelete : pendingAdd;
-        int index = isEliminazione
-                ? indexBeneCurrentePerEliminazione
-                : indexBeneCurrentePerAggiunta;
+        int index = isEliminazione ? indexBeneCurrentePerEliminazione : indexBeneCurrentePerAggiunta;
 
         if (ps == null || ps.getPrincipaliConAccessori().isEmpty()) {
             return null;
         }
 
         int idx = 0;
-
         for (InventarioDocTRBulk bene : ps.getPrincipaliConAccessori().keySet()) {
             if (idx == index) {
                 return bene;
             }
             idx++;
         }
-
         return null;
     }
 
@@ -1257,27 +1068,21 @@ public abstract class CRUDTraspRientInventarioBP<
             return Collections.emptyList();
         }
 
-        List<InventarioDocTRBulk> accessori =
-                ps.getPrincipaliConAccessori().get(bene);
-
+        List<InventarioDocTRBulk> accessori = ps.getPrincipaliConAccessori().get(bene);
         return accessori == null ? Collections.emptyList() : accessori;
     }
 
     public String getMessaggioSingoloBene(boolean isEliminazione) {
         InventarioDocTRBulk bene = getBenePrincipaleCorrente(isEliminazione);
-
         if (bene == null) {
             return "";
         }
 
         int numAccessori = getAccessoriCorrente(isEliminazione).size();
-
         StringBuilder msg = new StringBuilder();
 
         if (isEliminazione) {
-            msg.append("Il bene principale con codice: ")
-                    .append(bene.getNr_inventario());
-
+            msg.append("Il bene principale con codice: ").append(bene.getNr_inventario());
             appendEtichetta(msg, bene);
 
             msg.append(" ha ")
@@ -1288,33 +1093,19 @@ public abstract class CRUDTraspRientInventarioBP<
                     .append("• SI: Elimina il bene principale CON tutti gli accessori\n")
                     .append("• NO: Elimina SOLO il bene principale (mantieni accessori)\n")
                     .append("• ANNULLA: Interrompi l'operazione");
-
         } else {
-            msg.append("La selezione include il bene principale con codice: ")
-                    .append(bene.getNr_inventario());
-
+            msg.append("La selezione include il bene principale con codice: ").append(bene.getNr_inventario());
             appendEtichetta(msg, bene);
 
             msg.append(" che ha ")
                     .append(numAccessori)
-                    .append(numAccessori == 1
-                            ? " bene accessorio associato"
-                            : " beni accessori associati")
+                    .append(numAccessori == 1 ? " bene accessorio associato" : " beni accessori associati")
                     .append(".\n\n");
 
-            String articolo = numAccessori == 1
-                    ? "questo accessorio"
-                    : "questi accessori";
+            String articolo = numAccessori == 1 ? "questo accessorio" : "questi accessori";
+            String azione = TRASPORTO.equals(getTipo()) ? "nell'aggiunta" : "nel rientro";
 
-            String azione = TRASPORTO.equals(getTipo())
-                    ? "nell'aggiunta"
-                    : "nel rientro";
-
-            msg.append("Vuoi includere anche ")
-                    .append(articolo)
-                    .append(" ")
-                    .append(azione)
-                    .append("?");
+            msg.append("Vuoi includere anche ").append(articolo).append(" ").append(azione).append("?");
         }
 
         return msg.toString();
@@ -1326,42 +1117,28 @@ public abstract class CRUDTraspRientInventarioBP<
         }
     }
 
-    public void elaboraBeneCorrente(
-            ActionContext context,
-            boolean isEliminazione,
-            boolean includiAccessori)
+    public void elaboraBeneCorrente(ActionContext context, boolean isEliminazione, boolean includiAccessori)
             throws BusinessProcessException {
 
-        if (isEliminazione) {
-            if (includiAccessori) {
-                eliminaBeneCorrente(context);
-            } else {
-                eliminaBenePrincipaleSenzaAccessori(context);
-            }
-        } else {
+        if (!isEliminazione) {
             aggiungiBeneCorrente(context, includiAccessori);
+        } else if (includiAccessori) {
+            eliminaBeneCorrente(context);
+        } else {
+            eliminaBenePrincipaleSenzaAccessori(context);
         }
     }
 
-    /**
-     * Wrapper mantenuto per compatibilità con eventuali chiamate esterne.
-     */
-    public void elaboraBeneConAccessori(
-            ActionContext context,
-            boolean isEliminazione,
-            boolean includiAccessori)
+    /** Wrapper per compatibilità con chiamate esterne. */
+    public void elaboraBeneConAccessori(ActionContext context, boolean isEliminazione, boolean includiAccessori)
             throws BusinessProcessException {
-
         elaboraBeneCorrente(context, isEliminazione, includiAccessori);
     }
 
-    private void aggiungiBeneCorrente(
-            ActionContext context,
-            boolean includiAccessori)
+    private void aggiungiBeneCorrente(ActionContext context, boolean includiAccessori)
             throws BusinessProcessException {
 
         InventarioDocTRBulk benePrincipale = getBenePrincipaleCorrente(false);
-
         if (benePrincipale == null) {
             return;
         }
@@ -1369,13 +1146,9 @@ public abstract class CRUDTraspRientInventarioBP<
         try {
             aggiungiSingoloBene(context, benePrincipale);
 
-            List<InventarioDocTRBulk> accessoriDaAggiungere =
-                    calcolaAccessoriDaAggiungere(benePrincipale, includiAccessori);
-
-            for (InventarioDocTRBulk accessorio : accessoriDaAggiungere) {
+            for (InventarioDocTRBulk accessorio : calcolaAccessoriDaAggiungere(benePrincipale, includiAccessori)) {
                 aggiungiSingoloBene(context, accessorio);
             }
-
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
@@ -1388,25 +1161,24 @@ public abstract class CRUDTraspRientInventarioBP<
             return;
         }
 
-        OggettoBulk[] singolo = new OggettoBulk[]{bene};
-        BitSet oldSelection = new BitSet(1);
-        BitSet newSelection = new BitSet(1);
-        newSelection.set(0);
-
         modificaBeniConAccessoriComponente(
                 context,
-                singolo,
-                oldSelection,
-                newSelection
+                new OggettoBulk[]{bene},
+                new BitSet(1),
+                bitSetUnico()
         );
     }
 
+    private BitSet bitSetUnico() {
+        BitSet bs = new BitSet(1);
+        bs.set(0);
+        return bs;
+    }
+
     private List<InventarioDocTRBulk> calcolaAccessoriDaAggiungere(
-            InventarioDocTRBulk benePrincipale,
-            boolean includiAccessori) {
+            InventarioDocTRBulk benePrincipale, boolean includiAccessori) {
 
         List<InventarioDocTRBulk> result = new ArrayList<>();
-
         PendingSelection pending = getPendingAdd();
 
         if (pending == null) {
@@ -1414,15 +1186,11 @@ public abstract class CRUDTraspRientInventarioBP<
         }
 
         if (includiAccessori) {
-            List<InventarioDocTRBulk> accessori =
-                    pending.getPrincipaliConAccessori().get(benePrincipale);
-
-            aggiungiSeNonPresente(result, accessori);
+            aggiungiSeNonPresente(result, pending.getPrincipaliConAccessori().get(benePrincipale));
             return result;
         }
 
-        List<InventarioDocTRBulk> accessoriStrutturali =
-                pending.getPrincipaliConAccessori().get(benePrincipale);
+        List<InventarioDocTRBulk> accessoriStrutturali = pending.getPrincipaliConAccessori().get(benePrincipale);
 
         for (InventarioDocTRBulk accessorioManuale : pending.getAccessori()) {
             if (isAccessorioDelPrincipale(accessorioManuale, benePrincipale)
@@ -1430,58 +1198,41 @@ public abstract class CRUDTraspRientInventarioBP<
                 aggiungiSeNonPresente(result, accessorioManuale);
             }
         }
-
         return result;
     }
 
-    private void aggiungiSeNonPresente(
-            List<InventarioDocTRBulk> destinazione,
-            List<InventarioDocTRBulk> sorgente) {
-
+    private void aggiungiSeNonPresente(List<InventarioDocTRBulk> destinazione, List<InventarioDocTRBulk> sorgente) {
         if (sorgente == null) {
             return;
         }
-
         for (InventarioDocTRBulk bene : sorgente) {
             aggiungiSeNonPresente(destinazione, bene);
         }
     }
 
-    private void aggiungiSeNonPresente(
-            List<InventarioDocTRBulk> destinazione,
-            InventarioDocTRBulk bene) {
-
+    private void aggiungiSeNonPresente(List<InventarioDocTRBulk> destinazione, InventarioDocTRBulk bene) {
         if (bene == null || beneNelDettaglio(bene) || contieneBene(destinazione, bene)) {
             return;
         }
-
         destinazione.add(bene);
     }
 
-    private boolean isAccessorioDelPrincipale(
-            InventarioDocTRBulk accessorio,
-            InventarioDocTRBulk principale) {
-
+    private boolean isAccessorioDelPrincipale(InventarioDocTRBulk accessorio, InventarioDocTRBulk principale) {
         return accessorio != null
                 && principale != null
                 && Objects.equals(accessorio.getNr_inventario(), principale.getNr_inventario())
                 && !Objects.equals(accessorio.getProgressivo(), principale.getProgressivo());
     }
 
-    private boolean contieneBene(
-            List<InventarioDocTRBulk> lista,
-            InventarioDocTRBulk candidato) {
-
+    private boolean contieneBene(List<InventarioDocTRBulk> lista, InventarioDocTRBulk candidato) {
         if (lista == null || candidato == null) {
             return false;
         }
-
         for (InventarioDocTRBulk presente : lista) {
             if (presente != null && presente.equalsByPrimaryKey(candidato)) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -1498,21 +1249,17 @@ public abstract class CRUDTraspRientInventarioBP<
     public void resetOperazione(boolean isEliminazione) {
         if (isEliminazione) {
             indexBeneCurrentePerEliminazione = 0;
-
             if (pendingDelete != null) {
                 pendingDelete.clear();
             }
-
             pendingDelete = null;
             return;
         }
 
         indexBeneCurrentePerAggiunta = 0;
-
         if (pendingAdd != null) {
             pendingAdd.clear();
         }
-
         pendingAdd = null;
     }
 
@@ -1522,24 +1269,19 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     public int getIndexBeneCorrente(boolean isEliminazione) {
-        return (isEliminazione
-                ? indexBeneCurrentePerEliminazione
-                : indexBeneCurrentePerAggiunta) + 1;
+        return (isEliminazione ? indexBeneCurrentePerEliminazione : indexBeneCurrentePerAggiunta) + 1;
     }
 
     public boolean hasBeniPrincipaliConAccessoriPerEliminazione() {
-        return pendingDelete != null
-                && !pendingDelete.getPrincipaliConAccessori().isEmpty();
+        return pendingDelete != null && !pendingDelete.getPrincipaliConAccessori().isEmpty();
     }
 
     public boolean hasBeniPrincipaliConAccessoriPendenti() {
-        return pendingAdd != null
-                && !pendingAdd.getPrincipaliConAccessori().isEmpty();
+        return pendingAdd != null && !pendingAdd.getPrincipaliConAccessori().isEmpty();
     }
 
     public boolean hasBeniAccessoriPendenti() {
-        return pendingAdd != null
-                && !pendingAdd.getAccessori().isEmpty();
+        return pendingAdd != null && !pendingAdd.getAccessori().isEmpty();
     }
 
     public int getNumeroBeniPrincipaliConAccessori() {
@@ -1550,21 +1292,14 @@ public abstract class CRUDTraspRientInventarioBP<
         if (pendingAdd == null) {
             return 0;
         }
-
-        return pendingAdd.getPrincipaliConAccessori()
-                .values()
-                .stream()
-                .mapToInt(List::size)
-                .sum();
+        return pendingAdd.getPrincipaliConAccessori().values().stream().mapToInt(List::size).sum();
     }
 
     public int getNumeroBeniSemplici() {
         if (pendingAdd == null) {
             return 0;
         }
-
-        return pendingAdd.getPrincipaliSenza().size()
-                + pendingAdd.getAccessori().size();
+        return pendingAdd.getPrincipaliSenza().size() + pendingAdd.getAccessori().size();
     }
 
     public int getNumeroBeniAccessoriPendenti() {
@@ -1611,54 +1346,38 @@ public abstract class CRUDTraspRientInventarioBP<
         ultimaOperazioneEliminazione = value;
     }
 
-    public void stampaDocTrasportoRientro(ActionContext context)
-            throws Exception {
-
+    public void stampaDocTrasportoRientro(ActionContext context) throws Exception {
         Doc_trasporto_rientroBulk doc = getDoc();
 
         if (doc == null || doc.getPgDocTrasportoRientro() == null) {
             throw new BusinessProcessException("Documento non valido");
         }
 
-        try (InputStream input = getStreamDocTrasportoRientro(
-                context.getUserContext(),
-                doc)) {
-
+        try (InputStream input = getStreamDocTrasportoRientro(context.getUserContext(), doc)) {
             if (input == null) {
                 return;
             }
 
-            HttpServletResponse response =
-                    ((HttpActionContext) context).getResponse();
-
+            HttpServletResponse response = ((HttpActionContext) context).getResponse();
             response.setContentType("application/pdf");
-            response.setHeader(
-                    "Content-Disposition",
-                    "inline; filename=\"doc_trasporto_rientro_"
-                            + doc.getPgDocTrasportoRientro()
-                            + ".pdf\""
-            );
+            response.setHeader("Content-Disposition",
+                    "inline; filename=\"doc_trasporto_rientro_" + doc.getPgDocTrasportoRientro() + ".pdf\"");
             response.setDateHeader("Expires", 0);
 
             OutputStream output = response.getOutputStream();
             byte[] buffer = new byte[response.getBufferSize()];
             int length;
-
             while ((length = input.read(buffer)) > 0) {
                 output.write(buffer, 0, length);
             }
-
             output.flush();
         }
     }
 
-    private InputStream getStreamDocTrasportoRientro(
-            UserContext userContext,
-            Doc_trasporto_rientroBulk doc)
+    private InputStream getStreamDocTrasportoRientro(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws Exception {
 
         Print_spoolerBulk print = new Print_spoolerBulk();
-
         print.setPgStampa(UUID.randomUUID().getLeastSignificantBits());
         print.setFlEmail(false);
         print.setReport("/cnrdocamm/docamm/" + REPORT_DOC_TRASPORTO_RIENTRO);
@@ -1677,33 +1396,22 @@ public abstract class CRUDTraspRientInventarioBP<
         return report.getInputStream();
     }
 
-    public void create(ActionContext context)
-            throws BusinessProcessException {
-
+    public void create(ActionContext context) throws BusinessProcessException {
         try {
             getModel().setToBeCreated();
 
-            Doc_trasporto_rientroBulk docCreato =
-                    (Doc_trasporto_rientroBulk) createComponentSession()
-                            .creaConBulk(
-                                    context.getUserContext(),
-                                    getModel()
-                            );
+            Doc_trasporto_rientroBulk docCreato = (Doc_trasporto_rientroBulk)
+                    createComponentSession().creaConBulk(context.getUserContext(), getModel());
 
             setModel(context, docCreato);
-
         } catch (Exception e) {
             throw handleException(e);
         }
     }
 
-    public DocTrasportoRientroComponentSession getComp()
-            throws BusinessProcessException {
-
+    public DocTrasportoRientroComponentSession getComp() throws BusinessProcessException {
         return (DocTrasportoRientroComponentSession) createComponentSession(
-                COMPONENT_SESSION,
-                DocTrasportoRientroComponentSession.class
-        );
+                COMPONENT_SESSION, DocTrasportoRientroComponentSession.class);
     }
 
     public CompoundFindClause getClauses() {
@@ -1723,16 +1431,11 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     @Override
-    protected void completeAllegato(T allegato, StorageObject storageObject)
-            throws ApplicationException {
-
-        Optional.ofNullable(storageObject.<String>getPropertyValue(
-                        "sigla_commons_aspect:utente_applicativo"))
+    protected void completeAllegato(T allegato, StorageObject storageObject) throws ApplicationException {
+        Optional.ofNullable(storageObject.<String>getPropertyValue("sigla_commons_aspect:utente_applicativo"))
                 .ifPresent(allegato::setUtenteSIGLA);
 
-        List<String> secondaryTypes =
-                storageObject.getPropertyValue("cmis:secondaryObjectTypeIds");
-
+        List<String> secondaryTypes = storageObject.getPropertyValue("cmis:secondaryObjectTypeIds");
         String aspect = estraiAspectAllegato(allegato, secondaryTypes);
 
         if (aspect != null) {
@@ -1742,31 +1445,31 @@ public abstract class CRUDTraspRientInventarioBP<
         super.completeAllegato(allegato, storageObject);
     }
 
-    private String estraiAspectAllegato(
-            T allegato,
-            List<String> secondaryTypes) {
-
+    private String estraiAspectAllegato(T allegato, List<String> secondaryTypes) {
         if (secondaryTypes == null || secondaryTypes.isEmpty()) {
             return null;
         }
 
-        String firmato = null;
-        String altro = null;
+        // Definiamo le tre chiavi previste per Trasporto o Rientro
+        String firmato;
+        String altro;
+        String daFirmare;
 
         if (allegato instanceof AllegatoDocumentoTrasportoBulk) {
             firmato = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
             altro = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO;
+            daFirmare = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_DA_FIRMARE;
         } else if (allegato instanceof AllegatoDocumentoRientroBulk) {
             firmato = AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
             altro = AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO;
-        }
-
-        if (firmato == null || altro == null) {
+            daFirmare = AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_DA_FIRMARE;
+        } else {
             return null;
         }
 
+        // Ora il BP riconoscerà anche l'aspect DA_FIRMARE letto da Azure
         for (String secondaryType : secondaryTypes) {
-            if (firmato.equals(secondaryType) || altro.equals(secondaryType)) {
+            if (firmato.equals(secondaryType) || altro.equals(secondaryType) || daFirmare.equals(secondaryType)) {
                 return secondaryType;
             }
         }
@@ -1774,9 +1477,7 @@ public abstract class CRUDTraspRientInventarioBP<
         return null;
     }
 
-    public void validaDatiPerDettagli()
-            throws ApplicationException {
-
+    public void validaDatiPerDettagli() throws ApplicationException {
         Doc_trasporto_rientroBulk doc = getDoc();
 
         if (doc == null) {
@@ -1784,9 +1485,7 @@ public abstract class CRUDTraspRientInventarioBP<
         }
 
         if (doc.getTipoMovimento() == null) {
-            throw new ApplicationException(
-                    "Selezionare il Tipo di Movimento prima di accedere al tab Dettagli."
-            );
+            throw new ApplicationException("Selezionare il Tipo di Movimento prima di accedere al tab Dettagli.");
         }
 
         if (doc.isSmartworking()) {
@@ -1797,29 +1496,20 @@ public abstract class CRUDTraspRientInventarioBP<
         validaDatiRitiro(doc);
     }
 
-    private void validaDatiSmartworking(Doc_trasporto_rientroBulk doc)
-            throws ApplicationException {
-
-        if (doc.getTerzoSmartworking() == null
-                || doc.getTerzoSmartworking().getCd_terzo() == null) {
+    private void validaDatiSmartworking(Doc_trasporto_rientroBulk doc) throws ApplicationException {
+        if (doc.getTerzoSmartworking() == null || doc.getTerzoSmartworking().getCd_terzo() == null) {
             throw new ApplicationException(
-                    "Per il tipo di movimento Smartworking è necessario selezionare l'Assegnatario Smartworking."
-            );
+                    "Per il tipo di movimento Smartworking è necessario selezionare l'Assegnatario Smartworking.");
         }
     }
 
-    private void validaDatiRitiro(Doc_trasporto_rientroBulk doc)
-            throws ApplicationException {
-
+    private void validaDatiRitiro(Doc_trasporto_rientroBulk doc) throws ApplicationException {
         if (!doc.hasTipoRitiroSelezionato()) {
-            throw new ApplicationException(
-                    "Selezionare il Tipo Ritiro (Incaricato o Vettore)."
-            );
+            throw new ApplicationException("Selezionare il Tipo Ritiro (Incaricato o Vettore).");
         }
 
         if (doc.isRitiroIncaricato()
-                && (doc.getTerzoIncRitiro() == null
-                || doc.getTerzoIncRitiro().getCd_terzo() == null)) {
+                && (doc.getTerzoIncRitiro() == null || doc.getTerzoIncRitiro().getCd_terzo() == null)) {
             throw new ApplicationException("Selezionare il Dipendente Incaricato.");
         }
 
@@ -1831,30 +1521,23 @@ public abstract class CRUDTraspRientInventarioBP<
             if (isNullOrEmpty(doc.getIndirizzo())) {
                 throw new ApplicationException("Specificare l'Indirizzo.");
             }
-
             if (isNullOrEmpty(doc.getDestinazione())) {
                 throw new ApplicationException("Specificare la Destinazione.");
             }
         }
     }
 
-    protected void eliminaTuttiBeniDaDettagli(ActionContext context)
-            throws BusinessProcessException {
-
+    protected void eliminaTuttiBeniDaDettagli(ActionContext context) throws BusinessProcessException {
         try {
             Doc_trasporto_rientroBulk doc = getDoc();
 
-            getComp().eliminaTuttiDettagliSalvati(
-                    context.getUserContext(),
-                    doc
-            );
+            getComp().eliminaTuttiDettagliSalvati(context.getUserContext(), doc);
 
             if (doc.getDoc_trasporto_rientro_dettColl() != null) {
                 doc.getDoc_trasporto_rientro_dettColl().clear();
             }
 
             setModel(context, doc);
-
         } catch (Throwable e) {
             throw handleException(e);
         }
@@ -1862,29 +1545,20 @@ public abstract class CRUDTraspRientInventarioBP<
 
     public void eliminaBeniDaDettagli(ActionContext context, OggettoBulk[] details)
             throws BusinessProcessException {
-
         try {
             Doc_trasporto_rientroBulk doc = getDoc();
 
-            getComp().eliminaDettagliSalvati(
-                    context.getUserContext(),
-                    doc,
-                    details
-            );
+            getComp().eliminaDettagliSalvati(context.getUserContext(), doc, details);
 
             rimuoviBeniDaCollection(doc, details);
             setModel(context, doc);
-
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
     }
 
-    private void eliminaBeneCorrente(ActionContext context)
-            throws BusinessProcessException {
-
+    private void eliminaBeneCorrente(ActionContext context) throws BusinessProcessException {
         InventarioDocTRBulk bene = getBenePrincipaleCorrente(true);
-
         if (bene == null) {
             return;
         }
@@ -1893,61 +1567,40 @@ public abstract class CRUDTraspRientInventarioBP<
             Doc_trasporto_rientroBulk doc = getDoc();
             List<InventarioDocTRBulk> accessori = getAccessoriCorrente(true);
 
-            getComp().eliminaBeniPrincipaleConAccessoriDaDettagli(
-                    context.getUserContext(),
-                    doc,
-                    bene,
-                    accessori
-            );
+            getComp().eliminaBeniPrincipaleConAccessoriDaDettagli(context.getUserContext(), doc, bene, accessori);
 
             rimuoviBeneDaCollection(doc, bene);
-
             for (InventarioDocTRBulk accessorio : accessori) {
                 rimuoviBeneDaCollection(doc, accessorio);
             }
-
             setModel(context, doc);
-
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
     }
 
-    private void eliminaBenePrincipaleSenzaAccessori(ActionContext context)
-            throws BusinessProcessException {
-
+    private void eliminaBenePrincipaleSenzaAccessori(ActionContext context) throws BusinessProcessException {
         InventarioDocTRBulk bene = getBenePrincipaleCorrente(true);
-
         if (bene == null) {
             return;
         }
 
         try {
             Doc_trasporto_rientroBulk doc = getDoc();
-            OggettoBulk[] soloIlPrincipale = new OggettoBulk[]{bene};
 
-            getComp().eliminaDettagliSalvati(
-                    context.getUserContext(),
-                    doc,
-                    soloIlPrincipale
-            );
+            getComp().eliminaDettagliSalvati(context.getUserContext(), doc, new OggettoBulk[]{bene});
 
             rimuoviBeneDaCollection(doc, bene);
             setModel(context, doc);
-
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
         }
     }
 
-    private void rimuoviBeniDaCollection(
-            Doc_trasporto_rientroBulk doc,
-            OggettoBulk[] beni) {
-
+    private void rimuoviBeniDaCollection(Doc_trasporto_rientroBulk doc, OggettoBulk[] beni) {
         if (beni == null) {
             return;
         }
-
         for (OggettoBulk bene : beni) {
             if (bene instanceof InventarioDocTRBulk) {
                 rimuoviBeneDaCollection(doc, (InventarioDocTRBulk) bene);
@@ -1955,56 +1608,38 @@ public abstract class CRUDTraspRientInventarioBP<
         }
     }
 
-    private void rimuoviBeneDaCollection(
-            Doc_trasporto_rientroBulk doc,
-            InventarioDocTRBulk bene) {
-
+    private void rimuoviBeneDaCollection(Doc_trasporto_rientroBulk doc, InventarioDocTRBulk bene) {
         if (doc == null || doc.getDoc_trasporto_rientro_dettColl() == null) {
             return;
         }
-
         doc.getDoc_trasporto_rientro_dettColl().removeIf(obj ->
                 obj instanceof Doc_trasporto_rientro_dettBulk
-                        && stessoBene((Doc_trasporto_rientro_dettBulk) obj, bene)
-        );
+                        && stessoBene((Doc_trasporto_rientro_dettBulk) obj, bene));
     }
 
     private boolean beneNelDettaglio(InventarioDocTRBulk bene) {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null || doc.getDoc_trasporto_rientro_dettColl() == null) {
             return false;
         }
-
         for (Object obj : doc.getDoc_trasporto_rientro_dettColl()) {
             if (obj instanceof Doc_trasporto_rientro_dettBulk
                     && stessoBene((Doc_trasporto_rientro_dettBulk) obj, bene)) {
                 return true;
             }
         }
-
         return false;
     }
 
-    private boolean stessoBene(
-            Doc_trasporto_rientro_dettBulk dettaglio,
-            InventarioDocTRBulk bene) {
-
+    private boolean stessoBene(Doc_trasporto_rientro_dettBulk dettaglio, InventarioDocTRBulk bene) {
         if (dettaglio == null || bene == null || bene.getProgressivo() == null) {
             return false;
         }
-
         return Objects.equals(dettaglio.getNr_inventario(), bene.getNr_inventario())
-                && Objects.equals(
-                dettaglio.getProgressivo(),
-                bene.getProgressivo().intValue()
-        );
+                && Objects.equals(dettaglio.getProgressivo(), bene.getProgressivo().intValue());
     }
 
-    private void assegnaFileUploadato(
-            ActionContext context,
-            Doc_trasporto_rientroBulk doc) {
-
+    private void assegnaFileUploadato(ActionContext context, Doc_trasporto_rientroBulk doc) {
         if (!(context instanceof HttpActionContext)
                 || doc == null
                 || doc.getArchivioAllegati() == null) {
@@ -2012,17 +1647,13 @@ public abstract class CRUDTraspRientInventarioBP<
         }
 
         it.cnr.jada.util.upload.UploadedFile uploadedFile =
-                ((HttpActionContext) context)
-                        .getMultipartParameter("main.ArchivioAllegati.file");
+                ((HttpActionContext) context).getMultipartParameter("main.ArchivioAllegati.file");
 
-        if (uploadedFile == null
-                || uploadedFile.getName() == null
-                || uploadedFile.getName().isEmpty()) {
+        if (uploadedFile == null || uploadedFile.getName() == null || uploadedFile.getName().isEmpty()) {
             return;
         }
 
-        doc.getArchivioAllegati()
-                .stream()
+        doc.getArchivioAllegati().stream()
                 .filter(a -> a.isToBeCreated() && a.getFile() == null)
                 .findFirst()
                 .ifPresent(a -> {
@@ -2032,22 +1663,17 @@ public abstract class CRUDTraspRientInventarioBP<
                 });
     }
 
-    private void validaAllegati(Doc_trasporto_rientroBulk doc)
-            throws ValidationException {
-
+    private void validaAllegati(Doc_trasporto_rientroBulk doc) throws ValidationException {
         if (doc.getArchivioAllegati() == null) {
             return;
         }
-
         for (AllegatoGenericoBulk allegato : doc.getArchivioAllegati()) {
             allegato.validate();
         }
     }
 
     @Override
-    public void update(ActionContext context)
-            throws BusinessProcessException {
-
+    public void update(ActionContext context) throws BusinessProcessException {
         try {
             Doc_trasporto_rientroBulk doc = getDoc();
 
@@ -2062,60 +1688,74 @@ public abstract class CRUDTraspRientInventarioBP<
 
             doc.setToBeUpdated();
 
-            Doc_trasporto_rientroBulk docAggiornato =
-                    (Doc_trasporto_rientroBulk) createComponentSession()
-                            .modificaConBulk(
-                                    context.getUserContext(),
-                                    doc
-                            );
+            Doc_trasporto_rientroBulk docAggiornato = (Doc_trasporto_rientroBulk)
+                    createComponentSession().modificaConBulk(context.getUserContext(), doc);
 
             setModel(context, docAggiornato);
             setSkipAllegatiReload(false);
 
-            getComp().archiviaAllegatiDocTR(
-                    context.getUserContext(),
-                    docAggiornato
-            );
+            getComp().archiviaAllegatiDocTR(context.getUserContext(), docAggiornato);
 
             commitUserTransaction();
-
             setMessage("Documento salvato correttamente.");
 
         } catch (ApplicationException e) {
             rollbackUserTransaction();
             throw new BusinessProcessException(e);
-
         } catch (Exception e) {
             rollbackUserTransaction();
             throw handleException(e);
         }
     }
 
-    private void validaUpdate(Doc_trasporto_rientroBulk doc)
-            throws BusinessProcessException {
-
+    private void validaUpdate(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
         if (doc == null) {
             throw new BusinessProcessException("Modello non disponibile.");
         }
-
         if (doc.isAnnullato() || doc.isDefinitivo()) {
             throw new BusinessProcessException("Documento non modificabile.");
         }
-
         if (doc.isInAttesaDiFirma()) {
-            throw new BusinessProcessException(
-                    "Documento in attesa di firma: allegati non modificabili."
-            );
+            throw new BusinessProcessException("Documento in attesa di firma: allegati non modificabili.");
         }
-
         if (doc.isFirmatoDaCompletare() && !isAllegatiModificabili()) {
             throw new BusinessProcessException("Allegati non modificabili.");
         }
+        if (doc.isFirmatoDaCompletare()) {
+            validaFirmatoPresente(doc);
+        }
     }
 
-    public void salvaDefinitivo(ActionContext context)
-            throws BusinessProcessException {
+    /** Il documento firmato deve mantenere un unico allegato FIRMATO attivo. */
+    private void validaFirmatoPresente(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
+        String aspectFirmato = getAspectFirmato(doc);
+        if (aspectFirmato == null || doc.getArchivioAllegati() == null) {
+            throw new BusinessProcessException("Documento firmato privo del file FIRMATO: impossibile salvare.");
+        }
 
+        boolean firmatoAttivo = false;
+        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
+            if (!(a instanceof AllegatoDocTraspRientroBulk)) continue;
+            AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
+            if (!aspectFirmato.equals(allegato.getAspectName())) continue;
+
+            if (allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
+                if (allegato.getStorageKey() != null) {
+                    throw new BusinessProcessException(
+                            "Il file FIRMATO non può essere eliminato da un documento firmato.");
+                }
+            } else {
+                firmatoAttivo = true;
+            }
+        }
+
+        if (!firmatoAttivo) {
+            throw new BusinessProcessException(
+                    "Documento firmato privo del file FIRMATO: caricare la copia firmata prima di salvare.");
+        }
+    }
+
+    public void salvaDefinitivo(ActionContext context) throws BusinessProcessException {
         try {
             Doc_trasporto_rientroBulk doc = getDoc();
 
@@ -2127,7 +1767,6 @@ public abstract class CRUDTraspRientInventarioBP<
 
             assegnaFileUploadato(context, doc);
             validaAllegati(doc);
-
             getComp().validaAggiuntaAllegatoFirmato(doc);
 
             doc.setToBeUpdated();
@@ -2137,17 +1776,13 @@ public abstract class CRUDTraspRientInventarioBP<
             setModel(context, doc);
             setSkipAllegatiReload(false);
 
-            getComp().archiviaAllegatiDocTR(
-                    context.getUserContext(),
-                    doc
-            );
+            getComp().archiviaAllegatiDocTR(context.getUserContext(), doc);
 
             doc.setStato(Doc_trasporto_rientroBulk.STATO_DEFINITIVO);
             doc.setCrudStatus(OggettoBulk.NORMAL);
 
             setStatus(VIEW);
             commitUserTransaction();
-
             setMessage("Documento salvato in stato DEFINITIVO.");
 
         } catch (ComponentException | RemoteException | ValidationException e) {
@@ -2156,33 +1791,21 @@ public abstract class CRUDTraspRientInventarioBP<
         }
     }
 
-    private void validaSalvaDefinitivo(Doc_trasporto_rientroBulk doc)
-            throws BusinessProcessException {
-
+    private void validaSalvaDefinitivo(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
         if (doc == null) {
             throw new BusinessProcessException("Modello non disponibile.");
         }
-
         if (doc.isAnnullato()) {
-            throw new BusinessProcessException(
-                    "Documento annullato: impossibile salvare definitivo."
-            );
+            throw new BusinessProcessException("Documento annullato: impossibile salvare definitivo.");
         }
-
         if (doc.isDefinitivo()) {
             throw new BusinessProcessException("Documento già definitivo.");
         }
-
         if (doc.getDataFirma() == null) {
-            throw new BusinessProcessException(
-                    "Documento non ancora firmato: impossibile salvare definitivo."
-            );
+            throw new BusinessProcessException("Documento non ancora firmato: impossibile salvare definitivo.");
         }
-
         if (doc.isInAttesaDiFirma()) {
-            throw new BusinessProcessException(
-                    "Documento ancora in attesa di firma."
-            );
+            throw new BusinessProcessException("Documento ancora in attesa di firma.");
         }
     }
 
@@ -2191,16 +1814,13 @@ public abstract class CRUDTraspRientInventarioBP<
         if (isViewing()) {
             return false;
         }
-
         if (isDocumentoFirmatoDaCompletare()) {
             return true;
         }
-
         if (isDocumentoNonModificabile()) {
             return false;
         }
-
-        return !isViewing() && super.isEditable();
+        return super.isEditable();
     }
 
     @Override
@@ -2212,9 +1832,7 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     public boolean isAnagraficiReadonly() {
-        return isTestataEDettagliBloccati()
-                || isViewing()
-                || (!isInserting() && !isEditing());
+        return isTestataEDettagliBloccati() || isViewing() || (!isInserting() && !isEditing());
     }
 
     @Override
@@ -2224,11 +1842,7 @@ public abstract class CRUDTraspRientInventarioBP<
         if (doc == null || isViewing()) {
             return false;
         }
-
-        if (doc.isDefinitivo()
-                || doc.isAnnullato()
-                || doc.isInAttesaDiFirma()
-                || doc.isInviatoInFirma()) {
+        if (doc.isDefinitivo() || doc.isAnnullato() || doc.isInAttesaDiFirma() || doc.isInviatoInFirma()) {
             return false;
         }
 
@@ -2240,83 +1854,67 @@ public abstract class CRUDTraspRientInventarioBP<
     @Override
     public boolean isSaveButtonHidden() {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null) {
             return false;
         }
-
-        if (doc.isDefinitivo()
-                || doc.isAnnullato()
-                || doc.isInAttesaDiFirma()
-                || doc.isInviatoInFirma()) {
+        if (doc.isDefinitivo() || doc.isAnnullato() || doc.isInAttesaDiFirma() || doc.isInviatoInFirma()) {
             return true;
         }
-
         if (isAllegatiModificabili()) {
             return false;
         }
-
         return doc.getCrudStatus() == OggettoBulk.TO_BE_CREATED;
     }
 
     public boolean isSalvaDefinitivoButtonHidden() {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null || doc.getPgDocTrasportoRientro() == null) {
             return true;
         }
-
         if (doc.isDefinitivo() || doc.isAnnullato()) {
             return true;
         }
-
         return !doc.isFirmatoDaCompletare();
     }
 
     public boolean isSalvaDefinitivoButtonEnabled() {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null || isViewing()) {
             return false;
         }
-
         if (doc.isAnnullato() || doc.isDefinitivo()) {
             return false;
         }
-
         return doc.isFirmatoDaCompletare()
                 && doc.hasDettagli()
                 && hasAllegatoFirmato()
                 && (isEditing() || isInserting());
     }
 
+    /**
+     * Il tab Allegati è accessibile (in sola lettura se non firmato da completare)
+     * da quando il documento è inviato in firma in poi.
+     */
     public boolean isAllegatiAccessibili() {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null || doc.getPgDocTrasportoRientro() == null) {
             return false;
         }
-
-        if (doc.isInAttesaDiFirma()) {
-            return false;
-        }
-
-        return doc.isFirmatoDaCompletare()
+        return doc.isInviatoInFirma()
+                || doc.isInAttesaDiFirma()
+                || doc.isFirmatoDaCompletare()
                 || doc.isDefinitivo()
                 || doc.isAnnullato();
     }
 
     public boolean isAllegatiModificabili() {
         Doc_trasporto_rientroBulk doc = getDoc();
-
         if (doc == null || isViewing()) {
             return false;
         }
-
         if (doc.isAnnullato() || doc.isDefinitivo()) {
             return false;
         }
-
         return doc.isFirmatoDaCompletare();
     }
 
@@ -2324,5 +1922,4 @@ public abstract class CRUDTraspRientInventarioBP<
     protected boolean isChildGrowable(boolean isGrowable) {
         return isAllegatiModificabili();
     }
-
 }

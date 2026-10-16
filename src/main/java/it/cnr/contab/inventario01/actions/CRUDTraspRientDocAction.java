@@ -4,6 +4,7 @@ import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
+import it.cnr.contab.inventario01.bp.SelezionatoreBeniTrasportoRientroBP;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.bulk.Stampa_doc_trasporto_rientroBulk;
@@ -13,10 +14,7 @@ import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
 import it.cnr.jada.action.HookForward;
-import it.cnr.jada.bulk.BulkList;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.bulk.SimpleBulkList;
-import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.RemoteIterator;
@@ -97,8 +95,8 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                  * - dopo firma: STATO = INS, STATO_FLUSSO = FIR, DATA_FIRMA valorizzata
                  * - oppure se il documento è definitivo
                  */
-                if (!doc.isDefinitivo() && !bp.isDocumentoFirmatoDaCompletare()) {
-                    bp.setMessage("Il tab Allegati sarà disponibile solo dopo la firma del documento.");
+                if (!bp.isAllegatiAccessibili()) {
+                    bp.setMessage("Il tab Allegati sarà disponibile solo dopo l'invio del documento in firma.");
                     return context.findDefaultForward();
                 }
 
@@ -196,7 +194,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bp.getModel();
             CompoundFindClause clauses = (CompoundFindClause) fwd.getParameter("filter");
             bp.setClauses(clauses);
-            context.addHookForward("filter", this, getSelezionaMethod());
+
             SimpleBulkList selezionati = getComponentSession(bp).selezionati(context.getUserContext(), doc);
             RemoteIterator ri = getListaBeni(context, bp, doc, selezionati, clauses);
             ri = EJBCommonServices.openRemoteIterator(context, ri);
@@ -205,9 +203,18 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 EJBCommonServices.closeRemoteIterator(context, ri);
                 return context.findDefaultForward();
             }
-            SelezionatoreListaBP slbp = select(context, ri, it.cnr.jada.bulk.BulkInfo.getBulkInfo(InventarioDocTRBulk.class), null, getSelezionaMethod(), null, bp);
+
+            SelezionatoreBeniTrasportoRientroBP slbp =
+                    (SelezionatoreBeniTrasportoRientroBP) context.createBusinessProcess("SelezionatoreBeniTrRi");
+            slbp.setSelectionListener(context, bp);
+            slbp.setIterator(context, ri);
+            slbp.setBulkInfo(BulkInfo.getBulkInfo(InventarioDocTRBulk.class));
+            slbp.setColumns(BulkInfo.getBulkInfo(InventarioDocTRBulk.class)
+                    .getColumnFieldPropertyDictionary(bp.getColumnSetSelezionatore()));
             slbp.setMultiSelection(true);
-            return slbp;
+
+            context.addHookForward("seleziona", this, getSelezionaMethod());
+            return context.addBusinessProcess(slbp);
         } catch (Throwable e) {
             return handleException(context, e);
         }

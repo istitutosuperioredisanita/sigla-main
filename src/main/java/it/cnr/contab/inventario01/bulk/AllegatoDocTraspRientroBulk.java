@@ -4,6 +4,7 @@ import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.ValidationException;
+import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.si.spring.storage.annotation.StoragePolicy;
 import it.cnr.si.spring.storage.annotation.StorageProperty;
 
@@ -27,18 +28,72 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 
 	public abstract void setAspectName(String aspectName);
 
-    @StorageProperty(name = "cmis:secondaryObjectTypeIds")
-    public List<String> getAspect() {
-        List<String> results = new ArrayList<>();
-        results.add("P:cm:titled");
+	/** Aspect "Altro" (selezionabile dall'utente). */
+	public abstract String getAspectAltroName();
 
-        if (getAspectName() != null && !getAspectName().trim().isEmpty()) {
-            results.add(getAspectName().trim());
-        }
+	/** Aspect del documento firmato (selezionabile dall'utente come "Documento di Trasporto/Rientro"). */
+	public abstract String getAspectFirmatoName();
 
-        return results;
-    }
+	/** Aspect del PDF generato all'invio in firma. NON è selezionabile dall'utente. */
+	public abstract String getAspectDaFirmareName();
 
+	/** Etichette di tutti gli aspect (menu + aspect di sistema), usate solo per la visualizzazione. */
+	protected abstract OrderedHashtable getEtichetteAspect();
+
+	/** True se l'allegato è il PDF "da firmare" generato dal sistema. */
+	public boolean isAspectDaFirmare() {
+		String aspect = getAspectName();
+		return aspect != null && aspect.equals(getAspectDaFirmareName());
+	}
+
+	/** True se l'allegato è il documento firmato. */
+	public boolean isAspectFirmato() {
+		String aspect = getAspectName();
+		return aspect != null && aspect.equals(getAspectFirmatoName());
+	}
+
+	/** Etichetta leggibile dell'aspect, valida anche per l'aspect "da firmare". */
+	public String getAspectNameLabel() {
+		String aspect = getAspectName();
+		if (aspect == null) {
+			return null;
+		}
+		Object label = getEtichetteAspect().get(aspect);
+		return label != null ? label.toString() : aspect;
+	}
+
+	/**
+	 * Metodo chiamato da JADA (tramite XML) per popolare il menu a tendina.
+	 * È dinamico, usa ESCLUSIVAMENTE la mappa delle etichette (etichetteAspect)
+	 * e si basa sui metodi astratti delle classi figlie. Nessuna stringa hardcoded.
+	 */
+	public OrderedHashtable getAspectNamesKeys() {
+		OrderedHashtable keys = new OrderedHashtable();
+
+		if (isAspectDaFirmare()) {
+			keys.put(getAspectDaFirmareName(), getEtichetteAspect().get(getAspectDaFirmareName()));
+		} else if (isAspectFirmato()) {
+			keys.put(getAspectFirmatoName(), getEtichetteAspect().get(getAspectFirmatoName()));
+		} else {
+			// Nuovo allegato (inserimento manuale) o allegato vecchio
+			keys.put(getAspectAltroName(), getEtichetteAspect().get(getAspectAltroName()));
+			keys.put(getAspectFirmatoName(), getEtichetteAspect().get(getAspectFirmatoName()));
+		}
+
+		return keys;
+	}
+
+	@StorageProperty(name = "cmis:secondaryObjectTypeIds")
+	public List<String> getAspect() {
+		List<String> results = new ArrayList<>();
+		results.add("P:cm:titled");
+
+		if (getAspectName() != null && !getAspectName().trim().isEmpty()) {
+			results.add(getAspectName().trim());
+		}
+
+		return results;
+	}
 
 	@Override
 	@StoragePolicy(name="P:cm:titled", property=@StorageProperty(name="cm:description"))
@@ -61,7 +116,6 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 	public void setNome(String nome) {
 		super.setNome(nome);
 	}
-
 
 	@StoragePolicy(
 			name = "P:sigla_commons_aspect:utente_applicativo_sigla",
@@ -87,17 +141,25 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 		return !this.isToBeCreated();
 	}
 
-    public boolean isDescrizioneReadonly() {
-        return false;
-    }
+	/**
+	 * Se è il documento FIRMATO o DA FIRMARE, è bloccato e non modificabile.
+	 * Metodo usato dal BP per switchare sulla form readonly.
+	 */
+	public boolean isAllegatoBloccato() {
+		return isAllegatoEsistente() && (isAspectFirmato() || isAspectDaFirmare());
+	}
 
-    public boolean isAspectNameReadonly() {
-        return isAllegatoEsistente();
-    }
+	public boolean isDescrizioneReadonly() {
+		return isAllegatoBloccato();
+	}
 
-    public boolean isFileReadonly() {
-        return isAllegatoEsistente();
-    }
+	public boolean isAspectNameReadonly() {
+		return isAllegatoEsistente();
+	}
+
+	public boolean isFileReadonly() {
+		return isAllegatoEsistente();
+	}
 
 	@Override
 	public void validate() throws ValidationException {

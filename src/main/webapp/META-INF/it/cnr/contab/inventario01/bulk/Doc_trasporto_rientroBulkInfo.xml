@@ -321,7 +321,7 @@
             inputType="ROTEXT"
             maxLength="8"
             inputSize="8"
-            label="Cod. responsabile firma" />
+            label="Cod. responsabile struttura" />
 
     <!-- ============================================ -->
     <!-- FORM FIELD PROPERTIES -->

@@ -5,14 +5,16 @@ import it.cnr.jada.util.OrderedHashtable;
 public class AllegatoDocumentoRientroBulk extends AllegatoDocTraspRientroBulk {
 	private static final long serialVersionUID = 1L;
 
-    public static final OrderedHashtable aspectNamesKeys = new OrderedHashtable();
+	public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO = "P:sigla_docrientro_attachment:altro";
+	public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO = "P:sigla_docrientro_attachment:docrientro_firmato";
+	public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_DA_FIRMARE = "P:sigla_docrientro_attachment:docrientro_da_firmare";
 
-    public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO = "P:sigla_docrientro_attachment:altro";
-    public static final String P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO = "P:sigla_docrientro_attachment:docrientro_firmato";
+	private static final OrderedHashtable etichetteAspect = new OrderedHashtable();
 
 	static {
-		aspectNamesKeys.put(P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO,"Altro");
-		aspectNamesKeys.put(P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO,"Doc. Rientro Firmato");
+		etichetteAspect.put(P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO, "Altro");
+		etichetteAspect.put(P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO, "Documento di Rientro");
+		etichetteAspect.put(P_SIGLA_DOCRIENTRO_ATTACHMENT_DA_FIRMARE, "Documento di Rientro");
 	}
 
 	private String aspectName;
@@ -29,11 +31,29 @@ public class AllegatoDocumentoRientroBulk extends AllegatoDocTraspRientroBulk {
 	public String getAspectName() {
 		return aspectName;
 	}
+
+	@Override
 	public void setAspectName(String aspectName) {
 		this.aspectName = aspectName;
 	}
 
-	public static OrderedHashtable getAspectNamesKeys() {
-		return aspectNamesKeys;
+	@Override
+	public String getAspectAltroName() {
+		return P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO;
+	}
+
+	@Override
+	public String getAspectFirmatoName() {
+		return P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
+	}
+
+	@Override
+	public String getAspectDaFirmareName() {
+		return P_SIGLA_DOCRIENTRO_ATTACHMENT_DA_FIRMARE;
+	}
+
+	@Override
+	protected OrderedHashtable getEtichetteAspect() {
+		return etichetteAspect;
 	}
 }

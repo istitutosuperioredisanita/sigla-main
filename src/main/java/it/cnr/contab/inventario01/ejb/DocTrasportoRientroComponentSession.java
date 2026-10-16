@@ -282,5 +282,17 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
 
     void caricaAllegatiDocumento(UserContext userContext,Doc_trasporto_rientroBulk doc) throws ComponentException, RemoteException;
 
+    /** Beni candidati all'inserimento nel documento, filtrati dalle clausole del selezionatore. */
+    RemoteIterator selectBeniPerInserimentoByClause(
+            UserContext userContext,
+            Doc_trasporto_rientroBulk doc,
+            CompoundFindClause clauses)
+            throws ComponentException, RemoteException;
 
+    String getEmailCreatore(UserContext userContext, Doc_trasporto_rientroBulk doc)
+            throws ComponentException, RemoteException;
+
+    void inviaNotifica(UserContext userContext, String subject, String body,
+                       java.util.List<String> destinatari)
+            throws ComponentException, java.rmi.RemoteException;
 }
