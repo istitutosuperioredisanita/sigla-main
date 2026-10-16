@@ -1,3 +1,69 @@
+## Release 8.0.37  -- _October 15, 2026_ 
+**Changes**
+
+>**fix: Evita il popup di autenticazione BASIC del browser sui 401 delle chiamate AJAX alla scadenza della sessione le risposte 401 contenevano l'header WWW-Authenticate: Basic e il browser mostrava la propria finestra di login anche per le chiamate XHR/fetch, prima che Angular potesse gestire l'errore.**
+> * `Aggiunta NoBasicPopupExtension (ServletExtension di Undertow) che rimuove l&#x27;header WWW-Authenticate dai 401 delle richieste AJAX (X-Requested-With o Accept: application/json). Registrata in META-INF/services.`
+> * `pom.xml: aggiunte undertow-core e undertow-servlet (scope provided).`
+>
+>[87c4c53e1b036d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/87c4c53e1b036d3) marco.spasiano *October 15, 2026*
+
+>**fix: calcolo acquisti per stato**
+>
+>[64b132a3899cdac](https://github.com/istitutosuperioredisanita/sigla-main/commit/64b132a3899cdac) marco.spasiano *October 15, 2026*
+
+>**fix: merge**
+>
+>[6c7bcf658359497](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c7bcf658359497) marco.spasiano *October 15, 2026*
+
+>**Contrattazione Spese: aggiunto filtro e flag approvazione singolo dettaglio**
+>
+>[5844ede038218a5](https://github.com/istitutosuperioredisanita/sigla-main/commit/5844ede038218a5) raffaele.pagano *October 15, 2026*
+
+>**fix: Contrattazione Spese: aggiunto filtro**
+>
+>[41d278b029e5cc9](https://github.com/istitutosuperioredisanita/sigla-main/commit/41d278b029e5cc9) marco.spasiano *October 15, 2026*
+
+>**PdGP Consultazioni - Nella consultazione del "PdGP per Istituto" è stata introdotta la visualizzazione delle note alla selezione dei dettagli**
+>
+>[9dc8c6671d24a0b](https://github.com/istitutosuperioredisanita/sigla-main/commit/9dc8c6671d24a0b) tomada_valentina *October 15, 2026*
+
+>**Update index.rst**
+>
+>[09b2aac05111a61](https://github.com/istitutosuperioredisanita/sigla-main/commit/09b2aac05111a61) patriziavillani *October 15, 2026*
+
+>**add: aggiunte le fatture stornate agli acquisti per stato**
+>
+>[919678510bdec4b](https://github.com/istitutosuperioredisanita/sigla-main/commit/919678510bdec4b) marco.spasiano *October 15, 2026*
+
+>**Update index.rst**
+>
+>[1805d69fd5e0f02](https://github.com/istitutosuperioredisanita/sigla-main/commit/1805d69fd5e0f02) patriziavillani *October 15, 2026*
+
+>**fix: column map e fetch policy**
+>
+>[64d5e8676018246](https://github.com/istitutosuperioredisanita/sigla-main/commit/64d5e8676018246) marco.spasiano *October 15, 2026*
+
+>**Rimosso il log Ecco**
+>
+>[05e0c6b9375ada7](https://github.com/istitutosuperioredisanita/sigla-main/commit/05e0c6b9375ada7) csalvio *October 15, 2026*
+
+>**Update index.rst**
+>
+>[218a87daf4eac38](https://github.com/istitutosuperioredisanita/sigla-main/commit/218a87daf4eac38) patriziavillani *October 15, 2026*
+
+>**Update index.rst**
+>
+>[ff25a03af8df524](https://github.com/istitutosuperioredisanita/sigla-main/commit/ff25a03af8df524) patriziavillani *October 15, 2026*
+
+>**fix: column map e fetch policy**
+>
+>[7b38643b56ea398](https://github.com/istitutosuperioredisanita/sigla-main/commit/7b38643b56ea398) marco.spasiano *October 15, 2026*
+
+>**Bumped version to 8.0.36**
+>
+>[60378d635e5d8b8](https://github.com/istitutosuperioredisanita/sigla-main/commit/60378d635e5d8b8) dirgensa *October 14, 2026*
+
+
 ## Release 8.0.36  -- _October 14, 2026_ 
 **Changes**
 
