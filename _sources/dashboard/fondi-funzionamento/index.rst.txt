@@ -1,0 +1,5 @@
+Fondi di Funzionamento
+======================
+
+Questa sezione del Dashboard analizza in modo specifico i Fondi assegnati alle strutture dell'Ente per il loro funzionamento.
+Si prende quindi in considerazione una specifica Area Progetttuale (fissata in configurazione) 
