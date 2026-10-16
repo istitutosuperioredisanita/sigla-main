@@ -584,6 +584,9 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
                         "È obbligatorio allegare il documento firmato prima di rendere definitivo il documento.");
             }
 
+            // Firma manuale: documento predisposto (stato INS, stato flusso null), il flusso diventerà FIR
+            final boolean firmaManuale = docTR.isPredispostoAllaFirma();
+
             validaAllegatiComp(docTR);
             caricaDettagliDocumento(userContext, docTR);
 
@@ -609,6 +612,10 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
             }
 
             validaDoc(userContext, docTR, true);
+            // Il firmato sostituisce il da firmare: l'eliminazione dal documentale la fa archiviaAllegatiDocTR (deleteIterator)
+            if (firmaManuale) {
+                rimuoviAllegatiDaFirmare(docTR);
+            }
 
             if (docTR.getArchivioAllegati() != null) {
                 for (AllegatoGenericoBulk allegato : docTR.getArchivioAllegati()) {
@@ -622,6 +629,12 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
             aggiornaStatoBeni(userContext, docTR, beneInIstituto);
 
             docTR.setStato(STATO_DEFINITIVO);
+            if (firmaManuale) {
+                docTR.setStatoFlusso(STATO_FLUSSO_FIRMATO);
+                if (docTR.getDataFirma() == null) {
+                    docTR.setDataFirma(new Timestamp(System.currentTimeMillis()));
+                }
+            }
             docTR.setToBeUpdated();
             preparaEAggiornaRiferimentiInversi(userContext, docTR);
 
@@ -631,6 +644,22 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
             throw new ComponentException(e.getMessage(), e);
         } catch (PersistencyException e) {
             throw new ComponentException("Errore durante il salvataggio definitivo", e);
+        }
+    }
+
+    /** Toglie dalla collection gli allegati DA_FIRMARE (finiscono nella delete list e vengono rimossi dallo storage in archiviazione). */
+    private void rimuoviAllegatiDaFirmare(Doc_trasporto_rientroBulk doc) {
+        String aspect = getAspectDaFirmare(doc);
+        if (aspect == null || doc.getArchivioAllegati() == null) {
+            return;
+        }
+        BulkList<AllegatoGenericoBulk> archivio = doc.getArchivioAllegati();
+        for (int i = archivio.size() - 1; i >= 0; i--) {
+            AllegatoGenericoBulk a = archivio.get(i);
+            if (a instanceof AllegatoDocTraspRientroBulk
+                    && aspect.equals(((AllegatoDocTraspRientroBulk) a).getAspectName())) {
+                archivio.remove(i);
+            }
         }
     }
 
@@ -932,6 +961,19 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
         return null;
     }
 
+    private String getAspectDaFirmare(Doc_trasporto_rientroBulk doc) {
+        if (doc == null || doc.getTiDocumento() == null) {
+            return null;
+        }
+        if (TRASPORTO.equals(doc.getTiDocumento())) {
+            return AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_DA_FIRMARE;
+        }
+        if (RIENTRO.equals(doc.getTiDocumento())) {
+            return AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_DA_FIRMARE;
+        }
+        return null;
+    }
+
     private int countAllegatiFirmati(Doc_trasporto_rientroBulk doc, String aspectAtteso) {
         if (doc == null || doc.getArchivioAllegati() == null || aspectAtteso == null) return 0;
         return (int) doc.getArchivioAllegati().stream()
@@ -1008,6 +1050,22 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
                 String tipo = TRASPORTO.equals(doc.getTiDocumento())
                         ? "Documento di Trasporto FIRMATO"
                         : "Documento di Rientro FIRMATO";
+                throw new ApplicationException(
+                        "Attenzione: è consentito allegare un solo " + tipo + ".");
+            }
+        }
+        String aspectDaFirmare = getAspectDaFirmare(doc);
+        if (aspectDaFirmare != null) {
+            long countDaFirmare = attivi.stream()
+                    .filter(a -> a instanceof AllegatoDocTraspRientroBulk)
+                    .map(a -> (AllegatoDocTraspRientroBulk) a)
+                    .filter(a -> aspectDaFirmare.equals(a.getAspectName()))
+                    .count();
+
+            if (countDaFirmare > 1) {
+                String tipo = TRASPORTO.equals(doc.getTiDocumento())
+                        ? "Documento di Trasporto da firmare"
+                        : "Documento di Rientro da firmare";
                 throw new ApplicationException(
                         "Attenzione: è consentito allegare un solo " + tipo + ".");
             }
@@ -2415,6 +2473,11 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
     /** Email del creatore (cd_utente_uid + dominio). Null se non risolvibile: in tal caso nessuna notifica. */
     public String getEmailCreatore(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws ComponentException {
+        if (!isGestioneInvioInFirmaAttiva(userContext)) {
+            log.debug("Gestione invio in firma non attiva: nessuna notifica al creatore del documento pg={}",
+                    doc.getPgDocTrasportoRientro());
+            return null;
+        }
         try {
             UtenteBulk utente = (UtenteBulk) getHome(userContext, UtenteBulk.class)
                     .findByPrimaryKey(new UtenteBulk(doc.getUtcr()));
@@ -3665,12 +3728,14 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
             if (tipo == null) continue;
             if (allegato instanceof AllegatoDocumentoTrasportoBulk
                     && (tipo.equals(AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO)
+                    || tipo.equals(AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_DA_FIRMARE)
                     || tipo.equals(AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO))) {
                 allegato.setAspectName(tipo);
                 return;
             }
             if (allegato instanceof AllegatoDocumentoRientroBulk
                     && (tipo.equals(AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO)
+                    || tipo.equals(AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_DA_FIRMARE)
                     || tipo.equals(AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO))) {
                 allegato.setAspectName(tipo);
                 return;
@@ -3815,7 +3880,18 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
     public void inviaNotifica(UserContext userContext, String subject, String body,
                               java.util.List<String> destinatari) throws ComponentException {
+        if (!isGestioneInvioInFirmaAttiva(userContext)) {
+            return;
+        }
         SendMail.sendMail(subject, body, destinatari);
     }
 
+    /** Gestione invio in firma attiva da configurazione (il profilo iss è già garantito dai service che chiamano questi metodi). */
+    private boolean isGestioneInvioInFirmaAttiva(UserContext userContext) throws ComponentException {
+        try {
+            return Utility.createConfigurazioneCnrComponentSession().isGestioneInvioInFirmaDocTRAttivo(userContext);
+        } catch (RemoteException e) {
+            throw handleException(e);
+        }
+    }
 }

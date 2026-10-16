@@ -119,12 +119,16 @@ function doStampaDocTraspRient() {
     <% if (bp.isDestinazioneVisible()) { %>
       <tr>
         <td><% bp.getController().writeFormLabel(out,"destinazione"); %></td>
-        <td colspan="3"><% bp.getController().writeFormInput(out,"destinazione"); %></td>
+        <td colspan="3">
+                <% bp.getController().writeFormInput(out, null, "destinazione", bp.isTestataEDettagliBloccati(), null, null); %>
+        </td>
       </tr>
 
       <tr>
         <td valign="top"><% bp.getController().writeFormLabel(out,"indirizzo"); %></td>
-        <td colspan="3"><% bp.getController().writeFormInput(out,"indirizzo"); %></td>
+        <td colspan="3">
+                <% bp.getController().writeFormInput(out, null, "indirizzo", bp.isTestataEDettagliBloccati(), null, null); %>
+        </td>
       </tr>
     <% } %>
 
@@ -144,7 +148,7 @@ function doStampaDocTraspRient() {
       <tr>
         <td><% bp.getController().writeFormLabel(out,"nominativoVettore"); %></td>
         <td colspan="3">
-          <% bp.getController().writeFormInput(out, null, "nominativoVettore", false, null, null); %>
+            <% bp.getController().writeFormInput(out, null, "nominativoVettore", bp.isTestataEDettagliBloccati(), null, null); %>        </td>
         </td>
       </tr>
     <% } %>
@@ -153,7 +157,9 @@ function doStampaDocTraspRient() {
     <% if (bp.isNoteAbilitate()) { %>
       <tr>
         <td valign="top"><% bp.getController().writeFormLabel(out,"note"); %></td>
-        <td colspan="3"><% bp.getController().writeFormInput(out,"note"); %></td>
+        <td colspan="3">
+            <% bp.getController().writeFormInput(out, null, "note", bp.isTestataEDettagliBloccati(), null, null); %>
+        </td>
       </tr>
     <% } %>
 

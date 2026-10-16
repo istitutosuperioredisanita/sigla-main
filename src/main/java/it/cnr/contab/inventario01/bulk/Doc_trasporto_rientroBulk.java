@@ -432,7 +432,8 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
                 && !isAnnullato()
                 && !isDefinitivo()
                 && !isInAttesaDiFirma()
-                && !isFirmatoDaCompletare();
+                && !isFirmatoDaCompletare()
+                && !isPredispostoAllaFirma();
     }
 
     public boolean isAnnullabile() {
@@ -543,6 +544,35 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
         setDataInvioFirma(now());
         setDataFirma(null);
         setNoteRifiuto(null);
+    }
+
+    /**
+     * Firma manuale: il documento resta nello stato INSERITO. Lo stato flusso non si tocca (null),
+     * nessun UUID e nessuna data firma; la DATA_INVIO_FIRMA marca la predisposizione.
+     */
+    public void inizializzaPerPredisposizioneFirma() {
+        setStato(STATO_INSERITO);
+        setStatoFlusso(null);
+        setUuidFlussoAutorizzativo(null);
+        setDataInvioFirma(now());
+        setDataFirma(null);
+        setNoteRifiuto(null);
+    }
+
+    /**
+     * Firma manuale: documento predisposto alla firma. Stato INSERITO, stato flusso null, nessun UUID,
+     * DATA_INVIO_FIRMA valorizzata (quando è stato salvato il documento da firmare).
+     */
+    public boolean isPredispostoAllaFirma() {
+        return isInserito()
+                && getStatoFlusso() == null
+                && getUuidFlussoAutorizzativo() == null
+                && getDataInvioFirma() != null;
+    }
+
+    /** Testata/dettagli bloccati, allegati modificabili, salvabile come definitivo (firma da workflow o manuale). */
+    public boolean isFirmaCompletabile() {
+        return isFirmatoDaCompletare() || isPredispostoAllaFirma();
     }
 
     public void aggiornaDopoFirmaCompletata() {

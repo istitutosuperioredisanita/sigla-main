@@ -96,18 +96,16 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                  * - oppure se il documento è definitivo
                  */
                 if (!bp.isAllegatiAccessibili()) {
-                    bp.setMessage("Il tab Allegati sarà disponibile solo dopo l'invio del documento in firma.");
+                    bp.setMessage(bp.getMessaggioAllegatiNonAccessibili());
                     return context.findDefaultForward();
                 }
 
                 /*
-                 * CASO DOCUMENTO FIRMATO MA NON DEFINITIVO.
-                 *
-                 * Qui bisogna forzare davvero la modalità EDIT,
-                 * altrimenti il controller standard degli allegati lascia disabilitati
-                 * i pulsanti di aggiunta/eliminazione.
+                 * Allegati modificabili (firmato da completare, predisposto alla firma, oppure firma manuale
+                 * con documento salvato): forzare la modalità EDIT, altrimenti il controller standard degli
+                 * allegati lascia disabilitati i pulsanti di aggiunta/eliminazione.
                  */
-                if (bp.isDocumentoFirmatoDaCompletare()) {
+                if (bp.isAllegatiModificabili()) {
                     bp.setStatus(CRUDTraspRientInventarioBP.EDIT);
 
                     if (doc.getCrudStatus() == OggettoBulk.NORMAL) {
@@ -409,6 +407,23 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
+    /** Firma manuale: salva il documento da firmare (stato resta INSERITO, stato flusso invariato, DATA_INVIO_FIRMA = now). */
+    public Forward doPredisponiAllaFirma(ActionContext context) {
+        try {
+            fillModel(context);
+            CRUDTraspRientInventarioBP bp = getBP(context);
+
+            bp.setSkipAllegatiReload(true);
+            try {
+                bp.predisponiAllaFirma(context);
+                return context.findDefaultForward();
+            } finally {
+                bp.setSkipAllegatiReload(false);
+            }
+        } catch (Throwable e) {
+            return handleException(context, e);
+        }
+    }
 
     /**
      * Esegue l'annullamento del documento se non ancora inviato alla firma o già annullato.

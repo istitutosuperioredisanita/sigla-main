@@ -40,6 +40,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -307,7 +308,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
     private boolean validaAccessoTabAllegati(Doc_trasporto_rientroBulk doc) {
         if (!isAllegatiAccessibili()) {
-            setErrorMessage("Il tab Allegati sarà disponibile solo dopo l'invio del documento in firma.");
+            setErrorMessage(getMessaggioAllegatiNonAccessibili());
             return false;
         }
 
@@ -389,8 +390,27 @@ public abstract class CRUDTraspRientInventarioBP<
         return getDoc() != null && getDoc().isInAttesaDiFirma();
     }
 
+    /**
+     * Fase finale del documento: testata e dettagli bloccati, allegati modificabili, salvabile come definitivo.
+     * Vale sia per il firmato da workflow sia per il documento predisposto manualmente alla firma.
+     */
     public boolean isDocumentoFirmatoDaCompletare() {
-        return getDoc() != null && getDoc().isFirmatoDaCompletare();
+        return getDoc() != null && getDoc().isFirmaCompletabile();
+    }
+
+    public boolean isDocumentoPredispostoAllaFirma() {
+        return getDoc() != null && getDoc().isPredispostoAllaFirma();
+    }
+
+    /** Nessun workflow di firma: l'utente carica a mano il documento da firmare e poi quello firmato. */
+    public boolean isFirmaManuale() {
+        return !isGestioneInvioInFirmaAttiva();
+    }
+
+    public String getMessaggioAllegatiNonAccessibili() {
+        return isFirmaManuale()
+                ? "Il tab Allegati sarà disponibile dopo aver salvato il documento con almeno un bene."
+                : "Il tab Allegati sarà disponibile solo dopo l'invio del documento in firma.";
     }
 
     /** Testata e dettagli sono bloccati. Non usarlo per decidere la modificabilità degli allegati. */
@@ -404,7 +424,7 @@ public abstract class CRUDTraspRientInventarioBP<
                 || doc.isAnnullato()
                 || doc.isDefinitivo()
                 || doc.isInAttesaDiFirma()
-                || doc.isFirmatoDaCompletare()
+                || doc.isFirmaCompletabile()
                 || doc.isInviatoInFirma();
     }
 
@@ -425,7 +445,8 @@ public abstract class CRUDTraspRientInventarioBP<
     @Override
     protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
         if (!isAllegatiModificabili()) return false;
-        // Il FIRMATO già archiviato non può essere eliminato: il documento deve restare firmato
+        if (isFirmaManuale()) return true;
+        // Il FIRMATO già archiviato (flusso workflow) non può essere eliminato: il documento deve restare firmato
         if (allegato != null
                 && allegato.getCrudStatus() != OggettoBulk.TO_BE_CREATED
                 && isAllegatoFirmato(allegato)) {
@@ -503,7 +524,8 @@ public abstract class CRUDTraspRientInventarioBP<
             return false;
         }
 
-        if (doc.isAnnullato() || doc.isInviatoInFirma()) {
+        // Stesse condizioni di doElimina: annullato, inviato in firma, oppure firmato (DATA_FIRMA valorizzata)
+        if (doc.isAnnullato() || doc.isInviatoInFirma() || doc.getDataFirma() != null) {
             return true;
         }
 
@@ -630,6 +652,7 @@ public abstract class CRUDTraspRientInventarioBP<
                 Arrays.stream(super.createToolbar()),
                 Stream.of(
                         new Button(props, "CRUDToolbar.inviaInFirma"),
+                        new Button(props, "CRUDToolbar.predisponiFirma"),
                         new Button(props, "CRUDToolbar.salvaDefinitivo"),
                         new Button(props, "CRUDToolbar.stampaDoc")
                 )
@@ -649,6 +672,42 @@ public abstract class CRUDTraspRientInventarioBP<
                 || doc == null
                 || (status != OggettoBulk.NORMAL && status != OggettoBulk.TO_BE_UPDATED)
                 || !doc.isInviabileAllaFirma();
+    }
+
+    /** Visibile finché il documento non è predisposto (cioè finché non è stato salvato il documento da firmare). */
+    public boolean isPredisponiFirmaButtonHidden() {
+        Doc_trasporto_rientroBulk doc = getDoc();
+        return !isFirmaManuale()
+                || doc == null
+                || doc.isTemporaneo()
+                || !doc.isInserito()
+                || doc.isPredispostoAllaFirma()
+                || !hasBeniSalvati(doc);
+    }
+
+    /** Cliccabile solo con l'allegato "Documento di Trasporto/Rientro" (da firmare) presente. */
+    public boolean isPredisponiFirmaButtonEnabled() {
+        return !isPredisponiFirmaButtonHidden()
+                && (isEditing() || isInserting())
+                && hasAllegatoDocumentoDaFirmare();
+    }
+
+    /** Prima della predisposizione il "Documento di T/R" scelto dal menu (chiave FIRMATO) è il da firmare. */
+    private boolean hasAllegatoDocumentoDaFirmare() {
+        Doc_trasporto_rientroBulk doc = getDoc();
+        if (doc == null || doc.getArchivioAllegati() == null) {
+            return false;
+        }
+        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
+            if (a instanceof AllegatoDocTraspRientroBulk) {
+                AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
+                if (allegato.isAspectDaFirmare()
+                        || (allegato.isToBeCreated() && allegato.isAspectFirmato())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isInviaInFirmaButtonEnabled() {
@@ -839,6 +898,70 @@ public abstract class CRUDTraspRientInventarioBP<
             throw handleException(e);
         }
     }
+
+    /** Firma manuale: verifica il documento da firmare e salva. Stato INS, stato flusso null, DATA_INVIO_FIRMA = now. */
+    public void predisponiAllaFirma(ActionContext context) throws BusinessProcessException {
+        Doc_trasporto_rientroBulk doc = getDoc();
+
+        validaPredisposizione(doc);
+        assegnaAspectAllegatiManuali(doc);
+        validaAllegatoDaFirmare(doc);
+
+        update(context);
+
+        setMessage("Documento predisposto alla firma. Caricare il documento firmato e premere Salva Definitivo.");
+    }
+
+    private void validaPredisposizione(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
+        if (doc == null) {
+            throw new BusinessProcessException("Modello non disponibile.");
+        }
+        if (!isFirmaManuale()) {
+            throw new BusinessProcessException("La predisposizione alla firma è prevista solo senza invio in firma automatico.");
+        }
+        if (doc.isTemporaneo()) {
+            throw new BusinessProcessException("Salvare il documento prima di predisporlo alla firma.");
+        }
+        if (!doc.isInserito()) {
+            throw new BusinessProcessException("Il documento deve essere in stato INSERITO per essere predisposto alla firma.");
+        }
+        if (doc.isPredispostoAllaFirma()) {
+            throw new BusinessProcessException("Il documento è già predisposto alla firma.");
+        }
+        if (!hasBeniSalvati(doc)) {
+            throw new BusinessProcessException("Il documento deve contenere almeno un bene salvato.");
+        }
+    }
+
+    /** Deve esserci esattamente un allegato "Documento di T/R" da firmare. */
+    private void validaAllegatoDaFirmare(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
+        int count = 0;
+        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
+            if (a instanceof AllegatoDocTraspRientroBulk && ((AllegatoDocTraspRientroBulk) a).isAspectDaFirmare()) {
+                count++;
+            }
+        }
+        String tipoDoc = TRASPORTO.equals(getTipo()) ? "Trasporto" : "Rientro";
+        if (count == 0) {
+            throw new BusinessProcessException(
+                    "Allegare il Documento di " + tipoDoc + " da firmare prima di predisporre il documento alla firma.");
+        }
+        if (count > 1) {
+            throw new BusinessProcessException("È consentito allegare un solo Documento di " + tipoDoc + " da firmare.");
+        }
+    }
+
+    /**
+     * Dopo un errore il DB è stato ripristinato dal rollback: il modello in memoria non deve restare "predisposto".
+     * Prima della predisposizione la DATA_INVIO_FIRMA è sempre null (lo garantisce validaPredisposizione).
+     */
+    private void annullaPredisposizioneInMemoria() {
+        Doc_trasporto_rientroBulk doc = getDoc();
+        if (doc != null && doc.isPredispostoAllaFirma()) {
+            doc.setDataInvioFirma(null);
+        }
+    }
+
 
     private void validaStatoPerFirma() throws BusinessProcessException {
         Doc_trasporto_rientroBulk doc = getDoc();
@@ -1674,6 +1797,10 @@ public abstract class CRUDTraspRientInventarioBP<
 
     @Override
     public void update(ActionContext context) throws BusinessProcessException {
+        Doc_trasporto_rientroBulk docPrima = getDoc();
+        Timestamp dataInvioPrec = docPrima != null ? docPrima.getDataInvioFirma() : null;
+        Timestamp dataFirmaPrec = docPrima != null ? docPrima.getDataFirma() : null;
+
         try {
             Doc_trasporto_rientroBulk doc = getDoc();
 
@@ -1684,7 +1811,10 @@ public abstract class CRUDTraspRientInventarioBP<
             }
 
             assegnaFileUploadato(context, doc);
+            assegnaAspectAllegatiManuali(doc);      // nuovo
+            validaAllegatiFirmaManuale(doc);        // nuovo
             validaAllegati(doc);
+            aggiornaDateFirmaManuale(doc);          // nuovo
 
             doc.setToBeUpdated();
 
@@ -1701,9 +1831,11 @@ public abstract class CRUDTraspRientInventarioBP<
 
         } catch (ApplicationException e) {
             rollbackUserTransaction();
+            ripristinaDateFirma(dataInvioPrec, dataFirmaPrec);
             throw new BusinessProcessException(e);
         } catch (Exception e) {
             rollbackUserTransaction();
+            ripristinaDateFirma(dataInvioPrec, dataFirmaPrec);
             throw handleException(e);
         }
     }
@@ -1718,9 +1850,10 @@ public abstract class CRUDTraspRientInventarioBP<
         if (doc.isInAttesaDiFirma()) {
             throw new BusinessProcessException("Documento in attesa di firma: allegati non modificabili.");
         }
-        if (doc.isFirmatoDaCompletare() && !isAllegatiModificabili()) {
+        if (doc.isFirmaCompletabile() && !isAllegatiModificabili()) {
             throw new BusinessProcessException("Allegati non modificabili.");
         }
+        // L'obbligo del FIRMATO attivo vale solo per la firma da workflow
         if (doc.isFirmatoDaCompletare()) {
             validaFirmatoPresente(doc);
         }
@@ -1756,6 +1889,10 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     public void salvaDefinitivo(ActionContext context) throws BusinessProcessException {
+        Doc_trasporto_rientroBulk docPrima = getDoc();
+        Timestamp dataInvioPrec = docPrima != null ? docPrima.getDataInvioFirma() : null;
+        Timestamp dataFirmaPrec = docPrima != null ? docPrima.getDataFirma() : null;
+
         try {
             Doc_trasporto_rientroBulk doc = getDoc();
 
@@ -1766,6 +1903,8 @@ public abstract class CRUDTraspRientInventarioBP<
             }
 
             assegnaFileUploadato(context, doc);
+            assegnaAspectAllegatiManuali(doc);      // nuovo
+            aggiornaDateFirmaManuale(doc);          // nuovo
             validaAllegati(doc);
             getComp().validaAggiuntaAllegatoFirmato(doc);
 
@@ -1787,6 +1926,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
         } catch (ComponentException | RemoteException | ValidationException e) {
             rollbackUserTransaction();
+            ripristinaDateFirma(dataInvioPrec, dataFirmaPrec);
             throw handleException(e);
         }
     }
@@ -1807,6 +1947,110 @@ public abstract class CRUDTraspRientInventarioBP<
         if (doc.isInAttesaDiFirma()) {
             throw new BusinessProcessException("Documento ancora in attesa di firma.");
         }
+        if (!doc.isFirmaCompletabile()) {
+            throw new BusinessProcessException(isFirmaManuale()
+                    ? "Documento non ancora predisposto alla firma: impossibile salvare definitivo."
+                    : "Documento non ancora firmato: impossibile salvare definitivo.");
+        }
+    }
+
+    /**
+     * Firma manuale: il "Documento di T/R" nuovo è il DA_FIRMARE se non c'è già un da firmare né un firmato attivi,
+     * altrimenti è il FIRMATO. Idempotente: si può richiamare più volte sullo stesso documento.
+     */
+    private void assegnaAspectAllegatiManuali(Doc_trasporto_rientroBulk doc) {
+        if (!isFirmaManuale() || doc == null || doc.getArchivioAllegati() == null) {
+            return;
+        }
+
+        boolean daFirmareOFirmatoPresente = false;
+        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
+            if (a instanceof AllegatoDocTraspRientroBulk && !a.isToBeCreated()) {
+                AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
+                if (allegato.isAspectDaFirmare() || allegato.isAspectFirmato()) {
+                    daFirmareOFirmatoPresente = true;
+                }
+            }
+        }
+
+        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
+            if (a instanceof AllegatoDocTraspRientroBulk && a.isToBeCreated()) {
+                AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
+                if (allegato.isAspectDaFirmare()) {
+                    daFirmareOFirmatoPresente = true;       // già assegnato da una chiamata precedente
+                } else if (allegato.isAspectFirmato() && !daFirmareOFirmatoPresente) {
+                    allegato.setAspectName(allegato.getAspectDaFirmareName());
+                    daFirmareOFirmatoPresente = true;
+                }
+            }
+        }
+    }
+
+    /**
+     * Firma manuale: DATA_INVIO_FIRMA = salvataggio con un nuovo da firmare; DATA_FIRMA = salvataggio con un nuovo firmato
+     * (null se non c'è più un firmato). Da chiamare dopo assegnaAspectAllegatiManuali e prima di salvare.
+     */
+    private void aggiornaDateFirmaManuale(Doc_trasporto_rientroBulk doc) {
+        if (!isFirmaManuale() || doc == null || doc.getArchivioAllegati() == null
+                || !doc.isInserito() || doc.isTemporaneo()) {
+            return;
+        }
+
+        boolean nuovoDaFirmare = false;
+        boolean nuovoFirmato = false;
+        boolean firmatoAttivo = false;
+
+        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {   // gli eliminati non sono nella collection
+            if (!(a instanceof AllegatoDocTraspRientroBulk)) continue;
+            AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
+
+            if (allegato.isAspectDaFirmare() && allegato.isToBeCreated()) {
+                nuovoDaFirmare = true;
+            }
+            if (allegato.isAspectFirmato()) {
+                firmatoAttivo = true;
+                if (allegato.isToBeCreated()) {
+                    nuovoFirmato = true;
+                }
+            }
+        }
+
+        Timestamp ora = new Timestamp(System.currentTimeMillis());
+
+        if (nuovoDaFirmare) {
+            doc.setDataInvioFirma(ora);
+        }
+        if (nuovoFirmato) {
+            doc.setDataFirma(ora);
+        } else if (!firmatoAttivo) {
+            doc.setDataFirma(null);
+        }
+    }
+
+    /** Dopo un errore il DB è stato ripristinato dal rollback: il modello in memoria torna alle date precedenti. */
+    private void ripristinaDateFirma(Timestamp dataInvioFirma, Timestamp dataFirma) {
+        Doc_trasporto_rientroBulk doc = getDoc();
+        if (doc != null) {
+            doc.setDataInvioFirma(dataInvioFirma);
+            doc.setDataFirma(dataFirma);
+        }
+    }
+
+    /** Un documento predisposto deve mantenere almeno un allegato da firmare (o il firmato). */
+    private void validaAllegatiFirmaManuale(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
+        if (!isFirmaManuale() || doc == null || !doc.isPredispostoAllaFirma()) {
+            return;
+        }
+        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
+            if (a instanceof AllegatoDocTraspRientroBulk) {
+                AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
+                if (allegato.isAspectDaFirmare() || allegato.isAspectFirmato()) {
+                    return;
+                }
+            }
+        }
+        throw new BusinessProcessException(
+                "Documento predisposto alla firma: deve restare allegato il Documento da firmare (o quello firmato).");
     }
 
     @Override
@@ -1874,7 +2118,7 @@ public abstract class CRUDTraspRientInventarioBP<
         if (doc.isDefinitivo() || doc.isAnnullato()) {
             return true;
         }
-        return !doc.isFirmatoDaCompletare();
+        return !doc.isFirmaCompletabile();
     }
 
     public boolean isSalvaDefinitivoButtonEnabled() {
@@ -1885,7 +2129,7 @@ public abstract class CRUDTraspRientInventarioBP<
         if (doc.isAnnullato() || doc.isDefinitivo()) {
             return false;
         }
-        return doc.isFirmatoDaCompletare()
+        return doc.isFirmaCompletabile()
                 && doc.hasDettagli()
                 && hasAllegatoFirmato()
                 && (isEditing() || isInserting());
@@ -1902,9 +2146,10 @@ public abstract class CRUDTraspRientInventarioBP<
         }
         return doc.isInviatoInFirma()
                 || doc.isInAttesaDiFirma()
-                || doc.isFirmatoDaCompletare()
+                || doc.isFirmaCompletabile()
                 || doc.isDefinitivo()
-                || doc.isAnnullato();
+                || doc.isAnnullato()
+                || isFirmaManualeSalvata(doc);
     }
 
     public boolean isAllegatiModificabili() {
@@ -1915,7 +2160,19 @@ public abstract class CRUDTraspRientInventarioBP<
         if (doc.isAnnullato() || doc.isDefinitivo()) {
             return false;
         }
-        return doc.isFirmatoDaCompletare();
+        return doc.isFirmaCompletabile() || isFirmaManualeSalvata(doc);
+    }
+
+    /** Firma manuale, documento già salvato con PG definitivo e ancora INSERITO (prima o dopo la predisposizione). */
+    private boolean isFirmaManualeSalvata(Doc_trasporto_rientroBulk doc) {
+        return isFirmaManuale() && doc.isInserito() && !doc.isTemporaneo();
+    }
+
+    /** Firma manuale: mostra solo data invio firma e data firma (niente UUID né stato flusso). */
+    public boolean isDateFirmaManualeVisible() {
+        Doc_trasporto_rientroBulk doc = getDoc();
+        return isFirmaManuale() && doc != null && !isInserting()
+                && (doc.getDataInvioFirma() != null || doc.getDataFirma() != null);
     }
 
     @Override

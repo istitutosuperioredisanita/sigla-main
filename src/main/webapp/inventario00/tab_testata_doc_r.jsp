@@ -92,7 +92,7 @@ function doStampaDocTraspRient() {
       <tr>
         <td><% bp.getController().writeFormLabel(out,"tipoRitiro"); %></td>
         <td colspan="3">
-          <% bp.getController().writeFormInput(out, null, "tipoRitiro", false, null, null); %>
+            <% bp.getController().writeFormInput(out, null, "tipoRitiro", bp.isAnagraficiReadonly(), null, null); %>
         </td>
       </tr>
     <% } %>
@@ -101,12 +101,12 @@ function doStampaDocTraspRient() {
     <% if (bp.isDestinazioneVisible()) { %>
         <tr>
             <td><% bp.getController().writeFormLabel(out,"destinazione"); %></td>
-            <td colspan="3"><% bp.getController().writeFormInput(out,"destinazione"); %></td>
+                <% bp.getController().writeFormInput(out, null, "destinazione", bp.isTestataEDettagliBloccati(), null, null); %>
         </tr>
 
         <tr>
             <td valign="top"><% bp.getController().writeFormLabel(out,"indirizzo"); %></td>
-            <td colspan="3"><% bp.getController().writeFormInput(out,"indirizzo"); %></td>
+                <% bp.getController().writeFormInput(out, null, "indirizzo", bp.isTestataEDettagliBloccati(), null, null); %>
         </tr>
     <% } %>
 
@@ -115,8 +115,8 @@ function doStampaDocTraspRient() {
             <td><% bp.getController().writeFormLabel(out,"findTerzoIncRitiro"); %></td>
             <td colspan="3">
                 <% bp.getController().writeFormInput(out, null, "findTerzoIncRitiro",
-                    false, null,
-                    "onChange=\"submitForm('doOnDipendenteChange')\""); %>
+                       bp.isAnagraficiReadonly(), null,
+                       "onChange=\"submitForm('doOnDipendenteChange')\""); %>
             </td>
         </tr>
     <% } %>
@@ -126,8 +126,7 @@ function doStampaDocTraspRient() {
       <tr>
         <td><% bp.getController().writeFormLabel(out,"nominativoVettore"); %></td>
         <td colspan="3">
-          <% bp.getController().writeFormInput(out, null, "nominativoVettore", false, null, null); %>
-        </td>
+            <% bp.getController().writeFormInput(out, null, "nominativoVettore", bp.isTestataEDettagliBloccati(), null, null); %>        </td>
       </tr>
     <% } %>
 
@@ -135,7 +134,7 @@ function doStampaDocTraspRient() {
     <% if (bp.isNoteAbilitate()) { %>
       <tr>
         <td valign="top"><% bp.getController().writeFormLabel(out,"note"); %></td>
-        <td colspan="3"><% bp.getController().writeFormInput(out,"note"); %></td>
+            <% bp.getController().writeFormInput(out, null, "note", bp.isTestataEDettagliBloccati(), null, null); %>
       </tr>
     <% } %>
 
