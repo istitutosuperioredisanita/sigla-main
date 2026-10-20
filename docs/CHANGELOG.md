@@ -1,3 +1,15 @@
+## Release 8.0.38  -- _October 20, 2026_ 
+**Changes**
+
+>**Contrattazione Spese: fix anomalie varie**
+>
+>[dc0a4f123538812](https://github.com/istitutosuperioredisanita/sigla-main/commit/dc0a4f123538812) raffaele.pagano *October 20, 2026*
+
+>**Bumped version to 8.0.37**
+>
+>[9a1a238b36421fa](https://github.com/istitutosuperioredisanita/sigla-main/commit/9a1a238b36421fa) dirgensa *October 16, 2026*
+
+
 ## Release 8.0.37  -- _October 15, 2026_ 
 **Changes**
 
