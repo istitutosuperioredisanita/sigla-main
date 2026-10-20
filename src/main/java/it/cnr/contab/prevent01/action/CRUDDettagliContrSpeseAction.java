@@ -89,14 +89,8 @@ public class CRUDDettagliContrSpeseAction extends CRUDAction {
 	public it.cnr.jada.action.Forward doBringBackSearchSearchtool_progetto(ActionContext context,Pdg_contrattazione_speseBulk pdg_contr_spese, Progetto_sipBulk progetto) {
 		try {
 			CRUDDettagliContrSpeseBP bp = (CRUDDettagliContrSpeseBP)context.getBusinessProcess();
-		
+
 			if (progetto != null) {
-				if (progetto.getUnita_organizzativa().getCd_tipo_unita().equalsIgnoreCase( it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome.TIPO_UO_SAC )) 
-				{
-					bp.setErrorMessage("Non è possibile inserire o modificare "+(bp.isFlNuovoPdg()?"progetti":"moduli di attività")+" afferenti a CDS appartenenti alla SAC.");
-					return context.findDefaultForward();
-				}
-				
 				CdrBulk cdr = ((PdgContrSpeseComponentSession)bp.createComponentSession()).caricaCdrAfferenzaDaUo(context.getUserContext(), progetto.getUnita_organizzativa());
 				pdg_contr_spese.setProgetto(progetto);
 				pdg_contr_spese.setCdr(cdr);

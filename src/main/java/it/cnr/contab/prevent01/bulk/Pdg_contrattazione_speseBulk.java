@@ -60,7 +60,8 @@ public class Pdg_contrattazione_speseBulk extends Pdg_contrattazione_speseBase {
 	}
 	public OggettoBulk initializeForInsert(it.cnr.jada.util.action.CRUDBP bp,it.cnr.jada.action.ActionContext context) 
 	{
-		inizializzaImporti();		
+		inizializzaImporti();
+		setFl_approvato(Boolean.FALSE);
 		return super.initializeForInsert(bp, context);
 	}
 	public it.cnr.contab.config00.sto.bulk.CdrBulk getCdr() {
