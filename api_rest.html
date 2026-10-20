@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<html
+   lang="it"
+  data-content_root="./"
+>
+<!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGLA | 8. Infrastruttura per servizi REST</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css">
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+
+    <!-- Relations -->
+    <link rel="index" title="Indice" href="index.html">
+    <link rel="top" title="SIGLA" href="index.html">
+    <link rel="next" title="Appendice" href="appendix.html">
+    <link rel="prev" title="7. Contabilità Economico Patrimoniale" href="contabilita_economica.html">
+
+
+    <!-- Favicons -->
+    <link rel="icon" href="_static/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="_static/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="icon" href="_static/favicon.ico">
+    <meta name="theme-color" content="#0066CC">
+
+    <meta name="robots" content="noindex, nofollow">
+</head>
+
+<body class="docs-italia" role="main">
+  <script>
+	if (document.location.href.indexOf('?payload=') >= 0)
+		document.body.className += ' loading';
+</script>
+  <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<header class="container-fluid container-fluid--desktop px-0 header">
+  <nav class="navbar navbar-expand-lg primary-bg-a7 navbar-dark slim-header justify-content-start p-0 pl-lg-4 pr-lg-5">
+    <span class="navbar-brand ml-4">
+      <a class="text-white" href="https://www.iss.it/">
+        <span class="d-none d-sm-inline">Istituto Superiore di Sanità</span> 
+        <span class="d-inline d-sm-none">ISS</span> 
+      </a>
+    </span>
+    <button class="navbar-toggler collapsed text-white px-2 py-0 mr-3"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+    <span class="navbar__icon it-expand my-auto ml-1"></span></button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item px-lg-2 pl-3">
+          <a class="nav-link" target="github" href="https://github.com/istitutosuperioredisanita">GitHub</a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="ml-auto">
+      
+    </div>
+  </nav>
+
+  <div class="row p-4 px-lg-5 m-0 bg-primary--dark align-items-center">
+    <div class="row w-100">
+      <div class="logo--header">
+        <a href="index.html" tabindex="-1" aria-hidden="true" class="d-block"><img src="_static/logo.png"></a>
+      </div>
+      <div class="col pl-3 pl-sm-4">
+        <h1 class="h1--header mb-1">
+          <a href="index.html" class="site-title text-white">
+            SIGLA
+          </a>
+        </h1>
+        <h2 class="text-white mb-0 h2--header">Sistema Informativo Gestione Linee di Attività</h2>
+      </div>
+    </div>
+  </div>
+</header>
+<!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<div class="doc-header container-fluid container-fluid--desktop bg-white">
+  <div class="row py-3 px-4 px-lg-5 align-items-center flex-nowrap justify-content-between">
+    <div class="col-auto d-md-none d-flex align-items-center order-1">
+      <a href="#" class="btn p-2" role="button" id="searchbox-toggle" data-toggle="collapse" data-target="#searchbox" aria-controls="searchbox" aria-expanded="false" aria-label="Toggle searchbox">
+        <span class="docs-icon-search d-inline-block">
+          <span class="sr-only">Cerca nel documento</span>
+        </span>
+      </a>
+    </div>
+    <div class="col-3 d-none d-md-flex pl-0">
+      
+  <div class="w-100" role="search">
+    <form class="mr-md-3" id="rtd-search-form" action="search.html" method="get">
+      <div class="input-group" role="search">
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+        <input type="text" class="p-2 text-grey form-control" style="" required="" id="cerca" name="q" placeholder="Cerca nel documento...">
+				<span class="input-group-append">
+					<button type="submit" class="btn btn-default text-primary px-3 py-2" role="search">
+            <span class="docs-icon-search d-block my-auto">
+							<span class="sr-only">Cerca nel documento</span>
+						</span>
+					</button>
+				</span>
+			</div>
+    </form>
+  </div>
+    </div>
+    <div class="col-auto d-flex align-items-center justify-content-center flex-md-grow-1 order-0 order-md-1 pl-0">
+      
+      <a href="#" role="button" class="btn p-2" data-toggle="modal" data-target="#document-info">
+        <span class="docs-icon-info"></span>
+        <span class="d-none d-md-inline align-middle">Informazioni</span>
+      </a>
+      
+    </div>
+    <div class="col-auto d-none d-md-flex flex-grow-1 align-items-center order-1">
+      <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<div class="document-actions d-flex flex-column flex-md-row justify-content-around w-100 p-2 p-md-0 text-blue">
+  <div class="dropdown p-3 px-md-2 py-md-0 d-flex flex-wrap">
+    <a class="btn dropdown-toggle p-2 flex-grow-1 text-left" href="#" id="downloads-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="docs-icon-download align-middle"></span>
+      <span class="align-middle">Scarica</span>
+    </a>
+    <div class="dropdown-menu w-100" aria-labelledby="downloads-dropdown" aria-disabled="false">
+      <div class="link-list-wrapper">
+        <ul class="link-list">
+          
+          <a class="dropdown-item" href="/sigla-main/Manuale-SIGLA.pdf" download>
+            pdf
+          </a>
+          
+          <li>
+            <span class="divider"></span>
+          </li>
+          
+          
+          <a class="dropdown-item" href="/sigla-main/Manuale-SIGLA.epub" download>
+            epub
+          </a>
+          
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+    
+  
+  <div class="p-3 px-md-2 py-md-0">
+    <a href="https://github.com/istitutosuperioredisanita/sigla-main/blob/master/docs/api_rest.rst" role="button" class="btn p-2" aria-disabled="false">
+        <span class="docs-icon-github"></span>
+        <span class="align-middle">Sorgente</span>
+    </a>
+  </div>
+</div>
+    </div>
+    
+    <div class="col-auto pr-0 d-md-none d-flex align-items-center justify-content-end order-1">
+      <a href="#" role="button" class="btn py-2 px-0" data-toggle="modal" data-target="#document-actions">
+        <span class="docs-icon-more"></span>
+        <span class="sr-only">Azioni</span>
+      </a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="progress-container">
+      <div class="progress-bar" id="scrollprogressBar"></div>
+    </div>
+  </div>
+</div>
+
+	<!--
+  Forum Italia comments templates
+-->
+
+<script id="forum-italia-comments" type="text/template">
+  <div class="block-comments" id="accordion-comments-{{ topicId }}" data-topic="{{ topicId }}">
+    <!-- Top header -->
+    <div class="block-comments__header d-flex border-top border-bottom border-width-2 pt-3 pb-3 align-items-center justify-content-between">
+      <h6 class="col-auto text-uppercase mb-0">{{ commentsCount }} Commenti</h6>
+      <button class="col-auto block-comments__toggle-btn rounded-circle border border-medium-blue border-width-2 collapsed" data-toggle="collapse" data-target="#comments-{{ topicId }}" aria-expanded="false">
+        <span class="docs-icon-plus"></span>
+        <span class="docs-icon-minus"></span>
+      </button>
+    </div>
+  </div>
+  <div class="block-comments__body collapse" data-parent="#accordion-comments-{{ topicId }}" id="comments-{{ topicId }}">
+    <!-- Input row -->
+    <div class="d-flex align-items-center mb-4 block-comments__input">
+      <div class="box-comment {{ canPost }}" data-topic="{{ topicId }}"></div>
+    </div>
+    <div class="row">
+      <div class="block-comments__container col">
+        <div class="row mt-4">
+          <ul class="block-comments__list col items mb-0" id="accordion-comment-item" data-topic="{{ topicId }}"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="block-comments__header d-flex border-bottom border-width-2 pt-3 pb-3 mb-4 align-items-center justify-content-end">
+      <button class="col-auto block-comments__toggle-btn rounded-circle border border-medium-blue border-width-2 collapsed" data-toggle="collapse" data-target="#comments-{{ topicId }}" aria-expanded="false">
+        <span class="docs-icon-plus"></span>
+        <span class="docs-icon-minus"></span>
+      </button>
+    </div>
+  </div>
+</script>
+
+<script id="forum-italia__comment" type="text/template">
+  <li id="comment-{{ post.id }}" class="row mb-4 block-comments__item {{ hidden }} {{ isNew }}"
+      data-topic="{{ post.topic_id }}" data-comment="{{ post.id }}">
+    <div id="reply-to-{{ post.id }}" class="block-comments__reply-anchor"></div>
+    <figure class="col-auto mb-0">
+      <img class="block-comments__img rounded-circle" src="{{ avatarUrl }}">
+    </figure>
+    <div class="col block-comments__content">
+      <div class="row align-items-center justify-content-between" id="comment-heading-1">
+        <div class="col-auto">
+          <span class="block-comments__name text-capitalize mb-0">{{ displayName }}</span>
+        </div>
+        <div class="col-auto">
+          <p class="d-inline-block mr-2 block-comments__date mb-0">{{ date }}</p>
+          <button class="block-comments__item-btn" data-toggle="collapse"
+                  data-target="#collapse-{{ post.id }}">
+            <i class="it-collapse"></i>
+            <i class="it-expand"></i>
+          </button>
+        </div>
+      </div>
+      <p class="text-uppercase block-comments__role">{{ publicUserField }}</p>
+      <div class="my-3">{{ replyLink }}</div>
+      <div id="collapse-{{ post.id }}" class="block-comments__paragraph pl-3 border-left collapse show"
+           aria-labelledby="comment-heading-1">
+        {{ post.cooked }}
+      </div>
+      <div class="block-comments__actions mb-2 mt-3">
+        {{ postActions }}
+      </div>
+    </div>
+  </li>
+</script>
+
+<script id="forum-italia__like-button" type="text/template">
+  <small>
+      <button id="{{ buttonAction }}-like-{{ post.id }}" type="button" class="btn btn-primary btn-sm mr-2 px-2 py-1">
+        {{ likeCount }}
+        <i class="it-favorite ml-1 mr-0"></i>
+      </button>
+      {{ likeDone }}
+    </small>
+</script>
+
+<script id="forum-italia__like-info" type="text/template">
+  <small>
+      <span id="like-{{ post.id }}" class="border rounded btn-sm mr-2 px-2 py-1">
+        {{ likeCount }}
+        <i class="it-favorite ml-1 mr-0"></i>
+      </span>
+      {{ likeDone }}
+    </small>
+</script>
+
+<script id="forum-italia__reply-link" type="text/template">
+  <div>
+    <small>In risposta al 
+      <a class="reply-to-post" href="#reply-to-{{ replyDest.id }}">
+        commento di {{ replyDest.name }}
+      </a>
+    </small>
+  </div>
+</script>
+
+<script id="forum__login" type="text/template">
+  <div class="box-comment__user-image box-comment__user-image--anon">
+    <i class="docs-icon-user"></i>
+  </div>
+  <div class="box-comment__login">
+    <div><button class="login-button btn-link p-0 border-0 align-baseline">Accedi al Forum</button> per commentare</div>
+  </div>
+</script>
+
+<script id="forum__comment" type="text/template">
+  <div class="form group">
+    <div class="box-comment__errors-box"></div>
+    <!-- Write -->
+    <div class="d-flex align-items-center mt-4 mb-4 block-comments__input box-comment__write">
+      <figure class="col-auto mb-0">
+        <img class="block-comments__img box-comment__figure rounded-circle" src="">
+          <figcaption>
+            <a href="#logout" class="block-comments__logout-link block-comments__logout-link--visible" data-toggle="modal" data-target="#logout-modal" title="Logout" alt="Logout">Logout</a>
+          </figcaption>
+      </figure>
+      <textarea class="form-control box-comment__body col ml-2 p-2" id="comments-input" placeholder="Scrivi qui un commento. Per formattare il testo puoi usare Markdown. Clicca sul bottone 'suggerimenti' per vedere alcuni esempi." rows="4"></textarea>
+    </div>
+    <!-- Buttons -->
+    <div class="box-comment__buttons">
+      <button type="button" class="btn btn-primary btn-sm box-comment__submit mr-2" disabled="true"><div>invia</div></button>
+      <button type="button" class="btn btn-sm btn-secondary new-comment__suggestions" data-container="body" data-toggle="popover" data-content="html">suggerimenti</button><span class="loading no-bg">&nbsp;</span>
+    </div>
+    <div class="box-comment__required">
+      <span>Scrivi almeno altri <span class="required-chars">20</span> caratteri</span>
+    </div>
+  </div>
+</script>
+
+<script id="forum-italia__missing_permission" type="text/template">
+	<div class="pl-2 block-comments__input missing_permission error error--{{ errorCode }} row">
+		<figure class="col-auto mb-0 mr-2">
+			<img class="block-comments__img new-comment__figure rounded-circle" src="">
+			<figcaption>
+				<a href="#logout" class="block-comments__logout-link block-comments__logout-link--visible" data-toggle="modal" data-target="#logout-modal" title="Logout" alt="Logout">Logout</a>
+			</figcaption>
+		</figure>
+
+		<div class="missing_permission__text col pt-2">{{ errorText }}</div>
+	</div>
+</script>
+
+<script id="forum__logout--modal" type="text/template">
+  <div class="modal logout-modal" id="logout-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Logout</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Dopo il logout non sarà possibile scrivere nuovi commenti. Sicuro di voler procedere?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="logout-modal__submit">Conferma</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="logout-modal__cancel">Annulla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script id="forum-italia__markup__tooltip" type="text/template">
+  <div class="tooltip tooltip--active doc-tooltip box-comment__suggestions__tooltip" role="tooltip">
+    <div class="tooltip__wrap">
+      Markdown per la formattazione del testo:
+      <ul class="tooltip__content">
+        <li><b>Grassetto:</b> __testo__ (o **testo**)</li>
+        <li><i>Corsivo</i>: _testo_</li>
+        <li>Link: [Testo](http://example.com)</li>
+        <li>Citazione: &gt; Testo citazione</li>
+      </ul>
+    </div>
+  </div>
+</script>
+
+<script id="forum-italia__silenced" type="text/template">
+  <div class="error error__silenced">
+    Il tuo account è stato temporaneamente sospeso, scopri di più leggendo
+    <a href="{{ notificationsUrl }}" target="_blank">le tue notifiche</a> su Forum Italia.
+    <br>
+  </div>
+</script>
+
+<script id="forum-italia__closedTopic" type="text/template">
+  <div class="error error__closed">
+    Questa discussione è in sola lettura.
+    <br>
+  </div>
+</script>
+
+<script id="section_navigation__comments" type="text/template">
+  <li class="chapter-nav__item">
+      <span class="it-comment mr-2 align-middle"></span>
+      <a href="#forum-italia-comments-{{ topicId }}" class="chapter-link chapter-link--expand">
+          {{ postsCount }} commenti
+      </a>
+  </li>
+</script>
+
+
+<!--
+  markup_modifier templates
+-->
+
+<script id="markup_modifier__chapter-header" type="text/template"> <div class="chapter-header clearfix row"><div class="title-wrap col"> </script>
+
+<script id="markup_modifier__icon" type="text/template">
+	<span class="docs-icon-{{ i }}"></span>
+</script>
+
+<script id="markup_modifier__note-action" type="text/template">
+	<div class='note-action'>
+		<button type='button' class='note-close-btn'>×</button>
+		<button type='button' class='note-back-btn'><i class='it-arrow-up'></i> {{ text }} </button>
+	</div>
+</script>
+
+<script id="markup_modifier__admonition" type="text/template">
+	<div class='admonition__toggle-wrap'>
+		<button type='button' class='admonition__toggle-btn'>
+			<span class='admonition__toggle-show-more'>
+				{{ more }} <span class='docs-icon-plus'></span>
+			</span>
+			<span class='admonition__toggle-show-less'>
+				{{ less }} <span class='docs-icon-minus'></span>
+			</span>
+		</button>
+	</div>
+</script>
+
+
+<!--
+  glossary_page templates
+-->
+
+<script id="glossary__btn" type="text/template">
+	<button class='glossary-page__btn collapsed border-top border-grey-light border-width-2 pt-3 pb-3' data-toggle='collapse' data-target='#glossary-{{ id }}' aria-expanded='true' aria-controls='glossary-{{ id }}'>
+		<span class='docs-icon-plus mr-3'> </span>
+		<span class='docs-icon-minus mr-3'> </span>
+		{{ text }}
+	</button>
+</script>
+
+<script id="glossary__copy-link" type="text/template">
+	<div class='glossary-page__copy-link-wrap mt-3'>
+		<i class='it-link mr-2 align-middle'></i>
+		<button type='button' class='glossary-page__copy-link'> {{ copyLink }} </button>
+	</div>
+</script>
+
+
+<!--
+  searchbox_collapse templates
+-->
+
+<script id="searchbox-collapse" type="text/template">
+	<div class="row p-2"><div class="col"></div></div>
+</script>
+
+
+<!--
+  section_navigation templates
+-->
+
+<script id="section_navigation__nav" type="text/template">
+    <div class="chapter-nav col-4">
+        <div class="chapter-nav__wrap">
+            <ul class="chapter-nav__list chapter-nav__list--visible">
+                <li class="chapter-nav__item">
+                    <span class="it-more-items mr-2 align-middle"></span>
+                    <button type="button" data-toggle="modal"
+                        class="chapter-link chapter-link--expand">{{ seeActions }}</button>
+                </li>
+            </ul>
+            <div class="{{ modalClass }} chapter-nav__list--hidden" tabindex="-1" role="dialog"
+                     aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="{{ modalContainerClass }}">
+                    <div class="{{ modalContentClass }} chapter-nav__list-wrap">
+                        <div class="chapter-nav__title"> {{ title }} </div>
+                        <ul class="chapter-nav__list">
+                            <li class="chapter-nav__item">
+                                <i class="it-link mr-2 align-middle"></i>
+                                <button type="button" class="chapter-link">{{ copyLink }}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<!--
+  tooltip templates
+-->
+
+<script id="tooltip__main" type="text/template">
+	<div class='tooltip tooltip--active doc-tooltip' role='tooltip'>
+		<div class='tooltip__wrap'>
+			<button type='button' role='button' class='tooltip__close-btn' data-ref="{{ item.ref }}"></button>
+			<h2 class='tooltip__title'>{{ item.title }}</h2>
+			<p class='tooltip__content'>{{ item.body }}</p>
+		</div>
+	</div>
+</script>
+
+<script id="tooltip__glossary" type="text/template">
+	<div class='tooltip tooltip--active doc-tooltip' role='tooltip'>
+		<div class='tooltip__wrap'>
+			<button type='button' role='button' class='tooltip__close-btn' data-ref="{{ item.ref }}"></button>
+			<h2 class='tooltip__title'>{{ item.title }}</h2>
+			<p class='tooltip__content'>{{ trimmedSummary }}</p> {{ btnToGlossary }}
+		</div>
+	</div>
+</script>
+
+<script id="tooltip__note" type="text/template">
+	<div class='tooltip tooltip--active doc-tooltip doc-tooltip--note' role='tooltip'>
+		<div class='tooltip__wrap'>
+			<button type='button' role='button' class='tooltip__close-btn' data-ref="{{ item.ref }}"></button>
+			<h2 class='tooltip__title'>{{ item.title }}</h2>
+			<p class='tooltip__content'> {{ item.body }}</p>
+		</div>
+	</div>
+</script>
+
+
+  <div id="main" role="main">
+    <div class="container-fluid container-fluid--desktop main-container">
+      <div class="row">
+        <nav class="col--nav">
+          <section class="docs-menu">
+  <div id="desktop-menu" class="sidebar-nav">
+    <a class=""
+      aria-controls="desktop-menu" aria-label="esci dalla navigazione" title="esci dalla navigazione" href="#">
+      <span class="" aria-hidden="true"></span>
+    </a>
+
+    <button data-toggle="collapse" data-target="#content-index" aria-expanded="true" class="sidebar-btn p-3 sidebar-btn--desktop" type="button" aria-controls="content-index">
+      Indice dei contenuti
+      <span class="it-collapse float-right"></span>
+      <span class="it-expand float-right"></span>
+    </button>
+    <div id="content-index" class="content-index--menu sidebar-list--wrapper sidebar-accordion-content collapse show">
+      <ul class="">
+        <li class="toctree-l1 ">
+          <a href='index.html'>Sommario</a>
+        </li>
+      </ul>
+      
+      <p class="caption" role="heading"><span class="caption-text">Indice dei contenuti</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="nuovo_layout.html">1. Indicazioni generali Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nuovo_layout.html#premessa">1.1. Premessa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nuovo_layout.html#accesso-allapplicazione-sigla">1.2. Accesso all’applicazione SIGLA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nuovo_layout.html#presentazione-e-funzionalita">1.3. Presentazione e Funzionalità</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nuovo_layout.html#responsive">1.4. Responsive</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="funzionalita_servizio/index.html">2. Funzionalità di Servizio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/stampe.html">2.1. Gestione Stampe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/coda_di_stampa.html">2.2. Coda di Stampa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/gestione_preferiti.html">2.3. Gestione Preferiti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/messaggi.html">2.4. Messaggi Applicativi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/utenze/index.html">2.5. Gestione e Abilitazioni delle Utenze</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configurazione/index.html">3. Configurazione</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/progetti/index.html">3.1. Progetti di Ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/gae.html">3.2. Gruppo di Azioni Elementari - GAE (o Linea di Attività)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/piano_conti_finanziario.html">3.3. Piano dei Conti Finanziario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/struttura_organizzativa.html">3.4. Struttura Organizzativa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/anagrafica_clienti_fornitori.html">3.5. Anagrafica Clienti/Fornitori</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/terzi.html">3.6. Terzo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/incarichi_di_collaborazione/index.html">3.7. Incarichi di collaborazione</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="previsione/contrattazione_previsione_finanziaria.html">4. Contrattazione della Previsione</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="previsione/contrattazione_previsione_finanziaria.html#premessa">4.1. Premessa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="previsione/contrattazione_previsione_finanziaria.html#previsione-di-spesa">4.2. Previsione di Spesa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="previsione/contrattazione_previsione_finanziaria.html#nota">4.3. NOTA</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documenti_contabili/index.html">5. Documenti Contabili</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documenti_contabili/impegni/index.html">5.1. Impegni</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documenti_amministrativi/index.html">6. Documenti Amministrativi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documenti_amministrativi/Fatture/index.html">6.1. Fatture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documenti_amministrativi/cassa_economale.html">6.2. Cassa Economale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documenti_amministrativi/inventario.html">6.3. Inventario</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contabilita_economica.html">7. Contabilità Economico Patrimoniale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contabilita_economica.html#economico-patrimoniale-parallela">7.1. Economico Patrimoniale Parallela</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contabilita_economica.html#esempio-scritture-economiche">7.2. Esempio scritture economiche</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Infrastruttura per servizi REST</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#elenco-degli-acronimi">8.1. Elenco degli acronimi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduzione">8.2. Introduzione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-genesi-di-open-sigla">8.3. La genesi di OPEN SIGLA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requisiti">8.4. Requisiti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#soluzioni-possibili">8.5. Soluzioni possibili</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#web-2-0-e-rest">8.6. Web 2.0 e REST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rappresentazione-delle-risorse">8.7. Rappresentazione delle risorse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vantaggi-di-rest">8.8. Vantaggi di REST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#open-sigla-http-get">8.9. OPEN SIGLA: HTTP GET</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#open-sigla-http-post">8.10. OPEN SIGLA: HTTP POST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusioni">8.11. Conclusioni</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendice</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="appendix.html#autori">Autori</a></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    <button data-toggle="collapse" data-target="#figures-index" aria-expanded="true" class="sidebar-btn p-3 sidebar-btn--desktop collapsed" type="button" aria-controls="figures-index">
+      Indice delle figure
+      <span class="it-collapse float-right"></span>
+      <span class="it-expand float-right"></span>
+    </button>
+    <div id="figures-index" class="figures-index--menu sidebar-list--wrapper sidebar-accordion-content collapse">
+      <ul>
+<li><a class="reference internal" href="nuovo_layout.html#id1">Fig. 1.1 - Schermata di accesso a SIGLA</a></li>
+<li><a class="reference internal" href="nuovo_layout.html#id2">Fig. 1.2 - Schermata di accesso a SIGLA utente multiplo</a></li>
+<li><a class="reference internal" href="contabilita_economica.html#id1">Fig. 7.1 - Scrittura economico patrimoniale</a></li>
+<li><a class="reference internal" href="#id2">Fig. 8.1 - Connessione TCP tra Client e Server</a></li>
+<li><a class="reference internal" href="#id4">Fig. 8.2 - Esempio di richiesta HTTP</a></li>
+<li><a class="reference internal" href="#id5">Fig. 8.3 - Esempio di messaggio di risposta HTTP</a></li>
+<li><a class="reference internal" href="#id6">Fig. 8.4 - Reverse proxy</a></li>
+<li><a class="reference internal" href="#id7">Fig. 8.5 - Infrastruttura di HA</a></li>
+</ul>
+
+    </div>
+    
+
+    
+    <button data-toggle="collapse" data-target="#table-index" aria-expanded="true" class="sidebar-btn p-3 sidebar-btn--desktop collapsed" type="button" aria-controls="table-index">
+      Indice delle tabelle
+      <span class="it-collapse float-right"></span>
+      <span class="it-expand float-right"></span>
+    </button>
+    <div id="table-index" class="table-index--menu collapse sidebar-list--wrapper sidebar-accordion-content collapse">
+      <ul>
+<li><a class="reference internal" href="configurazione/incarichi_di_collaborazione/incarichi-sigla.html#id1">Tab. 3.1 - Procedura Conferimento MONO-Incarico SENZA l’obbligo della v...</a></li>
+<li><a class="reference internal" href="#id1">Tab. 8.1 - Analisi delle possibili implementazioni</a></li>
+<li><a class="reference internal" href="#id3">Tab. 8.2 - Metodi HTTP</a></li>
+</ul>
+
+    </div>
+    
+
+    
+  </div>
+</section>
+          <!-- Toggle -->
+<div class="navbar-toggler--wrap navbar-toggler--wrap--bottom p-3">
+  <div class="navbar-toggler navbar-toggler--open p-0 border-0 ml-auto">
+    <div class="navbar-toggler-bottom__chapter align-middle text-truncate">
+      <span class="it-list mr-2"></span><span class="section-number">8. </span>Infrastruttura per servizi REST
+    </div>
+  </div>
+</div>
+
+<div class="sidebar-tabs">
+
+  <!-- Back button. -->
+  <div class="row">
+    <div class="col">
+      <button class="navbar-toggler navbar-toggler--back border-0 ml-auto" type="button" data-toggle="offcanvas">
+        <span class="it-arrow-left align-middle"></span>
+        <span class="navbar-toggler__chapter align-middle ml-2">
+          indici e glossario
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab -->
+  <ul class="row ml-3 mr-3 nav nav-tabs" role="tablist">
+    <li class="col text-center active">
+      <a id="content-index-mobile-tab" data-toggle="tab" href="#content-index-mobile" aria-controls="content-index-mobile" role="tab" aria-selected="true" class="sidebar-btn p-2 sidebar-btn--mobile active show">
+        contenuti
+      </a>
+    </li>
+    <li class="col text-center">
+      <a id="figures-index-mobile-tab" data-toggle="tab" href="#figures-index-mobile" aria-controls="figures-index-mobile" role="tab" aria-selected="false" class="col sidebar-btn p-2 sidebar-btn--mobile">
+        figura
+      </a>
+    </li>
+    <li class="col text-center">
+      <a id="table-index-mobile-tab" data-toggle="tab" href="#table-index-mobile" aria-controls="table-index-mobile" role="tab" aria-selected="false" class="col sidebar-btn p-2 sidebar-btn--mobile">
+        tabelle
+      </a>
+    </li>
+    <li class="col text-center">
+      <a id="glossary-index-mobile-tab" data-toggle="tab" href="#glossary-index-mobile" aria-controls="glossary-index-mobile" role="tab" aria-selected="false" class="col sidebar-btn p-2 sidebar-btn--mobile">
+        Glossario
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+<!-- Off canvas -->
+<section class="docs-offcanvas-menu" id="sidebar-nav">
+  <div class="tab-content sidebar-nav">
+
+      <div id="content-index-mobile" class="content-index--menu tab-pane sidebar-list--wrapper fade show active" role="tabpanel" aria-labelledby="content-index-mobile-tab">
+        <ul class="">
+          <li class="toctree-l1 ">
+            <a href='index.html'>Sommario</a>
+          </li>
+        </ul>
+        
+        <p class="caption" role="heading"><span class="caption-text">Indice dei contenuti</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="nuovo_layout.html">1. Indicazioni generali Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nuovo_layout.html#premessa">1.1. Premessa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nuovo_layout.html#accesso-allapplicazione-sigla">1.2. Accesso all’applicazione SIGLA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nuovo_layout.html#presentazione-e-funzionalita">1.3. Presentazione e Funzionalità</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nuovo_layout.html#responsive">1.4. Responsive</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="funzionalita_servizio/index.html">2. Funzionalità di Servizio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/stampe.html">2.1. Gestione Stampe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/coda_di_stampa.html">2.2. Coda di Stampa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/gestione_preferiti.html">2.3. Gestione Preferiti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/messaggi.html">2.4. Messaggi Applicativi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funzionalita_servizio/utenze/index.html">2.5. Gestione e Abilitazioni delle Utenze</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configurazione/index.html">3. Configurazione</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/progetti/index.html">3.1. Progetti di Ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/gae.html">3.2. Gruppo di Azioni Elementari - GAE (o Linea di Attività)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/piano_conti_finanziario.html">3.3. Piano dei Conti Finanziario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/struttura_organizzativa.html">3.4. Struttura Organizzativa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/anagrafica_clienti_fornitori.html">3.5. Anagrafica Clienti/Fornitori</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/terzi.html">3.6. Terzo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configurazione/incarichi_di_collaborazione/index.html">3.7. Incarichi di collaborazione</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="previsione/contrattazione_previsione_finanziaria.html">4. Contrattazione della Previsione</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="previsione/contrattazione_previsione_finanziaria.html#premessa">4.1. Premessa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="previsione/contrattazione_previsione_finanziaria.html#previsione-di-spesa">4.2. Previsione di Spesa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="previsione/contrattazione_previsione_finanziaria.html#nota">4.3. NOTA</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documenti_contabili/index.html">5. Documenti Contabili</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documenti_contabili/impegni/index.html">5.1. Impegni</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documenti_amministrativi/index.html">6. Documenti Amministrativi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documenti_amministrativi/Fatture/index.html">6.1. Fatture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documenti_amministrativi/cassa_economale.html">6.2. Cassa Economale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documenti_amministrativi/inventario.html">6.3. Inventario</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contabilita_economica.html">7. Contabilità Economico Patrimoniale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contabilita_economica.html#economico-patrimoniale-parallela">7.1. Economico Patrimoniale Parallela</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contabilita_economica.html#esempio-scritture-economiche">7.2. Esempio scritture economiche</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Infrastruttura per servizi REST</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#elenco-degli-acronimi">8.1. Elenco degli acronimi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduzione">8.2. Introduzione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-genesi-di-open-sigla">8.3. La genesi di OPEN SIGLA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requisiti">8.4. Requisiti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#soluzioni-possibili">8.5. Soluzioni possibili</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#web-2-0-e-rest">8.6. Web 2.0 e REST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rappresentazione-delle-risorse">8.7. Rappresentazione delle risorse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vantaggi-di-rest">8.8. Vantaggi di REST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#open-sigla-http-get">8.9. OPEN SIGLA: HTTP GET</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#open-sigla-http-post">8.10. OPEN SIGLA: HTTP POST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusioni">8.11. Conclusioni</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendice</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="appendix.html#autori">Autori</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+
+      <div id="figures-index-mobile" class="figures-index--menu tab-pane sidebar-list--wrapper fade" role="tabpanel" aria-labelledby="figures-index-mobile-tab">
+        <ul>
+<li><a class="reference internal" href="nuovo_layout.html#id1">Fig. 1.1 - Schermata di accesso a SIGLA</a></li>
+<li><a class="reference internal" href="nuovo_layout.html#id2">Fig. 1.2 - Schermata di accesso a SIGLA utente multiplo</a></li>
+<li><a class="reference internal" href="contabilita_economica.html#id1">Fig. 7.1 - Scrittura economico patrimoniale</a></li>
+<li><a class="reference internal" href="#id2">Fig. 8.1 - Connessione TCP tra Client e Server</a></li>
+<li><a class="reference internal" href="#id4">Fig. 8.2 - Esempio di richiesta HTTP</a></li>
+<li><a class="reference internal" href="#id5">Fig. 8.3 - Esempio di messaggio di risposta HTTP</a></li>
+<li><a class="reference internal" href="#id6">Fig. 8.4 - Reverse proxy</a></li>
+<li><a class="reference internal" href="#id7">Fig. 8.5 - Infrastruttura di HA</a></li>
+</ul>
+
+      </div>
+
+      <div id="table-index-mobile" class="table-index--menu tab-pane sidebar-list--wrapper fade" role="tabpanel" aria-labelledby="table-index-mobile-tab">
+        <ul>
+<li><a class="reference internal" href="configurazione/incarichi_di_collaborazione/incarichi-sigla.html#id1">Tab. 3.1 - Procedura Conferimento MONO-Incarico SENZA l’obbligo della v...</a></li>
+<li><a class="reference internal" href="#id1">Tab. 8.1 - Analisi delle possibili implementazioni</a></li>
+<li><a class="reference internal" href="#id3">Tab. 8.2 - Metodi HTTP</a></li>
+</ul>
+
+      </div>
+
+      <div id="glossary-index-mobile" class="glossary-mobile--menu tab-pane sidebar-list--wrapper fade" role="tabpanel" aria-labelledby="glossary-index-mobile-tab">
+        None
+      </div>
+
+  </div>
+</section>
+        </nav>
+        <div id="doc-content" class="col-content">
+          <!--<div class="doc-content__consultation">
+            <span class="it-icon-edit"></span>
+            in consultazione
+          </div>-->
+          
+            <div class="footer-buttons footer-buttons--prev" role="navigation" aria-label="footer navigation">
+                <a href="contabilita_economica.html" class="" title="7. Contabilità Economico Patrimoniale" accesskey="p" rel="prev"> Torna a <span class="section-number">7. </span>Contabilità Economico Patrimoniale</a>
+            </div>
+          
+          
+  <section id="infrastruttura-per-servizi-rest">
+<h1><span class="section-number">8. </span>Infrastruttura per servizi REST<a class="headerlink" href="#infrastruttura-per-servizi-rest" title="Link to this heading">¶</a></h1>
+<p>Il presente documento descrive, da un punto di vista tecnico, l’implementazione di una infrastruttura
+di Servizi Rest che permette la fruibilità ad altre applicazioni informatiche dei dati amministrativo-
+contabili gestiti dall’applicativo SIGLA.
+Il documento inizialmente presenta una dettagliata analisi dei requisiti richiesti; in seguito evidenzia
+una serie di implementazioni possibili riepilogate in una tabella comparativa ed infine analizza nel
+dettaglio la soluzione adottata, presentando una breve panoramica della tecnologia impiegata ed
+illustrando gli aspetti funzionali, architetturali ed implementativi della soluzione.
+La realizzazione del sistema è stata avviata nel 2015 e si è conclusa nel 2016.</p>
+<section id="elenco-degli-acronimi">
+<h2><span class="section-number">8.1. </span>Elenco degli acronimi<a class="headerlink" href="#elenco-degli-acronimi" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>SIGLA: Sistema Informativo per la Gestione delle Linee di Attività</p></li>
+<li><p>HTTP: HyperText Trasfer Protocol</p></li>
+<li><p>HA: High Availability</p></li>
+<li><p>REST: Representational State Transfer</p></li>
+<li><p>ROA: Resource Oriented Architecture</p></li>
+<li><p>JVM: Java Virtual Machine</p></li>
+<li><p>URI: Uniform Resource Identifier</p></li>
+<li><p>URL: Uniform Resource Locator</p></li>
+<li><p>MIME: Multipurpose Interact Mail Extension</p></li>
+<li><p>JSON: Javascript Object Notation</p></li>
+<li><p>XML: eXtensible Markup Language</p></li>
+<li><p>MVC: Model-View-Controller</p></li>
+<li><p>TCP: Transmission Control Protocol</p></li>
+<li><p>SOA: Services Oriented Architecture</p></li>
+<li><p>SOAP: Simple Object Access Protocol</p></li>
+<li><p>WDSL: Web Services Description Language</p></li>
+<li><p>W3C: World Wide Web Consortium</p></li>
+</ul>
+</section>
+<section id="introduzione">
+<h2><span class="section-number">8.2. </span>Introduzione<a class="headerlink" href="#introduzione" title="Link to this heading">¶</a></h2>
+<p>Come è noto, l’innovazione tecnologica e l’utilizzo di sistemi informativi efficienti contribuiscono
+validamente a promuovere la crescita organizzativa e a migliorare la funzione amministrativa e la
+governance.
+Oggi l’ottimizzazione, la maggiore efficienza, la trasparenza, l’economicità del lavoro nella pubblica
+amministrazione sono al centro del dibattito pubblico: in tale contesto le ICT, se debitamente
+utilizzate, possono concorrere efficacemente a snellire i procedimenti amministrativi e a ridurre i
+costi, consentendo pertanto di destinare le risorse così risparmiate ad altre iniziative, spesso bloccate
+o rallentate dalla carenza di personale o dall’insufficienza degli investimenti.
+L'evoluzione dei sistemi informativi, grazie alla crescente integrazione tra le varie applicazioni
+software, consente di sfruttare al meglio i dati, che divengono pertanto, sempre di più, un elemento
+essenziale per la vita delle organizzazioni. Tanto più questo è vero per un ente di ricerca come il
+Consiglio Nazionale delle Ricerche in cui i dati hanno una valenza duplice, sotto il profilo del
+patrimonio della conoscenza e insieme sotto quello amministrativo e organizzativo. In tale contesto
+appare fondamentale avere un accesso sempre più rapido e aggiornato alle informazioni.
+Si comprende quindi perché SIGLA, il sistema informativo amministrativo-contabile da tempo in uso
+presso il CNR, abbia acquistato via via un ruolo sempre maggiore per la pianificazione,
+l’organizzazione, la gestione e la consuntivazione delle risorse dell’Ente.
+È diventato perciò decisivo poter mettere a disposizione degli altri sistemi informativi CNR il
+patrimonio di dati e informazioni che SIGLA gestisce.
+A questo scopo si è deciso di creare uno strato software “OPEN SIGLA”, che permetta appunto a
+SIGLA di rendere disponibili e utilizzabili i propri dati ai sistemi informativi dell’Ente che ne
+facciano richiesta, superando le criticità della loro eterogeneità.
+OPEN SIGLA, seguendo le specifiche ROA, garantisce infatti l’accesso non solo agli utenti finali ma
+anche ad altri sistemi e applicazioni software. In questo modo, le risorse risultano accessibili a
+qualsiasi applicativo che ne sia autorizzato, senza che questo debba possedere la conoscenza della
+specifica implementazione e del tipo di piattaforma utilizzata da SIGLA.
+In particolare, l’applicazione rende disponibili i dati delle consultazioni presenti in SIGLA attraverso
+i REST, garantendo l’interoperabilità con qualunque altro software applicativo.</p>
+</section>
+<section id="la-genesi-di-open-sigla">
+<h2><span class="section-number">8.3. </span>La genesi di OPEN SIGLA<a class="headerlink" href="#la-genesi-di-open-sigla" title="Link to this heading">¶</a></h2>
+<p>Durante la progettazione dell’applicativo “Gestione Missioni”, si è
+evidenziata l’importanza dei dati presenti nell’applicativo SIGLA
+necessari per l’utilizzo della nuova suite:</p>
+<ul class="simple">
+<li><p>Anagrafica Centri di Spesa;</p></li>
+<li><p>Anagrafica Unità Organizzative;</p></li>
+<li><p>Anagrafica Centri di Responsabilità;</p></li>
+<li><p>Anagrafica Progetti;</p></li>
+<li><p>Anagrafica GAE;</p></li>
+<li><p>Anagrafica Capitoli di Bilancio;</p></li>
+<li><p>Elenco Impegni con relative disponibilità;</p></li>
+<li><p>Anagrafica Terzi;</p></li>
+<li><p>Tipo Missione;</p></li>
+<li><p>Tipo Spesa Missione;</p></li>
+<li><p>Inquadramento</p></li>
+</ul>
+<p>sorta l’esigenza di consultare i dati presenti in SIGLA in tempo reale, garantendo la sicurezza ed i filtri alla visualizzazione,
+usufruendo delle informazioni in modo semplice, senza gravare sulle performance di utilizzo di SIGLA.</p>
+<p>Di conseguenza, abbiamo pensato ad una soluzione strutturata che potesse
+rispondere alle esigenze del nuovo applicativo “Gestione Missioni” e ad
+eventuali necessità provenienti dai vari sistemi informatici utilizzati
+a supporto dell’attività dell’Ente. Il nome che abbiamo dato alla nuova
+soluzione applicativa è <strong>OPEN SIGLA.</strong></p>
+</section>
+<section id="requisiti">
+<h2><span class="section-number">8.4. </span>Requisiti<a class="headerlink" href="#requisiti" title="Link to this heading">¶</a></h2>
+<p>Da un’attenta analisi della problematica e delle esigenze funzionali
+sono emersi i seguenti requisiti minimi a cui la nuova applicazione deve
+rispondere:</p>
+<p><strong>Tempo reale</strong></p>
+<p>I dati devono essere aggiornati, in modo che l’applicativo che fruisce
+dei dati di SIGLA utilizzi sempre gli ultimi dati disponibili, ad
+esempio:</p>
+<p>Verifica della disponibilità di un impegno; Visualizzazione della
+disponibilità dei GAE.</p>
+<p><strong>Abilitazioni</strong></p>
+<p>I dati visualizzabili devono essere filtrati a seconda dell’utente che
+ne chiede la consultazione, ad esempio:</p>
+<p>Un utente dell’Istituto di Informatica e Telematica (IIT) deve vedere
+solo gli impegni propri e non quelli di altri istituti;</p>
+<p>Un utente amministrativo, abilitato all’inserimento dell’ordine di
+missione, non necessariamente deve aver accesso ad altre operazioni
+amministrative-contabili come consultare i versamenti delle ritenute.</p>
+<p><strong>Velocità nel recupero delle informazioni</strong></p>
+<p>Le informazioni devono essere disponibili rapidamente.</p>
+<p><strong>Facilità nella lettura delle informazioni</strong></p>
+<p>I dati devono essere facilmente fruibili dall’applicativo che ne fa
+richiesta limitando al minimo i tempi nello sviluppo
+dell’implementazione di integrazione con OPEN SIGLA.</p>
+<p><strong>Utilizzo delle ultime innovazioni tecnologiche</strong></p>
+<p>L’implementazione deve essere di facile manutenzione e deve durare nel
+tempo per ridurre l’obsolescenza del software.</p>
+<p><strong>Implementazione facile e rapida degli altri sistemi</strong></p>
+<p>L’implementazione software del sistema applicativo che desidera
+usufruire dei dati di SIGLA deve essere di facile e rapida
+realizzazione.</p>
+<p><strong>Sicurezza</strong></p>
+<p>I dati devono essere recuperati mantenendo un elevato standard di
+sicurezza.</p>
+<p><strong>Prestazioni</strong></p>
+<p>Le richieste di informazioni provenienti dai vari sistemi non devono
+compromettere le prestazioni e i tempi di risposta di SIGLA.</p>
+<section id="accesso-ai-servizi">
+<h3><span class="section-number">8.4.1. </span>Accesso ai Servizi<a class="headerlink" href="#accesso-ai-servizi" title="Link to this heading">¶</a></h3>
+<p>Per fornire l'accesso ai servizi bisogna che l'amministratore delle utenze dell'istituto, provveda alla creazione dell'utenza in SIGLA
+attraverso <a class="reference internal" href="funzionalita_servizio/utenze/gestione_utenze.html"><span class="doc">la funzione specifica</span></a> ed in seguito assegni il ruolo <strong>REST_SIGLA</strong> all'utenza creata,
+tramite la funzione dei <a class="reference internal" href="funzionalita_servizio/utenze/accesso_ruolo.html"><span class="doc">Ruoli</span></a>.</p>
+</section>
+</section>
+<section id="soluzioni-possibili">
+<h2><span class="section-number">8.5. </span>Soluzioni possibili<a class="headerlink" href="#soluzioni-possibili" title="Link to this heading">¶</a></h2>
+<p>Per permettere la consultazione dei dati di SIGLA sul web sono possibili
+diverse soluzioni:</p>
+<ol class="arabic simple">
+<li><p>Copia delle tabelle contenenti i dati di interesse di SIGLA
+nell’applicativo che ne fa richiesta (COPIA);</p></li>
+<li><p>Accesso diretto alle tabelle di SIGLA attraverso una connessione al
+DB di SIGLA (ACCESSO_DB);</p></li>
+<li><p>Accesso indiretto alle tabelle di SIGLA tramite un utente di database
+che abbia i privilegi di lettura all’utente database di SIGLA (UTENTE_DB);</p></li>
+<li><p>Utilizzo di Web-Services (WEB SERVICES);</p></li>
+<li><p>Utilizzo dei REST (REST).</p></li>
+</ol>
+<p>Si è proceduto ad una attenta analisi delle implementazioni da
+realizzare rispetto ai requisiti richiesti e, come si evince dalla
+matrice sottostante, la scelta è ricaduta sui REST in quanto tutti i
+requisiti vengono soddisfatti.</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-number">Tabella 8.1 </span><span class="caption-text">Analisi delle possibili implementazioni</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p><em>COPIA</em></p></th>
+<th class="head"><p><em>ACCESSO_DB</em></p></th>
+<th class="head"><p><em>UTENTE_DB</em></p></th>
+<th class="head"><p><em>WEB SERVICES</em></p></th>
+<th class="head"><p>REST</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>Tempo Reale</em></p></td>
+<td></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>Abilitazioni</em></p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-even"><td><p><em>Velocità</em></p></td>
+<td></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>Facilità</em></p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-even"><td><p><em>Innovazione Tecnologica</em></p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>Rapida Implementazione</em></p></td>
+<td></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-even"><td><p><em>Sicurezza</em></p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>Stabilità</em></p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+<td><p>X</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="web-2-0-e-rest">
+<h2><span class="section-number">8.6. </span>Web 2.0 e REST<a class="headerlink" href="#web-2-0-e-rest" title="Link to this heading">¶</a></h2>
+<p>Il web 2.0 ha modificato il modo di progettare applicazioni web: per lo
+scambio di informazioni tra applicazioni inizialmente ci si è affidati
+al paradigma architetturale SOA e ai Web Service [1], definito dal W3C
+come “<em>un sistema software disegnato per supportare l'interoperabilità
+tra più macchine</em> <em>che interagiscono tra di loro su una rete</em>”.
+L'interazione tra client e server è effettuata tramite delle invocazioni
+a procedure remote. Per scambiarsi informazioni su come debbano essere
+invocate queste procedure remote, si utilizzano nuovi protocolli: SOAP e
+WSDL. Il World Wide Web, però, è un insieme di risorse che gli utenti
+utilizzano. Allora, perché utilizzare un modello basato sui servizi per
+gestire Risorse quando il Web è già fatto di Risorse? Roy Fielding ha
+risposto a questa domanda disegnando un nuovo paradigma architetturale
+che pone al centro le “Risorse”: REST.</p>
+<p>Questo paradigma ci induce a considerare le applicazioni come un insieme
+di risorse da gestire.</p>
+<p>Viene riportato un estratto della tesi di dottorato di Roy Fielding [2]
+che descrive il paradigma REST:</p>
+<p><em>The Representational State Transfer (REST) style is an abstraction of
+the architectural elements within a distributed hypermedia system. REST
+ignores the details of component implementation and protocol syntax in
+order to focus on the roles of components, the constraints upon their
+interaction with other components, and their interpretation of
+significant data elements. It encompasses the fundamental constraints
+upon components, connectors, and data that define the basis of the Web
+architecture, and thus the essence of its behavior as a network-based
+application. […]</em></p>
+<p><em>REST emphasizes scalability of component interactions, generality of
+interfaces, independent deployment of components, and intermediary
+components to reduce interaction latency, enforce security, and
+encapsulate legacy systems. I describe the software engineering
+principles guiding REST and the interaction constraints chosen to retain
+those principles, contrasting them to the constraints of other
+architectural styles.</em></p>
+<section id="il-modello-roa">
+<h3><span class="section-number">8.6.1. </span>Il modello ROA<a class="headerlink" href="#il-modello-roa" title="Link to this heading">¶</a></h3>
+<p>Il modello ROA è un’architettura software ispirata ai principi REST.
+Usare il modello ROA significa mettere al centro il concetto di
+“risorsa”, utilizzando il protocollo HTTP come mezzo per accedervi. HTTP
+ha già tutto ciò che occorre per identificare una risorsa e indicare una
+modalità di utilizzo, quindi per richiedere una risorsa basta riferirsi
+ad essa con l'apposito metodo HTTP GET.</p>
+<p><strong>Il concetto di risorsa</strong></p>
+<p>Una risorsa è una entità a sé stante, che può essere memorizzata in un
+computer come un documento, un'immagine, una riga di un database o
+comunque una stringa di bit. Una risorsa, per essere considerata tale,
+deve permettere che ci si possa riferire ad essa. Il riferimento a
+risorse avviene mediante URI [3]. Per essere definita tale, una risorsa
+deve avere almeno un URI; in caso contrario, non potremo identificarla e
+quindi non potrebbe essere catalogata come risorsa.</p>
+<p>Gli URI devono essere descrittivi: leggendo un URI deve risultare
+facilmente interpretabile la richiesta che si sta effettuando.</p>
+<p><strong>L’architettura orientata alle risorse</strong></p>
+<p>L’architettura ROA è l’insieme di quattro aspetti:</p>
+<ul class="simple">
+<li><p>Cos’è una risorsa;</p></li>
+<li><p>Cos’è un URI;</p></li>
+<li><p>Cosa rappresenta una risorsa;</p></li>
+<li><p>Quali sono le relazioni tra le risorse;</p></li>
+</ul>
+<p>e di quattro proprietà:</p>
+<ul class="simple">
+<li><p>Addressability;</p></li>
+<li><p>Statelessness;</p></li>
+<li><p>Connectedness;</p></li>
+<li><p>Uniform Interface.</p></li>
+</ul>
+<p><em>Addressability:</em></p>
+<p>Un’applicazione è considerata <em>addressable</em> quando espone aspetti
+rilevanti dei dati attraverso Risorse. Esse sono identificate tramite
+URL, possiamo richiedere informazioni sempre più specifiche modificando
+la parte finale del path di una URL. Ciò si può fare quando le risorse
+sono correlate tra loro, e specializzare un URL significa
+contemporaneamente scendere ad un livello più specifico nella nostra
+gerarchia di risorse.</p>
+<p><em>Statelessness:</em></p>
+<p>REST si muove sul protocollo HTTP che è un protocollo <em>stateless</em>.
+L'esigenza di avere un protocollo <em>stateless</em> ci dà un enorme guadagno
+in scalabilità, poiché il server non deve associare più richieste una
+all'altra per capirle ma può utilizzarle una alla volta e poi deallocare
+le risorse. Questo permette l'implementazione di una struttura atta a
+garantire l'HA, ovvero un'alta affidabilità del servizio.</p>
+<p><em>Connectedness:</em></p>
+<p>Per <em>connectedness</em> intendiamo la possibilità di avere collegamenti
+esterni. Molti utenti non hanno la possibilità di digitare gli URL per
+accedere alle risorse, quindi un'applicazione ben formata dovrebbe, a
+partire da un qualunque punto, poter arrivare ad accedere a qualunque
+risorsa sul web, quindi in questo senso il web è <em>connected</em>.</p>
+<p><em>Uniform Interface:</em></p>
+<p>Un'interfaccia uniforme è data proprio dal protocollo HTTP. Uniforme
+perché HTTP definisce dei metodi standard da utilizzare e un modo
+omogeneo per scambiarsi le informazioni.</p>
+</section>
+<section id="il-protocollo-http">
+<h3><span class="section-number">8.6.2. </span>Il protocollo HTTP<a class="headerlink" href="#il-protocollo-http" title="Link to this heading">¶</a></h3>
+<p>HTTP è un protocollo che si occupa del trasferimento di ipertesti da
+un host ad un altro. Il protocollo HTTP (considerando lo stack
+protocollare) si trova subito sopra il protocollo TCP, ciò garantisce ad
+HTTP una connessione sicura tra client e server. E' un protocollo
+<em>“stateless”,</em> ciò indica che ogni richiesta ha tutto, e solo, ciò che
+occorre per essere servita. Dopo che la richiesta è stata servita la
+connessione viene chiusa, e le risorse usate deallocate. Le risorse
+vengono identificate tramite un URI che le definisce univocamente sul
+server. Il protocollo HTTP definisce:</p>
+<ul class="simple">
+<li><p>I tipi di messaggi scambiati, per esempio, messaggi di richiesta e
+messaggi di risposta;</p></li>
+<li><p>La sintassi dei vari tipi di messaggio;</p></li>
+<li><p>Il significato dell'informazione nei campi;</p></li>
+<li><p>Le regole per determinare quando e come un processo invia o risponde
+a messaggi;</p></li>
+</ul>
+<p>Ogni transazione HTTP consiste di una richiesta da parte del client e
+una risposta da parte del server che generalmente _e in ascolto sulla
+porta 80 usando il protocollo TCP a livello di trasporto. Nel caso
+dell'HTTP, un browser web implementa il lato client e un server web ne
+implementa il lato server, l'host che inizia la sessione è etichettato
+come client. In figura è evidenziato come avviene la connessione TCP
+tra Client e Server.</p>
+<figure class="align-default" id="id2">
+<img alt="Connessione TCP tra Client e Server" src="_images/api_rest1.jpeg" />
+<figcaption>
+<p><span class="caption-number">Fig. 8.1 </span><span class="caption-text">Connessione TCP tra Client e Server</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Quando accediamo a una risorsa tramite una URI e HTTP, viene specificata
+anche l'azione da eseguire su tale risorsa che viene definita
+utilizzando un metodo HTTP.</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-number">Tabella 8.2 </span><span class="caption-text">Metodi HTTP</span><a class="headerlink" href="#id3" title="Link to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Metodo</strong></p></th>
+<th class="head"><p><strong>Azione</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>GET</em></p></td>
+<td><p>Recupera una risorsa identificata da un URI</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>POST</em></p></td>
+<td><p>Invia la risorsa al server, aggiorna la risorsa nella posizione individuata dall’URI</p></td>
+</tr>
+<tr class="row-even"><td><p><em>PUT</em></p></td>
+<td><p>Invia una risorsa al server, memorizzandola nella posizione individuata dall’ URI</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>DELETE</em></p></td>
+<td><p>Elimina una risorsa identificata da un URI</p></td>
+</tr>
+<tr class="row-even"><td><p><em>TRACE</em></p></td>
+<td><p>Traccia una richiesta, visualizzando come viene trattata dal server</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>OPTIONS</em></p></td>
+<td><p>Richiede l'elenco dei metodi permessi dal server</p></td>
+</tr>
+</tbody>
+</table>
+<p>HTTP si basa su un meccanismo di richiesta/risposta. E’ possibile
+distinguere due tipi di messaggi:</p>
+<p><strong>Messaggio di Richiesta</strong></p>
+<p>Questo tipo di messaggio viene mandato dal client verso il server ed è
+composto da (Figura 1.1):</p>
+<ul class="simple">
+<li><p>Request Line, costituita da:</p>
+<ul>
+<li><p>Il metodo richiesto;</p></li>
+<li><p>L'URI che identifica l'oggetto della richiesta;</p></li>
+<li><p>La versione HTTP utilizzata per la comunicazione.</p></li>
+</ul>
+</li>
+<li><p>Request Headers, è composto da un insieme di informazioni aggiuntive
+sulla richiesta e/o il client (host, sistema operativo, browser che
+effettua la richiesta, lunghezza della richiesta, ecc.)</p></li>
+<li><p>Body, sono delle informazioni non obbligatorie che possono essere
+inviate al server.</p></li>
+</ul>
+<figure class="align-default" id="id4">
+<img alt="Esempio di richiesta HTTP" src="_images/api_rest2.jpeg" />
+<figcaption>
+<p><span class="caption-number">Fig. 8.2 </span><span class="caption-text">Esempio di richiesta HTTP</span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><strong>Messaggio di risposta</strong></p>
+<p>Una volta che il server ha ricevuto dal client una richiesta HTTP,
+effettua le operazioni necessarie a soddisfarla ed invia una risposta al
+client. Il messaggio di risposta è di tipo testuale ed è composto da:</p>
+<ul class="simple">
+<li><p>Status Line che contiene la versione del protocollo, l’ID stato che
+indica il risultato della richiesta e il messaggio di stato
+corrispondente.</p></li>
+<li><p>Headers line - È composto da un insieme di linee non obbligatorie che
+permettono di dare delle informazioni supplementari sulla risposta
+e/o il server.</p></li>
+<li><p>Body - Contenuto della risposta che contiene le informazioni
+necessarie per considerare soddisfatta la richiesta.</p></li>
+</ul>
+<figure class="align-default" id="id5">
+<img alt="Esempio di messaggio di risposta HTTP" src="_images/api_rest3.jpeg" />
+<figcaption>
+<p><span class="caption-number">Fig. 8.3 </span><span class="caption-text">Esempio di messaggio di risposta HTTP</span><a class="headerlink" href="#id5" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="http-e-roa">
+<h3><span class="section-number">8.6.3. </span>HTTP e ROA<a class="headerlink" href="#http-e-roa" title="Link to this heading">¶</a></h3>
+<p>REST nella sua implementazione cerca di essere il più semplice
+possibile. Il Web è nato sul protocollo HTTP, che ha già tutto ciò che
+occorre per fare web. Si tratta solo di ridefinire qualcosa e di
+utilizzarlo per ciò per cui è nato. Le risorse vengono identificate
+tramite un URI che le definisce univocamente sul server. Il protocollo
+HTTP riveste l'applicazione ROA di un'interfaccia uniforme. Per
+richiedere una risorsa si utilizzerà sempre lo stesso metodo GET,
+qualunque sia il tipo di risorsa da recuperare. Inoltre quando il server
+invia una risorsa al client deve comunicare ad esso anche il tipo MIME,
+così quest'ultimo può capire che tipo di dato è contenuto nella risposta
+e interpretarlo correttamente.</p>
+</section>
+<section id="servlet">
+<h3><span class="section-number">8.6.4. </span>SERVLET<a class="headerlink" href="#servlet" title="Link to this heading">¶</a></h3>
+<p>Una servlet è una componente applicativa server-side sviluppata in
+Java che risponde direttamente alle richieste WEB. Sono scritte
+interamente in Java e permettono di separare completamente la logica
+dall'applicazione, consentendo di dividere i lavori. In sintesi una
+servlet è lo strato applicativo lato server che intercetta l'oggetto
+request proveniente dal mondo web, provvede alla logica applicativa e
+invia al client che ne ha fatto richiesta l’oggetto response che
+contiene il risultato della richiesta. Per essere invocata da un browser
+la Servlet deve essere mappata su un URL, quindi per l'utente non è
+altro che una risorsa da invocare. La Servlet fa il dispatching della
+request ad una vista che si occupa di formattare il tutto in XML e quindi in un formato standard in modo da
+poter effettuare una richiesta Ajax.</p>
+<p>L'oggetto Request permette di accedere alle informazioni di intestazione
+del protocollo HTTP oppure ai parametri passati nei form sia tramite GET
+che tramite POST. Il server può facilmente leggere al momento della
+richiesta (oltre agli <em>input</em>) i dati quali <em>metodo HTTP</em> utilizzato,
+<em>porta</em> o <em>ip</em> del client o del server e altro. L'oggetto Response
+permette di inviare i risultati dell'esecuzione al client.</p>
+<p>Le Servlet quindi nell’architettura del Pattern MVC permettono di implementare la parte Controller.</p>
+<p>Il ciclo di vita di una servlet è formato da tre passi fondamentali:</p>
+<ul class="simple">
+<li><p><em>Init()</em>: segna la nascita di una servlet, è un metodo richiamato una
+sola volta e che si occupa dell'inizializzazione delle risorse;</p></li>
+<li><p><em>Service()</em>: si occupa di servire tutte le richieste che arrivano;</p></li>
+<li><p><em>Destroy()</em>: segna la fine del server, si occupa di memorizzare tutte
+le informazioni utili ad un prossimo caricamento, e di deallocare
+tutte le risorse.</p></li>
+</ul>
+</section>
+</section>
+<section id="rappresentazione-delle-risorse">
+<h2><span class="section-number">8.7. </span>Rappresentazione delle risorse<a class="headerlink" href="#rappresentazione-delle-risorse" title="Link to this heading">¶</a></h2>
+<p>Per rappresentazione si intende una descrizione dello stato corrente di
+una risorsa che inviata dal Web Service al client in vari formati. Gli
+standard più comuni di rappresentazioni delle risorse per le richieste
+HTTP sono XML e JSON perché rappresentano il modo più semplice da
+implementare lato server ma anche la più facile da utilizzare per un
+client.</p>
+<section id="json">
+<h3><span class="section-number">8.7.1. </span>JSON<a class="headerlink" href="#json" title="Link to this heading">¶</a></h3>
+<p>JSON [8], <a class="reference external" href="https://it.wikipedia.org/wiki/Acronimo">acronimo</a> di
+JavaScript Object Notation, è un formato adatto all'interscambio di dati
+fra
+<a class="reference external" href="https://it.wikipedia.org/wiki/Applicazione_(informatica)">applicazioni</a><a class="reference external" href="https://it.wikipedia.org/wiki/Client-server">client-server</a>.
+Il suo uso tramite JavaScript è particolarmente semplice, infatti
+l'<a class="reference external" href="https://it.wikipedia.org/wiki/Interprete_(informatica)">interprete</a></p>
+<ul class="simple">
+<li><p>in grado di eseguirne il
+<a class="reference external" href="https://it.wikipedia.org/wiki/Parsing">parsing</a> tramite una
+semplice chiamata alla funzione eval(). La sua popolarità nel mondo
+web è aumentata progressivamente in considerazione dell’elevato
+utilizzo di JavaScript nelle applicazioni WEB.</p></li>
+</ul>
+<p>I <a class="reference external" href="https://it.wikipedia.org/wiki/Tipo_di_dato">tipi di dati</a>
+supportati da questo formato sono:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://it.wikipedia.org/wiki/Booleano_(informatica)">booleani</a> (true e false);</p></li>
+<li><p>stringhe racchiuse da doppi apici (&quot;);</p></li>
+<li><p><a class="reference external" href="https://it.wikipedia.org/wiki/Array">array</a> (sequenze ordinate di valori, separati da virgole e racchiusi in parentesi quadre []);</p></li>
+<li><p><a class="reference external" href="https://it.wikipedia.org/wiki/Array_associativo">array associativi</a> (sequenze coppie chiave-valore separate da virgole racchiuse in parentesi graffe);</p></li>
+<li><p>interi, reali, <a class="reference external" href="https://it.wikipedia.org/wiki/Virgola_mobile">virgolamobile;</a></p></li>
+<li><p>null.</p></li>
+</ul>
+<p>La facilità nell’utilizzo ne ha determinato una rapida diffusione anche
+con altri linguaggi quali, per esempio:
+<a class="reference external" href="https://it.wikipedia.org/wiki/C_(linguaggio)">C,</a><a class="reference external" href="https://it.wikipedia.org/wiki/C_sharp">C#</a>,<a class="reference external" href="https://it.wikipedia.org/wiki/Embarcadero_Delphi">Delphi</a>,<a class="reference external" href="https://it.wikipedia.org/wiki/Java_(linguaggio_di_programmazione)">Java</a>,<a class="reference external" href="https://it.wikipedia.org/wiki/JavaScript">JavaScript</a>,<a class="reference external" href="https://it.wikipedia.org/wiki/Perl">Perl</a>,<a class="reference external" href="https://it.wikipedia.org/wiki/PHP">PHP</a>,<a class="reference external" href="https://it.wikipedia.org/wiki/Python">Python</a>.</p>
+</section>
+</section>
+<section id="vantaggi-di-rest">
+<h2><span class="section-number">8.8. </span>Vantaggi di REST<a class="headerlink" href="#vantaggi-di-rest" title="Link to this heading">¶</a></h2>
+<p>Il principale vantaggio che si ottiene utilizzando il paradigma REST è
+l'estrema semplicità della nostra applicazione; utilizza infatti solo
+protocolli leggeri, in pratica l'unico protocollo di livello
+applicazione che utilizza è HTTP. Questo comporta sia vantaggi di tipo
+tecnologico (il non dover essere legati a tecnologie particolari a volte
+anche commerciali), sia vantaggi in termini di peso delle request le
+quali sono molto più brevi. Inoltre, l'implementazione in Java non
+significa altro che la scrittura e l'esecuzione di una semplice classe.
+Questo significa che per il server è un'applicazione molto leggera e che
+può essere eseguita su un qualunque hardware su cui si può installare
+una JVM compatibile con le classi utilizzate. Anche i client sono molto
+versatili. Infatti un client può essere scritto in un qualunque
+linguaggio di programmazione, può essere ad interfaccia grafica o a
+linea di comando e soprattutto, se scritto anch'esso in Java, può essere
+eseguito su qualunque sistema. Il client deve solo conoscere l'XML ed
+avere la possibilità di accedere a risorse disponibili sul web.</p>
+<section id="implementazione-di-open-sigla">
+<h3><span class="section-number">8.8.1. </span>Implementazione di OPEN SIGLA<a class="headerlink" href="#implementazione-di-open-sigla" title="Link to this heading">¶</a></h3>
+<p>L’implementazione di Open SIGLA è stata realizzata implementando il
+paradigma REST all’interno di SIGLA per permettere l’invocazione di URL
+che forniscano le informazioni richieste dai vari applicativi. In
+particolare lo sviluppo ha riguardato:</p>
+<ul class="simple">
+<li><p>La creazione di un file xml contenente le informazioni relative alle
+diverse consultazioni previste con le relative configurazioni e
+parametrizzazioni;</p></li>
+<li><p>La creazione di una Classe Servlet che risponde alle varie richieste
+effettuate dai client dal nome RESTServlet:</p></li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">it.cnr.contab.util.servlet</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.config00.ejb.Unita_organizzativaComponentSession</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.utente00.nav.ejb.GestioneLoginComponentSession</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.utenze00.bp.CNRUserContext</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.utenze00.bp.RESTUserContext</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.utenze00.bulk.AssBpAccessoBulk</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.utenze00.bulk.CNRUserInfo</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.utenze00.bulk.UtenteBulk</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.utenze00.ejb.AssBpAccessoComponentSession</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.util.servlet.JSONRequest.Clause</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.contab.util.servlet.JSONRequest.OrderBy</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.action.ActionMapping</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.action.ActionMappings</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.action.ActionMappingsConfigurationException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.action.ActionPerformingError</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.action.ActionUtil</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.action.AdminUserContext</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.action.BusinessProcess</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.action.BusinessProcessException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.action.HttpActionContext</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.bulk.OggettoBulk</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.bulk.UserInfo</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.comp.ApplicationException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.comp.ComponentException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.persistency.sql.CompoundFindClause</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.util.OrderConstants</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">it.cnr.jada.util.action.ConsultazioniBP</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.io.File</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.io.IOException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.io.PrintWriter</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.io.StringWriter</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.rmi.RemoteException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.ArrayList</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.HashMap</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Hashtable</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Iterator</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Map</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.StringTokenizer</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.ejb.EJBException</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.http.HttpServlet</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.http.HttpServletRequest</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.servlet.http.HttpServletResponse</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jakarta.xml.bind.DatatypeConverter</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.codehaus.jackson.JsonFactory</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.codehaus.jackson.JsonGenerationException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.codehaus.jackson.JsonGenerator</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.codehaus.jackson.map.JsonMappingException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.codehaus.jackson.map.ObjectMapper</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.codehaus.jackson.map.SerializationConfig</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.slf4j.Logger</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.slf4j.LoggerFactory</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">com.google.gson.Gson</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">com.google.gson.JsonParser</span><span class="p">;</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RESTServlet</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">HttpServlet</span><span class="p">{</span>
+
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">serialVersionUID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1L</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">restExtension</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">File</span><span class="w"> </span><span class="n">actionDirFile</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">ActionMappings</span><span class="w"> </span><span class="n">mappings</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">COMMAND_POST</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"doRestResponse"</span><span class="p">,</span><span class="w"> </span><span class="n">COMMAND_GET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"doRestInfo"</span><span class="p">,</span><span class="w"> </span><span class="n">ACTION_INFO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"/info"</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Logger</span><span class="w"> </span><span class="n">logger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LoggerFactory</span><span class="p">.</span><span class="na">getLogger</span><span class="p">(</span><span class="n">RESTServlet</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nd">@Override</span>
+<span class="w">  </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doPost</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">resp</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">ServletException</span><span class="p">,</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">execute</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">resp</span><span class="p">,</span><span class="w"> </span><span class="n">COMMAND_POST</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nd">@Override</span>
+<span class="w">  </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doGet</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">resp</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">ServletException</span><span class="p">,</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">execute</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">resp</span><span class="p">,</span><span class="w"> </span><span class="n">COMMAND_GET</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">HttpServletRequest</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">HttpServletResponse</span><span class="w"> </span><span class="n">resp</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">command</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">ServletException</span><span class="p">,</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">resp</span><span class="p">.</span><span class="na">setContentType</span><span class="p">(</span><span class="s">"application/json"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">req</span><span class="p">.</span><span class="na">getServletPath</span><span class="p">();</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">authorization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">req</span><span class="p">.</span><span class="na">getHeader</span><span class="p">(</span><span class="s">"Authorization"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">logger</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">"RequestedSessionId: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRequestedSessionId</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">".RemoteAddr: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRemoteAddr</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">". RemoteHost:"</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRemoteHost</span><span class="p">()</span><span class="o">+</span><span class="w"> </span><span class="s">". RemotePort: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRemotePort</span><span class="p">());</span>
+<span class="w">    </span><span class="n">logger</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">"RequestedSessionId: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRequestedSessionId</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">".Action: "</span><span class="o">+</span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">". Command: "</span><span class="o">+</span><span class="n">command</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">". Authorization:"</span><span class="o">+</span><span class="n">authorization</span><span class="p">);</span>
+<span class="w">    </span><span class="n">logger</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">"RequestedSessionId: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRequestedSessionId</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">".ContentType: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getContentType</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">". Encoding:"</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getCharacterEncoding</span><span class="p">()</span><span class="o">+</span><span class="w"> </span><span class="s">". QueryString: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getQueryString</span><span class="p">());</span>
+<span class="w">    </span><span class="n">logger</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">"RequestedSessionId: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRequestedSessionId</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">".ServerName: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getServerName</span><span class="p">()</span><span class="o">+</span><span class="s">". ServerPort:"</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getServerPort</span><span class="p">()</span><span class="o">+</span><span class="s">".URI: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRequestURI</span><span class="p">());</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">substring</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">lastIndexOf</span><span class="p">(</span><span class="s">"."</span><span class="p">));</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">restExtension</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">extension</span><span class="p">))</span>
+<span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ServletException</span><span class="p">(</span><span class="s">"Le actions devono terminare con \\""+restExtension +"</span><span class="err">\</span><span class="s">""</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">extension</span><span class="p">.</span><span class="na">length</span><span class="p">());</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">ACTION_INFO</span><span class="p">)){</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">command</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">COMMAND_GET</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">searchForInfo</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">resp</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ServletException</span><span class="p">(</span><span class="s">"Non è possibile avere le informazioni sui servizi con il comando POST"</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">ActionMapping</span><span class="w"> </span><span class="n">actionmapping</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mappings</span><span class="p">.</span><span class="na">findActionMapping</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="n">actionmapping</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ServletException</span><span class="p">(</span><span class="s">"Action not found ["</span><span class="o">+</span><span class="n">s</span><span class="o">+</span><span class="s">"]"</span><span class="p">);</span>
+<span class="w">      </span><span class="n">UtenteBulk</span><span class="w"> </span><span class="n">utente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">      </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">actionmapping</span><span class="p">.</span><span class="na">needExistingSession</span><span class="p">())</span>
+<span class="w">          </span><span class="n">utente</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">authenticate</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">resp</span><span class="p">);</span>
+<span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">utente</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="err">\</span><span class="o">|</span><span class="err">\</span><span class="o">|</span><span class="w"> </span><span class="o">!</span><span class="n">actionmapping</span><span class="p">.</span><span class="na">needExistingSession</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">JSONRequest</span><span class="w"> </span><span class="n">jsonRequest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">            </span><span class="n">HttpActionContext</span><span class="w"> </span><span class="n">httpactioncontext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HttpActionContext</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="n">resp</span><span class="p">);</span>
+<span class="w">            </span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">setActionMapping</span><span class="p">(</span><span class="n">actionmapping</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">command</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">COMMAND_POST</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">jsonRequest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Gson</span><span class="p">().</span><span class="na">fromJson</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">JsonParser</span><span class="p">().</span><span class="na">parse</span><span class="p">(</span><span class="n">req</span><span class="p">.</span><span class="na">getReader</span><span class="p">()),</span><span class="w"> </span><span class="n">JSONRequest</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">actionmapping</span><span class="p">.</span><span class="na">needExistingSession</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">setUserContext</span><span class="p">(</span><span class="n">getContextFromRequest</span><span class="p">(</span><span class="n">jsonRequest</span><span class="p">,</span><span class="w"> </span><span class="n">utente</span><span class="p">.</span><span class="na">getCd_utente</span><span class="p">(),</span><span class="w"> </span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">getSessionId</span><span class="p">(),</span><span class="w"> </span><span class="n">req</span><span class="p">));</span>
+<span class="w">                </span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">setUserInfo</span><span class="p">(</span><span class="n">getUserInfo</span><span class="p">(</span><span class="n">utente</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">CNRUserContext</span><span class="p">)</span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">getUserContext</span><span class="p">()));</span>
+<span class="w">              </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">setUserContext</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">RESTUserContext</span><span class="p">());</span>
+<span class="w">                </span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">setUserInfo</span><span class="p">(</span><span class="n">getUserInfo</span><span class="p">(</span><span class="n">utente</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">CNRUserContext</span><span class="p">)</span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">getUserContext</span><span class="p">()));</span>
+<span class="w">              </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">BusinessProcess</span><span class="w"> </span><span class="n">businessProcess</span><span class="p">;</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">req</span><span class="p">.</span><span class="na">getParameter</span><span class="p">(</span><span class="s">"bpName"</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span>
+<span class="w">                </span><span class="n">businessProcess</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mappings</span><span class="p">.</span><span class="na">createBusinessProcess</span><span class="p">(</span><span class="n">req</span><span class="p">.</span><span class="na">getParameter</span><span class="p">(</span><span class="s">"bpName"</span><span class="p">),</span><span class="w"> </span><span class="n">httpactioncontext</span><span class="p">);</span>
+<span class="w">              </span><span class="k">else</span>
+<span class="w">                </span><span class="n">businessProcess</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mappings</span><span class="p">.</span><span class="na">createBusinessProcess</span><span class="p">(</span><span class="n">actionmapping</span><span class="p">,</span><span class="w"> </span><span class="n">httpactioncontext</span><span class="p">);</span>
+
+<span class="w">              </span><span class="n">logger</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">"RequestedSessionId: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRequestedSessionId</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">".Business Process: "</span><span class="o">+</span><span class="n">businessProcess</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">              </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">command</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">COMMAND_POST</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">Boolean</span><span class="w"> </span><span class="n">isEnableBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">actionmapping</span><span class="p">.</span><span class="na">needExistingSession</span><span class="p">())</span>
+<span class="w">                  </span><span class="n">isEnableBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loginComponentSession</span><span class="p">().</span><span class="na">isBPEnableForUser</span><span class="p">(</span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">getUserContext</span><span class="p">(),</span><span class="w"> </span><span class="n">utente</span><span class="p">,</span><span class="w"> </span><span class="n">CNRUserContext</span><span class="p">.</span><span class="na">getCd_unita_organizzativa</span><span class="p">(</span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">getUserContext</span><span class="p">()),</span><span class="w"> </span><span class="n">businessProcess</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">actionmapping</span><span class="p">.</span><span class="na">needExistingSession</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isEnableBP</span><span class="p">)</span><span class="w"> </span><span class="err">\</span><span class="o">|</span><span class="err">\</span><span class="o">|</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="n">businessProcess</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">ConsultazioniBP</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="n">resp</span><span class="p">.</span><span class="na">setStatus</span><span class="p">(</span><span class="n">HttpServletResponse</span><span class="p">.</span><span class="na">SC_UNAUTHORIZED</span><span class="p">);</span>
+<span class="w">                  </span><span class="n">resp</span><span class="p">.</span><span class="na">getWriter</span><span class="p">().</span><span class="na">append</span><span class="p">(</span><span class="s">"{\"message\" : \\"</span><span class="n">Utente</span><span class="w"> </span><span class="n">non</span><span class="w"> </span><span class="n">abilitato</span><span class="w"> </span><span class="n">ad</span><span class="w"> </span><span class="n">eseguire</span><span class="w"> </span><span class="n">la</span><span class="w"> </span><span class="n">richiesta</span><span class="o">!</span><span class="err">\</span><span class="s">"}"</span><span class="p">);</span>
+<span class="w">                  </span><span class="k">return</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="n">ConsultazioniBP</span><span class="w"> </span><span class="n">consBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">ConsultazioniBP</span><span class="p">)</span><span class="n">businessProcess</span><span class="p">);</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">jsonRequest</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">jsonRequest</span><span class="p">.</span><span class="na">getClauses</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                  </span><span class="n">CompoundFindClause</span><span class="w"> </span><span class="n">compoundFindClause</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CompoundFindClause</span><span class="p">();</span>
+<span class="w">                  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Clause</span><span class="w"> </span><span class="n">clause</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">jsonRequest</span><span class="p">.</span><span class="na">getClauses</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">compoundFindClause</span><span class="p">.</span><span class="na">addClause</span><span class="p">(</span><span class="n">clause</span><span class="p">.</span><span class="na">getCondition</span><span class="p">(),</span><span class="w"> </span><span class="n">clause</span><span class="p">.</span><span class="na">getFieldName</span><span class="p">(),</span><span class="w"> </span><span class="n">clause</span><span class="p">.</span><span class="na">getSQLOperator</span><span class="p">(),</span><span class="w"> </span><span class="n">clause</span><span class="p">.</span><span class="na">getFieldValue</span><span class="p">());</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">                  </span><span class="n">consBP</span><span class="p">.</span><span class="na">setFindclause</span><span class="p">(</span><span class="n">compoundFindClause</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="n">consBP</span><span class="p">.</span><span class="na">setIterator</span><span class="p">(</span><span class="n">httpactioncontext</span><span class="p">,</span><span class="w"> </span><span class="n">consBP</span><span class="p">.</span><span class="na">search</span><span class="p">(</span><span class="n">httpactioncontext</span><span class="p">,</span><span class="w"> </span><span class="n">consBP</span><span class="p">.</span><span class="na">getFindclause</span><span class="p">(),</span><span class="w"> </span><span class="p">(</span><span class="n">OggettoBulk</span><span class="p">)</span><span class="w"> </span><span class="n">consBP</span><span class="p">.</span><span class="na">getBulkInfo</span><span class="p">().</span><span class="na">getBulkClass</span><span class="p">().</span><span class="na">newInstance</span><span class="p">()));</span>
+<span class="w">                </span><span class="n">parseRequestParameter</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">httpactioncontext</span><span class="p">,</span><span class="w"> </span><span class="n">jsonRequest</span><span class="p">,</span><span class="w"> </span><span class="n">consBP</span><span class="p">);</span>
+<span class="w">              </span><span class="p">}</span>
+<span class="w">              </span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">setBusinessProcess</span><span class="p">(</span><span class="n">businessProcess</span><span class="p">);</span>
+<span class="w">              </span><span class="n">req</span><span class="p">.</span><span class="na">setAttribute</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="na">cnr</span><span class="p">.</span><span class="na">jada</span><span class="p">.</span><span class="na">action</span><span class="p">.</span><span class="na">BusinessProcess</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getName</span><span class="p">(),</span><span class="w"> </span><span class="n">businessProcess</span><span class="p">);</span>
+<span class="w">              </span><span class="n">httpactioncontext</span><span class="p">.</span><span class="na">perform</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="n">actionmapping</span><span class="p">,</span><span class="w"> </span><span class="n">command</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">ActionPerformingError</span><span class="w"> </span><span class="n">actionperformingerror</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ComponentException</span><span class="p">(</span><span class="n">actionperformingerror</span><span class="p">.</span><span class="na">getDetail</span><span class="p">());</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="p">(</span><span class="n">RuntimeException</span><span class="w"> </span><span class="n">runtimeexception</span><span class="p">){</span>
+<span class="w">              </span><span class="n">logger</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">"RuntimeException"</span><span class="p">,</span><span class="w"> </span><span class="n">runtimeexception</span><span class="p">);</span>
+<span class="w">              </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ComponentException</span><span class="p">(</span><span class="n">runtimeexception</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">BusinessProcessException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">logger</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">"BusinessProcessException"</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
+<span class="w">              </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ComponentException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InstantiationException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">logger</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">"InstantiationException"</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
+<span class="w">              </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ComponentException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">IllegalAccessException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="n">logger</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">"IllegalAccessException"</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
+<span class="w">              </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ComponentException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">          </span><span class="n">logger</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">"RequestedSessionId: "</span><span class="o">+</span><span class="n">req</span><span class="p">.</span><span class="na">getRequestedSessionId</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">".End"</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">ComponentException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">logger</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">"ComponentException"</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
+<span class="w">          </span><span class="n">resp</span><span class="p">.</span><span class="na">setStatus</span><span class="p">(</span><span class="n">HttpServletResponse</span><span class="p">.</span><span class="na">SC_INTERNAL_SERVER_ERROR</span><span class="p">);</span>
+<span class="w">          </span><span class="n">Gson</span><span class="w"> </span><span class="n">gson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Gson</span><span class="p">();</span>
+<span class="w">          </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exc_map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">          </span><span class="n">exc_map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"message"</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="na">toString</span><span class="p">());</span>
+<span class="w">          </span><span class="n">exc_map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">"stacktrace"</span><span class="p">,</span><span class="w"> </span><span class="n">getStackTrace</span><span class="p">(</span><span class="n">e</span><span class="p">));</span>
+<span class="w">          </span><span class="n">resp</span><span class="p">.</span><span class="na">getWriter</span><span class="p">().</span><span class="na">append</span><span class="p">(</span><span class="n">gson</span><span class="p">.</span><span class="na">toJson</span><span class="p">(</span><span class="n">exc_map</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Tecnicamente quindi una servlet non è altro che una classe che estende
+la classe <em>jakarta.servlet.http.HttpServlet</em> ed implementa l'interfaccia
+<em>jakarta.servlet.Servlet</em>.</p>
+<p>Questo fa sì che possiamo, e dobbiamo, ridefinire due funzioni:</p>
+<ul class="simple">
+<li><p><em>doGet</em> viene invocata quando viene richiesta la servlet con metodo HTTPGET;</p></li>
+<li><p><em>doPost</em> viene invocata quando viene richiesta la servlet con metodo HTTP POST.</p></li>
+</ul>
+<p>Entrambe le funzioni ricevono come parametri la request (ossia la
+richiesta che è stata fatta dal client) e la response (che rappresenta
+la risposta che dovrà essere inviata al client). Come abbiamo già detto,
+una Servlet deve gestire il Controller, questo può essere visto come il
+“cuore” dell'intelligenza dell'applicazione. Lo scopo di una Servlet è
+recuperare tutti i dati inviati dall'utente, validarli, e se tutto è
+corretto eseguire una sequenza di operazioni.</p>
+<p>Per OPEN SIGLA, dopo aver effettuato alcuni controlli formali sulla
+request, abbiamo previsto che al metodo HTTP GET corrispondono una serie
+di informazioni che documentano i vari Servizi REST esistenti, mentre al
+metodo HTTP POST corrisponde il ritorno al client dei dati
+amministrativo-contabili di SIGLA richiesti.</p>
+</section>
+</section>
+<section id="open-sigla-http-get">
+<h2><span class="section-number">8.9. </span>OPEN SIGLA: HTTP GET<a class="headerlink" href="#open-sigla-http-get" title="Link to this heading">¶</a></h2>
+<p>Invocando il metodo HTTP GET in OPEN SIGLA è possibile avere la
+documentazione dei</p>
+<p>Servizi REST accessibili. In particolare:</p>
+<ol class="loweralpha simple" start="15">
+<li><p>Attraverso la chiamata a info.json si possono avere le informazioni
+di tutti i servizi REST presenti in OPEN SIGLA con i relativi
+dettagli tecnici quali: nome del servizio REST, descrizione breve del
+servizio, la modalità di accesso e le relative autorizzazioni.</p></li>
+</ol>
+<p>Esempio:</p>
+<p>GET <a class="reference external" href="http://testX.si.cnr.it:8180/SIGLA/info.json?proxyUrl=info.json">http://testX.si.cnr.it:8180/SIGLA/info.json?proxyUrl=info.json</a></p>
+<p>Ed ecco la risposta fornita da OPEN SIGLA:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"totalNumItems"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"maxItemsPerPage"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"activePage"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"elements"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"action"</span><span class="p">:</span><span class="s2">"/ConsTerzoAction"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"descrizione"</span><span class="p">:</span><span class="s2">"Servizio REST per i Terzi"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"accesso"</span><span class="p">:</span><span class="s2">"CONSTERZOREST"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"authentication"</span><span class="p">:</span><span class="s2">"true"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"action"</span><span class="p">:</span><span class="s2">"/ConsPDGGAreaAction"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"descrizione"</span><span class="p">:</span><span class="s2">"Consultazione PdG Gestionale Spese per Area/Istituto"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"accesso"</span><span class="p">:</span><span class="s2">"CONSPDGGAREASPE"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"authentication"</span><span class="p">:</span><span class="s2">"true"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Attraverso la chiamata al singolo servizio REST si potranno avere</dt><dd><p>tutte le informazioni tecniche relative ai dettagli delle
+informazioni che saranno rese disponibili ed in particolare per
+ciascun attributo: nome, label, tipo di dato, lunghezza massima,
+obbligatorierà.</p>
+</dd>
+</dl>
+<p>Esempio:</p>
+<p>GET  <a class="reference external" href="http://testX.si.cnr.it:8180/SIGLA/ConsTerzoAction.json?proxyUrl=ConsTerzoAction.json">http://testX.si.cnr.it:8180/SIGLA/ConsTerzoAction.json?proxyUrl=ConsTerzoAction.json</a></p>
+<p>Ed ecco la risposta fornita da OPEN SIGLA:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"title"</span><span class="p">:</span><span class="s2">"Terzo"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"fields"</span><span class="p">:[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"property"</span><span class="p">:</span><span class="s2">"cd_terzo"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"Codice"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"cd_terzo"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputType"</span><span class="p">:</span><span class="s2">"TEXT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"maxLength"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputSize"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nullable"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"propertyType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"java.lang.Integer"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"property"</span><span class="p">:</span><span class="s2">"anagrafico.cd_anag"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"Anagrafica"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"cd_anag"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputType"</span><span class="p">:</span><span class="s2">"TEXT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"maxLength"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputSize"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nullable"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"propertyType"</span><span class="p">:</span><span class="s2">"java.lang.Integer"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"property"</span><span class="p">:</span><span class="s2">"denominazione_sede"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"Denominazione"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"denominazione_sede"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputType"</span><span class="p">:</span><span class="s2">"TEXT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"maxLength"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputSize"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nullable"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"propertyType"</span><span class="p">:</span><span class="s2">"java.lang.String"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"property"</span><span class="p">:</span><span class="s2">"anagrafico.codice_fiscale"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"Codice Fiscale"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"codice_fiscale_anagrafico"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputType"</span><span class="p">:</span><span class="s2">"TEXT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"maxLength"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputSize"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nullable"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"propertyType"</span><span class="p">:</span><span class="s2">"java.lang.String"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"property"</span><span class="p">:</span><span class="s2">"anagrafico.partita_iva"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"Partita IVA"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"partita_iva_anagrafico"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputType"</span><span class="p">:</span><span class="s2">"TEXT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"maxLength"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputSize"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nullable"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"propertyType"</span><span class="p">:</span><span class="s2">"java.lang.String"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"property"</span><span class="p">:</span><span class="s2">"dt_fine_rapporto"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"Fine rapp."</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"dt_fine_rapporto"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TEXT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"maxLength"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputSize"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nullable"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"propertyType"</span><span class="p">:</span><span class="s2">"java.sql.Timestamp"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"property"</span><span class="p">:</span><span class="s2">"anagrafico.descrizioneAnagrafica"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"Anagrafica"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"descrizioneAnagrafica"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputType"</span><span class="p">:</span><span class="s2">"TEXT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"maxLength"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputSize"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nullable"</span><span class="p">:</span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"propertyType"</span><span class="p">:</span><span class="s2">"java.lang.String"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"property"</span><span class="p">:</span><span class="s2">"anagrafico.ti_italiano_estero_anag"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"Italiano/&lt;BR&gt;Estero"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"italianoEstero"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputType"</span><span class="p">:</span><span class="s2">"ROTEXT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"maxLength"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inputSize"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"nullable"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"propertyType"</span><span class="p">:</span><span class="s2">"java.lang.String"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Si noti la semplicità di interpretazione della risposta in formato JSON.</p>
+</section>
+<section id="open-sigla-http-post">
+<h2><span class="section-number">8.10. </span>OPEN SIGLA: HTTP POST<a class="headerlink" href="#open-sigla-http-post" title="Link to this heading">¶</a></h2>
+<p>Nel caso di chiamata del metodo HTTP POST l’implementazione effettua le
+seguenti operazioni:</p>
+<ol class="arabic simple">
+<li><p>Verifica di esistenza del Servizio REST di consultazione di SIGLA;</p></li>
+<li><p>Verifica di abilitazione dell’utente che sta richiedendo il servizio
+rispetto alle informazioni richieste;</p></li>
+<li><p>Chiamata alla BusinessLogic di SIGLA per il recupero delle
+informazioni richieste, filtrate per il CDR e per l’utente che ne ha
+effettuato la richiesta;</p></li>
+<li><p>Preparazione della response in formato JSON con i risultati
+richiesti.</p></li>
+</ol>
+<p>Ecco un esempio di chiamata del metodo POST:</p>
+<p><em>Authorization Basic bWlzc2lvbmk6TTE1NTEwTjE=</em></p>
+<p>POST <a class="reference external" href="http://testX.si.cnr.it:8180/SIGLA/ConsTerzoAction.json?proxyUrl=ConsTerzoAction.json">http://testX.si.cnr.it:8180/SIGLA/ConsTerzoAction.json?proxyUrl=ConsTerzoAction.json</a></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"activePage"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"maxItemsPerPage"</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"clauses"</span><span class="p">:[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"condition"</span><span class="p">:</span><span class="s2">"AND"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"fieldName"</span><span class="p">:</span><span class="s2">"anagrafico.codice_fiscale"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"operator"</span><span class="p">:</span><span class="s2">"="</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"fieldValue"</span><span class="p">:</span><span class="s2">"GSPGFR76E31F839Z"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"context"</span><span class="p">:{</span>
+<span class="w">    </span><span class="nt">"esercizio"</span><span class="p">:</span><span class="mi">2016</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"cd_unita_organizzativa"</span><span class="p">:</span><span class="s2">"999.000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"cd_cds"</span><span class="p">:</span><span class="s2">"999"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"cd_cdr"</span><span class="p">:</span><span class="s2">"999.000.000"</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Ed ecco la risposta fornita da OPEN SIGLA:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"totalNumItems"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"maxItemsPerPage"</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"activePage"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"elements"</span><span class="p">:[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"cd_terzo"</span><span class="p">:</span><span class="w"> </span><span class="mi">184076</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"cd_anag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">174071</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"denominazione_sede"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"GASPARRO GIANFRANCO"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"codice_fiscale_anagrafico"</span><span class="p">:</span><span class="s2">"GSPGFR76E31F839Z"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"partita_iva_anagrafico"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"dt_fine_rapporto"</span><span class="p">:</span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"descrizioneAnagrafica"</span><span class="p">:</span><span class="s2">"GIANFRANCO GASPARRO"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"italianoEstero"</span><span class="p">:</span><span class="s2">"I"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Si noti come nella chiamata al servizio è possibile indicare il numero
+massimo di righe da restituire per poter permettere la paginazione nel
+caso di un numero elevato di dati presenti.</p>
+<p><strong>OPEN SIGLA: High Availability</strong></p>
+<p>Quando si parla di alta affidabilità del servizio si intende la
+possibilità di poter fermare ogni singolo componente per permettere
+aggiornamenti, cambi di configurazioni, manutenzione hardware e software
+senza dover interrompere il servizio e poterlo fornire in continuazione.
+Grazie alle caratteristiche dei protocolli di trasporto e
+dell'applicazione, descritte fino ad ora, stato possibile implementare il servizio Open Sigla su
+un'architettura in grado di garantire efficienza ed alta affidabilità. Tale architettura è composta dai componenti:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Firewall: fornisce l'accesso agli utenti e alle applicazioni di
+terze parti tramite un indirizzo (<em>Traffic Handler</em>) usato per
+smistare le richieste a nodi multipli, bilanciandole in base
+all'origine di provenienza.</p></li>
+<li><p>Reverse Proxy: server web (<em>Apache Web Server e ModJK connetctor</em>)
+[9] configurati per accettare le richieste e smistarle ai server
+applicativi dove viene erogato il servizio. La funzione di questo
+tipo di server è quella di:</p>
+<ul class="simple">
+<li><p>Catalogare gli accessi e le richieste alle applicazioni (audit
+log) in maniera centralizzata inviandole ad un sistema remoto
+(<em>logserver)</em>.</p></li>
+<li><p>Distribuire automaticamente il flusso applicativo ai server
+effettivamente attivi, aggiungendoli e rimuovendoli
+dinamicamente in base al loro stato.</p></li>
+<li><p>Dividere le richieste di tipo specifico (ad esempio i Web
+Services) solo a particolari gruppi di nodi applicativi. Si
+possono così suddividere le risorse computazionali per
+tipologie di carico di lavoro.</p></li>
+<li><p>Bilanciare le richieste degli utenti in modo da distribuirle
+efficientemente tra i nodi di calcolo meno impegnati
+computazionalmente.</p></li>
+<li><p>Mantenere una sessione utente legata ad uno specifico nodo
+applicativo così da ottimizzare il lavoro del nodo stesso</p></li>
+</ul>
+</li>
+</ol>
+</div></blockquote>
+<figure class="align-default" id="id6">
+<img alt="Reverse proxy" src="_images/api_rest4.jpeg" />
+<figcaption>
+<p><span class="caption-number">Fig. 8.4 </span><span class="caption-text">Reverse proxy</span><a class="headerlink" href="#id6" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>In questo diagramma è generalizzato il caso d'uso dei reverse proxy.
+Secure Asset rappresenta il servizio erogato dai nodi applicativi.</p>
+<ol class="arabic simple" start="3">
+<li><p>Application Server: sono i nodi di calcolo basati su Java Virtual
+Machine e application server Jboss dove viene eseguita l'applicazione
+e sono serviti dai Reverse Proxy. Possono scalare orizzontalmente,
+ovvero il loro numero può crescere per far fronte a picchi di
+richieste da parte degli utenti o delle applicazioni di terze parti.</p></li>
+</ol>
+<p>Per la messa in sicurezza del servizio, la comunicazione di queste
+componenti avviene su reti (LAN) diverse e fisicamente separate.
+L'accesso tra loro viene regolato dal firewall perimetrale e vi sono
+regole di accesso (ACL) specifiche relativamente agli utilizzatori del
+servizio, alle applicazioni che interagiscono col servizio e al
+personale autorizzato ad accedere ai sistemi.</p>
+<p>Di seguito un diagramma semplificato dell'infrastruttura di HA con un
+solo servizio oltre a open sigla in evidenza. Anche gli altri servizi,
+come quello JSON, sono forniti secondo lo stesso principio:</p>
+<figure class="align-default" id="id7">
+<img alt="Infrastruttura di HA" src="_images/api_rest5.jpeg" />
+<figcaption>
+<p><span class="caption-number">Fig. 8.5 </span><span class="caption-text">Infrastruttura di HA</span><a class="headerlink" href="#id7" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Di seguito un esempio di configurazione di un reverse proxy Apache.
+Esempio estratto dal file worker.properties che definisce i nodi applicativi:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Apache Worker List
+…
+worker.list=sigla,siglaprint,siglajs,…
+…
+#
+# template comune di balancing
+#
+worker.template.type=ajp13
+worker.template.lbfactor=1
+# Timeout CPING/CPONG
+worker.template.ping_timeout=5000
+worker.template.ping_mode=A
+# TCP/IP SO_KEEPALIVE
+# NB: Inserire i valori adeguati (per evitare il troncamento delle connesioni dal firewall) nel file /etc/sysctl.conf
+worker.template.socket_keepalive=true
+# Millisecondi di attesa per una risposta congrua dal backend
+worker.template.reply_timeout=900000
+worker.template.max_reply_timeouts=2
+worker.template.connection_pool_timeout=86400
+# Impostato escalation immediata in errore del backend
+error_escalation_time=0
+…
+#
+# Open SIGLA
+#
+worker.sigla1.reference=worker.template
+worker.sigla1.port=8009
+worker.sigla1.host=192.168.1.10
+worker.sigla1.redirect=sigla2
+#worker.sigla1.activation=S
+
+worker.sigla2.reference=worker.template
+worker.sigla2.port=8009
+worker.sigla2.host=192.168.1.20
+worker.sigla2.redirect=sigla1
+#worker.sigla2.activation=S
+
+worker.sigla.type=lb
+worker.sigla.balance_workers=sigla1,sigla2
+
+#
+# SIGLA Print
+#
+worker.sigla1print.reference=worker.template
+worker.sigla1print.port=8109
+worker.sigla1print.host=192.168.1.10
+worker.sigla1print.redirect=sigla2print
+#worker.sigla1print.activation=S
+
+worker.sigla2print.reference=worker.template
+worker.sigla2print.port=8109
+worker.sigla2print.host=192.168.1.20
+worker.sigla2print.redirect=sigla1print
+#worker.sigla2print.activation=S
+
+worker.sigla.type=lb
+worker.siglaprint.balance_workers=sigla1print,sigla2print
+
+#
+# SIGLA JS
+#
+worker.sigla1js.reference=worker.template
+worker.sigla1js.port=8009
+worker.sigla1js.host=192.168.1.11
+worker.sigla1js.redirect=sigla2js
+#worker.sigla1js.activation=S
+
+worker.sigla2js.reference=worker.template
+worker.sigla2js.port=8009
+worker.sigla2js.host=192.168.1.21
+worker.sigla2js.redirect=sigla1js
+#worker.sigla2js.activation=S
+
+worker.sigla.type=lb
+worker.siglajs.balance_workers=sigla1js,sigla2js
+…
+</pre></div>
+</div>
+<p>Esempio estratto dal file httpd-vhost.conf che definisce i virtual host con le regole di accesso e puntamento ai worker.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>….
+##
+##  ==== SIGLA ====
+##
+&lt;VirtualHost 10.1.1.10:80&gt;
+ServerName sigla.lan
+CustomLog logs/sigla.log combined_D
+CustomLog "\| nc logserver.remoto 2515" syslog_ng
+**JkMount /SIGLA\* sigla**
+&lt;/VirtualHost&gt;
+
+##
+## ==== SIGLAPRINT ====
+##
+&lt;VirtualHost 10.1.1.11:80&gt;
+ServerName siglaprint.lan
+CustomLog logs/siglaprint.log combined_D CustomLog "\| nc
+logserver.remoto 2515" syslog_ng
+**JkMount /jreport/\* siglaprint**
+&lt;/VirtualHost&gt;
+
+##
+##  ==== SIGLAJS ====
+##
+&lt;VirtualHost 10.1.1.12:80&gt;
+ServerName siglajs.lan
+RedirectMatch permanent ^/$ http://siglajs.lan/
+CustomLog logs/siglajs.log combined_D
+CustomLog "\| nc logserver.remoto 2515" syslog_ng
+**JkMount /SIGLA/*.json siglajs**
+&lt;/VirtualHost&gt;
+</pre></div>
+</div>
+</section>
+<section id="conclusioni">
+<h2><span class="section-number">8.11. </span>Conclusioni<a class="headerlink" href="#conclusioni" title="Link to this heading">¶</a></h2>
+<p>Nel presente rapporto tecnico è stato presentato il sistema OPEN SIGLA
+per rendere fruibile a chiunque ne faccia richiesta i dati
+amministrativo-contabili presenti in SIGLA.</p>
+<p>L’implementazione non ha comportato un grande investimento di tempo, in
+quanto si è provveduto a riutilizzare tutte le consultazioni presenti in
+SIGLA implementando in aggiunta soltanto la creazione di un file xml di
+configurazione e la creazione della classe Servlet. Nel caso si
+volessero avere dati non presenti in nessuna consultazione di SIGLA,
+sarà necessario sviluppare la parte relativa al recupero delle
+informazioni richieste e anche in questo caso la modifica non richiederà
+molto tempo. A fronte di un impegno di tempo e/o risorse limitato, i
+vantaggi sono molteplici e si possono così sintetizzare:</p>
+<ul class="simple">
+<li><p>eliminazione dell’accesso diretto al database per il recupero delle
+informazioni, da parte di applicazioni terze;</p></li>
+<li><p>disponibilità dei dati in tempo reale;</p></li>
+<li><p>accesso ai dati amministrativo-contabili filtrato dalle abilitazioni
+per utente/funzione;</p></li>
+<li><p>nessuna abilitazione aggiuntiva all’accesso dei dati; sono infatti
+usate le abilitazioni già attive per utente/funzione di SIGLA;</p></li>
+<li><p>fruibilità dei dati in un formato facilmente leggibile secondo gli
+standard più evoluti;</p></li>
+<li><p>facilità di implementazione nell’acquisizione dei dati da parte di
+applicazioni terze;</p></li>
+<li><p>documentazione sempre aggiornata dei dati disponibili;</p></li>
+<li><p>accesso ai dati senza nessun sovraccarico di risorse per le
+web-application di esercizio attraverso l’indirizzamento dei servizi
+REST su una Web-Application dedicata;</p></li>
+<li><p>efficienza e continuità di servizio dell'infrastruttura di HA;</p></li>
+<li><p>accesso ai dati senza compromettere le operazioni di gestione per gli
+utenti SIGLA.</p></li>
+</ul>
+<p>Al momento le applicazioni terze che utilizzano OPEN SIGLA sono:</p>
+<ul class="simple">
+<li><p>Gestione Missioni;</p></li>
+<li><p>MIA - Monitoraggio Integrato Attività di Ricerca;</p></li>
+<li><p>Applicativo integrato di rendicontazione progetti dell’IFAC.</p></li>
+</ul>
+<section id="riferimenti-bibliografici-e-sitografici">
+<h3><span class="section-number">8.11.1. </span>Riferimenti bibliografici e sitografici<a class="headerlink" href="#riferimenti-bibliografici-e-sitografici" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Web Service Architecture, W3C, <a class="reference external" href="https://www.w3.org/TR/ws-arch/">https://www.w3.org/TR/ws-arch/</a></p></li>
+<li><p>Fielding Roy Thomas<em>, Architectural Styles and the Design of
+Network-based Software</em> <em>Architectures,</em></p></li>
+</ol>
+<p>University of California, Irvine, 2000,
+<a class="reference external" href="https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm">https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm</a></p>
+<ol class="arabic simple" start="3">
+<li><p>Uniform Resource Identifier: Generic Syntax, RFC 3986, IETF -
+Internet Engineering Task Force, January 2005,
+<a class="reference external" href="https://tools.ietf.org/html/rfc3986">https://tools.ietf.org/html/rfc3986</a></p></li>
+<li><p>Leonard Richardsone e Sam Ruby, <em>RESTful Web Services</em>; O'Reilly, May
+2007,
+<a class="reference external" href="https://www.crummy.com/writing/RESTful-Web-Services/RESTful_Web_Services.pdf">https://www.crummy.com/writing/RESTful-Web-Services/RESTful_Web_Services.pdf</a></p></li>
+<li><p>Fielding R., et al., <em>Hypertext Transfer Protocol - HTTP/1.1</em>, RFC
+2616, IETF - Internet Engineering Task Force, June 1999,
+<a class="reference external" href="https://tools.ietf.org/html/rfc2616">https://tools.ietf.org/html/rfc2616</a></p></li>
+<li><p>Java Servlet Technology, Oracle,
+<a class="reference external" href="http://www.oracle.com/technetwork/java/index-jsp-135475.html">http://www.oracle.com/technetwork/java/index-jsp-135475.html</a></p></li>
+<li><p><a class="reference external" href="http://www.artima.com/articles/dci_vision.html">The DCI Architecture: A New Vision of Object-Oriented
+Programming</a> -
+<a class="reference external" href="https://en.wikipedia.org/wiki/Trygve_Reenskaug">Trygve
+Reenskaug</a> and
+<a class="reference external" href="https://en.wikipedia.org/wiki/James_Coplien">James Coplien,</a>
+March 2009, <a class="reference external" href="http://www.artima.com/articles/dci_vision.html">http://www.artima.com/articles/dci_vision.html</a></p></li>
+<li><p>Introducing JSON, JSON, <a class="reference external" href="http://json.org/">http://json.org/</a></p></li>
+<li><p>The Apache Tomcat Connectors,
+<a class="reference external" href="http://tomcat.apache.org/connectors-doc/">http://tomcat.apache.org/connectors-doc/</a></p></li>
+<li><p>Apache HTTP Server, <a class="reference external" href="https://httpd.apache.org/docs-project/">https://httpd.apache.org/docs-project/</a></p></li>
+</ol>
+<p><em>Tutti gli indirizzi di rete citati sono stati verificati il 15 luglio 2016</em></p>
+</section>
+<section id="autori">
+<h3><span class="section-number">8.11.2. </span>Autori<a class="headerlink" href="#autori" title="Link to this heading">¶</a></h3>
+<p><em>Autore della sezione: Marco Spasiano <a class="reference external" href="mailto:marco&#46;spasiano&#37;&#52;&#48;cnr&#46;it">marco<span>&#46;</span>spasiano<span>&#64;</span>cnr<span>&#46;</span>it</a></em></p>
+<p><em>Autore della sezione: Gianfranco Gasparro <a class="reference external" href="mailto:gianfranco&#46;gasparro&#37;&#52;&#48;cnr&#46;it">gianfranco<span>&#46;</span>gasparro<span>&#64;</span>cnr<span>&#46;</span>it</a></em></p>
+<p><em>Autore della sezione: David Rossi <a class="reference external" href="mailto:david&#46;rossi&#37;&#52;&#48;cnr&#46;it">david<span>&#46;</span>rossi<span>&#64;</span>cnr<span>&#46;</span>it</a></em></p>
+</section>
+</section>
+</section>
+
+
+          
+            <div class="footer-buttons footer-buttons--next" role="navigation" aria-label="footer navigation">
+                  <a href="appendix.html" class="" title="Appendice" accesskey="n" rel="next">Appendice</a>
+              </div>
+            
+          </div>
+
+        </div>
+      </div>
+  </div>
+  <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<footer class="it-footer bg-primary container-fluid container-fluid--desktop main-container mb-5">
+  <div class="row justify-content-md-center">
+    <div class="col-md-4 d-flex align-items-center">
+      <a href="https://www.iss.it/" target="_blank">
+        <img class="team-logo--icon" src="_static/images/logo_ISS.png" alt="Consiglio Nazionale delle Ricerche" />
+      </a>
+    </div>
+  </div><!--/row-->
+</footer>
+  <script type="text/javascript">
+var t = {
+  this : "it",
+  locale : "it_IT",
+  about_these_documents : "Informazioni su questi documenti",
+  active_lang : "lingua attiva",
+  contents : "contenuti",
+  cookiebar_accept : "Accetto",
+  cookiebar_msg : "Questo sito utilizza cookie tecnici, analytics e di terze parti. Proseguendo nella navigazione accetti l’utilizzo dei cookie.",
+  cookiebar_privacy_policy : "Cookie policy",
+  copyright : "Copyright",
+  documents : "Documentazione",
+  download : "Scarica",
+  footer_link_privacy_policy : "Privacy policy",
+  footer_link_cookies : "Cookie policy",
+  footer_link_legal_notes : "Note legali",
+  go_to : "Vai a",
+  index : "Indice",
+  last_updated : "Più recenti",
+  most_viewed_this_month : "Più visti questo mese",
+  navigation_menu_label : "Menu di navigazione",
+  navigation_menu_esc : "esci dalla navigazione",
+  search : "Cerca",
+  search_form_label : "Cerca nel documento",
+  search_form_off : "disattiva il form di ricerca",
+  search_form_on : "attiva il form di ricerca",
+  search_form_start : "avvia la ricerca",
+  search_results : "Risultati della ricerca",
+  search_no_results : "La tua ricerca non ha prodotto documenti. Assicurati di non aver commesso errori di digitazione.",
+  site_subtitle : "Sistema Informativo Gestione Linee di Attività",
+  site_title : "Docs Italia",
+  share_msg : "condividi",
+  skiplink_goto_content : "vai ai contenuti",
+  skiplink_goto_navigation : "vai alla navigazione del sito",
+  toggle_menu_label : "accedi al menu",
+  version : "versione",
+  compare : "Confronta",
+  copy_link : "copia link",
+  copied_link : "link copiato",
+  see_actions : "vedi azioni",
+  other_actions : "altre azioni",
+  comments : "commenti",
+  back_to_text : "torna al testo",
+  glossary_empty : "informazione non trovata",
+  glossary : "Glossario",
+  go_to_glossary : "vai al glossario",
+  deepening : "approfondimento",
+  example : "esempio",
+  must : "si deve",
+  must_not : "non si deve",
+  should : "si dovrebbe",
+  should_not : "non si dovrebbe",
+  may : "si può",
+  use : "usa",
+  use_not : "non usare",
+  consultation : "consultazione",
+  show_more : "mostra tutto",
+  show_less : "mostra meno",
+  content_index : "Indice dei contenuti",
+  table_index : "Indice delle tabelle",
+  figures_index : "Indice delle figure",
+  figures : "figura",
+  tables : "tabelle",
+  in_consultation : "in consultazione",
+  indices_and_glossary : "indici e glossario",
+  note : "nota",
+  no_description : "nessuna descrizione",
+  no_content : "nessuna sezione",
+  no_glossary : "nessun glossario",
+  no_figures : "nessuna figura",
+  no_tables : "nessuna tabella",
+  summary : "Sommario",
+  project : "Progetto",
+  administration : "Amministrazione",
+  info : "Informazioni",
+  related : "Documenti correlati",
+  actions : "Azioni",
+  tags : "Tag",
+  view_source : "Sorgente",
+  previous : "precedente",
+  next : "successivo",
+  in_collaboration_with : "in collaborazione con",
+  follow_us : "seguici su",
+  header_link_trasformazione : "Piano Triennale",
+  header_link_piattaforme : "Piattaforme",
+  header_link_software : "Software",
+  header_link_api : "API",
+  header_link_community : "Le community",
+  header_link_developers : "Developers",
+  header_link_design : "Designers",
+  header_link_tools : "Gli strumenti",
+  header_link_forum : "Forum",
+  header_link_docs : "Docs",
+  header_link_github : "GitHub",
+  header_link_secondary_who_we_are : "Chi siamo",
+  header_link_projects : "Progetti",
+  header_link_documents : "Documenti",
+  header_link_administrations : "Amministrazioni",
+  header_link_whatis : "Che cos'è",
+}
+</script>
+  <a href="#" aria-hidden="true" data-attribute="return-to-top" class="return-to-top">
+  <i class="it-collapse"></i>
+</a>
+  
+  <script type="text/javascript">
+var PRODUCTION_DOMAIN = 'localhost';
+var DOCSITALIA_DATA = {
+  publisher_slug: 'organizzazione-demo',
+  publisher_project_slug: 'progetto-demo'
+}
+
+LOCAL = true;
+READTHEDOCS_DATA = {
+  project: 'demo-document',
+  version: 'bozza',
+  language: 'it',
+  api_host: '//' + PRODUCTION_DOMAIN
+}
+
+</script>
+<script src="_static/js/theme.js"></script>
+<script src="_static/language_data.js"></script>
+<script type="text/javascript" src="_static/documentation_options.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/sphinx_highlight.js"></script>
+<script type="text/javascript" src="_static/translations.js"></script>
+  
+  
+    <div class="cookiebar bg-dark p-4 hide" aria-hidden="true">
+  <div class="container">
+    <div class="row d-flex align-items-center">
+      <div class="col-12 col-md-7">
+        <span class="text-white">Questo sito utilizza cookie tecnici, analytics e di terze parti. Proseguendo nella navigazione accetti l’utilizzo dei cookie.</span>
+      </div>
+      <div class="col-12 col-md-5 mt-2 mt-md-0 text-right">
+        <a class="btn btn-link" href="/cookies-policy/">Cookie policy</a>
+        <button class="btn btn-sm btn-primary mr-2" data-accept="cookiebar">Accetto</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  
+  <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<div class="modal fade modal-sm-full" id="document-info" tabindex="-1" role="dialog" aria-labelledby="document-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content rounded">
+      <div class="modal-header">
+        <h4 class="modal-title" id="document-title">Sistema Informativo Gestione Linee di Attività</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>SIGLA – Sistema informativo contabile per Enti Pubblici basato sulla contabilità finanziaria con rendicontazione anche economica ed analitica.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="document-actions" aria-hidden="true">
+  <div class="modal-dialog mt-5" role="document">
+     <div class="modal-content rounded">
+        <div class="modal-body p-1">
+          <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<div class="document-actions d-flex flex-column flex-md-row justify-content-around w-100 p-2 p-md-0 text-blue">
+  <div class="dropdown p-3 px-md-2 py-md-0 d-flex flex-wrap">
+    <a class="btn dropdown-toggle p-2 flex-grow-1 text-left" href="#" id="downloads-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="docs-icon-download align-middle"></span>
+      <span class="align-middle">Scarica</span>
+    </a>
+    <div class="dropdown-menu w-100" aria-labelledby="downloads-dropdown" aria-disabled="false">
+      <div class="link-list-wrapper">
+        <ul class="link-list">
+          
+          <a class="dropdown-item" href="/sigla-main/Manuale-SIGLA.pdf" download>
+            pdf
+          </a>
+          
+          <li>
+            <span class="divider"></span>
+          </li>
+          
+          
+          <a class="dropdown-item" href="/sigla-main/Manuale-SIGLA.epub" download>
+            epub
+          </a>
+          
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+    
+  
+  <div class="p-3 px-md-2 py-md-0">
+    <a href="https://github.com/istitutosuperioredisanita/sigla-main/blob/master/docs/api_rest.rst" role="button" class="btn p-2" aria-disabled="false">
+        <span class="docs-icon-github"></span>
+        <span class="align-middle">Sorgente</span>
+    </a>
+  </div>
+</div>
+        </div>
+     </div>
+  </div>
+</div>
+  
+</body>
+</html>
