@@ -116,7 +116,7 @@
         freeSearchSet="searchtool"
 		readonlyProperty="ROrigadet"
 	    enabledOnInsert="true"
-		enabledOnEdit="true"		
+		enabledOnEdit="true"
         enabledOnSearch="true"
         label="Livello contrattazione" />		
 	<fieldProperty
@@ -133,6 +133,8 @@
 		inputType="TEXT"
 		inputSize="7"
 		maxLength="7"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
 		label="Classificazione" />
 	<fieldProperty
 		name="cd_dipartimento"
@@ -362,6 +364,8 @@
 	<findFieldProperty
 		name="cd_progetto"
 		label="Progetto"/>
+	<findFieldProperty
+		name="cd_classificazione"/>
 	<findFieldProperty
 		name="tot_spese_decentr_int" />
 	<findFieldProperty

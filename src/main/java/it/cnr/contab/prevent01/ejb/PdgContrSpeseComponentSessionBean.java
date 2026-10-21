@@ -28,6 +28,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.RemoteIterator;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.*;
 @Stateless(name="CNRPREVENT01_EJB_PdgContrSpeseComponentSession")
@@ -143,4 +144,24 @@ public void undoApprovazioneDefinitiva(it.cnr.jada.UserContext param0) throws Co
 		throw uncaughtError(param0,componentObj,e);
 	}
 }
+
+	@Override
+	public RemoteIterator findPdgContrSpeseDettagli(UserContext param0, Pdg_approvato_dip_areaBulk param1, CompoundFindClause param2)throws ComponentException{
+		pre_component_invocation(param0,componentObj);
+		try {
+			RemoteIterator result = ((PdgContrSpeseComponent)componentObj).findPdgContrSpeseDettagli(param0,param1,param2);
+			component_invocation_succes(param0,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
 }

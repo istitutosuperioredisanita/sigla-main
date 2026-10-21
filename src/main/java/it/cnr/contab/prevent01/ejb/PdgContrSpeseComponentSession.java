@@ -29,6 +29,7 @@ import it.cnr.jada.persistency.PersistencyException;
 import java.rmi.RemoteException;
 
 import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.RemoteIterator;
 import jakarta.ejb.Remote;
 @Remote
 public interface PdgContrSpeseComponentSession extends it.cnr.jada.ejb.CRUDComponentSession {
@@ -38,4 +39,5 @@ public interface PdgContrSpeseComponentSession extends it.cnr.jada.ejb.CRUDCompo
 	Integer livelloContrattazioneSpese(UserContext userContext) throws ComponentException, PersistencyException, RemoteException;
 	void approvaDefinitivamente(it.cnr.jada.UserContext param0) throws ComponentException, RemoteException;
 	void undoApprovazioneDefinitiva(it.cnr.jada.UserContext param0) throws ComponentException, RemoteException;
+	RemoteIterator findPdgContrSpeseDettagli(UserContext param0, Pdg_approvato_dip_areaBulk param1, CompoundFindClause param2)throws ComponentException;
 }

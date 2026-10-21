@@ -18,6 +18,7 @@
 package it.cnr.contab.prevent01.action;
 
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
+import it.cnr.contab.pdg00.bulk.VpgBilRiclassificatoBulk;
 import it.cnr.contab.prevent01.bp.CRUDDettagliContrSpeseBP;
 import it.cnr.contab.prevent01.bulk.Contrattazione_speseVirtualBulk;
 import it.cnr.contab.prevent01.bulk.Pdg_approvato_dip_areaBulk;
@@ -25,10 +26,24 @@ import it.cnr.contab.prevent01.bulk.Pdg_contrattazione_speseBulk;
 import it.cnr.contab.prevent01.ejb.PdgContrSpeseComponentSession;
 import it.cnr.contab.progettiric00.core.bulk.Progetto_sipBulk;
 import it.cnr.jada.action.ActionContext;
+import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
+import it.cnr.jada.bulk.BulkInfo;
+import it.cnr.jada.bulk.ColumnFieldProperty;
+import it.cnr.jada.ejb.BulkLoaderIterator;
+import it.cnr.jada.excel.bp.OfflineExcelSpoolerBP;
+import it.cnr.jada.excel.bulk.Excel_spoolerBulk;
+import it.cnr.jada.excel.ejb.BframeExcelComponentSession;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.persistency.sql.Query;
+import it.cnr.jada.util.OrderedHashtable;
+import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.CRUDAction;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 
+import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Optional;
 
 public class CRUDDettagliContrSpeseAction extends CRUDAction {
  
@@ -208,6 +223,49 @@ public class CRUDDettagliContrSpeseAction extends CRUDAction {
 			return removeFilter(context, getController(context, "main.Dettagli"));
 		} catch (Exception exception) {
 			return handleException(context, exception);
+		}
+	}
+	public Forward doExcel(ActionContext actioncontext) {
+		try {
+			final CRUDDettagliContrSpeseBP  dettagliContrSpeseBP = (CRUDDettagliContrSpeseBP ) actioncontext.getBusinessProcess();
+			Pdg_approvato_dip_areaBulk pdg_dip_area = (Pdg_approvato_dip_areaBulk) dettagliContrSpeseBP.getCrudDettagliDipArea().getModel();
+
+			BframeExcelComponentSession bframeExcelComponentSession = (BframeExcelComponentSession)
+					EJBCommonServices.createEJB("BFRAMEEXCEL_EJB_BframeExcelComponentSession");
+
+			PdgContrSpeseComponentSession session = EJBCommonServices.createEJB("CNRPREVENT01_EJB_PdgContrSpeseComponentSession", PdgContrSpeseComponentSession.class);
+
+			String longDescription = dettagliContrSpeseBP.getBulkInfo().getLongDescription();
+			final RemoteIterator remoteiterator = session.findPdgContrSpeseDettagli(actioncontext.getUserContext(), pdg_dip_area,new CompoundFindClause());
+			Query query = ((BulkLoaderIterator) remoteiterator).getQuery();
+			BulkInfo bulkInfo = BulkInfo.getBulkInfo(Pdg_contrattazione_speseBulk.class);
+
+
+			OrderedHashtable columnLabel = new OrderedHashtable();
+			OrderedHashtable columnHeaderLabel = new OrderedHashtable();
+			OrderedHashtable colonnedaEstrarre = new OrderedHashtable();
+			for (Enumeration enumeration = bulkInfo.getColumnFieldPropertyDictionary().keys(); enumeration.hasMoreElements(); ) {
+				String columnName = (String) enumeration.nextElement();
+				colonnedaEstrarre.put(columnName, bulkInfo.getColumnFieldPropertyDictionary().get(columnName));
+			}
+			for (Enumeration enumeration = bulkInfo.getColumnFieldPropertyDictionary().elements(); enumeration.hasMoreElements(); ) {
+				ColumnFieldProperty columnfieldproperty = (ColumnFieldProperty) enumeration.nextElement();
+				columnLabel.put(columnfieldproperty, columnfieldproperty.getLabel());
+				Optional.ofNullable(columnfieldproperty.getHeaderLabel())
+						.ifPresent(s -> columnHeaderLabel.put(columnfieldproperty, s));
+			}
+			Excel_spoolerBulk bulk = bframeExcelComponentSession.addQueue(
+					actioncontext.getUserContext(),
+					columnLabel,
+					columnHeaderLabel, longDescription, colonnedaEstrarre, query.toString(), null, query.getColumnMap(), new VpgBilRiclassificatoBulk());
+			OfflineExcelSpoolerBP excelSpoolerBP = (OfflineExcelSpoolerBP) actioncontext.createBusinessProcess("OfflineExcelSpoolerBP");
+			excelSpoolerBP.setModel(actioncontext, bulk);
+			return actioncontext.addBusinessProcess(excelSpoolerBP);
+
+		} catch (BusinessProcessException businessprocessexception) {
+			return handleException(actioncontext, businessprocessexception);
+		} catch (Throwable throwable) {
+			return handleException(actioncontext, throwable);
 		}
 	}
 }

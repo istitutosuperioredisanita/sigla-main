@@ -147,6 +147,14 @@ public class CRUDDettagliContrSpeseBP extends SimpleCRUDBP {
 							"Elimina approvazione",
 							HttpActionContext.isFromBootstrap(context));
 				}
+				String commandExcel = "javascript:submitForm('doExcel')";
+				it.cnr.jada.util.jsp.JSPUtils.toolbarButton(
+						context,
+						HttpActionContext.isFromBootstrap(context) ? "fa fa-fw fa-file-excel-o" : "img/iconaExcel.gif",
+						!(getDetails().isEmpty() || ((CRUDBP) getParentController()).isSearching()) ? commandExcel : null,
+						true,
+						"Esporta in Excel",
+						HttpActionContext.isFromBootstrap(context));
 			}
 			super.closeButtonGROUPToolbar(context);
 		}

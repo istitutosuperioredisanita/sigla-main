@@ -53,6 +53,12 @@
 				sqlTypeName="VARCHAR"
 				columnSize="30"
 				nullable="true"/>
+		<columnMapping
+				columnName="V_CLASSIFICAZIONE_VOCI.CD_CLASSIFICAZIONE"
+				propertyName="classificazione.cd_classificazione"
+				sqlTypeName="VARCHAR"
+				columnSize="7"
+				nullable="true"/>
 	</columnMap>
 
 	<persistentProperty

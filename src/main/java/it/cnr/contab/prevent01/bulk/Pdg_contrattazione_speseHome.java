@@ -70,9 +70,7 @@ public class Pdg_contrattazione_speseHome extends BulkHome {
 
 		super.initializePrimaryKeyForInsert(usercontext, pdg_contrattazione_spese);
 	}
-
-	public java.util.Collection findPdgContrSpeseDettagli(UserContext userContext, Pdg_approvato_dip_areaBulk pdg_dip_area, CompoundFindClause compoundFindClause) throws IntrospectionException, PersistencyException {
-		PersistentHome dettHome = getHomeCache().getHome(Pdg_contrattazione_speseBulk.class, "PROGETTO_CODICE");
+	public SQLBuilder getPdgContrSpeseDettagliQuery(PersistentHome dettHome, Pdg_approvato_dip_areaBulk pdg_dip_area, CompoundFindClause compoundFindClause) throws IntrospectionException, PersistencyException {
 		SQLBuilder sql = dettHome.createSQLBuilder();
 		sql.addTableToHeader("V_CLASSIFICAZIONE_VOCI");
 		sql.addTableToHeader("PROGETTO");
@@ -88,6 +86,12 @@ public class Pdg_contrattazione_speseHome extends BulkHome {
 		if (compoundFindClause!=null)
 			sql.addClause( compoundFindClause );
 		sql.addOrderBy("V_CLASSIFICAZIONE_VOCI.cd_classificazione");
+		return sql;
+	}
+
+	public java.util.Collection findPdgContrSpeseDettagli(UserContext userContext, Pdg_approvato_dip_areaBulk pdg_dip_area, CompoundFindClause compoundFindClause) throws IntrospectionException, PersistencyException {
+		PersistentHome dettHome = getHomeCache().getHome(Pdg_contrattazione_speseBulk.class, "PROGETTO_CODICE");
+		SQLBuilder sql = getPdgContrSpeseDettagliQuery(dettHome,pdg_dip_area,compoundFindClause);
 		return dettHome.fetchAll(sql);
 	}
 

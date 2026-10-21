@@ -29,7 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import it.cnr.contab.prevent01.bulk.*;
-import it.cnr.jada.persistency.sql.FindClause;
+import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.util.RemoteIterator;
 import jakarta.ejb.EJBException;
 
 import it.cnr.contab.config00.bulk.Parametri_cnrBulk;
@@ -62,9 +63,6 @@ import it.cnr.jada.comp.CRUDComponent;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.SQLBroker;
-import it.cnr.jada.persistency.sql.SQLBuilder;
 
 public class PdgContrSpeseComponent extends CRUDComponent {
 
@@ -107,6 +105,17 @@ public class PdgContrSpeseComponent extends CRUDComponent {
 		} catch (PersistencyException e) {
 			throw new ComponentException(e);
 		}		
+	}
+	public RemoteIterator findPdgContrSpeseDettagli(UserContext usercontext, Pdg_approvato_dip_areaBulk pdg_dip_area, CompoundFindClause compoundFindClause)throws ComponentException {
+		try {
+			Pdg_contrattazione_speseHome pdgContrHome = (Pdg_contrattazione_speseHome)getHome(usercontext, Pdg_contrattazione_speseBulk.class,"PROGETTO_CODICE");
+			return iterator(usercontext, pdgContrHome.getPdgContrSpeseDettagliQuery(pdgContrHome, pdg_dip_area, compoundFindClause), Pdg_contrattazione_speseBulk.class, null);
+
+		} catch (IntrospectionException e) {
+			throw new ComponentException(e);
+		} catch (PersistencyException e) {
+			throw new ComponentException(e);
+		}
 	}
 	public OggettoBulk inizializzaDettagliBulkPerModifica(UserContext usercontext,Contrattazione_speseVirtualBulk contr_spese, Pdg_approvato_dip_areaBulk pdg_dip_area, CompoundFindClause compoundFindClause)throws ComponentException {
 		try {
