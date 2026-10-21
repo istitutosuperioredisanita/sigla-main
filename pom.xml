@@ -306,7 +306,7 @@
             <artifactId>sigla-ws-client</artifactId>
             <version>${version.sigla-ws.client}</version>
         </dependency>
-        <dependency>master
+        <dependency>
             <groupId>it.cnr.si</groupId>
             <artifactId>sdi-fatturapa</artifactId>
             <version>${version.sdi.fatturapa}</version>
