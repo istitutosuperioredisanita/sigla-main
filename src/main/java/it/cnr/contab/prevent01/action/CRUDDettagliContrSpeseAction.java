@@ -38,7 +38,9 @@ import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.Query;
 import it.cnr.jada.util.OrderedHashtable;
 import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.action.AbstractDetailCRUDController;
 import it.cnr.jada.util.action.CRUDAction;
+import it.cnr.jada.util.action.SimpleDetailCRUDController;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.util.Enumeration;
@@ -236,7 +238,9 @@ public class CRUDDettagliContrSpeseAction extends CRUDAction {
 			PdgContrSpeseComponentSession session = EJBCommonServices.createEJB("CNRPREVENT01_EJB_PdgContrSpeseComponentSession", PdgContrSpeseComponentSession.class);
 
 			String longDescription = dettagliContrSpeseBP.getBulkInfo().getLongDescription();
-			final RemoteIterator remoteiterator = session.findPdgContrSpeseDettagli(actioncontext.getUserContext(), pdg_dip_area,new CompoundFindClause());
+			CompoundFindClause clauses = dettagliContrSpeseBP.getFiltercrudDettagliContrSpese();
+
+			final RemoteIterator remoteiterator = session.findPdgContrSpeseDettagli(actioncontext.getUserContext(), pdg_dip_area,clauses);
 			Query query = ((BulkLoaderIterator) remoteiterator).getQuery();
 			BulkInfo bulkInfo = BulkInfo.getBulkInfo(Pdg_contrattazione_speseBulk.class);
 

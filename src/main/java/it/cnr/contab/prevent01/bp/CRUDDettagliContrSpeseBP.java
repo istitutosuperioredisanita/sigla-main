@@ -79,6 +79,16 @@ public class CRUDDettagliContrSpeseBP extends SimpleCRUDBP {
 		}
 	};
 
+	private CompoundFindClause filtercrudDettagliContrSpese;
+
+	public CompoundFindClause getFiltercrudDettagliContrSpese() {
+		return filtercrudDettagliContrSpese;
+	}
+
+	public void setFiltercrudDettagliContrSpese(CompoundFindClause filtercrudDettagliContrSpese) {
+		this.filtercrudDettagliContrSpese = filtercrudDettagliContrSpese;
+	}
+
 	private SimpleDetailCRUDController crudDettagliContrSpese = new SimpleDetailCRUDController( "Dettagli", Pdg_contrattazione_speseBulk.class, "dettagliContrSpese", this, true) {
 		private CompoundFindClause filterController;
 
@@ -169,6 +179,7 @@ public class CRUDDettagliContrSpeseBP extends SimpleCRUDBP {
 					bp.caricaDettagli(actioncontext, contr_spese, pdg_dip_area, compoundfindclause);
 
 				filterController = compoundfindclause;
+				setFiltercrudDettagliContrSpese(filterController);
 			} catch (DetailedRuntimeException | BusinessProcessException e) {
                 throw new RuntimeException(e);
             }
@@ -187,6 +198,7 @@ public class CRUDDettagliContrSpeseBP extends SimpleCRUDBP {
 		protected void clearFilter()
 		{
 			filterController = null;
+			setFiltercrudDettagliContrSpese(null);
 		}
 	};
 
