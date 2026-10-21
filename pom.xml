@@ -96,22 +96,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.infinispan</groupId>
-                <artifactId>infinispan-bom</artifactId>
-                <version>16.2.2</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.wildfly.bom</groupId>
                 <artifactId>wildfly-ee-with-tools</artifactId>
                 <version>${version.wildfly}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
         </dependencies>
-
     </dependencyManagement>
     <build>
         <finalName>sigla</finalName>
@@ -443,18 +434,15 @@
             <version>1.0.2</version>
         </dependency>
         <!-- Spring Infinispan -->
-
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-spring7-embedded</artifactId>
-
-
+            <artifactId>infinispan-spring5-embedded</artifactId>
+            <version>13.0.10.Final</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core</artifactId>
-
-
+            <artifactId>infinispan-commons</artifactId>
+            <version>13.0.10.Final</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
