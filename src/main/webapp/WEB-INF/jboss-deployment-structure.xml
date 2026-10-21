@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <deployment>
+        <dependencies>
+            <!-- Espone le classi core di Infinispan all'applicazione (Risolve il NoClassDefFoundError) -->
+            <module name="org.infinispan" export="true"/>
+            <module name="org.infinispan.commons" export="true"/>
+            <!-- Consente a Spring 7 di leggere l'implementazione del subsystem di WildFly -->
+            <module name="org.jboss.as.clustering.infinispan" export="true"/>
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>
