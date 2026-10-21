@@ -436,13 +436,14 @@
         <!-- Spring Infinispan -->
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-spring5-embedded</artifactId>
-            <version>13.0.10.Final</version>
+            <artifactId>infinispan-spring7-embedded</artifactId>
+            <version>16.0.11</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-commons</artifactId>
-            <version>13.0.10.Final</version>
+            <version>16.0.11</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
