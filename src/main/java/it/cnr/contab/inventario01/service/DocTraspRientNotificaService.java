@@ -1,27 +1,21 @@
 package it.cnr.contab.inventario01.service;
 
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
+import it.cnr.contab.inventario01.util.DocTraspRientUtil;
 import it.cnr.jada.UserContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Notifiche email per i documenti di Trasporto/Rientro firmati o rifiutati da HappySign.
- * Destinatario: il creatore del documento (utcr). L'indirizzo viene ricostruito dal component
- * (cd_utente_uid + dominio email di configurazione PK_COSTANTI / SK_DOMINIO_EMAIL), chiamato
- * via flowService perché il thread dello scheduler non ha il contesto EJB per i lookup java:module
- * e non può usare le home.
- * <p>
- * L'invio vero e proprio avviene tramite flowService (quindi in un component EJB): dal thread
- * dello scheduler il lookup java:comp/env/mail/MailSession non è disponibile e SendMail
- * ripiegherebbe sulla session di default di WildFly (localhost, senza mail.from).
- * Se l'indirizzo non è risolvibile la notifica non viene inviata (nessun fallback, nessuna eccezione).
+ * Email al creatore del documento T/R quando viene firmato o rifiutato su HappySign.
+ * Indirizzo e invio passano dal component (flowService): dal thread dello scheduler
+ * non sono disponibili home e mail session.
  */
 @Service
 @Profile("iss")
@@ -33,12 +27,14 @@ public class DocTraspRientNotificaService {
     @Autowired
     private DocTraspRientFlowService flowService;
 
-    /** Notifica al creatore che il documento è stato firmato. */
+    // TEST: destinatario usato se l'email del creatore non è recuperabile (vuoto = nessun invio)
+    @Value("${doc.trasp.rient.happysign.test.emailCreatore:}")
+    private String emailCreatoreTest;
+
     public void notificaFirmato(UserContext userContext, Doc_trasporto_rientroBulk doc) {
-        String tipo = descrizioneTipo(doc);
-        String subject = "Documento " + tipo + " n. " + doc.getPgDocTrasportoRientro()
-                + " firmato";
-        String body = "<p>Il documento " + tipo + " n. <b>" + doc.getPgDocTrasportoRientro()
+        String tipo = DocTraspRientUtil.descrizioneTipo(doc);
+        String subject = "Documento di " + tipo + " n. " + doc.getPgDocTrasportoRientro() + " firmato";
+        String body = "<p>Il documento di " + tipo + " n. <b>" + doc.getPgDocTrasportoRientro()
                 + "</b> (esercizio " + doc.getEsercizio()
                 + ") è stato <b>firmato</b> e risulta ora definitivo.</p>"
                 + "<p>Il PDF firmato è disponibile tra gli allegati del documento.</p>";
@@ -46,16 +42,12 @@ public class DocTraspRientNotificaService {
         inviaMail(userContext, doc, subject, body);
     }
 
-    /** Notifica al creatore che il documento è stato rifiutato in firma, con il motivo. */
     public void notificaRifiutato(UserContext userContext, Doc_trasporto_rientroBulk doc,
                                   String motivoRifiuto) {
-        String tipo = descrizioneTipo(doc);
-        String subject = "Documento " + tipo + " n. " + doc.getPgDocTrasportoRientro()
-                + " rifiutato in firma";
-        String motivo = (motivoRifiuto != null && !motivoRifiuto.isBlank())
-                ? motivoRifiuto
-                : "non specificato";
-        String body = "<p>Il documento " + tipo + " n. <b>" + doc.getPgDocTrasportoRientro()
+        String tipo = DocTraspRientUtil.descrizioneTipo(doc);
+        String subject = "Documento di " + tipo + " n. " + doc.getPgDocTrasportoRientro() + " rifiutato in firma";
+        String motivo = (motivoRifiuto != null && !motivoRifiuto.isBlank()) ? motivoRifiuto : "non specificato";
+        String body = "<p>Il documento di " + tipo + " n. <b>" + doc.getPgDocTrasportoRientro()
                 + "</b> (esercizio " + doc.getEsercizio()
                 + ") è stato <b>rifiutato</b> in fase di firma.</p>"
                 + "<p><b>Motivo del rifiuto:</b><br>" + escapeHtml(motivo) + "</p>"
@@ -64,40 +56,30 @@ public class DocTraspRientNotificaService {
         inviaMail(userContext, doc, subject, body);
     }
 
+    /** Non solleva mai eccezioni: la notifica non deve far fallire l'aggiornamento del documento. */
     private void inviaMail(UserContext userContext, Doc_trasporto_rientroBulk doc,
                            String subject, String body) {
         try {
-            List<String> destinatari = risolviDestinatari(userContext, doc);
-            if (destinatari.isEmpty()) {
-                log.warn("Nessun destinatario per la notifica del documento pg={}",
-                        doc.getPgDocTrasportoRientro());
+            String email = null;
+            try {
+                email = flowService.getEmailCreatore(userContext, doc);
+            } catch (Exception e) {
+                log.warn("Errore recupero email creatore per pg={}: {}", doc.getPgDocTrasportoRientro(), e.getMessage());
+            }
+            if ((email == null || email.isBlank()) && !emailCreatoreTest.isBlank()) {
+                log.warn("MODALITA' TEST: email creatore non recuperata per pg={}, invio a {}",
+                        doc.getPgDocTrasportoRientro(), emailCreatoreTest);
+                email = emailCreatoreTest;
+            }
+            if (email == null || email.isBlank()) {
+                log.warn("Nessun destinatario per la notifica del documento pg={}", doc.getPgDocTrasportoRientro());
                 return;
             }
-            // Invio tramite component (contesto EJB): qui SendMail trova la mail session corretta
-            flowService.inviaMail(userContext, subject, body, destinatari);
-            log.info("Notifica '{}' inviata a {}", subject, destinatari);
+            flowService.inviaMail(userContext, subject, body, List.of(email.trim()));
+            log.info("Notifica '{}' inviata a {}", subject, email.trim());
         } catch (Exception e) {
-            // La notifica non deve mai far fallire l'aggiornamento del documento
-            log.error("Errore invio notifica per documento pg={}",
-                    doc.getPgDocTrasportoRientro(), e);
+            log.error("Errore invio notifica per documento pg={}", doc.getPgDocTrasportoRientro(), e);
         }
-    }
-
-    private List<String> risolviDestinatari(UserContext userContext, Doc_trasporto_rientroBulk doc)
-            throws Exception {
-
-         List<String> destinatari = new ArrayList<>();
-         String email = flowService.getEmailCreatore(userContext, doc);
-         if (email != null && !email.isBlank()) {
-             destinatari.add(email.trim());
-         }
-         return destinatari;
-    }
-
-    private String descrizioneTipo(Doc_trasporto_rientroBulk doc) {
-        return Doc_trasporto_rientroBulk.TRASPORTO.equals(doc.getTiDocumento())
-                ? "di Trasporto"
-                : "di Rientro";
     }
 
     private String escapeHtml(String s) {

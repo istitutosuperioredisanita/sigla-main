@@ -10,6 +10,7 @@ import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.bulk.Stampa_doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
 import it.cnr.contab.reports.bp.ParametricPrintBP;
+import it.cnr.contab.util00.bulk.storage.AllegatoGenericoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
@@ -31,9 +32,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Action astratta per la gestione del flusso di Trasporto e Rientro Beni.
- * Fornisce la logica comune per la manipolazione della testata, la gestione
- * ricorsiva dei beni con accessori e l'integrazione con il workflow di firma.
+ * Action comune per Trasporto e Rientro beni: testata, beni con accessori (flusso ricorsivo)
+ * e operazioni di firma.
  */
 public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CRUDAction {
 
@@ -51,9 +51,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
     protected abstract String getTabTestataName();
 
-    /**
-     * Gestisce il cambio del dipendente e la rimozione dei beni precedentemente inseriti.
-     */
+    /** Cambio dipendente: rimuove i beni già inseriti. */
     public Forward doOnDipendenteChange(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
@@ -72,9 +70,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Gestisce la navigazione tra i tab, validando l'accesso agli allegati e creando la testata se necessario.
-     */
+    /** Navigazione tra i tab: controlla l'accesso agli allegati e crea la testata se necessario. */
     @Override
     public Forward doTab(ActionContext context, String tabName, String pageName) {
         try {
@@ -90,21 +86,12 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                     return context.findDefaultForward();
                 }
 
-                /*
-                 * Il tab Allegati deve essere accessibile:
-                 * - dopo firma: STATO = INS, STATO_FLUSSO = FIR, DATA_FIRMA valorizzata
-                 * - oppure se il documento è definitivo
-                 */
                 if (!bp.isAllegatiAccessibili()) {
                     bp.setMessage(bp.getMessaggioAllegatiNonAccessibili());
                     return context.findDefaultForward();
                 }
 
-                /*
-                 * Allegati modificabili (firmato da completare, predisposto alla firma, oppure firma manuale
-                 * con documento salvato): forzare la modalità EDIT, altrimenti il controller standard degli
-                 * allegati lascia disabilitati i pulsanti di aggiunta/eliminazione.
-                 */
+                // Allegati modificabili: modalità EDIT, altrimenti aggiungi/elimina restano disabilitati
                 if (bp.isAllegatiModificabili()) {
                     bp.setStatus(CRUDTraspRientInventarioBP.EDIT);
 
@@ -143,20 +130,14 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-
-    /**
-     * Posiziona l'utente sul tab testata durante la creazione di un nuovo documento.
-     */
+    /** Nuovo documento: posiziona sul tab testata. */
     @Override
     public Forward doNuovo(ActionContext context) {
         super.doTab(context, "tab", getTabTestataName());
         return super.doNuovo(context);
     }
 
-
-    /**
-     * Inizializza la ricerca libera per l'aggiunta di nuovi beni al documento.
-     */
+    /** Apre la ricerca libera per aggiungere beni. */
     public Forward doAddToCRUDMain_DettBeniController(ActionContext context) {
         try {
             fillModel(context);
@@ -182,9 +163,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Gestisce il ritorno dalla ricerca e apre il selezionatore di beni.
-     */
+    /** Ritorno dalla ricerca: apre il selezionatore dei beni. */
     protected Forward doBringBackGeneric(ActionContext context) {
         try {
             HookForward fwd = (HookForward) context.getCaller();
@@ -218,9 +197,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Elabora la risposta dell'utente (SI/NO/ANNULLA) per l'inclusione degli accessori nel flusso ricorsivo.
-     */
+    /** Risposta SI/NO/ANNULLA sull'inclusione degli accessori nel flusso ricorsivo. */
     public Forward doRispostaRicorsivaGenerica(ActionContext context, int opt) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
@@ -256,9 +233,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Gestisce la rimozione dei beni selezionati dal dettaglio del documento.
-     */
+    /** Rimuove i beni selezionati dal dettaglio. */
     public Forward doRemoveFromCRUDMain_DettBeniController(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
@@ -307,9 +282,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Avvia il processo di aggiunta beni distinguendo tra beni semplici e beni con accessori.
-     */
+    /** Aggiunta beni: i semplici subito, quelli con accessori tramite conferma. */
     protected Forward doSelezionaBeniGeneric(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
@@ -330,9 +303,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Aggiunge direttamente i beni che non presentano accessori opzionali.
-     */
+    /** Aggiunge direttamente i beni senza accessori opzionali. */
     private void aggiungiImmediatamenteBeniSemplici(ActionContext context, CRUDTraspRientInventarioBP bp) throws BusinessProcessException {
         try {
             List<InventarioDocTRBulk> beniSemplici = new ArrayList<>();
@@ -356,9 +327,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Gestisce l'apertura della finestra di conferma per ogni bene con accessori nel flusso ricorsivo.
-     */
+    /** Apre la conferma per il bene con accessori corrente del flusso ricorsivo. */
     private Forward apriFlussoRicorsivoGenerico(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, List<InventarioDocTRBulk> beniDaElaborare, int index) throws ComponentException, RemoteException, BusinessProcessException {
         if (beniDaElaborare == null || index >= beniDaElaborare.size()) {
             finalizeFlusso(context, bp, isEliminazione, true);
@@ -384,9 +353,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         return context.findDefaultForward();
     }
 
-    /**
-     * Conclude il flusso di aggiunta o eliminazione resettando il Business Process.
-     */
     private void finalizeFlusso(ActionContext context, CRUDTraspRientInventarioBP bp, boolean isEliminazione, boolean ultimaRispostaSI) throws ComponentException, RemoteException, BusinessProcessException {
         bp.getDettBeniController().resync(context);
         bp.setMessage(isEliminazione ? "Eliminazione completata." : "Aggiunta beni completata con successo");
@@ -407,15 +373,20 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /** Firma manuale: salva il documento da firmare (stato resta INSERITO, stato flusso invariato, DATA_INVIO_FIRMA = now). */
-    public Forward doPredisponiAllaFirma(ActionContext context) {
+    /** Operazione del BP eseguita senza ricaricare gli allegati dal documentale. */
+    @FunctionalInterface
+    private interface OperazioneBP {
+        void esegui(CRUDTraspRientInventarioBP bp) throws Exception;
+    }
+
+    private Forward eseguiSenzaReloadAllegati(ActionContext context, OperazioneBP operazione) {
         try {
             fillModel(context);
             CRUDTraspRientInventarioBP bp = getBP(context);
 
             bp.setSkipAllegatiReload(true);
             try {
-                bp.predisponiAllaFirma(context);
+                operazione.esegui(bp);
                 return context.findDefaultForward();
             } finally {
                 bp.setSkipAllegatiReload(false);
@@ -425,9 +396,12 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Esegue l'annullamento del documento se non ancora inviato alla firma o già annullato.
-     */
+    /** Firma manuale: archivia gli allegati e marca il documento come predisposto alla firma. */
+    public Forward doPredisponiAllaFirma(ActionContext context) {
+        return eseguiSenzaReloadAllegati(context, bp -> bp.predisponiAllaFirma(context));
+    }
+
+    /** Annulla il documento se non inviato in firma, non firmato e non già annullato. */
     @Override
     public Forward doElimina(ActionContext context) throws RemoteException {
         try {
@@ -460,39 +434,31 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Recupera la sessione EJB specifica per la gestione dei documenti di trasporto.
-     */
     protected DocTrasportoRientroComponentSession getComponentSession(CRUDTraspRientInventarioBP bp) throws Exception {
         return (DocTrasportoRientroComponentSession) bp.createComponentSession("CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession", DocTrasportoRientroComponentSession.class);
     }
 
-    /**
-     * Utility per il confronto di uguaglianza tra oggetti.
-     */
     protected <T> boolean valoreUguale(T oldValue, T newValue) {
         return Objects.equals(oldValue, newValue);
     }
 
-    /**
-     * Estrae il codice anagrafico associato a un Terzo.
-     */
-    protected Integer getCdAnag(it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo) {
-        if (terzo == null) return null;
-        it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk anag = terzo.getAnagrafico();
-        return (anag != null) ? anag.getCd_anag() : null;
+    protected Integer getCdAnag(TerzoBulk terzo) {
+        return terzo == null ? null : getCdAnag(terzo.getAnagrafico());
     }
 
-    /**
-     * Verifica la presenza di beni nei dettagli del documento.
-     */
+    private Integer getCdAnag(AnagraficoBulk anag) {
+        return anag != null ? anag.getCd_anag() : null;
+    }
+
+    protected Integer getCdTerzo(TerzoBulk terzo) {
+        return (terzo != null) ? terzo.getCd_terzo() : null;
+    }
+
     protected boolean hasBeniInDettaglio(Doc_trasporto_rientroBulk doc) {
         return doc.getDoc_trasporto_rientro_dettColl() != null && !doc.getDoc_trasporto_rientro_dettColl().isEmpty();
     }
 
-    /**
-     * Rimuove massivamente tutti i beni dal dettaglio del documento corrente.
-     */
+    /** Rimuove tutti i beni dal dettaglio del documento corrente. */
     protected void eliminaBeniSePresenti(ActionContext context, CRUDTraspRientInventarioBP bp, Doc_trasporto_rientroBulk doc, String messaggio) throws Exception {
         BulkList dettagli = getComponentSession(bp).getDetailsFor(context.getUserContext(), doc);
         if (!dettagli.isEmpty()) {
@@ -502,9 +468,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Valida i dati obbligatori della testata prima di operazioni sui dettagli.
-     */
+    /** Dati obbligatori della testata prima delle operazioni sui dettagli. */
     protected void validaTestataDocumento(Doc_trasporto_rientroBulk doc) throws ValidationException {
         if (doc.getTipoMovimento() == null)
             throw new ValidationException("Attenzione: specificare un tipo di movimento nella testata.");
@@ -514,9 +478,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             throw new ValidationException("Attenzione: indicare una Descrizione per il Documento.");
     }
 
-    /**
-     * Gestisce la stampa di un documento di trasporto o rientro.
-     */
     public Forward doStampaDocTraspRient(ActionContext context) {
         try {
             fillModel(context);
@@ -539,54 +500,29 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Esegue il salvataggio definitivo del documento senza ricaricare gli allegati.
-     */
     public Forward doSalvaDefinitivo(ActionContext context) {
-        try {
-            fillModel(context);
-            CRUDTraspRientInventarioBP bp = getBP(context);
-
-            bp.setSkipAllegatiReload(true);
-
-            try {
-                bp.salvaDefinitivo(context);
-                return context.findDefaultForward();
-            } finally {
-                bp.setSkipAllegatiReload(false);
-            }
-
-        } catch (Throwable ex) {
-            return handleException(context, ex);
-        }
+        return eseguiSenzaReloadAllegati(context, bp -> bp.salvaDefinitivo(context));
     }
 
-    /**
-     * Esegue il salvataggio standard del documento senza ricaricare gli allegati.
-     */
+    /** Salvataggio standard; in firma manuale il Salva in bozza lascia visibili gli allegati non archiviati. */
     @Override
     public Forward doSalva(ActionContext context) {
-        try {
-            fillModel(context);
-            CRUDTraspRientInventarioBP bp = getBP(context);
+        return eseguiSenzaReloadAllegati(context, bp -> {
+            Doc_trasporto_rientroBulk docPrima = bp.getDoc();
+            BulkList<AllegatoGenericoBulk> allegatiVisibili =
+                    docPrima != null ? docPrima.getArchivioAllegati() : null;
 
-            bp.setSkipAllegatiReload(true);
+            bp.save(context);
 
-            try {
-                bp.save(context);
-                return context.findDefaultForward();
-            } finally {
-                bp.setSkipAllegatiReload(false);
+            Doc_trasporto_rientroBulk docDopo = bp.getDoc();
+            if (bp.isFirmaManuale() && !bp.isUltimoSalvataggioArchiviato()
+                    && docDopo != null && allegatiVisibili != null) {
+                docDopo.setArchivioAllegati(allegatiVisibili);
             }
-
-        } catch (Throwable e) {
-            return handleException(context, e);
-        }
+        });
     }
 
-    /**
-     * Gestisce il cambio dell'assegnatario smartworking e rimuove i beni associati.
-     */
+    /** Cambio assegnatario smartworking: carica il terzo completo e rimuove i beni. */
     public Forward doOnTerzoSmartworkingChange(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
@@ -622,9 +558,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Gestisce la selezione del tipo movimento e resetta beni e soggetti coinvolti.
-     */
+    /** Cambio tipo movimento: ricarica i tipi e azzera beni e soggetti. */
     public Forward doSelezionaTipoMovimento(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
@@ -659,9 +593,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Gestisce la variazione del tipo di ritiro resettando beni e dipendente incaricato.
-     */
+    /** Cambio tipo ritiro: azzera beni e incaricato. */
     public Forward doOnTipoRitiroChange(ActionContext context) {
         try {
             CRUDTraspRientInventarioBP bp = getBP(context);
@@ -704,13 +636,6 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         }
     }
 
-    /**
-     * Estrae il codice del terzo.
-     */
-    protected Integer getCdTerzo(it.cnr.contab.anagraf00.core.bulk.TerzoBulk terzo) {
-        return (terzo != null) ? terzo.getCd_terzo() : null;
-    }
-
     public Forward doSearchFindTerzoIncRitiro(ActionContext context) {
         return search(context, getFormField(context, "main.findTerzoIncRitiro"), null);
     }
@@ -725,7 +650,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         try {
             if (terzoSelezionato != null) {
                 CRUDTraspRientInventarioBP bp = getBP(context);
-                Integer oldCd = doc.getTerzoIncRitiro() != null ? doc.getTerzoIncRitiro().getCd_terzo() : null;
+                Integer oldCd = getCdTerzo(doc.getTerzoIncRitiro());
                 doc.setTerzoIncRitiro(terzoSelezionato);
                 if (!valoreUguale(oldCd, terzoSelezionato.getCd_terzo())) {
                     eliminaBeniSePresenti(context, bp, doc, "Dipendente Incaricato modificato. Beni precedenti rimossi.");
@@ -751,7 +676,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
         try {
             if (terzoSelezionato != null) {
                 CRUDTraspRientInventarioBP bp = getBP(context);
-                Integer oldCd = doc.getTerzoSmartworking() != null ? doc.getTerzoSmartworking().getCd_terzo() : null;
+                Integer oldCd = getCdTerzo(doc.getTerzoSmartworking());
                 doc.setTerzoSmartworking(terzoSelezionato);
                 if (!valoreUguale(oldCd, terzoSelezionato.getCd_terzo())) {
                     eliminaBeniSePresenti(context, bp, doc, "Assegnatario Smartworking modificato. Beni precedenti rimossi.");
@@ -762,12 +687,4 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             return handleException(context, e);
         }
     }
-
-    /**
-     * Estrae il codice anagrafico.
-     */
-    private Integer getCdAnag(AnagraficoBulk anag) {
-        return anag != null ? anag.getCd_anag() : null;
-    }
-
 }

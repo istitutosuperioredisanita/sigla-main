@@ -44,18 +44,19 @@
     it.cnr.contab.config,
     it.cnr.contab.spring,
     it.cnr.contab.service,
-    it.cnr.si,
-    it.iss.si.workflow.service,
-    it.iss.si.workflow.service.happysign,
-    it.iss.si.service,
-    it.cnr.contab.inventario01.service"/>
+    it.cnr.si"/>
 
     <!-- ========================================================= -->
     <!-- Import contesti esistenti                                  -->
     <!-- ========================================================= -->
-
     <import resource="classpath*:it/cnr/contab/storage/service/storage-service-context.xml"/>
     <import resource="classpath*:it/cnr/contab/service/sdi-client-service-context.xml"/>
+
+    <!-- Import configurazione Signature Flow -->
+    <bean class="it.iss.si.signature.flow.config.SignatureFlowConfiguration"/>
+
+    <!-- Import configurazione Ace Iss Client -->
+    <bean class="it.iss.si.AceClientIssConfiguration"/>
 
     <!-- ========================================================= -->
     <!-- Bean applicativi generali                                  -->

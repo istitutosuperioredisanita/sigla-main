@@ -65,7 +65,8 @@
         <cors.allow-origin>http://localhost:9000</cors.allow-origin>
         <version.xbraccrual>1.0.0</version.xbraccrual>
 
-        <workflow-service.version>1.0.0-SNAPSHOT</workflow-service.version>
+        <signature-flow.version>1.0.0-SNAPSHOT</signature-flow.version>
+        <version.ace.iss>2.0.0-SNAPSHOT</version.ace.iss>
     </properties>
 
     <!-- Repository necessari per le dipendenze WildFly/JBoss -->
@@ -94,9 +95,31 @@
             </snapshots>
         </repository>
         <repository>
-            <id>github-workflow</id>
-            <name>GitHub Packages - workflow</name>
-            <url>https://maven.pkg.github.com/istitutosuperioredisanita/workflow-service</url>
+            <id>github-signature-flow</id>
+            <name>GitHub Packages - signature-flow</name>
+            <url>https://maven.pkg.github.com/istitutosuperioredisanita/signature-flow</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>github-happysign</id>
+            <name>GitHub Packages - happysign-client</name>
+            <url>https://maven.pkg.github.com/istitutosuperioredisanita/happysign-client</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>github-ace</id>
+            <name>GitHub Packages - ace-iss-client</name>
+            <url>https://maven.pkg.github.com/istitutosuperioredisanita/ace-iss-client</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -267,7 +290,7 @@
                         <webExtension>.properties</webExtension>
                     </webExtensions>
                     <ignore-patterns>.*\.java</ignore-patterns>
-                 </configuration>
+                </configuration>
                 <executions>
                     <execution>
                         <id>provision-server</id>
@@ -463,11 +486,18 @@
             <version>3.9</version>
         </dependency>
 
-        <!-- Workflow Service API: necessaria SEMPRE per compilare anche senza profilo iss -->
+        <!-- Signature Flow Core: necessaria SEMPRE per compilare anche senza profilo iss -->
+        <dependency>
+            <groupId>it.iss.si.signature</groupId>
+            <artifactId>signature-flow-core</artifactId>
+            <version>${signature-flow.version}</version>
+        </dependency>
+
+        <!-- ACE ISS: conversione codice fiscale -> email dei firmatari -->
         <dependency>
             <groupId>it.iss.si</groupId>
-            <artifactId>workflow-service-commons</artifactId>
-            <version>${workflow-service.version}</version>
+            <artifactId>ace-iss-client</artifactId>
+            <version>${version.ace.iss}</version>
         </dependency>
 
         <dependency>
@@ -902,9 +932,9 @@
             <id>iss</id>
             <dependencies>
                 <dependency>
-                    <groupId>it.iss.si</groupId>
-                    <artifactId>workflow-service-happysign</artifactId>
-                    <version>${workflow-service.version}</version>
+                    <groupId>it.iss.si.signature</groupId>
+                    <artifactId>signature-flow-happysign</artifactId>
+                    <version>${signature-flow.version}</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.springframework</groupId>

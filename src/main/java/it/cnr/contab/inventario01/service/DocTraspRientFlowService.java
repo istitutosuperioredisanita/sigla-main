@@ -70,7 +70,7 @@ public class DocTraspRientFlowService {
         }
     }
 
-    /** Email del creatore del documento (null se non risolvibile). Risolta nel component, dentro il contesto EJB. */
+    /** Email del creatore del documento (null se non risolvibile), risolta nel component. */
     public String getEmailCreatore(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc) throws ComponentException {
@@ -81,6 +81,7 @@ public class DocTraspRientFlowService {
         }
     }
 
+    /** Invio tramite component: nel contesto EJB SendMail trova la mail session SIGLA. */
     public void inviaMail(UserContext userContext, String subject, String body,
                           java.util.List<String> destinatari) throws Exception {
         getSession().inviaNotifica(userContext, subject, body, destinatari);

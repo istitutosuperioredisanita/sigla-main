@@ -4,6 +4,7 @@ import it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession;
 import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario01.bulk.*;
 import it.cnr.contab.inventario01.ejb.DocTrasportoRientroComponentSession;
+import it.cnr.contab.inventario01.util.DocTraspRientUtil;
 import it.cnr.contab.reports.bp.OfflineReportPrintBP;
 import it.cnr.contab.reports.bulk.Print_spoolerBulk;
 import it.cnr.contab.reports.bulk.Print_spooler_paramBulk;
@@ -34,8 +35,6 @@ import it.cnr.jada.util.action.SelectionListener;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.si.spring.storage.StorageObject;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,10 +46,9 @@ import java.util.stream.Stream;
 import static it.cnr.jada.bulk.OggettoBulk.isNullOrEmpty;
 
 /**
- * Business Process comune per documenti di Trasporto/Rientro beni inventariali:
- * testata, dettagli, selezione beni/accessori, allegati, firma, salvataggio definitivo e stampa.
- * <p>
- * Dopo la firma il documento è modificabile solo lato allegati; testata e dettagli restano bloccati.
+ * BP comune per i documenti di Trasporto/Rientro: testata, dettagli, selezione beni/accessori,
+ * allegati, firma, salvataggio definitivo e stampa.
+ * Dopo la firma testata e dettagli restano bloccati; sono modificabili solo gli allegati.
  */
 public abstract class CRUDTraspRientInventarioBP<
         T extends AllegatoDocTraspRientroBulk,
@@ -64,17 +62,21 @@ public abstract class CRUDTraspRientInventarioBP<
     private static final String CONFIG_COMPONENT_SESSION =
             "CNRCONFIG00_EJB_Configurazione_cnrComponentSession";
 
-    private static final String REPORT_DOC_TRASPORTO_RIENTRO = "doc_trasporto_rientro.jasper";
-
     public static final String TRASPORTO = "T";
     public static final String RIENTRO = "R";
 
     private static final int MAX_BENI_SELEZIONABILI = 100;
 
+    /** Margine tra DATA_INVIO_FIRMA e la data degli allegati nel documentale (orologi diversi). */
+    private static final long MARGINE_ALLEGATI_PREDISPOSIZIONE_MS = 5000L;
+
     private String tipo;
     private boolean isAmministratore;
     private boolean isGestioneInvioInFirmaAttiva;
     private boolean skipAllegatiReload;
+    /** Firma manuale: gli allegati vanno nel documentale solo con Predisponi in firma e Salva definitivo. */
+    private boolean archiviaAllegatiNelDocumentale;
+    private boolean ultimoSalvataggioArchiviato = true;
 
     private PendingSelection pendingAdd;
     private PendingSelection pendingDelete;
@@ -185,9 +187,13 @@ public abstract class CRUDTraspRientInventarioBP<
                             CONFIG_COMPONENT_SESSION,
                             Configurazione_cnrComponentSession.class);
 
-            setGestioneInvioInFirmaAttiva(
-                    isProfiloSpringIssAttivo()
-                            && confSession.isGestioneInvioInFirmaDocTRAttivo(context.getUserContext()));
+            final boolean profiloIss = DocTraspRientUtil.isProfiloIssAttivo();
+            final boolean configAttiva = profiloIss
+                    && Boolean.TRUE.equals(confSession.isGestioneInvioInFirmaDocTRAttivo(context.getUserContext()));
+            setGestioneInvioInFirmaAttiva(configAttiva);
+            org.slf4j.LoggerFactory.getLogger(CRUDTraspRientInventarioBP.class).info(
+                    "Invio in firma T/R: profilo Spring iss={}, gestione invio attiva={} (false = firma manuale)",
+                    profiloIss, configAttiva);
 
         } catch (ComponentException | RemoteException e) {
             throw handleException(e);
@@ -195,17 +201,6 @@ public abstract class CRUDTraspRientInventarioBP<
 
         super.init(config, context);
         resetTabs();
-    }
-
-    private boolean isProfiloSpringIssAttivo() {
-        WebApplicationContext springCtx = ContextLoader.getCurrentWebApplicationContext();
-
-        return springCtx != null
-                && springCtx.getEnvironment() != null
-                && Arrays.stream(springCtx.getEnvironment().getActiveProfiles())
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .anyMatch("iss"::equalsIgnoreCase);
     }
 
     @Override
@@ -254,9 +249,31 @@ public abstract class CRUDTraspRientInventarioBP<
     @Override
     public OggettoBulk initializeModelForEditAllegati(ActionContext context, OggettoBulk bulk)
             throws BusinessProcessException {
-        return isSkipAllegatiReload()
-                ? bulk
-                : super.initializeModelForEditAllegati(context, bulk);
+        if (isSkipAllegatiReload()) {
+            return bulk;
+        }
+        OggettoBulk result = super.initializeModelForEditAllegati(context, bulk);
+        nascondiAllegatiAntecedentiPredisposizione(result);
+        return result;
+    }
+
+    /** Firma manuale, documento predisposto: mostra solo gli allegati aggiunti dopo la predisposizione. */
+    private void nascondiAllegatiAntecedentiPredisposizione(OggettoBulk bulk) {
+        if (!isFirmaManuale() || !(bulk instanceof Doc_trasporto_rientroBulk)) {
+            return;
+        }
+        Doc_trasporto_rientroBulk doc = (Doc_trasporto_rientroBulk) bulk;
+        if (!doc.isPredispostoAllaFirma() || doc.getArchivioAllegati() == null) {
+            return;
+        }
+        long soglia = doc.getDataInvioFirma().getTime() + MARGINE_ALLEGATI_PREDISPOSIZIONE_MS;
+        BulkList<AllegatoGenericoBulk> visibili = new BulkList<>();
+        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
+            if (a.getLastModificationDate() == null || a.getLastModificationDate().getTime() > soglia) {
+                visibili.add(a);
+            }
+        }
+        doc.setArchivioAllegati(visibili);
     }
 
     @Override
@@ -370,6 +387,11 @@ public abstract class CRUDTraspRientInventarioBP<
         this.skipAllegatiReload = skipAllegatiReload;
     }
 
+    /** False dopo un Salva in bozza di firma manuale: gli allegati sono ancora solo in memoria. */
+    public boolean isUltimoSalvataggioArchiviato() {
+        return ultimoSalvataggioArchiviato;
+    }
+
     private boolean hasValidModel() {
         return getModel() != null && getDoc() != null;
     }
@@ -390,10 +412,7 @@ public abstract class CRUDTraspRientInventarioBP<
         return getDoc() != null && getDoc().isInAttesaDiFirma();
     }
 
-    /**
-     * Fase finale del documento: testata e dettagli bloccati, allegati modificabili, salvabile come definitivo.
-     * Vale sia per il firmato da workflow sia per il documento predisposto manualmente alla firma.
-     */
+    /** Fase finale (firmato da workflow o predisposto manualmente): solo allegati modificabili. */
     public boolean isDocumentoFirmatoDaCompletare() {
         return getDoc() != null && getDoc().isFirmaCompletabile();
     }
@@ -413,7 +432,7 @@ public abstract class CRUDTraspRientInventarioBP<
                 : "Il tab Allegati sarà disponibile solo dopo l'invio del documento in firma.";
     }
 
-    /** Testata e dettagli sono bloccati. Non usarlo per decidere la modificabilità degli allegati. */
+    /** Testata e dettagli bloccati (non riguarda gli allegati). */
     public boolean isTestataEDettagliBloccati() {
         Doc_trasporto_rientroBulk doc = getDoc();
         if (doc == null) {
@@ -428,12 +447,12 @@ public abstract class CRUDTraspRientInventarioBP<
                 || doc.isInviatoInFirma();
     }
 
-    /** Wrapper per compatibilità con JSP/properties. */
+    /** Wrapper per JSP/properties. */
     public boolean isDocumentoNonModificabile() {
         return isTestataEDettagliBloccati();
     }
 
-    /** Wrapper per compatibilità con JSP/properties. */
+    /** Wrapper per JSP/properties. */
     public boolean isTestataODettagliNonModificabili() {
         return isTestataEDettagliBloccati();
     }
@@ -444,20 +463,27 @@ public abstract class CRUDTraspRientInventarioBP<
 
     @Override
     protected Boolean isPossibileCancellazione(AllegatoGenericoBulk allegato) {
-        if (!isAllegatiModificabili()) return false;
-        if (isFirmaManuale()) return true;
-        // Il FIRMATO già archiviato (flusso workflow) non può essere eliminato: il documento deve restare firmato
+        Doc_trasporto_rientroBulk doc = getDoc();
+        if (doc == null || isViewing()
+                || doc.isDefinitivo() || doc.isAnnullato() || doc.isInAttesaDiFirma() || doc.isInviatoInFirma()) {
+            return false;
+        }
+        // Firma manuale: eliminazione sempre abilitata fino al definitivo
+        if (isFirmaManuale()) {
+            return true;
+        }
+        // Workflow: il FIRMATO già archiviato non si elimina
         if (allegato != null
                 && allegato.getCrudStatus() != OggettoBulk.TO_BE_CREATED
                 && isAllegatoFirmato(allegato)) {
             return false;
         }
-        return true;
+        return isAllegatiModificabili();
     }
 
     private boolean isAllegatoFirmato(AllegatoGenericoBulk allegato) {
         if (!(allegato instanceof AllegatoDocTraspRientroBulk)) return false;
-        String aspectFirmato = getAspectFirmato(getDoc());
+        String aspectFirmato = DocTraspRientUtil.aspectFirmato(getDoc());
         return aspectFirmato != null
                 && aspectFirmato.equals(((AllegatoDocTraspRientroBulk) allegato).getAspectName());
     }
@@ -524,7 +550,7 @@ public abstract class CRUDTraspRientInventarioBP<
             return false;
         }
 
-        // Stesse condizioni di doElimina: annullato, inviato in firma, oppure firmato (DATA_FIRMA valorizzata)
+        // Come doElimina: annullato, inviato in firma o firmato
         if (doc.isAnnullato() || doc.isInviatoInFirma() || doc.getDataFirma() != null) {
             return true;
         }
@@ -592,7 +618,7 @@ public abstract class CRUDTraspRientInventarioBP<
             return false;
         }
 
-        String aspectFirmatoAtteso = getAspectFirmato(doc);
+        String aspectFirmatoAtteso = DocTraspRientUtil.aspectFirmato(doc);
         if (aspectFirmatoAtteso == null) {
             return false;
         }
@@ -610,20 +636,10 @@ public abstract class CRUDTraspRientInventarioBP<
         return false;
     }
 
-    private String getAspectFirmato(Doc_trasporto_rientroBulk doc) {
-        if (doc instanceof DocumentoTrasportoBulk) {
-            return AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
-        }
-        if (doc instanceof DocumentoRientroBulk) {
-            return AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
-        }
-        return null;
-    }
-
     @Override
     protected void initializePrintBP(ActionContext context, AbstractPrintBP abstractPrintBP) {
         OfflineReportPrintBP printbp = (OfflineReportPrintBP) abstractPrintBP;
-        printbp.setReportName("/cnrdocamm/docamm/" + REPORT_DOC_TRASPORTO_RIENTRO);
+        printbp.setReportName(DocTraspRientUtil.REPORT_DOC_TRASPORTO_RIENTRO);
 
         Doc_trasporto_rientroBulk doc = Optional.ofNullable(getModel())
                 .filter(Doc_trasporto_rientroBulk.class::isInstance)
@@ -674,7 +690,7 @@ public abstract class CRUDTraspRientInventarioBP<
                 || !doc.isInviabileAllaFirma();
     }
 
-    /** Visibile finché il documento non è predisposto (cioè finché non è stato salvato il documento da firmare). */
+    /** Visibile finché il documento non è predisposto alla firma. */
     public boolean isPredisponiFirmaButtonHidden() {
         Doc_trasporto_rientroBulk doc = getDoc();
         return !isFirmaManuale()
@@ -685,29 +701,29 @@ public abstract class CRUDTraspRientInventarioBP<
                 || !hasBeniSalvati(doc);
     }
 
-    /** Cliccabile solo con l'allegato "Documento di Trasporto/Rientro" (da firmare) presente. */
+    /** Cliccabile appena tra gli allegati (anche non salvati) c'è un "Documento di Trasporto/Rientro". */
     public boolean isPredisponiFirmaButtonEnabled() {
         return !isPredisponiFirmaButtonHidden()
                 && (isEditing() || isInserting())
-                && hasAllegatoDocumentoDaFirmare();
+                && countDocumentiDaFirmare() > 0;
     }
 
-    /** Prima della predisposizione il "Documento di T/R" scelto dal menu (chiave FIRMATO) è il da firmare. */
-    private boolean hasAllegatoDocumentoDaFirmare() {
+    private int countDocumentiDaFirmare() {
         Doc_trasporto_rientroBulk doc = getDoc();
+        int count = 0;
         if (doc == null || doc.getArchivioAllegati() == null) {
-            return false;
+            return count;
         }
         for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
-            if (a instanceof AllegatoDocTraspRientroBulk) {
+            if (a instanceof AllegatoDocTraspRientroBulk
+                    && a.getCrudStatus() != OggettoBulk.TO_BE_DELETED) {
                 AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
-                if (allegato.isAspectDaFirmare()
-                        || (allegato.isToBeCreated() && allegato.isAspectFirmato())) {
-                    return true;
+                if (allegato.isAspectFirmato() || allegato.isAspectDaFirmare()) {
+                    count++;
                 }
             }
         }
-        return false;
+        return count;
     }
 
     public boolean isInviaInFirmaButtonEnabled() {
@@ -751,7 +767,7 @@ public abstract class CRUDTraspRientInventarioBP<
                         throws BusinessProcessException {
 
                     if (isTestataEDettagliBloccati()) {
-                        throw new BusinessProcessException("Impossibile modificare i beni del documento in questo stato.");
+                        throw new BusinessProcessException(new ApplicationException("Impossibile modificare i beni del documento in questo stato."));
                     }
 
                     try {
@@ -836,7 +852,7 @@ public abstract class CRUDTraspRientInventarioBP<
         }
     }
 
-    /** Beni candidati all'inserimento, senza clausole di ricerca aggiuntive. */
+    /** Beni candidati all'inserimento. */
     public RemoteIterator selectBeniCandidatiByClause(ActionContext context, CompoundFindClause clauses)
             throws BusinessProcessException {
         try {
@@ -846,7 +862,7 @@ public abstract class CRUDTraspRientInventarioBP<
         }
     }
 
-    /** Columnset dei beni (InventarioDocTRBulk) per la griglia del selezionatore. */
+    /** Columnset dei beni per la griglia del selezionatore. */
     public String getColumnSetSelezionatore() {
         return TRASPORTO.equals(getTipo()) ? "righeTrasporto" : "righeRientro";
     }
@@ -857,7 +873,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
             Doc_trasporto_rientroBulk doc = getDoc();
             if (doc == null) {
-                throw new BusinessProcessException("Documento non presente.");
+                throw new ApplicationException("Documento non presente.");
             }
 
             if (doc.getCrudStatus() == OggettoBulk.TO_BE_CREATED) {
@@ -875,8 +891,7 @@ public abstract class CRUDTraspRientInventarioBP<
             Doc_trasporto_rientroBulk docFirmabile =
                     getComp().inviaDocumentoAllaFirma(context.getUserContext(), doc);
 
-            // Ricarica dallo storage il _DAFIRMARE appena archiviato.
-            // La lista va svuotata: initializeModelForEditAllegati aggiunge senza pulire e duplicherebbe.
+            // Ricarica il _DAFIRMARE dallo storage (lista svuotata per evitare duplicati)
             docFirmabile.setArchivioAllegati(new BulkList<>());
             docFirmabile = (Doc_trasporto_rientroBulk) initializeModelForEditAllegati(context, docFirmabile);
 
@@ -899,84 +914,92 @@ public abstract class CRUDTraspRientInventarioBP<
         }
     }
 
-    /** Firma manuale: verifica il documento da firmare e salva. Stato INS, stato flusso null, DATA_INVIO_FIRMA = now. */
-    public void predisponiAllaFirma(ActionContext context) throws BusinessProcessException {
+    /**
+     * Firma manuale: archivia tutti gli allegati e marca il documento come predisposto
+     * (stato INS, flusso null, DATA_INVIO_FIRMA = now). Gli allegati spariscono dalla lista ma restano nel documentale.
+     */
+    public void predisponiAllaFirma(ActionContext context) throws BusinessProcessException, ApplicationException {
         Doc_trasporto_rientroBulk doc = getDoc();
 
         validaPredisposizione(doc);
-        assegnaAspectAllegatiManuali(doc);
-        validaAllegatoDaFirmare(doc);
+        validaTipologieAllegatiFirmaManuale(doc);
+        validaAllegatoDaFirmare();
 
-        update(context);
+        Timestamp dataInvioPrec = doc.getDataInvioFirma();
+        Timestamp dataFirmaPrec = doc.getDataFirma();
 
-        setMessage("Documento predisposto alla firma. Caricare il documento firmato e premere Salva Definitivo.");
+        // 1) archivia tutti gli allegati (DATA_INVIO_FIRMA ancora null)
+        archiviaAllegatiNelDocumentale = true;
+        try {
+            update(context);
+        } finally {
+            archiviaAllegatiNelDocumentale = false;
+        }
+
+        // 2) predisposizione: DATA_INVIO_FIRMA successiva agli allegati archiviati
+        doc = getDoc();
+        doc.inizializzaPerPredisposizioneFirma();
+        try {
+            update(context);
+        } catch (BusinessProcessException e) {
+            ripristinaDateFirma(dataInvioPrec, dataFirmaPrec);
+            throw e;
+        }
+
+        // 3) gli allegati spariscono dalla lista, nel documentale restano
+        getDoc().setArchivioAllegati(new BulkList<>());
+
+        setMessage("Documento predisposto alla firma. Allegare il Documento firmato e premere Salva Definitivo.");
     }
 
-    private void validaPredisposizione(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
+    private void validaPredisposizione(Doc_trasporto_rientroBulk doc) throws ApplicationException {
         if (doc == null) {
-            throw new BusinessProcessException("Modello non disponibile.");
+            throw new ApplicationException("Modello non disponibile.");
         }
         if (!isFirmaManuale()) {
-            throw new BusinessProcessException("La predisposizione alla firma è prevista solo senza invio in firma automatico.");
+            throw new ApplicationException("La predisposizione alla firma è prevista solo senza invio in firma automatico.");
         }
         if (doc.isTemporaneo()) {
-            throw new BusinessProcessException("Salvare il documento prima di predisporlo alla firma.");
+            throw new ApplicationException("Salvare il documento prima di predisporlo alla firma.");
         }
         if (!doc.isInserito()) {
-            throw new BusinessProcessException("Il documento deve essere in stato INSERITO per essere predisposto alla firma.");
+            throw new ApplicationException("Il documento deve essere in stato INSERITO per essere predisposto alla firma.");
         }
         if (doc.isPredispostoAllaFirma()) {
-            throw new BusinessProcessException("Il documento è già predisposto alla firma.");
+            throw new ApplicationException("Il documento è già predisposto alla firma.");
         }
         if (!hasBeniSalvati(doc)) {
-            throw new BusinessProcessException("Il documento deve contenere almeno un bene salvato.");
+            throw new ApplicationException("Il documento deve contenere almeno un bene salvato.");
         }
     }
 
     /** Deve esserci esattamente un allegato "Documento di T/R" da firmare. */
-    private void validaAllegatoDaFirmare(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
-        int count = 0;
-        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
-            if (a instanceof AllegatoDocTraspRientroBulk && ((AllegatoDocTraspRientroBulk) a).isAspectDaFirmare()) {
-                count++;
-            }
-        }
-        String tipoDoc = TRASPORTO.equals(getTipo()) ? "Trasporto" : "Rientro";
+    private void validaAllegatoDaFirmare() throws ApplicationException {
+        int count = countDocumentiDaFirmare();
+        String tipoDoc = DocTraspRientUtil.descrizioneTipo(getTipo());
         if (count == 0) {
-            throw new BusinessProcessException(
+            throw new ApplicationException(
                     "Allegare il Documento di " + tipoDoc + " da firmare prima di predisporre il documento alla firma.");
         }
         if (count > 1) {
-            throw new BusinessProcessException("È consentito allegare un solo Documento di " + tipoDoc + " da firmare.");
+            throw new ApplicationException("È consentito allegare un solo Documento di " + tipoDoc + ".");
         }
     }
 
-    /**
-     * Dopo un errore il DB è stato ripristinato dal rollback: il modello in memoria non deve restare "predisposto".
-     * Prima della predisposizione la DATA_INVIO_FIRMA è sempre null (lo garantisce validaPredisposizione).
-     */
-    private void annullaPredisposizioneInMemoria() {
-        Doc_trasporto_rientroBulk doc = getDoc();
-        if (doc != null && doc.isPredispostoAllaFirma()) {
-            doc.setDataInvioFirma(null);
-        }
-    }
-
-
-    private void validaStatoPerFirma() throws BusinessProcessException {
+    private void validaStatoPerFirma() throws ApplicationException {
         Doc_trasporto_rientroBulk doc = getDoc();
 
         if (doc == null) {
-            throw new BusinessProcessException("Documento non presente");
+            throw new ApplicationException("Documento non presente");
         }
         if (doc.isAnnullato()) {
-            throw new BusinessProcessException("Impossibile inviare in firma un documento annullato");
+            throw new ApplicationException("Impossibile inviare in firma un documento annullato");
         }
         if (!doc.isInserito()) {
-            throw new BusinessProcessException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
+            throw new ApplicationException("Il documento deve essere in stato 'Inserito' per essere inviato in firma");
         }
         if (!doc.isInviabileAllaFirma()) {
-            throw new BusinessProcessException("Documento non completo per l'invio in firma");
+            throw new ApplicationException("Documento non completo per l'invio in firma");
         }
     }
 
@@ -1033,7 +1056,7 @@ public abstract class CRUDTraspRientInventarioBP<
     @Override
     public void selectAll(ActionContext context) throws BusinessProcessException {
         if (isTestataEDettagliBloccati()) {
-            throw new BusinessProcessException("Impossibile modificare il documento");
+            throw new BusinessProcessException(new ApplicationException("Impossibile modificare il documento"));
         }
 
         try {
@@ -1062,7 +1085,7 @@ public abstract class CRUDTraspRientInventarioBP<
             throws BusinessProcessException {
 
         if (isTestataEDettagliBloccati()) {
-            throw new BusinessProcessException("Impossibile modificare i beni del documento in questo stato.");
+            throw new BusinessProcessException(new ApplicationException("Impossibile modificare i beni del documento in questo stato."));
         }
 
         try {
@@ -1252,7 +1275,7 @@ public abstract class CRUDTraspRientInventarioBP<
         }
     }
 
-    /** Wrapper per compatibilità con chiamate esterne. */
+    /** Wrapper per chiamate esterne. */
     public void elaboraBeneConAccessori(ActionContext context, boolean isEliminazione, boolean includiAccessori)
             throws BusinessProcessException {
         elaboraBeneCorrente(context, isEliminazione, includiAccessori);
@@ -1284,18 +1307,9 @@ public abstract class CRUDTraspRientInventarioBP<
             return;
         }
 
-        modificaBeniConAccessoriComponente(
-                context,
-                new OggettoBulk[]{bene},
-                new BitSet(1),
-                bitSetUnico()
-        );
-    }
-
-    private BitSet bitSetUnico() {
-        BitSet bs = new BitSet(1);
-        bs.set(0);
-        return bs;
+        BitSet selezione = new BitSet(1);
+        selezione.set(0);
+        modificaBeniConAccessoriComponente(context, new OggettoBulk[]{bene}, new BitSet(1), selezione);
     }
 
     private List<InventarioDocTRBulk> calcolaAccessoriDaAggiungere(
@@ -1473,7 +1487,7 @@ public abstract class CRUDTraspRientInventarioBP<
         Doc_trasporto_rientroBulk doc = getDoc();
 
         if (doc == null || doc.getPgDocTrasportoRientro() == null) {
-            throw new BusinessProcessException("Documento non valido");
+            throw new ApplicationException("Documento non valido");
         }
 
         try (InputStream input = getStreamDocTrasportoRientro(context.getUserContext(), doc)) {
@@ -1500,18 +1514,8 @@ public abstract class CRUDTraspRientInventarioBP<
     private InputStream getStreamDocTrasportoRientro(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws Exception {
 
-        Print_spoolerBulk print = new Print_spoolerBulk();
-        print.setPgStampa(UUID.randomUUID().getLeastSignificantBits());
-        print.setFlEmail(false);
-        print.setReport("/cnrdocamm/docamm/" + REPORT_DOC_TRASPORTO_RIENTRO);
-        print.setNomeFile("DocTrasportoRientro_" + doc.getPgDocTrasportoRientro());
-        print.setUtcr(userContext.getUser());
-
-        print.addParam("esercizio", doc.getEsercizio(), Integer.class);
-        print.addParam("pg_inventario", doc.getPgInventario(), Long.class);
-        print.addParam("ti_documento", doc.getTiDocumento(), String.class);
-        print.addParam("pg_doc_trasporto_rientro", doc.getPgDocTrasportoRientro(), Long.class);
-        print.addParam("DIR_IMAGE", "", String.class);
+        Print_spoolerBulk print = DocTraspRientUtil.creaStampa(
+                doc, "DocTrasportoRientro_" + doc.getPgDocTrasportoRientro(), userContext.getUser());
 
         Report report = SpringUtil.getBean("printService", PrintService.class)
                 .executeReport(userContext, print);
@@ -1559,45 +1563,13 @@ public abstract class CRUDTraspRientInventarioBP<
                 .ifPresent(allegato::setUtenteSIGLA);
 
         List<String> secondaryTypes = storageObject.getPropertyValue("cmis:secondaryObjectTypeIds");
-        String aspect = estraiAspectAllegato(allegato, secondaryTypes);
+        String aspect = DocTraspRientUtil.aspectDaStorage(allegato, secondaryTypes);
 
         if (aspect != null) {
             allegato.setAspectName(aspect);
         }
 
         super.completeAllegato(allegato, storageObject);
-    }
-
-    private String estraiAspectAllegato(T allegato, List<String> secondaryTypes) {
-        if (secondaryTypes == null || secondaryTypes.isEmpty()) {
-            return null;
-        }
-
-        // Definiamo le tre chiavi previste per Trasporto o Rientro
-        String firmato;
-        String altro;
-        String daFirmare;
-
-        if (allegato instanceof AllegatoDocumentoTrasportoBulk) {
-            firmato = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_FIRMATO;
-            altro = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_ALTRO;
-            daFirmare = AllegatoDocumentoTrasportoBulk.P_SIGLA_DOCTRASPORTO_ATTACHMENT_DA_FIRMARE;
-        } else if (allegato instanceof AllegatoDocumentoRientroBulk) {
-            firmato = AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_FIRMATO;
-            altro = AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_ALTRO;
-            daFirmare = AllegatoDocumentoRientroBulk.P_SIGLA_DOCRIENTRO_ATTACHMENT_DA_FIRMARE;
-        } else {
-            return null;
-        }
-
-        // Ora il BP riconoscerà anche l'aspect DA_FIRMARE letto da Azure
-        for (String secondaryType : secondaryTypes) {
-            if (firmato.equals(secondaryType) || altro.equals(secondaryType) || daFirmare.equals(secondaryType)) {
-                return secondaryType;
-            }
-        }
-
-        return null;
     }
 
     public void validaDatiPerDettagli() throws ApplicationException {
@@ -1762,6 +1734,7 @@ public abstract class CRUDTraspRientInventarioBP<
                 && Objects.equals(dettaglio.getProgressivo(), bene.getProgressivo().intValue());
     }
 
+    /** Assegna il file caricato all'allegato selezionato (sostituzione) o al primo nuovo senza file. */
     private void assegnaFileUploadato(ActionContext context, Doc_trasporto_rientroBulk doc) {
         if (!(context instanceof HttpActionContext)
                 || doc == null
@@ -1776,14 +1749,31 @@ public abstract class CRUDTraspRientInventarioBP<
             return;
         }
 
-        doc.getArchivioAllegati().stream()
-                .filter(a -> a.isToBeCreated() && a.getFile() == null)
-                .findFirst()
-                .ifPresent(a -> {
-                    a.setFile(uploadedFile.getFile());
-                    a.setContentType(uploadedFile.getContentType());
-                    a.setNome(a.parseFilename(uploadedFile.getName()));
-                });
+        AllegatoGenericoBulk selezionato = (AllegatoGenericoBulk) getCrudArchivioAllegati().getModel();
+        Optional<AllegatoGenericoBulk> destinazione = Optional.empty();
+
+        // Allegato esistente non bloccato: il nuovo file ne sostituisce il contenuto
+        if (isFirmaManuale()
+                && selezionato instanceof AllegatoDocTraspRientroBulk
+                && !selezionato.isToBeCreated()
+                && !((AllegatoDocTraspRientroBulk) selezionato).isAllegatoBloccato()
+                && doc.getArchivioAllegati().contains(selezionato)) {
+            destinazione = Optional.of(selezionato);
+        }
+        if (!destinazione.isPresent()) {
+            destinazione = doc.getArchivioAllegati().stream()
+                    .filter(a -> a.isToBeCreated() && a.getFile() == null)
+                    .findFirst();
+        }
+
+        destinazione.ifPresent(a -> {
+            a.setFile(uploadedFile.getFile());
+            a.setContentType(uploadedFile.getContentType());
+            a.setNome(a.parseFilename(uploadedFile.getName()));
+            if (a.getCrudStatus() == OggettoBulk.NORMAL) {
+                a.setToBeUpdated();
+            }
+        });
     }
 
     private void validaAllegati(Doc_trasporto_rientroBulk doc) throws ValidationException {
@@ -1811,20 +1801,29 @@ public abstract class CRUDTraspRientInventarioBP<
             }
 
             assegnaFileUploadato(context, doc);
-            assegnaAspectAllegatiManuali(doc);      // nuovo
-            validaAllegatiFirmaManuale(doc);        // nuovo
+            validaTipologieAllegatiFirmaManuale(doc);
             validaAllegati(doc);
-            aggiornaDateFirmaManuale(doc);          // nuovo
 
             doc.setToBeUpdated();
+
+            BulkList<AllegatoGenericoBulk> allegatiVisibili = doc.getArchivioAllegati();
 
             Doc_trasporto_rientroBulk docAggiornato = (Doc_trasporto_rientroBulk)
                     createComponentSession().modificaConBulk(context.getUserContext(), doc);
 
-            setModel(context, docAggiornato);
-            setSkipAllegatiReload(false);
+            // Firma manuale: il Salva in bozza non archivia e lascia visibili gli allegati
+            boolean archivia = !isFirmaManuale() || archiviaAllegatiNelDocumentale;
+            ultimoSalvataggioArchiviato = archivia;
+            if (!archivia) {
+                docAggiornato.setArchivioAllegati(allegatiVisibili);
+            }
 
-            getComp().archiviaAllegatiDocTR(context.getUserContext(), docAggiornato);
+            setModel(context, docAggiornato);
+
+            if (archivia) {
+                setSkipAllegatiReload(false);
+                getComp().archiviaAllegatiDocTR(context.getUserContext(), docAggiornato);
+            }
 
             commitUserTransaction();
             setMessage("Documento salvato correttamente.");
@@ -1840,30 +1839,30 @@ public abstract class CRUDTraspRientInventarioBP<
         }
     }
 
-    private void validaUpdate(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
+    private void validaUpdate(Doc_trasporto_rientroBulk doc) throws ApplicationException {
         if (doc == null) {
-            throw new BusinessProcessException("Modello non disponibile.");
+            throw new ApplicationException("Modello non disponibile.");
         }
         if (doc.isAnnullato() || doc.isDefinitivo()) {
-            throw new BusinessProcessException("Documento non modificabile.");
+            throw new ApplicationException("Documento non modificabile.");
         }
         if (doc.isInAttesaDiFirma()) {
-            throw new BusinessProcessException("Documento in attesa di firma: allegati non modificabili.");
+            throw new ApplicationException("Documento in attesa di firma: allegati non modificabili.");
         }
         if (doc.isFirmaCompletabile() && !isAllegatiModificabili()) {
-            throw new BusinessProcessException("Allegati non modificabili.");
+            throw new ApplicationException("Allegati non modificabili.");
         }
-        // L'obbligo del FIRMATO attivo vale solo per la firma da workflow
+        // L'obbligo del FIRMATO vale solo per la firma da workflow
         if (doc.isFirmatoDaCompletare()) {
             validaFirmatoPresente(doc);
         }
     }
 
     /** Il documento firmato deve mantenere un unico allegato FIRMATO attivo. */
-    private void validaFirmatoPresente(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
-        String aspectFirmato = getAspectFirmato(doc);
+    private void validaFirmatoPresente(Doc_trasporto_rientroBulk doc) throws ApplicationException {
+        String aspectFirmato = DocTraspRientUtil.aspectFirmato(doc);
         if (aspectFirmato == null || doc.getArchivioAllegati() == null) {
-            throw new BusinessProcessException("Documento firmato privo del file FIRMATO: impossibile salvare.");
+            throw new ApplicationException("Documento firmato privo del file FIRMATO: impossibile salvare.");
         }
 
         boolean firmatoAttivo = false;
@@ -1874,7 +1873,7 @@ public abstract class CRUDTraspRientInventarioBP<
 
             if (allegato.getCrudStatus() == OggettoBulk.TO_BE_DELETED) {
                 if (allegato.getStorageKey() != null) {
-                    throw new BusinessProcessException(
+                    throw new ApplicationException(
                             "Il file FIRMATO non può essere eliminato da un documento firmato.");
                 }
             } else {
@@ -1883,7 +1882,7 @@ public abstract class CRUDTraspRientInventarioBP<
         }
 
         if (!firmatoAttivo) {
-            throw new BusinessProcessException(
+            throw new ApplicationException(
                     "Documento firmato privo del file FIRMATO: caricare la copia firmata prima di salvare.");
         }
     }
@@ -1903,8 +1902,8 @@ public abstract class CRUDTraspRientInventarioBP<
             }
 
             assegnaFileUploadato(context, doc);
-            assegnaAspectAllegatiManuali(doc);      // nuovo
-            aggiornaDateFirmaManuale(doc);          // nuovo
+            validaTipologieAllegatiFirmaManuale(doc);
+            impostaDataFirmaManuale(doc);
             validaAllegati(doc);
             getComp().validaAggiuntaAllegatoFirmato(doc);
 
@@ -1931,126 +1930,67 @@ public abstract class CRUDTraspRientInventarioBP<
         }
     }
 
-    private void validaSalvaDefinitivo(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
+    private void validaSalvaDefinitivo(Doc_trasporto_rientroBulk doc) throws ApplicationException {
         if (doc == null) {
-            throw new BusinessProcessException("Modello non disponibile.");
+            throw new ApplicationException("Modello non disponibile.");
         }
         if (doc.isAnnullato()) {
-            throw new BusinessProcessException("Documento annullato: impossibile salvare definitivo.");
+            throw new ApplicationException("Documento annullato: impossibile salvare definitivo.");
         }
         if (doc.isDefinitivo()) {
-            throw new BusinessProcessException("Documento già definitivo.");
+            throw new ApplicationException("Documento già definitivo.");
         }
-        if (doc.getDataFirma() == null) {
-            throw new BusinessProcessException("Documento non ancora firmato: impossibile salvare definitivo.");
+        if (!isFirmaManuale() && doc.getDataFirma() == null) {
+            throw new ApplicationException("Documento non ancora firmato: impossibile salvare definitivo.");
         }
         if (doc.isInAttesaDiFirma()) {
-            throw new BusinessProcessException("Documento ancora in attesa di firma.");
+            throw new ApplicationException("Documento ancora in attesa di firma.");
         }
         if (!doc.isFirmaCompletabile()) {
-            throw new BusinessProcessException(isFirmaManuale()
+            throw new ApplicationException(isFirmaManuale()
                     ? "Documento non ancora predisposto alla firma: impossibile salvare definitivo."
                     : "Documento non ancora firmato: impossibile salvare definitivo.");
         }
     }
 
-    /**
-     * Firma manuale: il "Documento di T/R" nuovo è il DA_FIRMARE se non c'è già un da firmare né un firmato attivi,
-     * altrimenti è il FIRMATO. Idempotente: si può richiamare più volte sullo stesso documento.
-     */
-    private void assegnaAspectAllegatiManuali(Doc_trasporto_rientroBulk doc) {
+    /** Firma manuale: un solo "Documento di T/R" per volta (prima il da firmare, poi il firmato). */
+    private void validaTipologieAllegatiFirmaManuale(Doc_trasporto_rientroBulk doc) throws ApplicationException {
         if (!isFirmaManuale() || doc == null || doc.getArchivioAllegati() == null) {
             return;
         }
 
-        boolean daFirmareOFirmatoPresente = false;
+        int documenti = 0;
         for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
-            if (a instanceof AllegatoDocTraspRientroBulk && !a.isToBeCreated()) {
+            if (a instanceof AllegatoDocTraspRientroBulk && a.getCrudStatus() != OggettoBulk.TO_BE_DELETED) {
                 AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
-                if (allegato.isAspectDaFirmare() || allegato.isAspectFirmato()) {
-                    daFirmareOFirmatoPresente = true;
+                if (allegato.isAspectFirmato() || (!doc.isPredispostoAllaFirma() && allegato.isAspectDaFirmare())) {
+                    documenti++;
                 }
             }
         }
 
-        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
-            if (a instanceof AllegatoDocTraspRientroBulk && a.isToBeCreated()) {
-                AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
-                if (allegato.isAspectDaFirmare()) {
-                    daFirmareOFirmatoPresente = true;       // già assegnato da una chiamata precedente
-                } else if (allegato.isAspectFirmato() && !daFirmareOFirmatoPresente) {
-                    allegato.setAspectName(allegato.getAspectDaFirmareName());
-                    daFirmareOFirmatoPresente = true;
-                }
-            }
+        if (documenti > 1) {
+            throw new ApplicationException("È consentito allegare un solo Documento di "
+                    + DocTraspRientUtil.descrizioneTipo(getTipo())
+                    + (doc.isPredispostoAllaFirma() ? " firmato." : "."));
         }
     }
 
-    /**
-     * Firma manuale: DATA_INVIO_FIRMA = salvataggio con un nuovo da firmare; DATA_FIRMA = salvataggio con un nuovo firmato
-     * (null se non c'è più un firmato). Da chiamare dopo assegnaAspectAllegatiManuali e prima di salvare.
-     */
-    private void aggiornaDateFirmaManuale(Doc_trasporto_rientroBulk doc) {
-        if (!isFirmaManuale() || doc == null || doc.getArchivioAllegati() == null
-                || !doc.isInserito() || doc.isTemporaneo()) {
+    /** Firma manuale: DATA_FIRMA impostata solo dal Salva definitivo con il firmato presente. */
+    private void impostaDataFirmaManuale(Doc_trasporto_rientroBulk doc) {
+        if (!isFirmaManuale() || doc == null || !hasAllegatoFirmato()) {
             return;
         }
-
-        boolean nuovoDaFirmare = false;
-        boolean nuovoFirmato = false;
-        boolean firmatoAttivo = false;
-
-        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {   // gli eliminati non sono nella collection
-            if (!(a instanceof AllegatoDocTraspRientroBulk)) continue;
-            AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
-
-            if (allegato.isAspectDaFirmare() && allegato.isToBeCreated()) {
-                nuovoDaFirmare = true;
-            }
-            if (allegato.isAspectFirmato()) {
-                firmatoAttivo = true;
-                if (allegato.isToBeCreated()) {
-                    nuovoFirmato = true;
-                }
-            }
-        }
-
-        Timestamp ora = new Timestamp(System.currentTimeMillis());
-
-        if (nuovoDaFirmare) {
-            doc.setDataInvioFirma(ora);
-        }
-        if (nuovoFirmato) {
-            doc.setDataFirma(ora);
-        } else if (!firmatoAttivo) {
-            doc.setDataFirma(null);
-        }
+        doc.setDataFirma(new Timestamp(System.currentTimeMillis()));
     }
 
-    /** Dopo un errore il DB è stato ripristinato dal rollback: il modello in memoria torna alle date precedenti. */
+    /** Dopo un rollback il modello in memoria torna alle date precedenti. */
     private void ripristinaDateFirma(Timestamp dataInvioFirma, Timestamp dataFirma) {
         Doc_trasporto_rientroBulk doc = getDoc();
         if (doc != null) {
             doc.setDataInvioFirma(dataInvioFirma);
             doc.setDataFirma(dataFirma);
         }
-    }
-
-    /** Un documento predisposto deve mantenere almeno un allegato da firmare (o il firmato). */
-    private void validaAllegatiFirmaManuale(Doc_trasporto_rientroBulk doc) throws BusinessProcessException {
-        if (!isFirmaManuale() || doc == null || !doc.isPredispostoAllaFirma()) {
-            return;
-        }
-        for (AllegatoGenericoBulk a : doc.getArchivioAllegati()) {
-            if (a instanceof AllegatoDocTraspRientroBulk) {
-                AllegatoDocTraspRientroBulk allegato = (AllegatoDocTraspRientroBulk) a;
-                if (allegato.isAspectDaFirmare() || allegato.isAspectFirmato()) {
-                    return;
-                }
-            }
-        }
-        throw new BusinessProcessException(
-                "Documento predisposto alla firma: deve restare allegato il Documento da firmare (o quello firmato).");
     }
 
     @Override
@@ -2079,14 +2019,16 @@ public abstract class CRUDTraspRientInventarioBP<
         return isTestataEDettagliBloccati() || isViewing() || (!isInserting() && !isEditing());
     }
 
+    /** Documento definitivo, annullato, in attesa di firma o inviato in firma: niente salvataggi. */
+    private boolean isSalvataggioBloccato(Doc_trasporto_rientroBulk doc) {
+        return doc.isDefinitivo() || doc.isAnnullato() || doc.isInAttesaDiFirma() || doc.isInviatoInFirma();
+    }
+
     @Override
     public boolean isSaveButtonEnabled() {
         Doc_trasporto_rientroBulk doc = getDoc();
 
-        if (doc == null || isViewing()) {
-            return false;
-        }
-        if (doc.isDefinitivo() || doc.isAnnullato() || doc.isInAttesaDiFirma() || doc.isInviatoInFirma()) {
+        if (doc == null || isViewing() || isSalvataggioBloccato(doc)) {
             return false;
         }
 
@@ -2101,7 +2043,7 @@ public abstract class CRUDTraspRientInventarioBP<
         if (doc == null) {
             return false;
         }
-        if (doc.isDefinitivo() || doc.isAnnullato() || doc.isInAttesaDiFirma() || doc.isInviatoInFirma()) {
+        if (isSalvataggioBloccato(doc)) {
             return true;
         }
         if (isAllegatiModificabili()) {
@@ -2135,10 +2077,7 @@ public abstract class CRUDTraspRientInventarioBP<
                 && (isEditing() || isInserting());
     }
 
-    /**
-     * Il tab Allegati è accessibile (in sola lettura se non firmato da completare)
-     * da quando il documento è inviato in firma in poi.
-     */
+    /** Tab Allegati accessibile dall'invio in firma in poi (firma manuale: dal primo salvataggio). */
     public boolean isAllegatiAccessibili() {
         Doc_trasporto_rientroBulk doc = getDoc();
         if (doc == null || doc.getPgDocTrasportoRientro() == null) {
@@ -2163,12 +2102,46 @@ public abstract class CRUDTraspRientInventarioBP<
         return doc.isFirmaCompletabile() || isFirmaManualeSalvata(doc);
     }
 
-    /** Firma manuale, documento già salvato con PG definitivo e ancora INSERITO (prima o dopo la predisposizione). */
+    /**
+     * Tipologia e Nome degli allegati salvati bloccati quando il documento è
+     * - profilo ISS: inviato in firma, firmato, definitivo o annullato;
+     * - firma manuale: predisposto alla firma, definitivo o annullato.
+     */
+    public boolean isTipologiaNomeAllegatiBloccati() {
+        Doc_trasporto_rientroBulk doc = getDoc();
+        if (doc == null) {
+            return false;
+        }
+        if (doc.isDefinitivo() || doc.isAnnullato()) {
+            return true;
+        }
+        if (isFirmaManuale()) {
+            return doc.isPredispostoAllaFirma();
+        }
+        return doc.isInviatoInFirma() || doc.isFirmatoDaCompletare();
+    }
+
+    /** Propaga il blocco agli allegati prima del disegno del tab (chiamato dalla JSP a ogni render). */
+    @Override
+    public String getAllegatiFormName() {
+        Doc_trasporto_rientroBulk doc = getDoc();
+        if (doc != null && doc.getArchivioAllegati() != null) {
+            boolean bloccati = isTipologiaNomeAllegatiBloccati();
+            for (AllegatoGenericoBulk allegato : doc.getArchivioAllegati()) {
+                if (allegato instanceof AllegatoDocTraspRientroBulk) {
+                    ((AllegatoDocTraspRientroBulk) allegato).setTipologiaNomeBloccati(bloccati);
+                }
+            }
+        }
+        return super.getAllegatiFormName();
+    }
+
+    /** Firma manuale, documento salvato con PG definitivo e ancora INSERITO. */
     private boolean isFirmaManualeSalvata(Doc_trasporto_rientroBulk doc) {
         return isFirmaManuale() && doc.isInserito() && !doc.isTemporaneo();
     }
 
-    /** Firma manuale: mostra solo data invio firma e data firma (niente UUID né stato flusso). */
+    /** Firma manuale: mostra solo data invio firma e data firma. */
     public boolean isDateFirmaManualeVisible() {
         Doc_trasporto_rientroBulk doc = getDoc();
         return isFirmaManuale() && doc != null && !isInserting()

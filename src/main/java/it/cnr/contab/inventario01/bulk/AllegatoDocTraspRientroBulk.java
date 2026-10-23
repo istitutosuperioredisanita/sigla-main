@@ -28,31 +28,29 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 
 	public abstract void setAspectName(String aspectName);
 
-	/** Aspect "Altro" (selezionabile dall'utente). */
+	/** Aspect "Altro" (selezionabile). */
 	public abstract String getAspectAltroName();
 
-	/** Aspect del documento firmato (selezionabile dall'utente come "Documento di Trasporto/Rientro"). */
+	/** Aspect del documento firmato (selezionabile come "Documento di Trasporto/Rientro"). */
 	public abstract String getAspectFirmatoName();
 
-	/** Aspect del PDF generato all'invio in firma. NON è selezionabile dall'utente. */
+	/** Aspect del PDF generato all'invio in firma (non selezionabile). */
 	public abstract String getAspectDaFirmareName();
 
-	/** Etichette di tutti gli aspect (menu + aspect di sistema), usate solo per la visualizzazione. */
+	/** Etichette di tutti gli aspect, usate per la visualizzazione. */
 	protected abstract OrderedHashtable getEtichetteAspect();
 
-	/** True se l'allegato è il PDF "da firmare" generato dal sistema. */
 	public boolean isAspectDaFirmare() {
 		String aspect = getAspectName();
 		return aspect != null && aspect.equals(getAspectDaFirmareName());
 	}
 
-	/** True se l'allegato è il documento firmato. */
 	public boolean isAspectFirmato() {
 		String aspect = getAspectName();
 		return aspect != null && aspect.equals(getAspectFirmatoName());
 	}
 
-	/** Etichetta leggibile dell'aspect, valida anche per l'aspect "da firmare". */
+	/** Etichetta leggibile dell'aspect (anche per il "da firmare"). */
 	public String getAspectNameLabel() {
 		String aspect = getAspectName();
 		if (aspect == null) {
@@ -62,20 +60,15 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 		return label != null ? label.toString() : aspect;
 	}
 
-	/**
-	 * Metodo chiamato da JADA (tramite XML) per popolare il menu a tendina.
-	 * È dinamico, usa ESCLUSIVAMENTE la mappa delle etichette (etichetteAspect)
-	 * e si basa sui metodi astratti delle classi figlie. Nessuna stringa hardcoded.
-	 */
+	/** Opzioni del menu Tipologia: una sola se l'allegato è bloccato, altrimenti "Altro" e "Documento di T/R". */
 	public OrderedHashtable getAspectNamesKeys() {
 		OrderedHashtable keys = new OrderedHashtable();
 
-		if (isAspectDaFirmare()) {
+		if (isAspectDaFirmare() && isAllegatoBloccato()) {
 			keys.put(getAspectDaFirmareName(), getEtichetteAspect().get(getAspectDaFirmareName()));
-		} else if (isAspectFirmato()) {
+		} else if (isAspectFirmato() && isAllegatoBloccato()) {
 			keys.put(getAspectFirmatoName(), getEtichetteAspect().get(getAspectFirmatoName()));
 		} else {
-			// Nuovo allegato (inserimento manuale) o allegato vecchio
 			keys.put(getAspectAltroName(), getEtichetteAspect().get(getAspectAltroName()));
 			keys.put(getAspectFirmatoName(), getEtichetteAspect().get(getAspectFirmatoName()));
 		}
@@ -141,24 +134,51 @@ public abstract class AllegatoDocTraspRientroBulk extends AllegatoGenericoBulk {
 		return !this.isToBeCreated();
 	}
 
-	/**
-	 * Se è il documento FIRMATO o DA FIRMARE, è bloccato e non modificabile.
-	 * Metodo usato dal BP per switchare sulla form readonly.
-	 */
+	/** Allegato già salvato di un documento bloccato: Tipologia, Nome, Descrizione e File non modificabili. */
 	public boolean isAllegatoBloccato() {
-		return isAllegatoEsistente() && (isAspectFirmato() || isAspectDaFirmare());
+		return isAllegatoEsistente() && tipologiaNomeBloccati;
 	}
 
 	public boolean isDescrizioneReadonly() {
 		return isAllegatoBloccato();
 	}
 
+	/** Impostato dal BP in base allo stato del documento; un allegato nuovo resta sempre compilabile. */
+	private boolean tipologiaNomeBloccati = false;
+
+	public void setTipologiaNomeBloccati(boolean tipologiaNomeBloccati) {
+		this.tipologiaNomeBloccati = tipologiaNomeBloccati;
+	}
+
 	public boolean isAspectNameReadonly() {
-		return isAllegatoEsistente();
+		return isAllegatoBloccato();
 	}
 
 	public boolean isFileReadonly() {
-		return isAllegatoEsistente();
+		return isAllegatoBloccato();
+	}
+
+	/** Nome: automatico per un allegato nuovo, modificabile per uno esistente se il documento non è bloccato. */
+	public boolean isNomeReadonly() {
+		return !isAllegatoEsistente() || isAllegatoBloccato();
+	}
+
+	/**
+	 * Il generico confronta solo la storageKey: due allegati nuovi (key null) risulterebbero uguali
+	 * e una riga sparirebbe. I nuovi si confrontano per identità.
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		String key = getStorageKey();
+		return key != null && key.equals(((AllegatoDocTraspRientroBulk) o).getStorageKey());
+	}
+
+	@Override
+	public int hashCode() {
+		String key = getStorageKey();
+		return key != null ? key.hashCode() : System.identityHashCode(this);
 	}
 
 	@Override
