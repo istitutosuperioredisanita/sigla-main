@@ -53,4 +53,9 @@ public class FondiFunzionamentoUODTO {
                 .orElse(BigDecimal.ZERO);
     }
 
+    public BigDecimal getImportoPagato() {
+        return Optional.ofNullable(unitaOrganizzativaBulk)
+                .map(Unita_organizzativaBulk::getImportoPagato)
+                .orElse(BigDecimal.ZERO);
+    }
 }

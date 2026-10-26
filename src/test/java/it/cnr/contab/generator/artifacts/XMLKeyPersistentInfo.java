@@ -64,10 +64,10 @@ public class XMLKeyPersistentInfo extends XMLBase {
                         Integer.valueOf(c.getColumnSize()).toString());
                 addAttribute(
                         Tags.NULLABLE,
-                        new Boolean(c.isNullable()).toString());
+                        Boolean.toString(c.isNullable()));
                 addAttribute(
                         Tags.PRIMARY,
-                        new Boolean(c.isPrimary()).toString());
+                        Boolean.toString(c.isPrimary()));
                 closeEmptyTag();
             }
         }
