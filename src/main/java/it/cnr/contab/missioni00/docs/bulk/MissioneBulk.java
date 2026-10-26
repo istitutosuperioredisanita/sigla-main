@@ -100,7 +100,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	@JsonIgnore
 	private MissioneBulk missioneIniziale;
 	public final static int CANCELLAZIONE_FISICA = 2;
-	public final static int CANCELLAZIONE_LOGICA = 1;	
+	public final static int CANCELLAZIONE_LOGICA = 1;
 	public final static String SALVA_DEFINITIVO = "D";
 	public final static String SALVA_PROVVISORIO = "P";
 	public final static String SALVA_TEMPORANEO = "T";
@@ -110,13 +110,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		ti_salvataggioKeys = new OrderedHashtable();
 		ti_salvataggioKeys.put("D", "Definitiva");
 		ti_salvataggioKeys.put("P", "Provvisoria");
-		ti_salvataggioKeys.put("T", "");				
+		ti_salvataggioKeys.put("T", "");
 
 		DA_GEMIS_DA_COMPLETARE = new it.cnr.jada.util.OrderedHashtable();
 		DA_GEMIS_DA_COMPLETARE.put(new Boolean(false), "N");
 		DA_GEMIS_DA_COMPLETARE.put(new Boolean(true), "Y");
 
-	}	
+	}
 
 	// Tappe
 	private BulkList<Missione_tappaBulk> tappeMissioneColl = new BulkList<Missione_tappaBulk>();
@@ -163,7 +163,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	protected Tipo_rapportoBulk tipo_rapporto;
 	@JsonIgnore
 	private java.util.Collection tipi_rapporto;
-	protected BancaBulk banca;	
+	protected BancaBulk banca;
 	protected Rif_modalita_pagamentoBulk modalita_pagamento;
 	@JsonIgnore
 	protected Rif_termini_pagamentoBulk termini_pagamento;
@@ -172,13 +172,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	@JsonIgnore
 	private java.util.Collection termini;
 	public final static String ANAG_ALTRO = "A";
-	public final static String ANAG_DIPENDENTE = "D";				
+	public final static String ANAG_DIPENDENTE = "D";
 	public final static Dictionary ti_anagraficoKeys;
 	static
 	{
 		ti_anagraficoKeys = new OrderedHashtable();
 		ti_anagraficoKeys.put("D", "Dipendente");
-		ti_anagraficoKeys.put("A", "Altro");		
+		ti_anagraficoKeys.put("A", "Altro");
 	}
 
 	// Diaria
@@ -225,7 +225,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	private String cdrGeMis;
 	private String voceGeMis;
 	private Long pgMissioneFromGeMis;
-    private BigDecimal importoDaRimborsare;
+	private BigDecimal importoDaRimborsare;
 
 	// Fondo Economale
 	public final static Dictionary STATO_FONDO_ECO;
@@ -233,21 +233,21 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	public final static String FONDO_ECO = "A";
 	public final static String REGISTRATO_IN_FONDO_ECO = "R";
 	// Stati Cofi
-	public final static java.util.Dictionary STATO_COFI;	
-	public final static String STATO_INIZIALE_COFI = "I";	
+	public final static java.util.Dictionary STATO_COFI;
+	public final static String STATO_INIZIALE_COFI = "I";
 	public final static String STATO_CONTABILIZZATO_COFI = "C";
 	public final static String STATO_PAGATO = "P";
-	public final static String STATO_ANNULLATO = "A";			
+	public final static String STATO_ANNULLATO = "A";
 	// Stati Coan
 	public final static String STATO_INIZIALE_COAN = "N";
 	public final static String STATO_CONTABILIZZATO_COAN = "C";
 	public final static String STATO_RICONTABILIZZARE_COAN = "R";
-	public final static String STATO_COAN_NON_PROCESSARE = "X";	
+	public final static String STATO_COAN_NON_PROCESSARE = "X";
 	// Stati Coge	
-	public final static String STATO_INIZIALE_COGE = "N";	
+	public final static String STATO_INIZIALE_COGE = "N";
 	public final static String STATO_CONTABILIZZATO_COGE = "C";
 	public final static String STATO_RICONTABILIZZARE_COGE = "R";
-	public final static String STATO_COGE_NON_PROCESSARE = "X";		
+	public final static String STATO_COGE_NON_PROCESSARE = "X";
 	// Stati Manrev
 	public final static java.util.Dictionary TI_ASSOCIATO_MANREV;
 	public final static String STATO_INIZIALE_MANREV = "N";
@@ -310,15 +310,15 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * e i relativi valori di business (in valore). Se la mappa non esiste viene creata
 	 */
 
-	public void addToDefferredSaldi(IDocumentoContabileBulk docCont, java.util.Map values) 
+	public void addToDefferredSaldi(IDocumentoContabileBulk docCont, java.util.Map values)
 	{
-		if (docCont != null) 
+		if (docCont != null)
 		{
 			if (deferredSaldi == null)
 				deferredSaldi = new PrimaryKeyHashMap();
 			if (!deferredSaldi.containsKey(docCont))
 				deferredSaldi.put(docCont, values);
-			else 
+			else
 			{
 				java.util.Map firstValues = (java.util.Map)deferredSaldi.get(docCont);
 				deferredSaldi.remove(docCont);
@@ -330,9 +330,9 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk.
 	 */
 
-	public void addToDettagliCancellati(IDocumentoAmministrativoRigaBulk dettaglio) 
+	public void addToDettagliCancellati(IDocumentoAmministrativoRigaBulk dettaglio)
 	{
-		if (dettaglio != null && ((OggettoBulk)dettaglio).getCrudStatus() == OggettoBulk.NORMAL) 
+		if (dettaglio != null && ((OggettoBulk)dettaglio).getCrudStatus() == OggettoBulk.NORMAL)
 		{
 			getDettagliCancellati().addElement(dettaglio);
 			addToDocumentiContabiliCancellati(dettaglio.getScadenzaDocumentoContabile());
@@ -345,7 +345,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * che devono essere cancellate/inserite/modificate a db
 	 */
 
-	public void addToDocumentiContabiliCancellati(IScadenzaDocumentoContabileBulk scadenza) 
+	public void addToDocumentiContabiliCancellati(IScadenzaDocumentoContabileBulk scadenza)
 	{
 		if(getDocumentiContabiliCancellati() == null)
 			setDocumentiContabiliCancellati(new Vector());
@@ -364,15 +364,15 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo inizializza il dettaglio di spesa che si sta creando
 	 */
 
-	public int addToSpeseMissioneColl( Missione_dettaglioBulk spesa ) 
+	public int addToSpeseMissioneColl( Missione_dettaglioBulk spesa )
 	{
 		// Assegno un progressivo al dettaglio di spesa
 		spesa.setPg_riga(assegnaProgressivoSpesa(spesa));
 
 		spesa.setMissione(this);
 		if(getPg_missione() != null)
-			spesa.setPg_missione(getPg_missione());		
-		spesa.setTipo_spesa(new Missione_tipo_spesaBulk());	
+			spesa.setPg_missione(getPg_missione());
+		spesa.setTipo_spesa(new Missione_tipo_spesaBulk());
 		spesa.setTi_spesa_diaria(spesa.TIPO_SPESA);
 		spesa.setCd_cds(getCd_cds());
 		spesa.setCd_unita_organizzativa(getCd_unita_organizzativa());
@@ -390,7 +390,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		// Inizializzo i campi "not null" di particolari tipi di spesa
 		spesa.setIm_base_maggiorazione(new BigDecimal(0));
 		spesa.setIm_maggiorazione(new BigDecimal(0));
-		spesa.setIm_maggiorazione_euro(new java.math.BigDecimal(0));	
+		spesa.setIm_maggiorazione_euro(new java.math.BigDecimal(0));
 		spesa.setPercentuale_maggiorazione(new BigDecimal(0));
 		spesa.setIndennita_chilometrica(new BigDecimal(0));
 
@@ -402,13 +402,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo inizializza la tappa che si sta creando
 	 */
 
-	public int addToTappeMissioneColl( Missione_tappaBulk tappa ) 
+	public int addToTappeMissioneColl( Missione_tappaBulk tappa )
 	{
 		tappeMissioneColl.add(tappa);
 
 		tappa.setMissione(this);
 		if(getPg_missione() != null)
-			tappa.setPg_missione(getPg_missione());	
+			tappa.setPg_missione(getPg_missione());
 		tappa.setCd_cds(getCd_cds());
 		tappa.setCd_unita_organizzativa(getCd_unita_organizzativa());
 		tappa.setEsercizio(getEsercizio());
@@ -419,7 +419,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		tappa.setFl_comune_estero(new Boolean(false));
 
 		tappa.setFl_no_diaria(new Boolean(true));
-		tappa.setFlag_spese(tappa.NESSUNO);	
+		tappa.setFlag_spese(tappa.NESSUNO);
 		tappa.setFl_rimborso(new Boolean(false));
 
 		return tappeMissioneColl.size()-1;
@@ -428,7 +428,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo determina se i campi necessari per ricercare i tipi rapporto
 	 * sono stati inizializzati o meno
 	 */
-	public boolean areCampiPerRicercaTipiRapportoValorizzati() 
+	public boolean areCampiPerRicercaTipiRapportoValorizzati()
 	{
 		return (getV_terzo()!=null && getV_terzo().getCd_terzo()!=null && getDt_inizio_missione()!=null);
 	}
@@ -436,7 +436,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo determina se i campi necessari per ricercare i tipi trattamento
 	 * sono stati inizializzati o meno
 	 */
-	public boolean areCampiPerRicercaTipiTrattamentoValorizzati() 
+	public boolean areCampiPerRicercaTipiTrattamentoValorizzati()
 	{
 		return (getCd_tipo_rapporto()!=null && getDt_registrazione()!=null);
 	}
@@ -445,20 +445,20 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 *	lista dei dettagli cancellati
 	 */
 
-	public Long assegnaProgressivoSpesa(Missione_dettaglioBulk spesa) 
+	public Long assegnaProgressivoSpesa(Missione_dettaglioBulk spesa)
 	{
 		long max = 0;
-		for (Iterator i = getDettagliMissioneColl().iterator(); i.hasNext();) 
+		for (Iterator i = getDettagliMissioneColl().iterator(); i.hasNext();)
 		{
 			long prog = ((Missione_dettaglioBulk)i.next()).getPg_riga().longValue();
-			if (prog > max) 
+			if (prog > max)
 				max = prog;
 		}
-		long maxDel = 0;	
+		long maxDel = 0;
 		for ( Iterator i = getDettagliMissioneColl().deleteIterator(); i.hasNext(); )
 		{
 			long prog = ((Missione_dettaglioBulk)i.next()).getPg_riga().longValue();
-			if (prog > maxDel) 
+			if (prog > maxDel)
 				maxDel = prog;
 		}
 		if(max>=maxDel)
@@ -469,11 +469,11 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo calcola tutti gli importi necessari per il consuntivo delle spese,
 	 * della diaria e della missione
-	 */ 
+	 */
 
-	public void calcolaConsuntivi() 
+	public void calcolaConsuntivi()
 	{
-		calcolaConsuntiviSpese();			
+		calcolaConsuntiviSpese();
 		calcolaConsuntiviDiaria();
 		calcolaConsuntiviRimborso();
 		calcolaConsuntiviMissione();
@@ -483,10 +483,10 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * della missione
 	 */
 
-	public void calcolaConsuntiviDiaria() 
+	public void calcolaConsuntiviDiaria()
 	{
 		setIm_diaria_netto(new BigDecimal(0));
-		setIm_quota_esente(new BigDecimal(0));	
+		setIm_quota_esente(new BigDecimal(0));
 		setIm_diaria_lorda(new BigDecimal(0));
 
 		if(getDiariaMissioneColl() == null)
@@ -500,17 +500,17 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			{
 				setIm_diaria_netto(getIm_diaria_netto().add(diaria.getIm_diaria_netto()));
 				setIm_diaria_netto(getIm_diaria_netto().setScale(2, BigDecimal.ROUND_HALF_UP));
-			}	
+			}
 			if(diaria.getIm_quota_esente() != null)
 			{
 				setIm_quota_esente(getIm_quota_esente().add(diaria.getIm_quota_esente()));
 				setIm_quota_esente(getIm_quota_esente().setScale(2, BigDecimal.ROUND_HALF_UP));
-			}	
+			}
 			if(diaria.getIm_diaria_lorda() != null)
 			{
 				setIm_diaria_lorda(getIm_diaria_lorda().add(diaria.getIm_diaria_lorda()));
 				setIm_diaria_lorda(getIm_diaria_lorda().setScale(2, BigDecimal.ROUND_HALF_UP));
-			}	
+			}
 		}
 	}
 	/**
@@ -518,10 +518,10 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * di un determinato giorno
 	 */
 
-	public void calcolaConsuntiviDiariaDelGiorno() 
+	public void calcolaConsuntiviDiariaDelGiorno()
 	{
 		setTotaleNettoDiariaDelGiorno(new BigDecimal(0));
-		setTotaleEsenteDiariaDelGiorno(new BigDecimal(0));			
+		setTotaleEsenteDiariaDelGiorno(new BigDecimal(0));
 
 		if((getGiorno_consuntivo() == null) || (getDiariaMissioneColl() == null))
 			return;
@@ -534,20 +534,20 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			{
 				if(spesa.getIm_diaria_netto() != null)
 					setTotaleNettoDiariaDelGiorno(getTotaleNettoDiariaDelGiorno().add(spesa.getIm_diaria_netto()));
-				if(spesa.getIm_quota_esente() != null)	
-					setTotaleEsenteDiariaDelGiorno(getTotaleEsenteDiariaDelGiorno().add(spesa.getIm_quota_esente()));			
-			}	
-		}	
+				if(spesa.getIm_quota_esente() != null)
+					setTotaleEsenteDiariaDelGiorno(getTotaleEsenteDiariaDelGiorno().add(spesa.getIm_quota_esente()));
+			}
+		}
 	}
 	/**
 	 * Il metodo calcola tutti gli importi necessari per il consuntivo rimborso 
 	 * della missione
 	 */
 
-	public void calcolaConsuntiviRimborso() 
+	public void calcolaConsuntiviRimborso()
 	{
 		setIm_rimborso(new BigDecimal(0));
-		setIm_quota_esente(new BigDecimal(0));	
+		setIm_quota_esente(new BigDecimal(0));
 
 		if(getRimborsoMissioneColl() == null)
 			return;
@@ -560,12 +560,12 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			{
 				setIm_rimborso(getIm_rimborso().add(rimborso.getIm_rimborso()));
 				setIm_rimborso(getIm_rimborso().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			}	
+			}
 			if(rimborso.getIm_quota_esente() != null)
 			{
 				setIm_quota_esente(getIm_quota_esente().add(rimborso.getIm_quota_esente()));
 				setIm_quota_esente(getIm_quota_esente().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			}	
+			}
 		}
 	}
 	/**
@@ -573,10 +573,10 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * di un determinato giorno
 	 */
 
-	public void calcolaConsuntiviRimborsoDelGiorno() 
+	public void calcolaConsuntiviRimborsoDelGiorno()
 	{
 		setTotaleRimborsoDelGiorno(new BigDecimal(0));
-		setTotaleEsenteRimborsoDelGiorno(new BigDecimal(0));			
+		setTotaleEsenteRimborsoDelGiorno(new BigDecimal(0));
 
 		if((getGiorno_consuntivo() == null) || (getRimborsoMissioneColl() == null))
 			return;
@@ -589,20 +589,20 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			{
 				if(rimborso.getIm_rimborso() != null)
 					setTotaleRimborsoDelGiorno(getTotaleRimborsoDelGiorno().add(rimborso.getIm_rimborso()));
-				if(rimborso.getIm_quota_esente() != null)	
-					setTotaleEsenteRimborsoDelGiorno(getTotaleEsenteRimborsoDelGiorno().add(rimborso.getIm_quota_esente()));			
-			}	
-		}	
+				if(rimborso.getIm_quota_esente() != null)
+					setTotaleEsenteRimborsoDelGiorno(getTotaleEsenteRimborsoDelGiorno().add(rimborso.getIm_quota_esente()));
+			}
+		}
 	}
 
 	/**
 	 * Il metodo calcola tutti gli importi necessari per il consuntivo della missione
 	 */
 
-	public void calcolaConsuntiviMissione() 
+	public void calcolaConsuntiviMissione()
 	{
 		setIm_totale_missione(new BigDecimal(0));
-		setIm_lordo_percepiente(new BigDecimal(0));	
+		setIm_lordo_percepiente(new BigDecimal(0));
 		setIm_netto_pecepiente(new BigDecimal(0));
 
 		if(getIm_spese() == null)
@@ -626,10 +626,10 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			{
 				setIm_netto_pecepiente(getCompenso().getIm_netto_percipiente());
 				setIm_lordo_percepiente(getCompenso().getIm_lordo_percipiente());
-				setIm_totale_missione(getCompenso().getIm_totale_compenso());			
-			}	
+				setIm_totale_missione(getCompenso().getIm_totale_compenso());
+			}
 		}
-		else	
+		else
 		{
 			setIm_totale_missione(getIm_spese().add(getIm_diaria_netto().add(getIm_rimborso())));
 			setIm_totale_missione(getIm_totale_missione().setScale(2, BigDecimal.ROUND_HALF_UP));
@@ -706,7 +706,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * di un determinato giorno
 	 */
 
-	public void calcolaConsuntiviSpeseDelGiorno() 
+	public void calcolaConsuntiviSpeseDelGiorno()
 	{
 		setTotaleSpeseDelGiorno(new BigDecimal(0));
 
@@ -717,17 +717,17 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		{
 			Missione_dettaglioBulk spesa = (Missione_dettaglioBulk)i.next();
 
-			if((getGiorno_consuntivo().equals(spesa.getDt_inizio_tappa())) && 
+			if((getGiorno_consuntivo().equals(spesa.getDt_inizio_tappa())) &&
 					(spesa.getIm_totale_spesa() != null))
 				setTotaleSpeseDelGiorno(getTotaleSpeseDelGiorno().add(spesa.getIm_totale_spesa()));
-		}	
+		}
 	}
 	/**
 	 * Il metodo rimuove tutti i dettagli di diaria dalla relativa collection ed inizializza
 	 * gli importi della missione relativi alla diaria
 	 */
 
-	public void cancellaDiaria() 
+	public void cancellaDiaria()
 	{
 		if(getDiariaMissioneColl() == null || getDiariaMissioneColl().isEmpty())
 			return;
@@ -736,14 +736,14 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 
 		setIm_diaria_lorda(new BigDecimal(0));
 		setIm_diaria_netto(new BigDecimal(0));
-		setIm_quota_esente(new BigDecimal(0));	
+		setIm_quota_esente(new BigDecimal(0));
 	}
 	/**
 	 * Il metodo rimuove tutti i dettagli di diaria dalla relativa collection ed inizializza
 	 * gli importi della missione relativi alla diaria
 	 */
 
-	public void cancellaRimborso() 
+	public void cancellaRimborso()
 	{
 		if(getRimborsoMissioneColl() == null || getRimborsoMissioneColl().isEmpty())
 			return;
@@ -751,12 +751,12 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		setRimborsoMissioneColl(new BulkList());
 
 		setIm_rimborso(new BigDecimal(0));
-		setIm_quota_esente(new BigDecimal(0));	
+		setIm_quota_esente(new BigDecimal(0));
 	}
 	/**
 	 * Il metodo rimuove tutti i dettagli di spesa dalla relativa collection
 	 */
-	public void cancellaSpese() 
+	public void cancellaSpese()
 	{
 		if((getSpeseMissioneColl() == null) || (getSpeseMissioneColl().isEmpty()))
 			return;
@@ -767,7 +767,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo rimuove tuttw le tappe dalla relativa collection
 	 */
-	public void cancellaTappe() 
+	public void cancellaTappe()
 	{
 		if((getTappeMissioneColl() == null) || (getTappeMissioneColl().isEmpty()))
 			return;
@@ -786,12 +786,12 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	public void checkValiditaInizioFineMissione() throws it.cnr.jada.action.MessageToUser
 	{
 		if((getDt_inizio_missione() == null) || (getDt_fine_missione() == null))
-			throw new it.cnr.jada.action.MessageToUser( "Valorizzare le date di inizio e fine missione !" ); 		
+			throw new it.cnr.jada.action.MessageToUser( "Valorizzare le date di inizio e fine missione !" );
 
 		isPeriodoMissioneInEserciziValidi();
 
 		if(getDt_inizio_missione().after(getDt_fine_missione()))
-			throw new it.cnr.jada.action.MessageToUser( "La Data/Ora inizio missione non deve essere successiva alla Data/Ora fine missione !" ); 		
+			throw new it.cnr.jada.action.MessageToUser( "La Data/Ora inizio missione non deve essere successiva alla Data/Ora fine missione !" );
 
 		if(getDt_inizio_missione().equals(getDt_fine_missione()))
 			throw new it.cnr.jada.action.MessageToUser( "La Data/Ora inizio missione non deve essere uguale alla Data/Ora fine missione !" );
@@ -800,11 +800,11 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		GregorianCalendar gdi = getGregorianCalendar(getDt_inizio_missione());
 		gdf.add(java.util.Calendar.DAY_OF_YEAR, -240);
 		if(gdf.after(gdi))
-			throw new it.cnr.jada.action.MessageToUser( "La durata della missione non puo' essere superiore ai 240 giorni !" );	
+			throw new it.cnr.jada.action.MessageToUser( "La durata della missione non puo' essere superiore ai 240 giorni !" );
 	}
 	/**
 	 * Il metodo genera le tappe non configurate facendole ereditare dalla tappa giorno precedente 
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 
 	public void generaTappeNonConfigurate(java.sql.Timestamp data_fine_diaria_miss_estero) throws ValidationException, ParseException
@@ -814,7 +814,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			return;
 
 		// Riordino le tappe configurate per giorno (dt_inizio_tappa)
-		ordinaTappePerDataInizioTappa();		
+		ordinaTappePerDataInizioTappa();
 
 		if(getCollectionGiorni().size() == getTappeMissioneColl().size())
 			return;
@@ -836,11 +836,11 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			GregorianCalendar ggGreg = (GregorianCalendar)getGregorianCalendar(gg).clone();
 			if(!gg.equals(getCollectionGiorni().get(0)))
 			{
-				GregorianCalendar ggDaClonareGreg = (GregorianCalendar)ggGreg.clone();		
+				GregorianCalendar ggDaClonareGreg = (GregorianCalendar)ggGreg.clone();
 				ggDaClonareGreg.set(GregorianCalendar.HOUR_OF_DAY, 0);
 				ggDaClonareGreg.set(GregorianCalendar.MINUTE, 0);
 				ggDaClonareGreg.add(java.util.Calendar.DATE, -1);		// Giorno precedente	
-				java.sql.Timestamp ggDaClonare = new java.sql.Timestamp(ggDaClonareGreg.getTime().getTime());		
+				java.sql.Timestamp ggDaClonare = new java.sql.Timestamp(ggDaClonareGreg.getTime().getTime());
 
 				index=0;
 				found=false;
@@ -859,8 +859,8 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 					if(inizioTappaGreg.equals(ggGreg))
 						found=true;						// OK! la tappa del giorno 'gg' e' stata configurata	 	  	
 					else
-						index++;								
-				}		
+						index++;
+				}
 
 				if(!found)
 				{
@@ -885,7 +885,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 					 */
 					newTappa.setCrudStatus(OggettoBulk.TO_BE_CREATED);
 					getTappeMissioneColl().add(newTappa);
-					ordinaTappePerDataInizioTappa();				
+					ordinaTappePerDataInizioTappa();
 				}
 			}
 		}
@@ -909,7 +909,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		sincronizzaScadenzeCancellate(newScadenza);
 
 		// La missione non aveva associato alcuna scadenza
-		if(!isMissioneConObbligazione())		
+		if(!isMissioneConObbligazione())
 			return;
 
 		// La scadenza associata alla missione e' sempre la stessa
@@ -921,7 +921,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		//	quella nuova potrebbe avermi modificato quella da sostituire (cioe' quella attulamente 
 		//	associata).
 		if(newScadenza.getObbligazione().equalsByPrimaryKey(getObbligazione_scadenzario().getObbligazione()))
-		{	
+		{
 			boolean trovata=false;
 			BulkList coll = newScadenza.getObbligazione().getObbligazione_scadenzarioColl();
 			if(coll != null && !coll.isEmpty())	// 	Se coll e' vuota significa che non arrivo da obbligazione
@@ -933,13 +933,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 					{
 						setObbligazione_scadenzario(aScadenza);
 						trovata = true;
-					}	
+					}
 				}
 				if(!trovata)
 					return;		//	significa che la scadenza che sto sostituendo
 				//	e' stata cancellata
 			}
-		}	
+		}
 
 		addToDocumentiContabiliCancellati(getObbligazione_scadenzario());
 
@@ -949,22 +949,22 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		//	Se la scadenza appena associata alla missione l'avevo precedente sganciata dalla
 		//	missione e quindi inserita nella collection dei Cancellati, devo rimuoverla da
 		//	tale collection.
-		for ( Iterator i = ((Vector)getDocumentiContabiliCancellati().clone()).iterator(); i.hasNext(); )	
+		for ( Iterator i = ((Vector)getDocumentiContabiliCancellati().clone()).iterator(); i.hasNext(); )
 		{
 			Obbligazione_scadenzarioBulk aScadDaSganciare = (Obbligazione_scadenzarioBulk)i.next();
 			if(aScadDaSganciare.equalsByPrimaryKey(newScadenza))
 			{
 				getDocumentiContabiliCancellati().remove(aScadDaSganciare);
 				break;
-			}	
-		}	
+			}
+		}
 	}
 
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 */
 
-	public it.cnr.contab.docamm00.docs.bulk.AccertamentiTable getAccertamentiHash() 
+	public it.cnr.contab.docamm00.docs.bulk.AccertamentiTable getAccertamentiHash()
 	{
 		return null;
 	}
@@ -1001,7 +1001,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * della missione
 	 */
 
-	public BulkCollection[] getBulkLists() 
+	public BulkCollection[] getBulkLists()
 	{
 		// Metti solo le liste di oggetti che devono essere resi persistenti
 
@@ -1054,7 +1054,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Tale metodo ritorna il tipo del documento amministrativo (MISSIONE)
 	 */
 
-	public java.lang.String getCd_tipo_doc_amm() 
+	public java.lang.String getCd_tipo_doc_amm()
 	{
 		return it.cnr.contab.docamm00.docs.bulk.Numerazione_doc_ammBulk.TIPO_MISSIONE;
 	}
@@ -1080,7 +1080,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 *  Metodo richiesto dall' interfaccia IDocumentoAmministrativoSpesaBulk
 	 */
 
-	public java.lang.String getCd_uo() 
+	public java.lang.String getCd_uo()
 	{
 		return getCd_unita_organizzativa();
 	}
@@ -1097,7 +1097,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 */
 
-	public java.lang.Class getChildClass() 
+	public java.lang.Class getChildClass()
 	{
 		return null;
 	}
@@ -1105,7 +1105,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 */
 
-	public List getChildren() 
+	public List getChildren()
 	{
 		return null;
 	}
@@ -1122,7 +1122,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Tale proprietà contiene tutti i singoli giorni tra l'inizio e la fine della missione,
 	 * essa viene usata per la selezione del giorno della spesa
 	 */
-	public java.util.List getCollectionGiorniSpese() 
+	public java.util.List getCollectionGiorniSpese()
 	{
 		if((getCollectionGiorni() == null) || (getCollectionGiorni().size() == 0))
 			return getCollectionGiorni();
@@ -1154,8 +1154,8 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo restituisce il Timestamp ricevuto come parametro come istanza di Calendar 
 	 * inizializzandone ore, minuti, secondi a zero
-	 */ 
-	public java.util.Calendar getDateCalendar(java.sql.Timestamp date) 
+	 */
+	public java.util.Calendar getDateCalendar(java.sql.Timestamp date)
 	{
 		if (date == null)
 			date = it.cnr.jada.util.ejb.EJBCommonServices.getServerTimestamp();
@@ -1173,7 +1173,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall' interfaccia IDefferUpdateSaldi
 	 */
 
-	public it.cnr.jada.bulk.PrimaryKeyHashMap getDefferredSaldi() 
+	public it.cnr.jada.bulk.PrimaryKeyHashMap getDefferredSaldi()
 	{
 		return deferredSaldi;
 	}
@@ -1181,24 +1181,24 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall' interfaccia IDefferUpdateSaldi
 	 */
 
-	public IDocumentoContabileBulk getDefferredSaldoFor(IDocumentoContabileBulk docCont) 
+	public IDocumentoContabileBulk getDefferredSaldoFor(IDocumentoContabileBulk docCont)
 	{
 		if (docCont != null && deferredSaldi != null)
 		{
-			for (java.util.Iterator i = deferredSaldi.keySet().iterator(); i.hasNext();) 
+			for (java.util.Iterator i = deferredSaldi.keySet().iterator(); i.hasNext();)
 			{
 				IDocumentoContabileBulk key = (IDocumentoContabileBulk)i.next();
 				if (((OggettoBulk)docCont).equalsByPrimaryKey((OggettoBulk)key))
 					return key;
 			}
-		}	
-		return null;	
+		}
+		return null;
 	}
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoSpesaBulk
 	 * Il metodo ritorna la descrizione della missione
 	 */
-	public java.lang.String getDescrizione_spesa() 
+	public java.lang.String getDescrizione_spesa()
 	{
 		return getDs_missione();
 	}
@@ -1207,13 +1207,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 */
 	public java.util.Vector getDettagliCancellati() {
 		return dettagliCancellati;
-	} 
+	}
 	/**
 	 * Il metodo ritorna una BulkList contenente tutti i dettagli della missione (spese + diarie)
 	 */
 
 	@JsonIgnore
-	public BulkList<Missione_dettaglioBulk> getDettagliMissioneColl() 
+	public BulkList<Missione_dettaglioBulk> getDettagliMissioneColl()
 	{
 		BulkList<Missione_dettaglioBulk> listaDettagli = new BulkList<Missione_dettaglioBulk>();
 
@@ -1246,20 +1246,20 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il  metodo ritorna il valore dell'attributo 'documentiContabiliCancellati'
 	 */
 
-	public java.util.Vector getDocumentiContabiliCancellati() { 
+	public java.util.Vector getDocumentiContabiliCancellati() {
 		return documentiContabiliCancellati;
 	}
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 */
-	public Class getDocumentoAmministrativoClassForDelete() 
+	public Class getDocumentoAmministrativoClassForDelete()
 	{
 		return MissioneBulk.class;
 	}
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 */
-	public Class getDocumentoContabileClassForDelete() 
+	public Class getDocumentoContabileClassForDelete()
 	{
 		return it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk.class;
 	}
@@ -1313,7 +1313,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Dato un Timestamp, tale metodo ritorna la relativa istanza di GregorianCalendar 
 	 */
-	public GregorianCalendar getGregorianCalendar(java.sql.Timestamp ts) 
+	public GregorianCalendar getGregorianCalendar(java.sql.Timestamp ts)
 	{
 		if(ts == null)
 			return null;
@@ -1326,7 +1326,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 * Il metodo ritorna l'importo della missione
 	 */
-	public java.math.BigDecimal getImporto_netto_spesa() 
+	public java.math.BigDecimal getImporto_netto_spesa()
 	{
 		return getImporto_spesa();
 	}
@@ -1337,7 +1337,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * quello dell'anticipo
 	 */
 
-	public java.math.BigDecimal getImporto_scadenza_obbligazione() 
+	public java.math.BigDecimal getImporto_scadenza_obbligazione()
 	{
 		if(getIm_totale_missione() == null)
 			setIm_totale_missione(new BigDecimal(0));
@@ -1345,13 +1345,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		if(!isMissioneConAnticipo())
 			return getIm_totale_missione();
 		else
-			return getIm_totale_missione().subtract(getAnticipo().getIm_anticipo());	
+			return getIm_totale_missione().subtract(getAnticipo().getIm_anticipo());
 	}
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 * Il metodo ritorna l'importo della missione
 	 */
-	public java.math.BigDecimal getImporto_spesa() 
+	public java.math.BigDecimal getImporto_spesa()
 	{
 		java.math.BigDecimal imSpesa = getIm_totale_missione();
 
@@ -1368,9 +1368,9 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo ritorna l'importo dell'anticipo
 	 */
 
-	public java.math.BigDecimal getImportoSignForDelete(java.math.BigDecimal importo) 
+	public java.math.BigDecimal getImportoSignForDelete(java.math.BigDecimal importo)
 	{
-		if (importo == null) 
+		if (importo == null)
 			return null;
 		return importo.negate();
 	}
@@ -1383,14 +1383,14 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 */
-	public String getManagerName() 
+	public String getManagerName()
 	{
 		return "CRUDMissioneBP";
 	}
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 */
-	public java.lang.String getManagerOptions() 
+	public java.lang.String getManagerOptions()
 	{
 		// NON CANCELLARE QUESTO COMMENTO: E' DA ABILITARE AL POSTO DEL RESTO NEL CASO DI APERTURA
 		// IN MODIFICA
@@ -1431,7 +1431,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 */
-	public ObbligazioniTable getObbligazioniHash() 
+	public ObbligazioniTable getObbligazioniHash()
 	{
 		ObbligazioniTable ot = new ObbligazioniTable();
 		if (getObbligazione_scadenzario() != null)
@@ -1461,7 +1461,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Ritorna il progressivo della missione
 	 */
 
-	public java.lang.Long getPg_doc_amm() 
+	public java.lang.Long getPg_doc_amm()
 	{
 		return getPg_missione();
 	}
@@ -1510,12 +1510,12 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo ritorna il primo giorno della lista dei giorni selezionati per l'inserimento delle spese
 	 */
-	public java.sql.Timestamp getPrimoGiornoSpesaSelezionato() 
+	public java.sql.Timestamp getPrimoGiornoSpesaSelezionato()
 	{
 		if(getCollectionGiorniSpeseSelezionati()==null || getCollectionGiorniSpeseSelezionati().isEmpty())
 			return null;
 
-		return (java.sql.Timestamp)getCollectionGiorniSpeseSelezionati().get(0);		
+		return (java.sql.Timestamp)getCollectionGiorniSpeseSelezionati().get(0);
 	}
 	/**
 	 * Il metodo ritorna il valore dell'attributo 'rif_inquadramento'
@@ -1546,14 +1546,14 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo restituisce il dictionary per la gestione degli stati Cofi della missione
 	 */
-	public java.util.Dictionary getStato_cofiKeys() 
+	public java.util.Dictionary getStato_cofiKeys()
 	{
 		return STATO_COFI;
 	}
 	/**
 	 * Il metodo restituisce il dictionary per la gestione degli stati Cofi della missione
 	 */
-	public Dictionary getStato_cofiKeysForSearch() 
+	public Dictionary getStato_cofiKeysForSearch()
 	{
 		it.cnr.jada.util.OrderedHashtable d = (it.cnr.jada.util.OrderedHashtable)getStato_cofiKeys();
 		if (d == null) return null;
@@ -1639,7 +1639,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo restituisce il dictionary per la gestione di ti_associato_manrev
 	 */
-	public java.util.Dictionary getTi_associato_manrevKeys() 
+	public java.util.Dictionary getTi_associato_manrevKeys()
 	{
 		return TI_ASSOCIATO_MANREV;
 	}
@@ -1736,7 +1736,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 *	e un progressivo diverso
 	 */
 
-	public void imputaSpesaSuPiuGiorni(Missione_dettaglioBulk primaSpesa) 
+	public void imputaSpesaSuPiuGiorni(Missione_dettaglioBulk primaSpesa)
 	{
 		java.sql.Timestamp aGiorno = null;
 		for (java.util.Iterator i = getCollectionGiorniSpeseSelezionati().iterator(); i.hasNext();)
@@ -1746,21 +1746,21 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			{
 				Missione_dettaglioBulk nuovaSpesa = new Missione_dettaglioBulk();
 				nuovaSpesa = (Missione_dettaglioBulk)primaSpesa.clone();
-				nuovaSpesa.setDt_inizio_tappa(aGiorno);				
+				nuovaSpesa.setDt_inizio_tappa(aGiorno);
 				nuovaSpesa.setPg_riga(assegnaProgressivoSpesa(nuovaSpesa));
 				getSpeseMissioneColl().add(nuovaSpesa);
-			}	
+			}
 		}
 	}
 	/**
 	 * Il metodo inzializza la missione da modificare
 	 */
-	public OggettoBulk initializeForInsert(CRUDBP bp, ActionContext context) 
+	public OggettoBulk initializeForInsert(CRUDBP bp, ActionContext context)
 	{
 		it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk unita_organizzativa = null;
 		unita_organizzativa =	it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
 		setCd_cds(unita_organizzativa.getUnita_padre().getCd_unita_organizzativa());
-		setCd_unita_organizzativa(unita_organizzativa.getCd_unita_organizzativa());	
+		setCd_unita_organizzativa(unita_organizzativa.getCd_unita_organizzativa());
 		setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
 
 		setTi_provvisorio_definitivo(MissioneBulk.SALVA_TEMPORANEO);
@@ -1771,7 +1771,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		setStato_cofi(STATO_INIZIALE_COFI);
 		setStato_coge(STATO_INIZIALE_COGE);
 		setStato_coan(STATO_INIZIALE_COAN);
-		setFl_associato_compenso(new Boolean(false));	
+		setFl_associato_compenso(new Boolean(false));
 		setTi_associato_manrev(STATO_INIZIALE_MANREV);
 		setStato_pagamento_fondo_eco(NO_FONDO_ECO);
 		setStato_liquidazione(SOSP);
@@ -1782,19 +1782,19 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo inzializza la missione da cercare
 	 */
-	public OggettoBulk initializeForSearch(CRUDBP bp, ActionContext context) 
+	public OggettoBulk initializeForSearch(CRUDBP bp, ActionContext context)
 	{
 		it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk unita_organizzativa = null;
 		unita_organizzativa =	it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context);
 		setCd_cds(unita_organizzativa.getUnita_padre().getCd_unita_organizzativa());
-		setCd_unita_organizzativa(unita_organizzativa.getCd_unita_organizzativa());	
+		setCd_unita_organizzativa(unita_organizzativa.getCd_unita_organizzativa());
 		setEsercizio(it.cnr.contab.utenze00.bulk.CNRUserInfo.getEsercizio(context));
 
 		setV_terzo(new V_terzo_per_compensoBulk());
 		setTi_anagrafico(null);
 		setTi_istituz_commerc(null);
 
-		if (bp instanceof IDocumentoAmministrativoSpesaBP && ((IDocumentoAmministrativoSpesaBP)bp).isSpesaBP()) 
+		if (bp instanceof IDocumentoAmministrativoSpesaBP && ((IDocumentoAmministrativoSpesaBP)bp).isSpesaBP())
 		{
 			setStato_cofi(STATO_CONTABILIZZATO_COFI);
 			setStato_pagamento_fondo_eco(FONDO_ECO);
@@ -1832,7 +1832,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		setCodice_fiscale(null);
 		setPartita_iva(null);
 		setTermini(null);
-		setTermini_pagamento(null);			
+		setTermini_pagamento(null);
 		setModalita(null);
 		setModalita_pagamento(null);
 		setBanca(null);
@@ -1852,9 +1852,9 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * - se l'esercizio del documento e quello scrivania di scrivania sono diversi da quello solare 
 	 *   l' obbligazione non deve essere stata riportata  (isEditable)
 	 */
-	public boolean isAbledToInsertBank() 
+	public boolean isAbledToInsertBank()
 	{
-		return !(getV_terzo() != null && 
+		return !(getV_terzo() != null &&
 				getV_terzo().getCrudStatus() == OggettoBulk.NORMAL &&
 				getModalita_pagamento() != null &&
 				(getCompenso()==null || !getCompenso().isPagato()) &&
@@ -1865,7 +1865,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo ritorna TRUE se la missione e' stata cancellata logicamente
 	 */
-	public boolean isAnnullato() 
+	public boolean isAnnullato()
 	{
 		return STATO_ANNULLATO.equalsIgnoreCase(getStato_cofi());
 	}
@@ -1873,7 +1873,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo ritorna TRUE se e' cambiato l'importo dell'anticipo
 	 */
 
-	public boolean isAnticipoModificato() 
+	public boolean isAnticipoModificato()
 	{
 		if(getMissioneIniziale() == null)
 			return false;
@@ -1896,7 +1896,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo ritorna TRUE se l'anticipo e' stato rimborsato 
 	 */
 
-	public boolean isAnticipoRimborsato() 
+	public boolean isAnticipoRimborsato()
 	{
 		return(isMissioneConAnticipo() && getAnticipo().hasRimborso());
 	}
@@ -1910,7 +1910,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo ritorna TRUE se la missione e' stata cancellata logicamente
 	 */
-	public boolean isCancellataLogicamente() 
+	public boolean isCancellataLogicamente()
 	{
 		return getDt_cancellazione() != null;
 	}
@@ -1920,14 +1920,14 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * l'applicazione deve modificare e salvare il compenso senza doverlo aprire
 	 */
 
-	public boolean isCompensoDaModificareInAutomatico() 
+	public boolean isCompensoDaModificareInAutomatico()
 	{
 		// Inizializzo l'unico attributo che potrebbe essere nullo
 		if(getTermini_pagamento() == null)
 			setTermini_pagamento(new Rif_termini_pagamentoBulk());
 		Optional.ofNullable(missioneIniziale).
-		filter(map -> map.getTermini_pagamento() == null).
-		ifPresent(map -> map.setTermini_pagamento(new Rif_termini_pagamentoBulk()));
+				filter(map -> map.getTermini_pagamento() == null).
+				ifPresent(map -> map.setTermini_pagamento(new Rif_termini_pagamentoBulk()));
 
 		if(	!Optional.ofNullable(getModalita_pagamento()).orElse(new Rif_modalita_pagamentoBulk()).equalsByPrimaryKey(Optional.ofNullable(missioneIniziale).map(MissioneBulk::getModalita_pagamento).orElse(null)) ||
 				!Optional.ofNullable(getBanca()).orElse(new BancaBulk()).equalsByPrimaryKey(Optional.ofNullable(missioneIniziale).map(MissioneBulk::getBanca).orElse(null)) ||
@@ -1946,7 +1946,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Se uno dei seguenti attributi e' cambiato allora al salvataggio della missione 
 	 * l'applicazione deve modificare il compenso aprendolo
 	 */
-	public boolean isCompensoDaModificareInManuale() 
+	public boolean isCompensoDaModificareInManuale()
 	{
 		try{
 			return (!getTipo_trattamento().equalsByPrimaryKey(getMissioneIniziale().getTipo_trattamento()) ||
@@ -1959,8 +1959,8 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 					!getTipo_rapporto().equalsByPrimaryKey(getMissioneIniziale().getTipo_rapporto()) ||
 					!getV_terzo().equalsByPrimaryKey(getMissioneIniziale().getV_terzo()) ||
 					isAnticipoModificato() ||
-					getDt_fine_missione().compareTo(missioneIniziale.getDt_fine_missione())!=0			 
-					);
+					getDt_fine_missione().compareTo(missioneIniziale.getDt_fine_missione())!=0
+			);
 		}catch(NullPointerException e){
 			return false;
 		}
@@ -1975,25 +1975,25 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		if(isCompensoObbligatorio() && isMissioneConCompenso() && getCompenso().isPagato())
 			throw new it.cnr.jada.comp.ApplicationException("Impossibile proseguire! La missione e' associata ad un compenso gia' pagato!");
 
-		return true;	
+		return true;
 	}
 	/**
 	 * Il metodo stabilisce se la missione deve essere associata ad un compenso.
 	 * Il compenso non deve essere creato solo se TUTTE le tappe sono in COMUNE ALTRO
 	 */
-	public boolean isCompensoObbligatorio() 
+	public boolean isCompensoObbligatorio()
 	{
 		if(getTappeMissioneColl() == null || getTappeMissioneColl().isEmpty())
 			return false;
 
-		Missione_tappaBulk tappa=null;		
-		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )	
+		Missione_tappaBulk tappa=null;
+		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )
 		{
 			tappa = (Missione_tappaBulk) i.next();
 			if((tappa.isEstera() && tappa.getFl_no_diaria() == false) || tappa.isComuneProprio() ||
 					(tappa.isEstera() && tappa.getFl_rimborso() == true)	)
-				return true;		
-		}		
+				return true;
+		}
 		return false;
 	}
 	/**
@@ -2016,20 +2016,20 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		if(getSpeseMissioneColl()!=null && !getSpeseMissioneColl().isEmpty())
 			throw new it.cnr.jada.comp.ApplicationException("Per modificare la configurazione delle tappe occorre prima cancellare le spese/diaria inserite !");
 
-		return true;	
+		return true;
 	}
 	/**
 	 * Il metodo stabilisce se l'utente può modificare la data fine missione.
 	 * La modifica può essere effettuata solo se l'eventuale compenso associato e' modificabile
 	 * e se la missione non e' associata ad anticipo rimborsato
-	 */ 
+	 */
 
 	public void isDataFineModificabile() throws it.cnr.jada.comp.ApplicationException
 	{
 		isCompensoModificabile();
 
 		if(isAnticipoRimborsato())
-			throw new it.cnr.jada.comp.ApplicationException("Impossibile proseguire! La missione ha associato un anticipo rimborsato.");	
+			throw new it.cnr.jada.comp.ApplicationException("Impossibile proseguire! La missione ha associato un anticipo rimborsato.");
 	}
 	/**
 	 * Il metodo stabilisce se l'utente può modificare la data inizio missione.
@@ -2041,7 +2041,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		isCompensoModificabile();
 
 		if(isAnticipoRimborsato())
-			throw new it.cnr.jada.comp.ApplicationException("Impossibile proseguire! La missione ha associato un anticipo rimborsato.");		
+			throw new it.cnr.jada.comp.ApplicationException("Impossibile proseguire! La missione ha associato un anticipo rimborsato.");
 	}
 	/**
 	 * Il metodo stabilisce se la data di registrazione puo' essere modificata o meno.
@@ -2055,7 +2055,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		isCompensoModificabile();
 
 		if(isAnticipoRimborsato())
-			throw new it.cnr.jada.comp.ApplicationException("Impossibile proseguire! La missione ha associato un anticipo rimborsato.");	
+			throw new it.cnr.jada.comp.ApplicationException("Impossibile proseguire! La missione ha associato un anticipo rimborsato.");
 	}
 
 	/**
@@ -2070,14 +2070,14 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * - se l'esercizio del documento e quello scrivania di scrivania sono diversi da quello solare 
 	 *   l' obbligazione non deve essere stata riportata  (isROPerChiusura)
 	 */
-	public boolean isEditable() 
+	public boolean isEditable()
 	{
 		return !isPagata() && !isROPerChiusura();
 	}
 	/**
 	 * Il metodo ritorna TRUE se la missione è associata ad un anticipo di importo maggiore
 	 */
-	public boolean isImportoAnticipoMaggioreDiMissione() 
+	public boolean isImportoAnticipoMaggioreDiMissione()
 	{
 		if(!isMissioneConAnticipo())
 			return false;
@@ -2096,7 +2096,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo ritorna TRUE se la data di inizio missione e' cambiata
 	 */
 
-	public boolean isInizioMissioneCambiato(java.sql.Timestamp newDataInizio, java.sql.Timestamp oldDataInizio) 
+	public boolean isInizioMissioneCambiato(java.sql.Timestamp newDataInizio, java.sql.Timestamp oldDataInizio)
 	{
 		if(oldDataInizio == null && newDataInizio != null)
 			return true;
@@ -2105,12 +2105,12 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			return true;
 
 		if(oldDataInizio == null && newDataInizio == null)
-			return true;				
+			return true;
 
 		if(!oldDataInizio.equals(newDataInizio))
 			return true;
 
-		return false;	
+		return false;
 	}
 	/**
 	 * Il metodo stabilisce se l'utente può creare/modificare/cancellare una spesa.
@@ -2140,7 +2140,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		isCompensoModificabile();
 
 		if(isAnticipoRimborsato())
-			throw new it.cnr.jada.comp.ApplicationException("Impossibile proseguire! La missione ha associato un anticipo rimborsato.");		
+			throw new it.cnr.jada.comp.ApplicationException("Impossibile proseguire! La missione ha associato un anticipo rimborsato.");
 	}
 	/**
 	 * Il metodo stabilisce se visualizzare o meno la Labe 'Documento riportato' qundo
@@ -2148,7 +2148,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Potrebbe infatti capitare che la missione risulti riportata ma in realtà non ha obbligazione.
 	 */
 
-	public boolean isLabelRiportoToShow() 
+	public boolean isLabelRiportoToShow()
 	{
 		if(isMissioneConCompenso())
 			return getCompenso().isObbligazioneObbligatoria();
@@ -2161,8 +2161,8 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 
 	public boolean isMissioneConAnticipo()
 	{
-		return (getAnticipo() != null && 
-				getPg_anticipo() != null && 
+		return (getAnticipo() != null &&
+				getPg_anticipo() != null &&
 				getAnticipo().getEsercizio() != null &&
 				getAnticipo().getCd_cds() != null &&
 				getAnticipo().getCd_unita_organizzativa() != null);
@@ -2191,7 +2191,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 
 	public boolean isMissioneConObbligazione()
 	{
-		return (getObbligazione_scadenzario() != null && 
+		return (getObbligazione_scadenzario() != null &&
 				getEsercizio_ori_obbligazione() != null &&
 				getPg_obbligazione() != null &&
 				getPg_obbligazione_scadenzario() != null);
@@ -2199,14 +2199,14 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il  metodo ritorna TRUE se la missione e' stata salvata in modo definitivo
 	 */
-	public boolean isMissioneDefinitiva() 
-	{ 
+	public boolean isMissioneDefinitiva()
+	{
 		return MissioneBulk.SALVA_DEFINITIVO.equals(getTi_provvisorio_definitivo());
 	}
 	/**
 	 * Il  metodo ritorna TRUE se la missione e' stata salvata in modo provvisorio
 	 */
-	public boolean isMissioneProvvisoria() 
+	public boolean isMissioneProvvisoria()
 	{
 		return MissioneBulk.SALVA_PROVVISORIO.equals(getTi_provvisorio_definitivo());
 	}
@@ -2215,16 +2215,16 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * La missione richiede l'obbligazione se non ho il compenso oppure se l'eventuale 
 	 * anticipo associato non ha importo maggiore di quello della missione
 	 */
-	public boolean isObbligazioneObbligatoria() 
+	public boolean isObbligazioneObbligatoria()
 	{
 		return (!isCompensoObbligatorio() && !isImportoAnticipoMaggioreDiMissione());
 	}
 	/**
 	 * Il  metodo riotrna TRUE se la missione e' stata pagata
 	 */
-	public boolean isPagata() 
+	public boolean isPagata()
 	{
-		return 	(STATO_PAGATO.equalsIgnoreCase(getStato_cofi())) || 
+		return 	(STATO_PAGATO.equalsIgnoreCase(getStato_cofi())) ||
 				(REGISTRATO_IN_FONDO_ECO.equalsIgnoreCase(getStato_pagamento_fondo_eco()));
 	}
 	/**
@@ -2238,7 +2238,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 *   e quella di fine nell'esercizio successivo
 	 */
 
-	public void isPeriodoMissioneInEserciziValidi() 
+	public void isPeriodoMissioneInEserciziValidi()
 	{
 		if(getDt_inizio_missione() == null ||  getDt_fine_missione() == null)
 			return;
@@ -2247,9 +2247,9 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		GregorianCalendar fine = getGregorianCalendar(getDt_fine_missione());
 
 		if(	fine.get(GregorianCalendar.YEAR) > (getEsercizio().intValue()+1))
-			throw new it.cnr.jada.action.MessageToUser( "La data di fine missione non e' valida!" );	  			 
+			throw new it.cnr.jada.action.MessageToUser( "La data di fine missione non e' valida!" );
 
-		if(	inizio.get(GregorianCalendar.YEAR) == (getEsercizio().intValue()-1) && 
+		if(	inizio.get(GregorianCalendar.YEAR) == (getEsercizio().intValue()-1) &&
 				fine.get(GregorianCalendar.YEAR) == (getEsercizio().intValue()+1))
 			throw new it.cnr.jada.action.MessageToUser( "Le date di inizio/fine missione possono solo essere entrambe nell'esercizio precedente, in quello corrente o a cavallo di esercizio !" );
 		if(	fine.get(GregorianCalendar.YEAR) - inizio.get(GregorianCalendar.YEAR) > 1 )
@@ -2260,7 +2260,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo ritorna TRUE se l'obbligazione la cui scadenza e' associata alla missione
 	 * e' stata riportata
 	 */
-	public boolean isRiportata() 
+	public boolean isRiportata()
 	{
 		return !NON_RIPORTATO.equals(riportata);
 	}
@@ -2271,9 +2271,9 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 
 		return !NON_RIPORTATO.equals(riportataInScrivania);
 	}
-	public boolean isROAnticipo() 
+	public boolean isROAnticipo()
 	{
-		return anticipo == null || anticipo.getCrudStatus() == NORMAL;	 
+		return anticipo == null || anticipo.getCrudStatus() == NORMAL;
 	}
 	/**
 	 * Il metodo definisce le regole base per l'abilitazione dei campi in caso di obbligazione riportata
@@ -2293,7 +2293,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		// MB - (06/11/2004 12.23.28)
 		if (getEsercizio().intValue() == getEsercizioScrivania()) {
 			return isRiportata();
-		} else 
+		} else
 			return true;
 	}
 	/**
@@ -2304,7 +2304,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * - se l'esercizio del documento e quello scrivania di scrivania sono diversi da quello solare 
 	 *   e l' obbligazione e' stata riportata  (isEditable)
 	 */
-	public boolean isROStato_pagamento_fondo_eco()  
+	public boolean isROStato_pagamento_fondo_eco()
 	{
 		if(!isMissioneConObbligazione() || !isEditable())
 			return true;
@@ -2319,14 +2319,14 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * - se l'esercizio del documento e quello scrivania di scrivania sono 
 	 *   diversi da quello solare e l' obbligazione e' stata riportata  (isEditable) 
 	 */
-	public boolean isROTerzo() 
+	public boolean isROTerzo()
 	{
-		return 	v_terzo == null || v_terzo.getCrudStatus() == NORMAL || 
-				(	getPg_missione() != null && 
-				getPg_missione().compareTo(Long.valueOf(0))>0 && 
-				isMissioneConDocumenti() &&
-				!isEditable()
-						);
+		return 	v_terzo == null || v_terzo.getCrudStatus() == NORMAL ||
+				(	getPg_missione() != null &&
+						getPg_missione().compareTo(Long.valueOf(0))>0 &&
+						isMissioneConDocumenti() &&
+						!isEditable()
+				);
 	}
 	/**
 	 * Il metodo stabilisce se i dati del terzo sono abilitati o meno.
@@ -2336,15 +2336,15 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * - se l'esercizio del documento e quello scrivania di scrivania sono 
 	 *   diversi da quello solare e l' obbligazione e' stata riportata  (isEditable) 
 	 */
-	public boolean isROTerzoPerModifica() 
+	public boolean isROTerzoPerModifica()
 	{
 		//  Se la missione e' in modifica e ho dei documenti associati non posso
 		//	modificare il terzo
-		return	getPg_missione() != null && 
-				getPg_missione().compareTo(Long.valueOf(0))>0 && 
+		return	getPg_missione() != null &&
+				getPg_missione().compareTo(Long.valueOf(0))>0 &&
 				isMissioneConDocumenti() &&
 				!isEditable();
-	} 
+	}
 	/**
 	 * Il metodo ritorna il valore dell'attributo 'salvataggioTemporaneo'
 	 */
@@ -2359,7 +2359,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * salvata con la missione (numerazione negativa)
 	 */
 
-	public boolean isScadenzaDaRimuovereDaiCancellati() 
+	public boolean isScadenzaDaRimuovereDaiCancellati()
 	{
 		if(getDocumentiContabiliCancellati()==null || getDocumentiContabiliCancellati().isEmpty())
 			return false;
@@ -2367,20 +2367,20 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		if(getObbligazione_scadenzarioClone()!=null && getObbligazione_scadenzario().equalsByPrimaryKey(getObbligazione_scadenzarioClone()))
 			return true;
 
-		Obbligazione_scadenzarioBulk scadenza=null;	
+		Obbligazione_scadenzarioBulk scadenza=null;
 		for ( Iterator i = getDocumentiContabiliCancellati().iterator(); i.hasNext(); )
 		{
 			scadenza = (Obbligazione_scadenzarioBulk) i.next();
 			if(scadenza.equalsByPrimaryKey(getObbligazione_scadenzario()))
 				return true;
-		}			
+		}
 		return false;
 	}
 	/**
 	 * Il metodo ritorna TRUE se l'utente ha selezionato piu' di un giorno di spesa
 	 */
 
-	public boolean isSelezioneGiorniSpesaMultipla() 
+	public boolean isSelezioneGiorniSpesaMultipla()
 	{
 		if(getCollectionGiorniSpeseSelezionati()==null || getCollectionGiorniSpeseSelezionati().isEmpty())
 			return false;
@@ -2397,7 +2397,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * coerenti, cioe' abbiano ad esempio gli massimali per ogni giorno)	
 	 */
 
-	public boolean isSelezioneGiorniSpesaValida() 
+	public boolean isSelezioneGiorniSpesaValida()
 	{
 		if(getCollectionGiorniSpeseSelezionati()==null || getCollectionGiorniSpeseSelezionati().isEmpty())
 			return true;
@@ -2414,7 +2414,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		//	lo stesso progressivo della nazione e la stessa area geografica	
 		for (Iterator i = getCollectionGiorniSpeseSelezionati().iterator(); i.hasNext();)
 		{
-			aGiorno = (java.sql.Timestamp)i.next();		
+			aGiorno = (java.sql.Timestamp)i.next();
 			aTappa = (Missione_tappaBulk) getTappeMissioneHash().get(aGiorno);
 			if(!primaTappa.getPg_nazione().equals(aTappa.getPg_nazione()))
 				return false;
@@ -2440,7 +2440,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	{
 		Missione_tappaBulk primaTappa = (Missione_tappaBulk)getTappeMissioneColl().get(0);
 
-		GregorianCalendar gcPrimaTappa = (GregorianCalendar)getGregorianCalendar(primaTappa.getDt_inizio_tappa()).clone();				
+		GregorianCalendar gcPrimaTappa = (GregorianCalendar)getGregorianCalendar(primaTappa.getDt_inizio_tappa()).clone();
 		gcPrimaTappa.set(GregorianCalendar.HOUR_OF_DAY, 0);
 		gcPrimaTappa.set(GregorianCalendar.MINUTE, 0);
 
@@ -2461,7 +2461,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Il metodo verifica se il terzo e' valido rispetto alla data di registrazione della missione
 	 */
 
-	public boolean isTerzoValido() 
+	public boolean isTerzoValido()
 	{
 		if((getV_terzo() == null) || (getV_terzo().getDt_fine_validita_terzo() == null))
 			return true;
@@ -2474,16 +2474,16 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo riordina in modo crescente i giorni della missione
 	 */
-	public void ordinaCollectionGiorni( ) 
+	public void ordinaCollectionGiorni( )
 	{
 		// riordino la lista dei giorni
 
-		Collections.sort(getCollectionGiorni(),new Comparator() {	
+		Collections.sort(getCollectionGiorni(),new Comparator() {
 
-			public int compare(Object o1, Object o2) 
+			public int compare(Object o1, Object o2)
 			{
 				java.sql.Timestamp ts1 = (java.sql.Timestamp) o1;
-				java.sql.Timestamp ts2 = (java.sql.Timestamp) o2;			
+				java.sql.Timestamp ts2 = (java.sql.Timestamp) o2;
 				return ts1.compareTo(ts2);
 			}
 		});
@@ -2493,13 +2493,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo ordina le tappe per data inizio
 	 */
-	public void ordinaTappePerDataInizioTappa( ) 
+	public void ordinaTappePerDataInizioTappa( )
 	{
 		// riordino la lista delle tappe configurate per "data inizio tappa"
 
-		Collections.sort(getTappeMissioneColl(),new Comparator() {	
+		Collections.sort(getTappeMissioneColl(),new Comparator() {
 
-			public int compare(Object o1, Object o2) 
+			public int compare(Object o1, Object o2)
 			{
 				Missione_tappaBulk os1 = (Missione_tappaBulk) o1;
 				Missione_tappaBulk os2 = (Missione_tappaBulk) o2;
@@ -2530,7 +2530,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall' interfaccia IDefferUpdateSaldi
 	 * Il metodo rimuove il documento contabile dalla mappa dei saldi in differita 
 	 */
-	public void removeFromDefferredSaldi(it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk docCont) 
+	public void removeFromDefferredSaldi(it.cnr.contab.doccont00.core.bulk.IDocumentoContabileBulk docCont)
 	{
 		if(docCont != null && deferredSaldi != null &&	deferredSaldi.containsKey(docCont))
 			deferredSaldi.remove(docCont);
@@ -2538,7 +2538,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoSpesaBulk
 	 */
-	public int removeFromDettagliCancellati(IDocumentoAmministrativoRigaBulk dettaglio) 
+	public int removeFromDettagliCancellati(IDocumentoAmministrativoRigaBulk dettaglio)
 	{
 		if (BulkCollections.containsByPrimaryKey(getDettagliCancellati(), (OggettoBulk)dettaglio))
 			getDettagliCancellati().remove(BulkCollections.indexOfByPrimaryKey(getDettagliCancellati(), (OggettoBulk)dettaglio));
@@ -2548,7 +2548,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo rimuove dalla collection dei dettagli di diaria un solo dettaglio
 	 */
-	public Missione_dettaglioBulk removeFromDiariaMissioneColl(int index) 
+	public Missione_dettaglioBulk removeFromDiariaMissioneColl(int index)
 	{
 		Missione_dettaglioBulk diaria = (Missione_dettaglioBulk)diariaMissioneColl.remove(index);
 		diaria.setToBeDeleted();
@@ -2558,7 +2558,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoSpesaBulk
 	 */
-	public int removeFromDocumentiContabiliCancellati(IScadenzaDocumentoContabileBulk dettaglio) 
+	public int removeFromDocumentiContabiliCancellati(IScadenzaDocumentoContabileBulk dettaglio)
 	{
 		if(getDocumentiContabiliCancellati() == null)
 			return -1;
@@ -2585,7 +2585,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo rimuove dalla collection dei dettagli di spesa un solo dettaglio
 	 */
-	public Missione_dettaglioBulk removeFromSpeseMissioneColl(int index) 
+	public Missione_dettaglioBulk removeFromSpeseMissioneColl(int index)
 	{
 		Missione_dettaglioBulk spesa = (Missione_dettaglioBulk)speseMissioneColl.remove(index);
 		spesa.setToBeDeleted();
@@ -2595,7 +2595,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo rimuove dalla collection delle tappe una sola tappa
 	 */
-	public Missione_tappaBulk removeFromTappeMissioneColl(int index) 
+	public Missione_tappaBulk removeFromTappeMissioneColl(int index)
 	{
 		Missione_tappaBulk tappa = (Missione_tappaBulk)tappeMissioneColl.remove(index);
 		tappa.setToBeDeleted();
@@ -2606,15 +2606,15 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall' interfaccia IDefferUpdateSaldi
 	 * Imposta la mappa dei saldi in differita al valore di default 
 	 */
-	public void resetDefferredSaldi() 
+	public void resetDefferredSaldi()
 	{
-		deferredSaldi = null;	
+		deferredSaldi = null;
 	}
 	/**
 	 * Il metodo ressetto il TIME delle date di inizio/fine tappa per forzare la riconfigurazione
 	 * delle tappe
 	 */
-	public void resettaInizioFineTappe() 
+	public void resettaInizioFineTappe()
 	{
 		Missione_tappaBulk tappa = null;
 		java.util.GregorianCalendar gcInizio = null;
@@ -2633,7 +2633,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 				index = getCollectionGiorni().indexOf(tappa.getDt_inizio_tappa());
 
 				gcInizio = getGregorianCalendar(tappa.getDt_inizio_tappa());
-				gcInizio.set(java.util.GregorianCalendar.HOUR_OF_DAY, 0);			
+				gcInizio.set(java.util.GregorianCalendar.HOUR_OF_DAY, 0);
 				gcInizio.set(java.util.GregorianCalendar.MINUTE, 0);
 
 				if(index >= 0)
@@ -2650,7 +2650,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * inizio e fine missione. 
 	 */
 
-	public void riempiElencoGiorniColl( ) 
+	public void riempiElencoGiorniColl( )
 	{
 		if((getCollectionGiorni() != null) && (getCollectionGiorni().size() > 0))
 			return;
@@ -2658,7 +2658,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		setCollectionGiorni(new Vector());
 
 		GregorianCalendar gcInizio = getGregorianCalendar(getDt_inizio_missione());
-		gcInizio.set(GregorianCalendar.HOUR_OF_DAY, 0);			
+		gcInizio.set(GregorianCalendar.HOUR_OF_DAY, 0);
 		gcInizio.set(GregorianCalendar.MINUTE, 0);
 
 		GregorianCalendar gcFine = getGregorianCalendar(getDt_fine_missione());
@@ -2672,14 +2672,14 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		while(gcInizio.before(gcFine))
 		{
 			gcInizio.add(java.util.Calendar.DATE, 1);
-			getCollectionGiorni().add(new java.sql.Timestamp(gcInizio.getTime().getTime())); 
-		}	
+			getCollectionGiorni().add(new java.sql.Timestamp(gcInizio.getTime().getTime()));
+		}
 	}
 	/**
 	 * Il metodo inizializza la collection dei giorni ogni volta che carica in modifca una missione
 	 */
 
-	public void riempiElencoGiorniCollPerModifica( ) 
+	public void riempiElencoGiorniCollPerModifica( )
 	{
 		setCollectionGiorni(new Vector());
 
@@ -2693,7 +2693,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * cancellati automaticamente dalla cancellazione delle tappe (Constraint).
 	 */
 
-	public void ripristinaCrudStatusFigli() 
+	public void ripristinaCrudStatusFigli()
 	{
 		// 	Avendo cancellato tutte le tappe in tabella devo predisporre tutte le tappe
 		//	che ho in memoria come se dovessero essere inserite per la prima volta
@@ -2712,60 +2712,60 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		{
 			tappa = (Missione_tappaBulk)i.next();
 			if(tappa.isToBeDeleted())
-				tappa.setCrudStatus(OggettoBulk.UNDEFINED);			
+				tappa.setCrudStatus(OggettoBulk.UNDEFINED);
 		}
 		// 	Inizializzo le collection dei dettagli (spese/diaria) perche'
 		//	cancellando le tappe vengono cancellati anche i relativi dettagli 
 		//	(spese e diaria) da un Constraint. 
-		setSpeseMissioneColl(new BulkList());		
-		setDiariaMissioneColl(new BulkList());	
+		setSpeseMissioneColl(new BulkList());
+		setDiariaMissioneColl(new BulkList());
 		setRimborsoMissioneColl(new BulkList());
 	}
 	/**
 	 * il  metodo imposta il valore dell'attributo 'annoSolare'
-	 */ 
+	 */
 	public void setAnnoSolare(int newAnnoSolare) {
 		annoSolare = newAnnoSolare;
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'anticipo'
-	 */ 
+	 */
 	public void setAnticipo(AnticipoBulk newAnticipo) {
 		anticipo = newAnticipo;
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'anticipoClone'
-	 */ 
+	 */
 	public void setAnticipoClone(AnticipoBulk newAnticipoClone) {
 		anticipoClone = newAnticipoClone;
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'banca'
-	 */ 
+	 */
 	public void setBanca(it.cnr.contab.anagraf00.core.bulk.BancaBulk newBanca) {
 		banca = newBanca;
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'cd_cds_anticipo'
-	 */ 
+	 */
 	public void setCd_cds_anticipo(java.lang.String cd_cds_anticipo) {
 		this.getAnticipo().setCd_cds(cd_cds_anticipo);
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'cd_ds_obbligazione'
-	 */ 
+	 */
 	public void setCd_cds_obbligazione(java.lang.String cd_cds_obbligazione) {
 		this.getObbligazione_scadenzario().getObbligazione().getCds().setCd_unita_organizzativa(cd_cds_obbligazione);
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'cd_modalita_pag'
-	 */ 
+	 */
 	public void setCd_modalita_pag(java.lang.String cd_modalita_pag) {
 		this.getModalita_pagamento().setCd_modalita_pag(cd_modalita_pag);
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'cd_termini_pag'
-	 */ 
+	 */
 	public void setCd_termini_pag(java.lang.String cd_termini_pag) {
 		this.getTermini_pagamento().setCd_termini_pag(cd_termini_pag);
 	}
@@ -2775,13 +2775,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	public void setCd_tipo_doc_amm(java.lang.String newCd_tipo_doc_amm) {}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'cd_tipo_missione'
-	 */ 
+	 */
 	public void setCd_tipo_missione(java.lang.String cd_tipo_missione) {
 		this.getTipo_missione().setCd_tipo_missione(cd_tipo_missione);
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'cd_tipo_rapporto'
-	 */ 
+	 */
 	public void setCd_tipo_rapporto(java.lang.String cd_tipo_rapporto) {
 		this.getTipo_rapporto().setCd_tipo_rapporto(cd_tipo_rapporto);
 	}
@@ -2789,7 +2789,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall'interfaccia IDocumentoAmministrativoSpesaBulk
 	 * Imposta il valore dell'attributo 'cd_unita_organizzativa'
 	 */
-	public void setCd_uo(java.lang.String newCd_uo) 
+	public void setCd_uo(java.lang.String newCd_uo)
 	{
 		setCd_unita_organizzativa(newCd_uo);
 	}
@@ -2826,7 +2826,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Metodo richiesto dall' interfaccia IDefferUpdateSaldi
 	 */
-	public void setDeferredSaldi(it.cnr.jada.bulk.PrimaryKeyHashMap newDeferredSaldi) 
+	public void setDeferredSaldi(it.cnr.jada.bulk.PrimaryKeyHashMap newDeferredSaldi)
 	{
 		deferredSaldi = newDeferredSaldi;
 	}
@@ -2896,8 +2896,8 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			if(tappa.getFl_comune_proprio().booleanValue())
 				setFl_comune_proprio(new Boolean(true));
 			if(tappa.getFl_comune_estero().booleanValue())
-				setFl_comune_estero(new Boolean(true));						
-		}	
+				setFl_comune_estero(new Boolean(true));
+		}
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'giornoConsuntivo'
@@ -2907,7 +2907,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	}
 	/**
 	 * Il metodo imposta correttamente data/ora di inizio/fine tappa in base alla configurazione
-	 * @throws ValidationException 
+	 * @throws ValidationException
 	 */
 	public void setInizioFineTappe(java.sql.Timestamp data_fine_diaria_miss_estero) throws ValidationException
 	{
@@ -2927,16 +2927,16 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			GregorianCalendar fineMissione = (GregorianCalendar)getGregorianCalendar(getDt_fine_missione()).clone();
 
 			Missione_tappaBulk tappaPrecedente=null;
-			Missione_tappaBulk tappaSuccessiva=null;  	
+			Missione_tappaBulk tappaSuccessiva=null;
 			if(index>0)
 				tappaPrecedente = (Missione_tappaBulk)((Missione_tappaBulk) getTappeMissioneColl().get(index-1)).clone();
-			if(index<=getTappeMissioneColl().size()-2)	
+			if(index<=getTappeMissioneColl().size()-2)
 				tappaSuccessiva = (Missione_tappaBulk)((Missione_tappaBulk) getTappeMissioneColl().get(index+1)).clone();
 
 			/************* Imposto Data/Ora inizio tappa **********************/
 			if( (inizioTappa.get(GregorianCalendar.DATE) == inizioMissione.get(GregorianCalendar.DATE)) &&
-					(inizioTappa.get(GregorianCalendar.MONTH) == inizioMissione.get(GregorianCalendar.MONTH)) &&	 		
-					(inizioTappa.get(GregorianCalendar.YEAR) == inizioMissione.get(GregorianCalendar.YEAR)))	
+					(inizioTappa.get(GregorianCalendar.MONTH) == inizioMissione.get(GregorianCalendar.MONTH)) &&
+					(inizioTappa.get(GregorianCalendar.YEAR) == inizioMissione.get(GregorianCalendar.YEAR)))
 			{
 				if(tappa.isEstera() && (!(tappa.getDt_inizio_tappa().compareTo(data_fine_diaria_miss_estero)>0)))
 				{
@@ -2949,8 +2949,8 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 					if(getCollectionGiorni().contains(tappa.getDt_inizio_tappa()))
 					{
 						getCollectionGiorni().remove(tappa.getDt_inizio_tappa());
-						getCollectionGiorni().add(new java.sql.Timestamp(inizioPrimaTappa.getTime().getTime()));					
-					}	
+						getCollectionGiorni().add(new java.sql.Timestamp(inizioPrimaTappa.getTime().getTime()));
+					}
 
 					tappa.setDt_inizio_tappa(new java.sql.Timestamp(inizioPrimaTappa.getTime().getTime()));
 					// Reimposto "inizioTappa" perche' potrebbe servirmi valorizzare la fine
@@ -2958,47 +2958,47 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 
 				}
 				else
-				{	
+				{
 					// Reimposto il giorno nella collection perche' aveva ora nulla
 					// Se non lo facessi quando modifico una tappa non mi seleziona il gg
 					if(getCollectionGiorni().contains(tappa.getDt_inizio_tappa()))
 					{
 						getCollectionGiorni().remove(tappa.getDt_inizio_tappa());
-						getCollectionGiorni().add((java.sql.Timestamp)getDt_inizio_missione().clone());					
-					}	
+						getCollectionGiorni().add((java.sql.Timestamp)getDt_inizio_missione().clone());
+					}
 
 					tappa.setDt_inizio_tappa((java.sql.Timestamp)getDt_inizio_missione().clone());
 					// Reimposto "inizioTappa" perche' potrebbe servirmi valorizzare la fine
 					inizioTappa = (GregorianCalendar)getGregorianCalendar(tappa.getDt_inizio_tappa()).clone();
 				}
-			}	
-			else	
+			}
+			else
 			{
 				// Non e' la prima tappa
 				GregorianCalendar gcInizio = (GregorianCalendar)getGregorianCalendar(tappaPrecedente.getDt_fine_tappa()).clone();
 				if((gcInizio.get(GregorianCalendar.HOUR_OF_DAY) == 23) && (gcInizio.get(GregorianCalendar.MINUTE) == 59))
 				{
-					gcInizio.add(java.util.Calendar.DATE, 1);				
+					gcInizio.add(java.util.Calendar.DATE, 1);
 					gcInizio.set(GregorianCalendar.HOUR_OF_DAY, 0);
-					gcInizio.set(GregorianCalendar.MINUTE, 0);				
+					gcInizio.set(GregorianCalendar.MINUTE, 0);
 				}
 				if(getCollectionGiorni().contains(tappa.getDt_inizio_tappa()))
 				{
 					// Reimposto il giorno nella collection perche' aveva ora nulla
 					// Se non lo facessi quando modifico una tappa non mi seleziona il gg
 					getCollectionGiorni().remove(tappa.getDt_inizio_tappa());
-					getCollectionGiorni().add(new java.sql.Timestamp(gcInizio.getTime().getTime()));					
-				}	
+					getCollectionGiorni().add(new java.sql.Timestamp(gcInizio.getTime().getTime()));
+				}
 
 				tappa.setDt_inizio_tappa(new java.sql.Timestamp(gcInizio.getTime().getTime()));
 				// Reimposto "inizioTappa" perche' potrebbe servirmi valorizzare la fine
-				inizioTappa = (GregorianCalendar)getGregorianCalendar(tappa.getDt_inizio_tappa()).clone();			
+				inizioTappa = (GregorianCalendar)getGregorianCalendar(tappa.getDt_inizio_tappa()).clone();
 			}
 
 			/************* Imposto Data/Ora fine tappa **********************/
 			if(	(inizioTappa.get(GregorianCalendar.DATE) == fineMissione.get(GregorianCalendar.DATE)) &&
-					(inizioTappa.get(GregorianCalendar.MONTH) == fineMissione.get(GregorianCalendar.MONTH)) &&	 		
-					(inizioTappa.get(GregorianCalendar.YEAR) == fineMissione.get(GregorianCalendar.YEAR)))	 	  	
+					(inizioTappa.get(GregorianCalendar.MONTH) == fineMissione.get(GregorianCalendar.MONTH)) &&
+					(inizioTappa.get(GregorianCalendar.YEAR) == fineMissione.get(GregorianCalendar.YEAR)))
 			{
 				// Ultima tappa
 				if(tappa.getFl_comune_estero().booleanValue() && (!(tappa.getDt_inizio_tappa().compareTo(data_fine_diaria_miss_estero)>0)))
@@ -3006,7 +3006,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 					// Estero
 					fineMissione.set(GregorianCalendar.HOUR_OF_DAY, 23);
 					fineMissione.set(GregorianCalendar.MINUTE, 59);
-					tappa.setDt_fine_tappa(new java.sql.Timestamp(fineMissione.getTime().getTime()));		
+					tappa.setDt_fine_tappa(new java.sql.Timestamp(fineMissione.getTime().getTime()));
 				}
 				else
 					tappa.setDt_fine_tappa((java.sql.Timestamp)getDt_fine_missione().clone());
@@ -3015,12 +3015,12 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			{
 				// Non e' l'ultima tappa
 				if(tappa.getFl_comune_estero().booleanValue()&& (!(tappa.getDt_inizio_tappa().compareTo(data_fine_diaria_miss_estero)>0)))
-				{ 
+				{
 					// Estero
 					inizioTappa.set(GregorianCalendar.HOUR_OF_DAY, 23);
 					inizioTappa.set(GregorianCalendar.MINUTE, 59);
-					tappa.setDt_fine_tappa(new java.sql.Timestamp(inizioTappa.getTime().getTime()));					
-				}		
+					tappa.setDt_fine_tappa(new java.sql.Timestamp(inizioTappa.getTime().getTime()));
+				}
 				else
 				{
 					// Estere - non è la prima nè l'ultima tappa
@@ -3028,18 +3028,18 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 							((tappaPrecedente != null) && (tappaPrecedente.getFl_comune_estero().booleanValue())&& (!(tappa.getDt_inizio_tappa().compareTo(data_fine_diaria_miss_estero)>0))))
 					{
 						inizioTappa.set(GregorianCalendar.HOUR_OF_DAY, 23);
-						inizioTappa.set(GregorianCalendar.MINUTE, 59);					
+						inizioTappa.set(GregorianCalendar.MINUTE, 59);
 					}
 					else //Italia oppure non diaria
 					{
 						//if(!((inizioTappa.get(GregorianCalendar.HOUR_OF_DAY) == 0) && (inizioTappa.get(GregorianCalendar.MINUTE)==0)))
-						inizioTappa.add(java.util.Calendar.DATE, 1);					
+						inizioTappa.add(java.util.Calendar.DATE, 1);
 						//if((inizioTappa.get(GregorianCalendar.HOUR_OF_DAY) == 0) && (inizioTappa.get(GregorianCalendar.MINUTE)==0))
 						//{
 						//	inizioTappa.set(GregorianCalendar.HOUR_OF_DAY, 23);
 						//	inizioTappa.set(GregorianCalendar.MINUTE, 59);					
 						//}						
-					}	
+					}
 					tappa.setDt_fine_tappa(new java.sql.Timestamp(inizioTappa.getTime().getTime()));
 				}
 			}
@@ -3090,7 +3090,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo inizializza alcuni campi della missione che la rendono DEFINITIVA
 	 */
-	public void setMissioneDefinitiva() 
+	public void setMissioneDefinitiva()
 	{
 		setStato_coge(STATO_INIZIALE_COGE);
 		setStato_coan(STATO_INIZIALE_COAN);
@@ -3105,7 +3105,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo inizializzo alcuni campi della missione che la rendono PROVVISORIA
 	 */
-	public void setMissioneProvvisoria() 
+	public void setMissioneProvvisoria()
 	{
 		setStato_coge(STATO_COGE_NON_PROCESSARE);
 		setStato_coan(STATO_COAN_NON_PROCESSARE);
@@ -3151,7 +3151,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Metodo richiesto dall' interfaccia IDocumentoAmministrativoBulk
 	 * il metodo ritorna il progressivo della missione
 	 */
-	public void setPg_doc_amm(java.lang.Long newPg) 
+	public void setPg_doc_amm(java.lang.Long newPg)
 	{
 		setPg_missione(newPg);
 	}
@@ -3208,7 +3208,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo imposta il valore dell'attributo 'speseInserite'
 	 */
-	public void setSpeseInserite(boolean newSpeseInserite) 
+	public void setSpeseInserite(boolean newSpeseInserite)
 	{
 		speseInserite = newSpeseInserite;
 	}
@@ -3221,7 +3221,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	/**
 	 * Il metodo imposta il valore dell'attributo 'tappeConfigurate'
 	 */
-	public void setTappeConfigurate(boolean newTappeConfigurate) 
+	public void setTappeConfigurate(boolean newTappeConfigurate)
 	{
 		tappeConfigurate = newTappeConfigurate;
 		if(tappeConfigurate)
@@ -3230,12 +3230,12 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			{
 				Missione_tappaBulk tappa = (Missione_tappaBulk) i.next();
 				putInHashtableTappe(tappa);
-			}	
+			}
 		}
 		if(!tappeConfigurate)
 		{
 			setTappeMissioneHash(new PrimaryKeyHashtable());
-		}	
+		}
 	}
 	/**
 	 * Il metodo imposta il valore dell'attributo 'tappeMissioneColl'
@@ -3339,21 +3339,21 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Nel caso in cui la quota esente e l'importo netto della diaria siano uguali --> il compenso non ha obbligazione
 	 * Nel caso in cui l'anticipo e' maggiore della missione --> il compenso ha obbligazione 
 	 */
-	public void sincronizzaObbligazioneCompenso(it.cnr.jada.UserContext uc) 
+	public void sincronizzaObbligazioneCompenso(it.cnr.jada.UserContext uc)
 	{
 		if(getCompenso().getObbligazioneScadenzario()==null)
 			return;
 
 		it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk obbligazione = getCompenso().getObbligazioneScadenzario().getObbligazione();
 		PrimaryKeyHashMap relazioni = getCompenso().getRelationsDocContForSaldi();
-		if (relazioni != null) 
+		if (relazioni != null)
 		{
 			Long temporaneo = (Long)relazioni.get(obbligazione);
-			if (temporaneo != null && temporaneo.longValue()<0 && relazioni != null && !relazioni.isEmpty()) 
+			if (temporaneo != null && temporaneo.longValue()<0 && relazioni != null && !relazioni.isEmpty())
 			{
 				it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk obblTemporanea = (it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk)obbligazione.clone();
 				obblTemporanea.setPg_obbligazione(temporaneo);
-				if (getDefferredSaldi() != null) 
+				if (getDefferredSaldi() != null)
 				{
 					java.util.Map data = (java.util.Map) getDefferredSaldi().get(obblTemporanea);
 					removeFromDefferredSaldi(obblTemporanea);
@@ -3378,13 +3378,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	 * Nel caso in cui la quota esente e l'importo netto della diaria siano uguali --> il compenso non ha obbligazione
 	 * Nel caso in cui l'anticipo e' maggiore della missione --> il compenso ha obbligazione 
 	 */
-	public void sincronizzaObbligazioniCancellateCompenso(it.cnr.jada.UserContext uc) 
+	public void sincronizzaObbligazioniCancellateCompenso(it.cnr.jada.UserContext uc)
 	{
 		if(getCompenso().getDocumentiContabiliCancellati()==null || getCompenso().getDocumentiContabiliCancellati().isEmpty())
 			return;
 
 		PrimaryKeyHashMap relazioni = getCompenso().getRelationsDocContForSaldi();
-		if (relazioni == null || relazioni.isEmpty()) 
+		if (relazioni == null || relazioni.isEmpty())
 			return;
 
 		for ( Iterator i = getCompenso().getDocumentiContabiliCancellati().iterator(); i.hasNext(); )
@@ -3394,11 +3394,11 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk obbligazioneCancellata = scadCancellata.getObbligazione();
 
 			Long temporaneo = (Long)relazioni.get(obbligazioneCancellata);
-			if (temporaneo != null && temporaneo.longValue()<0 ) 
+			if (temporaneo != null && temporaneo.longValue()<0 )
 			{
 				it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk obblTemporanea = (it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk)obbligazioneCancellata.clone();
 				obblTemporanea.setPg_obbligazione(temporaneo);
-				if (getDefferredSaldi() != null) 
+				if (getDefferredSaldi() != null)
 				{
 					java.util.Map data = (java.util.Map) getDefferredSaldi().get(obblTemporanea);
 					removeFromDefferredSaldi(obblTemporanea);
@@ -3440,7 +3440,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 
 		for ( Iterator c = ((Vector)getDocumentiContabiliCancellati().clone()).iterator(); c.hasNext(); )
 		{
-			Obbligazione_scadenzarioBulk aScadCanc = (Obbligazione_scadenzarioBulk)c.next();		
+			Obbligazione_scadenzarioBulk aScadCanc = (Obbligazione_scadenzarioBulk)c.next();
 			trovata = false;
 
 			for ( Iterator i = coll.iterator(); i.hasNext(); )
@@ -3452,10 +3452,10 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 					getDocumentiContabiliCancellati().remove(aScadCanc);
 					getDocumentiContabiliCancellati().add(aScadenza);
 					trovata = true;
-				}	
+				}
 			}
 			if(!trovata && aScadCanc.getObbligazione().equalsByPrimaryKey(newScadenza.getObbligazione()))
-				getDocumentiContabiliCancellati().remove(aScadCanc);		
+				getDocumentiContabiliCancellati().remove(aScadCanc);
 		}
 	}
 
@@ -3479,20 +3479,20 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	public void validaTabAnagrafico() throws it.cnr.jada.action.MessageToUser
 	{
 		if(getCd_terzo() == null || getV_terzo().getCd_terzo() == null)
-			throw new it.cnr.jada.action.MessageToUser( "Selezionare un Terzo" );	
+			throw new it.cnr.jada.action.MessageToUser( "Selezionare un Terzo" );
 
 		if(getCd_modalita_pag() == null)
 			throw new it.cnr.jada.action.MessageToUser( "Selezionare la Modalita' di Pagamento" );
 
 		if(getPg_banca() == null)
-			throw new it.cnr.jada.action.MessageToUser( "Selezionare un'altra Modalita' di Pagamento" );		
+			throw new it.cnr.jada.action.MessageToUser( "Selezionare un'altra Modalita' di Pagamento" );
 
 		if(getCd_tipo_rapporto() == null)
 			throw new it.cnr.jada.action.MessageToUser( "Selezionare il Tipo Rapporto" );
 
 		if(getPg_rif_inquadramento() == null)
 			throw new it.cnr.jada.action.MessageToUser( "Selezionare l' Inquadramento" );
-	} 
+	}
 	/**
 	 * Il metodo valida i dati inseriti nel Tab Testata, ossia :
 	 * - che sia valorizzato la descrizione
@@ -3515,14 +3515,14 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			if(getStato_liquidazione()==null)
 				throw new it.cnr.jada.action.MessageToUser("Inserire lo stato della liquidazione!");
 
-		}	
+		}
 		//	if(!isMissioneDefinitiva() && getCd_tipo_missione() == null)
 		//		throw new it.cnr.jada.action.MessageToUser( "Selezionare l' ambito della missione" );
-	} 
+	}
 	/**
 	 * Il metodo valida la missione che si sta creando/modificando
 	 */
-	public void validate() throws ValidationException 
+	public void validate() throws ValidationException
 	{
 		/*************  ULTIME INIZIALIZZAZIONI MISSIONE ****************/
 		setFlagComuni();
@@ -3533,13 +3533,13 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		super.validate();
 
 		if((getTappeMissioneColl() == null) || (getTappeMissioneColl().isEmpty()))
-			throw new ValidationException("Configurare le tappe !");		
+			throw new ValidationException("Configurare le tappe !");
 
 		if(!isTappeConfigurate())
 			throw new ValidationException("Selezionare il bottone di Fine Configurazione Tappe !");
 
 		// Significa verificare che la diaria sia stata creata
-		if((!isSpeseInserite()) && (!isSalvataggioTemporaneo()))	
+		if((!isSpeseInserite()) && (!isSalvataggioTemporaneo()))
 			throw new ValidationException("Selezionare il bottone di Fine Inserimento Spese !");
 
 		// Importo totale della missione nullo
@@ -3547,7 +3547,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 				(getIm_spese()==null || getIm_spese().compareTo(new BigDecimal(0))==0) &&
 				(getIm_diaria_netto()==null || getIm_diaria_netto().compareTo(new BigDecimal(0))==0) &&
 				(getIm_rimborso()==null || getIm_rimborso().compareTo(new BigDecimal(0))==0)
-				)
+		)
 			throw new ValidationException("Impossibile proseguire con il salvataggio! La missione ha importo nullo.");
 		// 	Il tipo trattamento e' necessario per generare il compenso se ho della
 		//	Diaria all'estero
@@ -3577,7 +3577,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	public void verificaUltimaTappa()
 	{
 		Missione_tappaBulk tappa=null;
-		Missione_tappaBulk penultimaTappa=null; 
+		Missione_tappaBulk penultimaTappa=null;
 
 		tappa = (Missione_tappaBulk)getTappeMissioneColl().get(getTappeMissioneColl().size()-1);
 
@@ -3585,16 +3585,16 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			penultimaTappa = (Missione_tappaBulk)getTappeMissioneColl().get(getTappeMissioneColl().size()-2);
 
 		if((tappa.getDt_inizio_tappa().after(tappa.getDt_fine_tappa())) || (tappa.getDt_inizio_tappa().equals(tappa.getDt_fine_tappa())))
-		{	
+		{
 			//if((!tappa.getFl_comune_estero().booleanValue()) && (penultimaTappa != null))
 			if((penultimaTappa != null))
 				penultimaTappa.setDt_fine_tappa((java.sql.Timestamp)getDt_fine_missione().clone());
 
 			int indice = getTappeMissioneColl().size()-1	;
 			Missione_tappaBulk aTappa = (Missione_tappaBulk)getTappeMissioneColl().get(indice);
-			aTappa.setToBeDeleted();	
+			aTappa.setToBeDeleted();
 			removeFromTappeMissioneColl(indice);
-		}	
+		}
 	}
 
 	public boolean isTappeEstereCoerenti()
@@ -3604,7 +3604,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 
 		Missione_tappaBulk tappa=null;
 		Boolean rimborso=null;
-		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )	
+		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )
 		{
 			tappa = (Missione_tappaBulk) i.next();
 			if(tappa.isEstera() && rimborso == null)
@@ -3613,7 +3613,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 				return false;
 		}
 		Boolean diaria=null;
-		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )	
+		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )
 		{
 			tappa = (Missione_tappaBulk) i.next();
 			if(tappa.isEstera() && diaria == null)
@@ -3631,7 +3631,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		Missione_tappaBulk tappa=null;
 		//Boolean rimborso=null;
 		Long oreTappa=null;
-		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )	
+		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )
 		{
 			tappa = (Missione_tappaBulk) i.next();
 			if(tappa.isEstera() && tappa.getFl_rimborso())
@@ -3639,10 +3639,10 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 				//conto le ore delle tappe estere
 				java.util.GregorianCalendar inizioTappa = (java.util.GregorianCalendar)getGregorianCalendar(tappa.getDt_inizio_tappa()).clone();
 				java.util.GregorianCalendar fineTappa = (java.util.GregorianCalendar)getGregorianCalendar(tappa.getDt_inizio_tappa()).clone();
-				oreTappa =  fineTappa.getTime().getTime() - inizioTappa.getTime().getTime();	
+				oreTappa =  fineTappa.getTime().getTime() - inizioTappa.getTime().getTime();
 			}
 
-		}		
+		}
 		return false;
 	}
 	public boolean isMissioneConRimborso()
@@ -3651,12 +3651,12 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 			return false;
 
 		Missione_tappaBulk tappa=null;
-		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )	
+		for ( Iterator i = getTappeMissioneColl().iterator(); i.hasNext(); )
 		{
 			tappa = (Missione_tappaBulk) i.next();
 			if(tappa.isEstera() && tappa.getFl_rimborso())
 				return true;
-		}		
+		}
 		return false;
 	}
 	public Unita_organizzativaBulk getUnitaOrganizzativa() {
@@ -3717,7 +3717,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	}
 	public int addToArchivioAllegati(AllegatoGenericoBulk allegato) {
 		archivioAllegati.add(allegato);
-		return archivioAllegati.size()-1;		
+		return archivioAllegati.size()-1;
 	}
 	public BulkList<AllegatoGenericoBulk> getArchivioAllegati() {
 		return archivioAllegati;
@@ -3860,6 +3860,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 		Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
 	}
 
+	@JsonIgnore
 	public List<Missione_riga_ecoBulk> getRigheEconomica() {
 		return righeEconomica;
 	}
@@ -3869,6 +3870,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	}
 
 	@Override
+	@JsonIgnore
 	public IDocumentoCogeBulk getFather() {
 		return this;
 	}
@@ -3891,6 +3893,7 @@ public class MissioneBulk extends MissioneBase implements IDefferUpdateSaldi, ID
 	}
 
 	@Override
+	@JsonIgnore
 	public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
 		return this.getRigheEconomica().stream()
 				.filter(Objects::nonNull)
