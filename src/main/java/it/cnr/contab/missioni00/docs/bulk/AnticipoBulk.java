@@ -17,6 +17,7 @@
 
 package it.cnr.contab.missioni00.docs.bulk;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import it.cnr.contab.anagraf00.core.bulk.BancaBulk;
@@ -1506,6 +1507,7 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
         Optional.ofNullable(this.getVoce_ep()).ifPresent(el->el.setCd_voce_ep(cd_voce_ep));
     }
 
+    @JsonIgnore
     public List<Anticipo_riga_ecoBulk> getRigheEconomica() {
         return righeEconomica;
     }
@@ -1515,6 +1517,7 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
     }
 
     @Override
+    @JsonIgnore
     public IDocumentoCogeBulk getFather() {
         return this;
     }
@@ -1538,6 +1541,7 @@ public class AnticipoBulk extends AnticipoBase implements IDefferUpdateSaldi, ID
 
 
     @Override
+    @JsonIgnore
     public List<IDocumentoDetailAnaCogeBulk> getChildrenAna() {
         return this.getRigheEconomica().stream()
                 .filter(Objects::nonNull)
