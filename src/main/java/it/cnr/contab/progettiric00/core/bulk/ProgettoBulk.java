@@ -183,6 +183,7 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 
 	@Transient private BigDecimal importoFinanziato;
 	@Transient private BigDecimal importoUtilizzato;
+	@Transient private BigDecimal importoPagato;
 
 	//Variabile utilizzata per sapere se la richiesta di creazione proviene da una mappa di tipo Amministra
 	private boolean fromAmministra = Boolean.FALSE;
@@ -1447,5 +1448,13 @@ public void setUnita_organizzativa(it.cnr.contab.config00.sto.bulk.Unita_organiz
 
 	public void setFromAmministra(boolean fromAmministra) {
 		this.fromAmministra = fromAmministra;
+	}
+
+	public BigDecimal getImportoPagato() {
+		return importoPagato;
+	}
+
+	public void setImportoPagato(BigDecimal importoPagato) {
+		this.importoPagato = importoPagato;
 	}
 }
