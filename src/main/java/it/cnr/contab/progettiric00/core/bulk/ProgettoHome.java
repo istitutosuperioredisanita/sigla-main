@@ -1293,8 +1293,35 @@ public class ProgettoHome extends BulkHome {
 				.map(ColumnMapping::getColumnName)
 				.map(s -> "V_PROGETTO_PADRE.".concat(s))
 				.forEach(sqlBuilder::addSQLGroupBy);
+		List<ProgettoBulk> result = fetchAll(sqlBuilder);
+		if (Optional.ofNullable(voce).isPresent()) {
+			return result
+					.stream()
+					.map(progettoBulk -> {
+						PersistentHome persistentHome = getHomeCache().getHome(V_saldi_piano_econom_progettoBulk.class);
+						SQLBuilder sqlBuilder1 = persistentHome.createSQLBuilder();
+						sqlBuilder1.addTableToHeader("ASS_PROGETTO_PIAECO_VOCE");
+						sqlBuilder1.addSQLClause(FindClause.AND, "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+						sqlBuilder1.addSQLClause(FindClause.AND, "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO", SQLBuilder.EQUALS, progettoBulk.getPg_progetto());
+						sqlBuilder1.addSQLJoin("V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO", "ASS_PROGETTO_PIAECO_VOCE.ESERCIZIO_PIANO");
+						sqlBuilder1.addSQLJoin("V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO", "ASS_PROGETTO_PIAECO_VOCE.PG_PROGETTO");
+						sqlBuilder1.addSQLJoin("ASS_PROGETTO_PIAECO_VOCE.TI_GESTIONE","V_SALDI_PIANO_ECONOM_PROGETTO.TI_GESTIONE");
+						sqlBuilder1.addSQLClause(FindClause.AND, "ASS_PROGETTO_PIAECO_VOCE.ESERCIZIO_VOCE", SQLBuilder.EQUALS, esercizio);
+						sqlBuilder1.addSQLClause(FindClause.AND, "ASS_PROGETTO_PIAECO_VOCE.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, voce);
 
-		return fetchAll(sqlBuilder);
+						try {
+							List<V_saldi_piano_econom_progettoBulk> vSaldiPianoEconomProgettoBulks =  persistentHome.fetchAll(sqlBuilder1);
+							double assestato = vSaldiPianoEconomProgettoBulks.stream().mapToDouble(vSaldiPianoEconomProgettoBulk -> {
+								return vSaldiPianoEconomProgettoBulk.getImportoFin().add(vSaldiPianoEconomProgettoBulk.getImportoCofin()).doubleValue();
+							}).sum();
+							progettoBulk.setImportoFinanziato(BigDecimal.valueOf(assestato));
+						} catch (PersistencyException e) {
+							throw new RuntimeException(e);
+						}
+						return progettoBulk;
+					}).toList();
+		}
+		return result;
 	}
 
 	public List<ProgettoBulk> findFondiFunzionamentoTipoFinanziamento(UserContext userContext, Integer esercizio, String codice, String uo) throws ComponentException, PersistencyException {

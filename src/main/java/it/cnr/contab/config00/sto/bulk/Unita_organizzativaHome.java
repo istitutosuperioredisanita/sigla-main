@@ -34,6 +34,7 @@ import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.*;
 import it.cnr.jada.persistency.sql.*;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -41,6 +42,7 @@ import java.time.Month;
 import java.time.Year;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Home dell'unità organizzativa bulk
@@ -755,19 +757,63 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 				.map(s -> "V_UNITA_ORGANIZZATIVA_VALIDA.".concat(s))
 				.forEach(sqlBuilder::addSQLGroupBy);
 		List<Unita_organizzativaBulk> result = fetchAll(sqlBuilder);
-		/*
 		if (Optional.ofNullable(voce).isPresent()) {
 			return result
 					.stream()
 					.map(unitaOrganizzativaBulk -> {
 						PersistentHome persistentHome = getHomeCache().getHome(V_saldi_piano_econom_progettoBulk.class);
 						SQLBuilder sqlBuilder1 = persistentHome.createSQLBuilder();
-						sqlBuilder1.resetColumns();
-						sqlBuilder1.addColumn("SUM(NVL(p.IMPORTO_FIN, 0) + NVL(p.IMPORTO_COFIN, 0))");
-						return unitaOrganizzativaBulk;
+						sqlBuilder1.addTableToHeader("ASS_PROGETTO_PIAECO_VOCE");
+						sqlBuilder1.addSQLClause(FindClause.AND, "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+
+						sqlBuilder1.addSQLJoin("V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO", "ASS_PROGETTO_PIAECO_VOCE.ESERCIZIO_PIANO");
+						sqlBuilder1.addSQLJoin("V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO", "ASS_PROGETTO_PIAECO_VOCE.PG_PROGETTO");
+						sqlBuilder1.addSQLJoin("ASS_PROGETTO_PIAECO_VOCE.TI_GESTIONE","V_SALDI_PIANO_ECONOM_PROGETTO.TI_GESTIONE");
+						sqlBuilder1.addSQLClause(FindClause.AND, "ASS_PROGETTO_PIAECO_VOCE.ESERCIZIO_VOCE", SQLBuilder.EQUALS, esercizio);
+						sqlBuilder1.addSQLClause(FindClause.AND, "ASS_PROGETTO_PIAECO_VOCE.CD_ELEMENTO_VOCE", SQLBuilder.EQUALS, voce);
+						sqlBuilder1.addTableToHeader("V_PROGETTO_PADRE");
+						sqlBuilder1.addTableToHeader("PROGETTO_OTHER_FIELD");
+						sqlBuilder1.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
+						sqlBuilder1.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+						sqlBuilder1.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.TIPO_FASE", SQLBuilder.EQUALS, ProgettoGestUoBulk.TIPO_FASE_NON_DEFINITA);
+						sqlBuilder1.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
+						sqlBuilder1.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, unitaOrganizzativaBulk.getCd_unita_organizzativa());
+
+						sqlBuilder1.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.P_CD_PROGETTO", SQLBuilder.EQUALS, Optional.ofNullable(config).map(Configurazione_cnrBase::getVal01).orElse(null));
+						Optional.ofNullable(config)
+								.map(Configurazione_cnrBase::getVal02)
+								.map(s -> s.split(","))
+								.map(Arrays::asList)
+								.orElse(Collections.emptyList())
+								.forEach(s -> {
+									sqlBuilder1.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_UNITA_ORGANIZZATIVA", SQLBuilder.NOT_EQUALS, s);
+								});
+						Optional.ofNullable(config)
+								.map(Configurazione_cnrBase::getVal03)
+								.map(s -> s.split(","))
+								.map(Arrays::asList)
+								.orElse(Collections.emptyList())
+								.forEach(s -> {
+									sqlBuilder1.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.CD_TIPO_PROGETTO", SQLBuilder.NOT_EQUALS, s);
+								});
+
+						//Inserisco il filtro sulla data di inizio del progetto che deve essere dell'esercizio
+						sqlBuilder1.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.GREATER_EQUALS, Timestamp.from(Year.of(esercizio).atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+						sqlBuilder1.addSQLClause(FindClause.AND, "PROGETTO_OTHER_FIELD.DT_INIZIO", SQLBuilder.LESS_EQUALS, Timestamp.from(Year.of(esercizio).atMonth(Month.DECEMBER).atDay(31).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+
+						try {
+							List<V_saldi_piano_econom_progettoBulk> vSaldiPianoEconomProgettoBulks =  persistentHome.fetchAll(sqlBuilder1);
+							double assestato = vSaldiPianoEconomProgettoBulks.stream().mapToDouble(vSaldiPianoEconomProgettoBulk -> {
+                                return vSaldiPianoEconomProgettoBulk.getImportoFin().add(vSaldiPianoEconomProgettoBulk.getImportoCofin()).doubleValue();
+                            }).sum();
+							unitaOrganizzativaBulk.setImportoFinanziato(BigDecimal.valueOf(assestato));
+						} catch (PersistencyException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return unitaOrganizzativaBulk;
 					}).toList();
 		}
-		 */
 		return result;
 	}
 }

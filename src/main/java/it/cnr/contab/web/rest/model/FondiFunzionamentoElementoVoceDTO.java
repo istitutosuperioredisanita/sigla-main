@@ -54,4 +54,10 @@ public class FondiFunzionamentoElementoVoceDTO {
                 .orElse(BigDecimal.ZERO);
     }
 
+    public BigDecimal getImportoPagato() {
+        return Optional.ofNullable(elementoVoceBulk)
+                .map(Elemento_voceBulk::getImportoPagato)
+                .orElse(BigDecimal.ZERO);
+    }
+
 }
