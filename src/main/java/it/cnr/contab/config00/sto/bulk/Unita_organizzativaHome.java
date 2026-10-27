@@ -22,6 +22,9 @@ import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.config00.bulk.Configurazione_cnrHome;
 import it.cnr.contab.consultazioni.bulk.ConsultazioniRestHome;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoGestUoBulk;
+import it.cnr.contab.progettiric00.core.bulk.V_saldi_piano_econom_progettoBulk;
+import it.cnr.contab.progettiric00.core.bulk.V_saldi_voce_progettoBase;
+import it.cnr.contab.progettiric00.core.bulk.V_saldi_voce_progettoBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
@@ -652,8 +655,11 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 		PersistentHome home = getHomeCache().getHome(Unita_organizzativaBulk.class, "REGISTRO_INVENTARIO",  "fetchUnitaPadre");
 		SQLBuilder sqlBuilder = home.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO");
+		sqlBuilder.addTableToHeader("TERZO");
 		sqlBuilder.addTableToHeader("ANAGRAFICO");
-		sqlBuilder.addSQLJoin("ANAGRAFICO.CD_ANAG", "V_CONS_REGISTRO_INVENTARIO.CD_ASSEGNATARIO");
+		sqlBuilder.addSQLJoin("TERZO.CD_TERZO", "V_CONS_REGISTRO_INVENTARIO.CD_ASSEGNATARIO");
+		sqlBuilder.addSQLJoin("TERZO.CD_ANAG", "ANAGRAFICO.CD_ANAG");
+
 		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "COALESCE(ANAGRAFICO.CD_UNITA_ORGANIZZATIVA, '" + ente.getCd_unita_organizzativa() + "')");
 		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.ESERCIZIO", "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO");
 		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
@@ -748,6 +754,20 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 				.map(ColumnMapping::getColumnName)
 				.map(s -> "V_UNITA_ORGANIZZATIVA_VALIDA.".concat(s))
 				.forEach(sqlBuilder::addSQLGroupBy);
-		return fetchAll(sqlBuilder);
+		List<Unita_organizzativaBulk> result = fetchAll(sqlBuilder);
+		/*
+		if (Optional.ofNullable(voce).isPresent()) {
+			return result
+					.stream()
+					.map(unitaOrganizzativaBulk -> {
+						PersistentHome persistentHome = getHomeCache().getHome(V_saldi_piano_econom_progettoBulk.class);
+						SQLBuilder sqlBuilder1 = persistentHome.createSQLBuilder();
+						sqlBuilder1.resetColumns();
+						sqlBuilder1.addColumn("SUM(NVL(p.IMPORTO_FIN, 0) + NVL(p.IMPORTO_COFIN, 0))");
+						return unitaOrganizzativaBulk;
+					}).toList();
+		}
+		 */
+		return result;
 	}
 }
