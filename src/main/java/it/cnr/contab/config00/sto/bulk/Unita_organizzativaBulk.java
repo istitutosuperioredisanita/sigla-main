@@ -520,4 +520,5 @@ public class Unita_organizzativaBulk extends Unita_organizzativaBase {
 	public void setImportoPagato(BigDecimal importoPagato) {
 		this.importoPagato = importoPagato;
 	}
+
 }
