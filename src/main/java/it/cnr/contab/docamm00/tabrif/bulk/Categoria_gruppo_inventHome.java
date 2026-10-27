@@ -122,9 +122,11 @@ public class Categoria_gruppo_inventHome extends BulkHome {
                     } catch (Throwable e) {
                         throw new RuntimeException(e);
                     };
-					sqlBuilder.addTableToHeader("ANAGRAFICO");
 					sqlBuilder.addTableToHeader("V_UNITA_ORGANIZZATIVA_VALIDA");
-                    sqlBuilder.addSQLJoin("ANAGRAFICO.CD_ANAG", "V_CONS_REGISTRO_INVENTARIO.CD_ASSEGNATARIO");
+                    sqlBuilder.addTableToHeader("TERZO");
+                    sqlBuilder.addTableToHeader("ANAGRAFICO");
+                    sqlBuilder.addSQLJoin("TERZO.CD_TERZO", "V_CONS_REGISTRO_INVENTARIO.CD_ASSEGNATARIO");
+                    sqlBuilder.addSQLJoin("TERZO.CD_ANAG", "ANAGRAFICO.CD_ANAG");
                     sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "COALESCE(ANAGRAFICO.CD_UNITA_ORGANIZZATIVA, '" + ente.getCd_unita_organizzativa() + "')");
 					sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.ESERCIZIO", "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO");
 					sqlBuilder.addSQLClause(FindClause.AND, "V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, s);
