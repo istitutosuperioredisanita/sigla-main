@@ -1,3 +1,67 @@
+## Release 8.0.39  -- _October 27, 2026_ 
+**Changes**
+
+>**fix: assegnato sul progetto per le componenti della dashboard**
+>
+>[f36351114e9cdb9](https://github.com/istitutosuperioredisanita/sigla-main/commit/f36351114e9cdb9) marco.spasiano *October 27, 2026*
+
+>**fix: assegnatario grafico**
+>
+>[b276cab8ad5e5bd](https://github.com/istitutosuperioredisanita/sigla-main/commit/b276cab8ad5e5bd) marco.spasiano *October 27, 2026*
+
+>**add: aggiunto il pagato al Trend fondi funzionamento per Voce**
+>
+>[ae9e49c4b4e9abe](https://github.com/istitutosuperioredisanita/sigla-main/commit/ae9e49c4b4e9abe) marco.spasiano *October 27, 2026*
+
+>**fix: assegnatario grafico**
+>
+>[968dce40aa8881d](https://github.com/istitutosuperioredisanita/sigla-main/commit/968dce40aa8881d) marco.spasiano *October 27, 2026*
+
+>**fix: assegnatario grafico**
+>
+>[85ec5aab703853d](https://github.com/istitutosuperioredisanita/sigla-main/commit/85ec5aab703853d) marco.spasiano *October 27, 2026*
+
+>**fix: assegnatario grafico**
+>
+>[21778a0e326be10](https://github.com/istitutosuperioredisanita/sigla-main/commit/21778a0e326be10) marco.spasiano *October 27, 2026*
+
+>**fix: assegnatario grafico**
+>
+>[06a0066e9a792a0](https://github.com/istitutosuperioredisanita/sigla-main/commit/06a0066e9a792a0) marco.spasiano *October 27, 2026*
+
+>**Update uo.rst**
+>
+>[b8526dba393b41d](https://github.com/istitutosuperioredisanita/sigla-main/commit/b8526dba393b41d) patriziavillani *October 27, 2026*
+
+>**Update uo.rst**
+>
+>[8b3b801ec3e08cc](https://github.com/istitutosuperioredisanita/sigla-main/commit/8b3b801ec3e08cc) patriziavillani *October 27, 2026*
+
+>**Update index.rst**
+>
+>[8c3237f4a4499de](https://github.com/istitutosuperioredisanita/sigla-main/commit/8c3237f4a4499de) patriziavillani *October 27, 2026*
+
+>**Update index.rst**
+>
+>[7c874786820bbd4](https://github.com/istitutosuperioredisanita/sigla-main/commit/7c874786820bbd4) patriziavillani *October 27, 2026*
+
+>**Aggiornamento infinity span spring 7**
+>
+>[af68d4a80a24912](https://github.com/istitutosuperioredisanita/sigla-main/commit/af68d4a80a24912) csalvio *October 21, 2026*
+
+>**Aggiornamento infinity span spring 7**
+>
+>[548509223c0f3c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/548509223c0f3c9) csalvio *October 21, 2026*
+
+>**Revert aggiornamento infinity span spring 7**
+>
+>[6348b7a31bead1b](https://github.com/istitutosuperioredisanita/sigla-main/commit/6348b7a31bead1b) csalvio *October 21, 2026*
+
+>**Bumped version to 8.0.38**
+>
+>[ef93384068b8934](https://github.com/istitutosuperioredisanita/sigla-main/commit/ef93384068b8934) dirgensa *October 20, 2026*
+
+
 ## Release 8.0.38  -- _October 20, 2026_ 
 **Changes**
 
