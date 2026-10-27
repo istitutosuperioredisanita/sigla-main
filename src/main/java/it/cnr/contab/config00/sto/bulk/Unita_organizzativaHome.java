@@ -639,13 +639,23 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 	}
 
 	public List<Unita_organizzativaBulk> findRegistroInventario(UserContext userContext, Integer esercizio, String cds) throws ComponentException, PersistencyException {
-		CdrBulk cdrEnte = ((CdrHome) getHomeCache().getHome(CdrBulk.class)).findCdrEnte(esercizio);
+        Unita_organizzativa_enteBulk ente = null;
+        try {
+            ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class)
+                    .findAll()
+                    .stream()
+                    .findAny()
+                    .orElseThrow(() -> new ApplicationException("UO Ente non trovata!"));
+        } catch (Throwable e) {
+            throw new ComponentException(e);
+        }
+        ;
 		PersistentHome home = getHomeCache().getHome(Unita_organizzativaBulk.class, "REGISTRO_INVENTARIO",  "fetchUnitaPadre");
 		SQLBuilder sqlBuilder = home.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO");
-		sqlBuilder.addTableToHeader("CDR");
-		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "CDR.CD_UNITA_ORGANIZZATIVA");
-		sqlBuilder.addSQLJoin("CDR.CD_CENTRO_RESPONSABILITA", "COALESCE(V_CONS_REGISTRO_INVENTARIO.CD_UTILIZZATORE_CDR, '" + cdrEnte.getCd_centro_responsabilita() + "')");
+		sqlBuilder.addTableToHeader("ANAGRAFICO");
+		sqlBuilder.addSQLJoin("ANAGRAFICO.CD_ANAG", "V_CONS_REGISTRO_INVENTARIO.CD_ASSEGNATARIO");
+		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "COALESCE(ANAGRAFICO.CD_UNITA_ORGANIZZATIVA, '" + ente.getCd_unita_organizzativa() + "')");
 		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.ESERCIZIO", "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO");
 		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		Optional.ofNullable(cds)
