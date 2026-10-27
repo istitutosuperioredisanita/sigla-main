@@ -2,19 +2,66 @@
 Cruscotto
 =========
 
-Il **Cruscotto** riguarda una serie di indici utili all'analisi dell’Attività Amministrativa.
+Il **Cruscotto** riguarda una serie di grafici utili all'analisi dell’Attività Amministrativa.
 L'analisi riguarda indicatori di efficienza, sostenibilità e resilienza per la valutazione complessiva delle performance gestionali dell'amministrazione.
 
-La funzionalità si riferisce ad un anno di gestione specifico, scelto all'accesso e modificabile, e riepiloga in una prima pagina alcuni dati fondamentali che mostrano l'andamento economico generale dell'Ente e alcuni grafici principali dai quali si accede a dati più dettagliati
+La funzionalità si riferisce ad un anno di gestione specifico, scelto all'accesso e modificabile, e riepiloga in prima pagina alcuni dati fondamentali che mostrano l'andamento economico generale dell'Ente attraverso grafici dai quali si accede a dati più dettagliati
 
-La pagina presenta con serie di box riepilogativi e alcuni grafici principali.
+La pagina presenta alcuni grafici principali e una serie di indici riepilogativi.
 
-Box Indici riepilogativi
+
+Grafici principali
+------------------
+
+**Trend Fondi di Funzionamento per UO**
+
+Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Unità Organizzative) rispetto ad un CDS specifico indicato in alto insieme all'anno di gestione utilizzato come riferimento.
+
+Vengono mostrati:
+
+- l'importo assegnato (assegnato per tutti i Progetti di funzionamento) per ogni UO;
+- l'importo stanziato (stanziato di tutti i Progetti di funzionamento) per ogni UO;
+
+relativi al CDS e all'anno specifico indicati nel titolo del grafico.
+
+**Funzionamento per Voce**
+
+Il grafico analizza i Fondi di Funzionamento di tutte le strutture dell'Ente, raggruppati per Voce di Bilancio.
+
+Vengono mostrati:
+
+- l'importo utilizzato (impegnato di tutti i Progetti di funzionamento) relativo a tutte le strutture dell'Ente;
+- l'importo pagato (pagato relativo agli importi impegnati di cui al punto precedente, quindi pagato di tutti i Progetti di funzionamento) per tutti i CDS/UO dell'Ente;
+
+relativi all'anno specifico, indicato nel titolo del grafico.
+
+**Cespiti**
+
+Il grafico analizza il valore dei beni patrimoniali (cespiti) di tutte le strutture dell'Ente, raggruppati per Centro di Spesa (CDS).
+
+Vengono mostrati:
+
+- Numero Beni per ogni CDS;
+- Valore totale dei beni (valore dei Beni, per l'anno di esercizio specifico, considerando il valore iniziale per ogni bene, comprensivo di eventuali variazioni positive/negative) per tutte le strutture dell'Ente;
+
+relativi all'anno specifico, indicato nel titolo del grafico.
+
+
+**Nota importante di configurazione**
+
+Per i primi due grafici di funzionamento sono stati selezionati solo Progetti di Funzionamento (apparteneti ad una specifica Area Progettuale indicata in configurazione).
+Sono state escluse dalla selezione le UO che non hanno fondi di funzionamento (indicate in configurazione).
+Sono stati esclusi alcuni progetti usati come 'Progetti di appoggio' la cui tipologia è indicata in configurazione.
+
+Per il Terzo grafico relativo ai cespiti sono stati considerati i beni del Registro inventario per l'anno selezionato
+
+
+Box Indici riepilogativi (da aggiungere dopo sulla prima pagina)
 ------------------------
 
 **Assegnato nell'anno**
 
-Rappresenta l'importo assegnato di tutti i progetti dell'anno di gestione. E' un dato inserito in fase di creazione del singolo progetto che rappresenta fondamentalmente la **spesa** consentita da utilizzare per il progetto.
+Rappresenta l'importo assegnato di tutti i progetti dell'anno di gestione. E' un dato inserito in fase di creazione del singolo progetto che rappresenta fondamentalmente la **spesa** consentita da utilizzare per ogni progetto.
 Viene mostrata, sotto l'importo assegnato, una percentuale di scostamento positivo o negativo rispetto allo stesso dato dell'anno precedente.
 
 **Utilizzato nell'anno**
@@ -37,30 +84,5 @@ Rappresenta, per un CDS specifico (indicato nel grafico che segue: Trend Fondi d
 
 Rappresenta la somma delle Fatture elettroniche pagate nell'anno alla data di consultazione.
 Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture elettroniche ricevute (non si tiene conto di eventuali documenti generici, compensi o altre tipologie di documenti passivi).
-
-Grafici principali
-------------------
-
-**Trend Fondi di Funzionamento per UO**
-
-Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Unità Organizzative) rispetto ad un CDS specifico indicato in alto insieme all'anno di gestione utilizzato come riferimento.
-
-Vengono mostrati:
-
-- l'importo assegnato (assegnato per tutti i Progetti di funzionamento) per ogni UO;
-- l'importo stanziato (stanziato di tutti i Progetti di funzionamento) per ogni UO;
-
-relativi al CDS e all'anno specifico.
-
-**Progetti per Voce**
-
-Il grafico analizza i Fondi di Funzionamento di tutte le strutture dell'Ente, raggruppati per Voce di Bilancio.
-
-Vengono mostrati:
-
-- l'importo stanziato (stanziato di tutti i Progetti di funzionamento) relativo a tutte le strutture dell'Ente;
-- l'importo utilizzato (impegnato di tutti i Progetti di funzionamento) relativo a tutte le strutture dell'Ente;
-
-relativi al CDS e all'anno specifico.
 
 
