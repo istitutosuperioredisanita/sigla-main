@@ -105,16 +105,6 @@ public class Categoria_gruppo_inventHome extends BulkHome {
     }
 
 	public List<Categoria_gruppo_inventBulk> findRegistroInventario(UserContext userContext, Integer esercizio, String cdUnitaOrganizzativa) throws ComponentException, PersistencyException {
-        Unita_organizzativa_enteBulk ente = null;
-        try {
-            ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class)
-                    .findAll()
-                    .stream()
-                    .findAny()
-                    .orElseThrow(() -> new ApplicationException("UO Ente non trovata!"));
-        } catch (Throwable e) {
-            throw new ComponentException(e);
-        };
 		setColumnMap("REGISTRO_INVENTARIO");
 		SQLBuilder sqlBuilder = super.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO");
@@ -122,6 +112,16 @@ public class Categoria_gruppo_inventHome extends BulkHome {
 		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		Optional.ofNullable(cdUnitaOrganizzativa)
 				.ifPresent(s -> {
+                    Unita_organizzativa_enteBulk ente = null;
+                    try {
+                        ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class)
+                                .findAll()
+                                .stream()
+                                .findAny()
+                                .orElseThrow(() -> new ApplicationException("UO Ente non trovata!"));
+                    } catch (Throwable e) {
+                        throw new RuntimeException(e);
+                    };
 					sqlBuilder.addTableToHeader("ANAGRAFICO");
 					sqlBuilder.addTableToHeader("V_UNITA_ORGANIZZATIVA_VALIDA");
                     sqlBuilder.addSQLJoin("ANAGRAFICO.CD_ANAG", "V_CONS_REGISTRO_INVENTARIO.CD_ASSEGNATARIO");
