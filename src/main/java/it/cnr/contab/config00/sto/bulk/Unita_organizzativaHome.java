@@ -648,8 +648,7 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
                     .orElseThrow(() -> new ApplicationException("UO Ente non trovata!"));
         } catch (Throwable e) {
             throw new ComponentException(e);
-        }
-        ;
+        };
 		PersistentHome home = getHomeCache().getHome(Unita_organizzativaBulk.class, "REGISTRO_INVENTARIO",  "fetchUnitaPadre");
 		SQLBuilder sqlBuilder = home.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO");
