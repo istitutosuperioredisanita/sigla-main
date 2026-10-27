@@ -1245,10 +1245,12 @@ public class ProgettoHome extends BulkHome {
 
 		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,Optional.ofNullable(voce).isPresent() ? "FONDI_FUNZIONAMENTO_VOCE" : "FONDI_FUNZIONAMENTO");
 		SQLBuilder sqlBuilder = progettohome.createSQLBuilder();
-		sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
 		sqlBuilder.addTableToHeader("PROGETTO_OTHER_FIELD");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
-		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
+		if (Optional.ofNullable(voce).isEmpty()) {
+			sqlBuilder.addTableToHeader("V_SALDI_PIANO_ECONOM_PROGETTO");
+			sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.ESERCIZIO", "V_SALDI_PIANO_ECONOM_PROGETTO.ESERCIZIO");
+			sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "V_SALDI_PIANO_ECONOM_PROGETTO.PG_PROGETTO");
+		}
 		sqlBuilder.addSQLJoin("V_PROGETTO_PADRE.PG_PROGETTO", "PROGETTO_OTHER_FIELD.PG_PROGETTO");
 
 		sqlBuilder.addSQLClause(FindClause.AND, "V_PROGETTO_PADRE.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
