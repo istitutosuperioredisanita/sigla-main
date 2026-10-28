@@ -116,9 +116,7 @@ Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture el
 --------------------------------------------------------------------------------------------------------------
 
 .. toctree::
-
 .. only:: html
-
 .. toctree::
    :numbered:
    :caption: Indice dei contenuti
