@@ -56,6 +56,18 @@ Sono stati esclusi alcuni progetti usati come 'Progetti di appoggio' la cui tipo
 Per il Terzo grafico relativo ai cespiti sono stati considerati i beni del Registro inventario per l'anno selezionato
 
 
+--------------------------------------------------------------------------------------------------------------
+
+.. toctree::
+  
+   fondi_funzionamento/index
+   indice_tempestivita
+   acquisti_per_struttura
+   acquisti_per_stato
+   cespiti_per_struttura
+
+----------------------------------------------------------------------------------------------------------------
+
 Box Indici riepilogativi (da aggiungere dopo sulla prima pagina)
 ------------------------
 
@@ -84,5 +96,3 @@ Rappresenta, per un CDS specifico (indicato nel grafico che segue: Trend Fondi d
 
 Rappresenta la somma delle Fatture elettroniche pagate nell'anno alla data di consultazione.
 Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture elettroniche ricevute (non si tiene conto di eventuali documenti generici, compensi o altre tipologie di documenti passivi).
-
-
