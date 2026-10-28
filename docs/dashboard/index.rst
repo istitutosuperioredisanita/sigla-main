@@ -56,22 +56,13 @@ Sono stati esclusi alcuni progetti usati come 'Progetti di appoggio' la cui tipo
 Per il Terzo grafico relativo ai cespiti sono stati considerati i beni del Registro inventario per l'anno selezionato
 
 
---------------------------------------------------------------------------------------------------------------
-
-.. toctree::
-  
-   fondi_funzionamento/index
-   indice_tempestivita
-   acquisti_per_struttura
-   acquisti_per_stato
-   cespiti_per_struttura
-
 ----------------------------------------------------------------------------------------------------------------
 
 
 
-Box Indici riepilogativi (da aggiungere dopo sulla prima pagina)
+Box Indici riepilogativi 
 ------------------------
+(da aggiungere sulla prima pagina del dashboard)
 
 **Assegnato nell'anno**
 
@@ -93,6 +84,18 @@ La visualizzazione è riferita all'esercizio in corso (modificabile per consulta
 **UO sotto soglia**
 
 Rappresenta, per un CDS specifico (indicato nel grafico che segue: Trend Fondi di Funzionamento), il numero di UO che hanno utilizzato meno del 30% dei fondi assegnati. Quardando il grafico di dettaglio sottostante si può analizzare la situazione dell'assegnato e utilizzato per ogni UO del CDS specifico (modificabile per analizzare la situazione di tutti i CDS).
+
+
+--------------------------------------------------------------------------------------------------------------
+
+.. toctree::
+  
+   fondi_funzionamento/index
+   indice_tempestivita
+   acquisti_per_struttura
+   acquisti_per_stato
+   cespiti_per_struttura
+
 
 **Fatture pagate nell'anno**
 
