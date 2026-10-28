@@ -18,7 +18,7 @@ Grafici principali
 Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Unità Organizzative) rispetto ad un CDS specifico (preimpostato con il CDS principale, definito in anagrafica come SAC, Sede Amministrazione Centrale) e indicato in alto insieme all'anno di gestione utilizzato come riferimento.
 
 Sull'asse orizzontale sono indicate le Unità Organizzative (Codice UO) e sull'asse verticale gli importi secondo una scala crescente.
-Scorrendo la barra orizzontale posta sotto il grafico è possibile resringere il campo di visualizzazione e quindi aumentare la rrisoluzione grafica dei dati mostrati.
+Scorrendo la barra orizzontale posta sotto il grafico è possibile resringere o allargare il campo di visualizzazione e quindi aumentare o diminuire la risoluzione grafica dei dati mostrati.
 Il CDS e l'anno di riferimento sono indicati nel titolo del grafico.
 
 Navigando sugli istogrammi verticali del grafico, mostrati in ordine di importo decrescente, vengono visualizzate informazioni relative a:
@@ -31,8 +31,7 @@ Navigando sugli istogrammi verticali del grafico, mostrati in ordine di importo 
 
 **Funzionamento per Voce**
 
-**Trend Fondi di Funzionamento per UO**
-Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Cenri di Spesa e Unità Organizzative). I criteri di selezione predefiniti sono gli stessi utilizzati per il grafico precedente:  'Trend dei Fondi di funzionamento per UO', ma in questo caso il raggruppamento dei dati è per Voce di spesa e si riferisce a tutte le stutture dell'Ente.
+Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Cenri di Spesa e Unità Organizzative). I criteri di selezione predefiniti sono gli stessi utilizzati per il grafico precedente:  'Trend Fondi di funzionamento per UO', ma in questo caso il raggruppamento dei dati è per Voce di spesa e si riferisce a tutte le stutture dell'Ente.
 
 Sull'asse orizzontale sono indicati gli importi secondo una scala crescente e sull'asse vericale sono indicate le Voci di spesa.
 
@@ -53,12 +52,19 @@ Il tutto è sempre riferito all'anno di accesso al sistema Sigla, indicato nel t
 
 Il grafico analizza il valore dei beni patrimoniali (cespiti) di tutte le strutture dell'Ente, raggruppati per Centro di Spesa (CDS).
 
-Vengono mostrati:
+Sull'asse orizzontale sono indicati i Centri di Spesa (CDS) dell'Ente, compreso la struttura ENTE (999) che raccoglie eventualmente i beni non assegnati direttamente agli altri CDS.
+Sull'asse verticale vengono mostrati, a sinistra il numero di beni e a destra gli importi, entrambi secondo una scala crescente di valori.
+Scorrendo la barra orizzontale posta sotto il grafico è possibile resringere o allargare il campo di visualizzazione e quindi aumentare o diminuire la risoluzione grafica dei dati mostrati.
+L'anno di riferimento è indicato nel titolo del grafico.
 
-- Numero Beni per ogni CDS;
-- Valore totale dei beni (valore dei Beni, per l'anno di esercizio specifico, considerando il valore iniziale per ogni bene, comprensivo di eventuali variazioni positive/negative) per tutte le strutture dell'Ente;
+Gli Istogrammi verticali mostrano il numero di beni assegnati alle strutture dell'Ente (CDS), mentre la linea orizzontale di diverso colore rappresenta il valore dei cespiti per ogni CDS.
 
-relativi all'anno specifico, indicato nel titolo del grafico.
+Quindi i dati oggetto di analisi sono:
+
+* Numero Beni per ogni CDS;
+* Valore totale dei beni (valore dei Beni, per l'anno di esercizio specifico, considerando il valore iniziale per ogni bene comprensivo di eventuali variazioni di valore positivo/negativo) per il livello più alto dell'organigramma dell'Ente (CDS);
+
+I beni presi in considerazione sono quelli indicati nell'inventario per l'anno di riferimento, escludendo quindi beni scaricati o trasferiti, anche totalmente ammortizzati, e considerando come valore del bene quello iniziale comprensivo di variazioni positive e negative verificatesi sempre nell'anno di riferimento.
 
 
 **Nota importante di configurazione**
