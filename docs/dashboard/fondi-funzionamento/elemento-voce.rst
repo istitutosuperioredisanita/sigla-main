@@ -5,14 +5,19 @@ Il grafico di riepilogo (mostrato nel cruscotto iniziale) riporta gli importi ut
 I dati sono già selezionati per mostrare solo Fondi di Funziamento (Area specifica ed esclusione UO e Progetti da configurazione). Il primo grafico si riferisce alle spese per Voci di tutti i CDS/UO dell'Ente.
 
 Dal grafico di riepilogo della Dashboard, (oppure dal menù Statistiche/Progetti/Trend Fondi di Funzionameento per Voce), si può entrare nel dettaglio di una Voce di spesa. 
+Essendo la lista delle voci abbastanza lunga, è possibile usare la barra a destra del grafico per scorrere in verticale l'elenco delle Voci di spesa.
 
 Dal cruscotto principale (o da menu statistiche) si può cliccare su una voce e vedere per essa la suddivisione degli importi per:
-* Unità Organizzativa - Vengono mostrate le voci di spesa utilizzate dalla UO selezionata: Utilizzato e pagato;
-* Entrando ancora più in dettaglio si possono consultare i Progetti della UO selezionata che ha usato la Voce di spesa;
+* Unità Organizzativa - Vengono mostrate tutte le UO che hanno usato la voce selezionata - Utilizzato e pagato;
+    * Entrando ancora più in dettaglio della Voce/UO si possono consultare i Progetti per la UO/Voce selezionate.
 
-* per Voce di spesa - Vengono mostrate tutte le UO che hanno usato la voce di spesa: Utilizzato e pagato;
-* L'indicazione di uno dei filtri esclude l'altro;
+Entrando da menù statistiche si può subito inserire il filtro per una UO oppure per una voce di spesa o entrambi:
 
-* Dopo aver selezionato la UO oppure la Voce + possibile entrare ancora più nel dettagglio e consultare i Progetti
+* Il filtro per UO consente di vedere tutte le voci di spesa usate dalla UO (sempre per importi Utilizzato e Pagato).
+    * Entrando nel dettaglio della voce si possono consultare i Progetti per UO/Voce.
+* Il filtro per Voce consente di vedere tutte le UO che hanno effettuato quella spesa;
+    * Entrando nel dettaglio della UO si possono consultare i Progetti per Voce/UO.
+* Il filtro per UO e Voce insieme consentirà di arrivare direttamente alla consultazione dei Progetti per UO/Voce.
 
-Siccome la lista delle voci è lunga, è possibile scorrere in verticale l'elenco Voci di spesa 
+
+
