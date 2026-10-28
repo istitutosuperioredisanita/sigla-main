@@ -31,19 +31,23 @@ Navigando sugli istogrammi verticali del grafico, mostrati in ordine di importo 
 
 **Funzionamento per Voce**
 
+**Trend Fondi di Funzionamento per UO**
+Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Cenri di Spesa e Unità Organizzative). I criteri di selezione predefiniti sono gli stessi utilizzati per il grafico precedente:  'Trend dei Fondi di funzionamento per UO', ma in questo caso il raggruppamento dei dati è per Voce di spesa e si riferisce a tutte le stutture dell'Ente.
+
 Sull'asse orizzontale sono indicati gli importi secondo una scala crescente e sull'asse vericale sono indicate le Voci di spesa.
-Il grafico analizza i Fondi di Funzionamento di tutte le strutture dell'Ente, raggruppati per Voce di Bilancio.
 
-Tramite la barra verticale, posta a destra del grafico, è possibile resringere/aumentare il campo di visualizzazione e quindi aumentare/diminuire la quantità dei dati mostrati, oppure è possibile scorrere i dati per moostrare quelli non inclusi nella pagina iniziale.
-............
-Il CDS e l'anno di riferimento sono indicati nel titolo del grafico.
+Tramite la barra verticale, posta a destra del grafico, è possibile resringere/aumentare il campo di visualizzazione e quindi aumentare/diminuire la quantità dei dati mostrati, oppure è possibile scorrere i dati per moostrare quelli non inclusi nella prima pagina del grafico mostrata.
+L'anno di riferimento è indicato nel titolo del grafico.
 
-Vengono mostrati:
+Navigando sugli istogrammi orizzontali del grafico, mostrati in ordine di importo decrescente, vengono visualizzate informazioni relative a:
 
-- l'importo utilizzato (impegnato di tutti i Progetti di funzionamento) relativo a tutte le strutture dell'Ente;
-- l'importo pagato (pagato relativo agli importi impegnati di cui al punto precedente, quindi pagato di tutti i Progetti di funzionamento) per tutti i CDS/UO dell'Ente;
+* Codice e destrizione della voce di spesa
+* Importo utilizzato (impegnato di tutti i Progetti di funzionamento) relativo a tutte le strutture dell'Ente per la voce in esame;
+* Importo pagato (pagato relativo agli importi impegnati di cui al punto precedente) per tutti i CDS/UO dell'Ente;
+* Per l'importo pagato è indicata una percentuale del pagato rispetto all'utilizzato.
 
-relativi all'anno specifico, indicato nel titolo del grafico.
+Il tutto è sempre riferito all'anno di accesso al sistema Sigla, indicato nel titolo del grafico.
+
 
 **Cespiti**
 
