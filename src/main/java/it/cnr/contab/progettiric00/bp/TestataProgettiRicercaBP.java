@@ -568,6 +568,9 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         hash.put(i++, new String[]{"tabTestata", "Testata", "/progettiric00/progetto_ricerca_testata_commesse.jsp"});
 
         if (this.isFlNuovoPdg()) {
+            if (!this.isFlInformix() && !Optional.ofNullable(progetto).map(ProgettoBulk::isAccordoSenzaContributo).orElse(Boolean.FALSE))
+                hash.put(i++, new String[]{"tabDettagliFinanziatori", "Finanziatori", "/progettiric00/progetto_ricerca_dettagliFinanziatori.jsp"});
+
             if (this.isFlPrgPianoEconomico() &&
                     ((progetto.isPianoEconomicoRequired() &&
                             Optional.ofNullable(progetto.getOtherField()).flatMap(el -> Optional.ofNullable(el.getDtInizio())).isPresent() &&
@@ -578,7 +581,6 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
                 hash.put(i++, new String[]{"tabPianoEconomico", "Piano Economico", "/progettiric00/progetto_piano_economico.jsp"});
 
             if (!this.isFlInformix()) {
-                hash.put(i++, new String[]{"tabDettagliFinanziatori", "Finanziatori", "/progettiric00/progetto_ricerca_dettagliFinanziatori.jsp"});
                 hash.put(i++, new String[]{"tabDettagliPartner_esterni", "Partner esterni", "/progettiric00/progetto_ricerca_dettagliPartner_esterni.jsp"});
                 hash.put(i++, new String[]{"tabDettagli", "UO partecipanti", "/progettiric00/progetto_ricerca_dettagli.jsp"});
             }
@@ -1004,11 +1006,13 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
                     throw new ValidationException("Operazione non possibile! Indicare la data di fine progetto!");
             }
 
-            if (!optOtherField.map(Progetto_other_fieldBulk::getImFinanziato).filter(el -> !(el.compareTo(BigDecimal.ZERO) < 0)).isPresent())
-                throw new ValidationException("Operazione non possibile! Indicare l'importo finanziato (valore maggiore o uguale a 0)!");
-            if (!optOtherField.map(Progetto_other_fieldBulk::getImCofinanziato).filter(el -> !(el.compareTo(BigDecimal.ZERO) < 0)).isPresent())
-                throw new ValidationException("Operazione non possibile! Indicare l'importo cofinanziato (valore maggiore o uguale a 0)!");
-
+            //Gli accordi senza contributo aggiuntivo non prevedono importi finanziato/cofinanziato
+            if (!optProgetto.get().isAccordoSenzaContributo()) {
+                if (!optOtherField.map(Progetto_other_fieldBulk::getImFinanziato).filter(el -> !(el.compareTo(BigDecimal.ZERO) < 0)).isPresent())
+                    throw new ValidationException("Operazione non possibile! Indicare l'importo finanziato (valore maggiore o uguale a 0)!");
+                if (!optOtherField.map(Progetto_other_fieldBulk::getImCofinanziato).filter(el -> !(el.compareTo(BigDecimal.ZERO) < 0)).isPresent())
+                    throw new ValidationException("Operazione non possibile! Indicare l'importo cofinanziato (valore maggiore o uguale a 0)!");
+            }
             if (optProgetto.get().isPianoEconomicoRequired()) {
                 if (!isFlPdgCalderone() && !optProgetto.map(ProgettoBulk::getImTotale).filter(el -> el.compareTo(BigDecimal.ZERO) > 0).isPresent())
                     throw new ValidationException("Operazione non possibile! Indicare almeno un importo positivo tra quello finanziato e cofinanziato!");
