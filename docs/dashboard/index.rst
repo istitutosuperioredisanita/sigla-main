@@ -5,7 +5,7 @@ Cruscotto
 Il **Cruscotto** riguarda una serie di grafici utili all'analisi dell’Attività Amministrativa.
 L'analisi riguarda indicatori di efficienza, sostenibilità e resilienza per la valutazione complessiva delle performance gestionali dell'amministrazione.
 
-La funzionalità si riferisce ad un anno di gestione specifico, scelto all'accesso e modificabile, e riepiloga in prima pagina alcuni dati fondamentali che mostrano l'andamento economico generale dell'Ente attraverso grafici dai quali si accede a dati più dettagliati
+La funzionalità si riferisce ad un anno di gestione specifico, scelto all'accesso e modificabile, e riepiloga in prima pagina alcuni dati fondamentali che mostrano l'andamento economico generale dell'Ente attraverso grafici dai quali si accede a dati più dettagliati.
 
 La pagina presenta alcuni grafici principali e una serie di indici riepilogativi.
 
@@ -17,16 +17,26 @@ Grafici principali
 
 Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Unità Organizzative) rispetto ad un CDS specifico (preimpostato con il CDS principale, definito in anagrafica come SAC, Sede Amministrazione Centrale) e indicato in alto insieme all'anno di gestione utilizzato come riferimento.
 
-Vengono mostrati:
+Sull'asse orizzontale sono indicate le Unità Organizzative (Codice UO) e sull'asse verticale gli importi secondo una scala crescente.
+Scorrendo la barra orizzontale posta sotto il grafico è possibile resringere il campo di visualizzazione e quindi aumentare la rrisoluzione grafica dei dati mostrati.
+Il CDS e l'anno di riferimento sono indicati nel titolo del grafico.
 
-- l'importo assegnato (assegnato per tutti i Progetti di funzionamento) per ogni UO;
-- l'importo stanziato (stanziato di tutti i Progetti di funzionamento) per ogni UO;
+Navigando sugli istogrammi verticali del grafico, mostrati in ordine di importo decrescente, vengono visualizzate informazioni relative a:
 
-per il CDS e l'anno indicati nel titolo del grafico.
+* Codice e destrizione della Unitò Organizzativa;
+* Importo assegnato (assegnato per tutti i Progetti di funzionamento) per la UO;
+* Importo stanziato (stanziato di tutti i Progetti di funzionamento) per la UO;
+* Importo residuo da stanziare (differenza tra assegnato e stanziato) per la UO.
+
 
 **Funzionamento per Voce**
 
+Sull'asse orizzontale sono indicati gli importi secondo una scala crescente e sull'asse vericale sono indicate le Voci di spesa.
 Il grafico analizza i Fondi di Funzionamento di tutte le strutture dell'Ente, raggruppati per Voce di Bilancio.
+
+Tramite la barra verticale, posta a destra del grafico, è possibile resringere/aumentare il campo di visualizzazione e quindi aumentare/diminuire la quantità dei dati mostrati, oppure è possibile scorrere i dati per moostrare quelli non inclusi nella pagina iniziale.
+............
+Il CDS e l'anno di riferimento sono indicati nel titolo del grafico.
 
 Vengono mostrati:
 
