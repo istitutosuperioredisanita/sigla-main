@@ -68,6 +68,8 @@ Per il Terzo grafico relativo ai cespiti sono stati considerati i beni del Regis
 
 ----------------------------------------------------------------------------------------------------------------
 
+
+
 Box Indici riepilogativi (da aggiungere dopo sulla prima pagina)
 ------------------------
 
