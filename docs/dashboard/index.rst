@@ -7,6 +7,8 @@ L'analisi riguarda indicatori di efficienza, sostenibilità e resilienza per la 
 
 La funzionalità si riferisce ad un anno di gestione specifico, scelto all'accesso e modificabile, e riepiloga in prima pagina alcuni dati fondamentali che mostrano l'andamento economico generale dell'Ente attraverso grafici dai quali si accede a dati più dettagliati.
 
+E' possibile estrarre sia l'immagine dei grafici mostrati che i dati contenuti in fogli di lavoro excel.
+
 La pagina presenta alcuni grafici principali e una serie di indici riepilogativi.
 
 
@@ -59,12 +61,13 @@ L'anno di riferimento è indicato nel titolo del grafico.
 
 Gli Istogrammi verticali mostrano il numero di beni assegnati alle strutture dell'Ente (CDS), mentre la linea orizzontale di diverso colore rappresenta il valore dei cespiti per ogni CDS.
 
-Quindi i dati oggetto di analisi sono:
+Navigando sugli istogrammi verticali e sulla linea orizzontale del grafico, vengono visualizzate informazioni relative a:
 
+* Codice e descrizione dell CCentro di spesa (CDS);
 * Numero Beni per ogni CDS;
 * Valore totale dei beni (valore dei Beni, per l'anno di esercizio specifico, considerando il valore iniziale per ogni bene comprensivo di eventuali variazioni di valore positivo/negativo) per il livello più alto dell'organigramma dell'Ente (CDS);
 
-I beni presi in considerazione sono quelli indicati nell'inventario per l'anno di riferimento, escludendo quindi beni scaricati o trasferiti, anche totalmente ammortizzati, e considerando come valore del bene quello iniziale comprensivo di variazioni positive e negative verificatesi sempre nell'anno di riferimento.
+I beni presi in considerazione sono quelli indicati nel Registro Inventario per l'anno di riferimento, escludendo quindi beni scaricati o trasferiti, anche totalmente ammortizzati, e considerando come valore del bene quello iniziale comprensivo di variazioni positive e negative verificatesi sempre nell'anno di riferimento.
 
 
 **Nota importante di configurazione**
