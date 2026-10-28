@@ -250,6 +250,9 @@ public class CRUDProgettoAction extends CRUDAbstractProgettoAction {
 		if (tipoFinanziamento != null && tipoFinanziamento.isAutofinanziamentoAree()) {
 			progetto.getOtherField().setImFinanziato(null);
 			progetto.getOtherField().setImCofinanziato(null);
+			//gli accordi senza contributo aggiuntivo non prevedono finanziatori: elimino quelli presenti
+			while (!progetto.getDettagliFinanziatori().isEmpty())
+				progetto.removeFromDettagliFinanziatori(0);
 		}
 
 		if (progetto.isPianoEconomicoRequired() && progetto.getOtherField().isStatoIniziale() && progetto.getDettagliPianoEconomicoTotale().isEmpty()) {
