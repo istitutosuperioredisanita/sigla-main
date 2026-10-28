@@ -20,9 +20,11 @@ package it.cnr.contab.docamm00.tabrif.bulk;
 import it.cnr.contab.config00.sto.bulk.CdrBulk;
 import it.cnr.contab.config00.sto.bulk.CdrHome;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
+import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
@@ -103,7 +105,6 @@ public class Categoria_gruppo_inventHome extends BulkHome {
     }
 
 	public List<Categoria_gruppo_inventBulk> findRegistroInventario(UserContext userContext, Integer esercizio, String cdUnitaOrganizzativa) throws ComponentException, PersistencyException {
-		CdrBulk cdrEnte = ((CdrHome) getHomeCache().getHome(CdrBulk.class)).findCdrEnte(esercizio);
 		setColumnMap("REGISTRO_INVENTARIO");
 		SQLBuilder sqlBuilder = super.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO");
@@ -111,10 +112,22 @@ public class Categoria_gruppo_inventHome extends BulkHome {
 		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 		Optional.ofNullable(cdUnitaOrganizzativa)
 				.ifPresent(s -> {
-					sqlBuilder.addTableToHeader("CDR");
+                    Unita_organizzativa_enteBulk ente = null;
+                    try {
+                        ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class)
+                                .findAll()
+                                .stream()
+                                .findAny()
+                                .orElseThrow(() -> new ApplicationException("UO Ente non trovata!"));
+                    } catch (Throwable e) {
+                        throw new RuntimeException(e);
+                    };
 					sqlBuilder.addTableToHeader("V_UNITA_ORGANIZZATIVA_VALIDA");
-					sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "CDR.CD_UNITA_ORGANIZZATIVA");
-					sqlBuilder.addSQLJoin("CDR.CD_CENTRO_RESPONSABILITA", "COALESCE(V_CONS_REGISTRO_INVENTARIO.CD_UTILIZZATORE_CDR, '" + cdrEnte.getCd_centro_responsabilita() + "')");
+                    sqlBuilder.addTableToHeader("TERZO");
+                    sqlBuilder.addTableToHeader("ANAGRAFICO");
+                    sqlBuilder.addSQLJoin("TERZO.CD_TERZO", "V_CONS_REGISTRO_INVENTARIO.CD_ASSEGNATARIO");
+                    sqlBuilder.addSQLJoin("TERZO.CD_ANAG", "ANAGRAFICO.CD_ANAG");
+                    sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "COALESCE(ANAGRAFICO.CD_UNITA_ORGANIZZATIVA, '" + ente.getCd_unita_organizzativa() + "')");
 					sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.ESERCIZIO", "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO");
 					sqlBuilder.addSQLClause(FindClause.AND, "V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, s);
 				});

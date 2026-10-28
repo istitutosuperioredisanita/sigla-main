@@ -32,6 +32,8 @@ import jakarta.persistence.Transient;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Dictionary;
+import java.util.Hashtable;
+
 @JsonInclude(value=Include.NON_NULL)
 public class Elemento_voceBulk extends Elemento_voceBase implements IVoceBilancioBulk {
 	private java.util.Hashtable ti_appartenenzaKeys;
@@ -76,6 +78,7 @@ public class Elemento_voceBulk extends Elemento_voceBase implements IVoceBilanci
 	protected String cd_voce_piano_associato;
 	@Transient private BigDecimal importoFinanziato;
 	@Transient private BigDecimal importoUtilizzato;
+	@Transient private BigDecimal importoPagato;
 
 	/**
 	 * Questo campo viene valorizzato dalla view V_ELEMENTO_VOCE_ASSESTATO
@@ -573,5 +576,13 @@ public class Elemento_voceBulk extends Elemento_voceBase implements IVoceBilanci
 
 	public void setImportoUtilizzato(BigDecimal importoUtilizzato) {
 		this.importoUtilizzato = importoUtilizzato;
+	}
+
+	public BigDecimal getImportoPagato() {
+		return importoPagato;
+	}
+
+	public void setImportoPagato(BigDecimal importoPagato) {
+		this.importoPagato = importoPagato;
 	}
 }
