@@ -52,6 +52,7 @@ Organizzato in questo modo il sistema prevede gestisce e controlla l’aspetto a
    contabilita_economica
    dashboard
    api_rest
+   dashboard/index
    
 .. toctree::
    :hidden:
