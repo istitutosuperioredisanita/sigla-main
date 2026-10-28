@@ -15,14 +15,14 @@ Grafici principali
 
 **Trend Fondi di Funzionamento per UO**
 
-Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Unità Organizzative) rispetto ad un CDS specifico (preimpostato con il CDS principale, definito in anagrafica come SAC, Sede Amministrazione Centrale) indicato in alto insieme all'anno di gestione utilizzato come riferimento.
+Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Unità Organizzative) rispetto ad un CDS specifico (preimpostato con il CDS principale, definito in anagrafica come SAC, Sede Amministrazione Centrale) e indicato in alto insieme all'anno di gestione utilizzato come riferimento.
 
 Vengono mostrati:
 
 - l'importo assegnato (assegnato per tutti i Progetti di funzionamento) per ogni UO;
 - l'importo stanziato (stanziato di tutti i Progetti di funzionamento) per ogni UO;
 
-relativi al CDS e all'anno specifico indicati nel titolo del grafico.
+per il CDS e l'anno indicati nel titolo del grafico.
 
 **Funzionamento per Voce**
 
