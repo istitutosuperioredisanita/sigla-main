@@ -85,6 +85,10 @@ La visualizzazione è riferita all'esercizio in corso (modificabile per consulta
 
 Rappresenta, per un CDS specifico (indicato nel grafico che segue: Trend Fondi di Funzionamento), il numero di UO che hanno utilizzato meno del 30% dei fondi assegnati. Quardando il grafico di dettaglio sottostante si può analizzare la situazione dell'assegnato e utilizzato per ogni UO del CDS specifico (modificabile per analizzare la situazione di tutti i CDS).
 
+**Fatture pagate nell'anno**
+
+Rappresenta la somma delle Fatture elettroniche pagate nell'anno alla data di consultazione.
+Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture elettroniche ricevute (non si tiene conto di eventuali documenti generici, compensi o altre tipologie di documenti passivi).
 
 --------------------------------------------------------------------------------------------------------------
 
@@ -96,8 +100,3 @@ Rappresenta, per un CDS specifico (indicato nel grafico che segue: Trend Fondi d
    acquisti_per_stato
    cespiti_per_struttura
 
-
-**Fatture pagate nell'anno**
-
-Rappresenta la somma delle Fatture elettroniche pagate nell'anno alla data di consultazione.
-Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture elettroniche ricevute (non si tiene conto di eventuali documenti generici, compensi o altre tipologie di documenti passivi).
