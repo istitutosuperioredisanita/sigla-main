@@ -116,15 +116,15 @@ Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture el
 --------------------------------------------------------------------------------------------------------------
 
 .. toctree::
-.. only:: html
-.. toctree::
-   :numbered:
-   :caption: Indice dei contenuti
-   :maxdepth: 2
-
-   fondi_funzionamento/index
-   indice_tempestivita
-   acquisti_per_struttura
-   acquisti_per_stato
-   cespiti_per_struttura
+   .. only:: html
+   .. toctree::
+      :numbered:
+      :caption: Indice dei contenuti
+      :maxdepth: 2
+   
+      fondi_funzionamento/index
+      indice_tempestivita
+      acquisti_per_struttura
+      acquisti_per_stato
+      cespiti_per_struttura
 
