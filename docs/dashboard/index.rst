@@ -114,17 +114,17 @@ Rappresenta la somma delle Fatture elettroniche pagate nell'anno alla data di co
 Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture elettroniche ricevute (non si tiene conto di eventuali documenti generici, compensi o altre tipologie di documenti passivi).
 
 --------------------------------------------------------------------------------------------------------------
+.. only:: html
 
 .. toctree::
-   .. only:: html
-   .. toctree::
-      :numbered:
-      :caption: Indice dei contenuti
-      :maxdepth: 2
-   
-      fondi_funzionamento/index
-      indice_tempestivita
-      acquisti_per_struttura
-      acquisti_per_stato
-      cespiti_per_struttura
+
+   :numbered:
+   :caption: Indice dei contenuti
+   :maxdepth: 2
+
+   fondi-funzionamento/index
+   indice-tempestivita-pagamenti
+   acquisti-struttura
+   acquisti-stato
+   cespiti-struttura
 
