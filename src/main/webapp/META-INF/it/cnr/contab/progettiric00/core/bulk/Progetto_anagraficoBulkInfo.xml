@@ -47,10 +47,22 @@
 	<fieldProperty
 		name="importo"
 		property="importo"
+		readonlyProperty="ROImporto"
 		inputType="TEXT"
 		formatName="it.cnr.contab.util.Importo2CifreFormat"
-		enabledOnEdit="false"
 		label="Importo totale" />
+
+	<fieldProperty
+		name="fl_tempo_ind"
+		property="fl_tempo_ind"
+		label="Tempo Indeterminato"
+		enabledOnSearch="true"
+		enabledOnFreeSearch="true"
+		enabledOnEdit="true"
+		inputType="CHECKBOX"
+		command="doOnChangeFlTempoInd"
+	/>
+
 
 	<form name="readonly">
 		<formFieldProperty
@@ -69,9 +81,10 @@
 			name="dataFine"
 			enabledOnEdit="false"
 			enabledOnView="false"/>
-
-
-
+		<formFieldProperty
+				name="fl_tempo_ind"
+				enabledOnEdit="false"
+				enabledOnView="false"/>
 
 	</form>
 	<form name="default">
@@ -86,7 +99,10 @@
 		<formFieldProperty
 				name="dataFine"
 				enabledOnView="true"/>
-
+		<formFieldProperty
+				name="fl_tempo_ind"
+				enabledOnEdit="true"
+				enabledOnView="true"/>
 
 
 
@@ -105,7 +121,8 @@
 		name="dataFine" />
 	<columnFieldProperty
 		name="importo" />
-
+	<columnFieldProperty
+		name="fl_tempo_ind"/>
 
 	<columnSet
 			name="default">
@@ -117,6 +134,9 @@
 				name="dataInizio" />
 		<columnFieldProperty
 				name="dataFine" />
+		<columnFieldProperty
+				name="fl_tempo_ind"/>
+
 
 	</columnSet>
 
@@ -130,6 +150,9 @@
 				name="dataInizio" />
 		<columnFieldProperty
 				name="dataFine" />
+		<columnFieldProperty
+				name="fl_tempo_ind"/>
+
 
 	</columnSet>
 </bulkInfo>

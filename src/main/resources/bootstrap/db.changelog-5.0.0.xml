@@ -6396,4 +6396,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : RAFFAELE PAGANO - aggiunta colonna FL_APPROVATA su PDG_CONTRATTAZIONE_SPESE -->
     <include file="bootstrap/add_column_fl_approvato_to_pdg_contrattazione_spese.xml"/>
+
+    <!-- Autore : VALENTINA TOMADA - aggiunta colonna FL_TEMPO_IND su ANAGRAFICA_PROGETTO -->
+    <include file="bootstrap/add_fl_tempo_ind_progetto_anagrafico.xml"/>
 </databaseChangeLog>

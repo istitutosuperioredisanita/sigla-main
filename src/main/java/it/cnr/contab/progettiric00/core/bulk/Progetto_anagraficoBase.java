@@ -19,6 +19,8 @@ public class Progetto_anagraficoBase extends Progetto_anagraficoKey implements K
  
 //    IMPORTO DECIMAL(15,2)
 	private java.math.BigDecimal importo;
+
+	private boolean fl_tempo_ind;
  
 	/**
 	 * Created by BulkGenerator 2.0 [07/12/2009]
@@ -99,5 +101,13 @@ public class Progetto_anagraficoBase extends Progetto_anagraficoKey implements K
 	 **/
 	public void setImporto(java.math.BigDecimal importo)  {
 		this.importo=importo;
+	}
+
+	public boolean isFl_tempo_ind() {
+		return fl_tempo_ind;
+	}
+
+	public void setFl_tempo_ind(boolean fl_tempo_ind) {
+		this.fl_tempo_ind = fl_tempo_ind;
 	}
 }
