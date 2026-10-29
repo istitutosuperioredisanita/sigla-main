@@ -105,11 +105,11 @@ public ProgettoRicercaComponent() {
  *
  */
 		public OggettoBulk creaConBulk(UserContext uc, OggettoBulk bulk) throws ComponentException {
-			try{		
+			try{
 				Parametri_enteBulk parEnte = Utility.createParametriEnteComponentSession().getParametriEnte(uc);
 				if (parEnte.getFl_informix())
 					throw new ComponentException("Operazione creazione progetto non possibile in presenza del sistema Informix!");
-				
+
 				Optional<ProgettoBulk> optBulk = Optional.ofNullable(bulk).filter(ProgettoBulk.class::isInstance).map(ProgettoBulk.class::cast);
 				optBulk.filter(el->!Optional.ofNullable(el.getImporto_progetto()).isPresent())
 					.ifPresent(el->el.setImporto_progetto(Optional.ofNullable(el.getProgettopadre())
@@ -142,19 +142,19 @@ public ProgettoRicercaComponent() {
 			((Progetto_uoBulk) ((ProgettoBulk)bulk).getDettagli().get(0)).setPg_progetto(sq_progetto.intValue());
 			for(int i = 0; ((ProgettoBulk)bulk).getDettagliPianoEconomicoTotale().size() > i; i++) {
 			  ((ProgettoBulk)bulk).getDettagliPianoEconomicoTotale().get(i).setPg_progetto(sq_progetto.intValue());
-			}	
+			}
 			for(int i = 0; ((ProgettoBulk)bulk).getDettagliPianoEconomicoAnnoCorrente().size() > i; i++) {
 			  ((ProgettoBulk)bulk).getDettagliPianoEconomicoAnnoCorrente().get(i).setPg_progetto(sq_progetto.intValue());
-			}	
+			}
 			for(int i = 0; ((ProgettoBulk)bulk).getDettagliPianoEconomicoAltriAnni().size() > i; i++) {
 			  ((ProgettoBulk)bulk).getDettagliPianoEconomicoAltriAnni().get(i).setPg_progetto(sq_progetto.intValue());
-			}	
+			}
 			for(int i = 0; ((ProgettoBulk)bulk).getDettagliFinanziatori().size() > i; i++) {
 			  ((Progetto_finanziatoreBulk) ((ProgettoBulk)bulk).getDettagliFinanziatori().get(i)).setPg_progetto(sq_progetto.intValue());
-			}	
+			}
 			for(int i = 0; ((ProgettoBulk)bulk).getDettagliPartner_esterni().size() > i; i++) {
 			  ((Progetto_partner_esternoBulk) ((ProgettoBulk)bulk).getDettagliPartner_esterni().get(i)).setPg_progetto(sq_progetto.intValue());
-			}	                
+			}
 			for(int i = 0; ((ProgettoBulk)bulk).getDettagli().size() > i; i++) {
 			 ((Progetto_uoBulk) ((ProgettoBulk)bulk).getDettagli().get(i)).setPg_progetto(sq_progetto.intValue());
 			}
@@ -169,7 +169,7 @@ public ProgettoRicercaComponent() {
 					((ProgettoBulk)bulk).getOtherField().setPg_progetto(((ProgettoBulk)bulk).getPg_progetto());
 					((ProgettoBulk)bulk).getOtherField().setUser(bulk.getUser());
 					getHome(uc, Progetto_other_fieldBulk.class).insert(((ProgettoBulk)bulk).getOtherField(), uc);
-					
+
 					((ProgettoBulk)bulk).setPg_progetto_other_field(((ProgettoBulk)bulk).getOtherField().getPg_progetto());
 				}
 				if (((ProgettoBulk)bulk).getFl_previsione()) {
@@ -203,7 +203,7 @@ public ProgettoRicercaComponent() {
 
 		public void eliminaConBulk(it.cnr.jada.UserContext aUC, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
 			validaEliminaConBulk(aUC, bulk);
-			try{		
+			try{
 			  /*Se sto cancellando il progetto cancello anche tutti i dettagli */
 			  if (bulk instanceof ProgettoBulk){
 				  ProgettoHome progettohome = (ProgettoHome)getHome(aUC, ProgettoBulk.class,"V_PROGETTO_PADRE");
@@ -228,7 +228,7 @@ public ProgettoRicercaComponent() {
 					  e.setToBeDeleted();
 					  ((ProgettoBulk)bulk).removeFromDettagliPianoEconomicoTotale(((ProgettoBulk)bulk).getDettagliPianoEconomicoTotale().indexOf(e));
 				  });
-				  
+
 				  List<OggettoBulk> dettagliPianoEconomicoAnnoCorrenteCopy = new BulkList<>();
 				  dettagliPianoEconomicoAnnoCorrenteCopy.addAll(((ProgettoBulk)bulk).getDettagliPianoEconomicoAnnoCorrente());
 				  dettagliPianoEconomicoAnnoCorrenteCopy.forEach(e->{
@@ -283,7 +283,7 @@ public ProgettoRicercaComponent() {
 		   		throw ex;
 		   }catch(Throwable throwable){
 		       throw handleException(throwable);
-		   }		  
+		   }
 		}
 
 		public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerInserimento(it.cnr.jada.UserContext aUC, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
@@ -293,7 +293,7 @@ public ProgettoRicercaComponent() {
 				((ProgettoBulk)bulk).setFl_utilizzabile(Boolean.TRUE);
 				((ProgettoBulk)bulk).setFl_piano_triennale(Boolean.TRUE);
 				((ProgettoBulk)bulk).setFl_piano_triennale(Boolean.TRUE);
-				((ProgettoBulk)bulk).setStato("INI");				
+				((ProgettoBulk)bulk).setStato("INI");
 				return super.inizializzaBulkPerInserimento(aUC, bulk);
 		}
 
@@ -333,7 +333,7 @@ public ProgettoRicercaComponent() {
 				   			testata.setPdgModuli(new BulkList(pdgModuliList.stream().filter(el->el.getEsercizio().compareTo(annoFrom.intValue())>=0).collect(Collectors.toList())));
 				   		else
 				   			testata.setPdgModuli(pdgModuliList);
-				   		
+
 						testata.setRimodulazioni(new BulkList<>(find(userContext, ProgettoBulk.class, "findRimodulazioni", testata.getPg_progetto())));
 						testata.setContratti(new BulkList<>(find(userContext, ProgettoBulk.class, "findContratti", testata.getPg_progetto())));
 
@@ -377,40 +377,40 @@ public ProgettoRicercaComponent() {
 		{
 		  for(int i = 0; progetto.getDettagli().size() > i; i++) {
 			if (((Progetto_uoBulk)(progetto.getDettagli().get(i))).getCd_unita_organizzativa().equals(progetto.getCd_unita_organizzativa())){
-			   return false;	
-			}  
-		  }        	
+			   return false;
+			}
+		  }
 		  return true;
 		}
 		private ProgettoBulk intBulk(UserContext userContext, ProgettoBulk bulk, boolean isInformix) throws ComponentException {
 	        if (!isInformix) {
 				if (bulk.getTipo() == null)
 			     throw new it.cnr.jada.comp.ApplicationException("Attenzione: il campo Tipo deve essere valorizzato!");
-				     
+
 				if (!bulk.getFl_previsione() && !bulk.getFl_gestione())
 					throw new it.cnr.jada.comp.ApplicationException("Indicare almeno una fase di operatività del progetto.");
-	
+
 				//se data di fine esiste deve essere minore di data inizio
 				if(bulk.getDt_fine() != null && bulk.getDt_inizio().after( bulk.getDt_fine() ))
 					throw new it.cnr.jada.comp.ApplicationException("Data di fine deve essere maggiore della data di inizio!");
-	
+
 				//se data di fine non esiste non deve esistere data di proroga
 				if(bulk.getDt_fine() == null && bulk.getDt_proroga() != null)
 					throw new it.cnr.jada.comp.ApplicationException("Non può esistere una data di proroga se non si indica una data di fine!");
-	
+
 				//se data di proroga esiste deve essere minore di data fine
 				if(bulk.getDt_proroga() != null && bulk.getDt_fine().after( bulk.getDt_proroga() ))
 					throw new it.cnr.jada.comp.ApplicationException("Data di proroga deve essere maggiore della data di fine!");
-	
+
 				if (bulk.getUnita_organizzativa() == null)
 					throw new it.cnr.jada.comp.ApplicationException("L'unità organizzativa è obbligatoria.");
-	
+
 				if (bulk.getProgettopadre() == null || bulk.getProgettopadre().getPg_progetto() == null)
-					throw new it.cnr.jada.comp.ApplicationException("Attenzione: Per salvare il progetto è necessario inserire il progetto padre!");	                	
-	
+					throw new it.cnr.jada.comp.ApplicationException("Attenzione: Per salvare il progetto è necessario inserire il progetto padre!");
+
 				if (bulk.getProgettopadre() == null)
 				  bulk.setLivello(1);
-	
+
 				//se nei dettagli non è presente la UO cordinatrice viene creata
 				if( cercaUocordinatrice(bulk) ) {
 				   Progetto_uoBulk dett = new Progetto_uoBulk(bulk.getPg_progetto(), bulk.getUnita_organizzativa());
@@ -419,7 +419,7 @@ public ProgettoRicercaComponent() {
 				   bulk.addToDettagli(dett);
 				}
 			}
-				
+
 			if (!bulk.getDettagliPianoEconomicoAnnoCorrente().isEmpty() ||
 				!bulk.getDettagliPianoEconomicoAltriAnni().isEmpty()) {
 				BulkList<Progetto_piano_economicoBulk> allPiano = new BulkList<>();
@@ -435,7 +435,7 @@ public ProgettoRicercaComponent() {
 							throw new ApplicationException("Attenzione: E' stato inserito nel piano economico un anno non compatibile con la durata del progetto!");
 				}
 			}
-					
+
 			//VERIFICO CHE UNA VOCE DI BILANCIO NON SIA ASSOCIATA PIù VOLTE
 			BulkList<Ass_progetto_piaeco_voceBulk> newList = new BulkList<>();
 			bulk.getAllDetailsProgettoPianoEconomico().stream()
@@ -485,8 +485,8 @@ public ProgettoRicercaComponent() {
  * Pre:  Ricerca progetti disponibili
  * Post: Limitazione ai progetti della UO in scrivania tranne per l'ente.
  */
-        
-		public Query select(UserContext userContext,CompoundFindClause clauses,OggettoBulk bulk) throws ComponentException, it.cnr.jada.persistency.PersistencyException 
+
+		public Query select(UserContext userContext,CompoundFindClause clauses,OggettoBulk bulk) throws ComponentException, it.cnr.jada.persistency.PersistencyException
 		{
 		   ProgettoBulk progetto = (ProgettoBulk)bulk;
 		   ProgettoHome progettohome = (ProgettoHome)getHome(userContext, ProgettoBulk.class,"V_PROGETTO_PADRE_OTHER_FIELD");
@@ -650,17 +650,17 @@ public ProgettoRicercaComponent() {
 												  Progetto_sipBulk progettopadre,
 												  CompoundFindClause clause)
 		throws ComponentException {
-				if (clause == null) 
+				if (clause == null)
 				  clause = progettopadre.buildFindClauses(null);
 				SQLBuilder sql = getHome(userContext, progettopadre).createSQLBuilder();
 				sql.addSQLClause("AND", "PG_PROGETTO", SQLBuilder.NOT_EQUALS, ((ProgettoBulk)bulk).getPg_progetto());
 				if (((ProgettoBulk)bulk).getLivello() != null)
 				   sql.addSQLClause("AND", "LIVELLO", SQLBuilder.EQUALS, ((ProgettoBulk) bulk).getLivello() - 1);
-				if (clause != null) 
+				if (clause != null)
 				  sql.addClause(clause);
 				return sql;
 		}
-        
+
 /**
  * Pre:  Ricerca progettopadre
  * Post: Limitazione ai progetti diversi da quello in oggetto.
@@ -670,7 +670,7 @@ public ProgettoRicercaComponent() {
 											  ProgettoBulk progettopadre,
 											  CompoundFindClause clause)
 		throws ComponentException {
-				if (clause == null) 
+				if (clause == null)
 				  clause = progettopadre.buildFindClauses(null);
 				SQLBuilder sql = getHome(userContext, progettopadre,"V_PROGETTO_PADRE").createSQLBuilder();
 				sql.addSQLClause(FindClause.AND, "ESERCIZIO", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
@@ -678,7 +678,7 @@ public ProgettoRicercaComponent() {
 				sql.addSQLClause(FindClause.AND, "TIPO_FASE", SQLBuilder.EQUALS, ProgettoBulk.TIPO_FASE_NON_DEFINITA);
 			    if (((ProgettoBulk)bulk).getLivello() != null)
 				   sql.addSQLClause(FindClause.AND, "LIVELLO", SQLBuilder.EQUALS, ((ProgettoBulk) bulk).getLivello() - 1);
-				if (clause != null) 
+				if (clause != null)
 				  sql.addClause(clause);
 				return sql;
 		}
@@ -757,7 +757,7 @@ public ProgettoRicercaComponent() {
 	private void inizializzaBulkPerStampa(UserContext usercontext, Stampa_anag_progettiVBulk stampa_progettivbulk)
 		throws ComponentException
 	{
-	  String cd_uo = CNRUserContext.getCd_unita_organizzativa(usercontext);	
+	  String cd_uo = CNRUserContext.getCd_unita_organizzativa(usercontext);
 	  try{
 		   stampa_progettivbulk.setLivello(Stampa_anag_progettiVBulk.LIVELLO_PROGETTO_ALL);
 		   Unita_organizzativaHome uoHome = (Unita_organizzativaHome)getHome(usercontext, Unita_organizzativaBulk.class);
@@ -775,20 +775,20 @@ public ProgettoRicercaComponent() {
 		throw new ComponentException(pe);
 		}
 	}
-    
+
 	public OggettoBulk inizializzaBulkPerStampa(UserContext usercontext, OggettoBulk oggettobulk)
 		throws ComponentException
 	{
 		if(oggettobulk instanceof Stampa_progettiVBulk)
 			inizializzaBulkPerStampa(usercontext, (Stampa_progettiVBulk)oggettobulk);
 		if(oggettobulk instanceof Stampa_anag_progettiVBulk)
-			inizializzaBulkPerStampa(usercontext, (Stampa_anag_progettiVBulk)oggettobulk);  
+			inizializzaBulkPerStampa(usercontext, (Stampa_anag_progettiVBulk)oggettobulk);
 		if(oggettobulk instanceof Stampa_elenco_progetti_laBulk)
-			inizializzaBulkPerStampa(usercontext, (Stampa_elenco_progetti_laBulk)oggettobulk);          
+			inizializzaBulkPerStampa(usercontext, (Stampa_elenco_progetti_laBulk)oggettobulk);
 		return oggettobulk;
 	}
 
-		public OggettoBulk inizializzaBulkPerStampa(UserContext usercontext,Stampa_elenco_progetti_laBulk stampa) throws ComponentException { 
+		public OggettoBulk inizializzaBulkPerStampa(UserContext usercontext,Stampa_elenco_progetti_laBulk stampa) throws ComponentException {
 		//	Imposta l'Esercizio come quello di scrivania
 			stampa.setEsercizio(CNRUserContext.getEsercizio(usercontext));
 		return stampa;
@@ -797,25 +797,25 @@ public ProgettoRicercaComponent() {
  * stampaConBulk method comment.
  */
 public it.cnr.jada.bulk.OggettoBulk stampaConBulk(it.cnr.jada.UserContext aUC, it.cnr.jada.bulk.OggettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
-	if (bulk instanceof Stampa_elenco_progetti_laBulk) 
+	if (bulk instanceof Stampa_elenco_progetti_laBulk)
 			return  stampaConBulk(aUC,(Stampa_elenco_progetti_laBulk)bulk);
 	return bulk;
-}        
-        
-/** 
+}
+
+/**
   *  Tutti i controlli superati.
   *    PreCondition:
-  *      E' stata generata la richiesta di creazione di un Iteratore su tutti i nodi figli 
+  *      E' stata generata la richiesta di creazione di un Iteratore su tutti i nodi figli
   *		di un Progetto.
   *    PostCondition:
   *		 Viene restituito il RemoteIterator con l'elenco degli eventuali nodi figli del progetto di riferimento.
-  *      
+  *
   *
   * @param userContext lo <code>UserContext</code> che ha generato la richiesta
   * @param bulk <code>OggettoBulk</code> il progetto di riferimento.
   *
   * @return remoteIterator <code>RemoteIterator</code> l'Iterator creato.
-**/ 
+**/
 public RemoteIterator getChildren(UserContext userContext, OggettoBulk bulk) throws ComponentException{
 
 	ProgettoBulk ubi = (ProgettoBulk)bulk;
@@ -826,20 +826,20 @@ public RemoteIterator getChildren(UserContext userContext, OggettoBulk bulk) thr
 		ProgettoBulk.class,
 		null);
 }
-/** 
+/**
   *  Tutti i controlli superati.
   *    PreCondition:
-  *      E' stata generata la richiesta di creazione di un Iteratore su tutti i nodi figli 
+  *      E' stata generata la richiesta di creazione di un Iteratore su tutti i nodi figli
   *		di un Progetto.
   *    PostCondition:
   *		 Viene restituito il RemoteIterator con l'elenco degli eventuali nodi figli del progetto di riferimento.
-  *      
+  *
   *
   * @param userContext lo <code>UserContext</code> che ha generato la richiesta
   * @param bulk <code>OggettoBulk</code> il progetto di riferimento.
   *
   * @return remoteIterator <code>RemoteIterator</code> l'Iterator creato.
-**/ 
+**/
 public RemoteIterator getChildrenForSip(UserContext userContext, OggettoBulk bulk) throws ComponentException{
 
 	Progetto_sipBulk ubi = (Progetto_sipBulk)bulk;
@@ -851,20 +851,20 @@ public RemoteIterator getChildrenForSip(UserContext userContext, OggettoBulk bul
 		"tipoFinanziamento");
 }
 
-/** 
+/**
   *  Tutti i controlli superati.
   *    PreCondition:
-  *      E' stata generata la richiesta di creazione di un Iteratore su tutti i nodi figli 
+  *      E' stata generata la richiesta di creazione di un Iteratore su tutti i nodi figli
   *		di un Progetto.
   *    PostCondition:
   *		 Viene restituito il RemoteIterator con l'elenco degli eventuali nodi figli del progetto di riferimento.
-  *      
+  *
   *
   * @param userContext lo <code>UserContext</code> che ha generato la richiesta
   * @param bulk <code>OggettoBulk</code> il progetto di riferimento.
   *
   * @return remoteIterator <code>RemoteIterator</code> l'Iterator creato.
-**/ 
+**/
 public RemoteIterator getChildrenWorkpackage(UserContext userContext, OggettoBulk bulk) throws ComponentException{
 
 	ProgettoBulk ubi = (ProgettoBulk)bulk;
@@ -875,35 +875,35 @@ public RemoteIterator getChildrenWorkpackage(UserContext userContext, OggettoBul
 		ProgettoBulk.class,
 		null);
 }
-/** 
+/**
   *  Tutti i controlli superati.
   *    PreCondition:
   *      E' stata generata la richiesta di ricerca del Progetto padre del Progetto specificato negli argomenti.
   *    PostCondition:
   *		 Viene restituito l'oggetto ProgettoBulk che è il Progetto padre cercato.
-  *      
+  *
   *
   * @param userContext lo <code>UserContext</code> che ha generato la richiesta
   * @param bulk <code>OggettoBulk</code> il Progetto di riferimento.
   *
   * @return bulk <code>OggettoBulk</code> il Progetto cercato.
-**/ 
+**/
 public OggettoBulk getParent(UserContext userContext, OggettoBulk bulk) throws ComponentException{
 
 	try{
 		ProgettoBulk ubi = (ProgettoBulk)bulk;
 		ProgettoHome ubiHome = (ProgettoHome)getHome(userContext,ProgettoBulk.class,"V_PROGETTO_PADRE");
 		return ubiHome.getParent(ubi);
-		
+
 	}catch(PersistencyException | IntrospectionException ex){
 		throw handleException(bulk,ex);
 	}
-}        
-/** 
+}
+/**
   *  Controlla che il progetto sia una foglia.
   *    PreCondition:
   *      E' stata generata la richiesta di controllare se il Progetto specificato è una foglia,
-  *		ossia se il suo livello è l'ultimo, (3). Questo implicherebbe che il Progetto in 
+  *		ossia se il suo livello è l'ultimo, (3). Questo implicherebbe che il Progetto in
   *		questione non ha dei Progetti figli.
   *    PostCondition:
   *		 Viene restituito un valore booleano:
@@ -914,7 +914,7 @@ public OggettoBulk getParent(UserContext userContext, OggettoBulk bulk) throws C
   * @param bulk <code>OggettoBulk</code> il Progetto di riferimento.
   *
   * @return il risultato <code>boolean</code> del controllo.
-**/ 
+**/
 public boolean isLeaf(UserContext userContext, OggettoBulk bulk) throws ComponentException{
 	try {
 		ProgettoBulk ubi = (ProgettoBulk)bulk;
@@ -924,35 +924,35 @@ public boolean isLeaf(UserContext userContext, OggettoBulk bulk) throws Componen
 		throw handleException(e);
 	}
 }
-/** 
+/**
   *  Tutti i controlli superati.
   *    PreCondition:
   *      E' stata generata la richiesta di ricerca del Progetto padre del Progetto specificato negli argomenti.
   *    PostCondition:
   *		 Viene restituito l'oggetto ProgettoBulk che è il Progetto padre cercato.
-  *      
+  *
   *
   * @param userContext lo <code>UserContext</code> che ha generato la richiesta
   * @param bulk <code>OggettoBulk</code> il Progetto di riferimento.
   *
   * @return bulk <code>OggettoBulk</code> il Progetto cercato.
-**/ 
+**/
 public OggettoBulk getParentForSip(UserContext userContext, OggettoBulk bulk) throws ComponentException{
 
 	try{
 		Progetto_sipBulk ubi = (Progetto_sipBulk)bulk;
 		Progetto_sipHome ubiHome = (Progetto_sipHome)getHome(userContext,Progetto_sipBulk.class);
 		return ubiHome.getParent(ubi);
-		
+
 	}catch(PersistencyException | IntrospectionException ex){
 		throw handleException(bulk,ex);
 	}
-}        
-/** 
+}
+/**
   *  Controlla che il progetto sia una foglia.
   *    PreCondition:
   *      E' stata generata la richiesta di controllare se il Progetto specificato è una foglia,
-  *		ossia se il suo livello è l'ultimo, (3). Questo implicherebbe che il Progetto in 
+  *		ossia se il suo livello è l'ultimo, (3). Questo implicherebbe che il Progetto in
   *		questione non ha dei Progetti figli.
   *    PostCondition:
   *		 Viene restituito un valore booleano:
@@ -963,7 +963,7 @@ public OggettoBulk getParentForSip(UserContext userContext, OggettoBulk bulk) th
   * @param bulk <code>OggettoBulk</code> il Progetto di riferimento.
   *
   * @return il risultato <code>boolean</code> del controllo.
-**/ 
+**/
 public boolean isLeafForSip(UserContext userContext, OggettoBulk bulk) throws ComponentException{
 	try {
 		Progetto_sipBulk ubi = (Progetto_sipBulk)bulk;
@@ -984,7 +984,7 @@ public ProgettoBulk cercaWorkpackages(UserContext userContext, ProgettoBulk comm
 		for (Object o : result1) {
 			commessa.addToWorkpackage_collegati((WorkpackageBulk) o);
 		}
-		
+
 		Collection result2 = commessaHome.findWorkpackage_disponibili(userContext,commessa);
 		for (Object o : result2) {
 			WorkpackageBulk wp = (WorkpackageBulk) o;
@@ -1000,22 +1000,22 @@ public ProgettoBulk cercaWorkpackages(UserContext userContext, ProgettoBulk comm
 	catch (Exception e )
 	{
 		throw handleException( e );
-	}	
+	}
 	return commessa;
 
 }
 public String creaCodiceProgetto(UserContext aUC, ProgettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
 	try
 	{
-		LoggableStatement cs = new LoggableStatement(getConnection( aUC ), 
+		LoggableStatement cs = new LoggableStatement(getConnection( aUC ),
 			"{ ? = call " +
-			it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +			
+			it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
 			"creaCodiceProgetto(?, ?, ?)}",false,this.getClass());
 		try
 		{
-			cs.registerOutParameter( 1, java.sql.Types.CHAR );		
+			cs.registerOutParameter( 1, java.sql.Types.CHAR );
 			cs.setString( 2, bulk.getProgettopadre().getCd_progetto());
-			cs.setString( 3, TIPO_PROGETTO );		
+			cs.setString( 3, TIPO_PROGETTO );
 			cs.setObject( 4, bulk.getParametriCds().getProgetto_numeratore_cifre());
 			cs.executeQuery();
 
@@ -1024,7 +1024,7 @@ public String creaCodiceProgetto(UserContext aUC, ProgettoBulk bulk) throws it.c
 		catch ( SQLException e )
 		{
 			throw handleException( e );
-		}	
+		}
 		finally
 		{
 			cs.close();
@@ -1033,14 +1033,14 @@ public String creaCodiceProgetto(UserContext aUC, ProgettoBulk bulk) throws it.c
 	catch ( SQLException e )
 	{
 		throw handleException( e );
-	}	
+	}
 }
 public Parametri_cdsBulk parametriCds(UserContext aUC, ProgettoBulk bulk) throws it.cnr.jada.comp.ComponentException {
 	Parametri_cdsBulk param;
 	try {
-		 param = (Parametri_cdsBulk) getHome( aUC, Parametri_cdsBulk.class ).findByPrimaryKey( 
+		 param = (Parametri_cdsBulk) getHome( aUC, Parametri_cdsBulk.class ).findByPrimaryKey(
 			new Parametri_cdsBulk(
-				((CNRUserContext) aUC).getCd_cds(), 
+				((CNRUserContext) aUC).getCd_cds(),
 				((CNRUserContext) aUC).getEsercizio()));
 	} catch (PersistencyException | ComponentException ex) {
 		throw handleException(ex);
@@ -1053,13 +1053,13 @@ public Parametri_cdsBulk parametriCds(UserContext aUC, ProgettoBulk bulk) throws
 	}
 	return param;
 }
-/** 
+/**
   *  Verifica se è possibile eliminare l'associazione della UO al modulo di attività,
   *  dato che ciò non è possibile se esiste un workpackage associato al modulo di attività
-  *  il cui cdr appartiene alla UO associata al modulo stesso 
+  *  il cui cdr appartiene alla UO associata al modulo stesso
   *
   *    PreCondition:
-  *      E' stata generata la richiesta di cancellare l'associazione fatta durante 
+  *      E' stata generata la richiesta di cancellare l'associazione fatta durante
   *		la sessione di lavoro.
   *    PostCondition:
   *      Verifica se l'associazione può essere eliminata
@@ -1067,10 +1067,10 @@ public Parametri_cdsBulk parametriCds(UserContext aUC, ProgettoBulk bulk) throws
   * @param userContext lo <code>UserContext</code> che ha generato la richiesta
   * @param progetto il <code>ProgettoBulk</code> progetto di ricerca.
   * @param dett <code>OggettoBulk</code> la UO di cui fare la verifica.
-**/ 
+**/
 public void validaCancellazioneUoAssociata(UserContext userContext, ProgettoBulk progetto, OggettoBulk dett) throws ComponentException{
 	Progetto_uoBulk pruo = (Progetto_uoBulk) dett;
-	
+
 	try {
 		BulkHome home = getHome(userContext,it.cnr.contab.config00.latt.bulk.WorkpackageBulk.class,"V_LINEA_ATTIVITA_VALIDA");
 		SQLBuilder sql = home.createSQLBuilder();
@@ -1085,10 +1085,10 @@ public void validaCancellazioneUoAssociata(UserContext userContext, ProgettoBulk
 		if (!ris.isEmpty())
 			throw new ApplicationException("Impossibile cancellare la UO partecipante "+pruo.getCd_unita_organizzativa()+" in quanto\n"+
                "il livello di progetto è collegato al GAE "+((WorkpackageBulk)ris.get(0)).getCd_linea_attivita());
-		
+
 		BulkHome moduloHome = getHome(userContext,Pdg_moduloBulk.class);
 		SQLBuilder sqlModulo = moduloHome.createSQLBuilder();
-		
+
 		sqlModulo.addClause(FindClause.AND, "pg_progetto",SQLBuilder.EQUALS,pruo.getPg_progetto());
 
 		sqlModulo.addTableToHeader("V_STRUTTURA_ORGANIZZATIVA", "STRUTTURA_MODULO");
@@ -1131,24 +1131,24 @@ public SQLBuilder selectProgettoForPrintByClause (UserContext userContext,Oggett
 	if (((CNRUserContext) userContext).getCd_unita_organizzativa().equals( ente.getCd_unita_organizzativa())){
 	  return sql;
 	}else{
-		sql.addSQLExistsClause("AND",progettohome.abilitazioniProgetti(userContext));		
+		sql.addSQLExistsClause("AND",progettohome.abilitazioniProgetti(userContext));
 	}
 	return sql;
-}	
+}
 
 public SQLBuilder selectProgettoForPrintByClause (UserContext userContext,Stampa_elenco_progetti_laBulk stampa,ProgettoBulk progetto,CompoundFindClause clause) throws ComponentException, PersistencyException{
 	return selectProgettoForPrintByClause(userContext,(OggettoBulk)stampa,progetto,clause);
-}	
-	
+}
+
 public SQLBuilder selectProgettoForPrintByClause (UserContext userContext,Stampa_anag_progettiVBulk stampa,ProgettoBulk progetto,CompoundFindClause clause) throws ComponentException, PersistencyException{
 	return selectProgettoForPrintByClause(userContext,(OggettoBulk)stampa,progetto,clause);
-}	
+}
 
 public SQLBuilder selectCommessaForPrintByClause (UserContext userContext,Stampa_elenco_progetti_laBulk stampa,ProgettoBulk commessa,CompoundFindClause clause) throws ComponentException, PersistencyException{
 	ProgettoHome progettohome = (ProgettoHome)getHome(userContext, ProgettoBulk.class,"V_PROGETTO_PADRE");
 	SQLBuilder sql = progettohome.createSQLBuilder();
 	String progetto = stampa.getCdProgettoForPrint();
-	sql.addClause( clause ); 
+	sql.addClause( clause );
 	sql.addClause("AND", "esercizio", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
 	sql.addClause("AND", "tipo_fase", SQLBuilder.EQUALS, ProgettoBulk.TIPO_FASE_NON_DEFINITA);
 	sql.addClause("AND", "livello", SQLBuilder.EQUALS, ProgettoBulk.LIVELLO_PROGETTO_SECONDO);
@@ -1181,16 +1181,16 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 		sql.addParameter(commessa ,java.sql.Types.VARCHAR,0);
 	    return sql;
 	}else{
-		sql.addSQLExistsClause("AND",progettohome.abilitazioniModuli(userContext));		
+		sql.addSQLExistsClause("AND",progettohome.abilitazioniModuli(userContext));
 	}
-	return sql;	
+	return sql;
 }
 
 	private void allineaAbilitazioniTerzoLivello(UserContext uc, ProgettoBulk prg) throws ComponentException, PersistencyException{
 		allineaAbilitazioniTerzoLivello(uc, prg, ProgettoBulk.TIPO_FASE_PREVISIONE, prg.getFl_previsione());
 		allineaAbilitazioniTerzoLivello(uc, prg, ProgettoBulk.TIPO_FASE_GESTIONE, prg.getFl_gestione());
 	}
-	
+
 	private void allineaAbilitazioniTerzoLivello(UserContext uc, ProgettoBulk prg, String pTipoFase, Boolean pFaseAttiva) throws ComponentException, PersistencyException{
 		ProgettoHome homeSip = (ProgettoHome)getHome(uc, ProgettoBulk.class, "PROGETTO_SIP");
 
@@ -1199,7 +1199,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 		sql.addClause(FindClause.AND, "tipo_fase", SQLBuilder.EQUALS, pTipoFase);
 		sql.addClause(FindClause.AND, "progettopadre", SQLBuilder.EQUALS, prg);
 		sql.addClause(FindClause.AND, "livello", SQLBuilder.EQUALS, ProgettoBulk.LIVELLO_PROGETTO_TERZO);
-			
+
 		List<ProgettoBulk> list = homeSip.fetchAll(sql);
 		List<ProgettoBulk> listAbilitate = new ArrayList<>();
 		List<ProgettoBulk> listToDelete = new ArrayList<>();
@@ -1221,14 +1221,14 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 					listToDelete.add(progettoBulk);
 			}
 		}
-		
+
 		for (ProgettoBulk progettoBulk : listToDelete)
 			homeSip.delete(progettoBulk, uc);
 
-		if (pFaseAttiva) { 
+		if (pFaseAttiva) {
 			for(int i = 0; prg.getDettagli().size() > i; i++) {
 				Progetto_uoBulk progettoUO = (Progetto_uoBulk)prg.getDettagli().get(i);
-			
+
 				boolean uoPresente = false;
 				for (ProgettoBulk progettoBulk : listAbilitate) {
 					if (progettoUO.getCd_unita_organizzativa().equals(progettoBulk.getCd_unita_organizzativa()))
@@ -1236,7 +1236,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				}
 				if (!uoPresente) {
 					Integer pgProgetto = null;
-	
+
 					ProgettoHome home = (ProgettoHome)getHome(uc, ProgettoBulk.class);
 					SQLBuilder sqlPgProgetto = home.createSQLBuilder();
 					sqlPgProgetto.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, prg.getEsercizio());
@@ -1247,22 +1247,22 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 					List<ProgettoBulk> listPgProgetto = home.fetchAll(sqlPgProgetto);
 					if (!listPgProgetto.isEmpty())
 						pgProgetto = listPgProgetto.get(0).getPg_progetto();
-	
+
 					ProgettoBulk progettoTerzo = copyProgettoAbilUo(uc, prg, pgProgetto, progettoUO.getUnita_organizzativa());
 					progettoTerzo.setTipo_fase(pTipoFase);
-					progettoTerzo.setTipo_fase_progetto_padre(pTipoFase);					
+					progettoTerzo.setTipo_fase_progetto_padre(pTipoFase);
 					homeSip.insert(progettoTerzo, uc);
 				}
 			}
 		}
-	}	 
-	
+	}
+
 	private ProgettoBulk copyProgettoAbilUo(UserContext uc, ProgettoBulk prgToCopy, Integer pgProgetto, Unita_organizzativaBulk uo) throws ComponentException{
 		ProgettoBulk progettoTerzo = new ProgettoBulk();
 		progettoTerzo.setEsercizio(prgToCopy.getEsercizio());
 		progettoTerzo.setTipo_fase(prgToCopy.getTipo_fase());
 
-		if (pgProgetto!=null) 
+		if (pgProgetto!=null)
 			progettoTerzo.setPg_progetto(pgProgetto);
 		else {
 			java.math.BigDecimal sq_progetto;
@@ -1275,7 +1275,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			progettoTerzo.setCd_progetto(cdProgetto.substring(1, 29));
 		else
 			progettoTerzo.setCd_progetto(cdProgetto.toString());
-		
+
 		progettoTerzo.setProgettopadre(prgToCopy);
 		progettoTerzo.setDs_progetto(prgToCopy.getDs_progetto());
 		progettoTerzo.setUnita_organizzativa(uo);
@@ -1316,7 +1316,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			sqlModuli.addSQLClause(FindClause.OR, "V_SIP_MODULI_VALIDI.FL_CANCELLABILE", SQLBuilder.EQUALS, "N");
 			sqlModuli.addSQLClause(FindClause.OR, "V_SIP_MODULI_VALIDI.FL_TERMINABILE", SQLBuilder.EQUALS, "N");
 			sqlModuli.closeParenthesis();
-			
+
 			SQLBroker brokerUtilizzati = moduli_utilizzatiHome.createBroker(sqlModuli);
 			if (brokerUtilizzati.next())
 				throw new ApplicationException("Impossibile cancellare il progetto. Risulta già essere utilizzato.");
@@ -1328,7 +1328,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
             throw handleException(throwable);
         }
     }
-    
+
     public SQLBuilder selectVoce_piano_economicoByClause(UserContext userContext, Progetto_piano_economicoBulk pianoEconomico, Voce_piano_economico_prgBulk vocePiano, CompoundFindClause clauses) throws ComponentException {
 
     	Voce_piano_economico_prgHome home = (Voce_piano_economico_prgHome)getHome(userContext, Voce_piano_economico_prgBulk.class);
@@ -1347,14 +1347,14 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
     				if (!tipoFin.getFlAssCatVociInd() || !tipoFin.getFlAssCatVociDet() || !tipoFin.getFlAssCatVociAltro()) {
     			    	sql.openParenthesis(FindClause.AND);
     			    	sql.addClause(FindClause.OR, "tipologia", SQLBuilder.ISNULL, null);
-    			    	if (!tipoFin.getFlAssCatVociInd())	
+    			    	if (!tipoFin.getFlAssCatVociInd())
 	    					sql.addClause(FindClause.OR, "tipologia", SQLBuilder.NOT_EQUALS, Voce_piano_economico_prgBulk.PERSONALE_INDET);
 	    				if (!tipoFin.getFlAssCatVociDet())
 	    					sql.addClause(FindClause.OR, "tipologia", SQLBuilder.NOT_EQUALS, Voce_piano_economico_prgBulk.PERSONALE_DETER);
 	    				if (!tipoFin.getFlAssCatVociAltro())
 	    					sql.addClause(FindClause.OR, "tipologia", SQLBuilder.NOT_EQUALS, Voce_piano_economico_prgBulk.PERSONALE_OTHER);
 	    		    	sql.closeParenthesis();
-    				}   				
+    				}
     			});
 
     	sql.addClause(clauses);
@@ -1365,13 +1365,13 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 
     public void validaCancellazionePianoEconomicoAssociato(UserContext userContext, ProgettoBulk progetto, OggettoBulk dett) throws ComponentException{
     	Progetto_piano_economicoBulk piano = (Progetto_piano_economicoBulk) dett;
-    	
+
     	try {
     		Pdg_Modulo_EntrateHome homeEtr = (Pdg_Modulo_EntrateHome)getHome(userContext,Pdg_Modulo_EntrateBulk.class);
     		SQLBuilder sqlEtr = homeEtr.createSQLBuilder();
-    		sqlEtr.addClause(FindClause.AND,"pg_progetto",SQLBuilder.EQUALS,piano.getPg_progetto());    		
+    		sqlEtr.addClause(FindClause.AND,"pg_progetto",SQLBuilder.EQUALS,piano.getPg_progetto());
     		sqlEtr.addClause(FindClause.AND,"cd_unita_piano",SQLBuilder.EQUALS,piano.getVoce_piano_economico().getCd_unita_organizzativa());
-    		sqlEtr.addClause(FindClause.AND,"cd_voce_piano",SQLBuilder.EQUALS,piano.getVoce_piano_economico().getCd_voce_piano());    		
+    		sqlEtr.addClause(FindClause.AND,"cd_voce_piano",SQLBuilder.EQUALS,piano.getVoce_piano_economico().getCd_voce_piano());
 
     		List resultEtr = homeEtr.fetchAll(sqlEtr);
     		if (!resultEtr.isEmpty())
@@ -1393,17 +1393,17 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
     		throw handleException(e);
     	}
     }
-    
+
     public void validaCancellazioneVoceAssociataPianoEconomico(UserContext userContext, Progetto_piano_economicoBulk prgPiano, OggettoBulk dett) throws ComponentException{
     	Ass_progetto_piaeco_voceBulk assVoce = (Ass_progetto_piaeco_voceBulk) dett;
-    	
+
     	try {
     		if (Elemento_voceHome.GESTIONE_ENTRATE.equals(assVoce.getTi_gestione())) {
     			Pdg_modulo_entrate_gestHome homeEtr = (Pdg_modulo_entrate_gestHome)getHome(userContext,Pdg_modulo_entrate_gestBulk.class);
     			SQLBuilder sqlEtr = homeEtr.createSQLBuilder();
-    			sqlEtr.addClause(FindClause.AND,"pg_progetto",SQLBuilder.EQUALS,assVoce.getPg_progetto());    		
+    			sqlEtr.addClause(FindClause.AND,"pg_progetto",SQLBuilder.EQUALS,assVoce.getPg_progetto());
     			sqlEtr.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,assVoce.getEsercizio_voce());
-    			sqlEtr.addClause(FindClause.AND,"ti_appartenenza",SQLBuilder.EQUALS,assVoce.getTi_appartenenza());    		
+    			sqlEtr.addClause(FindClause.AND,"ti_appartenenza",SQLBuilder.EQUALS,assVoce.getTi_appartenenza());
     			sqlEtr.addClause(FindClause.AND,"ti_gestione",SQLBuilder.EQUALS,assVoce.getTi_gestione());
     			sqlEtr.addClause(FindClause.AND,"cd_elemento_voce",SQLBuilder.EQUALS,assVoce.getCd_elemento_voce());
 
@@ -1412,12 +1412,12 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 	    			throw new ApplicationException("Impossibile cancellare la voce "+assVoce.getCd_elemento_voce()+" in quanto "+
 	                   "già collegata al progetto nel preventivo gestionale -  parte entrate.");
     		} else {
-    			
+
         		Pdg_modulo_spese_gestHome homeSpe = (Pdg_modulo_spese_gestHome)getHome(userContext,Pdg_modulo_spese_gestBulk.class);
         		SQLBuilder sqlSpe = homeSpe.createSQLBuilder();
-        		sqlSpe.addClause(FindClause.AND,"pg_progetto",SQLBuilder.EQUALS,assVoce.getPg_progetto());    		
+        		sqlSpe.addClause(FindClause.AND,"pg_progetto",SQLBuilder.EQUALS,assVoce.getPg_progetto());
     			sqlSpe.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,assVoce.getEsercizio_voce());
-    			sqlSpe.addClause(FindClause.AND,"ti_appartenenza",SQLBuilder.EQUALS,assVoce.getTi_appartenenza());    		
+    			sqlSpe.addClause(FindClause.AND,"ti_appartenenza",SQLBuilder.EQUALS,assVoce.getTi_appartenenza());
     			sqlSpe.addClause(FindClause.AND,"ti_gestione",SQLBuilder.EQUALS,assVoce.getTi_gestione());
     			sqlSpe.addClause(FindClause.AND,"cd_elemento_voce",SQLBuilder.EQUALS,assVoce.getCd_elemento_voce());
 
@@ -1425,7 +1425,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
         		if (!resultSpe.isEmpty())
         			throw new ApplicationException("Impossibile cancellare la voce "+assVoce.getCd_elemento_voce()+" in quanto "+
                        "già collegata al progetto nel preventivo gestionale -  parte spese.");
-    			
+
         		Pdg_variazione_riga_gestHome homeVarSpe = (Pdg_variazione_riga_gestHome)getHome(userContext,Pdg_variazione_riga_gestBulk.class);
         		SQLBuilder sqlVarSpe = homeVarSpe.createSQLBuilder();
         		sqlVarSpe.addTableToHeader("V_LINEA_ATTIVITA_VALIDA");
@@ -1441,7 +1441,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 
         		sqlVarSpe.addSQLClause(FindClause.AND,"V_LINEA_ATTIVITA_VALIDA.PG_PROGETTO",SQLBuilder.EQUALS,assVoce.getPg_progetto());
         		sqlVarSpe.addClause(FindClause.AND,"esercizio",SQLBuilder.EQUALS,assVoce.getEsercizio_voce());
-        		sqlVarSpe.addClause(FindClause.AND,"ti_appartenenza",SQLBuilder.EQUALS,assVoce.getTi_appartenenza());    		
+        		sqlVarSpe.addClause(FindClause.AND,"ti_appartenenza",SQLBuilder.EQUALS,assVoce.getTi_appartenenza());
         		sqlVarSpe.addClause(FindClause.AND,"ti_gestione",SQLBuilder.EQUALS,assVoce.getTi_gestione());
         		sqlVarSpe.addClause(FindClause.AND,"cd_elemento_voce",SQLBuilder.EQUALS,assVoce.getCd_elemento_voce());
 
@@ -1454,13 +1454,13 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
     	} catch(Throwable e) {
     		throw handleException(e);
     	}
-    }    
-	
+    }
+
     public SQLBuilder selectElemento_voceByClause (UserContext userContext, Ass_progetto_piaeco_voceBulk assPiaecoVoce, Elemento_voceBulk voce, CompoundFindClause clauses) throws ComponentException {
     	try {
 	    	Elemento_voceHome home = (Elemento_voceHome)getHome(userContext, Elemento_voceBulk.class);
 	    	SQLBuilder sql = home.createSQLBuilder();
-	        
+
     		if (!Optional.of(assPiaecoVoce.getEsercizio_piano()).isPresent())
     			sql.addSQLClause(FindClause.AND, "1!=1"); //Condizione inserita per far fallire la query
     		else {
@@ -1471,7 +1471,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 						.orElse(6);
 
 				sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, assPiaecoVoce.getEsercizio_piano());
-		
+
 		    	sql.openParenthesis(FindClause.AND);
 		    	sql.openParenthesis(FindClause.OR);
 		    	sql.addClause(FindClause.AND, "cd_unita_piano", SQLBuilder.ISNULL, null);
@@ -1482,16 +1482,16 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 		    	sql.addClause(FindClause.AND, "cd_voce_piano", SQLBuilder.EQUALS, assPiaecoVoce.getCd_voce_piano());
 		    	sql.closeParenthesis();
 		    	sql.closeParenthesis();
-		
+
 		    	sql.addClause(clauses);
-		    	
+
 		        sql.addTableToHeader("PARAMETRI_LIVELLI");
 		        sql.addSQLJoin("ELEMENTO_VOCE.ESERCIZIO", "PARAMETRI_LIVELLI.ESERCIZIO");
-		
+
 		        sql.addTableToHeader("V_CLASSIFICAZIONE_VOCI_ALL", "CLASS_VOCE");
 		        sql.addSQLJoin("ELEMENTO_VOCE.ID_CLASSIFICAZIONE", "CLASS_VOCE.ID_CLASSIFICAZIONE");
 		        sql.addSQLJoin("CLASS_VOCE.NR_LIVELLO", "PARAMETRI_LIVELLI.LIVELLI_SPESA");
-		
+
 				sql.addTableToHeader("V_CLASSIFICAZIONE_VOCI", "CLASS_PARENT");
 				sql.addSQLJoin("CLASS_VOCE.ID_LIV" + livelloPdgDecisSpe,"CLASS_PARENT.ID_CLASSIFICAZIONE");
 				sql.addSQLClause(FindClause.AND, "CLASS_PARENT.NR_LIVELLO", SQLBuilder.EQUALS, livelloPdgDecisSpe);
@@ -1504,7 +1504,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			    sql.addSQLClause(FindClause.AND, "CLASS_PARENT.FL_SOLO_GESTIONE", SQLBuilder.EQUALS,"N");
     		}
 	    	sql.addOrderBy("cd_elemento_voce");
-	
+
 	    	return sql;
     	} catch(Throwable e) {
     		throw handleException(e);
@@ -1548,22 +1548,22 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
     	try {
 	    	Elemento_voceHome elementoVoceHome = (Elemento_voceHome)getHome(userContext, Elemento_voceBulk.class);
 	    	V_classificazione_vociHome classVoceHome = (V_classificazione_vociHome)getHome(userContext, V_classificazione_vociBulk.class);
-	
+
 	    	Pdg_modulo_speseHome pdgModuloHome = (Pdg_modulo_speseHome)getHome(userContext, Pdg_modulo_speseBulk.class);
 			SQLBuilder sqlPdgModulo = pdgModuloHome.createSQLBuilder();
 			sqlPdgModulo.addClause(FindClause.AND,"esercizio",SQLBuilder.GREATER_EQUALS,annoFrom);
 			sqlPdgModulo.addClause(FindClause.AND,"pg_progetto",SQLBuilder.EQUALS,progetto.getPg_progetto());
 			sqlPdgModulo.addClause(FindClause.AND,"cd_unita_piano",SQLBuilder.ISNOTNULL,null);
 			sqlPdgModulo.addClause(FindClause.AND,"cd_voce_piano",SQLBuilder.ISNOTNULL,null);
-	
+
 			List<Pdg_modulo_speseBulk> pdgModuloList = new it.cnr.jada.bulk.BulkList(pdgModuloHome.fetchAll(sqlPdgModulo));
-		
+
 			if (pdgModuloList.size()>0 &&
 				!(progetto.isStatoPrgApprovato() || progetto.isStatoPrgChiuso())) {
 				throw new ApplicationRuntimeException("Attenzione: il progetto risulta già inserito in previsione. "
 						+ "Non è possibile attibuirgli uno stato diverso da Approvato o Chiuso. Operazione non consentita!");
 			}
-				
+
 			pdgModuloList.stream().collect(Collectors.groupingBy(Pdg_modulo_speseBulk::getEsercizio))
 			.entrySet().forEach(entryEse->{
 				try {
@@ -1677,7 +1677,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			sqlPdgModuloGest.addSQLJoin("PDG_MODULO_SPESE.PG_DETTAGLIO", "PDG_MODULO_SPESE_GEST.PG_DETTAGLIO");
 			sqlPdgModuloGest.addSQLClause(FindClause.AND,"PDG_MODULO_SPESE.CD_UNITA_PIANO",SQLBuilder.ISNOTNULL,null);
 			sqlPdgModuloGest.addSQLClause(FindClause.AND,"PDG_MODULO_SPESE.CD_VOCE_PIANO",SQLBuilder.ISNOTNULL,null);
-	
+
 			List<Pdg_modulo_spese_gestBulk> pdgModuloGestList = new it.cnr.jada.bulk.BulkList(pdgModuloGestHome.fetchAll(sqlPdgModuloGest));
 
 			if (pdgModuloGestList.size()>0 &&
@@ -1697,11 +1697,11 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 										.filter(el->el.getEsercizio_piano().equals(entryEse.getKey()))
 										.noneMatch(el->el.getVoce_piano_economico().equalsByPrimaryKey(entryVpe.getKey())))
 									throw new ApplicationRuntimeException("Attenzione: non risulta presente la voce del piano economico "+
-											entryEse.getKey()+"/"+entryVpe.getKey().getCd_voce_piano()+" già inserita in previsione (Es: " + 
+											entryEse.getKey()+"/"+entryVpe.getKey().getCd_voce_piano()+" già inserita in previsione (Es: " +
 											entryEse.getKey()+" - Cdr: "+
 											entryVpe.getValue().stream().map(Pdg_modulo_spese_gestBulk::getCd_centro_responsabilita).findFirst().orElse(null)+
 											"). Operazione non consentita!");
-		
+
 								BulkList<Elemento_voceBulk> vociAssociatePianoEconomico = new BulkList<>();
 								progetto.getAllDetailsProgettoPianoEconomico().stream()
 										.filter(el->el.getEsercizio_piano().equals(entryEse.getKey()))
@@ -1710,17 +1710,17 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 										.forEach(el->vociAssociatePianoEconomico.addAll(el.stream()
 												.map(Ass_progetto_piaeco_voceBulk::getElemento_voce)
 												.collect(Collectors.toList())));
-		
+
 								entryVpe.getValue().stream().collect(Collectors.groupingBy(Pdg_modulo_spese_gestBulk::getElemento_voce))
 									.keySet().stream().filter(voce->!vociAssociatePianoEconomico.contains(voce)).findFirst().ifPresent(voce->{
 										throw new ApplicationRuntimeException("Attenzione: non risulta presente per la voce del piano economico "+
-											entryEse.getKey()+"/"+entryVpe.getKey().getCd_voce_piano()+" l'associazione alla voce di bilancio già inserita in previsione (Es: " + 
+											entryEse.getKey()+"/"+entryVpe.getKey().getCd_voce_piano()+" l'associazione alla voce di bilancio già inserita in previsione (Es: " +
 											entryEse.getKey()+" - Cdr: "+
 											entryVpe.getValue().stream().map(Pdg_modulo_spese_gestBulk::getCd_centro_responsabilita).findFirst().orElse(null)+
 											" - Voce: "+voce.getEsercizio()+"/"+voce.getTi_gestione()+"/"+voce.getCd_elemento_voce()+
 											"). Operazione non consentita!");
 									});
-							});	
+							});
 					}
 				} catch(Throwable e) {
 		    		throw new ApplicationRuntimeException(e);
@@ -1737,27 +1737,27 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
  			if (!progetto.isPianoEconomicoRequired()) {
 	            BigDecimal assestatoEtrPrg = Utility.createSaldoComponentSession()
 	            		.getStanziamentoAssestatoProgetto(userContext, progetto, Elemento_voceHome.GESTIONE_ENTRATE, null, null, null);
-		
+
 	            if (Optional.ofNullable(progetto.getImFinanziato()).orElse(BigDecimal.ZERO).compareTo(assestatoEtrPrg)<0)
 	   	           	throw new ApplicationRuntimeException("Attenzione: l'importo finanziato ("+
              		   	   new it.cnr.contab.util.EuroFormat().format(progetto.getImFinanziato()) +
                              ") non può essere inferiore all'assestato entrate totale (" +
                              new it.cnr.contab.util.EuroFormat().format(assestatoEtrPrg) + ")!");
-	
+
 	            BigDecimal assestatoSpePrgFes = Utility.createSaldoComponentSession()
-	            		.getStanziamentoAssestatoProgetto(userContext, progetto, Elemento_voceHome.GESTIONE_SPESE, null, null, 
+	            		.getStanziamentoAssestatoProgetto(userContext, progetto, Elemento_voceHome.GESTIONE_SPESE, null, null,
 	            				Progetto_other_fieldHome.TI_IMPORTO_FINANZIATO);
-	
+
 	            if (Optional.ofNullable(progetto.getImFinanziato()).orElse(BigDecimal.ZERO).compareTo(assestatoSpePrgFes)<0)
 	   	           	throw new ApplicationRuntimeException("Attenzione: l'importo finanziato ("+
              		   	    new it.cnr.contab.util.EuroFormat().format(progetto.getImFinanziato()) +
                             ") non può essere inferiore all'assestato totale spese 'fonti esterne' (" +
                             new it.cnr.contab.util.EuroFormat().format(assestatoSpePrgFes) + ")!");
-	
+
 	            BigDecimal assestatoSpePrgReimpiego = Utility.createSaldoComponentSession()
-	            		.getStanziamentoAssestatoProgetto(userContext, progetto, Elemento_voceHome.GESTIONE_SPESE, null, null, 
+	            		.getStanziamentoAssestatoProgetto(userContext, progetto, Elemento_voceHome.GESTIONE_SPESE, null, null,
 	            				Progetto_other_fieldHome.TI_IMPORTO_COFINANZIATO);
-	
+
 	            if (Optional.ofNullable(progetto.getImCofinanziato()).orElse(BigDecimal.ZERO).compareTo(assestatoSpePrgReimpiego)<0)
 	   	           	throw new ApplicationRuntimeException("Attenzione: l'importo cofinanziato ("+
              		   	   new it.cnr.contab.util.EuroFormat().format(progetto.getImCofinanziato()) +
@@ -1784,8 +1784,8 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 		                        cercaSaldoPianoEconomico(ppe, "S");
 			    	} catch(Throwable e) {
 			    		throw new ApplicationRuntimeException(e);
-			    	}    			
-		
+			    	}
+
 		   			if (Optional.ofNullable(saldo).isPresent()) {
 		   				if (Optional.ofNullable(rimodulazione).isPresent()) {
 		   					Optional.ofNullable(ppe.getIm_spesa_finanziato())
@@ -1795,7 +1795,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				   	    				" non può essere inferiore all'utilizzato spese 'fonti esterne' ("+
 				   	    				new EuroFormat().format(saldo.getUtilizzatoAssestatoFinanziamento())+")!");
 							});
-				
+
 				   			Optional.ofNullable(ppe.getIm_spesa_cofinanziato())
 			   					.filter(el->el.subtract(saldo.getUtilizzatoAssestatoCofinanziamento()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
 				   	           	throw new ApplicationRuntimeException("Attenzione: l'importo cofinanziato rimodulato del piano economico "+
@@ -1819,7 +1819,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 				   	    				" non può essere inferiore all'assestato spese 'fonti esterne' ("+
 				   	    				new EuroFormat().format(saldo.getAssestatoFinanziamento())+")!");
 							});
-				
+
 				   			Optional.ofNullable(saldo.getImportoCofin())
 			   					.filter(el->el.subtract(saldo.getAssestatoCofinanziamento()).compareTo(BigDecimal.ZERO)<0).ifPresent(el->{
 				   	           	throw new ApplicationRuntimeException("Attenzione: l'importo cofinanziato del piano economico "+
@@ -1830,19 +1830,19 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			   			}
 		   			}
 		   		});
-				
+
 				Voce_f_saldi_cdr_lineaHome saldiHome = (Voce_f_saldi_cdr_lineaHome)getHome(userContext, Voce_f_saldi_cdr_lineaBulk.class);
 				SQLBuilder sqlSaldi = saldiHome.createSQLBuilder();
 				sqlSaldi.addSQLClause(FindClause.AND,"VOCE_F_SALDI_CDR_LINEA.ESERCIZIO",SQLBuilder.GREATER_EQUALS,annoFrom);
 				sqlSaldi.addSQLClause(FindClause.AND,"VOCE_F_SALDI_CDR_LINEA.ESERCIZIO_RES",SQLBuilder.GREATER_EQUALS,annoFrom);
 				sqlSaldi.addSQLClause(FindClause.AND,"VOCE_F_SALDI_CDR_LINEA.TI_GESTIONE",SQLBuilder.GREATER_EQUALS,Elemento_voceHome.GESTIONE_SPESE);
-				
+
 				sqlSaldi.addTableToHeader("V_LINEA_ATTIVITA_VALIDA");
 				sqlSaldi.addSQLJoin("V_LINEA_ATTIVITA_VALIDA.ESERCIZIO","VOCE_F_SALDI_CDR_LINEA.ESERCIZIO");
 				sqlSaldi.addSQLJoin("V_LINEA_ATTIVITA_VALIDA.CD_CENTRO_RESPONSABILITA","VOCE_F_SALDI_CDR_LINEA.CD_CENTRO_RESPONSABILITA");
 				sqlSaldi.addSQLJoin("V_LINEA_ATTIVITA_VALIDA.CD_LINEA_ATTIVITA","VOCE_F_SALDI_CDR_LINEA.CD_LINEA_ATTIVITA");
 				sqlSaldi.addSQLClause(FindClause.AND,"V_LINEA_ATTIVITA_VALIDA.PG_PROGETTO",SQLBuilder.EQUALS,progetto.getPg_progetto());
-	
+
 				sqlSaldi.openParenthesis(FindClause.AND);
 
 				sqlSaldi.addSQLClause(FindClause.OR,"VOCE_F_SALDI_CDR_LINEA.IM_STANZ_INIZIALE_A1",SQLBuilder.GREATER,BigDecimal.ZERO);
@@ -1864,12 +1864,12 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 					sqlExist.addSQLJoin("ASS_PROGETTO_PIAECO_VOCE.ESERCIZIO_PIANO","VOCE_F_SALDI_CDR_LINEA.ESERCIZIO_RES");
 					sqlExist.addSQLJoin("ASS_PROGETTO_PIAECO_VOCE.TI_APPARTENENZA","VOCE_F_SALDI_CDR_LINEA.TI_APPARTENENZA");
 					sqlExist.addSQLJoin("ASS_PROGETTO_PIAECO_VOCE.TI_GESTIONE","VOCE_F_SALDI_CDR_LINEA.TI_GESTIONE");
-					sqlExist.addSQLJoin("ASS_PROGETTO_PIAECO_VOCE.CD_ELEMENTO_VOCE","VOCE_F_SALDI_CDR_LINEA.CD_ELEMENTO_VOCE");			
+					sqlExist.addSQLJoin("ASS_PROGETTO_PIAECO_VOCE.CD_ELEMENTO_VOCE","VOCE_F_SALDI_CDR_LINEA.CD_ELEMENTO_VOCE");
 
 					sqlSaldi.addSQLNotExistsClause(FindClause.AND, sqlExist);
 				}
 
-	
+
 				List<Voce_f_saldi_cdr_lineaBulk> saldiList = new it.cnr.jada.bulk.BulkList(saldiHome.fetchAll(sqlSaldi));
 				Integer currentAnno = saldiList.stream().mapToInt(Voce_f_saldi_cdr_lineaKey::getEsercizio).max().orElse(999);
 
@@ -1922,7 +1922,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 					).findFirst().ifPresent(el->{
 		               	throw new ApplicationRuntimeException("Attenzione: risulta movimentata, per il progetto e per l'anno contabile "
 		               			+el.getEsercizio_res()+", la voce di bilancio " + el.getTi_gestione()+"/"+el.getCd_voce()+
-		               			" che non risulta associata a nessun piano economico per l'anno "+el.getEsercizio_res()+". " + 
+		               			" che non risulta associata a nessun piano economico per l'anno "+el.getEsercizio_res()+". " +
 		               			"Operazione non consentita!");
 					});
 			}
@@ -1939,14 +1939,14 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 	    				.orElseThrow(()-> new ApplicationException("Attenzione: Sul progetto risulta caricato un piano economico. "
 	    						+ "Il tipo finanziamento selezionato non è coerente! Selezionare un tipo di finanziamento che non prevede "
 	    						+ "piano economico o eliminare il piano economico stesso!"));
-	    		
+
 	    		if (optTipoFin.filter(el->!el.getFlAssCatVociDet()).isPresent() &&
 						progetto.getAllDetailsProgettoPianoEconomico().stream()
 								.anyMatch(el2->el2.getVoce_piano_economico().isVocePersonaleTempoDeterminato()))
 	    			throw new ApplicationException("Attenzione: Il tipo finanziamento selezionato non è coerente! "
 	    					  		+ "Sul progetto risulta caricata una voce di piano economico di tipo 'Personale a Tempo Determinato' "
 	    					  		+ "non consentita dal tipo di finanziamento.");
-	
+
 	    		if (optTipoFin.filter(el->!el.getFlAssCatVociInd()).isPresent() &&
 						progetto.getAllDetailsProgettoPianoEconomico().stream()
 								.anyMatch(el2->el2.getVoce_piano_economico().isVocePersonaleTempoIndeterminato()))
@@ -1968,23 +1968,23 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			   	if (Optional.ofNullable(annoFrom).isPresent())
 			       	sqlPdgModuloEntrate.addClause(FindClause.AND, "esercizio", SQLBuilder.GREATER_EQUALS, progetto.getEsercizio());
 		        sqlPdgModuloEntrate.addClause(FindClause.AND, "pg_progetto", SQLBuilder.EQUALS, progetto.getPg_progetto());
-		        
+
 	    		if (sqlPdgModuloEntrate.executeExistsQuery(getConnection(userContext)))
 	    			throw new ApplicationException("Attenzione: Il tipo finanziamento selezionato non è coerente! "
 	    								+ "Sul progetto risultano caricati dati previsionali di entrata non previsti "
 	    								+ "dal tipo di finanziamento.");
-	
+
 		    	Pdg_modulo_speseHome pdgModuloSpeseHome = (Pdg_modulo_speseHome)getHome(userContext, Pdg_modulo_speseBulk.class);
 		        SQLBuilder sqlPdgModuloSpese = pdgModuloSpeseHome.createSQLBuilder();
 			   	if (Optional.ofNullable(annoFrom).isPresent())
 			       	sqlPdgModuloSpese.addClause(FindClause.AND, "esercizio", SQLBuilder.GREATER_EQUALS, progetto.getEsercizio());
 		        sqlPdgModuloSpese.addClause(FindClause.AND, "pg_progetto", SQLBuilder.EQUALS, progetto.getPg_progetto());
-		        
+
 		        sqlPdgModuloSpese.openParenthesis(FindClause.AND);
 		        sqlPdgModuloSpese.addClause(FindClause.OR, "im_spese_gest_decentrata_int", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);
 		        sqlPdgModuloSpese.addClause(FindClause.OR, "im_spese_gest_decentrata_est", SQLBuilder.NOT_EQUALS, BigDecimal.ZERO);
 		        sqlPdgModuloSpese.closeParenthesis();
-		        	
+
 	    		if (sqlPdgModuloSpese.executeExistsQuery(getConnection(userContext)))
 	    			throw new ApplicationException("Attenzione: Il tipo finanziamento selezionato non è coerente! "
 	    								+ "Sul progetto risultano caricati dati previsionali di spesa con importi decentrati valorizzati "
@@ -2058,7 +2058,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 							}
 						});
 			}
-	        	
+
 		} catch(Throwable e) {
 			throw handleException(e);
 		}
@@ -2104,14 +2104,15 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			if (sqlPdgModulo.executeExistsQuery(getConnection(userContext)))
 				findClause.addClause(FindClause.AND, "flPrevEntSpesa", SQLBuilder.EQUALS, Boolean.TRUE);
 
-			// nei filtri mettiamo in OR anche CODICE_AUT_AREE per includerlo sempre tra i risultati.
-			if (findClause.getClauses().hasMoreElements()) {
-				CompoundFindClause autAreeClause = new CompoundFindClause();
-				autAreeClause.addClause(FindClause.AND, "codice", SQLBuilder.EQUALS, TipoFinanziamentoBulk.CODICE_AUT_AREE);
-
-				CompoundFindClause combinedClause = CompoundFindClause.or(findClause, autAreeClause);
-				sql.addClause(combinedClause);
-			}
+			// in creazione: OR su CODICE_AUT_AREE per includerlo sempre tra i risultati;
+            if (progetto.isToBeCreated()) {
+                CompoundFindClause autAreeClause = new CompoundFindClause();
+                autAreeClause.addClause(FindClause.AND, "codice", SQLBuilder.EQUALS, TipoFinanziamentoBulk.CODICE_AUT_AREE);
+                CompoundFindClause combinedClause = CompoundFindClause.or(findClause, autAreeClause);
+                sql.addClause(combinedClause);
+            } else{
+                sql.addClause(findClause);
+            }
 
 			sql.addClause(clauses);
 			return sql;
@@ -2120,7 +2121,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			throw handleException(e);
 		}
 	}
-    
+
     private void validaDatePianoEconomico(UserContext userContext, ProgettoBulk progetto) throws ComponentException {
 		try{
 			Optional<Progetto_other_fieldBulk> optOtherField = Optional.ofNullable(progetto.getOtherField());
@@ -2132,7 +2133,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			if (ctrlDtInizio)
 	    		Optional.ofNullable(progetto.getOtherField().getDtInizio())
 	    				.orElseThrow(()-> new ApplicationException("Attenzione: E' necessario indicare la data di inizio del progetto!"));
-			
+
 			if (ctrlDtFine)
 				Optional.ofNullable(progetto.getOtherField().getDtFineEffettiva())
     				.orElseThrow(()-> new ApplicationException("Attenzione: E' necessario indicare la data di fine del progetto!"));
@@ -2201,7 +2202,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 									+ "Non è possibile attribuirgli uno stato diverso da Approvato o Chiuso. Operazione non consentita!");
 		    			});
 		    		}
-		    		
+
 		    		if (ctrlDtInizio)
 			    		listObb.stream()
 							   .filter(obb->obb.getIm_obbligazione().compareTo(BigDecimal.ZERO)>0)
@@ -2233,9 +2234,9 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 									+ new java.text.SimpleDateFormat("dd/MM/yyyy").format(progetto.getOtherField().getDtFineEffettiva())
 									+ " del progetto stesso! Aggiornare la data di fine/proroga del progetto con un valore coerente!");
 		 			    });
-			    		
+
 			    		List<Obbligazione_modificaBulk> listObblMod = (List<Obbligazione_modificaBulk>)prgHome.findModifichePositiveObbligazioniAssociate(progetto.getPg_progetto(), annoFrom.intValue());
-			    		
+
 			    		listObblMod.stream()
 		    			   .max(Comparator.comparing(Obbligazione_modificaBase::getDt_modifica))
 			 			   .filter(el->el.getDt_modifica().after(progetto.getOtherField().getDtFineEffettiva()))
@@ -2247,14 +2248,14 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 									+ " superiore alla data di fine/proroga "
 									+ new java.text.SimpleDateFormat("dd/MM/yyyy").format(progetto.getOtherField().getDtFineEffettiva())
 									+ " del progetto stesso! Aggiornare la data di fine/proroga del progetto con un valore coerente!");
-		 			    });			    		
+		 			    });
 		    		}
 		    	}
 
 	    		//cerco la movimentazione di variazioni di bilancio di competenza
 	    		{
 		    		List<Pdg_variazioneBulk> listVar = (List<Pdg_variazioneBulk>)prgHome.findVariazioniCompetenzaAssociate(progetto.getPg_progetto(), annoFrom.intValue());
-	
+
 		    		if (ctrlStato) {
 		    			listVar.stream().filter(el->!el.isAnnullata()).filter(el->!el.isRespinta()).findFirst().ifPresent(el->{
 							throw new ApplicationRuntimeException("Attenzione: risultano già variazioni di competenza emesse sul progetto. ("
@@ -2307,7 +2308,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 	    		//cerco la data min e max di variazioni di bilancio di residuo
 	    		{
 		    		List<Var_stanz_resBulk> listVar = (List<Var_stanz_resBulk>)prgHome.findVariazioniResiduoAssociate(progetto.getPg_progetto(),annoFrom.intValue());
-	
+
 		    		if (ctrlStato) {
 		    			listVar.stream().filter(el->!el.isAnnullata()).filter(el->!el.isRespinta()).findFirst().ifPresent(el->{
 							throw new ApplicationRuntimeException("Attenzione: risultano già variazioni di residuo emesse sul progetto ("
@@ -2315,7 +2316,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 									+ "Non è possibile attribuirgli uno stato diverso da Approvato o Chiuso. Operazione non consentita!");
 		    			});
 		    		}
-					
+
 		    		if (ctrlDtInizio)
 						listVar.stream()
   						       .filter(el->!el.isAnnullata())
@@ -2357,7 +2358,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 											+ " del progetto stesso! Aggiornare la data di fine/proroga del progetto con un valore coerente!");
 		 			   });
 	    		}
-	    	}	    					   
+	    	}
 		} catch(Throwable e) {
 			throw handleException(e);
 		}
@@ -2373,7 +2374,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 	}
     /**
      * Ritorna il pdg_esercizio del CDR di primo livello del CDR collegato
-     * 
+     *
      * @param userContext userContext
      * @return Pdg_esercizioBulk Pdg_esercizioBulk
      * @throws ComponentException exception

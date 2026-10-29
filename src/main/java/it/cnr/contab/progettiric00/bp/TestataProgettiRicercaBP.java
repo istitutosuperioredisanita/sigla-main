@@ -568,19 +568,21 @@ public class TestataProgettiRicercaBP extends AllegatiProgettoCRUDBP<AllegatoGen
         hash.put(i++, new String[]{"tabTestata", "Testata", "/progettiric00/progetto_ricerca_testata_commesse.jsp"});
 
         if (this.isFlNuovoPdg()) {
-            if (!this.isFlInformix() && !Optional.ofNullable(progetto).map(ProgettoBulk::isAccordoSenzaContributo).orElse(Boolean.FALSE))
-                hash.put(i++, new String[]{"tabDettagliFinanziatori", "Finanziatori", "/progettiric00/progetto_ricerca_dettagliFinanziatori.jsp"});
 
             if (this.isFlPrgPianoEconomico() &&
-                    ((progetto.isPianoEconomicoRequired() &&
-                            Optional.ofNullable(progetto.getOtherField()).flatMap(el -> Optional.ofNullable(el.getDtInizio())).isPresent() &&
-                            Optional.ofNullable(progetto.getOtherField()).flatMap(el -> Optional.ofNullable(el.getDtFine())).isPresent()) ||
+                    ("tabPianoEconomico".equals(getTab("tab")) ||
+                            (progetto.isPianoEconomicoRequired() &&
+                                    Optional.ofNullable(progetto.getOtherField()).flatMap(el -> Optional.ofNullable(el.getDtInizio())).isPresent() &&
+                                    Optional.ofNullable(progetto.getOtherField()).flatMap(el -> Optional.ofNullable(el.getDtFine())).isPresent()) ||
                             (progetto.isDettagliPianoEconomicoPresenti() &&
                                     Optional.ofNullable(this.getAnnoFromPianoEconomico()).map(el -> el.compareTo(CNRUserContext.getEsercizio(HttpActionContext.getUserContext(session))) <= 0)
                                             .orElse(Boolean.FALSE))))
                 hash.put(i++, new String[]{"tabPianoEconomico", "Piano Economico", "/progettiric00/progetto_piano_economico.jsp"});
 
             if (!this.isFlInformix()) {
+                if(!Optional.ofNullable(progetto).map(ProgettoBulk::isAccordoSenzaContributo).orElse(Boolean.FALSE)){
+                    hash.put(i++, new String[]{"tabDettagliFinanziatori", "Finanziatori", "/progettiric00/progetto_ricerca_dettagliFinanziatori.jsp"});
+                }
                 hash.put(i++, new String[]{"tabDettagliPartner_esterni", "Partner esterni", "/progettiric00/progetto_ricerca_dettagliPartner_esterni.jsp"});
                 hash.put(i++, new String[]{"tabDettagli", "UO partecipanti", "/progettiric00/progetto_ricerca_dettagli.jsp"});
             }
