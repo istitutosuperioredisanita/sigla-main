@@ -924,5 +924,18 @@ public class CRUDProgettoAction extends CRUDAbstractProgettoAction {
 			return riga.getDataFine();
 		return riga.getDataInizio();
 	}
+
+	public Forward doOnChangeFlTempoInd(ActionContext actioncontext) throws FillException {
+		TestataProgettiRicercaBP bp = (TestataProgettiRicercaBP) getBusinessProcess(actioncontext);
+		ProgettoBulk model=(ProgettoBulk)bp.getModel();
+		fillModel(actioncontext);
+		Progetto_anagraficoBulk riga = (Progetto_anagraficoBulk) bp.getCrudProgetto_anagrafico().getModel();
+		if(riga.isFl_tempo_ind()){
+			riga.setImporto(null);
+		}
+		return actioncontext.findDefaultForward();
+	}
+
+
 }
 

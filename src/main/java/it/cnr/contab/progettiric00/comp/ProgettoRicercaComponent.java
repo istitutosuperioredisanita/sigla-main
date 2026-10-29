@@ -2664,7 +2664,12 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 	private void validaRigheDettaglioAnagraficaProgetto(UserContext uc, ProgettoBulk bulk) throws ComponentException {
 
 		if(isProgettoAnagraficaDuplicato(bulk)){
-			throw new ApplicationException("Ci sono anagrafiche duplicate");
+			if(isAnagraficaDoppiaSenzaDataFine(bulk)) {
+				throw new ApplicationException("Attenzione per inserire una doppia anagrafica è necessario impostare la data fine");
+			}
+			if(isAnagraficaDoppiaDateSovrapposte(bulk)){
+				throw new ApplicationException("Attenzione ci sono anagrafiche ripetute con date sovrapposte");
+			}
 		}
 		for ( Progetto_anagraficoBulk progetto_anagraficoBulk:bulk.getAnagraficheProgetto()){
 			if(progetto_anagraficoBulk.getCdAnag() == null || progetto_anagraficoBulk.getCdAnag()== 0){
@@ -2676,6 +2681,19 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			}
 		}
 	}
+	private boolean isAnagraficaDoppiaSenzaDataFine(ProgettoBulk bulk){
+		if (bulk.getAnagraficheProgetto().stream()
+				.filter(e -> e.getDataFine() == null)
+				.collect(Collectors.groupingBy(
+						Progetto_anagraficoBulk::getCdAnag,
+						Collectors.counting()))
+				.values().stream()
+				.anyMatch(count -> count > 1))  {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+
 	private boolean isProgettoAnagraficaDuplicato(ProgettoBulk bulk){
 		if (bulk.getAnagraficheProgetto().stream()
 				.collect(Collectors.groupingBy(Progetto_anagraficoBulk::getCdAnag, Collectors.counting()))
@@ -2683,6 +2701,51 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
+	}
+
+	private boolean isAnagraficaDoppiaDateSovrapposte(ProgettoBulk bulk){
+
+		Map<Integer, List<Progetto_anagraficoBulk>> perAnagrafica =
+				bulk.getAnagraficheProgetto().stream()
+						.collect(Collectors.groupingBy(Progetto_anagraficoBulk::getCdAnag));
+
+		for (List<Progetto_anagraficoBulk> anagrafiche : perAnagrafica.values()) {
+
+			for (int i = 0; i < anagrafiche.size(); i++) {
+				for (int j = i + 1; j < anagrafiche.size(); j++) {
+
+					Progetto_anagraficoBulk prima = anagrafiche.get(i);
+					Progetto_anagraficoBulk seconda = anagrafiche.get(j);
+
+					if (periodiSovrapposti(prima, seconda)) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return Boolean.FALSE;
+	}
+	private boolean periodiSovrapposti(Progetto_anagraficoBulk prima,
+									   Progetto_anagraficoBulk seconda) {
+		// Entrambe hanno dataFine
+		if (prima.getDataFine() != null && seconda.getDataFine() != null) {
+
+			return prima.getDataInizio().before(seconda.getDataFine())
+					&& seconda.getDataInizio().before(prima.getDataFine());
+		}
+		// Prima senza dataFine
+		if (prima.getDataFine() == null && seconda.getDataFine() != null) {
+			return !prima.getDataInizio().before(seconda.getDataInizio())
+					&& prima.getDataInizio().before(seconda.getDataFine());
+		}
+		// Seconda senza dataFine
+		if (seconda.getDataFine() == null && prima.getDataFine() != null) {
+			return !seconda.getDataInizio().before(prima.getDataInizio())
+					&& seconda.getDataInizio().before(prima.getDataFine());
+		}
+		return Boolean.FALSE;
+
 	}
 	public SQLBuilder selectAnagraficoByClause(UserContext userContext,
 											   Progetto_anagraficoBulk progetto,

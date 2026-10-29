@@ -1423,6 +1423,7 @@ public void setUnita_organizzativa(it.cnr.contab.config00.sto.bulk.Unita_organiz
 
 	public int addToAnagraficheProgetto(Progetto_anagraficoBulk dett){
 		dett.setPgProgetto(this.getPg_progetto());
+		dett.setFl_tempo_ind(true);
 		getAnagraficheProgetto().add(dett);
 		return anagraficheProgetto.size()-1;
 	}
