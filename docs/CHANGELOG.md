@@ -1,3 +1,147 @@
+## Release 8.0.40  -- _October 29, 2026_ 
+**Changes**
+
+>**Corretta la visibilità della tab Piano Economico per evitare pagine vuote dopo l’eliminazione delle righe, ripristinato l’ordine della tab Finanziatori e limitata la selezione di AUT_AREE alla sola fase di creazione, mantenendo i filtri standard in modifica.**
+>
+>[0dbba49dc71ab8a](https://github.com/istitutosuperioredisanita/sigla-main/commit/0dbba49dc71ab8a) davide-mirra *October 29, 2026*
+
+>**fix: dashboard documents**
+>
+>[efb429e5c3a4ffc](https://github.com/istitutosuperioredisanita/sigla-main/commit/efb429e5c3a4ffc) marco.spasiano *October 29, 2026*
+
+>**fix: menu indent**
+>
+>[96a13b7e681c186](https://github.com/istitutosuperioredisanita/sigla-main/commit/96a13b7e681c186) Marco Spasiano *October 29, 2026*
+
+>**Update elemento-voce.rst**
+>
+>[dcadeb6a98da87c](https://github.com/istitutosuperioredisanita/sigla-main/commit/dcadeb6a98da87c) patriziavillani *October 28, 2026*
+
+>**Update elemento-voce.rst**
+>
+>[7da2e1441e7a59d](https://github.com/istitutosuperioredisanita/sigla-main/commit/7da2e1441e7a59d) patriziavillani *October 28, 2026*
+
+>**Update uo.rst**
+>
+>[6a9c22408a77b27](https://github.com/istitutosuperioredisanita/sigla-main/commit/6a9c22408a77b27) patriziavillani *October 28, 2026*
+
+>**Update elemento-voce.rst**
+>
+>[9fe96241020a006](https://github.com/istitutosuperioredisanita/sigla-main/commit/9fe96241020a006) patriziavillani *October 28, 2026*
+
+>**fix Accordi senza contributo aggiuntivo: nascosto tab Finanziatori e saltato controllo importi finanziato/cofinanziato in approvazione**
+>
+>[d2bfff6105b2c92](https://github.com/istitutosuperioredisanita/sigla-main/commit/d2bfff6105b2c92) davide-mirra *October 28, 2026*
+
+>**Update index.rst**
+>
+>[97d6bae1c2b3b94](https://github.com/istitutosuperioredisanita/sigla-main/commit/97d6bae1c2b3b94) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[5a0c86ce7fd0dd7](https://github.com/istitutosuperioredisanita/sigla-main/commit/5a0c86ce7fd0dd7) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[5b41e64a63aac5c](https://github.com/istitutosuperioredisanita/sigla-main/commit/5b41e64a63aac5c) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[b5749c592c90f61](https://github.com/istitutosuperioredisanita/sigla-main/commit/b5749c592c90f61) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[711105d9baa6012](https://github.com/istitutosuperioredisanita/sigla-main/commit/711105d9baa6012) patriziavillani *October 28, 2026*
+
+>**Update elemento-voce.rst**
+>
+>[eafd1c372f8725b](https://github.com/istitutosuperioredisanita/sigla-main/commit/eafd1c372f8725b) patriziavillani *October 28, 2026*
+
+>**Update elemento-voce.rst**
+>
+>[a7dd597afd68005](https://github.com/istitutosuperioredisanita/sigla-main/commit/a7dd597afd68005) patriziavillani *October 28, 2026*
+
+>**Update uo.rst**
+>
+>[813c515539d6230](https://github.com/istitutosuperioredisanita/sigla-main/commit/813c515539d6230) patriziavillani *October 28, 2026*
+
+>**Update uo.rst**
+>
+>[5e77005b411f2b6](https://github.com/istitutosuperioredisanita/sigla-main/commit/5e77005b411f2b6) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[257a460d31f8335](https://github.com/istitutosuperioredisanita/sigla-main/commit/257a460d31f8335) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[818ca14fc1bc1c9](https://github.com/istitutosuperioredisanita/sigla-main/commit/818ca14fc1bc1c9) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[e70fadb88664c00](https://github.com/istitutosuperioredisanita/sigla-main/commit/e70fadb88664c00) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[88a2b94054e7b17](https://github.com/istitutosuperioredisanita/sigla-main/commit/88a2b94054e7b17) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[263adc7f2d76f0d](https://github.com/istitutosuperioredisanita/sigla-main/commit/263adc7f2d76f0d) patriziavillani *October 28, 2026*
+
+>**Update uo.rst**
+>
+>[7cb353d2d0efb7c](https://github.com/istitutosuperioredisanita/sigla-main/commit/7cb353d2d0efb7c) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[3938607c2209bab](https://github.com/istitutosuperioredisanita/sigla-main/commit/3938607c2209bab) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[27b63bc631a06ae](https://github.com/istitutosuperioredisanita/sigla-main/commit/27b63bc631a06ae) patriziavillani *October 28, 2026*
+
+>**Update uo.rst**
+>
+>[2c379d8f78d6652](https://github.com/istitutosuperioredisanita/sigla-main/commit/2c379d8f78d6652) patriziavillani *October 28, 2026*
+
+>**Create ente-finanziatore**
+>
+>[a483b83bee00e5b](https://github.com/istitutosuperioredisanita/sigla-main/commit/a483b83bee00e5b) patriziavillani *October 28, 2026*
+
+>**Update tipo-finanziamento.rst**
+>
+>[df3ca18ddcdeed5](https://github.com/istitutosuperioredisanita/sigla-main/commit/df3ca18ddcdeed5) patriziavillani *October 28, 2026*
+
+>**Create progetti-tipo.rst**
+>
+>[3dbd62f55a12f77](https://github.com/istitutosuperioredisanita/sigla-main/commit/3dbd62f55a12f77) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[d51189f8d4aa4f5](https://github.com/istitutosuperioredisanita/sigla-main/commit/d51189f8d4aa4f5) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[9c98fc36a7c9566](https://github.com/istitutosuperioredisanita/sigla-main/commit/9c98fc36a7c9566) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[aebf3c6aa7dd4c3](https://github.com/istitutosuperioredisanita/sigla-main/commit/aebf3c6aa7dd4c3) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[064077daaa3f035](https://github.com/istitutosuperioredisanita/sigla-main/commit/064077daaa3f035) patriziavillani *October 28, 2026*
+
+>**Update index.rst**
+>
+>[ac226d1f5e7ba49](https://github.com/istitutosuperioredisanita/sigla-main/commit/ac226d1f5e7ba49) patriziavillani *October 28, 2026*
+
+>**Bumped version to 8.0.39**
+>
+>[74d6866d07eb035](https://github.com/istitutosuperioredisanita/sigla-main/commit/74d6866d07eb035) dirgensa *October 27, 2026*
+
+
 ## Release 8.0.39  -- _October 27, 2026_ 
 **Changes**
 
