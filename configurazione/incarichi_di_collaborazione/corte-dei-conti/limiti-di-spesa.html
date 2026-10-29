@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html
+   lang="it"
+  data-content_root="../../../"
+>
+<!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGLA | Limiti di spesa per incarichi di natura occasionale</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css">
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css">
+
+    <!-- Relations -->
+    <link rel="index" title="Indice" href="../../../index.html">
+    <link rel="top" title="SIGLA" href="../../../index.html">
+
+
+    <!-- Favicons -->
+    <link rel="icon" href="../../../_static/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="../../../_static/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="icon" href="../../../_static/favicon.ico">
+    <meta name="theme-color" content="#0066CC">
+
+    <meta name="robots" content="noindex, nofollow">
+</head>
+
+<body class="docs-italia" role="main">
+  <script>
+	if (document.location.href.indexOf('?payload=') >= 0)
+		document.body.className += ' loading';
+</script>
+  <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<header class="container-fluid container-fluid--desktop px-0 header">
+  <nav class="navbar navbar-expand-lg primary-bg-a7 navbar-dark slim-header justify-content-start p-0 pl-lg-4 pr-lg-5">
+    <span class="navbar-brand ml-4">
+      <a class="text-white" href="https://www.iss.it/">
+        <span class="d-none d-sm-inline">Istituto Superiore di Sanità</span> 
+        <span class="d-inline d-sm-none">ISS</span> 
+      </a>
+    </span>
+    <button class="navbar-toggler collapsed text-white px-2 py-0 mr-3"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+    <span class="navbar__icon it-expand my-auto ml-1"></span></button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item px-lg-2 pl-3">
+          <a class="nav-link" target="github" href="https://github.com/istitutosuperioredisanita">GitHub</a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="ml-auto">
+      
+    </div>
+  </nav>
+
+  <div class="row p-4 px-lg-5 m-0 bg-primary--dark align-items-center">
+    <div class="row w-100">
+      <div class="logo--header">
+        <a href="../../../index.html" tabindex="-1" aria-hidden="true" class="d-block"><img src="../../../_static/logo.png"></a>
+      </div>
+      <div class="col pl-3 pl-sm-4">
+        <h1 class="h1--header mb-1">
+          <a href="../../../index.html" class="site-title text-white">
+            SIGLA
+          </a>
+        </h1>
+        <h2 class="text-white mb-0 h2--header">Sistema Informativo Gestione Linee di Attività</h2>
+      </div>
+    </div>
+  </div>
+</header>
+<!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<div class="doc-header container-fluid container-fluid--desktop bg-white">
+  <div class="row py-3 px-4 px-lg-5 align-items-center flex-nowrap justify-content-between">
+    <div class="col-auto d-md-none d-flex align-items-center order-1">
+      <a href="#" class="btn p-2" role="button" id="searchbox-toggle" data-toggle="collapse" data-target="#searchbox" aria-controls="searchbox" aria-expanded="false" aria-label="Toggle searchbox">
+        <span class="docs-icon-search d-inline-block">
+          <span class="sr-only">Cerca nel documento</span>
+        </span>
+      </a>
+    </div>
+    <div class="col-3 d-none d-md-flex pl-0">
+      
+  <div class="w-100" role="search">
+    <form class="mr-md-3" id="rtd-search-form" action="../../../search.html" method="get">
+      <div class="input-group" role="search">
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+        <input type="text" class="p-2 text-grey form-control" style="" required="" id="cerca" name="q" placeholder="Cerca nel documento...">
+				<span class="input-group-append">
+					<button type="submit" class="btn btn-default text-primary px-3 py-2" role="search">
+            <span class="docs-icon-search d-block my-auto">
+							<span class="sr-only">Cerca nel documento</span>
+						</span>
+					</button>
+				</span>
+			</div>
+    </form>
+  </div>
+    </div>
+    <div class="col-auto d-flex align-items-center justify-content-center flex-md-grow-1 order-0 order-md-1 pl-0">
+      
+      <a href="#" role="button" class="btn p-2" data-toggle="modal" data-target="#document-info">
+        <span class="docs-icon-info"></span>
+        <span class="d-none d-md-inline align-middle">Informazioni</span>
+      </a>
+      
+    </div>
+    <div class="col-auto d-none d-md-flex flex-grow-1 align-items-center order-1">
+      <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<div class="document-actions d-flex flex-column flex-md-row justify-content-around w-100 p-2 p-md-0 text-blue">
+  <div class="dropdown p-3 px-md-2 py-md-0 d-flex flex-wrap">
+    <a class="btn dropdown-toggle p-2 flex-grow-1 text-left" href="#" id="downloads-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="docs-icon-download align-middle"></span>
+      <span class="align-middle">Scarica</span>
+    </a>
+    <div class="dropdown-menu w-100" aria-labelledby="downloads-dropdown" aria-disabled="false">
+      <div class="link-list-wrapper">
+        <ul class="link-list">
+          
+          <a class="dropdown-item" href="/sigla-main/Manuale-SIGLA.pdf" download>
+            pdf
+          </a>
+          
+          <li>
+            <span class="divider"></span>
+          </li>
+          
+          
+          <a class="dropdown-item" href="/sigla-main/Manuale-SIGLA.epub" download>
+            epub
+          </a>
+          
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+    
+  
+  <div class="p-3 px-md-2 py-md-0">
+    <a href="https://github.com/istitutosuperioredisanita/sigla-main/blob/master/docs/configurazione/incarichi_di_collaborazione/corte-dei-conti/limiti-di-spesa.rst" role="button" class="btn p-2" aria-disabled="false">
+        <span class="docs-icon-github"></span>
+        <span class="align-middle">Sorgente</span>
+    </a>
+  </div>
+</div>
+    </div>
+    
+    <div class="col-auto pr-0 d-md-none d-flex align-items-center justify-content-end order-1">
+      <a href="#" role="button" class="btn py-2 px-0" data-toggle="modal" data-target="#document-actions">
+        <span class="docs-icon-more"></span>
+        <span class="sr-only">Azioni</span>
+      </a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="progress-container">
+      <div class="progress-bar" id="scrollprogressBar"></div>
+    </div>
+  </div>
+</div>
+
+	<!--
+  Forum Italia comments templates
+-->
+
+<script id="forum-italia-comments" type="text/template">
+  <div class="block-comments" id="accordion-comments-{{ topicId }}" data-topic="{{ topicId }}">
+    <!-- Top header -->
+    <div class="block-comments__header d-flex border-top border-bottom border-width-2 pt-3 pb-3 align-items-center justify-content-between">
+      <h6 class="col-auto text-uppercase mb-0">{{ commentsCount }} Commenti</h6>
+      <button class="col-auto block-comments__toggle-btn rounded-circle border border-medium-blue border-width-2 collapsed" data-toggle="collapse" data-target="#comments-{{ topicId }}" aria-expanded="false">
+        <span class="docs-icon-plus"></span>
+        <span class="docs-icon-minus"></span>
+      </button>
+    </div>
+  </div>
+  <div class="block-comments__body collapse" data-parent="#accordion-comments-{{ topicId }}" id="comments-{{ topicId }}">
+    <!-- Input row -->
+    <div class="d-flex align-items-center mb-4 block-comments__input">
+      <div class="box-comment {{ canPost }}" data-topic="{{ topicId }}"></div>
+    </div>
+    <div class="row">
+      <div class="block-comments__container col">
+        <div class="row mt-4">
+          <ul class="block-comments__list col items mb-0" id="accordion-comment-item" data-topic="{{ topicId }}"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="block-comments__header d-flex border-bottom border-width-2 pt-3 pb-3 mb-4 align-items-center justify-content-end">
+      <button class="col-auto block-comments__toggle-btn rounded-circle border border-medium-blue border-width-2 collapsed" data-toggle="collapse" data-target="#comments-{{ topicId }}" aria-expanded="false">
+        <span class="docs-icon-plus"></span>
+        <span class="docs-icon-minus"></span>
+      </button>
+    </div>
+  </div>
+</script>
+
+<script id="forum-italia__comment" type="text/template">
+  <li id="comment-{{ post.id }}" class="row mb-4 block-comments__item {{ hidden }} {{ isNew }}"
+      data-topic="{{ post.topic_id }}" data-comment="{{ post.id }}">
+    <div id="reply-to-{{ post.id }}" class="block-comments__reply-anchor"></div>
+    <figure class="col-auto mb-0">
+      <img class="block-comments__img rounded-circle" src="{{ avatarUrl }}">
+    </figure>
+    <div class="col block-comments__content">
+      <div class="row align-items-center justify-content-between" id="comment-heading-1">
+        <div class="col-auto">
+          <span class="block-comments__name text-capitalize mb-0">{{ displayName }}</span>
+        </div>
+        <div class="col-auto">
+          <p class="d-inline-block mr-2 block-comments__date mb-0">{{ date }}</p>
+          <button class="block-comments__item-btn" data-toggle="collapse"
+                  data-target="#collapse-{{ post.id }}">
+            <i class="it-collapse"></i>
+            <i class="it-expand"></i>
+          </button>
+        </div>
+      </div>
+      <p class="text-uppercase block-comments__role">{{ publicUserField }}</p>
+      <div class="my-3">{{ replyLink }}</div>
+      <div id="collapse-{{ post.id }}" class="block-comments__paragraph pl-3 border-left collapse show"
+           aria-labelledby="comment-heading-1">
+        {{ post.cooked }}
+      </div>
+      <div class="block-comments__actions mb-2 mt-3">
+        {{ postActions }}
+      </div>
+    </div>
+  </li>
+</script>
+
+<script id="forum-italia__like-button" type="text/template">
+  <small>
+      <button id="{{ buttonAction }}-like-{{ post.id }}" type="button" class="btn btn-primary btn-sm mr-2 px-2 py-1">
+        {{ likeCount }}
+        <i class="it-favorite ml-1 mr-0"></i>
+      </button>
+      {{ likeDone }}
+    </small>
+</script>
+
+<script id="forum-italia__like-info" type="text/template">
+  <small>
+      <span id="like-{{ post.id }}" class="border rounded btn-sm mr-2 px-2 py-1">
+        {{ likeCount }}
+        <i class="it-favorite ml-1 mr-0"></i>
+      </span>
+      {{ likeDone }}
+    </small>
+</script>
+
+<script id="forum-italia__reply-link" type="text/template">
+  <div>
+    <small>In risposta al 
+      <a class="reply-to-post" href="#reply-to-{{ replyDest.id }}">
+        commento di {{ replyDest.name }}
+      </a>
+    </small>
+  </div>
+</script>
+
+<script id="forum__login" type="text/template">
+  <div class="box-comment__user-image box-comment__user-image--anon">
+    <i class="docs-icon-user"></i>
+  </div>
+  <div class="box-comment__login">
+    <div><button class="login-button btn-link p-0 border-0 align-baseline">Accedi al Forum</button> per commentare</div>
+  </div>
+</script>
+
+<script id="forum__comment" type="text/template">
+  <div class="form group">
+    <div class="box-comment__errors-box"></div>
+    <!-- Write -->
+    <div class="d-flex align-items-center mt-4 mb-4 block-comments__input box-comment__write">
+      <figure class="col-auto mb-0">
+        <img class="block-comments__img box-comment__figure rounded-circle" src="">
+          <figcaption>
+            <a href="#logout" class="block-comments__logout-link block-comments__logout-link--visible" data-toggle="modal" data-target="#logout-modal" title="Logout" alt="Logout">Logout</a>
+          </figcaption>
+      </figure>
+      <textarea class="form-control box-comment__body col ml-2 p-2" id="comments-input" placeholder="Scrivi qui un commento. Per formattare il testo puoi usare Markdown. Clicca sul bottone 'suggerimenti' per vedere alcuni esempi." rows="4"></textarea>
+    </div>
+    <!-- Buttons -->
+    <div class="box-comment__buttons">
+      <button type="button" class="btn btn-primary btn-sm box-comment__submit mr-2" disabled="true"><div>invia</div></button>
+      <button type="button" class="btn btn-sm btn-secondary new-comment__suggestions" data-container="body" data-toggle="popover" data-content="html">suggerimenti</button><span class="loading no-bg">&nbsp;</span>
+    </div>
+    <div class="box-comment__required">
+      <span>Scrivi almeno altri <span class="required-chars">20</span> caratteri</span>
+    </div>
+  </div>
+</script>
+
+<script id="forum-italia__missing_permission" type="text/template">
+	<div class="pl-2 block-comments__input missing_permission error error--{{ errorCode }} row">
+		<figure class="col-auto mb-0 mr-2">
+			<img class="block-comments__img new-comment__figure rounded-circle" src="">
+			<figcaption>
+				<a href="#logout" class="block-comments__logout-link block-comments__logout-link--visible" data-toggle="modal" data-target="#logout-modal" title="Logout" alt="Logout">Logout</a>
+			</figcaption>
+		</figure>
+
+		<div class="missing_permission__text col pt-2">{{ errorText }}</div>
+	</div>
+</script>
+
+<script id="forum__logout--modal" type="text/template">
+  <div class="modal logout-modal" id="logout-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Logout</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Dopo il logout non sarà possibile scrivere nuovi commenti. Sicuro di voler procedere?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="logout-modal__submit">Conferma</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="logout-modal__cancel">Annulla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script id="forum-italia__markup__tooltip" type="text/template">
+  <div class="tooltip tooltip--active doc-tooltip box-comment__suggestions__tooltip" role="tooltip">
+    <div class="tooltip__wrap">
+      Markdown per la formattazione del testo:
+      <ul class="tooltip__content">
+        <li><b>Grassetto:</b> __testo__ (o **testo**)</li>
+        <li><i>Corsivo</i>: _testo_</li>
+        <li>Link: [Testo](http://example.com)</li>
+        <li>Citazione: &gt; Testo citazione</li>
+      </ul>
+    </div>
+  </div>
+</script>
+
+<script id="forum-italia__silenced" type="text/template">
+  <div class="error error__silenced">
+    Il tuo account è stato temporaneamente sospeso, scopri di più leggendo
+    <a href="{{ notificationsUrl }}" target="_blank">le tue notifiche</a> su Forum Italia.
+    <br>
+  </div>
+</script>
+
+<script id="forum-italia__closedTopic" type="text/template">
+  <div class="error error__closed">
+    Questa discussione è in sola lettura.
+    <br>
+  </div>
+</script>
+
+<script id="section_navigation__comments" type="text/template">
+  <li class="chapter-nav__item">
+      <span class="it-comment mr-2 align-middle"></span>
+      <a href="#forum-italia-comments-{{ topicId }}" class="chapter-link chapter-link--expand">
+          {{ postsCount }} commenti
+      </a>
+  </li>
+</script>
+
+
+<!--
+  markup_modifier templates
+-->
+
+<script id="markup_modifier__chapter-header" type="text/template"> <div class="chapter-header clearfix row"><div class="title-wrap col"> </script>
+
+<script id="markup_modifier__icon" type="text/template">
+	<span class="docs-icon-{{ i }}"></span>
+</script>
+
+<script id="markup_modifier__note-action" type="text/template">
+	<div class='note-action'>
+		<button type='button' class='note-close-btn'>×</button>
+		<button type='button' class='note-back-btn'><i class='it-arrow-up'></i> {{ text }} </button>
+	</div>
+</script>
+
+<script id="markup_modifier__admonition" type="text/template">
+	<div class='admonition__toggle-wrap'>
+		<button type='button' class='admonition__toggle-btn'>
+			<span class='admonition__toggle-show-more'>
+				{{ more }} <span class='docs-icon-plus'></span>
+			</span>
+			<span class='admonition__toggle-show-less'>
+				{{ less }} <span class='docs-icon-minus'></span>
+			</span>
+		</button>
+	</div>
+</script>
+
+
+<!--
+  glossary_page templates
+-->
+
+<script id="glossary__btn" type="text/template">
+	<button class='glossary-page__btn collapsed border-top border-grey-light border-width-2 pt-3 pb-3' data-toggle='collapse' data-target='#glossary-{{ id }}' aria-expanded='true' aria-controls='glossary-{{ id }}'>
+		<span class='docs-icon-plus mr-3'> </span>
+		<span class='docs-icon-minus mr-3'> </span>
+		{{ text }}
+	</button>
+</script>
+
+<script id="glossary__copy-link" type="text/template">
+	<div class='glossary-page__copy-link-wrap mt-3'>
+		<i class='it-link mr-2 align-middle'></i>
+		<button type='button' class='glossary-page__copy-link'> {{ copyLink }} </button>
+	</div>
+</script>
+
+
+<!--
+  searchbox_collapse templates
+-->
+
+<script id="searchbox-collapse" type="text/template">
+	<div class="row p-2"><div class="col"></div></div>
+</script>
+
+
+<!--
+  section_navigation templates
+-->
+
+<script id="section_navigation__nav" type="text/template">
+    <div class="chapter-nav col-4">
+        <div class="chapter-nav__wrap">
+            <ul class="chapter-nav__list chapter-nav__list--visible">
+                <li class="chapter-nav__item">
+                    <span class="it-more-items mr-2 align-middle"></span>
+                    <button type="button" data-toggle="modal"
+                        class="chapter-link chapter-link--expand">{{ seeActions }}</button>
+                </li>
+            </ul>
+            <div class="{{ modalClass }} chapter-nav__list--hidden" tabindex="-1" role="dialog"
+                     aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="{{ modalContainerClass }}">
+                    <div class="{{ modalContentClass }} chapter-nav__list-wrap">
+                        <div class="chapter-nav__title"> {{ title }} </div>
+                        <ul class="chapter-nav__list">
+                            <li class="chapter-nav__item">
+                                <i class="it-link mr-2 align-middle"></i>
+                                <button type="button" class="chapter-link">{{ copyLink }}</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<!--
+  tooltip templates
+-->
+
+<script id="tooltip__main" type="text/template">
+	<div class='tooltip tooltip--active doc-tooltip' role='tooltip'>
+		<div class='tooltip__wrap'>
+			<button type='button' role='button' class='tooltip__close-btn' data-ref="{{ item.ref }}"></button>
+			<h2 class='tooltip__title'>{{ item.title }}</h2>
+			<p class='tooltip__content'>{{ item.body }}</p>
+		</div>
+	</div>
+</script>
+
+<script id="tooltip__glossary" type="text/template">
+	<div class='tooltip tooltip--active doc-tooltip' role='tooltip'>
+		<div class='tooltip__wrap'>
+			<button type='button' role='button' class='tooltip__close-btn' data-ref="{{ item.ref }}"></button>
+			<h2 class='tooltip__title'>{{ item.title }}</h2>
+			<p class='tooltip__content'>{{ trimmedSummary }}</p> {{ btnToGlossary }}
+		</div>
+	</div>
+</script>
+
+<script id="tooltip__note" type="text/template">
+	<div class='tooltip tooltip--active doc-tooltip doc-tooltip--note' role='tooltip'>
+		<div class='tooltip__wrap'>
+			<button type='button' role='button' class='tooltip__close-btn' data-ref="{{ item.ref }}"></button>
+			<h2 class='tooltip__title'>{{ item.title }}</h2>
+			<p class='tooltip__content'> {{ item.body }}</p>
+		</div>
+	</div>
+</script>
+
+
+  <div id="main" role="main">
+    <div class="container-fluid container-fluid--desktop main-container">
+      <div class="row">
+        <nav class="col--nav">
+          <section class="docs-menu">
+  <div id="desktop-menu" class="sidebar-nav">
+    <a class=""
+      aria-controls="desktop-menu" aria-label="esci dalla navigazione" title="esci dalla navigazione" href="#">
+      <span class="" aria-hidden="true"></span>
+    </a>
+
+    <button data-toggle="collapse" data-target="#content-index" aria-expanded="true" class="sidebar-btn p-3 sidebar-btn--desktop" type="button" aria-controls="content-index">
+      Indice dei contenuti
+      <span class="it-collapse float-right"></span>
+      <span class="it-expand float-right"></span>
+    </button>
+    <div id="content-index" class="content-index--menu sidebar-list--wrapper sidebar-accordion-content collapse show">
+      <ul class="">
+        <li class="toctree-l1 ">
+          <a href='../../../index.html'>Sommario</a>
+        </li>
+      </ul>
+      
+      <p class="caption" role="heading"><span class="caption-text">Indice dei contenuti</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../nuovo_layout.html">1. Indicazioni generali Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../nuovo_layout.html#premessa">1.1. Premessa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../nuovo_layout.html#accesso-allapplicazione-sigla">1.2. Accesso all’applicazione SIGLA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../nuovo_layout.html#presentazione-e-funzionalita">1.3. Presentazione e Funzionalità</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../nuovo_layout.html#responsive">1.4. Responsive</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../funzionalita_servizio/index.html">2. Funzionalità di Servizio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/stampe.html">2.1. Gestione Stampe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/coda_di_stampa.html">2.2. Coda di Stampa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/gestione_preferiti.html">2.3. Gestione Preferiti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/messaggi.html">2.4. Messaggi Applicativi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/utenze/index.html">2.5. Gestione e Abilitazioni delle Utenze</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">3. Configurazione</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../progetti/index.html">3.1. Progetti di Ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gae.html">3.2. Gruppo di Azioni Elementari - GAE (o Linea di Attività)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../piano_conti_finanziario.html">3.3. Piano dei Conti Finanziario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../struttura_organizzativa.html">3.4. Struttura Organizzativa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../anagrafica_clienti_fornitori.html">3.5. Anagrafica Clienti/Fornitori</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../terzi.html">3.6. Terzo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html">3.7. Incarichi di collaborazione</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../previsione/contrattazione_previsione_finanziaria.html">4. Contrattazione della Previsione</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../previsione/contrattazione_previsione_finanziaria.html#premessa">4.1. Premessa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../previsione/contrattazione_previsione_finanziaria.html#previsione-di-spesa">4.2. Previsione di Spesa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../previsione/contrattazione_previsione_finanziaria.html#nota">4.3. NOTA</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documenti_contabili/index.html">5. Documenti Contabili</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../documenti_contabili/impegni/index.html">5.1. Impegni</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documenti_amministrativi/index.html">6. Documenti Amministrativi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../documenti_amministrativi/Fatture/index.html">6.1. Fatture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../documenti_amministrativi/cassa_economale.html">6.2. Cassa Economale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../documenti_amministrativi/inventario.html">6.3. Inventario</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contabilita_economica.html">7. Contabilità Economico Patrimoniale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contabilita_economica.html#economico-patrimoniale-parallela">7.1. Economico Patrimoniale Parallela</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contabilita_economica.html#esempio-scritture-economiche">7.2. Esempio scritture economiche</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dashboard/index.html">8. Cruscotto</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dashboard/index.html#grafici-principali">8.1. Grafici principali</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dashboard/index.html#box-indici-riepilogativi">8.2. Box Indici riepilogativi</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_rest.html">9. Infrastruttura per servizi REST</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#elenco-degli-acronimi">9.1. Elenco degli acronimi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#introduzione">9.2. Introduzione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#la-genesi-di-open-sigla">9.3. La genesi di OPEN SIGLA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#requisiti">9.4. Requisiti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#soluzioni-possibili">9.5. Soluzioni possibili</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#web-2-0-e-rest">9.6. Web 2.0 e REST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#rappresentazione-delle-risorse">9.7. Rappresentazione delle risorse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#vantaggi-di-rest">9.8. Vantaggi di REST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#open-sigla-http-get">9.9. OPEN SIGLA: HTTP GET</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#open-sigla-http-post">9.10. OPEN SIGLA: HTTP POST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#conclusioni">9.11. Conclusioni</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Note di rilascio</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Release 8.0.40  -- <em>October 29, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-39-october-27-2026">Release 8.0.39  -- <em>October 27, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-38-october-20-2026">Release 8.0.38  -- <em>October 20, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-37-october-15-2026">Release 8.0.37  -- <em>October 15, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-36-october-14-2026">Release 8.0.36  -- <em>October 14, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-35-october-13-2026">Release 8.0.35  -- <em>October 13, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-34-october-08-2026">Release 8.0.34  -- <em>October 08, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-33-september-30-2026">Release 8.0.33  -- <em>September 30, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-32-september-25-2026">Release 8.0.32  -- <em>September 25, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-31-september-24-2026">Release 8.0.31  -- <em>September 24, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-30-september-23-2026">Release 8.0.30  -- <em>September 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-29-september-21-2026">Release 8.0.29  -- <em>September 21, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-28-september-21-2026">Release 8.0.28  -- <em>September 21, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-27-september-17-2026">Release 8.0.27  -- <em>September 17, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-26-september-11-2026">Release 8.0.26  -- <em>September 11, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-25-september-11-2026">Release 8.0.25  -- <em>September 11, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-24-september-07-2026">Release 8.0.24  -- <em>September 07, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-23-august-07-2026">Release 8.0.23  -- <em>August 07, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-22-august-06-2026">Release 8.0.22  -- <em>August 06, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-21-august-05-2026">Release 8.0.21  -- <em>August 05, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-20-august-04-2026">Release 8.0.20  -- <em>August 04, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-19-august-04-2026">Release 8.0.19  -- <em>August 04, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-18-july-13-2026">Release 8.0.18  -- <em>July 13, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-17-june-30-2026">Release 8.0.17  -- <em>June 30, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-16-june-26-2026">Release 8.0.16  -- <em>June 26, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-15-june-24-2026">Release 8.0.15  -- <em>June 24, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-14-june-23-2026">Release 8.0.14  -- <em>June 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-13-june-23-2026">Release 8.0.13  -- <em>June 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-12-june-23-2026">Release 8.0.12  -- <em>June 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-11-june-22-2026">Release 8.0.11  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-10-june-22-2026">Release 8.0.10  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-9-june-22-2026">Release 8.0.9  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-8-june-22-2026">Release 8.0.8  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-7-june-22-2026">Release 8.0.7  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-6-june-19-2026">Release 8.0.6  -- <em>June 19, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-5-june-19-2026">Release 8.0.5  -- <em>June 19, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-4-june-18-2026">Release 8.0.4  -- <em>June 18, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-3-june-16-2026">Release 8.0.3  -- <em>June 16, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-2-june-11-2026">Release 8.0.2  -- <em>June 11, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-1-june-08-2026">Release 8.0.1  -- <em>June 08, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-0-may-26-2026">Release 8.0.0  -- <em>May 26, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-67-march-12-2026">Release 7.0.67  -- <em>March 12, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-66-march-12-2026">Release 7.0.66  -- <em>March 12, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-65-march-10-2026">Release 7.0.65  -- <em>March 10, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-64-february-23-2026">Release 7.0.64  -- <em>February 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-63-february-16-2026">Release 7.0.63  -- <em>February 16, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-62-february-03-2026">Release 7.0.62  -- <em>February 03, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-61-february-03-2026">Release 7.0.61  -- <em>February 03, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-60-january-29-2026">Release 7.0.60  -- <em>January 29, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-59-january-23-2026">Release 7.0.59  -- <em>January 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-58-january-20-2026">Release 7.0.58  -- <em>January 20, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-57-january-19-2026">Release 7.0.57  -- <em>January 19, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-56-january-16-2026">Release 7.0.56  -- <em>January 16, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-55-january-15-2026">Release 7.0.55  -- <em>January 15, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-54-january-08-2026">Release 7.0.54  -- <em>January 08, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-53-january-08-2026">Release 7.0.53  -- <em>January 08, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-52-january-02-2026">Release 7.0.52  -- <em>January 02, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-51-december-22-2025">Release 7.0.51  -- <em>December 22, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-50-december-10-2025">Release 7.0.50  -- <em>December 10, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-49-november-27-2025">Release 7.0.49  -- <em>November 27, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-48-november-26-2025">Release 7.0.48  -- <em>November 26, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-47-november-24-2025">Release 7.0.47  -- <em>November 24, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-46-november-12-2025">Release 7.0.46  -- <em>November 12, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-45-november-04-2025">Release 7.0.45  -- <em>November 04, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-44-october-23-2025">Release 7.0.44  -- <em>October 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-43-october-17-2025">Release 7.0.43  -- <em>October 17, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-42-october-15-2025">Release 7.0.42  -- <em>October 15, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-41-october-14-2025">Release 7.0.41  -- <em>October 14, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-40-october-14-2025">Release 7.0.40  -- <em>October 14, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-39-october-03-2025">Release 7.0.39  -- <em>October 03, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-38-september-30-2025">Release 7.0.38  -- <em>September 30, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-37-september-23-2025">Release 7.0.37  -- <em>September 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-36-september-23-2025">Release 7.0.36  -- <em>September 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-35-september-19-2025">Release 7.0.35  -- <em>September 19, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-34-september-19-2025">Release 7.0.34  -- <em>September 19, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-33-september-16-2025">Release 7.0.33  -- <em>September 16, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-32-september-15-2025">Release 7.0.32  -- <em>September 15, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-31-september-15-2025">Release 7.0.31  -- <em>September 15, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-30-september-11-2025">Release 7.0.30  -- <em>September 11, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-28-september-09-2025">Release 7.0.28  -- <em>September 09, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-27-september-03-2025">Release 7.0.27  -- <em>September 03, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-26-september-02-2025">Release 7.0.26  -- <em>September 02, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-25-august-27-2025">Release 7.0.25  -- <em>August 27, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-24-august-27-2025">Release 7.0.24  -- <em>August 27, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-23-august-25-2025">Release 7.0.23  -- <em>August 25, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-22-august-13-2025">Release 7.0.22  -- <em>August 13, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-21-august-13-2025">Release 7.0.21  -- <em>August 13, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-20-august-04-2025">Release 7.0.20  -- <em>August 04, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-19-july-17-2025">Release 7.0.19  -- <em>July 17, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-18-july-16-2025">Release 7.0.18  -- <em>July 16, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-17-july-16-2025">Release 7.0.17  -- <em>July 16, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-16-july-09-2025">Release 7.0.16  -- <em>July 09, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-15-july-09-2025">Release 7.0.15  -- <em>July 09, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-14-july-04-2025">Release 7.0.14  -- <em>July 04, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-13-july-03-2025">Release 7.0.13  -- <em>July 03, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-12-june-30-2025">Release 7.0.12  -- <em>June 30, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-11-june-23-2025">Release 7.0.11  -- <em>June 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-10-june-23-2025">Release 7.0.10  -- <em>June 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-9-june-17-2025">Release 7.0.9  -- <em>June 17, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-8-june-12-2025">Release 7.0.8  -- <em>June 12, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-7-june-12-2025">Release 7.0.7  -- <em>June 12, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-6-june-11-2025">Release 7.0.6  -- <em>June 11, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-5-june-10-2025">Release 7.0.5  -- <em>June 10, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-4-may-30-2025">Release 7.0.4  -- <em>May 30, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-3-may-25-2025">Release 7.0.3  -- <em>May 25, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-2-may-25-2025">Release 7.0.2  -- <em>May 25, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-1-may-25-2025">Release 7.0.1  -- <em>May 25, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-0-may-22-2025">Release 7.0.0  -- <em>May 22, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-21-february-03-2020">Release 6.1.21  -- <em>February 03, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-20-february-03-2020">Release 6.1.20  -- <em>February 03, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-19-january-31-2020">Release 6.1.19  -- <em>January 31, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-18-january-30-2020">Release 6.1.18  -- <em>January 30, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-17-january-28-2020">Release 6.1.17  -- <em>January 28, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-16-january-27-2020">Release 6.1.16  -- <em>January 27, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-15-january-27-2020">Release 6.1.15  -- <em>January 27, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-14-january-27-2020">Release 6.1.14  -- <em>January 27, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-13-january-25-2020">Release 6.1.13  -- <em>January 25, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-11-january-20-2020">Release 6.1.11  -- <em>January 20, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-10-january-18-2020">Release 6.1.10  -- <em>January 18, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-9-january-17-2020">Release 6.1.9  -- <em>January 17, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-8-january-17-2020">Release 6.1.8  -- <em>January 17, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-7-january-16-2020">Release 6.1.7  -- <em>January 16, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-6-january-16-2020">Release 6.1.6  -- <em>January 16, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-5-january-16-2020">Release 6.1.5  -- <em>January 16, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-4-january-14-2020">Release 6.1.4  -- <em>January 14, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-3-january-13-2020">Release 6.1.3  -- <em>January 13, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-2-january-09-2020">Release 6.1.2  -- <em>January 09, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-1-december-23-2019">Release 6.1.1  -- <em>December 23, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-0-december-17-2019">Release 6.1.0  -- <em>December 17, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-31-december-16-2019">Release 6.0.31  -- <em>December 16, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-30-december-13-2019">Release 6.0.30  -- <em>December 13, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-29-december-13-2019">Release 6.0.29  -- <em>December 13, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-28-december-13-2019">Release 6.0.28  -- <em>December 13, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-27-december-12-2019">Release 6.0.27  -- <em>December 12, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-26-december-09-2019">Release 6.0.26  -- <em>December 09, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-25-december-07-2019">Release 6.0.25  -- <em>December 07, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-24-december-06-2019">Release 6.0.24  -- <em>December 06, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-23-december-06-2019">Release 6.0.23  -- <em>December 06, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-22-december-02-2019">Release 6.0.22  -- <em>December 02, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-21-november-29-2019">Release 6.0.21  -- <em>November 29, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-20-november-29-2019">Release 6.0.20  -- <em>November 29, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-19-november-28-2019">Release 6.0.19  -- <em>November 28, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-18-november-22-2019">Release 6.0.18  -- <em>November 22, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-17-november-22-2019">Release 6.0.17  -- <em>November 22, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-16-november-21-2019">Release 6.0.16  -- <em>November 21, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-15-november-20-2019">Release 6.0.15  -- <em>November 20, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-14-november-20-2019">Release 6.0.14  -- <em>November 20, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-13-november-20-2019">Release 6.0.13  -- <em>November 20, 2019</em></a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../appendix.html">Appendice</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../appendix.html#autori">Autori</a></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    <button data-toggle="collapse" data-target="#figures-index" aria-expanded="true" class="sidebar-btn p-3 sidebar-btn--desktop collapsed" type="button" aria-controls="figures-index">
+      Indice delle figure
+      <span class="it-collapse float-right"></span>
+      <span class="it-expand float-right"></span>
+    </button>
+    <div id="figures-index" class="figures-index--menu sidebar-list--wrapper sidebar-accordion-content collapse">
+      <ul>
+<li><a class="reference internal" href="../../../nuovo_layout.html#id1">Fig. 1.1 - Schermata di accesso a SIGLA</a></li>
+<li><a class="reference internal" href="../../../nuovo_layout.html#id2">Fig. 1.2 - Schermata di accesso a SIGLA utente multiplo</a></li>
+<li><a class="reference internal" href="../../../contabilita_economica.html#id1">Fig. 7.1 - Scrittura economico patrimoniale</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id2">Fig. 9.1 - Connessione TCP tra Client e Server</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id4">Fig. 9.2 - Esempio di richiesta HTTP</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id5">Fig. 9.3 - Esempio di messaggio di risposta HTTP</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id6">Fig. 9.4 - Reverse proxy</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id7">Fig. 9.5 - Infrastruttura di HA</a></li>
+</ul>
+
+    </div>
+    
+
+    
+    <button data-toggle="collapse" data-target="#table-index" aria-expanded="true" class="sidebar-btn p-3 sidebar-btn--desktop collapsed" type="button" aria-controls="table-index">
+      Indice delle tabelle
+      <span class="it-collapse float-right"></span>
+      <span class="it-expand float-right"></span>
+    </button>
+    <div id="table-index" class="table-index--menu collapse sidebar-list--wrapper sidebar-accordion-content collapse">
+      <ul>
+<li><a class="reference internal" href="../incarichi-sigla.html#id1">Tab. 3.1 - Procedura Conferimento MONO-Incarico SENZA l’obbligo della v...</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id1">Tab. 9.1 - Analisi delle possibili implementazioni</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id3">Tab. 9.2 - Metodi HTTP</a></li>
+</ul>
+
+    </div>
+    
+
+    
+  </div>
+</section>
+          <!-- Toggle -->
+<div class="navbar-toggler--wrap navbar-toggler--wrap--bottom p-3">
+  <div class="navbar-toggler navbar-toggler--open p-0 border-0 ml-auto">
+    <div class="navbar-toggler-bottom__chapter align-middle text-truncate">
+      <span class="it-list mr-2"></span>Limiti di spesa per incarichi di natura occasionale
+    </div>
+  </div>
+</div>
+
+<div class="sidebar-tabs">
+
+  <!-- Back button. -->
+  <div class="row">
+    <div class="col">
+      <button class="navbar-toggler navbar-toggler--back border-0 ml-auto" type="button" data-toggle="offcanvas">
+        <span class="it-arrow-left align-middle"></span>
+        <span class="navbar-toggler__chapter align-middle ml-2">
+          indici e glossario
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab -->
+  <ul class="row ml-3 mr-3 nav nav-tabs" role="tablist">
+    <li class="col text-center active">
+      <a id="content-index-mobile-tab" data-toggle="tab" href="#content-index-mobile" aria-controls="content-index-mobile" role="tab" aria-selected="true" class="sidebar-btn p-2 sidebar-btn--mobile active show">
+        contenuti
+      </a>
+    </li>
+    <li class="col text-center">
+      <a id="figures-index-mobile-tab" data-toggle="tab" href="#figures-index-mobile" aria-controls="figures-index-mobile" role="tab" aria-selected="false" class="col sidebar-btn p-2 sidebar-btn--mobile">
+        figura
+      </a>
+    </li>
+    <li class="col text-center">
+      <a id="table-index-mobile-tab" data-toggle="tab" href="#table-index-mobile" aria-controls="table-index-mobile" role="tab" aria-selected="false" class="col sidebar-btn p-2 sidebar-btn--mobile">
+        tabelle
+      </a>
+    </li>
+    <li class="col text-center">
+      <a id="glossary-index-mobile-tab" data-toggle="tab" href="#glossary-index-mobile" aria-controls="glossary-index-mobile" role="tab" aria-selected="false" class="col sidebar-btn p-2 sidebar-btn--mobile">
+        Glossario
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+<!-- Off canvas -->
+<section class="docs-offcanvas-menu" id="sidebar-nav">
+  <div class="tab-content sidebar-nav">
+
+      <div id="content-index-mobile" class="content-index--menu tab-pane sidebar-list--wrapper fade show active" role="tabpanel" aria-labelledby="content-index-mobile-tab">
+        <ul class="">
+          <li class="toctree-l1 ">
+            <a href='../../../index.html'>Sommario</a>
+          </li>
+        </ul>
+        
+        <p class="caption" role="heading"><span class="caption-text">Indice dei contenuti</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../nuovo_layout.html">1. Indicazioni generali Layout</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../nuovo_layout.html#premessa">1.1. Premessa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../nuovo_layout.html#accesso-allapplicazione-sigla">1.2. Accesso all’applicazione SIGLA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../nuovo_layout.html#presentazione-e-funzionalita">1.3. Presentazione e Funzionalità</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../nuovo_layout.html#responsive">1.4. Responsive</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../funzionalita_servizio/index.html">2. Funzionalità di Servizio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/stampe.html">2.1. Gestione Stampe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/coda_di_stampa.html">2.2. Coda di Stampa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/gestione_preferiti.html">2.3. Gestione Preferiti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/messaggi.html">2.4. Messaggi Applicativi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../funzionalita_servizio/utenze/index.html">2.5. Gestione e Abilitazioni delle Utenze</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">3. Configurazione</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../progetti/index.html">3.1. Progetti di Ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gae.html">3.2. Gruppo di Azioni Elementari - GAE (o Linea di Attività)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../piano_conti_finanziario.html">3.3. Piano dei Conti Finanziario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../struttura_organizzativa.html">3.4. Struttura Organizzativa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../anagrafica_clienti_fornitori.html">3.5. Anagrafica Clienti/Fornitori</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../terzi.html">3.6. Terzo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html">3.7. Incarichi di collaborazione</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../previsione/contrattazione_previsione_finanziaria.html">4. Contrattazione della Previsione</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../previsione/contrattazione_previsione_finanziaria.html#premessa">4.1. Premessa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../previsione/contrattazione_previsione_finanziaria.html#previsione-di-spesa">4.2. Previsione di Spesa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../previsione/contrattazione_previsione_finanziaria.html#nota">4.3. NOTA</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documenti_contabili/index.html">5. Documenti Contabili</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../documenti_contabili/impegni/index.html">5.1. Impegni</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documenti_amministrativi/index.html">6. Documenti Amministrativi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../documenti_amministrativi/Fatture/index.html">6.1. Fatture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../documenti_amministrativi/cassa_economale.html">6.2. Cassa Economale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../documenti_amministrativi/inventario.html">6.3. Inventario</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contabilita_economica.html">7. Contabilità Economico Patrimoniale</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contabilita_economica.html#economico-patrimoniale-parallela">7.1. Economico Patrimoniale Parallela</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contabilita_economica.html#esempio-scritture-economiche">7.2. Esempio scritture economiche</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dashboard/index.html">8. Cruscotto</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dashboard/index.html#grafici-principali">8.1. Grafici principali</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dashboard/index.html#box-indici-riepilogativi">8.2. Box Indici riepilogativi</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_rest.html">9. Infrastruttura per servizi REST</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#elenco-degli-acronimi">9.1. Elenco degli acronimi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#introduzione">9.2. Introduzione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#la-genesi-di-open-sigla">9.3. La genesi di OPEN SIGLA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#requisiti">9.4. Requisiti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#soluzioni-possibili">9.5. Soluzioni possibili</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#web-2-0-e-rest">9.6. Web 2.0 e REST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#rappresentazione-delle-risorse">9.7. Rappresentazione delle risorse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#vantaggi-di-rest">9.8. Vantaggi di REST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#open-sigla-http-get">9.9. OPEN SIGLA: HTTP GET</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#open-sigla-http-post">9.10. OPEN SIGLA: HTTP POST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api_rest.html#conclusioni">9.11. Conclusioni</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Note di rilascio</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Release 8.0.40  -- <em>October 29, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-39-october-27-2026">Release 8.0.39  -- <em>October 27, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-38-october-20-2026">Release 8.0.38  -- <em>October 20, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-37-october-15-2026">Release 8.0.37  -- <em>October 15, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-36-october-14-2026">Release 8.0.36  -- <em>October 14, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-35-october-13-2026">Release 8.0.35  -- <em>October 13, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-34-october-08-2026">Release 8.0.34  -- <em>October 08, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-33-september-30-2026">Release 8.0.33  -- <em>September 30, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-32-september-25-2026">Release 8.0.32  -- <em>September 25, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-31-september-24-2026">Release 8.0.31  -- <em>September 24, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-30-september-23-2026">Release 8.0.30  -- <em>September 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-29-september-21-2026">Release 8.0.29  -- <em>September 21, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-28-september-21-2026">Release 8.0.28  -- <em>September 21, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-27-september-17-2026">Release 8.0.27  -- <em>September 17, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-26-september-11-2026">Release 8.0.26  -- <em>September 11, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-25-september-11-2026">Release 8.0.25  -- <em>September 11, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-24-september-07-2026">Release 8.0.24  -- <em>September 07, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-23-august-07-2026">Release 8.0.23  -- <em>August 07, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-22-august-06-2026">Release 8.0.22  -- <em>August 06, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-21-august-05-2026">Release 8.0.21  -- <em>August 05, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-20-august-04-2026">Release 8.0.20  -- <em>August 04, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-19-august-04-2026">Release 8.0.19  -- <em>August 04, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-18-july-13-2026">Release 8.0.18  -- <em>July 13, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-17-june-30-2026">Release 8.0.17  -- <em>June 30, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-16-june-26-2026">Release 8.0.16  -- <em>June 26, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-15-june-24-2026">Release 8.0.15  -- <em>June 24, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-14-june-23-2026">Release 8.0.14  -- <em>June 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-13-june-23-2026">Release 8.0.13  -- <em>June 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-12-june-23-2026">Release 8.0.12  -- <em>June 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-11-june-22-2026">Release 8.0.11  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-10-june-22-2026">Release 8.0.10  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-9-june-22-2026">Release 8.0.9  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-8-june-22-2026">Release 8.0.8  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-7-june-22-2026">Release 8.0.7  -- <em>June 22, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-6-june-19-2026">Release 8.0.6  -- <em>June 19, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-5-june-19-2026">Release 8.0.5  -- <em>June 19, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-4-june-18-2026">Release 8.0.4  -- <em>June 18, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-3-june-16-2026">Release 8.0.3  -- <em>June 16, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-2-june-11-2026">Release 8.0.2  -- <em>June 11, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-1-june-08-2026">Release 8.0.1  -- <em>June 08, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-8-0-0-may-26-2026">Release 8.0.0  -- <em>May 26, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-67-march-12-2026">Release 7.0.67  -- <em>March 12, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-66-march-12-2026">Release 7.0.66  -- <em>March 12, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-65-march-10-2026">Release 7.0.65  -- <em>March 10, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-64-february-23-2026">Release 7.0.64  -- <em>February 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-63-february-16-2026">Release 7.0.63  -- <em>February 16, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-62-february-03-2026">Release 7.0.62  -- <em>February 03, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-61-february-03-2026">Release 7.0.61  -- <em>February 03, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-60-january-29-2026">Release 7.0.60  -- <em>January 29, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-59-january-23-2026">Release 7.0.59  -- <em>January 23, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-58-january-20-2026">Release 7.0.58  -- <em>January 20, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-57-january-19-2026">Release 7.0.57  -- <em>January 19, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-56-january-16-2026">Release 7.0.56  -- <em>January 16, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-55-january-15-2026">Release 7.0.55  -- <em>January 15, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-54-january-08-2026">Release 7.0.54  -- <em>January 08, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-53-january-08-2026">Release 7.0.53  -- <em>January 08, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-52-january-02-2026">Release 7.0.52  -- <em>January 02, 2026</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-51-december-22-2025">Release 7.0.51  -- <em>December 22, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-50-december-10-2025">Release 7.0.50  -- <em>December 10, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-49-november-27-2025">Release 7.0.49  -- <em>November 27, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-48-november-26-2025">Release 7.0.48  -- <em>November 26, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-47-november-24-2025">Release 7.0.47  -- <em>November 24, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-46-november-12-2025">Release 7.0.46  -- <em>November 12, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-45-november-04-2025">Release 7.0.45  -- <em>November 04, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-44-october-23-2025">Release 7.0.44  -- <em>October 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-43-october-17-2025">Release 7.0.43  -- <em>October 17, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-42-october-15-2025">Release 7.0.42  -- <em>October 15, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-41-october-14-2025">Release 7.0.41  -- <em>October 14, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-40-october-14-2025">Release 7.0.40  -- <em>October 14, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-39-october-03-2025">Release 7.0.39  -- <em>October 03, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-38-september-30-2025">Release 7.0.38  -- <em>September 30, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-37-september-23-2025">Release 7.0.37  -- <em>September 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-36-september-23-2025">Release 7.0.36  -- <em>September 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-35-september-19-2025">Release 7.0.35  -- <em>September 19, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-34-september-19-2025">Release 7.0.34  -- <em>September 19, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-33-september-16-2025">Release 7.0.33  -- <em>September 16, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-32-september-15-2025">Release 7.0.32  -- <em>September 15, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-31-september-15-2025">Release 7.0.31  -- <em>September 15, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-30-september-11-2025">Release 7.0.30  -- <em>September 11, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-28-september-09-2025">Release 7.0.28  -- <em>September 09, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-27-september-03-2025">Release 7.0.27  -- <em>September 03, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-26-september-02-2025">Release 7.0.26  -- <em>September 02, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-25-august-27-2025">Release 7.0.25  -- <em>August 27, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-24-august-27-2025">Release 7.0.24  -- <em>August 27, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-23-august-25-2025">Release 7.0.23  -- <em>August 25, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-22-august-13-2025">Release 7.0.22  -- <em>August 13, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-21-august-13-2025">Release 7.0.21  -- <em>August 13, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-20-august-04-2025">Release 7.0.20  -- <em>August 04, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-19-july-17-2025">Release 7.0.19  -- <em>July 17, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-18-july-16-2025">Release 7.0.18  -- <em>July 16, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-17-july-16-2025">Release 7.0.17  -- <em>July 16, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-16-july-09-2025">Release 7.0.16  -- <em>July 09, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-15-july-09-2025">Release 7.0.15  -- <em>July 09, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-14-july-04-2025">Release 7.0.14  -- <em>July 04, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-13-july-03-2025">Release 7.0.13  -- <em>July 03, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-12-june-30-2025">Release 7.0.12  -- <em>June 30, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-11-june-23-2025">Release 7.0.11  -- <em>June 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-10-june-23-2025">Release 7.0.10  -- <em>June 23, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-9-june-17-2025">Release 7.0.9  -- <em>June 17, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-8-june-12-2025">Release 7.0.8  -- <em>June 12, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-7-june-12-2025">Release 7.0.7  -- <em>June 12, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-6-june-11-2025">Release 7.0.6  -- <em>June 11, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-5-june-10-2025">Release 7.0.5  -- <em>June 10, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-4-may-30-2025">Release 7.0.4  -- <em>May 30, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-3-may-25-2025">Release 7.0.3  -- <em>May 25, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-2-may-25-2025">Release 7.0.2  -- <em>May 25, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-1-may-25-2025">Release 7.0.1  -- <em>May 25, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-7-0-0-may-22-2025">Release 7.0.0  -- <em>May 22, 2025</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-21-february-03-2020">Release 6.1.21  -- <em>February 03, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-20-february-03-2020">Release 6.1.20  -- <em>February 03, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-19-january-31-2020">Release 6.1.19  -- <em>January 31, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-18-january-30-2020">Release 6.1.18  -- <em>January 30, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-17-january-28-2020">Release 6.1.17  -- <em>January 28, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-16-january-27-2020">Release 6.1.16  -- <em>January 27, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-15-january-27-2020">Release 6.1.15  -- <em>January 27, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-14-january-27-2020">Release 6.1.14  -- <em>January 27, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-13-january-25-2020">Release 6.1.13  -- <em>January 25, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-11-january-20-2020">Release 6.1.11  -- <em>January 20, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-10-january-18-2020">Release 6.1.10  -- <em>January 18, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-9-january-17-2020">Release 6.1.9  -- <em>January 17, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-8-january-17-2020">Release 6.1.8  -- <em>January 17, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-7-january-16-2020">Release 6.1.7  -- <em>January 16, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-6-january-16-2020">Release 6.1.6  -- <em>January 16, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-5-january-16-2020">Release 6.1.5  -- <em>January 16, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-4-january-14-2020">Release 6.1.4  -- <em>January 14, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-3-january-13-2020">Release 6.1.3  -- <em>January 13, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-2-january-09-2020">Release 6.1.2  -- <em>January 09, 2020</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-1-december-23-2019">Release 6.1.1  -- <em>December 23, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-1-0-december-17-2019">Release 6.1.0  -- <em>December 17, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-31-december-16-2019">Release 6.0.31  -- <em>December 16, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-30-december-13-2019">Release 6.0.30  -- <em>December 13, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-29-december-13-2019">Release 6.0.29  -- <em>December 13, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-28-december-13-2019">Release 6.0.28  -- <em>December 13, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-27-december-12-2019">Release 6.0.27  -- <em>December 12, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-26-december-09-2019">Release 6.0.26  -- <em>December 09, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-25-december-07-2019">Release 6.0.25  -- <em>December 07, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-24-december-06-2019">Release 6.0.24  -- <em>December 06, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-23-december-06-2019">Release 6.0.23  -- <em>December 06, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-22-december-02-2019">Release 6.0.22  -- <em>December 02, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-21-november-29-2019">Release 6.0.21  -- <em>November 29, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-20-november-29-2019">Release 6.0.20  -- <em>November 29, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-19-november-28-2019">Release 6.0.19  -- <em>November 28, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-18-november-22-2019">Release 6.0.18  -- <em>November 22, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-17-november-22-2019">Release 6.0.17  -- <em>November 22, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-16-november-21-2019">Release 6.0.16  -- <em>November 21, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-15-november-20-2019">Release 6.0.15  -- <em>November 20, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-14-november-20-2019">Release 6.0.14  -- <em>November 20, 2019</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html#release-6-0-13-november-20-2019">Release 6.0.13  -- <em>November 20, 2019</em></a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../appendix.html">Appendice</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../appendix.html#autori">Autori</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+
+      <div id="figures-index-mobile" class="figures-index--menu tab-pane sidebar-list--wrapper fade" role="tabpanel" aria-labelledby="figures-index-mobile-tab">
+        <ul>
+<li><a class="reference internal" href="../../../nuovo_layout.html#id1">Fig. 1.1 - Schermata di accesso a SIGLA</a></li>
+<li><a class="reference internal" href="../../../nuovo_layout.html#id2">Fig. 1.2 - Schermata di accesso a SIGLA utente multiplo</a></li>
+<li><a class="reference internal" href="../../../contabilita_economica.html#id1">Fig. 7.1 - Scrittura economico patrimoniale</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id2">Fig. 9.1 - Connessione TCP tra Client e Server</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id4">Fig. 9.2 - Esempio di richiesta HTTP</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id5">Fig. 9.3 - Esempio di messaggio di risposta HTTP</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id6">Fig. 9.4 - Reverse proxy</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id7">Fig. 9.5 - Infrastruttura di HA</a></li>
+</ul>
+
+      </div>
+
+      <div id="table-index-mobile" class="table-index--menu tab-pane sidebar-list--wrapper fade" role="tabpanel" aria-labelledby="table-index-mobile-tab">
+        <ul>
+<li><a class="reference internal" href="../incarichi-sigla.html#id1">Tab. 3.1 - Procedura Conferimento MONO-Incarico SENZA l’obbligo della v...</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id1">Tab. 9.1 - Analisi delle possibili implementazioni</a></li>
+<li><a class="reference internal" href="../../../api_rest.html#id3">Tab. 9.2 - Metodi HTTP</a></li>
+</ul>
+
+      </div>
+
+      <div id="glossary-index-mobile" class="glossary-mobile--menu tab-pane sidebar-list--wrapper fade" role="tabpanel" aria-labelledby="glossary-index-mobile-tab">
+        None
+      </div>
+
+  </div>
+</section>
+        </nav>
+        <div id="doc-content" class="col-content">
+          <!--<div class="doc-content__consultation">
+            <span class="it-icon-edit"></span>
+            in consultazione
+          </div>-->
+          
+          
+  <section id="limiti-di-spesa-per-incarichi-di-natura-occasionale">
+<h1>Limiti di spesa per incarichi di natura occasionale<a class="headerlink" href="#limiti-di-spesa-per-incarichi-di-natura-occasionale" title="Link to this heading">¶</a></h1>
+<p><em>Riferimenti normativi:</em></p>
+<ul class="simple">
+<li><p><em>Legge 266/2005 - art. 1 comma 57;</em></p></li>
+<li><p><em>Circolare n. 5 della P.C.M. Dipartimento della Funzione pubblica del 21 dicembre 2006;</em></p></li>
+<li><p><em>Circolare n. 2 della P.C.M. Dipartimento della Funzione pubblica del 11 marzo 2008.</em></p></li>
+</ul>
+<p>L’art. 1 comma 57 della Legge 266/2005, dispone che per un periodo di tre anni (<em>ndr</em> <em>2006 – 2007 -2008</em>), le pubbliche amministrazioni non possono <em>“ … stipulare contratti di consulenza che nel loro complesso siano di importo superiore rispetto all’ammontare totale dei contratti in essere al 30 settembre 2005, come automaticamente ridotto.</em>”. La riduzione cui fa riferimento la norma è del 10%.</p>
+<p>Tale importo è stato determinato in base all’ammontare dei contratti in essere al 30 settembre 2005 risultanti dalle comunicazioni effettuate da tutti i centri di responsabilità (verificare circolare interna all'Ente). Il limite è, pertanto, definito internamente all'Ente.</p>
+<p>Tale limite colpisce, pertanto, tutti <strong>gli incarichi di consulenza, conferiti in forma occasionale non abituale o professionale, a prescindere dalla fonte di finanziamento, anche se finalizzati all’attuazione di progetti di ricerca ed innovazione tecnologica.</strong></p>
+<p>Il limite non opera per gli incarichi conferiti in forma occasionale non abituale o professionale per attività di studio, di ricerca e per altre tipologie di attività oggetto di incarico (quali ad esempio quelle riguardanti il supporto ai servizi amministrativi e tecnici dell’ente - cfr. tabella in allegato 13).</p>
+<p><strong>Tale limite sarà, pertanto, operante per gli esercizi finanziari di un triennio.</strong></p>
+<p>Al fine di verificare finanziariamente la possibilità di stipulare incarichi di consulenza conferiti in forma occasionale non abituale o professionale, una volta rispettati i presupposti di legittimità ed espletate le formalità preliminari necessarie al conferimento (compresa la verifica di professionalità interne all’ente), ogni Centro di responsabilità interessato dovrà inserire l’incarico che intende affidare nella procedura SIGLA. La procedura provvederà a verificare, laddove necessario, il rispetto dei limiti di spesa, consentendo di proseguire nella registrazione, ovvero il superamento degli stessi, inibendo la relativa registrazione.</p>
+<p><strong>Limiti di spesa per incarichi di natura coordinata e continuativa</strong></p>
+<p><em>Riferimenti normativi:</em></p>
+<ul class="simple">
+<li><p><em>Legge 266/2005 - art. 1 comma 187 e 188;</em></p></li>
+<li><p><em>Legge 296/2006 - art. 1 comma 538;</em></p></li>
+<li><p><em>Legge 244/2007 – art. 3 comma 80;</em></p></li>
+<li><p><em>Circolare n. 5 della P.C.M. Dipartimento della Funzione pubblica del 21 dicembre 2006.</em></p></li>
+<li><p><em>Circolare n. 2 della P.C.M. Dipartimento della Funzione pubblica del 11 marzo 2008.</em></p></li>
+</ul>
+<p>Per quanto attiene ai limiti di spesa relativi alle collaborazioni coordinate e continuative è necessario riferirsi al comma 187 dell’articolo 1 della legge 266 del 2005, al comma 538 dell’art. 1 della legge 296 del 2006 ed al comma 80 dell’art. 3 della legge 244 del 2007. Dal combinato disposto risulta che dall’anno 2008 <em>“… gli enti di ricerca, … omissis … , possono avvalersi di personale …omissis… con contratti di collaborazione coordinata e continuativa, nel limite del 35 per cento della spesa sostenuta per le stesse finalità nell’anno 2003”.</em></p>
+<p>Per quanto riguarda gli enti di ricerca, il comma 188 dell’articolo 1 della legge 266 del 2005 inserisce una deroga. Infatti testualmente recita: “<em>Per gli enti di ricerca …omissis… sono fatte comunque salve … omissis… la stipula di contratti di collaborazione coordinata e continuativa per l'attuazione di progetti di ricerca e di innovazione
+tecnologica, i cui oneri non risultino a carico dei bilanci di funzionamento degli enti o del Fondo di finanziamento degli enti …”</em></p>
+<p><strong>Pertanto, non rientrano nel procedimento di verifica dei limiti di spesa, i contratti di collaborazione coordinata e continuativa inerenti lo svolgimento di qualsiasi tipologia di attività, purché finalizzate all’attuazione di progetti di ricerca e di innovazione tecnologica i cui oneri siano finanziati da Fondi esterni</strong>.</p>
+<p>Pertanto, a partire dall’anno 2008, l'Ente può avvalersi di contratti di collaborazione coordinata e continuativa a carico del Fondo di finanziamento ordinario nel limite del 35 per cento delle somme impegnate nel 2003 per contratti di collaborazione coordinata e continuativa finanziate dal medesimo fondo, pari ad un importo predefinito.</p>
+<p>Tale limite di spesa, quindi, per gli incarichi conferiti nella forma di collaborazione coordinata e continuativa:</p>
+<ul class="simple">
+<li><p>colpisce quelli che abbiano ad oggetto lo svolgimento di ogni tipologia di attività i cui oneri gravano sul fondo di finanziamento ordinario;</p></li>
+<li><p>colpisce quelli che abbiano ad oggetto lo svolgimento di ogni tipologia di attività i cui oneri, pur gravando su fondi esterni, non riguardano l’attuazione di progetti di ricerca ed innovazione tecnologica;</p></li>
+<li><p>non opera per quelli che abbiano ad oggetto lo svolgimento di ogni tipologia di attività i cui oneri gravano su fondi esterni per l’attuazione di progetti di ricerca ed innovazione tecnologica.</p></li>
+</ul>
+<p>Al fine di verificare finanziariamente la possibilità di stipulare nuovi contratti di collaborazione coordinata e continuativa, una volta rispettati i presupposti di legittimità ed espletate le formalità preliminari necessarie al conferimento (compresa la verifica di professionalità interne all’ente), ogni Centro di responsabilità
+interessato dovrà inserire l’incarico che intende affidare nella procedura SIGLA. La procedura provvederà a verificare, laddove necessario, il rispetto dei limiti di spesa, consentendo di proseguire nella registrazione, ovvero comunicando il superamento del limite massimo.</p>
+</section>
+
+
+          
+          </div>
+
+        </div>
+      </div>
+  </div>
+  <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<footer class="it-footer bg-primary container-fluid container-fluid--desktop main-container mb-5">
+  <div class="row justify-content-md-center">
+    <div class="col-md-4 d-flex align-items-center">
+      <a href="https://www.iss.it/" target="_blank">
+        <img class="team-logo--icon" src="../../../_static/images/logo_ISS.png" alt="Consiglio Nazionale delle Ricerche" />
+      </a>
+    </div>
+  </div><!--/row-->
+</footer>
+  <script type="text/javascript">
+var t = {
+  this : "it",
+  locale : "it_IT",
+  about_these_documents : "Informazioni su questi documenti",
+  active_lang : "lingua attiva",
+  contents : "contenuti",
+  cookiebar_accept : "Accetto",
+  cookiebar_msg : "Questo sito utilizza cookie tecnici, analytics e di terze parti. Proseguendo nella navigazione accetti l’utilizzo dei cookie.",
+  cookiebar_privacy_policy : "Cookie policy",
+  copyright : "Copyright",
+  documents : "Documentazione",
+  download : "Scarica",
+  footer_link_privacy_policy : "Privacy policy",
+  footer_link_cookies : "Cookie policy",
+  footer_link_legal_notes : "Note legali",
+  go_to : "Vai a",
+  index : "Indice",
+  last_updated : "Più recenti",
+  most_viewed_this_month : "Più visti questo mese",
+  navigation_menu_label : "Menu di navigazione",
+  navigation_menu_esc : "esci dalla navigazione",
+  search : "Cerca",
+  search_form_label : "Cerca nel documento",
+  search_form_off : "disattiva il form di ricerca",
+  search_form_on : "attiva il form di ricerca",
+  search_form_start : "avvia la ricerca",
+  search_results : "Risultati della ricerca",
+  search_no_results : "La tua ricerca non ha prodotto documenti. Assicurati di non aver commesso errori di digitazione.",
+  site_subtitle : "Sistema Informativo Gestione Linee di Attività",
+  site_title : "Docs Italia",
+  share_msg : "condividi",
+  skiplink_goto_content : "vai ai contenuti",
+  skiplink_goto_navigation : "vai alla navigazione del sito",
+  toggle_menu_label : "accedi al menu",
+  version : "versione",
+  compare : "Confronta",
+  copy_link : "copia link",
+  copied_link : "link copiato",
+  see_actions : "vedi azioni",
+  other_actions : "altre azioni",
+  comments : "commenti",
+  back_to_text : "torna al testo",
+  glossary_empty : "informazione non trovata",
+  glossary : "Glossario",
+  go_to_glossary : "vai al glossario",
+  deepening : "approfondimento",
+  example : "esempio",
+  must : "si deve",
+  must_not : "non si deve",
+  should : "si dovrebbe",
+  should_not : "non si dovrebbe",
+  may : "si può",
+  use : "usa",
+  use_not : "non usare",
+  consultation : "consultazione",
+  show_more : "mostra tutto",
+  show_less : "mostra meno",
+  content_index : "Indice dei contenuti",
+  table_index : "Indice delle tabelle",
+  figures_index : "Indice delle figure",
+  figures : "figura",
+  tables : "tabelle",
+  in_consultation : "in consultazione",
+  indices_and_glossary : "indici e glossario",
+  note : "nota",
+  no_description : "nessuna descrizione",
+  no_content : "nessuna sezione",
+  no_glossary : "nessun glossario",
+  no_figures : "nessuna figura",
+  no_tables : "nessuna tabella",
+  summary : "Sommario",
+  project : "Progetto",
+  administration : "Amministrazione",
+  info : "Informazioni",
+  related : "Documenti correlati",
+  actions : "Azioni",
+  tags : "Tag",
+  view_source : "Sorgente",
+  previous : "precedente",
+  next : "successivo",
+  in_collaboration_with : "in collaborazione con",
+  follow_us : "seguici su",
+  header_link_trasformazione : "Piano Triennale",
+  header_link_piattaforme : "Piattaforme",
+  header_link_software : "Software",
+  header_link_api : "API",
+  header_link_community : "Le community",
+  header_link_developers : "Developers",
+  header_link_design : "Designers",
+  header_link_tools : "Gli strumenti",
+  header_link_forum : "Forum",
+  header_link_docs : "Docs",
+  header_link_github : "GitHub",
+  header_link_secondary_who_we_are : "Chi siamo",
+  header_link_projects : "Progetti",
+  header_link_documents : "Documenti",
+  header_link_administrations : "Amministrazioni",
+  header_link_whatis : "Che cos'è",
+}
+</script>
+  <a href="#" aria-hidden="true" data-attribute="return-to-top" class="return-to-top">
+  <i class="it-collapse"></i>
+</a>
+  
+  <script type="text/javascript">
+var PRODUCTION_DOMAIN = 'localhost';
+var DOCSITALIA_DATA = {
+  publisher_slug: 'organizzazione-demo',
+  publisher_project_slug: 'progetto-demo'
+}
+
+LOCAL = true;
+READTHEDOCS_DATA = {
+  project: 'demo-document',
+  version: 'bozza',
+  language: 'it',
+  api_host: '//' + PRODUCTION_DOMAIN
+}
+
+</script>
+<script src="../../../_static/js/theme.js"></script>
+<script src="../../../_static/language_data.js"></script>
+<script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+<script type="text/javascript" src="../../../_static/doctools.js"></script>
+<script type="text/javascript" src="../../../_static/sphinx_highlight.js"></script>
+<script type="text/javascript" src="../../../_static/translations.js"></script>
+  
+  
+    <div class="cookiebar bg-dark p-4 hide" aria-hidden="true">
+  <div class="container">
+    <div class="row d-flex align-items-center">
+      <div class="col-12 col-md-7">
+        <span class="text-white">Questo sito utilizza cookie tecnici, analytics e di terze parti. Proseguendo nella navigazione accetti l’utilizzo dei cookie.</span>
+      </div>
+      <div class="col-12 col-md-5 mt-2 mt-md-0 text-right">
+        <a class="btn btn-link" href="/cookies-policy/">Cookie policy</a>
+        <button class="btn btn-sm btn-primary mr-2" data-accept="cookiebar">Accetto</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  
+  <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<div class="modal fade modal-sm-full" id="document-info" tabindex="-1" role="dialog" aria-labelledby="document-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content rounded">
+      <div class="modal-header">
+        <h4 class="modal-title" id="document-title">Sistema Informativo Gestione Linee di Attività</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>SIGLA – Sistema informativo contabile per Enti Pubblici basato sulla contabilità finanziaria con rendicontazione anche economica ed analitica.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="document-actions" aria-hidden="true">
+  <div class="modal-dialog mt-5" role="document">
+     <div class="modal-content rounded">
+        <div class="modal-body p-1">
+          <!--
+  ~ Copyright (C) 2020  Consiglio Nazionale delle Ricerche
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU Affero General Public License as
+  ~     published by the Free Software Foundation, either version 3 of the
+  ~     License, or (at your option) any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU Affero General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU Affero General Public License
+  ~     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<div class="document-actions d-flex flex-column flex-md-row justify-content-around w-100 p-2 p-md-0 text-blue">
+  <div class="dropdown p-3 px-md-2 py-md-0 d-flex flex-wrap">
+    <a class="btn dropdown-toggle p-2 flex-grow-1 text-left" href="#" id="downloads-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="docs-icon-download align-middle"></span>
+      <span class="align-middle">Scarica</span>
+    </a>
+    <div class="dropdown-menu w-100" aria-labelledby="downloads-dropdown" aria-disabled="false">
+      <div class="link-list-wrapper">
+        <ul class="link-list">
+          
+          <a class="dropdown-item" href="/sigla-main/Manuale-SIGLA.pdf" download>
+            pdf
+          </a>
+          
+          <li>
+            <span class="divider"></span>
+          </li>
+          
+          
+          <a class="dropdown-item" href="/sigla-main/Manuale-SIGLA.epub" download>
+            epub
+          </a>
+          
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+    
+  
+  <div class="p-3 px-md-2 py-md-0">
+    <a href="https://github.com/istitutosuperioredisanita/sigla-main/blob/master/docs/configurazione/incarichi_di_collaborazione/corte-dei-conti/limiti-di-spesa.rst" role="button" class="btn p-2" aria-disabled="false">
+        <span class="docs-icon-github"></span>
+        <span class="align-middle">Sorgente</span>
+    </a>
+  </div>
+</div>
+        </div>
+     </div>
+  </div>
+</div>
+  
+</body>
+</html>
