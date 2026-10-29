@@ -50,10 +50,17 @@ Organizzato in questo modo il sistema prevede gestisce e controlla l’aspetto a
    documenti_contabili/index
    documenti_amministrativi/index
    contabilita_economica
-   dashboard
-   api_rest
    dashboard/index
-   
+   api_rest
+
+.. only:: html
+
+   .. toctree::
+      :caption: Note di rilascio
+      :maxdepth: 1
+
+      CHANGELOG
+
 .. toctree::
    :hidden:
 

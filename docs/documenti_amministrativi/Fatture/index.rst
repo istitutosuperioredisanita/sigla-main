@@ -5,10 +5,10 @@ Fatture
 .. toctree::
    :maxdepth: -1
 
-  fattura_passiva.rst
-  nota_credito_passiva.rst
-  fattura_passiva_elettronica.rst
-  fattura_attiva.rst
-  nota_credito_attiva.rst
-  fattura_attiva_elettronica.rst
-  liquidazione_iva.rst
+   fattura_passiva
+   nota_credito_passiva
+   fattura_passiva_elettronica
+   fattura_attiva
+   nota_credito_attiva
+   fattura_attiva_elettronica
+   liquidazione_iva

@@ -8,7 +8,6 @@ Vengono mostrati in forma grafica, a seconda del dettaglio di visualizzazione, g
 .. only:: html
 
  .. toctree::
-   :numbered:
    :caption: Indice dei contenuti
    :maxdepth: 2
   

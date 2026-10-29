@@ -9,5 +9,4 @@ Funzionalità di Servizio
    coda_di_stampa
    gestione_preferiti
    messaggi
-   dashboard
    utenze/index

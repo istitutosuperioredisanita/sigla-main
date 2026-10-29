@@ -19,9 +19,11 @@ Tale operazione è uguale per la stampa definitiva dei registri IVA (in alcuni c
 
 Successivamente è necessario entrare nell’albero delle funzioni: 
 
-    - Liquidazione IVA 
-      - Liquidazione Provvisoria IVA  
-          - Gestione
+- Liquidazione IVA
+
+  - Liquidazione Provvisoria IVA
+
+    - Gestione
  
 Si sceglie il “Tipo” sezionale e il relativo mese e si clicca sull’icona “Calcola”,  si conferma la stampa e si può vedere se la UO è a debito o a credito. 
 

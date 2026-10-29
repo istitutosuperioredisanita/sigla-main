@@ -114,11 +114,8 @@ Rappresenta la somma delle Fatture elettroniche pagate nell'anno alla data di co
 Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture elettroniche ricevute (non si tiene conto di eventuali documenti generici, compensi o altre tipologie di documenti passivi).
 
 --------------------------------------------------------------------------------------------------------------
-.. only:: html
 
 .. toctree::
-
-   :numbered:
    :caption: Indice dei contenuti
    :maxdepth: 2
 

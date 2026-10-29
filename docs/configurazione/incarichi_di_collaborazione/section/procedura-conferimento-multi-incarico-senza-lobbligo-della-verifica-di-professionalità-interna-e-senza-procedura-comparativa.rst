@@ -1,3 +1,5 @@
+:orphan:
+
 Procedura Conferimento MULTI-Incarico SENZA l’obbligo della verifica di professionalità interna e SENZA procedura comparativa
 ==============================================================================================================================
 

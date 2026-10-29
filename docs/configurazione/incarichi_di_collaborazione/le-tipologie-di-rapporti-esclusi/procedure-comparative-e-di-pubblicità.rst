@@ -1,3 +1,5 @@
+:orphan:
+
 procedure comparative e di pubblicità
 =====================================
 
@@ -22,7 +24,7 @@ A titolo esemplificativo in tale categoria rientrano la singola docenza, le rela
 Per il conferimento di tali incarichi è sufficiente procedere alla sola verifica di professionalità interna, e, nel caso in cui la medesima dia esito negativo, alla redazione della decisione a contrattare, nella quale si procederà anche all’affidamento dell’incarico al soggetto scelto “intuitu personae”. Il procedimento di pubblicazione dell’avviso esterno deve, pertanto, essere omesso. Tali incarichi non sono soggetti all’obbligo di pubblicazione sul sito web del CNR.
 
 .. [1]
-Cfr. c\ \ *ircolare P.C.M. Dip.to della Funzione Pubblica n. 2 del    11 marzo 2008*
+   Cfr. c\ \ *ircolare P.C.M. Dip.to della Funzione Pubblica n. 2 del    11 marzo 2008*
 
 .. [2] 
-Cfr. art. 4 comma 2 bis del Disciplinare incarichi
+   Cfr. art. 4 comma 2 bis del Disciplinare incarichi

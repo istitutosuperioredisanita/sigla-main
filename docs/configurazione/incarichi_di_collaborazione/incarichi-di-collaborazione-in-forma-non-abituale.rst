@@ -35,7 +35,7 @@ Le collaborazioni coordinate e continuative
 -  *Circolare n. 2 della P.C.M. Dipartimento della Funzione pubblica del
    11 marzo 2008.*
 
-Il rapporto di lavoro autonomo in regime di collaborazione coordinata e continuativa  [1]_ non trova una definizione specifica nel codice civile, anche se la prestazione che viene svolta dal collaboratore è inquadrata come prestazione d’opera ai sensi degli artt. . 2222 - 2228 del codice civile. Le seguenti norme consentono di delineare gli  aspetti qualificanti di tale rapporto di lavoro:
+Il rapporto di lavoro autonomo in regime di collaborazione coordinata e continuativa  [#g1_1]_ non trova una definizione specifica nel codice civile, anche se la prestazione che viene svolta dal collaboratore è inquadrata come prestazione d’opera ai sensi degli artt. . 2222 - 2228 del codice civile. Le seguenti norme consentono di delineare gli  aspetti qualificanti di tale rapporto di lavoro:
 
 -  Codice di Procedura Civile (regole processuali in materia di lavoro) all’art. 409 comma 3 li definisce: “\ *omissis … rapporti di collaborazione che si concretizzano in una prestazione d’opera continuativa e coordinata prevalentemente personale, anche se non a carattere subordinato … omissis*\ ”;
 
@@ -111,7 +111,7 @@ Sulla base di quanto esposto si possono, pertanto, elencare i requisiti che cons
 
 -  **periodicità** del compenso prestabilito;
 
--  **proporzione** del compenso all’utilità conseguita ed alla qualità e quantità dell’opera prestata  [2]_;
+-  **proporzione** del compenso all’utilità conseguita ed alla qualità e quantità dell’opera prestata  [#g1_2]_;
 
 -  **riconducibilità dell’attività ad obiettivi, programmi e progetti**.
 
@@ -119,10 +119,10 @@ Si precisa, quindi, che il collaboratore coordinato e continuativo non deve esse
 
 Tale attività non deve essere trascurata perché attiene alla verifica dei risultati che debbono essere conseguiti ed alla valutazione sull’utilità della collaborazione e sulla effettiva esecuzione dell’opera svolta.
 
-Il collaboratore, infatti, è tenuto a svolgere relazioni intermedie ed una relazione finale al fine di consentire al CNR di verificare la rispondenza dell’attività svolta agli obiettivi prefissati e/o raggiunti [3]_.
+Il collaboratore, infatti, è tenuto a svolgere relazioni intermedie ed una relazione finale al fine di consentire al CNR di verificare la rispondenza dell’attività svolta agli obiettivi prefissati e/o raggiunti [#g1_3]_.
 
 Il collaboratore coordinato e continuativo non ha un obbligo di prestazione oraria, né è soggetto al relativo controllo delle presenze. Se è pur vero che potrebbe essere necessario un inserimento del collaboratore nell’organizzazione del committente, poiché debbono essere garantiti uno o più risultati continuativi che si integrino in tale
-organizzazione, ciò dovrà comunque avvenire in presenza di una gestione autonoma del tempo di lavoro da parte del collaboratore  [4]_
+organizzazione, ciò dovrà comunque avvenire in presenza di una gestione autonoma del tempo di lavoro da parte del collaboratore  [#g1_4]_
 . In altri termini, l’attività del collaboratore può anche svolgersi in un luogo diverso da quello nel quale opera l’organizzazione che fa capo al committente, venendo questi in contatto con l’organizzazione solo nei tempi utili allo svolgimento della sua collaborazione. Da ciò deriva che al collaboratore non può essere richiesta alcuna attestazione della propria presenza nei luoghi nei quali si svolge l’attività. Infatti, il collaboratore non entra a far parte dell’organizzazione del committente
 e, nel caso in cui il committente sia una pubblica amministrazione, questi non può in alcun modo essere considerato un suo dipendente.
 
@@ -130,26 +130,26 @@ Dalle considerazioni appena svolte deriva, quindi, l’impossibilità per il com
 
 Tuttavia è causa di sospensione dell’incarico:
 
--  la malattia superiore ai trenta giorni; in tale caso il contratto viene sospeso e riprenderà a decorrere dal venir meno della causa di sospensione ad eccezione del caso in cui l’obbiettivo per il quale è stato conferito l’incarico sia già stato raggiunto durante il periodo di sospensione  [5]_;
+-  la malattia superiore ai trenta giorni; in tale caso il contratto viene sospeso e riprenderà a decorrere dal venir meno della causa di sospensione ad eccezione del caso in cui l’obbiettivo per il quale è stato conferito l’incarico sia già stato raggiunto durante il periodo di sospensione  [#g1_5]_;
 
--  la maternità, per la cui disciplina si rinvia al Decreto del Ministero del Lavoro e della Previdenza Sociale del 12 luglio 2007 (pubblicato in G.U. 23 ottobre 2007, n. 247)  [6]_.
+-  la maternità, per la cui disciplina si rinvia al Decreto del Ministero del Lavoro e della Previdenza Sociale del 12 luglio 2007 (pubblicato in G.U. 23 ottobre 2007, n. 247)  [#g1_6]_.
 
-.. [1]
+.. [#g1_1]
     Cfr. art. 2 comma 1 del Disciplinare incarichi
 
-.. [2]
+.. [#g1_2]
     Cfr. art. 7 comma 1 del Disciplinare incarichi
 
-.. [3]
+.. [#g1_3]
     Cfr. art. 9 comma 1 del Disciplinare incarichi
 
-.. [4]
+.. [#g1_4]
     Cfr. art. 8 commi 1 e 2 del Disciplinare incarichi
 
-.. [5]
+.. [#g1_5]
     Cfr. art. 10 commi 1 e 2 del Disciplinare incarichi
 
-.. [6]
+.. [#g1_6]
     Cfr. art. 10 comma 3 del Disciplinare incarichi
     
     
@@ -179,7 +179,7 @@ Le collaborazioni occasionali di tipo non abituale
 
 -  *Circolare n. 2 della P.C.M. Dipartimento della Funzione pubblica del 11 marzo 2008.*
 
-Anche la prestazione che viene svolta dal collaboratore occasionale non abituale  [1]_ è inquadrata come prestazione d’opera ai sensi degli artt. dal 2222 al 2228 del codice civile. Le seguenti norme consentono di delineare gli aspetti qualificanti di tale rapporto di lavoro:
+Anche la prestazione che viene svolta dal collaboratore occasionale non abituale  [#g2_1]_ è inquadrata come prestazione d’opera ai sensi degli artt. dal 2222 al 2228 del codice civile. Le seguenti norme consentono di delineare gli aspetti qualificanti di tale rapporto di lavoro:
 
 -  DPR 917/86 (TUIR) art. 67, comma 1, lettera L): “\ *Sono redditi diversi … omissis … l) i redditi derivanti da attività di lavoro autonomo non esercitate abitualmente …omissis…*;
 
@@ -244,7 +244,7 @@ Sulla base di quanto detto si possono, pertanto, elencare i requisiti che consen
 
 -  **non abitualità:** cooperazione occasionale ed episodica all’attività del committente;
 
--  **temporaneità** dell’incarico  [2]_;
+-  **temporaneità** dell’incarico  [#g2_2]_;
 
 -  **straordinarietà ed occasionalità della prestazione:** limitata ad una o più questioni distinte e preventivamente determinate;
 
@@ -252,28 +252,28 @@ Sulla base di quanto detto si possono, pertanto, elencare i requisiti che consen
 
 -  **compenso:** non periodico (a saldo, a prestazione eseguita);
 
--  **proporzione** del compenso all’utilità conseguita ed alla qualità e quantità dell’opera prestata  [3]_ ;
+-  **proporzione** del compenso all’utilità conseguita ed alla qualità e quantità dell’opera prestata  [#g2_3]_ ;
 
 -  **riconducibilità dell’attività ad obiettivi, programmi e progetti**.
 
-Il collaboratore è tenuto a svolgere relazioni intermedie ed una relazione finale al fine di consentire al CNR di verificare la rispondenza dell’attività svolta agli obiettivi prefissati e/o raggiunti [4]_.
+Il collaboratore è tenuto a svolgere relazioni intermedie ed una relazione finale al fine di consentire al CNR di verificare la rispondenza dell’attività svolta agli obiettivi prefissati e/o raggiunti [#g2_4]_.
 
-Elementi in comune con la collaborazione coordinata e continuativa possono essere considerati l’assenza del vincolo di subordinazione e la libertà di organizzare la prestazione al di fuori di vincoli di orario. Il collaboratore, se espressamente autorizzato, può utilizzare le apparecchiature e le strutture del CNR, senza che tale utilizzo implichi, in nessun caso, l’instaurazione di un rapporto di lavoro subordinato [5]_.
+Elementi in comune con la collaborazione coordinata e continuativa possono essere considerati l’assenza del vincolo di subordinazione e la libertà di organizzare la prestazione al di fuori di vincoli di orario. Il collaboratore, se espressamente autorizzato, può utilizzare le apparecchiature e le strutture del CNR, senza che tale utilizzo implichi, in nessun caso, l’instaurazione di un rapporto di lavoro subordinato [#g2_5]_.
 
 
-.. [1]
+.. [#g2_1]
     Cfr. art. 2 comma 2 del Disciplinare incarichi
 
-.. [2]
+.. [#g2_2]
     Cfr. art. 6 comma 1 del Disciplinare incarichi
 
-.. [3]
+.. [#g2_3]
     Cfr. art. 7 comma 1 del Disciplinare incarichi
 
-.. [4]
+.. [#g2_4]
     Cfr. art. 9 del Disciplinare incarichi
 
-.. [5]
+.. [#g2_5]
     Cfr. art. 8 del Disciplinare incarichi
     
     
@@ -303,7 +303,7 @@ Le collaborazioni occasionali di tipo professionale con partita Iva
 
 -  *Circolare n. 2 della P.C.M. Dipartimento della Funzione pubblica del 11 marzo 2008.*
 
-La prestazione che viene svolta dal collaboratore occasionale professionale  [1]_ è inquadrata come prestazione intellettuale, ai sensi degli artt. 2229 - 2238 del codice civile, per l’esercizio della quale è necessaria l’iscrizione in appositi albi od elenchi professionali. Gli artt. 2230 - 2238 regolano il contratto che ha per oggetto una prestazione d’opera intellettuale ed in particolare dettano disposizioni riguardanti: l’\ *esecuzione dell’opera,* che deve essere eseguita personalmente anche se il professionista può avvalersi sotto la propria direzione e responsabilità di sostituti ed ausiliari (se consentito dal contratto e se compatibile con l’oggetto della
+La prestazione che viene svolta dal collaboratore occasionale professionale  [#g3_1]_ è inquadrata come prestazione intellettuale, ai sensi degli artt. 2229 - 2238 del codice civile, per l’esercizio della quale è necessaria l’iscrizione in appositi albi od elenchi professionali. Gli artt. 2230 - 2238 regolano il contratto che ha per oggetto una prestazione d’opera intellettuale ed in particolare dettano disposizioni riguardanti: l’\ *esecuzione dell’opera,* che deve essere eseguita personalmente anche se il professionista può avvalersi sotto la propria direzione e responsabilità di sostituti ed ausiliari (se consentito dal contratto e se compatibile con l’oggetto della
 prestazione); il *compenso,* che deve essere determinato dalle parti o dalle tariffe professionali e che deve essere adeguato all’importanza dell’opera ed al decoro professionale.
 
 Le altre seguenti norme consentono di delineare gli aspetti qualificanti di tale rapporto di lavoro:
@@ -376,11 +376,11 @@ Sulla base di quanto detto si possono, pertanto, elencare i requisiti che consen
 
 -  **compenso:** convenuto tra le parti, determinato da tariffe professionali e proporzionato all’importanza dell’opera ed al decoro della professione;
 
--  **proporzione** del compenso all’utilità conseguita ed alla qualità e quantità dell’opera prestata  [2]_ ; 
+-  **proporzione** del compenso all’utilità conseguita ed alla qualità e quantità dell’opera prestata  [#g3_2]_ ; 
 
 -  **riconducibilità dell’attività ad obiettivi, programmi e progetti**.
 
-Il collaboratore è tenuto a svolgere relazioni intermedie ed una relazione finale al fine di consentire al CNR di verificare la rispondenza dell’attività svolta agli obiettivi prefissati e/o raggiunti [3]_.
+Il collaboratore è tenuto a svolgere relazioni intermedie ed una relazione finale al fine di consentire al CNR di verificare la rispondenza dell’attività svolta agli obiettivi prefissati e/o raggiunti [#g3_3]_.
 
 5. **Le tipologie di attività oggetto di incarico (studio/ricerca/consulenza/altre)**
 
@@ -394,7 +394,7 @@ Il collaboratore è tenuto a svolgere relazioni intermedie ed una relazione fina
 
 -  *Circolare n. 2 della P.C.M. Dipartimento della Funzione pubblica del 11 marzo 2008.*
 
-Dall’esame delle fonti normative di riferimento emerge che gli incarichi illustrati al paragrafo 3 possono qualificarsi, a seconda dell’oggetto dell’attività, in incarichi di studio o di ricerca o di consulenza ovvero riguardante altre tipologie di attività  [4]_.
+Dall’esame delle fonti normative di riferimento emerge che gli incarichi illustrati al paragrafo 3 possono qualificarsi, a seconda dell’oggetto dell’attività, in incarichi di studio o di ricerca o di consulenza ovvero riguardante altre tipologie di attività  [#g3_4]_.
  
 Le leggi finanziarie degli anni 2005 e 2006 pongono dei precisi limiti di spesa agli incarichi di studio, ricerca e consulenza. Da ultimo, la circolare n. 5 della P.C.M. Dipartimento della Funzione pubblica del 21 dicembre 2006 al paragrafo 3.2 specifica che *“ … le attività di studio, ricerca o consulenza, possono essere oggetto, oltre che di una prestazione occasionale anche di un rapporto di collaborazione coordinata e continuativa …*\ ” Sussistono, tuttavia, altre tipologie di attività che, non rientrando nella predetta classificazione, possono riguardare, ad esempio, lo svolgimento di attività di supporto ai servizi amministrativi e tecnici dell’ente.
 
@@ -406,18 +406,18 @@ Al fine del corretto inquadramento, gli incarichi predetti vengono definiti come
 
 -  **Incarichi di consulenza:** consistono in pareri, valutazioni ed espressioni di giudizio, su specifiche questioni;
 
--  **Altri incarichi:** incarichi con oggetto non corrispondente alla classificazione suddetta, quali ad esempio le attività inerenti il supporto *“ … ai servizi amministrativi o tecnici dell’ente …”* [5]_. In tale tipologia, a titolo esemplificativo, rientrano le seguenti attività: audit, notarili, mediche (sicurezza del lavoro),    seminari e docenze.
+-  **Altri incarichi:** incarichi con oggetto non corrispondente alla classificazione suddetta, quali ad esempio le attività inerenti il supporto *“ … ai servizi amministrativi o tecnici dell’ente …”* [#g3_5]_. In tale tipologia, a titolo esemplificativo, rientrano le seguenti attività: audit, notarili, mediche (sicurezza del lavoro),    seminari e docenze.
 
-Si fa presente che ogni attività svolta dal collaboratore incaricato, e non solo l’attività di studio, deve essere oggetto di specifica e dettagliata relazione sulla base di quanto stabilito nell’atto di incarico (decisione a contrattare/contratto) che deve essere conservata agli atti dal responsabile del procedimento che ha affidato l’incarico [6]_.
+Si fa presente che ogni attività svolta dal collaboratore incaricato, e non solo l’attività di studio, deve essere oggetto di specifica e dettagliata relazione sulla base di quanto stabilito nell’atto di incarico (decisione a contrattare/contratto) che deve essere conservata agli atti dal responsabile del procedimento che ha affidato l’incarico [#g3_6]_.
 
-Nel seguito sarà chiarito che gli incarichi conferiti sotto forma di collaborazioni coordinate e continuative, indipendentemente dalla tipologia di attività oggetto del contratto (studio/ricerca/consulenza/contabile/audit), non sono soggetti ad alcun limite di spesa qualora la prestazione sia finalizzata all’attuazione di progetti di ricerca e/o di innovazione tecnologica  [7]_ [8]_ .
+Nel seguito sarà chiarito che gli incarichi conferiti sotto forma di collaborazioni coordinate e continuative, indipendentemente dalla tipologia di attività oggetto del contratto (studio/ricerca/consulenza/contabile/audit), non sono soggetti ad alcun limite di spesa qualora la prestazione sia finalizzata all’attuazione di progetti di ricerca e/o di innovazione tecnologica  [#g3_7]_ [#g3_8]_ .
 
 6. **La disciplina degli incarichi di collaborazione nel regolamento di contabilità del CNR – l’art. 89**
 
 *Riferimenti normativi:*
 
 -  *DPCNR 4 maggio 2005, n. 25034 “Regolamento di amministrazione, contabilità e finanza del CNR - Art. 89.* L’art. 89 del DPCNR 4 maggio 2005, n. 25034 “Regolamento di
-amministrazione, contabilità e finanza del CNR” è da ritenersi applicabile limitatamente alle parti non diversamente regolate dal presente disciplinare 21.
+   amministrazione, contabilità e finanza del CNR” è da ritenersi applicabile limitatamente alle parti non diversamente regolate dal presente disciplinare 21.
 
 In particolare risultano applicabili i commi 1 e 2, mentre in merito alla scelta del contraente sarà obbligatorio procedere in conformità alle norme previste dal Disciplinare incarichi.
 
@@ -449,7 +449,7 @@ dall’articolo 61, comma 2.”*
 Dalle norme vigenti emerge la possibilità per le pubbliche amministrazioni di affidare qualsiasi incarico di collaborazione di tipo occasionale non abituale o professionale ovvero coordinato e continuativo. Come già detto, l’elemento fondamentale e principale da considerare per l’affidamento di un incarico è quello individuabile in tutte le collaborazioni, e cioè il carattere autonomo della prestazione.
 Ciò sia per gli elementi caratteristici delle diverse forme contrattuali adottate per conferire detti incarichi, che sono estranei alla subordinazione, sia perché,  diversamente, sarebbero violate le norme sull’accesso alla pubblica amministrazione tramite concorso pubblico, nonché i principi di buon andamento e imparzialità sanciti dall’articolo 97 della Costituzione.
 
-Al fine di conferire legittimamente un incarico di collaborazione, è dunque indispensabile rispettare tutti i presupposti previsti dalla vigente normativa, di seguito indicati  [9]_:
+Al fine di conferire legittimamente un incarico di collaborazione, è dunque indispensabile rispettare tutti i presupposti previsti dalla vigente normativa, di seguito indicati  [#g3_9]_:
 
 a) autonomia della prestazione (incarichi estranei dalla subordinazione);
 
@@ -481,7 +481,7 @@ Si richiama l’attenzione dei Dirigenti/Direttori sul puntuale rispetto di tutt
 
 Inoltre, la nuova stesura dell’art. 7 comma 6 recita: “Il ricorso a contratti di collaborazione coordinata e continuativa per lo svolgimento di funzioni ordinarie ovvero l’utilizzo dei collaboratori come lavoratori subordinati è causa di responsabilità amministrativa per il Dirigente/Direttore che ha stipulato il contratto”.
 
-Per “ordinarie” si intendono quelle funzioni il cui svolgimento non necessita di una particolare competenza specialistica tipica delle attività di studio, ricerca e consulenza  [10]_.
+Per “ordinarie” si intendono quelle funzioni il cui svolgimento non necessita di una particolare competenza specialistica tipica delle attività di studio, ricerca e consulenza  [#g3_10]_.
 
 La Circolare n. 5 della P.C.M. Dipartimento della Funzione pubblica del 21 dicembre 2006 riassume i sopraelencati presupposti di legittimità nel punto in cui afferma che “ *… le amministrazioni … omissis … potranno conferire incarichi individuali, con contratti di lavoro autonomo, di natura occasionale o coordinata e continuativa, determinando durata, luogo, oggetto e compenso della collaborazione, quando debbano soddisfare esigenze alle quali non sia possibile fare fronte con il personale in servizio, dal punto di vista qualitativo e non quantitativo. Pertanto, tali esigenze dovranno essere di natura temporanea e, al contempo, richiedere l’apporto di prestazioni professionali altamente qualificate. Si sottolinea che i soggetti a cui è possibile conferire sono dalla norma definiti come “esperti di particolare e comprovata specializzazione universitaria”, quindi attinenti a professionalità non reperibili in ambito interno, ad esempio verificandone la presenza attraverso la valutazione dei curricula del personale in servizio, fermo rimanendo il rispetto della disciplina delle mansioni prevista dall’articolo 52 del decreto legislativo n. 165 del 2001. … omissis*\ ”.
 
@@ -495,34 +495,34 @@ Con riferimento al requisito di cui al punto d), secondo le indicazioni fornite 
 
 Inoltre, come indicato nel novellato art. 7 comma 6 del D.Lgs 165/2001, gli incarichi possono essere comunque conferiti, nel rispetto dell’intera procedimento di affidamento, a soggetti non laureati solo nel caso previsti nel successivo paragrafo 6.3.
 
-.. [1]
+.. [#g3_1]
     Cfr art. 2 comma 3 del Disciplinare incarichi
 
-.. [2]
+.. [#g3_2]
     Cfr. art. 7 comma 1 del Disciplinare incarichi
 
-.. [3]
+.. [#g3_3]
     Cfr. art. 9 del Disciplinare incarichi
 
-.. [4]
+.. [#g3_4]
     Cfr. art. 2 comma 4 del Disciplinare incarichi
 
-.. [5]
+.. [#g3_5]
     Cfr. art. 89 comma 2 del Disciplinare di contabilità
 
-.. [6]
+.. [#g3_6]
     Cfr. art. 9 comma 1 del Disciplinare incarichi
 
-.. [7]
+.. [#g3_7]
     Cfr. art. 1 comma 188 legge 266/2005
 
-.. [8]
+.. [#g3_8]
     Cfr. art. 14 comma 1 del Disciplinare incarichi
 
-.. [9]
+.. [#g3_9]
     Cfr. art. 3 del Disciplinare incarichi
 
-.. [10]
+.. [#g3_10]
     Cfr. art. 13 del Disciplinare incarichi
 
 

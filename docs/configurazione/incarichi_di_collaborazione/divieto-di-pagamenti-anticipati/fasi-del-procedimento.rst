@@ -39,7 +39,7 @@ Il procedimento di valutazione comparativa, deve risultare da un atto amministra
 
 Successivamente, provvederà all’affidamento dell’incarico secondo gli schemi di contratto previsti e con le condizioni fissate nell’avviso pubblico entro il termine di 60 giorni dalla data di scadenza dell’avviso pubblico.
 
-La persona individuata per lo svolgimento dell’incarico dovrà presentare una dichiarazione attestante la professione e/o il suo stato di dipendente pubblico al fine di appurare l’inesistenza di incompatibilità e altre eventuali cause ostative al conferimento dell’incarico. Nel caso in cui il soggetto individuato per lo svolgimento dell’incarico sia un pubblico dipendente dovrà preventivamente essere acquisita l’autorizzazione da parte dell’amministrazione di appartenenza secondo le disposizioni di cui all’art. 53 del D.lgs 165/2001  [1]_.
+La persona individuata per lo svolgimento dell’incarico dovrà presentare una dichiarazione attestante la professione e/o il suo stato di dipendente pubblico al fine di appurare l’inesistenza di incompatibilità e altre eventuali cause ostative al conferimento dell’incarico. Nel caso in cui il soggetto individuato per lo svolgimento dell’incarico sia un pubblico dipendente dovrà preventivamente essere acquisita l’autorizzazione da parte dell’amministrazione di appartenenza secondo le disposizioni di cui all’art. 53 del D.lgs 165/2001.
 
 Il procedimento si conclude con l’inserimento nella procedura SIGLA dell’incarico conferito.
 

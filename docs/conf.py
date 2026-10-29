@@ -19,6 +19,12 @@ project = 'SIGLA'
 release = '8.0.40'
 author = u'Istituto Superiore di Sanità'
 
+# non costruire il tema e i suoi test/demo come se fossero documentazione
+exclude_patterns = ['_build', 'theme/**']  # oppure includi il CHANGELOG nel toctree
+# CHANGELOG generato (semantic-release) parte da H2: è voluto
+suppress_warnings = ['myst.header']
+html_favicon = '_static/favicon.ico'
+
 show_authors = True
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
@@ -39,9 +45,8 @@ html_static_path = ['_static']
 copyright = "2020 Istituto Superiore di Sanità"
 html_title = "SIGLA"
 html_show_sourcelink = False
-html_favicon = "favicon.ico"
 html_logo = "logo.png"
-latex_logo = 'logo.png'
+latex_logo = 'logo_blu.png'
 html_baseurl = 'docs'
 smartquotes = False
 language = "it"

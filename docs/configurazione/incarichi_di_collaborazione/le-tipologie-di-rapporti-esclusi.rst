@@ -17,8 +17,7 @@ Il Disciplinare CNR del 23 /12/1998 consente, pertanto, di conferire contratti d
 
 -  titolo di studio: diploma universitario ovvero titolo di studio coerente con la natura della prestazione da svolgere;
 
--  prestazione: prevista da programmi di ricerca. E’ consentito l’affidamento anche di prestazioni di natura amministrativa esclusivamente laddove siano previste dal
-programma di ricerca e siano strettamente strumentali all’attuazione del medesimo.
+-  prestazione: prevista da programmi di ricerca. E’ consentito l’affidamento anche di prestazioni di natura amministrativa esclusivamente laddove siano previste dal programma di ricerca e siano strettamente strumentali all’attuazione del medesimo.
 
 Si sottolinea, inoltre, che per il conferimento di tali incarichi, non è necessaria la decisione a contrattare, in quanto la medesima viene sostituita dal bando di selezione e che gli stessi, come verrà espressamente specificato nel successivo paragrafo, non sono oggetto di controllo preventivo di legittimità , così come i contratti riconducibili all’art. 14, comma 2 del Disciplinare.
 

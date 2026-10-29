@@ -26,7 +26,7 @@ Persona Fisica
 ================
 Le persone fisiche possono essere **italiane** o **estere**, inoltre quando si registra l'anagrafica di un soggetto bisogna indicare se si tratta di una **ditta individuale** o **altro**.
 Alcune persone fisiche, se titolari di partita iva, devono essere targati come **soggetto iva**, questo attributo comporta l'inserimento obbligatorio della partita iva del soggetto oltre al codice fiscale che invece lo è sempre.
-La **Tipologia Istat** è un dato indispensabile ai fini dell'associazione ai codici :doc:`Siope<siope>`  nell'emissione dei :doc:`Mandati<mandati>`  e delle :doc:`Reversali<reversali>`.
+La **Tipologia Istat** è un dato indispensabile ai fini dell'associazione ai codici Siope  nell'emissione dei Mandati  e delle Reversali.
 L'anagrafica di una persona fisica, prevede anche l'inserimento di dati nel tab `Rapporto`_, `Dettagli`_, `Carichi Familiari`_ e `Pagamenti Esterni`_, qualora sia necessario.
 
 Persona Fisica Cervellone
@@ -72,7 +72,7 @@ In fase di ricezione di un documento elettronico passivo, la procedura controlla
 Studio Associato
 ================
 Lo Studio Associato è una persona guiridica e come tale deve essere registrata. L'attributo "Studio associato" consente di inserire nel tab Lista Associati,
-qualora sia necessario, i soggetti che fanno parte dello studio, inoltre consente la gestione di un particolare caso nella funzione dei :doc:`Compensi<compensi>`
+qualora sia necessario, i soggetti che fanno parte dello studio, inoltre consente la gestione di un particolare caso nella funzione dei Compensi
 
 
 Utilizzo delle Anagrafiche - Schema di Controlli
@@ -145,8 +145,8 @@ Si ricorda che ad ogni anagrafica di tipo “persona fisica” possono essere as
 Inoltre è necessario sapere che le date di inizio e fine validità vengono confrontate al momento della registrazione:
 
 - di un :doc:`Incarico<incarichi_di_collaborazione/incarichi-sigla>`, con le date di inizio e di fine;
-- di un :doc:`Compenso<compensi>`, con le date di competenza economica;
-- di una :doc:`Minicarriera<minicarriere>`, con le date di inizio e fine della minicarriera stessa.
+- di un Compenso, con le date di competenza economica;
+- di una Minicarriera, con le date di inizio e fine della minicarriera stessa.
 
 Per le anagrafiche di :under:`persone guiriche` è possibile inserire solo il rapporto :red:`'PROF'`.
 
@@ -159,7 +159,7 @@ L'inserimento dell'inquadramento è necessario solo per le tipologie di rapporto
 Carichi Familiari
 =================
 
-Le informazioni di questo pannello vengono utilizzate nel calcolo dei :doc:`Compensi<compensi>` e riguardano l’individuazione dei familiari a carico (coniuge, figlio, altro),
+Le informazioni di questo pannello vengono utilizzate nel calcolo dei Compensi e riguardano l’individuazione dei familiari a carico (coniuge, figlio, altro),
 della validità di inizio e di fine, e della percentuale di abbattimento per ognuno.
 Le detrazioni derivanti da familiari a carico, secondo quanto previsto dalla `Circolare <http://www.ittig.cnr.it/BancheDatiGuide/circolari/c08-02a1Direttiva%20RagioneriaSAC%20su%20buste%20paga%20e%20fisco%20-%2017-01-2008.pdf>`_ direttiva della Ragioneria della SAC
 N.Reg RagSac 21/2008 del 17 gennaio 2008], sono dovute se il richiedente dichiara, :red:`'annualmente'`, di averne diritto.

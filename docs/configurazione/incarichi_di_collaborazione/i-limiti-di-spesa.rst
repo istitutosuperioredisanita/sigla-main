@@ -62,9 +62,9 @@ impegnate nel 2003 per contratti di collaborazione coordinata e continuativa fin
 Tale limite di spesa, quindi, per gli incarichi conferiti nella forma di collaborazione coordinata e continuativa:
 
 - colpisce quelli che abbiano ad oggetto lo svolgimento di ogni tipologia di attività i cui oneri gravano sul fondo di finanziamento ordinario;
-- colpisce quelli che abbiano ad oggetto lo svolgimento di ogni tipologia di attività i cui oneri, pur gravando su fondi esterni, non riguardano l’attuazione di progetti di ricerca ed innovazione
-tecnologica;
+- colpisce quelli che abbiano ad oggetto lo svolgimento di ogni tipologia di attività i cui oneri, pur gravando su fondi esterni, non riguardano l’attuazione di progetti di ricerca ed innovazione tecnologica;
 - non opera per quelli che abbiano ad oggetto lo svolgimento di ogni tipologia di attività i cui oneri gravano su fondi esterni per l’attuazione di progetti di ricerca ed innovazione tecnologica.
+
 Al fine di verificare finanziariamente la possibilità di stipulare nuovi contratti di collaborazione coordinata e continuativa, una volta rispettati i presupposti di legittimità ed espletate le formalità preliminari
 necessarie al conferimento (compresa la verifica di professionalità interne all’ente), ogni Centro di responsabilità interessato dovrà inserire l’incarico che intende affidare nella procedura SIGLA. La
 procedura provvederà a verificare, laddove necessario, il rispetto dei limiti di spesa, consentendo di proseguire nella registrazione, ovvero comunicando il superamento del limite massimo.

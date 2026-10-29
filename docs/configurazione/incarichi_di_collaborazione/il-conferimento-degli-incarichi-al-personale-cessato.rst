@@ -18,8 +18,11 @@ amministrazioni con le quali ha avuto rapporti di lavoro o impiego nei cinque an
 Alla luce di quanto sopra esposto possono configurarsi le seguenti situazioni:
 
 a) personale CNR cessato per conseguimento della pensione di vecchiaia (65 anni per gli uomini e 60 per le donne): è possibile conferire un incarico;
+
 b) personale CNR cessato per dimissioni volontarie in possesso dei requisiti previsti per l’ottenimento della pensione di anzianità: non è possibile conferire l’incarico;
-c) personale CNR trasferito ad altra amministrazione pubblica che cessa da tale ultima amministrazione pubblica, occorre aver riguardo agli ultimi cinque anni che precedono la cessazione
-dal servizio:
-  c. 1 se anche uno solo di questi cinque anni che precedono la cessazione dal servizio è stato trascorso presso il CNR: non è possibile conferire un incarico;
-  c. 2 se i cinque anni che precedono la cessazione dal servizio sono stati trascorsi presso amministrazioni diverse dal CNR: è possibile conferire un incarico.
+
+c) personale CNR trasferito ad altra amministrazione pubblica che cessa da tale ultima amministrazione pubblica, occorre aver riguardo agli ultimi cinque anni che precedono la cessazione dal servizio:
+
+   - c. 1 se anche uno solo di questi cinque anni che precedono la cessazione dal servizio è stato trascorso presso il CNR: non è possibile conferire un incarico;
+
+   - c. 2 se i cinque anni che precedono la cessazione dal servizio sono stati trascorsi presso amministrazioni diverse dal CNR: è possibile conferire un incarico.

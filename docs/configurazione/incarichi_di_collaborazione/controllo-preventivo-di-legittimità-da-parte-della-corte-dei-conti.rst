@@ -1,3 +1,5 @@
+:orphan:
+
 8. Controllo preventivo di legittimità da parte della Corte dei Conti
 =====================================================================
 
@@ -225,7 +227,7 @@ controllo preventivo di legittimità:**
 *Riferimenti normativi:*
 
 - *Circolare n. 2 della P.C.M. Dipartimento della Funzione pubblica del
-11 marzo 2008.*
+  11 marzo 2008.*
 
 Il contratto con il quale viene conferito l’incarico al collaboratore,
 considerati i presupposti di straordinarietà che legittimano il

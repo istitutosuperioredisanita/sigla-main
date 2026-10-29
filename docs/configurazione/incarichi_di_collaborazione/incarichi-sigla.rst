@@ -160,8 +160,8 @@ La funzione “Procedura conferimento Incarichi” è stata implementata al fine
 
 Nel caso di avvio di una “Procedura di conferimento **Multi-Incarico** la funzione, nel folder “Incarichi”, consente l’associazione di più incarichi.
 
-*Procedura Conferimento Incarichi*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Procedura Conferimento Incarichi
+================================
 
 La funzione implementata in SIGLA consente la gestione di tutti gli adempimenti essenziali per l’affidamento di uno o più incarichi nella forma di collaborazione occasionale (con o senza partita Iva) o di collaborazione coordinata e continuativa. Tale funzione si compone di quattro folder :
 
@@ -178,13 +178,13 @@ La funzione implementata in SIGLA consente la gestione di tutti gli adempimenti 
 
 Ogni “Procedura di conferimento incarichi” registrata in SIGLA è identificata dal sistema informativo dall’anno di registrazione e da un “Identificativo Procedura” che corrisponde al numero attribuito automaticamente dalla procedura al salvataggio dei dati, con progressivo numerico assoluto per anno.
 
-*Gestione degli Stati*
-~~~~~~~~~~~~~~~~~~~~~~
+Gestione degli Stati
+====================
 
 Anche per la gestione degli Stati conviene distinguere il caso di Procedura **Mono-Incarico** e **Multi-Incarichi.**
 
 Stati per Procedura di conferimento Mono-Incarico
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------------------
 
 In questo caso gli Stati della Procedura di Conferimento Incarichi sono gli stessi di quelli dell’unico incarico ad essa associato. A seconda della procedura amministrativa utilizzata, gli stati possibili sono:
 
@@ -238,7 +238,7 @@ Il passaggio di stato comporta:
    -  la possibilità di riutilizzare l’eventuale riferimento della ricerca di professionalità interna (sempre che sia ancora valida) per un altro incarico.
 
 Stati per Procedura di conferimento Multi-Incarico
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------------------------------
 
 Occorre distinguere gli Stati della “Procedura di conferimento incarichi” dagli Stati degli incarichi ad essa associati.
 
@@ -309,12 +309,12 @@ Il passaggio di stato comporta:
    -  la possibilità di riutilizzare l’eventuale riferimento della ricerca di professionalità interna (sempre che sia ancora valida) per un altro incarico.
 
 Successione degli stati nell’ambito delle procedure amministrative
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==================================================================
 
 La funzione “Procedura di conferimento incarichi” è a supporto delle procedure amministrative per l’affidamento di incarichi. Ciascuna procedura prevede delle fasi diverse; di seguito sono riportati, in maniera schematica, i percorsi logici di ciascuna procedura amministrativa suddivisi per **Mono-Incarico** e **MultiIncarico**. Nel caso del **Mono-Incarico** gli Stati della Procedura di Conferimento Incarichi sono gli stessi di quelli dell’unico incarico ad essa associato.
 
 Procedura Conferimento MONO-Incarico CON l’obbligo della verifica di professionalità interna e CON procedura comparativa
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------------------------------------------------------------------------------------------
 
 
 .. list-table:: Procedura Conferimento MONO-Incarico SENZA l’obbligo della verifica di professionalità interna e CON procedura comparativa
@@ -335,7 +335,7 @@ Procedura Conferimento MONO-Incarico CON l’obbligo della verifica di professio
      - I campi non sono modificabili.
    * - Annullata
      - Direttore
-     - ----------------------------
+     - \-
      - L’incarico non può più essere affidato, la pubblicazione viene eliminata. Il processo è concluso.
    * - In Scadenza
      - Automatico
@@ -373,22 +373,22 @@ Procedura Conferimento MONO-Incarico CON l’obbligo della verifica di professio
 
 
 Procedura Conferimento MONO-Incarico SENZA l’obbligo della verifica di professionalità interna e SENZA procedura comparativa
------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
 
 
 
 Procedura Conferimento MONO-Incarico CON l’obbligo della verifica di professionalità interna e SENZA procedura comparativa
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------------------------------------------------------------------------------------
 
 
 
 Procedura Conferimento MULTI-Incarico CON l’obbligo della verifica di professionalità interna e CON procedura comparativa
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------------------------------------------------------------------------------------
 
 
 
 Procedura Conferimento MULTI-Incarico SENZA l’obbligo della verifica di professionalità interna e CON procedura comparativa
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------------------------------------------------------------------------------------
 
 
 Procedura Conferimento MULTI-Incarico SENZA l’obbligo della verifica di professionalità interna e SENZA procedura comparativa

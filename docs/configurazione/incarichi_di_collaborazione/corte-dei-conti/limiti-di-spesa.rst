@@ -1,11 +1,13 @@
- limiti di spesa per incarichi di natura occasionale
-====================================================
+Limiti di spesa per incarichi di natura occasionale
+===================================================
 
 *Riferimenti normativi:*
 
 -  *Legge 266/2005 - art. 1 comma 57;*
 
--  *Circolare n. 5 della P.C.M. Dipartimento della Funzione pubblica del 21 dicembre 2006;* - *Circolare n. 2 della P.C.M. Dipartimento della Funzione pubblica del 11 marzo 2008.*
+-  *Circolare n. 5 della P.C.M. Dipartimento della Funzione pubblica del 21 dicembre 2006;*
+
+-  *Circolare n. 2 della P.C.M. Dipartimento della Funzione pubblica del 11 marzo 2008.*
 
 L’art. 1 comma 57 della Legge 266/2005, dispone che per un periodo di tre anni (*ndr* *2006 – 2007 -2008*), le pubbliche amministrazioni non possono *“ … stipulare contratti di consulenza che nel loro complesso siano di importo superiore rispetto all’ammontare totale dei contratti in essere al 30 settembre 2005, come automaticamente ridotto.*\ ”. La riduzione cui fa riferimento la norma è del 10%.
 
@@ -23,7 +25,9 @@ Al fine di verificare finanziariamente la possibilità di stipulare incarichi di
 
 *Riferimenti normativi:*
 
--  *Legge 266/2005 - art. 1 comma 187 e 188;* - *Legge 296/2006 - art. 1 comma 538;*
+-  *Legge 266/2005 - art. 1 comma 187 e 188;*
+
+-  *Legge 296/2006 - art. 1 comma 538;*
 
 -  *Legge 244/2007 – art. 3 comma 80;*
 

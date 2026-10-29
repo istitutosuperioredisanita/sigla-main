@@ -36,8 +36,9 @@ Analizziamo ora i vari campi presenti nel folder “Testata” che sono comuni p
 - Totale Tale campo sarà compilato automaticamente dal sistema con la compilazione del folder “dettaglio”. 
 - Descrizione libera. 
 - Mod. pagamento scegliere nel menù a tendina la voce che interessa tenendo presente che:  
-      - BI – Banca d’Italia deve essere scelta tale modalità nel caso il cliente sia  un’amministrazione dello Stato o un Ente Pubblico presente nella tabella A legge 720/84 
-      - BO – Bonifico su c/c Bancario N.B. il c/c che deve essere fornito ai nostri clienti è  IBAN IT57S0100503392000000218155 
+
+  - BI – Banca d’Italia deve essere scelta tale modalità nel caso il cliente sia  un’amministrazione dello Stato o un Ente Pubblico presente nella tabella A legge 720/84
+  - BO – Bonifico su c/c Bancario N.B. il c/c che deve essere fornito ai nostri clienti è  IBAN IT57S0100503392000000218155
    
 Esaminiamo ora i campi particolari: 
 - Liquidazione Differita deve essere spuntato solo ed esclusivamente in caso di emissione di fattura attiva a favore di un organo dello Stato o di un Ente locale ai sensi art.6 DPR633/72 (In tal caso il nostro debito IVA sorgerà nel momento dell’incasso della fattura). 
@@ -72,14 +73,15 @@ Qualora in testata in tipo di documento sia stato scelto “Tariffario” dopo i
 
 **Caso particolare INTRA-UE** 
  
- Qualora  in  testata  sia  stato  spuntato il flag 'INTRA-UE' occorre distinguere se il cliente è un consumatore finale o un soggetto passivo di imposta: 
+Qualora  in  testata  sia  stato  spuntato il flag 'INTRA-UE' occorre distinguere se il cliente è un consumatore finale o un soggetto passivo di imposta:
+
 - Consumatore finale indipendentemente dalla scelta effettuata sul record Servizi/Beni la fattura dovrà essere sempre emessa con IVA. 
 - Soggetto passivo di imposta dobbiamo in questo caso distinguere tra: 
 
- - Beni
-   in questo caso la fattura dovrà essere emessa senza IVA (fuori campo) in quanto l’IVA viene acquisita nel paese del cliente e dovrà essere compilato il Modello Intrastat. 
- - Servizi 
-   in questo caso la fattura dovrà essere emessa senza IVA se il servizio prestato rientra nell’applicazione dell’art. 7 ter e dovrà essere compilato il relativo Modello Intrastat; qualora invece fossero Servizi che rientrano nell’ambito dell'art. 7 quater e 7 quinques - territorialmente effettuati in Italia la fattura sarà emessa con IVA e non dovrà essere compilato il relativo Modello Intrastat; qualora invece fossero Servizi che rientrano nell’ambito dell'art. 7 quater e 7 quinques - territorialmente non effettuati in Italia la fattura dovrà essere emessa Fuori campo IVA e non dovrà essere compilato il relativo Modello Intrastat. 
+  - Beni
+    in questo caso la fattura dovrà essere emessa senza IVA (fuori campo) in quanto l’IVA viene acquisita nel paese del cliente e dovrà essere compilato il Modello Intrastat.
+  - Servizi
+    in questo caso la fattura dovrà essere emessa senza IVA se il servizio prestato rientra nell’applicazione dell’art. 7 ter e dovrà essere compilato il relativo Modello Intrastat; qualora invece fossero Servizi che rientrano nell’ambito dell'art. 7 quater e 7 quinques - territorialmente effettuati in Italia la fattura sarà emessa con IVA e non dovrà essere compilato il relativo Modello Intrastat; qualora invece fossero Servizi che rientrano nell’ambito dell'art. 7 quater e 7 quinques - territorialmente non effettuati in Italia la fattura dovrà essere emessa Fuori campo IVA e non dovrà essere compilato il relativo Modello Intrastat.
 
 **Caso particolare EXTRA-UE** 
  

@@ -34,21 +34,27 @@ Di seguito vengono riporatati i passi da gestire per l'intero processo:
 5.	Creare Progetto calderone e sua Gae; 
 
 6.	Inserire in configurazione Ente i valori per la successiva gestione del gestionale: 
+
   - Progetto calderone (Progressivo Progetto), Cofog, Gae del progetto calderone: (il CDR e codice Gae). Inserimento valori da Funzione di configurazione dopo la loro creazione;
 
 **Nota tecnica:**
 
 Per il progetto calderone mettere nel campo Importo1 della tabella CONFIGURAZIONE_CNR:
+
  - CHIAVE_PRIMARIA: PROGETTI
  - CHIAVE_SECONDARIA: PROGETTO_CALDERONE
+
 il Progressivo del progetto Calderone;
 
 Per il COFOG mettere nel campo Valore1 della tabella CONFIGURAZIONE_CNR:
+
  - CHIAVE_PRIMARIA: PROGETTI
  - CHIAVE_SECONDARIA: COFOG_DEFAULT
+
 il codice Cofog
 
 Per la Gae calderone mettere nel campo Valore1 e Valore2 della tabella CONFIGURAZIONE_CNR:
+
  - il CDR e codice Gae calderone.
 
 7.	Gestione del Decisionale. Entrare sul Bilancio di previsione
@@ -71,10 +77,12 @@ Per la Gae calderone mettere nel campo Valore1 e Valore2 della tabella CONFIGURA
 9.	Ogni UO, dopo aver completato la previsione dei Progetti, effettua il passaggio di stato a ‘Chiusura compilazione’.
 
 10.	Successivamente ogni UO (oppure il Superutente per tutti) effettua la ‘chiusura CDR’:
+
   - cambio stato in alto a destra. Lo stato cambia da Apertura a Chiusura del CDR.
   - Solo la UO Ente può tornare indietro in questa fase.
 
 11.	Quando le UO hanno completato si può passare allo stato  ‘In esame dal centro’.
+
   - Solo la UO Ente  lo può fare selezionando una o tutte le UO (condizione per la multiselezione è che le UO selezionate abbiano lo stesso stato di partenza).
 
 
@@ -109,6 +117,7 @@ NOTA
 
 Importi da gestire: Solo Gestione Decentrata, Fonti Esterne
 per la funzione di Stampa Bilancio di previsione sarà prevista la possibilità di scegliere (se attiva questa gestione della Contrattazione): 
+
  - Stampa Bilancio di Previsione Totale: stampa solo Progetto calderone (indicato nei parametri);
  - Stampa dettagli: stampa solo i Progetti di dettaglio eccetto il ‘Calderone’
 

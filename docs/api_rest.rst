@@ -687,7 +687,7 @@ particolare lo sviluppo ha riguardato:
         logger.info("RequestedSessionId: "+req.getRequestedSessionId() + ".ServerName: "+req.getServerName()+". ServerPort:"+req.getServerPort()+".URI: "+req.getRequestURI());
         String extension = s.substring(s.lastIndexOf("."));
         if(!restExtension.contains(extension))
-          throw new ServletException("Le actions devono terminare con \\""+restExtension +"\"");
+          throw new ServletException("Le actions devono terminare con \""+restExtension +"\"");
         s = s.substring(0, s.length() - extension.length());
         if (s.equals(ACTION_INFO)){
           if (command.equals(COMMAND_GET)) {
@@ -703,7 +703,7 @@ particolare lo sviluppo ha riguardato:
           try {
             if (actionmapping.needExistingSession())
               utente = authenticate(req, resp);
-              if (utente != null \|\| !actionmapping.needExistingSession()) {
+              if (utente != null || !actionmapping.needExistingSession()) {
                 JSONRequest jsonRequest = null;
                 HttpActionContext httpactioncontext = new HttpActionContext(this, req,resp);
                 httpactioncontext.setActionMapping(actionmapping);
@@ -729,9 +729,9 @@ particolare lo sviluppo ha riguardato:
                     Boolean isEnableBP = false;
                     if (actionmapping.needExistingSession())
                       isEnableBP = loginComponentSession().isBPEnableForUser(httpactioncontext.getUserContext(), utente, CNRUserContext.getCd_unita_organizzativa(httpactioncontext.getUserContext()), businessProcess.getName());
-                    if ((actionmapping.needExistingSession() && !isEnableBP) \|\| !(businessProcess instanceof ConsultazioniBP)) {
+                    if ((actionmapping.needExistingSession() && !isEnableBP) || !(businessProcess instanceof ConsultazioniBP)) {
                       resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                      resp.getWriter().append("{\"message\" : \\"Utente non abilitato ad eseguire la richiesta!\"}");
+                      resp.getWriter().append("{\"message\" : \"Utente non abilitato ad eseguire la richiesta!\"}");
                       return;
                     }
                     ConsultazioniBP consBP = ((ConsultazioniBP)businessProcess);

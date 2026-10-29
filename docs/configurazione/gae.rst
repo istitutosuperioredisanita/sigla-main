@@ -7,7 +7,7 @@ Le Linee di Attività o Gruppo di Azioni Elementari (di seguito chiamatate GAE),
 Linea di attività Propria
 -------------------------
 
-La GAE si definisce 'propria' quando è assegnabile ad un solo cdr. L'altra modalità di creazione di una GAE è indicata al paragrafo :ref:`Linea-di-attività-comune`.
+La GAE si definisce 'propria' quando è assegnabile ad un solo cdr. L'altra modalità di creazione di una GAE è indicata al paragrafo :ref:`Linea attività comune <linea-di-attivita-comune>`.
 
 La GAE presenta elementi di testata e di dettaglio. I dati da specificare sono i seguenti:
 

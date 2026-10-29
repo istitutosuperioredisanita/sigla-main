@@ -20,10 +20,12 @@ In questo caso la rilevazione avviene sempre allo stesso modo (sia in entrata ch
 Oltre ai casi gestiti in automatico dalla procedura (per tributi su Stipendi, Compensi, IVA), ci sono poi alcune casistiche gestite manualmente dagli utenti dell'ufficio delle Risorse Umane per casistiche particolari, come ad esempio:
 
 - Tributi rilevati in fase stipendiale e da non liquidare il mese successivo agli Enti di competenza (Pignoramenti);
-In questo caso il Tributo ha una classificazione speciale indicata parametricamente che rileva in automatico la partita di giro Tronca (chiusa poi da una partita di Giro gestita manualmente anche su più dettagli a quadratura della prima).
+
+  In questo caso il Tributo ha una classificazione speciale indicata parametricamente che rileva in automatico la partita di giro Tronca (chiusa poi da una partita di Giro gestita manualmente anche su più dettagli a quadratura della prima).
 
 - Tributi rilevati in un'unica soluzione, sempre da automatismi stipendiali, e da suddividere su più scadenze o per più Terzi in fase di versamento;
-In questo caso manualmente si dividono le scadenze della Partita di Givo di versamento per indicare scadenze e Terzi diversi.
+
+  In questo caso manualmente si dividono le scadenze della Partita di Givo di versamento per indicare scadenze e Terzi diversi.
 
 **IVA**
 Per quanto riguarda la parte **IVA su documenti amministrativi**, invece, bisogna tener presente che:

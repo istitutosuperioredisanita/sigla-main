@@ -8,8 +8,10 @@ Dal grafico di riepilogo della Dashboard, (oppure dal menù Statistiche/Progetti
 Essendo la lista delle voci abbastanza lunga, è possibile usare la barra a destra del grafico per scorrere in verticale l'elenco delle Voci di spesa.
 
 Dal cruscotto principale (o da menu statistiche) si può cliccare su una voce e vedere per essa la suddivisione degli importi per:
+
 * Unità Organizzativa - Vengono mostrate tutte le UO che hanno usato la voce selezionata - Utilizzato e pagato;
-    * Entrando ancora più in dettaglio della Voce/UO si possono consultare i Progetti per la UO/Voce selezionate.
+
+  * Entrando ancora più in dettaglio della Voce/UO si possono consultare i Progetti per la UO/Voce selezionate.
 
 Entrando da menù statistiche si può subito inserire il filtro per una UO oppure per una voce di spesa o entrambi:
 
