@@ -8,6 +8,7 @@
 			formName="searchtool_dipendenti"
 			enabledOnSearch="true"
 			label="Anagrafica"
+			nullable="false"
 	/>
 
 	<fieldProperty
@@ -16,7 +17,7 @@
 		inputType="TEXT"
 		inputSize="20"
 		maxLength="8"
-		label="Codice entità anagrafica di primo livello" />
+		label="Anagrafica" />
 
 	<fieldProperty
 			name="dsAnagrafico"
@@ -35,6 +36,7 @@
 		formatName="date_short"
 		command="doOnDataInizioAnagraficaProgettoChange"
 		label="Data inizio nel progetto"
+		nullable="false"
 		/>
 	<fieldProperty
 		name="dataFine"
@@ -43,6 +45,7 @@
 		formatName="date_short"
 		command="doOnDataFineAnagraficaProgettoChange"
 		label="Data fine  nel progetto"
+		nullable="false"
 		/>
 	<fieldProperty
 		name="importo"

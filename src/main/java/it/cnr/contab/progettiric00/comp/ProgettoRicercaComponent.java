@@ -2679,8 +2679,21 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			if(progetto_anagraficoBulk.getDataInizio() == null){
 				throw new ApplicationException("Impostare per l'Anagrafica la data inizio nel progetto");
 			}
+			else{
+				if(progetto_anagraficoBulk.getDataInizio().before(bulk.getDt_inizio())){
+					throw new ApplicationException("Attezione la data inizio dell'Anagrafica risulta antecedente alla data di inizio Progetto");
+				}
+			}
+			if(progetto_anagraficoBulk.getDataFine() == null){
+				throw new ApplicationException("Impostare per l'Anagrafica la data fine nel progetto");
+			}
+
+			if(!progetto_anagraficoBulk.isFl_tempo_ind() && progetto_anagraficoBulk.getImporto()==null){
+				throw new ApplicationException("Impostare l'importo se anagrafica non è a tempo indeterminato");
+			}
 		}
 	}
+
 	private boolean isAnagraficaDoppiaSenzaDataFine(ProgettoBulk bulk){
 		if (bulk.getAnagraficheProgetto().stream()
 				.filter(e -> e.getDataFine() == null)
