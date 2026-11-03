@@ -912,6 +912,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     makeBulkPersistent(aUC, fatturaOrdiniOld);
                     //Serve per eliminare scritture prime note di riscontri poi annullati
                     gestisciEliminaRiscontroValore(aUC, Collections.singletonList(fatturaOrdiniOld), Collections.EMPTY_LIST);
+                    //devo gestire anche l'associazione ass_inv_bene_fattura che deve essere elimianata
+                    if (fatturaOrdiniOld.getFatturaPassivaRiga().isInventariato())
+                        deleteAssociazioniInventarioWith(aUC, fatturaOrdiniOld.getFatturaPassivaRiga());
                 }
             } catch (PersistencyException e) {
                 throw handleException(e);
