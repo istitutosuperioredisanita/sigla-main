@@ -42,7 +42,7 @@ public class V_cons_registro_inventarioHome extends BulkHome {
 		//	Se uo 999.000 in scrivania: visualizza tutto l'elenco
 		Unita_organizzativa_enteBulk ente = (Unita_organizzativa_enteBulk) getHomeCache().getHome(Unita_organizzativa_enteBulk.class).findAll().get(0);
 		if (!((CNRUserContext) usercontext).getCd_unita_organizzativa().equals( ente.getCd_unita_organizzativa())){
-		  sql.addSQLClause("AND","CD_UNITA_ORGANIZZATIVA = ?");
+		  sql.addSQLClause("AND","CD_UNITA_ASSEGNATARIO = ?");
 		  sql.addParameter(((CNRUserContext) usercontext).getCd_unita_organizzativa() ,java.sql.Types.VARCHAR,0);
 		}
 		

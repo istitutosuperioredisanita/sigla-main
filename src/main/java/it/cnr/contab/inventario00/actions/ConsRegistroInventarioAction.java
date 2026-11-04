@@ -24,19 +24,21 @@
 package it.cnr.contab.inventario00.actions;
 
 import java.rmi.RemoteException;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
+import it.cnr.contab.anagraf00.bp.CRUDAnagraficaBP;
+import it.cnr.contab.anagraf00.bp.CRUDTerzoBP;
+import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario00.bp.ConsRegistroInventarioBP;
+import it.cnr.contab.inventario00.consultazioni.bulk.V_cons_registro_inventarioBulk;
+import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
 import it.cnr.jada.action.Forward;
-import it.cnr.jada.bulk.OggettoBulk;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
-import it.cnr.jada.persistency.sql.SQLBuilder;
-import it.cnr.jada.util.RemoteIterator;
-import it.cnr.jada.util.action.BulkBP;
+import it.cnr.jada.comp.ApplicationException;
+import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.util.action.ConsultazioniAction;
-import it.cnr.jada.util.action.ConsultazioniBP;
-import it.cnr.jada.util.ejb.EJBCommonServices;
 
 
 public class ConsRegistroInventarioAction extends ConsultazioniAction {
@@ -54,9 +56,11 @@ public class ConsRegistroInventarioAction extends ConsultazioniAction {
 			return handleException(context,e);
 		}
 	}
+
 	public Forward doConsultaQuote(ActionContext context) {	
 		return doConsulta(context, ConsRegistroInventarioBP.QUOTE);
 	}
+
 	public Forward doCloseForm(ActionContext context) throws BusinessProcessException {
 		Forward appoForward = super.doCloseForm(context);
 		if (context.getBusinessProcess() instanceof ConsRegistroInventarioBP) {
@@ -67,4 +71,34 @@ public class ConsRegistroInventarioAction extends ConsultazioniAction {
 		}
 		return appoForward;
 	}
+
+	public Forward doApriTerzoAssegnatario(ActionContext context) throws BusinessProcessException {
+		try {
+			ConsRegistroInventarioBP bp = (ConsRegistroInventarioBP)context.getBusinessProcess();
+			fillModel(context);
+			TerzoBulk terzo = Optional.ofNullable(bp.getSelectedElements(context))
+					.filter(list -> list.size() == 1)
+					.map(List::getFirst)
+					.filter(V_cons_registro_inventarioBulk.class::isInstance)
+					.map(V_cons_registro_inventarioBulk.class::cast)
+					.filter(v -> Optional.ofNullable(v.getCd_assegnatario()).isPresent())
+					.map(v ->  {
+						TerzoBulk t = new TerzoBulk(Integer.valueOf(v.getCd_assegnatario()));
+						try {
+							return (TerzoBulk)Utility.createCRUDComponentSession().findByPrimaryKey(context.getUserContext(), t);
+						} catch (ComponentException | RemoteException e) {
+							throw new RuntimeException(e);
+						}
+					})
+					.orElseThrow(()-> new ApplicationException("Selezionare una riga con l'assegnatario valorizzato!"));
+
+
+			CRUDAnagraficaBP nbp = (CRUDAnagraficaBP) context.createBusinessProcess("CRUDAnagraficaBP", new Object[]{"M"});
+			nbp.basicEdit(context, terzo.getAnagrafico(), true);
+			return context.addBusinessProcess(nbp);
+		} catch(Throwable e) {
+			return handleException(context,e);
+		}
+	}
+
 }
