@@ -27,4 +27,4 @@ Entrando ancora più nel dettaglio di un progetto viene mostrata la lista delle 
 * Utilizzato/Impegnato
 * Pagato.
 
-
+I dati mostrati possono essere estratti sia come grafico che come contenuti.
