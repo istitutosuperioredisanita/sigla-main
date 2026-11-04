@@ -1,3 +1,87 @@
+## Release 8.0.41  -- _November 04, 2026_ 
+**Changes**
+
+>**fix: docs menu**
+>
+>[c5d4e7100613c51](https://github.com/istitutosuperioredisanita/sigla-main/commit/c5d4e7100613c51) marco.spasiano *November 04, 2026*
+
+>**fix: docs menu**
+>
+>[6cb3eb29e6c3d76](https://github.com/istitutosuperioredisanita/sigla-main/commit/6cb3eb29e6c3d76) marco.spasiano *November 04, 2026*
+
+>**Update acquisti-stato.rst**
+>
+>[76de00bbf3bfa4f](https://github.com/istitutosuperioredisanita/sigla-main/commit/76de00bbf3bfa4f) patriziavillani *November 04, 2026*
+
+>**Update acquisti-struttura.rst**
+>
+>[d0c3dbbed360814](https://github.com/istitutosuperioredisanita/sigla-main/commit/d0c3dbbed360814) patriziavillani *November 04, 2026*
+
+>**Update indice-tempestivita-pagamenti.rst [ci skip]**
+>
+>[21502a6fb05096b](https://github.com/istitutosuperioredisanita/sigla-main/commit/21502a6fb05096b) patriziavillani *November 04, 2026*
+
+>**new feature: aggiornata la consultazione del registro inventario**
+>
+>[9a2de4507d93d9e](https://github.com/istitutosuperioredisanita/sigla-main/commit/9a2de4507d93d9e) marco.spasiano *November 04, 2026*
+
+>**new feature: aggiornata la consultazione del registro inventario**
+>
+>[663df9518a03bf7](https://github.com/istitutosuperioredisanita/sigla-main/commit/663df9518a03bf7) marco.spasiano *November 04, 2026*
+
+>**Update ente-finanziatore.rst [ci skip]**
+>
+>[8e9672f5d912737](https://github.com/istitutosuperioredisanita/sigla-main/commit/8e9672f5d912737) patriziavillani *November 04, 2026*
+
+>**Eliminazione dalla tabella Ass_inv_bene_fattura dei beni in inventario quando a seguito della  registrazione della nota di credito viene disassociata la riga dell'ordine ma non elimina l'associazione del bene in inventario con la riga della fattura**
+>
+>[89eeeba7d9d6d22](https://github.com/istitutosuperioredisanita/sigla-main/commit/89eeeba7d9d6d22) csalvio *November 04, 2026*
+
+>**Update progetti-tipo.rst [ci skip]**
+>
+>[9dcc571a019b8d3](https://github.com/istitutosuperioredisanita/sigla-main/commit/9dcc571a019b8d3) patriziavillani *November 04, 2026*
+
+>**Update tipo-finanziamento.rst [ci skip]**
+>
+>[bb3de2c38c0a902](https://github.com/istitutosuperioredisanita/sigla-main/commit/bb3de2c38c0a902) patriziavillani *November 04, 2026*
+
+>**Update progetti-tipo.rst [ci skip]**
+>
+>[7fecf63f4ea36b2](https://github.com/istitutosuperioredisanita/sigla-main/commit/7fecf63f4ea36b2) patriziavillani *November 04, 2026*
+
+>**Update progetti-tipo.rst**
+>
+>[f43a3eec86b73ca](https://github.com/istitutosuperioredisanita/sigla-main/commit/f43a3eec86b73ca) patriziavillani *November 04, 2026*
+
+>**Update progetti-tipo.rst**
+>
+>[8c436606c6a2e9d](https://github.com/istitutosuperioredisanita/sigla-main/commit/8c436606c6a2e9d) patriziavillani *November 04, 2026*
+
+>**Update cespiti-struttura.rst**
+>
+>[dc9f87f6b6879c2](https://github.com/istitutosuperioredisanita/sigla-main/commit/dc9f87f6b6879c2) patriziavillani *November 04, 2026*
+
+>**Update cespiti-struttura.rst**
+>
+>[1e9a9045c607a8a](https://github.com/istitutosuperioredisanita/sigla-main/commit/1e9a9045c607a8a) patriziavillani *November 03, 2026*
+
+>**Update elemento-voce.rst**
+>
+>[51b9ae2822bfc06](https://github.com/istitutosuperioredisanita/sigla-main/commit/51b9ae2822bfc06) patriziavillani *November 02, 2026*
+
+>**Update elemento-voce.rst**
+>
+>[1383396730f6562](https://github.com/istitutosuperioredisanita/sigla-main/commit/1383396730f6562) patriziavillani *November 02, 2026*
+
+>**fix: documentazione online**
+>
+>[860d99668d27460](https://github.com/istitutosuperioredisanita/sigla-main/commit/860d99668d27460) marco.spasiano *October 29, 2026*
+
+>**Bumped version to 8.0.40**
+>
+>[6f67da0d3792711](https://github.com/istitutosuperioredisanita/sigla-main/commit/6f67da0d3792711) dirgensa *October 29, 2026*
+
+
 ## Release 8.0.40  -- _October 29, 2026_ 
 **Changes**
 
