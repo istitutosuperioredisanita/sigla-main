@@ -28,10 +28,11 @@ import java.util.List;
 import java.util.Optional;
 
 import it.cnr.contab.anagraf00.bp.CRUDAnagraficaBP;
-import it.cnr.contab.anagraf00.bp.CRUDTerzoBP;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
+import it.cnr.contab.inventario00.bp.CRUDInventarioBeniBP;
 import it.cnr.contab.inventario00.bp.ConsRegistroInventarioBP;
 import it.cnr.contab.inventario00.consultazioni.bulk.V_cons_registro_inventarioBulk;
+import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
@@ -101,4 +102,31 @@ public class ConsRegistroInventarioAction extends ConsultazioniAction {
 		}
 	}
 
+	public Forward doApriGestioneBene(ActionContext context) throws BusinessProcessException {
+		try {
+			ConsRegistroInventarioBP bp = (ConsRegistroInventarioBP)context.getBusinessProcess();
+			fillModel(context);
+			Inventario_beniBulk inventarioBeniBulk = Optional.ofNullable(bp.getSelectedElements(context))
+					.filter(list -> list.size() == 1)
+					.map(List::getFirst)
+					.filter(V_cons_registro_inventarioBulk.class::isInstance)
+					.map(V_cons_registro_inventarioBulk.class::cast)
+					.filter(v -> Optional.ofNullable(v.getNr_inventario()).isPresent())
+					.map(v ->  {
+						Inventario_beniBulk t = new Inventario_beniBulk(v.getNr_inventario(), v.getPg_inventario(), Long.valueOf(v.getProgressivo()));
+						try {
+							return (Inventario_beniBulk)Utility.createCRUDComponentSession().findByPrimaryKey(context.getUserContext(), t);
+						} catch (ComponentException | RemoteException e) {
+							throw new RuntimeException(e);
+						}
+					})
+					.orElseThrow(()-> new ApplicationException("Selezionare una riga con il bene valorizzato!"));
+
+			CRUDInventarioBeniBP nbp = (CRUDInventarioBeniBP) context.createBusinessProcess("CRUDInventarioBeniBP", new Object[]{"M"});
+			nbp.basicEdit(context, inventarioBeniBulk, true);
+			return context.addBusinessProcess(nbp);
+		} catch(Throwable e) {
+			return handleException(context,e);
+		}
+	}
 }

@@ -115,6 +115,8 @@ public class ConsRegistroInventarioBP extends ConsultazioniBP {
             button =  new Button(Config.getHandler().getProperties(getClass()), "Toolbar.assegnatario");
 			button.setSeparator(true);
 			listButton.addElement(button);
+            button =  new Button(Config.getHandler().getProperties(getClass()), "Toolbar.inventario");
+            listButton.addElement(button);
         }
         return listButton;
     }
