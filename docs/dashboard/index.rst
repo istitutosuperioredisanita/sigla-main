@@ -12,12 +12,10 @@ E' possibile estrarre sia l'immagine dei grafici mostrati che i dati contenuti i
 La pagina presenta alcuni grafici principali e una serie di indici riepilogativi.
 
 
-Grafici principali
-------------------
+Trend Fondi di Funzionamento per UO
+===================================
 
-**Trend Fondi di Funzionamento per UO**
-
-Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Unità Organizzative) rispetto ad un CDS specifico (preimpostato con il CDS principale, definito in anagrafica come SAC, Sede Amministrazione Centrale) e indicato in alto insieme all'anno di gestione utilizzato come riferimento.
+Il grafico analizza i :doc:`Fondi di Funzionamento accordati alle varie strutture (Unità Organizzative) <fondi-funzionamento/uo>` rispetto ad un CDS specifico (preimpostato con il CDS principale, definito in anagrafica come SAC, Sede Amministrazione Centrale) e indicato in alto insieme all'anno di gestione utilizzato come riferimento.
 
 Sull'asse orizzontale sono indicate le Unità Organizzative (Codice UO) e sull'asse verticale gli importi secondo una scala crescente.
 Scorrendo la barra orizzontale posta sotto il grafico è possibile resringere o allargare il campo di visualizzazione e quindi aumentare o diminuire la risoluzione grafica dei dati mostrati.
@@ -31,9 +29,10 @@ Navigando sugli istogrammi verticali del grafico, mostrati in ordine di importo 
 * Importo residuo da stanziare (differenza tra assegnato e stanziato) per la UO.
 
 
-**Funzionamento per Voce**
+Funzionamento per Voce
+======================
 
-Il grafico analizza i Fondi di Funzionamento accordati alle varie strutture (Cenri di Spesa e Unità Organizzative). I criteri di selezione predefiniti sono gli stessi utilizzati per il grafico precedente:  'Trend Fondi di funzionamento per UO', ma in questo caso il raggruppamento dei dati è per Voce di spesa e si riferisce a tutte le stutture dell'Ente.
+Il grafico analizza i :doc:`Fondi di Funzionamento accordati alle varie strutture (Centri di Spesa e Unità Organizzative).<fondi-funzionamento/elemento-voce>` I criteri di selezione predefiniti sono gli stessi utilizzati per il grafico precedente:  'Trend Fondi di funzionamento per UO', ma in questo caso il raggruppamento dei dati è per Voce di spesa e si riferisce a tutte le stutture dell'Ente.
 
 Sull'asse orizzontale sono indicati gli importi secondo una scala crescente e sull'asse vericale sono indicate le Voci di spesa.
 
@@ -50,9 +49,10 @@ Navigando sugli istogrammi orizzontali del grafico, mostrati in ordine di import
 Il tutto è sempre riferito all'anno di accesso al sistema Sigla, indicato nel titolo del grafico.
 
 
-**Cespiti**
+Cespiti
+=======
 
-Il grafico analizza il valore dei beni patrimoniali (cespiti) di tutte le strutture dell'Ente, raggruppati per Centro di Spesa (CDS).
+Il grafico analizza il valore dei :doc:`beni patrimoniali (cespiti) <cespiti-struttura>` di tutte le strutture dell'Ente, raggruppati per Centro di Spesa (CDS).
 
 Sull'asse orizzontale sono indicati i Centri di Spesa (CDS) dell'Ente, compreso la struttura ENTE (999) che raccoglie eventualmente i beni non assegnati direttamente agli altri CDS.
 Sull'asse verticale vengono mostrati, a sinistra il numero di beni e a destra gli importi, entrambi secondo una scala crescente di valori.
@@ -70,22 +70,24 @@ Navigando sugli istogrammi verticali e sulla linea orizzontale del grafico, veng
 I beni presi in considerazione sono quelli indicati nel Registro Inventario per l'anno di riferimento, escludendo quindi beni scaricati o trasferiti, anche totalmente ammortizzati, e considerando come valore del bene quello iniziale comprensivo di variazioni positive e negative verificatesi sempre nell'anno di riferimento.
 
 
-**Nota importante di configurazione**
+.. attention::
 
-Per i primi due grafici di funzionamento sono stati selezionati solo Progetti di Funzionamento (apparteneti ad una specifica Area Progettuale indicata in configurazione).
-Sono state escluse dalla selezione le UO che non hanno fondi di funzionamento (indicate in configurazione).
-Sono stati esclusi alcuni progetti usati come 'Progetti di appoggio' la cui tipologia è indicata in configurazione.
+   **Nota importante di configurazione**
 
-Per il Terzo grafico relativo ai cespiti sono stati considerati i beni del Registro inventario per l'anno selezionato
+   Per i primi due grafici di funzionamento sono stati selezionati solo Progetti di Funzionamento (apparteneti ad una specifica Area Progettuale indicata in configurazione).
+   Sono state escluse dalla selezione le UO che non hanno fondi di funzionamento (indicate in configurazione).
+   Sono stati esclusi alcuni progetti usati come 'Progetti di appoggio' la cui tipologia è indicata in configurazione.
+
+   Per il Terzo grafico relativo ai cespiti sono stati considerati i beni del Registro inventario per l'anno selezionato
 
 
 ----------------------------------------------------------------------------------------------------------------
 
 
+**Box Indici riepilogativi** 
 
-Box Indici riepilogativi 
-------------------------
-(da aggiungere sulla prima pagina del dashboard)
+.. hint::
+   (da aggiungere sulla prima pagina del dashboard)
 
 **Assegnato nell'anno**
 
@@ -114,6 +116,7 @@ Rappresenta la somma delle Fatture elettroniche pagate nell'anno alla data di co
 Si precisa che l'importo riguarda esclusivamente pagamenti relativi a Fatture elettroniche ricevute (non si tiene conto di eventuali documenti generici, compensi o altre tipologie di documenti passivi).
 
 --------------------------------------------------------------------------------------------------------------
+
 
 .. toctree::
    :caption: Indice dei contenuti
