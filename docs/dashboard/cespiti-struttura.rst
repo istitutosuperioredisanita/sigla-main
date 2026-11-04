@@ -3,9 +3,11 @@ CESPITI
 
 
 Il grafico analizza il valore dei beni patrimoniali (cespiti) di tutte le strutture dell'Ente, raggruppati per Centro di Spesa (CDS).
-Vengono esclusi i beni totalmente scaricati.
+Vengono esclusi i beni totalmente scaricati e/o dismessi con data dismissione fino all'anno di riferimento.
 
-I valori considerati dal grafico si riferiscono al numero e al valore finale dei beni caricati nell'anno di accesso.
+I valori considerati dal grafico si riferiscono al numero e al valore finale dei beni caricati fino all'anno di riferimento.
+I **CDS/UO considerati in questo grafico sono quelli derivanti dalla UO a cui è associato l'assegnatario di ogni cespite** (e non il CDR utilizzatore che sarà considerato ai fini dell'attribuzione dei costi per il bilancio economico/analitico).
+Il CDS/UO di registrazione invece può cambiare a seconda della configurazione del Registro Inventario. Nel caso in cui il Registro Inventario fosse unico il CDS/UO di registrazione del bene sarà sempre uno solo: CDS/UO Ente (999).
 
 **Primo Grafico - Cespiti**
 Il primo grafico (visibile anche da cruscotto) riporta i dati raggruppati per Centro di Spesa (CDS) rispetto ad un anno di gestione, che inizialmente è quello di ultimo accesso.
