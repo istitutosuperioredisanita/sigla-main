@@ -116,6 +116,10 @@ public class V_cons_registro_inventarioBase extends OggettoBulk implements Persi
 	// PERCENTUALE_UTILIZZO_LA DECIMAL(5,2) NOT NULL
 	private java.math.BigDecimal percentuale_utilizzo_la;
 
+	private java.lang.Boolean fl_totalmente_scaricato;
+	//    CD_UNITA_ASSEGNATARIO VARCHAR(30)
+	private java.lang.String cd_unita_assegnatario;
+
 	public V_cons_registro_inventarioBase() {
 		super();
 	}
@@ -361,4 +365,19 @@ public class V_cons_registro_inventarioBase extends OggettoBulk implements Persi
 		valore_ammortizzato = decimal;
 	}
 
+	public Boolean getFl_totalmente_scaricato() {
+		return fl_totalmente_scaricato;
+	}
+
+	public void setFl_totalmente_scaricato(Boolean fl_totalmente_scaricato) {
+		this.fl_totalmente_scaricato = fl_totalmente_scaricato;
+	}
+
+	public String getCd_unita_assegnatario() {
+		return cd_unita_assegnatario;
+	}
+
+	public void setCd_unita_assegnatario(String cd_unita_assegnatario) {
+		this.cd_unita_assegnatario = cd_unita_assegnatario;
+	}
 }

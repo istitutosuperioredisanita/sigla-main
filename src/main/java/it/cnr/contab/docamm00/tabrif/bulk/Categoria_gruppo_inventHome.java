@@ -109,7 +109,12 @@ public class Categoria_gruppo_inventHome extends BulkHome {
 		SQLBuilder sqlBuilder = super.createSQLBuilder();
 		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO");
 		sqlBuilder.addSQLJoin("CATEGORIA_GRUPPO_INVENT.CD_CATEGORIA_GRUPPO", "V_CONS_REGISTRO_INVENTARIO.CD_CATEGORIA_GRUPPO");
-		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+        sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", SQLBuilder.LESS_EQUALS, esercizio);
+        sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.FL_TOTALMENTE_SCARICATO", SQLBuilder.EQUALS, "N");
+        sqlBuilder.openParenthesis(FindClause.AND);
+        sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.FL_DISMESSO", SQLBuilder.EQUALS, "N");
+        sqlBuilder.addSQLClause(FindClause.OR, "V_CONS_REGISTRO_INVENTARIO.FL_DISMESSO", SQLBuilder.ISNULL, null);
+        sqlBuilder.closeParenthesis();
 		Optional.ofNullable(cdUnitaOrganizzativa)
 				.ifPresent(s -> {
                     Unita_organizzativa_enteBulk ente = null;
@@ -123,11 +128,7 @@ public class Categoria_gruppo_inventHome extends BulkHome {
                         throw new RuntimeException(e);
                     };
 					sqlBuilder.addTableToHeader("V_UNITA_ORGANIZZATIVA_VALIDA");
-                    sqlBuilder.addTableToHeader("TERZO");
-                    sqlBuilder.addTableToHeader("ANAGRAFICO");
-                    sqlBuilder.addSQLJoin("TERZO.CD_TERZO", "V_CONS_REGISTRO_INVENTARIO.CD_ASSEGNATARIO");
-                    sqlBuilder.addSQLJoin("TERZO.CD_ANAG", "ANAGRAFICO.CD_ANAG");
-                    sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "COALESCE(ANAGRAFICO.CD_UNITA_ORGANIZZATIVA, '" + ente.getCd_unita_organizzativa() + "')");
+                    sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "COALESCE(V_CONS_REGISTRO_INVENTARIO.CD_UNITA_ASSEGNATARIO, '" + ente.getCd_unita_organizzativa() + "')");
 					sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.ESERCIZIO", "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO");
 					sqlBuilder.addSQLClause(FindClause.AND, "V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", SQLBuilder.EQUALS, s);
 				});
