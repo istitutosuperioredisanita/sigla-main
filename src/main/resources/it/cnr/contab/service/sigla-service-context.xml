@@ -155,6 +155,7 @@
 		<task:scheduled ref="utilService" method="executeAggiornaGECO" cron="${aggiorna.geco.cron.expression}" />
 		<task:scheduled ref="utilService" method="executeDeleteMessaggi" cron="${delete.messaggi.cron.expression}" />
 		<task:scheduled ref="printService" method="executeReportWithJsonDataSource" cron="${print.jsondatasource.cron.expression}" />
+		<task:scheduled ref="situazioneAmministrativaService" method="executeSendAlertMail" cron="${sitamm.sendAlertMail.cron.expression}" />
 	</task:scheduled-tasks>
 
 	<task:scheduler id="siglaScheduler"  pool-size="10"/>

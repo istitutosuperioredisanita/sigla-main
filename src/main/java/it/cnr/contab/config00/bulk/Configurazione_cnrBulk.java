@@ -290,6 +290,9 @@ public class Configurazione_cnrBulk extends Configurazione_cnrBase {
     public final static String PK_LINEA_ATTIVITA = "LINEA_ATTIVITA";
     public final static String SK_NO_STATO_PROGETTO_INI = "NO_STATO_PROGETTO_INI";
 
+    public final static String PK_SITUAZIONE_AMMINISTRATIVA = "SITUAZIONE_AMMINISTRATIVA";
+    public final static String SK_ALERT_MAIL = "ALERT_MAIL";
+
     public final static Map<String,String> TI_STEP_FINE_ANNO = new HashMap<String, String>() {{
         put("N", "No");
         put("Y", "Si");

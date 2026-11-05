@@ -20,7 +20,6 @@ package it.cnr.contab.prevent01.ejb;
 import it.cnr.contab.prevent01.comp.SituazioneAmministrativaComponent;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
 
 @Stateless(name="CNRPREVENT01_EJB_SituazioneAmministrativaComponentSession")
@@ -58,6 +57,25 @@ public class SituazioneAmministrativaComponentSessionBean extends it.cnr.jada.ej
 			it.cnr.jada.bulk.OggettoBulk result = ((SituazioneAmministrativaComponent)componentObj).stampaConBulk(param0,param1);
 			component_invocation_succes(param0,componentObj);
 			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	@Override
+	public void sendAlertMail(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,jakarta.ejb.EJBException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			((SituazioneAmministrativaComponent)componentObj).sendAlertMail(param0);
+			component_invocation_succes(param0,componentObj);
 		} catch(it.cnr.jada.comp.NoRollbackException e) {
 			component_invocation_succes(param0,componentObj);
 			throw e;
