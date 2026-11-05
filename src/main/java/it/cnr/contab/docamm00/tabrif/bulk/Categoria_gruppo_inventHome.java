@@ -115,6 +115,12 @@ public class Categoria_gruppo_inventHome extends BulkHome {
         sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.FL_DISMESSO", SQLBuilder.EQUALS, "N");
         sqlBuilder.addSQLClause(FindClause.OR, "V_CONS_REGISTRO_INVENTARIO.FL_DISMESSO", SQLBuilder.ISNULL, null);
         sqlBuilder.closeParenthesis();
+
+        sqlBuilder.openParenthesis(FindClause.AND);
+        sqlBuilder.addSQLJoin("V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO_AMM");
+        sqlBuilder.addSQLClause(FindClause.OR, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO_AMM", SQLBuilder.ISNULL, null);
+        sqlBuilder.closeParenthesis();
+
 		Optional.ofNullable(cdUnitaOrganizzativa)
 				.ifPresent(s -> {
                     Unita_organizzativa_enteBulk ente = null;
