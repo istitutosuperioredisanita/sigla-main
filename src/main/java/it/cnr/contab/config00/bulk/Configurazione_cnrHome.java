@@ -26,18 +26,15 @@ import it.cnr.contab.config00.latt.bulk.WorkpackageHome;
 import it.cnr.contab.config00.pdcep.bulk.ContoBulk;
 import it.cnr.contab.config00.pdcep.bulk.ContoHome;
 import it.cnr.contab.missioni00.docs.bulk.AnticipoBulk;
-import it.cnr.contab.config00.pdcfin.bulk.Elemento_voceBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoBulk;
 import it.cnr.contab.progettiric00.core.bulk.ProgettoHome;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
-import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.PersistentCache;
-import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.persistency.sql.FindClause;
 import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
@@ -45,6 +42,7 @@ import it.cnr.jada.util.ejb.EJBCommonServices;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public class Configurazione_cnrHome extends BulkHome {
@@ -778,4 +776,11 @@ public class Configurazione_cnrHome extends BulkHome {
         }
     }
 
+    public List<Configurazione_cnrBulk> getAllConfigurazioni(String unita_funzionale, String chiave_primaria, String chiave_secondaria) throws PersistencyException {
+        SQLBuilder sql = createSQLBuilder();
+        sql.addClause(FindClause.AND, "cd_unita_funzionale", SQLBuilder.EQUALS, unita_funzionale);
+        sql.addClause(FindClause.AND, "cd_chiave_primaria", SQLBuilder.EQUALS, chiave_primaria);
+        sql.addClause(FindClause.AND, "cd_chiave_secondaria", SQLBuilder.EQUALS, chiave_secondaria);
+        return fetchAll(sql);
+    }
 }
