@@ -16,12 +16,12 @@
 import docs_theme
 
 project = 'SIGLA'
-release = '8.0.41'
+release = '8.0.42'
 author = u'Istituto Superiore di Sanità'
 
 # non costruire il tema e i suoi test/demo come se fossero documentazione
 exclude_patterns = ['_build', 'theme/**']  # oppure includi il CHANGELOG nel toctree
-# CHANGELOG generato (semantic-release = '8.0.41'
+# CHANGELOG generato (semantic-release = '8.0.42'
 suppress_warnings = ['myst.header']
 html_favicon = '_static/favicon.ico'
 

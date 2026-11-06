@@ -1,3 +1,27 @@
+## Release 8.0.42  -- _November 05, 2026_ 
+**Changes**
+
+>**fix: grafico dei cespiti**
+>
+>[ffb90dce760c698](https://github.com/istitutosuperioredisanita/sigla-main/commit/ffb90dce760c698) marco.spasiano *November 05, 2026*
+
+>**Monitoraggio consistenza di cassa. Invio mail al superamento di limiti stabiliti**
+>
+>[f1546ba43eb8a33](https://github.com/istitutosuperioredisanita/sigla-main/commit/f1546ba43eb8a33) raffaele.pagano *November 05, 2026*
+
+>**Update maven.yml**
+>
+>[a6eb19c4f3b12de](https://github.com/istitutosuperioredisanita/sigla-main/commit/a6eb19c4f3b12de) dirgensa *November 05, 2026*
+
+>**Aggiornata la dipendenza dall'artefatto storage cloud alla 3.1.0. Tale versione porta la dipendenza all'ultima versione, 12.36.0, di azure blob storage**
+>
+>[7a81c356648bc5f](https://github.com/istitutosuperioredisanita/sigla-main/commit/7a81c356648bc5f) csalvio *November 04, 2026*
+
+>**Bumped version to 8.0.41**
+>
+>[1c0757df1f3af2b](https://github.com/istitutosuperioredisanita/sigla-main/commit/1c0757df1f3af2b) dirgensa *November 04, 2026*
+
+
 ## Release 8.0.41  -- _November 04, 2026_ 
 **Changes**
 
