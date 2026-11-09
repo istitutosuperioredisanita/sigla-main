@@ -915,11 +915,19 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 	SQLBuilder sql = home.createSQLBuilder();
 	sql.addClause(clauses);
 
-	sql.setAutoJoins(true);
-	sql.generateJoin("assegnatario", "TERZO");
-	sql.generateJoin("ubicazione", "UBICAZIONE_BENE");
+	sql.addTableToHeader("TERZO");
+	sql.addTableToHeader("UBICAZIONE_BENE");
+	sql.addTableToHeader("ANAGRAFICO");
+	sql.addTableToHeader("UNITA_ORGANIZZATIVA","UNITA_ORGANIZZATIVA_ASS");
 
-	
+	sql.addSQLJoin("INVENTARIO_BENI.CD_ASSEGNATARIO", "TERZO.CD_TERZO");
+	sql.addSQLJoin("INVENTARIO_BENI.CD_UBICAZIONE", "UBICAZIONE_BENE.CD_UBICAZIONE");
+	sql.addSQLJoin("INVENTARIO_BENI.CD_CDS", "UBICAZIONE_BENE.CD_CDS");
+	sql.addSQLJoin("INVENTARIO_BENI.CD_UNITA_ORGANIZZATIVA", "UBICAZIONE_BENE.CD_UNITA_ORGANIZZATIVA");
+
+	sql.addSQLJoin("TERZO.CD_ANAG", "ANAGRAFICO.CD_ANAG");
+	sql.addSQLJoin("ANAGRAFICO.CD_UNITA_ORGANIZZATIVA", "UNITA_ORGANIZZATIVA_ASS.CD_UNITA_ORGANIZZATIVA ");
+
 	sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, inventario.getPg_inventario());
 	// Aggiunta clausola che visualizzi solo i beni che abbiano 
 	//	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.

@@ -228,6 +228,36 @@
 		inputType="TEXT"
 		label="Assegnatario"
 		caseSensitiveSearch="false" />
+	<fieldProperty
+			name="uo_assegnatario"
+			property="assegnatario.anagrafico.unitaOrganizzativa"
+			inputType="SEARCHTOOL"
+			formName="searchtool"
+			label="UO Assegnatario"
+			caseSensitiveSearch="false"
+			enabledOnSearch="false"
+			enabledOnEdit="false"
+			enabledOnInsert="false"/>
+	<fieldProperty
+			name="cd_uo_assegnatario"
+			property="assegnatario.anagrafico.unitaOrganizzativa.cd_unita_organizzativa"
+			maxLength="10"
+			inputSize="10"
+			inputType="TEXT"
+			label="Cod.Uo Assegnatario"
+			readonlyProperty="ROassegnatarioBene"
+			caseSensitiveSearch="false"
+			enabledOnInsert = "false"
+			enabledOnEdit = "false"
+			enabledOnFreeSearch="true" />
+	<fieldProperty
+			name="ds_uo_assegnatario"
+			property="assegnatario.anagrafico.unitaOrganizzativa.ds_unita_organizzativa"
+			maxLength="300"
+			inputSize="50"
+			inputType="TEXT"
+			label="UO Assegnatario"
+			caseSensitiveSearch="false" />
 		
 		
 	/*****************************************************	
@@ -640,6 +670,14 @@
 		name="cd_assegnatario" />
 	<formFieldProperty
 		name="ds_assegnatario" />
+	<formFieldProperty
+		name="uo_assegnatario" />
+	<formFieldProperty
+		name="cd_uo_assegnatario" />
+	<formFieldProperty
+		name="ds_uo_assegnatario" />
+
+
 
 /********** Bene Principale **********/	
 	<formFieldProperty
@@ -797,6 +835,12 @@
 			name="ds_assegnatario"
 			style="width:300px"/>
 	<columnFieldProperty
+			name="cd_uo_assegnatario"
+			style="width:300px"/>
+	<columnFieldProperty
+			name="ds_uo_assegnatario"
+			style="width:300px"/>
+	<columnFieldProperty
 		name="cd_ubicazione"   
 		style="width:40px"/>
 	<columnFieldProperty
@@ -827,6 +871,8 @@
 		name="cd_ubicazione" />
 	<findFieldProperty
 		name="cd_assegnatario" />
+	<findFieldProperty
+		name="cd_uo_assegnatario" />
 	<findFieldProperty
 		name="collocazione" />
 	<findFieldProperty
@@ -865,6 +911,8 @@
 			name="cd_ubicazione" />
 		<findFieldProperty
 			name="cd_assegnatario" />
+		<findFieldProperty
+			name="cd_uo_assegnatario" />
 		<findFieldProperty
 			name="collocazione" />
 		<findFieldProperty
