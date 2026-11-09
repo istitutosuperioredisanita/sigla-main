@@ -826,6 +826,16 @@ public RemoteIterator getChildren(UserContext userContext, OggettoBulk bulk) thr
 		ProgettoBulk.class,
 		null);
 }
+	public RemoteIterator getProgettiDaRiportare(UserContext userContext, OggettoBulk bulk , CompoundFindClause compoundFindClause) throws ComponentException{
+
+		ProgettoBulk progetto = (ProgettoBulk)bulk;
+		ProgettoHome progettoHome = (ProgettoHome)getHome(userContext,ProgettoBulk.class,"V_PROGETTO_PADRE");
+		return iterator(
+				userContext,
+				progettoHome.selectProgettiDaRiportare(userContext,progetto,compoundFindClause),
+				ProgettoBulk.class,
+				null);
+	}
 /**
   *  Tutti i controlli superati.
   *    PreCondition:

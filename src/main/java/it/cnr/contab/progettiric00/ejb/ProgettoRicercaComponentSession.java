@@ -19,6 +19,9 @@
 package it.cnr.contab.progettiric00.ejb;
 
 import it.cnr.contab.progettiric00.dto.RiportaProgettoDto;
+import it.cnr.jada.bulk.OggettoBulk;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.RemoteIterator;
 import jakarta.ejb.Remote;
 
 import it.cnr.contab.prevent01.bulk.Pdg_esercizioBulk;
@@ -54,4 +57,5 @@ it.cnr.jada.bulk.OggettoBulk modificaConBulk(UserContext param0, it.cnr.jada.bul
 List<ProgettoBulk> getAllChildren(it.cnr.jada.UserContext param0, ProgettoBulk param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 public List<V_saldi_piano_econom_progettoBulk> getPluriennaliProgettoPianoEco(UserContext userContext, Progetto_piano_economicoBulk bulk) throws ComponentException, PersistencyException, RemoteException;
 public void riportaInNuovoProgetto(UserContext userContext, List<RiportaProgettoDto> progettiDaRiportare,Integer nuovoEsercizio) throws ComponentException, PersistencyException, RemoteException;
+public RemoteIterator getProgettiDaRiportare(UserContext userContext, OggettoBulk bulk , CompoundFindClause compoundFindClause) throws ComponentException, RemoteException;
 }

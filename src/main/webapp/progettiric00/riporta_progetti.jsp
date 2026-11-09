@@ -21,6 +21,10 @@
 <!-- Form dettaglio: campo file + metadati allegato -->
 <div class="Group card mt-3">
   <table>
+    <tr>
+        <td colspan=2><CENTER><h3>Riporta Progetti nell'' Anno di Scrivania</h3></CENTER></td>
+    </tr>
+
     <% bp.getCrudArchivioAllegati().writeForm(out, bp.getAllegatiFormName()); %>
   </table>
 </div>

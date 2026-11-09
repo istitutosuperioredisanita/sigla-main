@@ -6399,4 +6399,7 @@ IVAS = IVA ACQUISTO SPLIT; GEN = GENERICO; RIC = RICAVO; IVAA = IVA ACQUISTO; CR
 
     <!-- Autore : VALENTINA TOMADA - aggiunta colonna FL_TEMPO_IND su ANAGRAFICA_PROGETTO -->
     <include file="bootstrap/add_fl_tempo_ind_progetto_anagrafico.xml"/>
+    <!-- Autore : VALENTINA TOMADA - modificata voce di menu per riporta progetti, inserita estrazione -->
+    <include file="bootstrap/update_accesso_riporta_progetto.xml"/>
+
 </databaseChangeLog>

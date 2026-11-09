@@ -50,6 +50,7 @@ import it.cnr.jada.bulk.BulkList;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ApplicationRuntimeException;
+import it.cnr.jada.util.action.CRUDBP;
 import it.cnr.si.spring.storage.StorageDriver;
 import jakarta.persistence.Transient;
 
@@ -76,6 +77,7 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 	public static final String LABEL_MODULO = "Modulo";
 
 	public static final String AREA_PROGETTUALE_FUNZIONAMENTO_UO = "AREA008";
+	public static final String AREA_PROGETTUALE_FUNZIONAMENTO_ISS_CNT_CNS = "AREA009";
 
 	public static final String TIPO_FASE_SEARCH_SOLO_PREVISIONE  ="P";
 	public static final String TIPO_FASE_SEARCH_SOLO_GESTIONE ="G";
@@ -187,6 +189,8 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 
 	//Variabile utilizzata per sapere se la richiesta di creazione proviene da una mappa di tipo Amministra
 	private boolean fromAmministra = Boolean.FALSE;
+	//Variabile utilizzata nel processo di Riporta Progetto, nella fase di esportazioni dei progetti da riportare
+	private String cd_progetto_new=" ";
 
 	public ProgettoBulk() {
 		super();
@@ -1468,5 +1472,13 @@ public void setUnita_organizzativa(it.cnr.contab.config00.sto.bulk.Unita_organiz
 
 	public void setImportoPagato(BigDecimal importoPagato) {
 		this.importoPagato = importoPagato;
+	}
+
+	public String getCd_progetto_new() {
+		return cd_progetto_new;
+	}
+
+	public void setCd_progetto_new(String cd_progetto_new) {
+		this.cd_progetto_new = " ";
 	}
 }

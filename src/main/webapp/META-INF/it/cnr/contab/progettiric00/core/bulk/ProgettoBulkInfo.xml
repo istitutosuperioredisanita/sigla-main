@@ -879,6 +879,14 @@
 		formatName="it.cnr.contab.util.EuroFormat"
 		enabledOnSearch="true"
 		label="Importo Totale da Ripartire" />
+	<fieldProperty
+			name="cd_progetto_new"
+			property="cd_progetto_new"
+			maxLength="30"
+			inputSize="30"
+			inputType="TEXT"
+			enabledOnSearch="false"
+			enabledOnEdit="false"/>
 
 	<fieldProperty
 		name="flAutoRimod"
@@ -1090,8 +1098,8 @@
 		name="imTotaleDaRipartire" />
 	<formFieldProperty
 			name="flAutoRimod" />
-
-
+	<formFieldProperty
+			name="cd_progetto_new" />
 
 	<columnFieldProperty
 		name="livello" />
@@ -1444,6 +1452,26 @@
 		<columnFieldProperty
 			name="note" />
 	</columnSet>
+	<columnSet
+			name="estrazione_riporta_progetti">
+		<columnFieldProperty
+				name="esercizio"
+				label="ESERCIZIO_ESTRAZIONE"
+				/>
+		<columnFieldProperty
+				name="cd_progetto"
+				label="CD_PROGETTO"
+				 />
+		<columnFieldProperty
+				name="pg_progetto"
+				label="PG_PROGETTO"
+				 />
+		<columnFieldProperty
+				name="cd_progetto_new"
+				property="cd_progetto_new"
+				label="NUOVO CODICE PROGETTO"
+				headerLabel="Aggiungere e compilare la colonna NUOVO CODICE PROGETTO " />/>
+	</columnSet>
 
 	<findFieldProperty
 		name="cd_progetto" />
@@ -1733,4 +1761,8 @@
 		<findFieldProperty
 				name="noteDatiContabili" />
 	</freeSearchSet>
+	<freeSearchSet name="estrazione_riporta_progetti">
+		<findFieldProperty	name="cd_progetto"/>
+	</freeSearchSet>
+
 </bulkInfo>

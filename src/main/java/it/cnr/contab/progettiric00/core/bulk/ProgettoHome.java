@@ -25,6 +25,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import it.cnr.contab.util.RemoveAccent;
 import it.cnr.jada.persistency.sql.*;
 import jakarta.ejb.EJBException;
 
@@ -250,6 +251,32 @@ public class ProgettoHome extends BulkHome {
 			  }
 		  }            				
 		}catch (PersistencyException ex){}
+		return sql;
+	}
+
+
+	public SQLBuilder selectProgettiDaRiportare(UserContext userContext,ProgettoBulk progetto,CompoundFindClause compoundFindClause){
+		ProgettoHome progettohome = (ProgettoHome)getHomeCache().getHome(ProgettoBulk.class,"V_PROGETTO_PADRE");
+		SQLBuilder sql = progettohome.createSQLBuilder();
+
+		sql.openParenthesis("AND");
+			sql.addSQLClause("OR","P_CD_PROGETTO",SQLBuilder.EQUALS,ProgettoBulk.AREA_PROGETTUALE_FUNZIONAMENTO_UO);
+			sql.addSQLClause("OR","P_CD_PROGETTO",SQLBuilder.EQUALS, ProgettoBulk.AREA_PROGETTUALE_FUNZIONAMENTO_ISS_CNT_CNS);
+		sql.closeParenthesis();
+
+		sql.addSQLClause("AND","DT_INIZIO_OTHER_FIELD",SQLBuilder.GREATER_EQUALS, progetto.getDt_inizio());
+
+		sql.openParenthesis("AND");
+			sql.addSQLClause("OR","DT_FINE_OTHER_FIELD",SQLBuilder.LESS_EQUALS,progetto.getDt_fine());
+			sql.addSQLClause("OR","DT_PROROGA_OTHER_FIELD",SQLBuilder.LESS_EQUALS,progetto.getDt_fine());
+		sql.closeParenthesis();
+		sql.addSQLClause("AND","ESERCIZIO",SQLBuilder.EQUALS, progetto.getEsercizio());
+		sql.addSQLClause("AND","LIVELLO",SQLBuilder.EQUALS, progetto.getLivello());
+		sql.addSQLClause("AND","TIPO_FASE",SQLBuilder.EQUALS, progetto.getTipo_fase());
+
+
+		if (compoundFindClause!=null)
+			sql.addClause( compoundFindClause );
 		return sql;
 	}
 

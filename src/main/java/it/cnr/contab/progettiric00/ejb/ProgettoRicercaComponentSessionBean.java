@@ -17,7 +17,10 @@
 
 package it.cnr.contab.progettiric00.ejb;
 import it.cnr.contab.progettiric00.dto.RiportaProgettoDto;
+import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.RemoteIterator;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJBException;
 import jakarta.ejb.Stateless;
@@ -420,5 +423,25 @@ public Pdg_esercizioBulk getPdgEsercizio(it.cnr.jada.UserContext param0) throws 
             throw new RuntimeException(e);
         }
     }
+
+	@Override
+	public RemoteIterator getProgettiDaRiportare(UserContext userContext, OggettoBulk bulk, CompoundFindClause compoundFindClause)  throws ComponentException, RemoteException {
+		pre_component_invocation(userContext,componentObj);
+		try {
+			RemoteIterator result = ((ProgettoRicercaComponent)componentObj).getProgettiDaRiportare(userContext,bulk,compoundFindClause);
+			component_invocation_succes(userContext,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(userContext,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(userContext,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(userContext,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(userContext,componentObj,e);
+		}
+	}
 }
 
