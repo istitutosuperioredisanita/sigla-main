@@ -1,3 +1,23 @@
+## Release 8.0.43  -- _November 09, 2026_ 
+**Changes**
+
+>**ANAGRAFICHE PROGETTO - obbligatorietà sulla data fine, sull'importo per dipendenti TD e controllo validità data inizio con inizio progetto**
+>
+>[a24a85a41f62d2c](https://github.com/istitutosuperioredisanita/sigla-main/commit/a24a85a41f62d2c) tomada_valentina *November 09, 2026*
+
+>**ANAGRAFICHE PROGETTO - inserito check per dipendenti a tempo indeterminato,reso editabile l'importo sul progetto per i dipendenti a tempo determinato, inserito controllo sulla sovrapposizione del range delle date inizio/fine nel caso di anagrafica doppia**
+>
+>[32c8d17a245b119](https://github.com/istitutosuperioredisanita/sigla-main/commit/32c8d17a245b119) tomada_valentina *November 09, 2026*
+
+>**Fix sitamm.sendAlertMail.cron.expression**
+>
+>[a6f50ed6e9ab009](https://github.com/istitutosuperioredisanita/sigla-main/commit/a6f50ed6e9ab009) salvio_ciro *November 06, 2026*
+
+>**Bumped version to 8.0.42**
+>
+>[b992297fa2fe34e](https://github.com/istitutosuperioredisanita/sigla-main/commit/b992297fa2fe34e) dirgensa *November 06, 2026*
+
+
 ## Release 8.0.42  -- _November 05, 2026_ 
 **Changes**
 
