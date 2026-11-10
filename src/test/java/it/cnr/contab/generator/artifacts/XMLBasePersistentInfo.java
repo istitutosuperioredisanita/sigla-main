@@ -76,7 +76,7 @@ public class XMLBasePersistentInfo extends XMLBase {
                         Tags.COLUMN_SCALE,
                         Integer.valueOf(c.getColumnScale()).toString());
             }
-            addAttribute(Tags.NULLABLE, new Boolean(c.isNullable()).toString());
+            addAttribute(Tags.NULLABLE, Boolean.toString(c.isNullable()));
             int nameLen = c.getColumnName().length();
             int len = 3;
             if (nameLen < 3)

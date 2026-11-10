@@ -40,7 +40,7 @@ public class Ass_inv_bene_fatturaBulk extends Ass_inv_bene_fatturaBase {
 	private String local_transactionID;
 
 	// Indica che l'associazione è PER AUMENTO VALORE
-	private Boolean perAumentoValore = new Boolean(false);
+	private Boolean perAumentoValore = Boolean.FALSE;
 
 	protected Boolean fl_bene_accessorio;
 

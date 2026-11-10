@@ -151,6 +151,12 @@
 				columnSize="17"
 				columnScale="2"
 				count="true"/>
+		<columnMapping
+				columnName="SUM(NVL(V_SALDI_VOCE_PROGETTO.MANRIS_FIN,0) + NVL(V_SALDI_VOCE_PROGETTO.MANRIS_COFIN,0)) IMPORTO_PAGATO"
+				propertyName="importoPagato"
+				columnSize="17"
+				columnScale="2"
+				count="true"/>
 	</columnMap>
 
 	<columnMap name="REGISTRO_INVENTARIO"
@@ -218,6 +224,9 @@
 			name="importoFinanziato" />
 	<persistentProperty
 			name="importoUtilizzato" />
+	<persistentProperty
+			name="importoPagato" />
+
 
 	<persistentProperty
 			name="numeroBeni" />

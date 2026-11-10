@@ -142,6 +142,12 @@
 				propertyName="ubicazione.ds_ubicazione_bene"
 				sqlTypeName="VARCHAR"
 				columnSize="200"/>
+		<columnMapping
+				columnName="UNITA_ORGANIZZATIVA_ASS.CD_UNITA_ORGANIZZATIVA"
+				propertyName="assegnatario.anagrafico.unitaOrganizzativa.cd_unita_organizzativa"
+				sqlTypeName="VARCHAR"
+				columnSize="200"
+		/>
 	</columnMap>
 	
 	<persistentProperty
