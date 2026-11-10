@@ -289,10 +289,9 @@ public interface DocTrasportoRientroComponentSession extends CRUDDetailComponent
             CompoundFindClause clauses)
             throws ComponentException, RemoteException;
 
-    String getEmailCreatore(UserContext userContext, Doc_trasporto_rientroBulk doc)
+    String getEmailUC(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException;
 
-    void inviaNotifica(UserContext userContext, String subject, String body,
-                       java.util.List<String> destinatari)
-            throws ComponentException, java.rmi.RemoteException;
+    void inviaNotifica(UserContext userContext, Doc_trasporto_rientroBulk doc, String subject, String msg)
+            throws ComponentException, RemoteException;
 }

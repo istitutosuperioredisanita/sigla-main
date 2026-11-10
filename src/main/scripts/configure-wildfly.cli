@@ -250,6 +250,15 @@ echo "Configurazione logging per debug..."
 
 /subsystem=mail/mail-session=SIGLA/server=smtp:add(outbound-socket-binding-ref=sigla-smtp)
 
+# CONFIGURAZIONE MAIL SESSION DEFAULT (java:jboss/mail/Default), usata da SendMail
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=mail-smtp:write-attribute(name=host, value=${sigla.mail.smtp_host:smtp.amministrazione.cnr.it})
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=mail-smtp:write-attribute(name=port, value=${sigla.mail.port:25})
+/subsystem=mail/mail-session=default:write-attribute(name=from, value=${sigla.mail.from:sigla@iss.it})
+/subsystem=mail/mail-session=default/server=smtp:write-attribute(name=username, value=${sigla.mail.username})
+/subsystem=mail/mail-session=default/server=smtp:write-attribute(name=password, value=${sigla.mail.password})
+/subsystem=mail/mail-session=default/server=smtp:write-attribute(name=tls, value=${sigla.smtp-server.tls:false})
+
+
 # Configurazione PEC Mail (opzionale)
 /socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-pec-smtp:add(host=${sigla.pec.smtp_host:smtps.pec.aruba.it}, port=${sigla.pec.port:465})
 

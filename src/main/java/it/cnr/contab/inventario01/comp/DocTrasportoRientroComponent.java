@@ -2440,36 +2440,21 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
 
     // ---------------------------------------------------------------- NOTIFICHE EMAIL
 
-    /**
-     * Email del creatore del documento (cd_utente_uid + dominio di configurazione).
-     * Nessun controllo di ruolo: viene chiamato dal job con l'utente tecnico SIGN_WORKFLOW.
-     * Null se non risolvibile (la notifica non viene inviata).
-     */
-    public String getEmailCreatore(UserContext userContext, Doc_trasporto_rientroBulk doc)
+    /** Email dello user context (cd_utente_uid + dominio), null se non risolvibile. */
+    public String getEmailUC(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws ComponentException {
         try {
             UtenteBulk utente = (UtenteBulk) getHome(userContext, UtenteBulk.class)
                     .findByPrimaryKey(new UtenteBulk(doc.getUtcr()));
-
-            if (utente == null || utente.getCd_utente_uid() == null || utente.getCd_utente_uid().isBlank()) {
-                log.warn("Notifica pg={}: utente '{}' senza cd_utente_uid, nessuna email",
-                        doc.getPgDocTrasportoRientro(), doc.getUtcr());
+            if (utente == null)
                 return null;
-            }
-
-            String email = DocTraspRientUtil.costruisciEmail(utente.getCd_utente_uid(), getDominioEmail(userContext));
-            if (email == null) {
-                log.warn("Notifica pg={}: dominio email (PK_COSTANTI/SK_DOMINIO_EMAIL) non configurato",
-                        doc.getPgDocTrasportoRientro());
-            }
-            return email;
-
+            return DocTraspRientUtil.costruisciEmail(utente.getCd_utente_uid(), getDominioEmail(userContext));
         } catch (PersistencyException | RemoteException e) {
             throw handleException(e);
         }
     }
 
-    /** Dominio email dell'esercizio di contesto, con ripiego sull'esercizio 0. */
+    /** Dominio email dell'esercizio, altrimenti dell'esercizio 0. */
     private String getDominioEmail(UserContext userContext) throws ComponentException, RemoteException {
         Configurazione_cnrComponentSession conf = Utility.createConfigurazioneCnrComponentSession();
         String dominio = conf.getVal01(userContext, CNRUserContext.getEsercizio(userContext), null,
@@ -2481,11 +2466,26 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
         return dominio;
     }
 
-    /** Invia la notifica tramite la mail session SIGLA (java:jboss/mail/sigla). */
-    public void inviaNotifica(UserContext userContext, String subject, String body,
-                              java.util.List<String> destinatari) throws ComponentException {
-        log.info("Invio notifica '{}' a {}", subject, destinatari);
-        SendMail.sendMail(subject, body, destinatari);
+    /**
+     * Notifica l'esito firma allo user context del documento
+     * Senza email reale usa il destinatario di test.
+     */
+    public void inviaNotifica(UserContext userContext, Doc_trasporto_rientroBulk doc,
+                              String subject, String msg) throws ComponentException {
+        String mailTo = getEmailUC(userContext, doc);
+        if (mailTo == null)
+            mailTo = SpringUtil.getBean(DocTraspRientFirmaTestService.class).getEmailUC();
+        if (mailTo == null) {
+            log.warn("Notifica pg={} non inviata: destinatario assente", doc.getPgDocTrasportoRientro());
+            return;
+        }
+        try {
+            log.info("Doc T/R: invio notifica '{}' a {} - pg: {}", subject, mailTo, doc.getPgDocTrasportoRientro());
+            SendMail.sendMail(subject, msg, jakarta.mail.internet.InternetAddress.parse(mailTo));
+        } catch (jakarta.mail.internet.AddressException e) {
+            log.error("Doc T/R: indirizzo {} non valido - pg: {}", mailTo, doc.getPgDocTrasportoRientro());
+            throw new ComponentException(e.getMessage());
+        }
     }
 
     // ---------------------------------------------------------------- STAMPA
@@ -3067,7 +3067,8 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
             SignatureService service = getSignatureService();
 
             validaBeniRientroOmogenei(userContext, doc, Collections.emptyList());
-            List<String> codiciFiscali = DocTraspRientFirmaTestService.applicaFirmatari(getCodiciFiscaliFirmatari(userContext, doc));
+            List<String> codiciFiscali = SpringUtil.getBean(DocTraspRientFirmaTestService.class)
+                    .applicaFirmatari(getCodiciFiscaliFirmatari(userContext, doc));
 
             SignatureDocument fileDaFirmare = new SignatureDocument(
                     nomeFileDaFirmare,

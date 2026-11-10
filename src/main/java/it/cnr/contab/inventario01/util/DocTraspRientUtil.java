@@ -191,10 +191,7 @@ public final class DocTraspRientUtil {
 
     // ---------------------------------------------------------------- EMAIL
 
-    /**
-     * Email da cd_utente_uid: se contiene già "@" viene usato così com'è,
-     * altrimenti si aggiunge il dominio. Null se non costruibile.
-     */
+    /** uid@dominio, null se non costruibile. */
     public static String costruisciEmail(String uid, String dominio) {
         if (uid == null || uid.isBlank()) return null;
 
@@ -204,5 +201,59 @@ public final class DocTraspRientUtil {
 
         String d = dominio.trim();
         return u + (d.startsWith("@") ? d : "@" + d);
+    }
+
+    // ---------------------------------------------------------------- NOTIFICHE ESITO FIRMA
+
+    public static String oggettoNotificaFirmato(Doc_trasporto_rientroBulk doc) {
+        return "Documento di " + descrizioneTipo(doc) + " n. " + doc.getPgDocTrasportoRientro() + " firmato";
+    }
+
+    public static String oggettoNotificaRifiutato(Doc_trasporto_rientroBulk doc) {
+        return "Documento di " + descrizioneTipo(doc) + " n. " + doc.getPgDocTrasportoRientro() + " rifiutato in firma";
+    }
+
+    public static String testoNotificaFirmato(Doc_trasporto_rientroBulk doc) {
+        return corpoNotifica(doc, "firmato",
+                "<p>Il PDF firmato è disponibile tra gli allegati del documento.</p>");
+    }
+
+    public static String testoNotificaRifiutato(Doc_trasporto_rientroBulk doc, String motivoRifiuto) {
+        String motivo = (motivoRifiuto != null && !motivoRifiuto.isBlank()) ? motivoRifiuto : "non specificato";
+        return corpoNotifica(doc, "rifiutato in fase di firma",
+                "<p><b>Motivo del rifiuto:</b><br>" + escapeHtml(motivo) + "</p>",
+                "<p>Il documento torna in stato INSERITO e può essere corretto e reinviato in firma.</p>");
+    }
+
+    private static String corpoNotifica(Doc_trasporto_rientroBulk doc, String esito, String... paragrafiExtra) {
+        StringBuilder corpo = new StringBuilder()
+                .append("<p>Il documento di ").append(descrizioneTipo(doc))
+                .append(" n. <b>").append(doc.getPgDocTrasportoRientro()).append("</b>")
+                .append(" (esercizio ").append(doc.getEsercizio()).append(") è stato <b>")
+                .append(esito).append("</b>.</p>");
+        for (String paragrafo : paragrafiExtra) {
+            corpo.append(paragrafo);
+        }
+        return soloAscii(corpo.toString());
+    }
+
+    /**
+     * Caratteri non ASCII come entita' HTML (&#232; per la e accentata): SendMail invia
+     * il testo in UTF-8 senza dichiarare il charset e i client lo leggerebbero come ISO-8859-1.
+     */
+    private static String soloAscii(String s) {
+        StringBuilder out = new StringBuilder(s.length());
+        s.codePoints().forEach(c -> {
+            if (c < 128) out.append((char) c);
+            else out.append("&#").append(c).append(';');
+        });
+        return out.toString();
+    }
+
+    private static String escapeHtml(String s) {
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\n", "<br>");
     }
 }

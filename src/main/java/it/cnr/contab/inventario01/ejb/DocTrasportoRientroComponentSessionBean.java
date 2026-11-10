@@ -975,11 +975,11 @@ public class DocTrasportoRientroComponentSessionBean
         }
     }
 
-    public String getEmailCreatore(UserContext param0, Doc_trasporto_rientroBulk param1)
+    public String getEmailUC(UserContext param0, Doc_trasporto_rientroBulk param1)
             throws ComponentException, RemoteException {
         pre_component_invocation(param0, componentObj);
         try {
-            String result = ((DocTrasportoRientroComponent) componentObj).getEmailCreatore(param0, param1);
+            String result = ((DocTrasportoRientroComponent) componentObj).getEmailUC(param0, param1);
             component_invocation_succes(param0, componentObj);
             return result;
         } catch (it.cnr.jada.comp.NoRollbackException e) {
@@ -997,17 +997,17 @@ public class DocTrasportoRientroComponentSessionBean
         }
     }
 
-    @Override
-    public void inviaNotifica(UserContext userContext, String subject, String body, List<String> destinatari) throws ComponentException, RemoteException {
-        pre_component_invocation(userContext, componentObj);
+    public void inviaNotifica(UserContext param0, Doc_trasporto_rientroBulk param1, String param2, String param3)
+            throws ComponentException, RemoteException {
+        pre_component_invocation(param0, componentObj);
         try {
-            ((DocTrasportoRientroComponent) componentObj).inviaNotifica(userContext, subject, body, destinatari);
-            component_invocation_succes(userContext, componentObj);
+            ((DocTrasportoRientroComponent) componentObj).inviaNotifica(param0, param1, param2, param3);
+            component_invocation_succes(param0, componentObj);
         } catch (it.cnr.jada.comp.NoRollbackException e) {
-            component_invocation_succes(userContext, componentObj);
+            component_invocation_succes(param0, componentObj);
             throw e;
         } catch (ComponentException | Error | RuntimeException e) {
-            component_invocation_failure(userContext, componentObj);
+            component_invocation_failure(param0, componentObj);
             throw e;
         }
     }
