@@ -1,3 +1,23 @@
+## Release 8.044  -- _November 10, 2026_ 
+**Changes**
+
+>**fix: configurazione email**
+>
+>[6c437f68d93e049](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c437f68d93e049) marco.spasiano *November 10, 2026*
+
+>**fix: configurazione email**
+>
+>[69e4c9aa03ca800](https://github.com/istitutosuperioredisanita/sigla-main/commit/69e4c9aa03ca800) marco.spasiano *November 10, 2026*
+
+>**Fattura Elettronica: sbloccata registrazione fattura emessa da persona fisica senza ritenute anche se non split-payment**
+>
+>[28666a4c6c35f35](https://github.com/istitutosuperioredisanita/sigla-main/commit/28666a4c6c35f35) raffaele.pagano *November 10, 2026*
+
+>**Bumped version to 8.0.43**
+>
+>[f88de5cd0e47337](https://github.com/istitutosuperioredisanita/sigla-main/commit/f88de5cd0e47337) dirgensa *November 10, 2026*
+
+
 ## Release 8.0.43  -- _November 09, 2026_ 
 **Changes**
 
