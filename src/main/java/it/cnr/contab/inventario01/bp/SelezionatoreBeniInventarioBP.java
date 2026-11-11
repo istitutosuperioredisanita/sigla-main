@@ -1,11 +1,13 @@
-
 package it.cnr.contab.inventario01.bp;
 
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.action.BusinessProcessException;
+import it.cnr.jada.action.HookForward;
 import it.cnr.jada.bulk.BulkInfo;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
 import it.cnr.jada.util.Config;
 import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.action.RicercaLiberaBP;
 import it.cnr.jada.util.action.SelezionatoreListaBP;
 import it.cnr.jada.util.jsp.Button;
 
@@ -13,14 +15,20 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Selezionatore comune dei beni di inventario, utilizzato dai diversi
- * documenti tramite l'interfaccia SelezionatoreBeniProvider.
- */
+/** Selezionatore comune beni di inventario. */
 public class SelezionatoreBeniInventarioBP extends SelezionatoreListaBP {
 
     /** Nome del BP registrato in main.xml. */
     public static final String BP_NAME = "SelezionatoreBeniInventario";
+
+    /** Parametro hook per la ricerca libera iniziale ("+"). */
+    public static final String PARAM_RICERCA_INIZIALE = "ricercaBeniIniziale";
+
+    /** Ricerca libera del filtro beni. */
+    private RicercaLiberaBP ricercaFiltroBeni;
+
+    /** Clausole del filtro applicato (null = nessun filtro). */
+    private CompoundFindClause clausesFiltro;
 
     public SelezionatoreBeniInventarioBP() {
         super();
@@ -30,17 +38,46 @@ public class SelezionatoreBeniInventarioBP extends SelezionatoreListaBP {
         super(s);
     }
 
-    /**
-     * Restituisce il BP del documento che ha aperto il selezionatore.
-     */
+    /** Restituisce il provider padre del selezionatore. */
     public SelezionatoreBeniProvider getProvider() {
         return (SelezionatoreBeniProvider) getParent();
     }
 
-    /**
-     * Crea e configura il selezionatore in modalità multi-selezione,
-     * utilizzando l'iteratore e le informazioni Bulk forniti dal documento.
-     */
+    public RicercaLiberaBP getRicercaFiltroBeni() {
+        return ricercaFiltroBeni;
+    }
+
+    public void setRicercaFiltroBeni(RicercaLiberaBP ricercaFiltroBeni) {
+        this.ricercaFiltroBeni = ricercaFiltroBeni;
+    }
+
+    public CompoundFindClause getClausesFiltro() {
+        return clausesFiltro;
+    }
+
+    public void setClausesFiltro(CompoundFindClause clausesFiltro) {
+        this.clausesFiltro = clausesFiltro;
+    }
+
+    /** Collega la ricerca iniziale agli hook di ritorno. */
+    public static void collegaRicercaIniziale(RicercaLiberaBP rlbp, HookForward... hooks) {
+        for (HookForward hook : hooks) {
+            if (hook != null) {
+                hook.addParameter(PARAM_RICERCA_INIZIALE, rlbp);
+            }
+        }
+    }
+
+    /** Imposta il filtro iniziale basato sulla ricerca. */
+    public void impostaFiltroIniziale(HookForward caller, CompoundFindClause clauses) {
+        setClausesFiltro(clauses);
+        Object ricerca = caller == null ? null : caller.getParameter(PARAM_RICERCA_INIZIALE);
+        if (ricerca instanceof RicercaLiberaBP) {
+            setCondizioneCorrente(((RicercaLiberaBP) ricerca).getCondizioneRadice());
+        }
+    }
+
+    /** Crea e configura il selezionatore in multi-selezione. */
     public static SelezionatoreBeniInventarioBP crea(
             ActionContext context,
             SelezionatoreBeniProvider provider,
@@ -66,10 +103,7 @@ public class SelezionatoreBeniInventarioBP extends SelezionatoreListaBP {
         return slbp;
     }
 
-    /**
-     * Configura la toolbar con le funzioni di esportazione,
-     * filtraggio e gestione della selezione dei beni.
-     */
+    /** Configura la toolbar con esportazione, filtri e selezione beni. */
     @Override
     public List<Button> createToolbarList() {
         List<Button> buttons = new ArrayList<>();

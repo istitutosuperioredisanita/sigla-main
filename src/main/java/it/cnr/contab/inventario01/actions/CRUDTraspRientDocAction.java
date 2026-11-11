@@ -154,8 +154,9 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             rlbp.setCanPerformSearchWithoutClauses(true);
             bp.configuraRicercaBeni(context, rlbp);
 
-            context.addHookForward("searchResult", this, getBringBackMethod());
-            context.addHookForward("filter", this, getBringBackMethod());
+            SelezionatoreBeniInventarioBP.collegaRicercaIniziale(rlbp,
+                    context.addHookForward("searchResult", this, getBringBackMethod()),
+                    context.addHookForward("filter", this, getBringBackMethod()));
             return context.addBusinessProcess(rlbp);
         } catch (Throwable e) {
             return handleException(context, e);
@@ -181,6 +182,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
             }
 
             SelezionatoreBeniInventarioBP slbp = SelezionatoreBeniInventarioBP.crea(context, bp, ri);
+            slbp.impostaFiltroIniziale(fwd, clauses);
             context.addHookForward("seleziona", this, getSelezionaMethod());
             return context.addBusinessProcess(slbp);
         } catch (Throwable e) {
