@@ -42,6 +42,8 @@ public class DocTraspRientCronService implements InitializingBean {
     private static final int RETRY_MAX = 3;
     private static final int BATCH_SIZE = 50;
     private static final String MOTIVO_RIFIUTO_DEFAULT = "Respinta da firma su HappySign";
+    /** Utente usato se signature-flow.driver non è valorizzato. */
+    private static final String UTENTE_SIGNATUREFLOW_DEFAULT = "SIGNATUREFLOW";
 
     private DocTrasportoRientroComponentSession docTrasportoRientroComponentSession;
 
@@ -52,6 +54,9 @@ public class DocTraspRientCronService implements InitializingBean {
     @Value("${doc.trasp.rient.happysign.timer.enabled:false}")
     private Boolean verificaFirmeCronEnable;
 
+    @Value("${signature-flow.driver:}")
+    private String signatureFlowDriver;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         this.docTrasportoRientroComponentSession = Optional.ofNullable(EJBCommonServices.createEJB("CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession"))
@@ -61,30 +66,38 @@ public class DocTraspRientCronService implements InitializingBean {
     }
 
     @Scheduled(cron = "${doc.trasp.rient.happysign.timer.cron.expression}")
-    public void executeVerificaFirmeWorkflow() {
+    public void executeVerificaFirmeSignatureflow() {
         try {
             if (verificaFirmeCronEnable) {
                 if (signatureService == null) {
                     logger.warn("Doc T/R Service: SignatureService non disponibile (signature-flow.driver non configurato), job non eseguito");
                     return;
                 }
-                logger.info("Doc T/R Service: verificaFirmeWorkflow started at: {}", LocalDateTime.now());
+                logger.info("Doc T/R Service: verificaFirmeSignatureflow started at: {}", LocalDateTime.now());
 
-                UserContext userContext = new CNRUserContext("SIGN_WORKFLOW", null, LocalDate.now().getYear(), null, null, null);
-                verificaFirmeWorkflow(userContext);
+                UserContext userContext = new CNRUserContext(getUtenteSignatureflow(), null, LocalDate.now().getYear(), null, null, null);
+                verificaFirmeSignatureflow(userContext);
 
-                logger.info("Doc T/R Service: verificaFirmeWorkflow end at: {}", LocalDateTime.now());
+                logger.info("Doc T/R Service: verificaFirmeSignatureflow end at: {}", LocalDateTime.now());
             } else {
-                logger.info("Doc T/R Service: verificaFirmeWorkflow disabled");
+                logger.info("Doc T/R Service: verificaFirmeSignatureflow disabled");
             }
         } catch (Throwable _ex) {
-            logger.error("Doc T/R Service: verificaFirmeWorkflow ScheduleExecutor error", _ex);
+            logger.error("Doc T/R Service: verificaFirmeSignatureflow ScheduleExecutor error", _ex);
         }
+    }
+
+    /** Utente del job = nome del driver signature-flow così come letto dalla configurazione. */
+    private String getUtenteSignatureflow() {
+        return Optional.ofNullable(signatureFlowDriver)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .orElse(UTENTE_SIGNATUREFLOW_DEFAULT);
     }
 
     /** Recupera i documenti in attesa di firma (uno per UUID) e li elabora a batch. */
     @SuppressWarnings("unchecked")
-    private void verificaFirmeWorkflow(UserContext userContext) throws Exception {
+    private void verificaFirmeSignatureflow(UserContext userContext) throws Exception {
         List<Doc_trasporto_rientroBulk> tuttiDocumenti =
                 docTrasportoRientroComponentSession.getDocumentiPredispostiAllaFirma(userContext);
 
