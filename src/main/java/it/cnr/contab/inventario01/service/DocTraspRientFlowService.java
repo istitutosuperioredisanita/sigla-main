@@ -70,19 +70,23 @@ public class DocTraspRientFlowService {
         }
     }
 
-    /** Email del creatore del documento (null se non risolvibile). Risolta nel component, dentro il contesto EJB. */
-    public String getEmailCreatore(
+    public String getEmailUC(
             UserContext userContext,
             Doc_trasporto_rientroBulk doc) throws ComponentException {
         try {
-            return getSession().getEmailCreatore(userContext, doc);
+            return getSession().getEmailUC(userContext, doc);
         } catch (RemoteException e) {
             throw new ComponentException("Errore remoto nel recupero email creatore", e);
         }
     }
 
-    public void inviaMail(UserContext userContext, String subject, String body,
-                          java.util.List<String> destinatari) throws Exception {
-        getSession().inviaNotifica(userContext, subject, body, destinatari);
+    /** Invio tramite component (SendMail con la mail session SIGLA). */
+    public void inviaNotifica(UserContext userContext, Doc_trasporto_rientroBulk doc,
+                              String subject, String msg) throws ComponentException {
+        try {
+            getSession().inviaNotifica(userContext, doc, subject, msg);
+        } catch (RemoteException e) {
+            throw new ComponentException("Errore remoto nell'invio della notifica", e);
+        }
     }
 }

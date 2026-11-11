@@ -1137,11 +1137,11 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
     @Override
-    public String getEmailCreatore(UserContext userContext, Doc_trasporto_rientroBulk doc)
+    public String getEmailUC(UserContext userContext, Doc_trasporto_rientroBulk doc)
             throws ComponentException, RemoteException {
 
         try {
-            return (String) invoke("getEmailCreatore", new Object[]{
+            return (String) invoke("getEmailUC", new Object[]{
                     userContext,
                     doc
             });
@@ -1159,15 +1159,10 @@ public class TransactionalDocTrasportoRientroComponentSession
     }
 
     @Override
-    public void inviaNotifica(UserContext userContext, String subject, String body, List<String> destinatari) throws ComponentException, RemoteException {
-
+    public void inviaNotifica(UserContext userContext, Doc_trasporto_rientroBulk doc, String subject, String msg)
+            throws ComponentException, RemoteException {
         try {
-            invoke("inviaNotifica", new Object[]{
-                    userContext,
-                    subject,
-                    body,
-                    destinatari
-            });
+            invoke("inviaNotifica", new Object[]{userContext, doc, subject, msg});
         } catch (java.rmi.RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {

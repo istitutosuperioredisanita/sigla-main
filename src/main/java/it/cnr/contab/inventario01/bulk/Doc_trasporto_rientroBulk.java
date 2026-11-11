@@ -570,7 +570,7 @@ public abstract class Doc_trasporto_rientroBulk extends Doc_trasporto_rientroBas
                 && getDataInvioFirma() != null;
     }
 
-    /** Testata/dettagli bloccati, allegati modificabili, salvabile come definitivo (firma da workflow o manuale). */
+    /** Testata/dettagli bloccati, allegati modificabili, salvabile come definitivo (firma da signatureflow o manuale). */
     public boolean isFirmaCompletabile() {
         return isFirmatoDaCompletare() || isPredispostoAllaFirma();
     }

@@ -14,8 +14,33 @@
             nullable="false"
             enabledOnInsert="true"
             enabledOnEdit="true"
-            readonlyProperty="allegatoEsistente"
+            readonlyProperty="aspectNameReadonly"
             label="Tipologia"/>
+
+    <fieldProperty
+            name="nome"
+            property="nome"
+            inputType="TEXT"
+            inputSize="40"
+            maxLength="400"
+            inputCssClass="w-100"
+            enabledOnInsert="true"
+            enabledOnEdit="true"
+            readonlyProperty="nomeReadonly"
+            caseSensitiveSearch="false"
+            label="Nome del File"/>
+
+    <fieldProperty
+            name="file"
+            property="file"
+            inputType="FILE"
+            inputCssClass="w-100"
+            inputSize="40"
+            maxLength="400"
+            readonlyProperty="fileReadonly"
+            caseSensitiveSearch="false"
+            nullable="false"
+            label="File"/>
 
 
     <fieldProperty
