@@ -34,6 +34,7 @@ import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
 import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_rigaBulk;
 import it.cnr.contab.inventario00.bp.RigheInvDaFatturaCRUDController;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession;
 import it.cnr.contab.inventario00.docs.bulk.Trasferimento_inventarioBulk;
 import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
@@ -48,7 +49,9 @@ import it.cnr.jada.bulk.ValidationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.util.EmptyRemoteIterator;
+import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.AbstractDetailCRUDController;
+import it.cnr.jada.util.action.RicercaLiberaBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
 import it.cnr.jada.util.action.Selection;
 import it.cnr.jada.util.action.SelectionIterator;
@@ -61,7 +64,7 @@ import it.cnr.jada.util.action.SimpleDetailCRUDController;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class CRUDScaricoInventarioBP extends CRUDCaricoScaricoInventarioBP  implements SelectionListener{
+public class CRUDScaricoInventarioBP extends CRUDCaricoScaricoInventarioBP  implements SelectionListener, SelezionatoreBeniProvider{
 	
 	public CRUDScaricoInventarioBP() {
 	super("Tr");
@@ -612,6 +615,43 @@ public void rimuoviDettagliDaScaricare(it.cnr.jada.UserContext userContext, Sele
 public void setClauses(it.cnr.jada.persistency.sql.CompoundFindClause newClauses) {
 	clauses = newClauses;
 }
+
+	/* ---------------- SelezionatoreBeniProvider ---------------- */
+
+	/** Restituisce i beni candidati allo scarico filtrati per clausola ed esclusi i già selezionati. */
+	public RemoteIterator selectBeniCandidatiByClause(ActionContext context, it.cnr.jada.persistency.sql.CompoundFindClause clauses)
+			throws BusinessProcessException {
+		try {
+			Buono_carico_scaricoBulk buono = (Buono_carico_scaricoBulk) getModel();
+			SimpleBulkList selezionati = ((BuonoCaricoScaricoComponentSession) createComponentSession())
+					.selezionati(context.getUserContext(), buono);
+			return getListaBeniDaScaricare(context.getUserContext(), buono.isByFattura(), selezionati, clauses);
+		} catch (ComponentException | RemoteException e) {
+			throw handleException(e);
+		}
+	}
+
+	/** Configura il prototipo e il set di ricerca guidata per i beni. */
+	public void configuraRicercaBeni(ActionContext context, RicercaLiberaBP rlbp) throws BusinessProcessException {
+		if (!isBy_fattura() && !isBy_documento()) {
+			rlbp.setPrototype(new Inventario_beniBulk());
+			return;
+		}
+		try {
+			Inventario_beniComponentSession inventarioComponent = (Inventario_beniComponentSession)
+					createComponentSession("CNRINVENTARIO00_EJB_Inventario_beniComponentSession", Inventario_beniBulk.class);
+			rlbp.setFreeSearchSet("freeSearchWithoutProgressivoSet");
+			rlbp.setPrototype((Inventario_beniBulk) inventarioComponent.inizializzaBulkPerInserimento(
+					context.getUserContext(), new Inventario_beniBulk()));
+			rlbp.setShowSearchResult(false);
+		} catch (ComponentException | RemoteException e) {
+			throw handleException(e);
+		}
+	}
+
+	public Class<? extends OggettoBulk> getClasseBeniSelezionatore() {
+		return Inventario_beniBulk.class;
+	}
 
 /**
  * Valida i dettagli del Buono di Scarico.
