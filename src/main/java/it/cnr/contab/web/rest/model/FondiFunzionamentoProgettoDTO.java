@@ -54,4 +54,10 @@ public class FondiFunzionamentoProgettoDTO {
                 .orElse(BigDecimal.ZERO);
     }
 
+
+    public BigDecimal getImportoPagato() {
+        return Optional.ofNullable(progettoBulk)
+                .map(ProgettoBulk::getImportoPagato)
+                .orElse(BigDecimal.ZERO);
+    }
 }

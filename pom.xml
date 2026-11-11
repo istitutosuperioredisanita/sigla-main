@@ -39,14 +39,14 @@
         <version.sdi.fatturapa>1.0.2</version.sdi.fatturapa>
         <version.sigla-ws.client>1.0.2</version.sigla-ws.client>
         <spring.version>7.0.2</spring.version>
-        <jada.version>8.0.10</jada.version>
+        <jada.version>8.0.12</jada.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.directory>target</project.build.directory>
         <sigla.build.number>DEV</sigla.build.number>
         <slf4j.version>1.7.21</slf4j.version>
         <liquibase.version>3.5.3</liquibase.version>
         <pdfbox.version>2.0.25</pdfbox.version>
-        <version.storage.cloud>3.0.1</version.storage.cloud>
+        <version.storage.cloud>3.1.0</version.storage.cloud>
         <jackson.version>2.10.3</jackson.version>
         <commons-io.version>2.7</commons-io.version>
         <git.changelog.maven.plugin.version>2.3.0</git.changelog.maven.plugin.version>
@@ -449,13 +449,14 @@
         <!-- Spring Infinispan -->
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-spring5-embedded</artifactId>
-            <version>13.0.10.Final</version>
+            <artifactId>infinispan-spring7-embedded</artifactId>
+            <version>16.0.11</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-commons</artifactId>
-            <version>13.0.10.Final</version>
+            <version>16.0.11</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

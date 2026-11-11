@@ -1022,7 +1022,7 @@
 		<columnFieldProperty name="im_prev_a3" label="Previsione anno +2"/>
 		<columnFieldProperty name="note" />
 	</columnSet>
-	
+
 
 <!-- Column Set per gestione Aree Progettuali -->
 	<columnSet name="SPECDRISTPROCOMLIV1">

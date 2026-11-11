@@ -183,6 +183,7 @@ public class ProgettoBulk extends ProgettoBase implements AllegatoParentBulk {
 
 	@Transient private BigDecimal importoFinanziato;
 	@Transient private BigDecimal importoUtilizzato;
+	@Transient private BigDecimal importoPagato;
 
 	//Variabile utilizzata per sapere se la richiesta di creazione proviene da una mappa di tipo Amministra
 	private boolean fromAmministra = Boolean.FALSE;
@@ -1072,6 +1073,17 @@ public void setUnita_organizzativa(it.cnr.contab.config00.sto.bulk.Unita_organiz
 				.map(Progetto_other_fieldBulk::isPianoEconomicoRequired)
 				.orElse(Boolean.FALSE);
 	}
+
+	/*
+	 * Indica se il progetto ha tipo finanziamento CODICE_AUT_AREE ("Accordi senza contributo aggiuntivo"):
+	 * per questi progetti non sono previsti importi finanziato/cofinanziato né finanziatori
+	 */
+	public boolean isAccordoSenzaContributo() {
+		return Optional.ofNullable(this.getOtherField())
+				.map(Progetto_other_fieldBulk::getTipoFinanziamento)
+				.map(TipoFinanziamentoBulk::isAutofinanziamentoAree)
+				.orElse(Boolean.FALSE);
+	}
 	
 	public BulkList<Progetto_piano_economicoBulk> getPianoEconomicoSummaryVoce() {
 		Map<String, List<Progetto_piano_economicoBulk>> resultByVoce = 
@@ -1411,6 +1423,7 @@ public void setUnita_organizzativa(it.cnr.contab.config00.sto.bulk.Unita_organiz
 
 	public int addToAnagraficheProgetto(Progetto_anagraficoBulk dett){
 		dett.setPgProgetto(this.getPg_progetto());
+		dett.setFl_tempo_ind(true);
 		getAnagraficheProgetto().add(dett);
 		return anagraficheProgetto.size()-1;
 	}
@@ -1447,5 +1460,13 @@ public void setUnita_organizzativa(it.cnr.contab.config00.sto.bulk.Unita_organiz
 
 	public void setFromAmministra(boolean fromAmministra) {
 		this.fromAmministra = fromAmministra;
+	}
+
+	public BigDecimal getImportoPagato() {
+		return importoPagato;
+	}
+
+	public void setImportoPagato(BigDecimal importoPagato) {
+		this.importoPagato = importoPagato;
 	}
 }

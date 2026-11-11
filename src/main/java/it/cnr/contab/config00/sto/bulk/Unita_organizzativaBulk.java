@@ -41,6 +41,7 @@ public class Unita_organizzativaBulk extends Unita_organizzativaBase {
 
 	@Transient private BigDecimal importoFinanziato;
 	@Transient private BigDecimal importoUtilizzato;
+	@Transient private BigDecimal importoPagato;
 
 	@Transient private Long numeroBeni;
 	@Transient private BigDecimal totaleBeni;
@@ -511,4 +512,13 @@ public class Unita_organizzativaBulk extends Unita_organizzativaBase {
 	public void setTotaleBeni(BigDecimal totaleBeni) {
 		this.totaleBeni = totaleBeni;
 	}
+
+	public BigDecimal getImportoPagato() {
+		return importoPagato;
+	}
+
+	public void setImportoPagato(BigDecimal importoPagato) {
+		this.importoPagato = importoPagato;
+	}
+
 }
