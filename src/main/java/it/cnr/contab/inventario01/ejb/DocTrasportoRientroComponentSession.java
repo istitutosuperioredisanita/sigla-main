@@ -39,7 +39,7 @@ import java.util.List;
  *
  * Espone i servizi per:
  * - CRUD documenti trasporto/rientro
- * - Gestione workflow (Inserito → Inviato → Definitivo)
+ * - Gestione signatureflow (Inserito → Inviato → Definitivo)
  * - Selezione e modifica beni con accessori
  * - Validazione e salvataggio definitivo
  */

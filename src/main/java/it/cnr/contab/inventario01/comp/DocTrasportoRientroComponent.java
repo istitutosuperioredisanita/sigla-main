@@ -3127,7 +3127,7 @@ public class DocTrasportoRientroComponent extends CRUDDetailComponent
         } catch (ApplicationException e) {
             throw e;
         } catch (Exception e) {
-            throw new ApplicationException("Workflow firma digitale non disponibile!");
+            throw new ApplicationException("Signatureflow firma digitale non disponibile!");
         }
     }
 

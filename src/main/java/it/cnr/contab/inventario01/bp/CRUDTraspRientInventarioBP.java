@@ -31,6 +31,7 @@ import it.cnr.jada.util.EmptyRemoteIterator;
 import it.cnr.jada.util.RemoteIterator;
 import it.cnr.jada.util.action.AbstractPrintBP;
 import it.cnr.jada.util.action.RemoteDetailCRUDController;
+import it.cnr.jada.util.action.RicercaLiberaBP;
 import it.cnr.jada.util.action.SelectionListener;
 import it.cnr.jada.util.jsp.Button;
 import it.cnr.si.spring.storage.StorageObject;
@@ -54,7 +55,7 @@ public abstract class CRUDTraspRientInventarioBP<
         T extends AllegatoDocTraspRientroBulk,
         K extends Doc_trasporto_rientroBulk>
         extends AllegatiCRUDBP<T, K>
-        implements SelectionListener {
+        implements SelectionListener, SelezionatoreBeniProvider {
 
     private static final String COMPONENT_SESSION =
             "CNRINVENTARIO01_EJB_DocTrasportoRientroComponentSession";
@@ -412,7 +413,7 @@ public abstract class CRUDTraspRientInventarioBP<
         return getDoc() != null && getDoc().isInAttesaDiFirma();
     }
 
-    /** Fase finale (firmato da workflow o predisposto manualmente): solo allegati modificabili. */
+    /** Fase finale (firmato da signatureflow o predisposto manualmente): solo allegati modificabili. */
     public boolean isDocumentoFirmatoDaCompletare() {
         return getDoc() != null && getDoc().isFirmaCompletabile();
     }
@@ -421,7 +422,7 @@ public abstract class CRUDTraspRientInventarioBP<
         return getDoc() != null && getDoc().isPredispostoAllaFirma();
     }
 
-    /** Nessun workflow di firma: l'utente carica a mano il documento da firmare e poi quello firmato. */
+    /** Nessuna firma tramite signatureflow: l'utente carica a mano il documento da firmare e poi quello firmato. */
     public boolean isFirmaManuale() {
         return !isGestioneInvioInFirmaAttiva();
     }
@@ -472,7 +473,7 @@ public abstract class CRUDTraspRientInventarioBP<
         if (isFirmaManuale()) {
             return true;
         }
-        // Workflow: il FIRMATO già archiviato non si elimina
+        // Signatureflow: il FIRMATO già archiviato non si elimina
         if (allegato != null
                 && allegato.getCrudStatus() != OggettoBulk.TO_BE_CREATED
                 && isAllegatoFirmato(allegato)) {
@@ -863,8 +864,20 @@ public abstract class CRUDTraspRientInventarioBP<
     }
 
     /** Columnset dei beni per la griglia del selezionatore. */
+    @Override
     public String getColumnSetSelezionatore() {
         return TRASPORTO.equals(getTipo()) ? "righeTrasporto" : "righeRientro";
+    }
+
+    /** Ricerca libera sui campi del bene (prototipo InventarioDocTRBulk). */
+    @Override
+    public void configuraRicercaBeni(ActionContext context, RicercaLiberaBP rlbp) throws BusinessProcessException {
+        rlbp.setPrototype(new InventarioDocTRBulk(), null, null, "searchTrasportoRientro");
+    }
+
+    @Override
+    public Class<? extends OggettoBulk> getClasseBeniSelezionatore() {
+        return InventarioDocTRBulk.class;
     }
 
     public void inviaAllaFirma(ActionContext context) throws BusinessProcessException {
@@ -1734,7 +1747,7 @@ public abstract class CRUDTraspRientInventarioBP<
                 && Objects.equals(dettaglio.getProgressivo(), bene.getProgressivo().intValue());
     }
 
-    /** Assegna il file caricato all'allegato selezionato (sostituzione) o al primo nuovo senza file. */
+
     private void assegnaFileUploadato(ActionContext context, Doc_trasporto_rientroBulk doc) {
         if (!(context instanceof HttpActionContext)
                 || doc == null
@@ -1745,36 +1758,57 @@ public abstract class CRUDTraspRientInventarioBP<
         it.cnr.jada.util.upload.UploadedFile uploadedFile =
                 ((HttpActionContext) context).getMultipartParameter("main.ArchivioAllegati.file");
 
-        if (uploadedFile == null || uploadedFile.getName() == null || uploadedFile.getName().isEmpty()) {
+        if (uploadedFile == null || uploadedFile.getFile() == null
+                || uploadedFile.getName() == null || uploadedFile.getName().isEmpty()) {
             return;
         }
 
-        AllegatoGenericoBulk selezionato = (AllegatoGenericoBulk) getCrudArchivioAllegati().getModel();
+        AllegatoGenericoBulk selezionato =
+                (AllegatoGenericoBulk) getCrudArchivioAllegati().getModel();
+
+        boolean selezionatoInLista = selezionato != null
+                && doc.getArchivioAllegati().contains(selezionato);
+
         Optional<AllegatoGenericoBulk> destinazione = Optional.empty();
 
-        // Allegato esistente non bloccato: il nuovo file ne sostituisce il contenuto
-        if (isFirmaManuale()
-                && selezionato instanceof AllegatoDocTraspRientroBulk
-                && !selezionato.isToBeCreated()
-                && !((AllegatoDocTraspRientroBulk) selezionato).isAllegatoBloccato()
-                && doc.getArchivioAllegati().contains(selezionato)) {
+        // Se è selezionato un nuovo allegato, assegna il file direttamente a esso.
+        if (selezionatoInLista && selezionato.isToBeCreated()) {
             destinazione = Optional.of(selezionato);
         }
+
+        // In caso di firma manuale, sostituisce il file di un allegato esistente non bloccato.
+        if (!destinazione.isPresent()
+                && isFirmaManuale()
+                && selezionatoInLista
+                && selezionato instanceof AllegatoDocTraspRientroBulk
+                && !((AllegatoDocTraspRientroBulk) selezionato).isAllegatoBloccato()) {
+            destinazione = Optional.of(selezionato);
+        }
+
+        // Se non c'è una destinazione valida, utilizza il primo nuovo allegato senza file o nome.
         if (!destinazione.isPresent()) {
             destinazione = doc.getArchivioAllegati().stream()
-                    .filter(a -> a.isToBeCreated() && a.getFile() == null)
+                    .filter(a -> a.isToBeCreated()
+                            && (a.getFile() == null
+                            || a.getNome() == null
+                            || a.getNome().trim().isEmpty()))
                     .findFirst();
         }
 
+        // Associa il file all'allegato individuato e aggiorna lo stato del documento.
         destinazione.ifPresent(a -> {
             a.setFile(uploadedFile.getFile());
             a.setContentType(uploadedFile.getContentType());
             a.setNome(a.parseFilename(uploadedFile.getName()));
+
             if (a.getCrudStatus() == OggettoBulk.NORMAL) {
                 a.setToBeUpdated();
             }
+
+            setDirty(true);
         });
     }
+
 
     private void validaAllegati(Doc_trasporto_rientroBulk doc) throws ValidationException {
         if (doc.getArchivioAllegati() == null) {
@@ -1852,7 +1886,7 @@ public abstract class CRUDTraspRientInventarioBP<
         if (doc.isFirmaCompletabile() && !isAllegatiModificabili()) {
             throw new ApplicationException("Allegati non modificabili.");
         }
-        // L'obbligo del FIRMATO vale solo per la firma da workflow
+        // L'obbligo del FIRMATO vale solo per la firma da signatureflow
         if (doc.isFirmatoDaCompletare()) {
             validaFirmatoPresente(doc);
         }

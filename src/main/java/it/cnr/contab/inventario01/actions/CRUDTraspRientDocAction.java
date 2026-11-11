@@ -4,7 +4,7 @@ import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.inventario00.docs.bulk.InventarioDocTRBulk;
 import it.cnr.contab.inventario01.bp.CRUDTraspRientInventarioBP;
-import it.cnr.contab.inventario01.bp.SelezionatoreBeniTrasportoRientroBP;
+import it.cnr.contab.inventario01.bp.SelezionatoreBeniInventarioBP;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientroBulk;
 import it.cnr.contab.inventario01.bulk.Doc_trasporto_rientro_dettBulk;
 import it.cnr.contab.inventario01.bulk.Stampa_doc_trasporto_rientroBulk;
@@ -152,8 +152,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
 
             RicercaLiberaBP rlbp = (RicercaLiberaBP) context.createBusinessProcess("RicercaLibera");
             rlbp.setCanPerformSearchWithoutClauses(true);
-            InventarioDocTRBulk prototype = new InventarioDocTRBulk();
-            rlbp.setPrototype(prototype, null, null, "searchTrasportoRientro");
+            bp.configuraRicercaBeni(context, rlbp);
 
             context.addHookForward("searchResult", this, getBringBackMethod());
             context.addHookForward("filter", this, getBringBackMethod());
@@ -181,15 +180,7 @@ public abstract class CRUDTraspRientDocAction extends it.cnr.jada.util.action.CR
                 return context.findDefaultForward();
             }
 
-            SelezionatoreBeniTrasportoRientroBP slbp =
-                    (SelezionatoreBeniTrasportoRientroBP) context.createBusinessProcess("SelezionatoreBeniTrRi");
-            slbp.setSelectionListener(context, bp);
-            slbp.setIterator(context, ri);
-            slbp.setBulkInfo(BulkInfo.getBulkInfo(InventarioDocTRBulk.class));
-            slbp.setColumns(BulkInfo.getBulkInfo(InventarioDocTRBulk.class)
-                    .getColumnFieldPropertyDictionary(bp.getColumnSetSelezionatore()));
-            slbp.setMultiSelection(true);
-
+            SelezionatoreBeniInventarioBP slbp = SelezionatoreBeniInventarioBP.crea(context, bp, ri);
             context.addHookForward("seleziona", this, getSelezionaMethod());
             return context.addBusinessProcess(slbp);
         } catch (Throwable e) {
