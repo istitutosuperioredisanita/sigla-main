@@ -2,8 +2,6 @@ name: Cleanup GitHub Packages
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 3 * * 0'
 
 permissions:
   contents: read
