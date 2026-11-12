@@ -40,7 +40,6 @@ public class CRUDAbiCabAction extends it.cnr.jada.util.action.CRUDAction {
     }
 
     public Forward doBlankSearchFind_comune(ActionContext context, AbicabBulk abicab) {
-
         if (abicab != null)
             abicab.resetComune();
         return context.findDefaultForward();
