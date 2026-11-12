@@ -1,0 +1,23 @@
+name: Cleanup SIGLA Main Docker
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete untagged images
+        uses: actions/delete-package-versions@v5
+        with:
+          owner: istitutosuperioredisanita
+          package-name: sigla-main
+          package-type: container
+          delete-only-untagged-versions: true
+          min-versions-to-keep: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
