@@ -1503,7 +1503,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 /** 
   *  default
   *    PreCondition:
-  *      Viene richiesto il CDR PERSONALE da configurazione CNR
+  *      Viene richiesto il CDR PERSONALE da Configurazione Sigla
   *    PostCondition:
   *      Restituisce il cdr con il codice specificato in CONFIGURAZIONE_CNR alla voce 
   *      "CDR_SPECIALE" , "CDR_PERSONALE"
@@ -1512,7 +1512,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 	private CdrBulk getCDR_PERSONALE (UserContext userContext) throws ComponentException {
 		try {
             String aCdCdr =  Optional.ofNullable(((Configurazione_cnrHome)getHome(userContext,Configurazione_cnrBulk.class)).getCdrPersonale(CNRUserContext.getEsercizio(userContext)))
-					.orElseThrow(()->new it.cnr.jada.comp.ApplicationException("Centro di responsabilità del Personale non definito in Configurazione CNR per l'esercizio "+CNRUserContext.getEsercizio(userContext)+"."));
+					.orElseThrow(()->new it.cnr.jada.comp.ApplicationException("Centro di responsabilità del Personale non definito in Configurazione Sigla per l'esercizio "+CNRUserContext.getEsercizio(userContext)+"."));
 			it.cnr.contab.config00.sto.bulk.CdrHome cdrHome = (it.cnr.contab.config00.sto.bulk.CdrHome)getHome(userContext,CdrBulk.class, "V_CDR_VALIDO");
 			SQLBuilder sql = cdrHome.createSQLBuilder();
 			sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
@@ -1523,7 +1523,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 			if(broker.next())
 			 aCdrBulk = (CdrBulk)broker.fetch(CdrBulk.class);
 			else
-			 throw new it.cnr.jada.comp.ApplicationException("Il CDR del personale specificato in CONFIGURAZIONE CNR non è stato trovato!");
+			 throw new it.cnr.jada.comp.ApplicationException("Il CDR del personale specificato in Configurazione Sigla non è stato trovato!");
 
 			return aCdrBulk;
 		} catch(Throwable e) {
@@ -1535,7 +1535,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 /** 
   *  default
   *    PreCondition:
-  *      Viene richiesto il CDR SPECIALE SERVIZIO ENTE da configurazione CNR
+  *      Viene richiesto il CDR SPECIALE SERVIZIO ENTE da Configurazione Sigla
   *    PostCondition:
   *      Restituisce il cdr con il codice specificato in CONFIGURAZIONE_CNR alla voce 
   *      "CDR_SPECIALE" , "CDR_SERVIZIO_ENTE"
@@ -1544,7 +1544,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 	private CdrBulk getCDR_SERVIZIO_ENTE (UserContext userContext) throws ComponentException {
 		try {
 			String aCdCdr = Optional.ofNullable(((Configurazione_cnrHome)getHome(userContext, Configurazione_cnrBulk.class)).getCdrServizioEnte(CNRUserContext.getEsercizio(userContext)))
-					.orElseThrow(()->new it.cnr.jada.comp.ApplicationException("Cdr di Servizio dell'Ente non trovato in Configurazione CNR per l'esercizio "+CNRUserContext.getEsercizio(userContext)+"."));
+					.orElseThrow(()->new it.cnr.jada.comp.ApplicationException("Cdr di Servizio dell'Ente non trovato in Configurazione Sigla per l'esercizio "+CNRUserContext.getEsercizio(userContext)+"."));
 			it.cnr.contab.config00.sto.bulk.CdrHome cdrHome = (it.cnr.contab.config00.sto.bulk.CdrHome)getHome(userContext,CdrBulk.class, "V_CDR_VALIDO");
 			SQLBuilder sql = cdrHome.createSQLBuilder();
 			sql.addClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
@@ -1555,7 +1555,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 			if(broker.next())
 			 aCdrBulk = (CdrBulk)broker.fetch(CdrBulk.class);
 			else
-			 throw new it.cnr.jada.comp.ApplicationException("Il CDR di servizio per l'ENTE specificato in CONFIGURAZIONE CNR non è stato trovato!");
+			 throw new it.cnr.jada.comp.ApplicationException("Il CDR di servizio per l'ENTE specificato in Configurazione Sigla non è stato trovato!");
 
 			return aCdrBulk;
 		} catch(Throwable e) {
@@ -1567,7 +1567,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 /** 
   *  default
   *    PreCondition:
-  *      Viene richiesta la voce di tipo ONERI_CNR da configurazione CNR
+  *      Viene richiesta la voce di tipo ONERI_CNR da Configurazione Sigla
   *    PostCondition:
   *      Restituisce l'elemento voce con il codice specificato in CONFIGURAZIONE_CNR alla voce 
   *      "ELEMENTO_VOCE_SPECIALE" , "ONERI_CNR"
@@ -1578,7 +1578,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 			Configurazione_cnrComponentSession configurazione = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession",Configurazione_cnrComponentSession.class);
 			String aCdOneriCnr=configurazione.getVal01(userContext,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),null,"ELEMENTO_VOCE_SPECIALE","ONERI_CNR");
 			if(aCdOneriCnr==null)
-			 throw new it.cnr.jada.comp.ApplicationException("Voce Oneri Cnr non definita in CONFIGURAZIONE CNR per l'esercizio corrente");
+			 throw new it.cnr.jada.comp.ApplicationException("Voce Oneri Cnr non definita in Configurazione Sigla per l'esercizio corrente");
 			return (Elemento_voceBulk)getHome(userContext,Elemento_voceBulk.class).findByPrimaryKey(new Elemento_voceBulk(
 				aCdOneriCnr,
 				it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),
@@ -1605,7 +1605,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 			Configurazione_cnrComponentSession configurazione = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession",Configurazione_cnrComponentSession.class);
 			String aVoceRicFig = configurazione.getVal01(userContext,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),null,"ELEMENTO_VOCE_SPECIALE","RICAVO_FIGURATIVO_ALTRO_CDR");
             if(aVoceRicFig==null)
-             throw new it.cnr.jada.comp.ApplicationException("Voce del piano \"Ricavo Figurativo\" non presente in configurazione CNR per l'esercizio corrente");
+             throw new it.cnr.jada.comp.ApplicationException("Voce del piano \"Ricavo Figurativo\" non presente in Configurazione Sigla per l'esercizio corrente");
 			return (Elemento_voceBulk)getHome(userContext,Elemento_voceBulk.class).findByPrimaryKey(new Elemento_voceBulk(
 				aVoceRicFig,
 				it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),
@@ -1621,7 +1621,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 /** 
   *  default
   *    PreCondition:
-  *      Viene richiesta la voce di tipo TFR da configurazione CNR
+  *      Viene richiesta la voce di tipo TFR da Configurazione Sigla
   *    PostCondition:
   *      Restituisce l'elemento voce con il codice specificato in CONFIGURAZIONE_CNR alla voce 
   *      "ELEMENTO_VOCE_SPECIALE" , "TFR"
@@ -1632,7 +1632,7 @@ private Pdg_preventivo_spe_detBulk creaSCRVersoCdR(UserContext userContext,Pdg_p
 			Configurazione_cnrComponentSession configurazione = (Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession",Configurazione_cnrComponentSession.class);
 			String aCdTfr=configurazione.getVal01(userContext,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),null,"ELEMENTO_VOCE_SPECIALE","TFR");
 			if(aCdTfr==null)
-			 throw new it.cnr.jada.comp.ApplicationException("Voce TFR non definita in CONFIGURAZIONE CNR per l'esercizio corrente");
+			 throw new it.cnr.jada.comp.ApplicationException("Voce TFR non definita in Configurazione Sigla per l'esercizio corrente");
 			return (Elemento_voceBulk)getHome(userContext,Elemento_voceBulk.class).findByPrimaryKey(new Elemento_voceBulk(
 				aCdTfr,
 				it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext),

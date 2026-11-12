@@ -87,22 +87,22 @@ public void callRiportaIndietro (UserContext userContext,it.cnr.contab.doccont00
   *      Un Impegno su partita di giro e' stato creato ed e' necessario creare il corrispondente Accertamento
   *    PostCondition:
   *      L'accertamento (AccertamentoPGiroBulk) viene creato con importo pari a quello dell'impegno, codice terzo
-  *      recuperato dalla Configurazione CNR come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
+  *      recuperato dalla Configurazione Sigla come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
   *      (metodo findVoce_f) dall'associazione fra Capitoli di Entrata e di Spesa per Partita di Giro, data di
   *		 scadenza uguale a quella della scadenza dell'obbligazione su partita di giro.
   *      Viene inoltre creata una scadenza (metodo creaAccertamento_scadenzario) e
   *      un dettaglio di scadenza (metodo creaAccertamento_scad_voce). I saldi relativi alla voce del piano
   *      dell'accertamento vengono aggiornati (metodo aggiornaCapitoloSaldoAccertamento).
   *		 Viene infine validato l'Accertamento prima della sua creazione (metodo verificaAccertamento)
-  *  errore - Configurazione CNR per codice DIVERSI su PGIRO
+  *  errore - Configurazione Sigla per codice DIVERSI su PGIRO
   *    PreCondition:
-  *      non e' presente in Configurazione CNR la definizione del CODICE DIVERSI per PGIRO
+  *      non e' presente in Configurazione Sigla la definizione del CODICE DIVERSI per PGIRO
   *    PostCondition:
-  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione CNR del CODICE DIVERSI 
+  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione Sigla del CODICE DIVERSI 
   *		 per PGIRO
   *  errore - Anagrafica per codice DIVERSI su PGIRO
   *    PreCondition:
-  *      non e' presente in Anagrafica il codice terzo presente in Configurazione CNR come CODICE DIVERSI per PGIRO
+  *      non e' presente in Anagrafica il codice terzo presente in Configurazione Sigla come CODICE DIVERSI per PGIRO
   *    PostCondition:
   *      Un messaggio di errore segnala all'utente la mancata definizione in Anagrafica
   *  errore - Associazione capitoli entrata/spese

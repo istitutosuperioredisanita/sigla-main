@@ -4109,7 +4109,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 	 *            lo userContext che ha generato la richiesta
 	 * @param compenso
 	 *            l'OggettoBulk che rappresenta il contesto della ricerca.
-	 * @return Il capitolo recuperato dalla configurazione CNR
+	 * @return Il capitolo recuperato dalla Configurazione Sigla
 	 * 
 	 **/
 	private String recuperaCapitolo(UserContext userContext,
@@ -6147,7 +6147,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 							"ADEGUAMENTI_ART35_DL223", "LIMITE3") == null)
 
 				throw new ApplicationException(
-						"Configurazione CNR: non sono stati impostati i valori per la gestione dell'Art.35 DL n.223/2006");
+						"Configurazione Sigla: non sono stati impostati i valori per la gestione dell'Art.35 DL n.223/2006");
 
 			importo1 = sess.getIm01(userContext, Integer.valueOf(0), null,
 					"ADEGUAMENTI_ART35_DL223", "LIMITE1");
@@ -6210,7 +6210,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 								null, "ACCONTO_ADD_COM", "PERIODO_VALIDITA") == null)
 
 					throw new ApplicationException(
-							"Configurazione CNR: non sono stati impostati i valori per la gestione dell'Acconto Addizionale Comunale");
+							"Configurazione Sigla: non sono stati impostati i valori per la gestione dell'Acconto Addizionale Comunale");
 
 				data_da = sess.getDt01(userContext, compenso.getEsercizio(),
 						null, "ACCONTO_ADD_COM", "PERIODO_VALIDITA");
@@ -6987,7 +6987,7 @@ public class CompensoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 							"SOSPENSIONE_IRPEF", "PERIODO_VALIDITA") == null)
 
 				throw new ApplicationException(
-						"Configurazione CNR: non sono stati impostati i valori per la gestione della Sospensione IRPEF");
+						"Configurazione Sigla: non sono stati impostati i valori per la gestione della Sospensione IRPEF");
 
 			data_da = sess.getDt01(userContext, null, null,
 					"SOSPENSIONE_IRPEF", "PERIODO_VALIDITA");

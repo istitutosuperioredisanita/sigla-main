@@ -694,7 +694,7 @@ public class Configurazione_cnrHome extends BulkHome {
                 return config.get().getIm01().intValueExact();
         } catch (Exception ignored) {
         }
-        throw new ComponentException("Esercizio di partenza non specificato in configurazione CNR.");
+        throw new ComponentException("Esercizio di partenza non specificato in Configurazione Sigla.");
     }
     public boolean isAttivaFirmaOrdine(int esercizio) throws PersistencyException {
         return Optional.ofNullable(

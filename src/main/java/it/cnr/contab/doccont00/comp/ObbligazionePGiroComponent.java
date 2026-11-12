@@ -835,7 +835,7 @@ public OggettoBulk creaConBulk (UserContext uc,OggettoBulk bulk) throws Componen
   *      Un Accertamento su partita di giro per il Cds e' stato creato ed e' necessario creare il corrispondente Impegno
   *    PostCondition:
   *      L'impegno (ImpegnoPGiroBulk) viene creato con importo pari a quello dell'accertamento, codice terzo
-  *      recuperato dalla Configurazione CNR come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
+  *      recuperato dalla Configurazione Sigla come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
   *      (metodo findVoce_f) dall'associazione fra Capitoli di Entrata e di Spesa per Partita di Giro, cds e unità
   *		 organizzativa di appartenenza e di origine uguali a quelli dell'accertamento, data di scadenza uguale a 
   *		 quella della scadenza dell'accertamento su partita di giro.
@@ -848,7 +848,7 @@ public OggettoBulk creaConBulk (UserContext uc,OggettoBulk bulk) throws Componen
   *      Un Accertamento su partita di giro per il CNR e' stato creato ed e' necessario creare il corrispondente Impegno
   *    PostCondition:
   *      L'impegno (ImpegnoPGiroBulk) viene creato con importo pari a quello dell'accertamento, codice terzo
-  *      recuperato dalla Configurazione CNR come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
+  *      recuperato dalla Configurazione Sigla come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
   *      (metodo findVoce_f) dall'associazione fra Capitoli di Entrata e di Spesa per Partita di Giro, cds e unità
   *		 organizzativa di appartenenza uguali a quelli dell'accertamento e cds e unità organizzativa di origine
   *		 uguali a quelli dell'ente.
@@ -856,14 +856,14 @@ public OggettoBulk creaConBulk (UserContext uc,OggettoBulk bulk) throws Componen
   *      un dettaglio di scadenza (metodo creaObbligazione_scad_voce). I saldi relativi alla voce del piano
   *      dell'obbligazione vengono aggiornati (metodo aggiornaCapitoloSaldoObbligazione).
   *		 Viene infine validata l'Obbligazione prima della sua creazione (metodo verificaObbligazione)
-  *  errore - Configurazione CNR per codice DIVERSI su PGIRO
+  *  errore - Configurazione Sigla per codice DIVERSI su PGIRO
   *    PreCondition:
-  *      non e' presente in Configurazione CNR la definizione del CODICE DIVERSI per PGIRO
+  *      non e' presente in Configurazione Sigla la definizione del CODICE DIVERSI per PGIRO
   *    PostCondition:
-  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione CNR del CODICE DIVERSI per PGIRO
+  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione Sigla del CODICE DIVERSI per PGIRO
   *  errore - Anagrafica per codice DIVERSI su PGIRO
   *    PreCondition:
-  *      non e' presente in Anagrafica il codice terzo presente in Configurazione CNR come CODICE DIVERSI per PGIRO
+  *      non e' presente in Anagrafica il codice terzo presente in Configurazione Sigla come CODICE DIVERSI per PGIRO
   *    PostCondition:
   *      Un messaggio di errore segnala all'utente la mancata definizione in Anagrafica
   *  errore - Associazione capitoli entrata/spese
@@ -952,10 +952,10 @@ public ImpegnoPGiroBulk creaObbligazione(
                 it.cnr.contab.config00.bulk.Configurazione_cnrBulk.PK_TERZO_SPECIALE,
                 it.cnr.contab.config00.bulk.Configurazione_cnrBulk.SK_CODICE_DIVERSI_PGIRO);
         if (config == null)
-            throw new ApplicationException("Configurazione CNR: manca la definizione del CODICE DIVERSI per partite di giro");
+            throw new ApplicationException("Configurazione Sigla: manca la definizione del CODICE DIVERSI per partite di giro");
 
         if (config.getIm01() == null)
-            throw new ApplicationException("Configurazione CNR: manca il CODICE TERZI nella definizione del codice diversi per partite di giro");
+            throw new ApplicationException("Configurazione Sigla: manca il CODICE TERZI nella definizione del codice diversi per partite di giro");
 
         SQLBuilder sql =
             getHomeCache(uc)
@@ -1043,14 +1043,14 @@ public ImpegnoPGiroBulk creaObbligazione(
   *      una scadenza di un impegno pgiro e' stata creata ed e' necessario creare il suo dettaglio
   *    PostCondition:
   *      Il dettaglio di scadenza (Obbligazione_scad_voceBulk) viene creato
-  *      con linea attività uguale alla linea di attività definita nella Configurazione CNR come Linea attività Spesa ENTE
+  *      con linea attività uguale alla linea di attività definita nella Configurazione Sigla come Linea attività Spesa ENTE
   *      e importo uguale all'importo della scadenza dell'obbligazione
-  *  errore - Configurazione CNR
+  *  errore - Configurazione Sigla
   *    PreCondition:
   *      una richiesta di creazione di un dettaglio di scadenza di un impegno pgiro e' stata generata
-  *      ma non e' stata definita in Configurazione CNR la Linea attività Spesa ENTE
+  *      ma non e' stata definita in Configurazione Sigla la Linea attività Spesa ENTE
   *    PostCondition:
-  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione CNR della linea di attivita' Spesa ENTE
+  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione Sigla della linea di attivita' Spesa ENTE
   *
   * @param uc lo <code>UserContext</code> che ha generato la richiesta
   * @param obblig_scad <code>Obbligazione_scadenzarioBulk</code> la scadenza dell'impegno pgiro creata
@@ -1081,7 +1081,7 @@ private Obbligazione_scad_voceBulk creaObbligazione_scad_voce (UserContext uc,Ob
 				obblig_scad_voce.setLinea_attivita( latt );
 		}
 		else
-			throw new ApplicationException("Configurazione CNR: manca la definizione del GAE SPESA ENTE");
+			throw new ApplicationException("Configurazione Sigla: manca la definizione del GAE SPESA ENTE");
 
 		
 		// altri campi
@@ -1166,7 +1166,7 @@ private AccertamentoPGiroComponentSession createAccertamentoPGiroComponent( ) th
 	}		
 }
 /**
- * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione CNR
+ * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione Sigla
  *
  * @return Configurazione_cnrComponentSession l'istanza di <code>Configurazione_cnrComponentSession</code> che serve per leggere i parametri di configurazione del CNR
  */

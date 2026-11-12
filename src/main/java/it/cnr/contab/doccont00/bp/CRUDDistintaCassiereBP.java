@@ -590,7 +590,7 @@ public class CRUDDistintaCassiereBP extends AllegatiCRUDBP<AllegatoGenericoBulk,
     public boolean isUoDistintaTuttaSac(ActionContext context) throws ComponentException, RemoteException {
         String uoDistintaTuttaSac =
                 Optional.ofNullable(Utility.createConfigurazioneCnrComponentSession().getUoDistintaTuttaSac(context.getUserContext(),CNRUserContext.getEsercizio(context.getUserContext())))
-                .orElseThrow(()->new ApplicationException("Configurazione CNR: non sono stati impostati i valori per UO SPECIALE - UO DISTINTA TUTTA SAC per l'esercizio "
+                .orElseThrow(()->new ApplicationException("Configurazione Sigla: non sono stati impostati i valori per UO SPECIALE - UO DISTINTA TUTTA SAC per l'esercizio "
                         +CNRUserContext.getEsercizio(context.getUserContext())+"."));
         if (uoDistintaTuttaSac.equals(it.cnr.contab.utenze00.bulk.CNRUserInfo.getUnita_organizzativa(context).getCd_unita_organizzativa())) {
             setElencoConUo(true);

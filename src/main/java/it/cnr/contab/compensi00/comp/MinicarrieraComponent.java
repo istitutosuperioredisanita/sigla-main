@@ -2276,7 +2276,7 @@ public boolean isGestitePrestazioni(UserContext userContext) throws ComponentExc
 	try {
 		String attivaPrestazione = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession")).getVal01(userContext, CNRUserContext.getEsercizio(userContext), "*", "GESTIONE_COMPENSI", "ATTIVA_PRESTAZIONE");
 		if (attivaPrestazione==null)
-			throw new ApplicationException("Configurazione CNR: non sono stati impostati i valori per GESTIONE_COMPENSI - ATTIVA_PRESTAZIONE");
+			throw new ApplicationException("Configurazione Sigla: non sono stati impostati i valori per GESTIONE_COMPENSI - ATTIVA_PRESTAZIONE");
 		if (attivaPrestazione.compareTo(new String("Y"))==0)
 		    return true;
 		else

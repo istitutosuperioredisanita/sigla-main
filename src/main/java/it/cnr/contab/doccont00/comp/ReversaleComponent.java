@@ -1989,7 +1989,7 @@ REVERSALE
     }
 
     /**
-     * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione CNR
+     * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione Sigla
      *
      * @return Configurazione_cnrComponentSession l'istanza di <code>Configurazione_cnrComponentSession</code> che serve per leggere i parametri di configurazione del CNR
      */
@@ -2402,7 +2402,7 @@ REVERSALE
     }
 
     /**
-     * Crea la ComponentSession da usare per effettuare le operazioni relative alla Configurazione CNR
+     * Crea la ComponentSession da usare per effettuare le operazioni relative alla Configurazione Sigla
      *
      * @return Configurazione_cnrComponentSession l'istanza di <code>Configurazione_cnrComponentSession</code> che serve per leggere i parametri di configurazione del CNR
      */
@@ -2562,7 +2562,7 @@ REVERSALE
      * E' stato generata la richiesta di creazione di una reversale di trasferimento
      * Il Cds beneficiario dell'accreditamento è uguale al SAC
      * PostCondition:
-     * Viene letta da Configurazione CNR il codice dell'uo per l'accreditamento SAC e vengono resituiti
+     * Viene letta da Configurazione Sigla il codice dell'uo per l'accreditamento SAC e vengono resituiti
      * i dati di tale UO
      *
      * @param userContext lo <code>UserContext</code> che ha generato la richiesta
@@ -2590,9 +2590,9 @@ REVERSALE
                     throw new ApplicationException("Non è possibile identificare l'uo-cds per il Cds " + mandato.getCodice_cds());
                 return ((Unita_organizzativaBulk) result.get(0));
             } else {
-                //cerco l'uo in configurazione CNR
+                //cerco l'uo in Configurazione Sigla
                 String cdUo = Optional.ofNullable(((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).getUoAccreditamentoSac(CNRUserContext.getEsercizio(userContext)))
-                        .orElseThrow(() -> new ApplicationException("Configurazione CNR: manca la definizione dell'UO_SPECIALE per ACCREDITAMENTO SAC per l'esercizio " + CNRUserContext.getEsercizio(userContext) + "."));
+                        .orElseThrow(() -> new ApplicationException("Configurazione Sigla: manca la definizione dell'UO_SPECIALE per ACCREDITAMENTO SAC per l'esercizio " + CNRUserContext.getEsercizio(userContext) + "."));
                 return (Unita_organizzativaBulk) getHome(userContext, Unita_organizzativaBulk.class).findByPrimaryKey(new Unita_organizzativaBulk(cdUo));
             }
 

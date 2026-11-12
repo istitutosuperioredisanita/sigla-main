@@ -172,7 +172,7 @@ public abstract it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext
  *       L'utente ha selezionato la linea di attività per cui creare l'accertamento su cui contabilizzare il rimborso
  * Post: Viene chiamata la stored procedure che 
  *       - crea un accertamento nel bilancio del CNR con voce del piano uguale
- *         a quella specificata in Configurazione CNR e linea di attività uguale a quella speciifcata dall'utente
+ *         a quella specificata in Configurazione Sigla e linea di attività uguale a quella speciifcata dall'utente
  *       - crea un rimborso contabilizzato sull'accertamento precedente 
  *
  * Nome: Crea rimborso - errore 

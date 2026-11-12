@@ -739,7 +739,7 @@ public Forward doCambiaDateRes(ActionContext context) {
  					anagrafico.setDt_fine_res_italia(null);
  					anagrafico.setAnno_fine_agevolazioni(null);
 					anagrafico.setAnno_inizio_res_fis(null);
- 					throw new ApplicationException("Configurazione CNR: non sono stati impostati i valori per la gestione dei 'Cervelli'");
+ 					throw new ApplicationException("Configurazione Sigla: non sono stati impostati i valori per la gestione dei 'Cervelli'");
  				}
  					
  				numMinGiorni = sess.getIm01(context.getUserContext(), Integer.valueOf(0), null, "COSTANTI", "NUMERO_LIMITE_GG_RESIDENZA_FISCALE").intValue();

@@ -105,7 +105,7 @@ public abstract it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext
   *      Un Accertamento su partita di giro per il Cds e' stato creato ed e' necessario creare il corrispondente Impegno
   *    PostCondition:
   *      L'impegno (ImpegnoPGiroBulk) viene creato con importo pari a quello dell'accertamento, codice terzo
-  *      recuperato dalla Configurazione CNR come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
+  *      recuperato dalla Configurazione Sigla come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
   *      (metodo findVoce_f) dall'associazione fra Capitoli di Entrata e di Spesa per Partita di Giro, cds e unità
   *		 organizzativa di appartenenza e di origine uguali a quelli dell'accertamento, data di scadenza uguale a 
   *		 quella della scadenza dell'accertamento su partita di giro.
@@ -118,7 +118,7 @@ public abstract it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext
   *      Un Accertamento su partita di giro per il CNR e' stato creato ed e' necessario creare il corrispondente Impegno
   *    PostCondition:
   *      L'impegno (ImpegnoPGiroBulk) viene creato con importo pari a quello dell'accertamento, codice terzo
-  *      recuperato dalla Configurazione CNR come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
+  *      recuperato dalla Configurazione Sigla come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
   *      (metodo findVoce_f) dall'associazione fra Capitoli di Entrata e di Spesa per Partita di Giro, cds e unità
   *		 organizzativa di appartenenza uguali a quelli dell'accertamento e cds e unità organizzativa di origine
   *		 uguali a quelli dell'ente.
@@ -126,14 +126,14 @@ public abstract it.cnr.jada.bulk.OggettoBulk creaConBulk(it.cnr.jada.UserContext
   *      un dettaglio di scadenza (metodo creaObbligazione_scad_voce). I saldi relativi alla voce del piano
   *      dell'obbligazione vengono aggiornati (metodo aggiornaCapitoloSaldoObbligazione).
   *		 Viene infine validata l'Obbligazione prima della sua creazione (metodo verificaObbligazione)
-  *  errore - Configurazione CNR per codice DIVERSI su PGIRO
+  *  errore - Configurazione Sigla per codice DIVERSI su PGIRO
   *    PreCondition:
-  *      non e' presente in Configurazione CNR la definizione del CODICE DIVERSI per PGIRO
+  *      non e' presente in Configurazione Sigla la definizione del CODICE DIVERSI per PGIRO
   *    PostCondition:
-  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione CNR del CODICE DIVERSI per PGIRO
+  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione Sigla del CODICE DIVERSI per PGIRO
   *  errore - Anagrafica per codice DIVERSI su PGIRO
   *    PreCondition:
-  *      non e' presente in Anagrafica il codice terzo presente in Configurazione CNR come CODICE DIVERSI per PGIRO
+  *      non e' presente in Anagrafica il codice terzo presente in Configurazione Sigla come CODICE DIVERSI per PGIRO
   *    PostCondition:
   *      Un messaggio di errore segnala all'utente la mancata definizione in Anagrafica
   *  errore - Associazione capitoli entrata/spese
