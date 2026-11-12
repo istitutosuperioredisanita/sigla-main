@@ -1,0 +1,24 @@
+name: Cleanup GitHub Packages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 0'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete old untagged versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: sigla-main
+          package-type: container
+          min-versions-to-keep: 20
+          delete-only-untagged-versions: 'true'
+          token: ${{ secrets.GITHUB_TOKEN }}
