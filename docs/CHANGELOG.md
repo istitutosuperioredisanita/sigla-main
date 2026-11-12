@@ -1,3 +1,43 @@
+## Release 8.044  -- _November 10, 2026_ 
+**Changes**
+
+>**fix: configurazione email**
+>
+>[6c437f68d93e049](https://github.com/istitutosuperioredisanita/sigla-main/commit/6c437f68d93e049) marco.spasiano *November 10, 2026*
+
+>**fix: configurazione email**
+>
+>[69e4c9aa03ca800](https://github.com/istitutosuperioredisanita/sigla-main/commit/69e4c9aa03ca800) marco.spasiano *November 10, 2026*
+
+>**Fattura Elettronica: sbloccata registrazione fattura emessa da persona fisica senza ritenute anche se non split-payment**
+>
+>[28666a4c6c35f35](https://github.com/istitutosuperioredisanita/sigla-main/commit/28666a4c6c35f35) raffaele.pagano *November 10, 2026*
+
+>**Bumped version to 8.0.43**
+>
+>[f88de5cd0e47337](https://github.com/istitutosuperioredisanita/sigla-main/commit/f88de5cd0e47337) dirgensa *November 10, 2026*
+
+
+## Release 8.0.43  -- _November 09, 2026_ 
+**Changes**
+
+>**ANAGRAFICHE PROGETTO - obbligatorietà sulla data fine, sull'importo per dipendenti TD e controllo validità data inizio con inizio progetto**
+>
+>[a24a85a41f62d2c](https://github.com/istitutosuperioredisanita/sigla-main/commit/a24a85a41f62d2c) tomada_valentina *November 09, 2026*
+
+>**ANAGRAFICHE PROGETTO - inserito check per dipendenti a tempo indeterminato,reso editabile l'importo sul progetto per i dipendenti a tempo determinato, inserito controllo sulla sovrapposizione del range delle date inizio/fine nel caso di anagrafica doppia**
+>
+>[32c8d17a245b119](https://github.com/istitutosuperioredisanita/sigla-main/commit/32c8d17a245b119) tomada_valentina *November 09, 2026*
+
+>**Fix sitamm.sendAlertMail.cron.expression**
+>
+>[a6f50ed6e9ab009](https://github.com/istitutosuperioredisanita/sigla-main/commit/a6f50ed6e9ab009) salvio_ciro *November 06, 2026*
+
+>**Bumped version to 8.0.42**
+>
+>[b992297fa2fe34e](https://github.com/istitutosuperioredisanita/sigla-main/commit/b992297fa2fe34e) dirgensa *November 06, 2026*
+
+
 ## Release 8.0.42  -- _November 05, 2026_ 
 **Changes**
 

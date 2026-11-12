@@ -7,6 +7,7 @@ import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.jada.action.ActionContext;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.util.action.CRUDBP;
+import org.infinispan.protostream.types.java.arrays.BooleanArrayAdapter;
 
 public class Progetto_anagraficoBulk extends Progetto_anagraficoBase {
 	/**
@@ -57,5 +58,9 @@ public class Progetto_anagraficoBulk extends Progetto_anagraficoBase {
 				getAnagrafico().getCognome()!=null )
 			return getAnagrafico().getCognome() + " " + getAnagrafico().getNome();
 		return "";
+	}
+
+	public boolean isROImporto(){
+		return isFl_tempo_ind();
 	}
 }
