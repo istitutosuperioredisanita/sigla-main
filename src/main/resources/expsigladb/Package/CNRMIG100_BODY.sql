@@ -1344,7 +1344,7 @@ dbms_output.put_line('0004');
 
 		-- Ribaltamento CONFIGURAZIONE_CNR sull'esercizio contabile destinazione
 		-- a partire dall'esercizio precedente
-		aMessage := 'Ribaltamento configurazione CNR sull''esercizio '||aEs||'. Lock tabella CONFIGURAZIONE_CNR';
+		aMessage := 'Ribaltamento Configurazione Sigla sull''esercizio '||aEs||'. Lock tabella CONFIGURAZIONE_CNR';
 		ibmutl200.LOGINF(aPgEsec,aMessage,'','');
 		for aConfCNR in (select * from CONFIGURAZIONE_CNR
 					 	 where esercizio = aEsPrec) Loop

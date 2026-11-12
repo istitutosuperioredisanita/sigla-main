@@ -161,7 +161,7 @@
 -- post: Il metodo termina senza segnalazioniene sollevata un'eccezione
 --
 -- pre-post-name: Voce speciale di entrata rimborso anticipi non trovata
--- pre: Il codice della voce del piano di entrata CNR rimborso anticipi non trovata in CONFIGURAZIONE CNR
+-- pre: Il codice della voce del piano di entrata CNR rimborso anticipi non trovata in Configurazione Sigla
 -- post: Viene sollevata un'eccezione
 --
 -- pre-post-name: Articolo di  entrata cnr corrispondente all'UO specificata nell'anticipo non trovato

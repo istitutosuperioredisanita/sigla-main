@@ -1233,7 +1233,7 @@ procedure gestioneNoCori(
     and ti_gestione = CNRCTB001.GESTIONE_ENTRATE
     and cd_elemento_voce = CNRCTB015.GETVAL01PERCHIAVE(aCompenso.esercizio,ELEMENTO_VOCE_SPECIALE,REC_CRED_DA_TERZI);
    exception when NO_DATA_FOUND then
-    IBMERR001.RAISE_ERR_GENERICO('Voce speciale di recupero crediti da terzi non trovata in configurazione cnr');
+    IBMERR001.RAISE_ERR_GENERICO('Voce speciale di recupero crediti da terzi non trovata in Configurazione Sigla');
    end;
    select * into parametriCnr from parametri_cnr
    where esercizio = inEsercizio;

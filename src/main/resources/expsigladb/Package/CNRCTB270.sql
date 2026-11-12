@@ -41,7 +41,7 @@
 --
 -- Date: 19/07/2002
 -- Version: 1.6
--- Recuperato da configurazione CNR il conto di versamento dell'IVA al centro (No partita giro)
+-- Recuperato da Configurazione Sigla il conto di versamento dell'IVA al centro (No partita giro)
 --
 -- Date: 24/07/2002
 -- Version: 1.7
@@ -190,14 +190,14 @@
 -- post: la procedura termina senza sollevare eccezioni
 --
 -- pre-post-name: Recupero senza successo del CORI IVA da CONFIGURAZIONE_CNR
--- pre: Ricerca senza successo del CORI IVA da configurazione CNR alla voce CORI_SPECIALE, IVA
+-- pre: Ricerca senza successo del CORI IVA da Configurazione Sigla alla voce CORI_SPECIALE, IVA
 -- post: viene sollevata un'eccezione
 --
 -- pre-post-name: Ricerca senza successo CDR responsabile dell'UO di versamento (nel caso di vers. centr.) o dell'UO locale
 -- pre: Non viene trovato il CDR responsabile dell'UO in processo (UO di versamento per versamento accentrato, UO locale altrimenti)
 -- post: viene sollevata un'eccezione
 --
--- pre-post-name: Estrazione senza successo della linea di attivitÃ  COMUNE per versamento IVA specificata come codice in configurazione CNR
+-- pre-post-name: Estrazione senza successo della linea di attivitÃ  COMUNE per versamento IVA specificata come codice in Configurazione Sigla
 -- pre: Non viene trovato la linea di attivita specificata in CONFIGURAZIONE_CNR alla voce LINEA_ATTIVITA_SPECIALE,LINEA_COMUNE_VERSAMENTO_IVA
 --      nel CDR responsabile dell'UO in processo (UO di versamento per versamento accentrato, UO locale altrimenti)
 -- post: viene sollevata un'eccezione
@@ -244,7 +244,7 @@
 --  1.1  Viene creata un'obbligazione, generico e mandato di versamento all'UO di versamento IVA
 --        Se la liquidazione Ã¨ di tipo commerciale -> viene creata un'obbligazione su partite normali, generico di trasferimento e mandato di versamento
 --        Se la liquidazione Ã¨ di tipo intraue o Sna MArino senz'iva -> viene creata un'obbligazione su partita di giro tronca, generico di versamento cori e mandato di versamento
---         Il conto viene recuperato da ASS_PARTITA_GIRO entrando con il conto specificato in configurazione CNR alla voce ESERCIZIO, ELEMENTO_VOCE_SPECIALE, VOCE_IVA_FATTURA_ESTERA
+--         Il conto viene recuperato da ASS_PARTITA_GIRO entrando con il conto specificato in Configurazione Sigla alla voce ESERCIZIO, ELEMENTO_VOCE_SPECIALE, VOCE_IVA_FATTURA_ESTERA
 --  1.2   Viene aggiornata la pratica di accantonamento al centro (accertamento su partita di giro tronca + generico di acc. + reversale provvisoria)
 --        Il riferimento a tale pratica Ã¨ mantenuto nella tabella LIQUIDAZIONE_IVA_CENTRO dove per ogni mese e tipo di liquidazione esiste un record
 --        con 2 stati: I -> Iniziale C -> Chiuso e il riferimento all'OBBLIGAZIONE su partita di giro corrispondente alla pratica di ACCANTONAMENTO IVA

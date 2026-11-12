@@ -705,9 +705,9 @@ TI_CORI_PERCIPIENTE CONSTANT CHAR(1) := 'P';
 --    movimento 2
 --	  	   importo = valore assoluto dell' (importo mandato versamento - saldo crediti/debiti)
 --         se la differenza tra l'importo del mandato di versamento e il saldo debiti/crediti < 0
---          un movimento in AVERE sul conto di ricavo identificato in configurazione CNR (RICAVO_IVA_NON_DETRAIBILE)
+--          un movimento in AVERE sul conto di ricavo identificato in Configurazione Sigla (RICAVO_IVA_NON_DETRAIBILE)
 --         altrimenti
---          un movimento in DARE sul conto di costo identificato in configurazione CNR (COSTO_IVA_NON_DETRAIBILE)
+--          un movimento in DARE sul conto di costo identificato in Configurazione Sigla (COSTO_IVA_NON_DETRAIBILE)
 --    movimento 3
 --         importo = importo del mandato di versamento
 --         movimento in dare sul conto debiti da erario (identificato via terzo mandato di versamento)
@@ -727,9 +727,9 @@ TI_CORI_PERCIPIENTE CONSTANT CHAR(1) := 'P';
 --    movimento 2
 --	  	   importo = valore assoluto del saldo crediti/debiti
 --         se la differenza tra l'importo del mandato di versamento e il saldo debiti/crediti < 0
---          un movimento in AVERE sul conto di ricavo identificato in configurazione CNR (RICAVO_IVA_NON_DETRAIBILE)
+--          un movimento in AVERE sul conto di ricavo identificato in Configurazione Sigla (RICAVO_IVA_NON_DETRAIBILE)
 --         altrimenti
---          un movimento in DARE sul conto di costo identificato in configurazione CNR (COSTO_IVA_NON_DETRAIBILE)
+--          un movimento in DARE sul conto di costo identificato in Configurazione Sigla (COSTO_IVA_NON_DETRAIBILE)
 --
 -- Al pagamento del mandato viene registrata in automatico la scrittura ultima terzo su banca secondo le regole del batch
 --

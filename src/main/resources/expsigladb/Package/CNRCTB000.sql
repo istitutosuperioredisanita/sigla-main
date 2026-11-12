@@ -67,28 +67,28 @@ DESCR_VAR_TOT   Constant  VARCHAR(60) := 'Variazione tra Istituti diversi';
 
 -- Functions e Procedures:
 
--- Estrae da configurazione CNR l'elemento voce speciale ricavo figurativo altro cdr
+-- Estrae da Configurazione Sigla l'elemento voce speciale ricavo figurativo altro cdr
 -- aEsercizio -> Esercizio contabile
 
  function getVoceRicFigAltroCDR(aEsercizio number) return elemento_voce%rowtype;
 
--- Estrae da configurazione CNR l'elemento voce speciale trattamento di fine rapporto
+-- Estrae da Configurazione Sigla l'elemento voce speciale trattamento di fine rapporto
 -- aEsercizio -> Esercizio contabile
 
  function getVoceTFR(aEsercizio number) return elemento_voce%rowtype;
 
--- Estrae da configurazione CNR l'elemento voce speciale degli oneri cnr
+-- Estrae da Configurazione Sigla l'elemento voce speciale degli oneri cnr
 -- aEsercizio -> Esercizio contabile
 
  function getVoceONERICNR(aEsercizio number) return elemento_voce%rowtype;
 
--- Estrae da configurazione CNR l'elemento voce speciale trattamento di fine rapporto
+-- Estrae da Configurazione Sigla l'elemento voce speciale trattamento di fine rapporto
 -- per personale a tempo determinato
 -- aEsercizio -> Esercizio contabile
 
  function getVoceTFRTEMPODET(aEsercizio number) return elemento_voce%rowtype;
 
--- Estrae da configurazione CNR l'elemento voce speciale degli oneri cnr
+-- Estrae da Configurazione Sigla l'elemento voce speciale degli oneri cnr
 -- per personale a tempo determinato
 -- aEsercizio -> Esercizio contabile
 

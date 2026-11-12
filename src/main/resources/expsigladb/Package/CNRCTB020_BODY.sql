@@ -66,7 +66,7 @@ end;
    Exception
      When noData Then
        if aEs=0 Then
-         IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: CDS_SPECIALE-CDS_SAC');
+         IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: CDS_SPECIALE-CDS_SAC');
       end if;
    End;
    if aCDS is null AND aEs!=0 then
@@ -763,7 +763,7 @@ Procedure ins_CDR (aDest CDR%rowtype) is
   Exception
     When noData Then
       if aEs=0 Then
-        IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: CDR_SPECIALE-CDR_PERSONALE');
+        IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: CDR_SPECIALE-CDR_PERSONALE');
      end if;
   End;
   if aCdCDR is null AND aEs!=0 then
@@ -781,7 +781,7 @@ Procedure ins_CDR (aDest CDR%rowtype) is
    Exception
      When noData Then
        if aEs=0 Then
-         IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: UO_SPECIALE-UO_VERSAMENTO_CORI');
+         IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: UO_SPECIALE-UO_VERSAMENTO_CORI');
       end if;
    End;
    if aCdUO is null AND aEs!=0 then
@@ -799,7 +799,7 @@ Procedure ins_CDR (aDest CDR%rowtype) is
    Exception
      When noData Then
        if aEs=0 Then
-         IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: UO_SPECIALE-UO_VERSAMENTO_CORI_TUTTA_SAC');
+         IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: UO_SPECIALE-UO_VERSAMENTO_CORI_TUTTA_SAC');
       end if;
    End;
    if aCdUO is null AND aEs!=0 then
@@ -817,7 +817,7 @@ Procedure ins_CDR (aDest CDR%rowtype) is
     Exception
       When noData Then
         if aEs=0 Then
-          IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: UO_SPECIALE-UO_VERSAMENTO_CORI_CONTO_BI');
+          IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: UO_SPECIALE-UO_VERSAMENTO_CORI_CONTO_BI');
        end if;
     End;
     if aCdUO is null AND aEs!=0 then
@@ -835,7 +835,7 @@ Procedure ins_CDR (aDest CDR%rowtype) is
     Exception
       When noData Then
         if aEs=0 Then
-          IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: UO_SPECIALE-UO_VERSAMENTO_IVA');
+          IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: UO_SPECIALE-UO_VERSAMENTO_IVA');
        end if;
     End;
     if aCdUO is null AND aEs!=0 then

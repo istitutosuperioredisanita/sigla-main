@@ -467,14 +467,14 @@ BEGIN
       and cd_chiave_secondaria = CONST_PERIODO_VALIDITA;
 
      If minData is null then
-         IBMERR001.RAISE_ERR_GENERICO('Data minima di validità per Acconto Addizionale comunale non specificata in configurazione CNR');
+         IBMERR001.RAISE_ERR_GENERICO('Data minima di validità per Acconto Addizionale comunale non specificata in Configurazione Sigla');
      End If;
 
      RETURN minData;
 
    Exception
       When No_Data_Found Then
-         IBMERR001.RAISE_ERR_GENERICO('Periodo di validità per Acconto Addizionale comunale non specificata in configurazione CNR');
+         IBMERR001.RAISE_ERR_GENERICO('Periodo di validità per Acconto Addizionale comunale non specificata in Configurazione Sigla');
    End;
 
 END getMinDataAcconto;
@@ -494,14 +494,14 @@ BEGIN
       and cd_chiave_secondaria = CONST_PERIODO_VALIDITA;
 
      If maxData is null then
-         IBMERR001.RAISE_ERR_GENERICO('Data massima di validità per Acconto Addizionale comunale non specificata in configurazione CNR');
+         IBMERR001.RAISE_ERR_GENERICO('Data massima di validità per Acconto Addizionale comunale non specificata in Configurazione Sigla');
      End If;
 
      RETURN maxData;
 
    Exception
       When No_Data_Found Then
-         IBMERR001.RAISE_ERR_GENERICO('Periodo di validità per Acconto Addizionale comunale non specificata in configurazione CNR');
+         IBMERR001.RAISE_ERR_GENERICO('Periodo di validità per Acconto Addizionale comunale non specificata in Configurazione Sigla');
    End;
 
 END getMaxDataAcconto;

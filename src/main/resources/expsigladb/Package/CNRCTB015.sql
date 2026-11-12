@@ -47,15 +47,15 @@
 --
 -- Date: 01/12/2002
 -- Version: 1.8
--- Aggiunto metodo per estrazione val03 da configurazione CNR
+-- Aggiunto metodo per estrazione val03 da Configurazione Sigla
 --
 -- Date: 24/01/2003
 -- Version: 1.9
--- Aggiunto il metodo di estrazione im02 da configurazione CNR
+-- Aggiunto il metodo di estrazione im02 da Configurazione Sigla
 --
 -- Date: 10/07/2003
 -- Version: 1.10
--- Aggiunto il metodo di estrazione dt01 da configurazione CNR
+-- Aggiunto il metodo di estrazione dt01 da Configurazione Sigla
 --
 -- Constants:
 --

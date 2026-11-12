@@ -23,7 +23,7 @@
 --
 -- Date: 05/12/2001
 -- Version: 1.2
--- Cambiata entry in CONFIGURAZIONE CNR per identificazione CDR gestione personale
+-- Cambiata entry in Configurazione Sigla per identificazione CDR gestione personale
 --
 -- Body:
 --
