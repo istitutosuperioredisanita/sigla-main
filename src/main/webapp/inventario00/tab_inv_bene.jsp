@@ -243,7 +243,15 @@
             <div class="Group">
                 <table>
                     <tr>
-                        <td>
+                      <td>
+                          <% bp.getController().writeFormLabel(out,"fl_totalmente_scaricato"); %>
+                      </td>
+                      <td>
+                          <% bp.getController().writeFormInput(out,"fl_totalmente_scaricato"); %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
                             <% bp.getController().writeFormLabel(out,"fl_dismesso"); %>
                         </td>
                         <td>

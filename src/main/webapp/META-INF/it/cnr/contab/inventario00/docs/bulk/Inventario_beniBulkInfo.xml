@@ -175,7 +175,10 @@
 		name="fl_totalmente_scaricato"
 		property="fl_totalmente_scaricato"
 		inputType="CHECKBOX"
-		label="Scarico Definitivo" />
+		label="Scarico Definitivo"
+		enabledOnSearch="true"
+		enabledOnInsert = "false"
+		enabledOnEdit = "false"/>
 
 	<fieldProperty
 			name="fl_dismesso"
@@ -244,7 +247,7 @@
 			maxLength="10"
 			inputSize="10"
 			inputType="TEXT"
-			label="Cod.Uo Assegnatario"
+			label="UO Assegnatario"
 			readonlyProperty="ROassegnatarioBene"
 			caseSensitiveSearch="false"
 			enabledOnInsert = "false"
@@ -836,9 +839,6 @@
 			style="width:300px"/>
 	<columnFieldProperty
 			name="cd_uo_assegnatario"
-			style="width:300px"/>
-	<columnFieldProperty
-			name="ds_uo_assegnatario"
 			style="width:300px"/>
 	<columnFieldProperty
 		name="cd_ubicazione"   
