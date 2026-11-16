@@ -17,126 +17,147 @@
 
 package it.cnr.contab.inventario00.tabrif.bulk;
 
-import it.cnr.jada.bulk.*;
+import it.cnr.contab.config00.sto.bulk.Unita_organizzativaBulk;
+import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
+import it.cnr.contab.utenze00.bp.CNRUserContext;
+import it.cnr.jada.UserContext;
+import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.comp.ApplicationException;
-import it.cnr.jada.persistency.*;
-import it.cnr.jada.persistency.beans.*;
-import it.cnr.jada.persistency.sql.*;
+import it.cnr.jada.persistency.Broker;
+import it.cnr.jada.persistency.IntrospectionException;
+import it.cnr.jada.persistency.PersistencyException;
+import it.cnr.jada.persistency.PersistentCache;
+import it.cnr.jada.persistency.sql.SQLBuilder;
+
+import java.util.Optional;
 
 public class Inventario_ap_chHome extends BulkHome {
-public Inventario_ap_chHome(java.sql.Connection conn) {
-	super(Inventario_ap_chBulk.class,conn);
-}
-public Inventario_ap_chHome(java.sql.Connection conn,PersistentCache persistentCache) {
-	super(Inventario_ap_chBulk.class,conn,persistentCache);
-}
-/**
- * Insert the method's description here.
- * Creation date: (06/12/2001 14.42.23)
- * @throws ApplicationException 
- */
-public Inventario_ap_chBulk findLastAperturaChiusuraObjFor(Id_inventarioBulk inv, Integer esercizio) throws IntrospectionException, PersistencyException, ApplicationException {
+    public Inventario_ap_chHome(java.sql.Connection conn) {
+        super(Inventario_ap_chBulk.class, conn);
+    }
 
-	if (inv==null)
-		throw new it.cnr.jada.comp.ApplicationException("Attenzione: non esiste alcun inventario associato alla UO");
-	else if (inv.getPg_inventario()==null)	     
-       return null;
-	SQLBuilder sql = createSQLBuilder();
-	sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,inv.getPg_inventario());
-	sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,esercizio);
-	sql.addOrderBy("DT_APERTURA DESC");
+    public Inventario_ap_chHome(java.sql.Connection conn, PersistentCache persistentCache) {
+        super(Inventario_ap_chBulk.class, conn, persistentCache);
+    }
 
-	Broker broker = createBroker(sql);
-	Inventario_ap_chBulk obj = null;
-	if (broker.next())
-		obj = (Inventario_ap_chBulk)fetch(broker);
+    /**
+     * Insert the method's description here.
+     * Creation date: (06/12/2001 14.42.23)
+     *
+     * @throws ApplicationException
+     */
+    public Inventario_ap_chBulk findLastAperturaChiusuraObjFor(UserContext userContext, Id_inventarioBulk inv, Integer esercizio) throws IntrospectionException, PersistencyException, ApplicationException {
+        Unita_organizzativaBulk uo = (Unita_organizzativaBulk) getHomeCache()
+                .getHome(Unita_organizzativaBulk.class)
+                .findByPrimaryKey(new Unita_organizzativaBulk(CNRUserContext.getCd_unita_organizzativa(userContext)));
+        final Long pgInventario = Optional.ofNullable(inv)
+                .map(Id_inventarioBulk::getPg_inventario)
+                .orElse(null);
 
-	broker.close();
-	return obj;
-}
-/**
- * Insert the method's description here.
- * Creation date: (06/12/2001 14.42.23)
- */
-public java.util.List findStoriaApChFor(Id_inventarioBulk inv, Integer esercizio) throws IntrospectionException, PersistencyException {
+        if (pgInventario == null && !uo.isUoEnte())
+            throw new it.cnr.jada.comp.ApplicationException("Attenzione: non esiste alcun inventario associato alla UO");
 
-	SQLBuilder sql = createSQLBuilder();
-	sql.addSQLClause("AND","PG_INVENTARIO",sql.EQUALS,inv.getPg_inventario());
-	sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,esercizio);
+        SQLBuilder sql = createSQLBuilder();
+        if (pgInventario != null)
+            sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, pgInventario);
+        sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, esercizio);
+        sql.addOrderBy("DT_APERTURA DESC");
 
-	return fetchAll(sql);
-}
-	public java.util.List findAllPerAnno( Integer esercizio) throws IntrospectionException, PersistencyException {
+        Broker broker = createBroker(sql);
+        Inventario_ap_chBulk obj = null;
+        if (broker.next())
+            obj = (Inventario_ap_chBulk) fetch(broker);
 
-		SQLBuilder sql = createSQLBuilder();
-		sql.addSQLClause("AND","ESERCIZIO",sql.EQUALS,esercizio);
+        broker.close();
+        return obj;
+    }
 
-		return fetchAll(sql);
-	}
-/**
- * Insert the method's description here.
- * Creation date: (06/12/2001 14.42.23)
- * @throws ApplicationException 
- */
-public boolean isAperto(Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+    /**
+     * Insert the method's description here.
+     * Creation date: (06/12/2001 14.42.23)
+     */
+    public java.util.List findStoriaApChFor(Id_inventarioBulk inv, Integer esercizio) throws IntrospectionException, PersistencyException {
 
-	Inventario_ap_chBulk invApCh = findLastAperturaChiusuraObjFor(inv,esercizio);
-	if ( (invApCh != null) && (invApCh.getStato().equals(Inventario_ap_chBulk.OPEN)) )
-		return true;
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, inv.getPg_inventario());
+        sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 
-	return false;
-}
-/**
- * Insert the method's description here.
- * Creation date: (06/12/2001 14.42.23)
- * @throws ApplicationException 
- */
-public boolean isAperto(Inventario_ap_chBulk invApCh, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+        return fetchAll(sql);
+    }
 
-	return isAperto(invApCh.getInventario(), esercizio);
-}
-/**
- * Insert the method's description here.
- * Creation date: (06/12/2001 14.42.23)
- * @throws ApplicationException 
- */
-public boolean isChiuso(Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+    public java.util.List findAllPerAnno(Integer esercizio) throws IntrospectionException, PersistencyException {
 
-	Inventario_ap_chBulk invApCh = findLastAperturaChiusuraObjFor(inv, esercizio);
-	if ( (invApCh != null) && (invApCh.getStato().equals(Inventario_ap_chBulk.CLOSE)) )
-		return true;
+        SQLBuilder sql = createSQLBuilder();
+        sql.addSQLClause("AND", "ESERCIZIO", SQLBuilder.EQUALS, esercizio);
 
-	return false;
-}
-/**
- * Insert the method's description here.
- * Creation date: (06/12/2001 14.42.23)
- * @throws ApplicationException 
- */
-public boolean isChiuso(Inventario_ap_chBulk invApCh, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+        return fetchAll(sql);
+    }
 
-	return isChiuso(invApCh.getInventario(), esercizio);
-}
-/**
- * Insert the method's description here.
- * Creation date: (06/12/2001 14.42.23)
- * @throws ApplicationException 
- */
-public boolean isPending(Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+    /**
+     * Insert the method's description here.
+     * Creation date: (06/12/2001 14.42.23)
+     *
+     * @throws ApplicationException
+     */
+    public boolean isAperto(UserContext userContext, Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
 
-	Inventario_ap_chBulk invApCh = findLastAperturaChiusuraObjFor(inv,esercizio);
-	if (invApCh == null)
-		return true;
+        Inventario_ap_chBulk invApCh = findLastAperturaChiusuraObjFor(userContext, inv, esercizio);
+        return (invApCh != null) && (invApCh.getStato().equals(Inventario_ap_chBulk.OPEN));
+    }
 
-	return false;
-}
-/**
- * Insert the method's description here.
- * Creation date: (06/12/2001 14.42.23)
- * @throws ApplicationException 
- */
-public boolean isPending(Inventario_ap_chBulk invApCh, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+    /**
+     * Insert the method's description here.
+     * Creation date: (06/12/2001 14.42.23)
+     *
+     * @throws ApplicationException
+     */
+    public boolean isAperto(UserContext userContext, Inventario_ap_chBulk invApCh, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
 
-	return isPending(invApCh.getInventario(),esercizio);
-}
+        return isAperto(userContext, invApCh.getInventario(), esercizio);
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (06/12/2001 14.42.23)
+     *
+     * @throws ApplicationException
+     */
+    public boolean isChiuso(UserContext userContext, Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+
+        Inventario_ap_chBulk invApCh = findLastAperturaChiusuraObjFor(userContext, inv, esercizio);
+        return (invApCh != null) && (invApCh.getStato().equals(Inventario_ap_chBulk.CLOSE));
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (06/12/2001 14.42.23)
+     *
+     * @throws ApplicationException
+     */
+    public boolean isChiuso(UserContext userContext, Inventario_ap_chBulk invApCh, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+
+        return isChiuso(userContext, invApCh.getInventario(), esercizio);
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (06/12/2001 14.42.23)
+     *
+     * @throws ApplicationException
+     */
+    public boolean isPending(UserContext userContext, Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+
+        Inventario_ap_chBulk invApCh = findLastAperturaChiusuraObjFor(userContext, inv, esercizio);
+        return invApCh == null;
+    }
+
+    /**
+     * Insert the method's description here.
+     * Creation date: (06/12/2001 14.42.23)
+     *
+     * @throws ApplicationException
+     */
+    public boolean isPending(UserContext userContext, Inventario_ap_chBulk invApCh, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+        return isPending(userContext, invApCh.getInventario(), esercizio);
+    }
 }

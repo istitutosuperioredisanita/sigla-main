@@ -214,7 +214,7 @@ try{
             //controlla anche se è chiuso l'inventario
             Id_inventarioHome inventarioHome = (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
             Id_inventarioBulk inventario = inventarioHome.findInventarioFor(userContext,false);
-            if (!inventarioHome.isAperto(inventario,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext)))
+            if (!inventarioHome.isAperto(userContext, inventario,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext)))
                return true;
         } catch ( PersistencyException | IntrospectionException ex) {
             throw handleException(ex);
@@ -2890,7 +2890,7 @@ throws ComponentException{
 				Inventario_ap_chHome invApChHome = (Inventario_ap_chHome) getHome(aUC,Inventario_ap_chBulk.class);
 				if ((bene.getValore_ammortizzato().compareTo(new BigDecimal(0))!=0 && 
 					buono_dett.getTi_documento().compareTo(Buono_carico_scaricoBulk.CARICO)==0) && 
-				    !invApChHome.isAperto(inventario,buono.getEsercizio()))
+				    !invApChHome.isAperto(aUC, inventario,buono.getEsercizio()))
 					throw new it.cnr.jada.comp.ApplicationException("Attenzione: Operazione non possibile!\nIl Bene " + 
 							bene.getNumeroBeneCompleto() + 
 							" ha cominciato l'ammortamento.");

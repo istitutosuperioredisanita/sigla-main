@@ -213,7 +213,7 @@ public class IdInventarioComponent
 
         try {
             Id_inventarioHome invHome = (Id_inventarioHome) getHome(aUC, Id_inventarioBulk.class);
-            return invHome.isAperto(inv, esercizio);
+            return invHome.isAperto(aUC, inv, esercizio);
         } catch (it.cnr.jada.persistency.PersistencyException ex) {
             throw handleException(ex);
         } catch (it.cnr.jada.persistency.IntrospectionException ex) {
