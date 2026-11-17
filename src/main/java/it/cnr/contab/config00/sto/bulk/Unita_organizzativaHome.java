@@ -656,24 +656,19 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
         };
 		PersistentHome home = getHomeCache().getHome(Unita_organizzativaBulk.class, "REGISTRO_INVENTARIO",  "fetchUnitaPadre");
 		SQLBuilder sqlBuilder = home.createSQLBuilder();
-		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO");
+		sqlBuilder.addTableToHeader("V_CONS_REGISTRO_INVENTARIO_BENI");
 
-		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_ORGANIZZATIVA", "COALESCE(V_CONS_REGISTRO_INVENTARIO.CD_UNITA_ASSEGNATARIO, '" + ente.getCd_unita_organizzativa() + "')");
-		sqlBuilder.addSQLJoin("V_UNITA_ORGANIZZATIVA_VALIDA.ESERCIZIO", "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO");
-		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", SQLBuilder.LESS_EQUALS, esercizio);
-		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.FL_TOTALMENTE_SCARICATO", SQLBuilder.EQUALS, "N");
+		sqlBuilder.addSQLJoin("UNITA_ORGANIZZATIVA.CD_UNITA_ORGANIZZATIVA", "COALESCE(V_CONS_REGISTRO_INVENTARIO_BENI.CD_UNITA_ASSEGNATARIO, '" + ente.getCd_unita_organizzativa() + "')");
+		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO_BENI.ESERCIZIO", SQLBuilder.LESS_EQUALS, esercizio);
+		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO_BENI.FL_TOTALMENTE_SCARICATO", SQLBuilder.EQUALS, "N");
 		sqlBuilder.openParenthesis(FindClause.AND);
-		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO.FL_DISMESSO", SQLBuilder.EQUALS, "N");
-		sqlBuilder.addSQLClause(FindClause.OR, "V_CONS_REGISTRO_INVENTARIO.FL_DISMESSO", SQLBuilder.ISNULL, null);
-		sqlBuilder.closeParenthesis();
-		sqlBuilder.openParenthesis(FindClause.AND);
-		sqlBuilder.addSQLJoin("V_CONS_REGISTRO_INVENTARIO.ESERCIZIO", "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO_AMM");
-		sqlBuilder.addSQLClause(FindClause.OR, "V_CONS_REGISTRO_INVENTARIO.ESERCIZIO_AMM", SQLBuilder.ISNULL, null);
+		sqlBuilder.addSQLClause(FindClause.AND, "V_CONS_REGISTRO_INVENTARIO_BENI.FL_DISMESSO", SQLBuilder.EQUALS, "N");
+		sqlBuilder.addSQLClause(FindClause.OR, "V_CONS_REGISTRO_INVENTARIO_BENI.FL_DISMESSO", SQLBuilder.ISNULL, null);
 		sqlBuilder.closeParenthesis();
 
 		Optional.ofNullable(cds)
 				.ifPresent(s -> {
-					sqlBuilder.addSQLClause(FindClause.AND, "V_UNITA_ORGANIZZATIVA_VALIDA.CD_UNITA_PADRE", SQLBuilder.EQUALS, s);
+					sqlBuilder.addSQLClause(FindClause.AND, "UNITA_ORGANIZZATIVA.CD_UNITA_PADRE", SQLBuilder.EQUALS, s);
 				});
 
 		Collection<ColumnMapping> columnMappings = getColumnMap().getColumnMappings();
@@ -681,7 +676,7 @@ public class Unita_organizzativaHome extends BulkHome implements ConsultazioniRe
 				.stream()
 				.filter(columnMapping -> !columnMapping.isCount())
 				.map(ColumnMapping::getColumnName)
-				.map(s -> "V_UNITA_ORGANIZZATIVA_VALIDA.".concat(s))
+				.map(s -> "UNITA_ORGANIZZATIVA.".concat(s))
 				.forEach(sqlBuilder::addSQLGroupBy);
 		final List result = fetchAll(sqlBuilder);
 		getHomeCache().fetchAll(userContext);
