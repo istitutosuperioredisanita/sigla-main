@@ -408,7 +408,7 @@ private void aggiornaLimiteSpesa(UserContext userContext,Pdg_variazioneBulk pdg)
 	}
 
 	/**
-	 * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione CNR
+	 * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione Sigla
 	 *
 	 * @return Configurazione_cnrComponentSession l'istanza di <code>Configurazione_cnrComponentSession</code> che serve per leggere i parametri di configurazione del CNR
 	 */
@@ -1251,7 +1251,7 @@ private void aggiornaLimiteSpesa(UserContext userContext,Pdg_variazioneBulk pdg)
 				it.cnr.contab.config00.bulk.Configurazione_cnrBulk config = createConfigurazioneCnrComponentSession().getConfigurazione( userContext, null, null, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.PK_LINEA_ATTIVITA_SPECIALE, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.SK_LINEA_ATTIVITA_SPESA_ENTE );
 
 				if ( config == null  )
-					throw new ApplicationException("Configurazione CNR: manca la definizione del GAE SPESA ENTE");
+					throw new ApplicationException("Configurazione Sigla: manca la definizione del GAE SPESA ENTE");
 				
 				V_assestatoBulk assestato = (V_assestatoBulk)assHome.findByPrimaryKey(
 						new V_assestatoBulk(pdgVariazione.getEsercizio(), 

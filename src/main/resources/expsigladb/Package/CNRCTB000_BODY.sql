@@ -129,7 +129,7 @@
        and cd_elemento_voce = CNRCTB015.getVal01PerChiave(aEsercizio, 'ELEMENTO_VOCE_SPECIALE','RICAVO_FIGURATIVO_ALTRO_CDR');
      return aEV;
  exception when NO_DATA_FOUND then
-  IBMERR001.RAISE_ERR_GENERICO('Conto ricavo figurativo altro CDR non specificato in configurazione CNR per l''esercizio '||aEsercizio);
+  IBMERR001.RAISE_ERR_GENERICO('Conto ricavo figurativo altro CDR non specificato in Configurazione Sigla per l''esercizio '||aEsercizio);
  end;
 
 
@@ -143,7 +143,7 @@
        and cd_elemento_voce = CNRCTB015.getVal01PerChiave(aEsercizio, 'ELEMENTO_VOCE_SPECIALE','TFR');
      return aEV;
  exception when NO_DATA_FOUND then
-  IBMERR001.RAISE_ERR_GENERICO('Conto Trattamento Fine Rapporto non specificato in configurazione CNR per l''esercizio '||aEsercizio);
+  IBMERR001.RAISE_ERR_GENERICO('Conto Trattamento Fine Rapporto non specificato in Configurazione Sigla per l''esercizio '||aEsercizio);
  end;
 
  function getVoceTFRTEMPODET(aEsercizio number) return elemento_voce%rowtype is
@@ -156,7 +156,7 @@
        and cd_elemento_voce = CNRCTB015.getVal01PerChiave(aEsercizio, 'ELEMENTO_VOCE_SPECIALE','TFR_TEMPO_DET');
      return aEV;
  exception when NO_DATA_FOUND then
-  IBMERR001.RAISE_ERR_GENERICO('Conto Trattamento Fine Rapporto per personale a tempo determinato non specificato in configurazione CNR per l''esercizio '||aEsercizio);
+  IBMERR001.RAISE_ERR_GENERICO('Conto Trattamento Fine Rapporto per personale a tempo determinato non specificato in Configurazione Sigla per l''esercizio '||aEsercizio);
  end;
 
  function getVoceONERICNR(aEsercizio number) return elemento_voce%rowtype is
@@ -169,7 +169,7 @@
        and cd_elemento_voce = CNRCTB015.getVal01PerChiave(aEsercizio, 'ELEMENTO_VOCE_SPECIALE','ONERI_CNR');
      return aEV;
  exception when NO_DATA_FOUND then
-  IBMERR001.RAISE_ERR_GENERICO('Conto Oneri Cnr non specificato in configurazione CNR per l''esercizio '||aEsercizio);
+  IBMERR001.RAISE_ERR_GENERICO('Conto Oneri Cnr non specificato in Configurazione Sigla per l''esercizio '||aEsercizio);
  end;
 
  function getVoceONERICNRTEMPODET(aEsercizio number) return elemento_voce%rowtype is
@@ -182,7 +182,7 @@
        and cd_elemento_voce = CNRCTB015.getVal01PerChiave(aEsercizio, 'ELEMENTO_VOCE_SPECIALE','ONERI_CNR_TEMPO_DET');
      return aEV;
  exception when NO_DATA_FOUND then
-  IBMERR001.RAISE_ERR_GENERICO('Conto Oneri Cnr per personale a tempo determinato non specificato in configurazione CNR per l''esercizio '||aEsercizio);
+  IBMERR001.RAISE_ERR_GENERICO('Conto Oneri Cnr per personale a tempo determinato non specificato in Configurazione Sigla per l''esercizio '||aEsercizio);
  end;
 
 Function TIPO_VAR_PDG (aEsercizio NUMBER, aNumVar NUMBER)  Return  VARCHAR2 Is

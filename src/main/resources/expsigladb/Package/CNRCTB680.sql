@@ -252,9 +252,9 @@ gPgLog  NUMBER:=0;
 --
 --    Viene creato un compenso senza calcoli per la gestione dei CORI della liquidazione
 --      Le caratteristiche del compenso sono le seguenti:
---       1. Il terzo è specificato in configurazione CNR sotto la voce TERZO_SPECIALE DIVERSI_STIPENDI
+--       1. Il terzo è specificato in Configurazione Sigla sotto la voce TERZO_SPECIALE DIVERSI_STIPENDI
 --		 2. Tale terzo deve avere un solo rapporto di tipo speciale 'STI'
---		 3. Il rapporto deve essere associato ad un trattamento CORI speciale identificato in configurazione CNR alla voce TIPO_TRATTAMENTO_SPECIALE TRATTAMENTO_STIPENDI
+--		 3. Il rapporto deve essere associato ad un trattamento CORI speciale identificato in Configurazione Sigla alla voce TIPO_TRATTAMENTO_SPECIALE TRATTAMENTO_STIPENDI
 --       4. Gli importi del compenso vengono impostati nel seguente modo:
 --           IM_CR_PERCIPIENTE=aTotCoriPercipiente
 --           IM_CR_ENTE=aTotCoriEnte
@@ -265,7 +265,7 @@ gPgLog  NUMBER:=0;
 --
 --      Tale compenso, senza mandato principale, risulta collegato a n-cori specificati in interfaccia stipendi
 --      Per ogni CORI viene aperta una partita di giro dipendente dal segno dell'importo del CORI
---        Nel caso il tipo contributo sia di classificazione CORI speciale (cd_classificazione_cori in CONFIGURAZIONE CNR alla voce CLASSIFICAZIONE_CORI_SPEC CORI_STIP_EXTRA):
+--        Nel caso il tipo contributo sia di classificazione CORI speciale (cd_classificazione_cori in Configurazione Sigla alla voce CLASSIFICAZIONE_CORI_SPEC CORI_STIP_EXTRA):
 --         viene aperta una partita di giro tronca
 --        Altrimenti
 --         viene aperta una normale partita giro che verrà chiusa dal versamento CORI come per i compensi

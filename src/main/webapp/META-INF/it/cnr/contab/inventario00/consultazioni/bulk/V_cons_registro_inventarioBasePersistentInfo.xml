@@ -230,7 +230,21 @@
 			sqlTypeName="DECIMAL"
 			columnSize="5"
 			columnScale="2"
-			nullable="false" />	
+			nullable="false" />
+		<columnMapping
+			columnName="FL_TOTALMENTE_SCARICATO"
+			propertyName="fl_totalmente_scaricato"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+			columnName="CD_UNITA_ASSEGNATARIO"
+			propertyName="cd_unita_assegnatario"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+
 	</defaultColumnMap>
 	<persistentProperty
 		name="pg_inventario"/>
@@ -301,5 +315,9 @@
 	<persistentProperty
 		name="percentuale_utilizzo_cdr" />
 	<persistentProperty
-		name="percentuale_utilizzo_la" />		
+		name="percentuale_utilizzo_la" />
+	<persistentProperty
+		name="fl_totalmente_scaricato" />
+	<persistentProperty
+		name="cd_unita_assegnatario" />
 </SQLPersistentInfo>

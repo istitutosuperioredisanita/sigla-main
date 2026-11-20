@@ -42,8 +42,6 @@ import javax.xml.transform.stream.StreamResult;
 import it.cnr.contab.anagraf00.core.bulk.*;
 import it.cnr.contab.config00.bulk.*;
 import it.cnr.contab.config00.sto.bulk.Tipo_unita_organizzativaHome;
-import it.cnr.contab.config00.sto.bulk.V_struttura_organizzativaHome;
-import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_IBulk;
 import it.cnr.contab.docamm00.storage.StorageDocAmmAspect;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.si.spring.storage.StorageException;
@@ -75,6 +73,7 @@ import it.gov.fatturapa.sdi.messaggi.v1.NotificaEsitoCommittenteType;
 import it.gov.fatturapa.sdi.messaggi.v1.RiferimentoFatturaType;
 import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.FileSdIType;
 import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.ObjectFactory;
+
 public class DocumentoEleTestataHome extends BulkHome {
 	private transient final static Logger logger = LoggerFactory.getLogger(DocumentoEleTestataHome.class);
 
@@ -137,16 +136,20 @@ public class DocumentoEleTestataHome extends BulkHome {
 		sql.closeParenthesis();
 
 		sql.openParenthesis(FindClause.AND);
-		sql.addSQLClause(FindClause.AND, "partita_iva", SQLBuilder.EQUALS, partitaIVA);
+		sql.addClause(FindClause.AND, "partita_iva", SQLBuilder.EQUALS, partitaIVA);
 		if (codiceFiscale != null){
 			sql.openParenthesis(FindClause.OR);
-			sql.addSQLClause(FindClause.OR, "codice_fiscale", SQLBuilder.EQUALS, codiceFiscale);
-			sql.addClause("AND", "ti_entita_giuridica", SQLBuilder.NOT_EQUALS, AnagraficoBulk.GRUPPO_IVA);
+			sql.addClause(FindClause.OR, "codice_fiscale", SQLBuilder.EQUALS, codiceFiscale);
+
+			sql.openParenthesis(FindClause.AND);
+			sql.addClause(FindClause.OR, "ti_entita_giuridica", SQLBuilder.ISNULL, null);
+			sql.addClause(FindClause.OR, "ti_entita_giuridica", SQLBuilder.NOT_EQUALS, AnagraficoBulk.GRUPPO_IVA);
+    		sql.closeParenthesis();
 
 			AssGruppoIvaAnagHome assGruppoIvaAnagHome = (AssGruppoIvaAnagHome)getHomeCache().getHome(AssGruppoIvaAnagBulk.class);
 			SQLBuilder sqlExists = assGruppoIvaAnagHome.createSQLBuilder();
 			sqlExists.addSQLJoin("ASS_GRUPPO_IVA_ANAG.CD_ANAG", "ANAGRAFICO.CD_ANAG");
-			sql.addSQLNotExistsClause("AND",sqlExists);
+			sql.addSQLNotExistsClause(FindClause.AND,sqlExists);
 			sql.closeParenthesis();
 		}
 		sql.closeParenthesis();

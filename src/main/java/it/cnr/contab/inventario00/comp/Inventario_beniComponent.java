@@ -124,12 +124,14 @@ public Id_inventarioBulk caricaInventario(UserContext aUC)
 		it.cnr.jada.persistency.PersistencyException,
 		it.cnr.jada.persistency.IntrospectionException 
 {
-	
+	Unita_organizzativaBulk uo = (Unita_organizzativaBulk) getHome(aUC, Unita_organizzativaBulk.class).
+			findByPrimaryKey(new Unita_organizzativaBulk(CNRUserContext.getCd_unita_organizzativa(aUC)));
+
 	Id_inventarioHome inventarioHome = (Id_inventarioHome) getHome(aUC, Id_inventarioBulk.class);
 	Id_inventarioBulk inventario = inventarioHome.findInventarioFor(aUC,false);
 
 	// NON ESISTE UN INVENTARIO ASSOCIATO ALLA UO DI SCRIVANIA
-	if (inventario == null)
+	if (inventario == null && !uo.isUoEnte())
 		throw new it.cnr.jada.comp.ApplicationException("Attenzione: non esiste alcun inventario associato alla UO");
 		
 
@@ -776,7 +778,7 @@ public it.cnr.jada.bulk.OggettoBulk inizializzaBulkPerStampa(it.cnr.jada.UserCon
 			//controlla anche se è chiuso l'inventario
 			Id_inventarioHome inventarioHome = (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
 			Id_inventarioBulk inventario = inventarioHome.findInventarioFor(userContext,false);
-			if (!inventarioHome.isAperto(inventario,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext)))
+			if (!inventarioHome.isAperto(userContext, inventario,it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext)))
 				return true;
 		} catch (PersistencyException | IntrospectionException e) {
 			throw handleException(e);
@@ -915,13 +917,22 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 	SQLBuilder sql = home.createSQLBuilder();
 	sql.addClause(clauses);
 
-	sql.setAutoJoins(true);
-	sql.generateJoin("assegnatario", "TERZO");
-	sql.generateJoin("ubicazione", "UBICAZIONE_BENE");
+	sql.addTableToHeader("TERZO");
+	sql.addTableToHeader("UBICAZIONE_BENE");
+	sql.addTableToHeader("ANAGRAFICO");
+	sql.addTableToHeader("UNITA_ORGANIZZATIVA","UNITA_ORGANIZZATIVA_ASS");
 
-	
-	sql.addSQLClause("AND", "PG_INVENTARIO", sql.EQUALS, inventario.getPg_inventario());
-	// Aggiunta clausola che visualizzi solo i beni che abbiano 
+	sql.addSQLJoin("INVENTARIO_BENI.CD_ASSEGNATARIO", "TERZO.CD_TERZO");
+	sql.addSQLJoin("INVENTARIO_BENI.CD_UBICAZIONE", "UBICAZIONE_BENE.CD_UBICAZIONE");
+	sql.addSQLJoin("INVENTARIO_BENI.CD_CDS", "UBICAZIONE_BENE.CD_CDS");
+	sql.addSQLJoin("INVENTARIO_BENI.CD_UNITA_ORGANIZZATIVA", "UBICAZIONE_BENE.CD_UNITA_ORGANIZZATIVA");
+
+	sql.addSQLJoin("TERZO.CD_ANAG", "ANAGRAFICO.CD_ANAG");
+	sql.addSQLJoin("ANAGRAFICO.CD_UNITA_ORGANIZZATIVA", "UNITA_ORGANIZZATIVA_ASS.CD_UNITA_ORGANIZZATIVA ");
+
+	Optional.ofNullable(inventario)
+			.ifPresent(idInventarioBulk -> sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, idInventarioBulk.getPg_inventario()));
+	// Aggiunta clausola che visualizzi solo i beni che abbiano
 	//	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
 	sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 

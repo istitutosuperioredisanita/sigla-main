@@ -198,11 +198,11 @@ TIPO_ENTE CONSTANT VARCHAR2(10) := 'ENTE';
 
  function isCDRENTE(aCDR cdr%rowtype) return boolean;
 
--- Estrae l'UO del personale leggendola da configurazione CNR
+-- Estrae l'UO del personale leggendola da Configurazione Sigla
 
  function getUOPersonale(aEs number) return unita_organizzativa%rowtype;
 
--- Estrae il CDR del personale leggendolo da configurazione CNR
+-- Estrae il CDR del personale leggendolo da Configurazione Sigla
 
  function getCDRPersonale(aEs number) return cdr%rowtype;
 

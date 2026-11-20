@@ -190,7 +190,7 @@ END sganciaAnticipoDaMissione;
 		   and ti_gestione = CNRCTB001.GESTIONE_ENTRATE
 		   and cd_elemento_voce = CNRCTB015.GETVAL01PERCHIAVE(aEsercizioScrivania,CNRCTB585.ELEMENTO_VOCE_SPECIALE,CNRCTB585.RIMBORSO_ANTICIPI);
 		  exception when NO_DATA_FOUND then
-		   IBMERR001.RAISE_ERR_GENERICO('Voce speciale di rimborso anticipi non trovata in configurazione cnr');
+		   IBMERR001.RAISE_ERR_GENERICO('Voce speciale di rimborso anticipi non trovata in Configurazione Sigla');
 		  end;
 		  begin
 		   select * into aVoceF from voce_f where
@@ -212,7 +212,7 @@ END sganciaAnticipoDaMissione;
 	   and ti_gestione = CNRCTB001.GESTIONE_ENTRATE
 	   and cd_elemento_voce = CNRCTB015.GETVAL01PERCHIAVE(aEsercizioScrivania,CNRCTB585.ELEMENTO_VOCE_SPECIALE,CNRCTB585.RIMBORSO_ANTICIPI);
 	  exception when NO_DATA_FOUND then
-	   IBMERR001.RAISE_ERR_GENERICO('Voce speciale di rimborso anticipi non trovata in configurazione cnr');
+	   IBMERR001.RAISE_ERR_GENERICO('Voce speciale di rimborso anticipi non trovata in Configurazione Sigla');
 	  end;
   end if;
   aUOENTE:=CNRCTB020.getUOENTE(aEsercizioScrivania);

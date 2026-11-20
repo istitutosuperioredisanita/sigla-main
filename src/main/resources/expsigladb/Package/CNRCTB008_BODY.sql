@@ -26,11 +26,11 @@
 	  and cd_chiave_primaria = CONST_ESERCIZIO_SPECIALE
       and cd_chiave_secondaria = CONST_ESERCIZIO_PARTENZA;
   if aNum is null then
-   IBMERR001.RAISE_ERR_GENERICO('Esercizio di partenza non specificato in configurazione CNR');
+   IBMERR001.RAISE_ERR_GENERICO('Esercizio di partenza non specificato in Configurazione Sigla');
   end if;
   return aNum;
  exception when NO_DATA_FOUND then
-  IBMERR001.RAISE_ERR_GENERICO('Esercizio di partenza non specificato in configurazione CNR');
+  IBMERR001.RAISE_ERR_GENERICO('Esercizio di partenza non specificato in Configurazione Sigla');
  end;
 
 function getStatoEsercizio (aEs number, aCdCds varchar2) return varchar2 is

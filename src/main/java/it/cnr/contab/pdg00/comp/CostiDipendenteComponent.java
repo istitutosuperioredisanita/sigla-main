@@ -2096,7 +2096,7 @@ public OggettoBulk caricaCosti_dipendente(UserContext userContext,Unita_organizz
 		java.math.BigDecimal giorni_lavorativi = config.getIm01();
 	
 		if(giorni_lavorativi == null)
-			 throw new ApplicationException("Totale giorni lavorativi non trovato in CONFIGURAZIONE CNR!");
+			 throw new ApplicationException("Totale giorni lavorativi non trovato in Configurazione Sigla!");
 
 		costi_dipendente.setGiorni_lavorativi(giorni_lavorativi);
 		costi_dipendente.setUnita_organizzativa_filter(uo);

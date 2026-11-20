@@ -72,6 +72,14 @@
 		<forward name="default" path="/util/form_lista.jsp" />
 		<init-param name="defaultAction" value="SelezionaLista" />
 	</businessProcess>
+	<action path="/SelezionatoreBeniInventarioAction"
+			actionClass="it.cnr.contab.inventario01.actions.SelezionatoreBeniInventarioAction">
+	</action>
+	<businessProcess name="SelezionatoreBeniInventario"
+					 className="it.cnr.contab.inventario01.bp.SelezionatoreBeniInventarioBP">
+		<forward name="default" path="/util/form_lista.jsp" />
+		<init-param name="defaultAction" value="SelezionatoreBeniInventarioAction" />
+	</businessProcess>
 	<businessProcess name="SelezionatoreAlbero"
 	                 className="it.cnr.jada.util.action.SelezionatoreAlberoBP">
 		<forward name="default" path="/util/form_albero.jsp" />

@@ -131,7 +131,9 @@ public class ConsRegistroInventarioComponent extends CRUDComponent {
 			addColumn(sql,tabAlias.concat("PERCENTUALE_UTILIZZO_CDR"),true);
 			addColumn(sql,tabAlias.concat("CD_LINEA_ATTIVITA"),true);
 			addColumn(sql,tabAlias.concat("PERCENTUALE_UTILIZZO_LA"),true);
-			
+			addColumn(sql,tabAlias.concat("CD_UNITA_ASSEGNATARIO"),true);
+			addColumn(sql,tabAlias.concat("FL_TOTALMENTE_SCARICATO"),true);
+
 			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_cds"),isBaseSQL);
 			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_unita_organizzativa"),isBaseSQL);
 			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("categoria"),isBaseSQL);
@@ -152,6 +154,9 @@ public class ConsRegistroInventarioComponent extends CRUDComponent {
 			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("percentuale_utilizzo_cdr"),isBaseSQL);
 			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_linea_attivita"),isBaseSQL);
 			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("percentuale_utilizzo_la"),isBaseSQL);
+			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_unita_assegnatario"),isBaseSQL);
+			addSQLGroupBy(sql,tabAlias.toLowerCase().concat("fl_totalmente_scaricato"),isBaseSQL);
+
 		}
 			
 		/**
@@ -190,7 +195,9 @@ public class ConsRegistroInventarioComponent extends CRUDComponent {
 				addColumn(sql,tabAlias.concat("VARIAZIONE_MENO"),true);
 				addColumn(sql,tabAlias.concat("VALORE_AMMORTIZZATO"),true);
 				addColumn(sql,tabAlias.concat("IMPONIBILE_AMMORTAMENTO"),true);
-				
+				addColumn(sql,tabAlias.concat("CD_UNITA_ASSEGNATARIO"),true);
+				addColumn(sql,tabAlias.concat("FL_TOTALMENTE_SCARICATO"),true);
+
 				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_cds"),isBaseSQL);
 				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_unita_organizzativa"),isBaseSQL);
 				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("categoria"),isBaseSQL);
@@ -215,6 +222,8 @@ public class ConsRegistroInventarioComponent extends CRUDComponent {
 				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("variazione_meno"),isBaseSQL);
 				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("valore_ammortizzato"),isBaseSQL);
 				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("imponibile_ammortamento"),isBaseSQL);
+				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("cd_unita_assegnatario"),isBaseSQL);
+				addSQLGroupBy(sql,tabAlias.toLowerCase().concat("fl_totalmente_scaricato"),isBaseSQL);
 		}
 		/**
 		 * Ritorna l'alias della tabella da aggiungere alle colonne di una select.

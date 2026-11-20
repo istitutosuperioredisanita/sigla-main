@@ -2416,7 +2416,7 @@ public class DocTrasportoRientroComponent extends it.cnr.jada.comp.CRUDDetailCom
             Id_inventarioHome inventarioHome =
                     (Id_inventarioHome) getHome(userContext, Id_inventarioBulk.class);
             Id_inventarioBulk inventario = inventarioHome.findInventarioFor(userContext, false);
-            if (!inventarioHome.isAperto(inventario, CNRUserContext.getEsercizio(userContext)))
+            if (!inventarioHome.isAperto(userContext, inventario, CNRUserContext.getEsercizio(userContext)))
                 return true;
 
         } catch (java.sql.SQLException ex) {

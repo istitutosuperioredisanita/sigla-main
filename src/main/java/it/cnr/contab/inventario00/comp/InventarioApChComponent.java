@@ -163,7 +163,7 @@ private void checkDataApertura(it.cnr.jada.UserContext aUC, Inventario_ap_chBulk
 		throw new it.cnr.jada.comp.CRUDValidationException("Attenzione: la data Apertura deve essere all'interno dell'esercizio corrente");
 	
 	Inventario_ap_chHome invApChHome = (Inventario_ap_chHome)getHome(aUC,Inventario_ap_chBulk.class);
-	Inventario_ap_chBulk tmp = invApChHome.findLastAperturaChiusuraObjFor(invApCh.getInventario(),invApCh.getEsercizio());
+	Inventario_ap_chBulk tmp = invApChHome.findLastAperturaChiusuraObjFor(aUC, invApCh.getInventario(),invApCh.getEsercizio());
 
 	if (tmp!=null){
 		// Data Apertura > Ultima Data Apertura effettuata 
@@ -292,7 +292,7 @@ private void checkStatoInventario(it.cnr.jada.UserContext aUC, Inventario_ap_chB
 	throws	ComponentException, it.cnr.jada.comp.CRUDValidationException,it.cnr.jada.persistency.PersistencyException, it.cnr.jada.persistency.IntrospectionException {
 
 	Inventario_ap_chHome invApChHome = (Inventario_ap_chHome)getHome(aUC,Inventario_ap_chBulk.class);
-  	if (invApChHome.isAperto(invApCh,invApCh.getEsercizio()))
+  	if (invApChHome.isAperto(aUC, invApCh,invApCh.getEsercizio()))
 	  throw new it.cnr.jada.comp.CRUDValidationException("Attenzione: l'Inventario è già aperto.\n E' necessario chiudere l'inventario prima di riaprirlo.");
 }
 /** 
@@ -360,7 +360,7 @@ public OggettoBulk creaConBulk(UserContext aUC,OggettoBulk bulk,it.cnr.contab.in
 		//}
 
 		// Controlla se è la prima volta che si apre l'Inventario
-		if (invApChHome.findLastAperturaChiusuraObjFor(invApCh.getInventario(), invApCh.getEsercizio()) == null){
+		if (invApChHome.findLastAperturaChiusuraObjFor(aUC, invApCh.getInventario(), invApCh.getEsercizio()) == null){
 			inserisciInventarioConsegnatario(aUC, invApCh, status);
 		}
 

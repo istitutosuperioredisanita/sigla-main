@@ -1037,6 +1037,15 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_ACCERTAMENTI">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_REGISTRO_ACCERTAMENTI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO_BENI">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO_BENI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO_BENI_H2">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO_BENI_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>

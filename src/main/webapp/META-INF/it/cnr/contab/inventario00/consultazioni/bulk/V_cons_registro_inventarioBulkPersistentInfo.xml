@@ -243,7 +243,21 @@
 			sqlTypeName="DECIMAL"
 			columnSize="22"
 			columnScale="2"
-			nullable="true" />	
+			nullable="true" />
+		<columnMapping
+			columnName="FL_TOTALMENTE_SCARICATO"
+			propertyName="fl_totalmente_scaricato"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+		<columnMapping
+			columnName="CD_UNITA_ASSEGNATARIO"
+			propertyName="cd_unita_assegnatario"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+
 	</defaultColumnMap>
 	<persistentProperty
 		name="pg_inventario"/>
@@ -318,8 +332,12 @@
 	<persistentProperty
 		name="esercizio_amm" />		
 	<persistentProperty
-		name="valore_ammortizzato" />		
-		
+		name="valore_ammortizzato" />
+	<persistentProperty
+		name="cd_unita_assegnatario" />
+	<persistentProperty
+		name="fl_totalmente_scaricato" />
+
 	<columnMap 	name="BASECONS"	tableName="V_CONS_REGISTRO_INVENTARIO">
 		<columnMapping
 			columnName="PG_INVENTARIO"
@@ -459,7 +477,21 @@
 			propertyName="valore_ammortizzato"
 			sqlTypeName="DECIMAL"
 			columnSize="22"
-			nullable="true" />	
+			nullable="true" />
+		<columnMapping
+			columnName="CD_UNITA_ASSEGNATARIO"
+			propertyName="cd_unita_assegnatario"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="FL_TOTALMENTE_SCARICATO"
+			propertyName="fl_totalmente_scaricato"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+
 	</columnMap>	
 	<columnMap 	name="QUOTE"	tableName="V_CONS_REGISTRO_INVENTARIO">
 		<columnMapping
@@ -582,6 +614,20 @@
 			sqlTypeName="DECIMAL"
 			columnSize="5"
 			columnScale="2"
-			nullable="false" />	
+			nullable="false" />
+		<columnMapping
+			columnName="CD_UNITA_ASSEGNATARIO"
+			propertyName="cd_unita_assegnatario"
+			sqlTypeName="VARCHAR"
+			columnSize="30"
+			nullable="true" />
+		<columnMapping
+			columnName="FL_TOTALMENTE_SCARICATO"
+			propertyName="fl_totalmente_scaricato"
+			sqlTypeName="CHAR"
+			columnSize="1"
+			nullable="false"
+			converterClassName="it.cnr.jada.persistency.sql.CHARToBooleanConverter" />
+
 	</columnMap>	
 </SQLPersistentInfo>

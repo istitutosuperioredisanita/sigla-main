@@ -160,6 +160,14 @@
                         <% bp.getController().writeFormInput(out,null,"find_assegnatario",(bp.isInserting()||bene.isBeneAccessorio()),null,null); %>
                     </td>
                 </tr>
+                <tr>
+                    <td >
+                        <% bp.getController().writeFormLabel(out,"uo_assegnatario"); %>
+                    </td>
+                    <td colspan="5"	>
+                        <% bp.getController().writeFormInput(out,null,"uo_assegnatario",true,null,null); %>
+                    </td>
+                </tr>
             </table>
         </div>
         <div class="Group">
@@ -235,7 +243,15 @@
             <div class="Group">
                 <table>
                     <tr>
-                        <td>
+                      <td>
+                          <% bp.getController().writeFormLabel(out,"fl_totalmente_scaricato"); %>
+                      </td>
+                      <td>
+                          <% bp.getController().writeFormInput(out,"fl_totalmente_scaricato"); %>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
                             <% bp.getController().writeFormLabel(out,"fl_dismesso"); %>
                         </td>
                         <td>

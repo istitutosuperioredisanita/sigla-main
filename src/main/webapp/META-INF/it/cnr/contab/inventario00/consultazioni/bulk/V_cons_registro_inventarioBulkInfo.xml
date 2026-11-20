@@ -293,7 +293,20 @@
 		inputSize="15"
 		maxLength="15"
 		formatName="it.cnr.contab.util.EuroFormat"
-		label="Valore Ammortizzato" />			
+		label="Valore Ammortizzato" />
+	<fieldProperty
+		name="fl_totalmente_scaricato"
+		property="fl_totalmente_scaricato"
+		label="Totalmente Scaricato"
+		inputType="CHECKBOX"/>
+	<fieldProperty
+		name="cd_unita_assegnatario"
+		property="cd_unita_assegnatario"
+		inputType="TEXT"
+		inputSize="30"
+		maxLength="30"
+		label="Unità Assegnatario" />
+
 	<formFieldProperty
 		name="cd_unita_organizzativa" />
 	<formFieldProperty
@@ -368,6 +381,11 @@
 		name="esercizio_amm" />
 	<formFieldProperty
 		name="valore_ammortizzato" />
+	<formFieldProperty
+		name="fl_totalmente_scaricato" />
+	<formFieldProperty
+		name="cd_unita_assegnatario" />
+
 	<findFieldProperty
 		name="cd_cds" />
 	<findFieldProperty
@@ -435,7 +453,12 @@
 	<findFieldProperty
 		name="cd_linea_attivita" />
 	<findFieldProperty
-		name="percentuale_utilizzo_la" />	
+		name="percentuale_utilizzo_la" />
+	<findFieldProperty
+		name="fl_totalmente_scaricato" />
+	<findFieldProperty
+		name="cd_unita_assegnatario" />
+
 	<columnFieldProperty
 		name="cd_cds" />
 	<columnFieldProperty
@@ -503,10 +526,16 @@
 	<columnFieldProperty
 		name="cd_linea_attivita" />
 	<columnFieldProperty
-		name="percentuale_utilizzo_la" />	
+		name="percentuale_utilizzo_la" />
+	<columnFieldProperty
+		name="fl_totalmente_scaricato" />
+	<columnFieldProperty
+		name="cd_unita_assegnatario" />
+
 	<columnSet name="BASECONS">	
 		<columnFieldProperty 	name="cd_cds" />
 		<columnFieldProperty 	name="cd_unita_organizzativa" />
+		<columnFieldProperty    name="cd_unita_assegnatario" />
 		<columnFieldProperty  	name="esercizio_carico_bene" />
 		<columnFieldProperty	name="pg_inventario" />
 		<columnFieldProperty	name="nr_inventario" />
@@ -528,11 +557,13 @@
 		<columnFieldProperty	name="variazione_piu" />
 		<columnFieldProperty	name="variazione_meno" />
 		<columnFieldProperty	name="valore_ammortizzato" />
-		<columnFieldProperty	name="imponibile_ammortamento" />		
-	</columnSet>	
+		<columnFieldProperty	name="imponibile_ammortamento" />
+		<columnFieldProperty 	name="fl_totalmente_scaricato" />
+	</columnSet>
 	<columnSet name="QUOTE">	
 		<columnFieldProperty	name="cd_cds" />
 		<columnFieldProperty	name="cd_unita_organizzativa" />
+		<columnFieldProperty	name="cd_unita_assegnatario" />
 		<columnFieldProperty	name="categoria" />
 		<columnFieldProperty	name="cd_categoria_gruppo" />
 		<columnFieldProperty	name="ds_categoria_gruppo" />
@@ -550,10 +581,12 @@
 		<columnFieldProperty	name="cd_utilizzatore_cdr" />
 		<columnFieldProperty	name="percentuale_utilizzo_cdr" />
 		<columnFieldProperty	name="cd_linea_attivita" />
-		<columnFieldProperty	name="percentuale_utilizzo_la" />	
+		<columnFieldProperty	name="percentuale_utilizzo_la" />
+		<columnFieldProperty	name="fl_totalmente_scaricato" />
 	</columnSet>	
 	<freeSearchSet name="BASECONS">	
 		<findFieldProperty 	name="cd_unita_organizzativa" />
+		<findFieldProperty	name="cd_unita_assegnatario" />
 		<findFieldProperty  name="esercizio_carico_bene" />
 		<findFieldProperty	name="pg_inventario" />
 		<findFieldProperty	name="nr_inventario" />
@@ -576,9 +609,11 @@
 		<findFieldProperty	name="variazione_meno" />
 		<findFieldProperty	name="valore_ammortizzato" />
 		<findFieldProperty	name="imponibile_ammortamento" />
+		<findFieldProperty	name="fl_totalmente_scaricato" />
 	</freeSearchSet>
 	<freeSearchSet name="QUOTE">	
 		<findFieldProperty	name="cd_unita_organizzativa" />
+		<findFieldProperty	name="cd_unita_assegnatario" />
 		<findFieldProperty	name="esercizio_carico_bene" />
 		<findFieldProperty	name="pg_inventario" />
 		<findFieldProperty	name="nr_inventario" />
@@ -596,6 +631,7 @@
 		<findFieldProperty	name="cd_utilizzatore_cdr" />
 		<findFieldProperty	name="percentuale_utilizzo_cdr" />
 		<findFieldProperty	name="cd_linea_attivita" />
-		<findFieldProperty	name="percentuale_utilizzo_la" />	
+		<findFieldProperty	name="percentuale_utilizzo_la" />
+		<findFieldProperty	name="fl_totalmente_scaricato" />
 	</freeSearchSet>	
 </bulkInfo>

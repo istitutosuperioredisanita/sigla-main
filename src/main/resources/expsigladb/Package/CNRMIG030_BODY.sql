@@ -49,7 +49,7 @@
 	  		 -- Recuperiamo il cdr realtivo all'ente
 	     	 lCdr := cnrctb020.GETCDRENTE;
 
-		 	 gMsgLog := 'In Configurazione CNR manca il TERZO_SPECIALE, CODICE_DIVERSI_IMPEGNI';
+		 	 gMsgLog := 'In Configurazione Sigla manca il TERZO_SPECIALE, CODICE_DIVERSI_IMPEGNI';
 			 select im01
 			 into lCdTerzoSpeciale
 			 from configurazione_cnr
@@ -936,7 +936,7 @@ savepoint altro_accertamento;
   	aCdLa varchar2(10);
 	lNumeScdVoce number :=0;
 	begin
-	    -- configurare la linea attivita in configurazione CNR
+	    -- configurare la linea attivita in Configurazione Sigla
 		aCdCdr  :=CNRCTB015.GETVAL01PERCHIAVE(CNRCTB035.LA_SPECIALE,CNRCTB035.LA_ENTRATA_ENTE);
 		aCdLa   :=CNRCTB015.GETVAL02PERCHIAVE(CNRCTB035.LA_SPECIALE,CNRCTB035.LA_ENTRATA_ENTE);
 	    lScadenzaVoce.CD_CDS                       := aScad.cd_cds;
@@ -2243,7 +2243,7 @@ savepoint altro_impegno;
 
 		return lScadenzaVoce;
 	exception when no_data_found then
-	    -- configurare la linea attivita in configurazione CNR
+	    -- configurare la linea attivita in Configurazione Sigla
 		aCdCdr  :=CNRCTB015.GETVAL01PERCHIAVE(CNRCTB035.LA_SPECIALE,CNRCTB035.LA_ENTRATA_ENTE);
 		aCdLa   :=CNRCTB015.GETVAL02PERCHIAVE(CNRCTB035.LA_SPECIALE,CNRCTB035.LA_ENTRATA_ENTE);
 		-- per individuare la voce_f si fa riferimento

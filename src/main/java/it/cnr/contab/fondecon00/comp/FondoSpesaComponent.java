@@ -712,10 +712,10 @@ public void verificaTracciabilitaPagamenti(UserContext context,
 	java.sql.Timestamp data_da=sess.getDt01(context, Integer.valueOf(0), null,"LIMITE_UTILIZZO_CONTANTI", "LIMITE1");
 	java.sql.Timestamp data_a=sess.getDt02(context, Integer.valueOf(0), null,"LIMITE_UTILIZZO_CONTANTI", "LIMITE1");
 	if ( sess == null  )
-		throw new ApplicationException("Configurazione CNR: manca la definizione del LIMITE_UTILIZZO_CONTANTI");	
+		throw new ApplicationException("Configurazione Sigla: manca la definizione del LIMITE_UTILIZZO_CONTANTI");	
 	
 	if ( limite == null || data_da == null || data_a == null)
-		throw new ApplicationException("Configurazione CNR: non sono stati impostati i valori per LIMITE_UTILIZZO_CONTANTI - LIMITE1");			
+		throw new ApplicationException("Configurazione Sigla: non sono stati impostati i valori per LIMITE_UTILIZZO_CONTANTI - LIMITE1");			
 
 	if (spesa.getDt_spesa().compareTo(data_da) > -1 && 
 		spesa.getDt_spesa().compareTo(data_a) < 1 &&

@@ -29,6 +29,7 @@ import it.cnr.contab.docamm00.docs.bulk.Fattura_attiva_rigaIBulk;
 import it.cnr.contab.docamm00.docs.bulk.Nota_di_credito_rigaBulk;
 import it.cnr.contab.doccont00.core.bulk.Accertamento_scadenzarioBulk;
 import it.cnr.contab.inventario01.bp.CRUDScaricoInventarioBP;
+import it.cnr.contab.inventario01.bp.SelezionatoreBeniInventarioBP;
 import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.Trasferimento_inventarioBulk;
 import it.cnr.contab.inventario00.tabrif.bulk.Tipo_carico_scaricoBulk;
@@ -39,6 +40,9 @@ import it.cnr.jada.bulk.PrimaryKeyHashtable;
 import it.cnr.jada.bulk.SimpleBulkList;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
+import it.cnr.jada.persistency.sql.CompoundFindClause;
+import it.cnr.jada.util.RemoteIterator;
+import it.cnr.jada.util.ejb.EJBCommonServices;
 import it.cnr.jada.util.action.*;
 public class CRUDScaricoBuonoAction extends it.cnr.jada.util.action.CRUDAction {
 	private List deletedList;
@@ -113,12 +117,7 @@ public Forward doAddToCRUDMain_DettController(ActionContext context) {
 			bp.setMessage("Nessun Bene recuperato");
 			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
 		} else {
-			RicercaLiberaBP rlbp = (RicercaLiberaBP)context.createBusinessProcess("RicercaLibera");
-			rlbp.setCanPerformSearchWithoutClauses(false);
-			rlbp.setPrototype(new Inventario_beniBulk());
-			context.addHookForward("searchResult",this,"doBringBackAddBeni");
-			context.addHookForward("filter",this,"doBringBackAddBeni");
-			return context.addBusinessProcess(rlbp);
+			return apriRicercaBeni(context, bp);
 		}		
 		return context.findDefaultForward();	
 		
@@ -175,22 +174,8 @@ public Forward doAddToCRUDMain_DettagliFattura_RigheInventarioDaFattura(ActionCo
 			bp_scarico.setMessage("Nessun Bene associabile");
 			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
 		} else {
-			//SelezionatoreListaBP slbp = select(context,ri,it.cnr.jada.bulk.BulkInfo.getBulkInfo(Inventario_beniBulk.class),null,"doSelezionaBeniScaricati",null,bp_scarico);
-			//slbp.setMultiSelection(true);
-
-			/* Crea BP di ricerca guidata */
-			RicercaLiberaBP rlbp = (RicercaLiberaBP)context.createBusinessProcess("RicercaLibera");
-			rlbp.setCanPerformSearchWithoutClauses(false);
-			//rlbp.setSearchProvider(bp_scarico.getBeneSearchProvider(context));		
-			it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession inventario_component = (it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession)bp_scarico.createComponentSession("CNRINVENTARIO00_EJB_Inventario_beniComponentSession",Inventario_beniBulk.class);
-			Inventario_beniBulk model_for_search = (Inventario_beniBulk)inventario_component.inizializzaBulkPerInserimento(context.getUserContext(),new Inventario_beniBulk());
-			rlbp.setFreeSearchSet("freeSearchWithoutProgressivoSet");
-			rlbp.setPrototype(model_for_search);
-			//rlbp.setMultiSelection(true);
-			rlbp.setShowSearchResult(false);
-			context.addHookForward("searchResult",this,"doBringBackAddBeni");
-			context.addHookForward("filter",this,"doBringBackAddBeni");
-			return context.addBusinessProcess(rlbp);
+			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
+			return apriRicercaBeni(context, bp_scarico);
 		}
 		
 		return context.findDefaultForward();	
@@ -200,38 +185,37 @@ public Forward doAddToCRUDMain_DettagliFattura_RigheInventarioDaFattura(ActionCo
 	}	
 	
 }
-public Forward doBringBackAddBeni(ActionContext context) {
 
+/** Apre la ricerca guidata sui beni configurata dal BP. */
+private Forward apriRicercaBeni(ActionContext context, CRUDScaricoInventarioBP bp) throws BusinessProcessException {
+	RicercaLiberaBP rlbp = (RicercaLiberaBP)context.createBusinessProcess("RicercaLibera");
+	rlbp.setCanPerformSearchWithoutClauses(false);
+	bp.configuraRicercaBeni(context, rlbp);
+	SelezionatoreBeniInventarioBP.collegaRicercaIniziale(rlbp,
+			context.addHookForward("searchResult",this,"doBringBackAddBeni"),
+			context.addHookForward("filter",this,"doBringBackAddBeni"));
+	return context.addBusinessProcess(rlbp);
+}
+
+/** Ritorno dalla ricerca guidata: apre il selezionatore beni comune. */
+public Forward doBringBackAddBeni(ActionContext context) {
 	try {
 		HookForward fwd = (HookForward)context.getCaller();
 		CRUDScaricoInventarioBP bp = (CRUDScaricoInventarioBP)getBusinessProcess(context);
-		Buono_carico_scaricoBulk buonoS =(Buono_carico_scaricoBulk)bp.getModel();
-		boolean no_accessori = buonoS.isByFattura();
-		SimpleBulkList selezionati=null;
-		it.cnr.jada.persistency.sql.CompoundFindClause clauses = (it.cnr.jada.persistency.sql.CompoundFindClause)fwd.getParameter("filter");
+		CompoundFindClause clauses = (CompoundFindClause)fwd.getParameter("filter");
 		bp.setClauses(clauses);
-		context.addHookForward("filter",this,"doSelezionaBeniScaricati");
-		if(buonoS.isByFattura() && bp.getDettagliFattura()!=null && bp.getDettagliFattura().countDetails()!=0 && !(bp.getDettagliFattura().getModel() instanceof Nota_di_credito_rigaBulk))
-			 selezionati=((it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession)bp.createComponentSession()).selezionati(context.getUserContext(),(Buono_carico_scaricoBulk)bp.getModel());
-		if(buonoS.isByDocumento() && bp.getDettagliDocumento()!=null && bp.getDettagliDocumento().countDetails()!=0)
-			 selezionati=((it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession)bp.createComponentSession()).selezionati(context.getUserContext(),(Buono_carico_scaricoBulk)bp.getModel());
-		else
-			selezionati=((it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession)bp.createComponentSession()).selezionati(context.getUserContext(),(Buono_carico_scaricoBulk)bp.getModel());
-		
-		it.cnr.jada.util.RemoteIterator iterator = bp.getListaBeniDaScaricare(context.getUserContext(),no_accessori,selezionati, clauses);
-		iterator = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context,iterator);
-		int count = iterator.countElements();
-		
+
+		RemoteIterator iterator = EJBCommonServices.openRemoteIterator(context, bp.selectBeniCandidatiByClause(context, clauses));
 		/* Non ci sono beni disponibili ad essere associati */
-		if (count == 0) {
+		if (iterator.countElements() == 0) {
 			bp.setMessage("Nessun Bene associabile");
-			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, iterator);
-		} else{
-			SelezionatoreListaBP slbp = select(context,iterator,it.cnr.jada.bulk.BulkInfo.getBulkInfo(Inventario_beniBulk.class),null,"doSelezionaBeniScaricati",null,bp);
-			slbp.setMultiSelection(true);
-			return slbp;
+			EJBCommonServices.closeRemoteIterator(context, iterator);
+			return context.findDefaultForward();
 		}
-		return context.findDefaultForward();
+		SelezionatoreBeniInventarioBP slbp = SelezionatoreBeniInventarioBP.crea(context, bp, iterator);
+		slbp.impostaFiltroIniziale(fwd, clauses);
+		context.addHookForward("seleziona",this,"doSelezionaBeniScaricati");
+		return context.addBusinessProcess(slbp);
 	} catch(Throwable e) {
 		return handleException(context,e);
 	}
@@ -586,22 +570,8 @@ public Forward doAddToCRUDMain_DettagliDocumento_RigheInventarioDaDocumento(Acti
 			bp_scarico.setMessage("Nessun Bene associabile");
 			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
 		} else {
-			//SelezionatoreListaBP slbp = select(context,ri,it.cnr.jada.bulk.BulkInfo.getBulkInfo(Inventario_beniBulk.class),null,"doSelezionaBeniScaricati",null,bp_scarico);
-			//slbp.setMultiSelection(true);
-
-			/* Crea BP di ricerca guidata */
-			RicercaLiberaBP rlbp = (RicercaLiberaBP)context.createBusinessProcess("RicercaLibera");
-			rlbp.setCanPerformSearchWithoutClauses(false);
-			//rlbp.setSearchProvider(bp_scarico.getBeneSearchProvider(context));		
-			it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession inventario_component = (it.cnr.contab.inventario00.ejb.Inventario_beniComponentSession)bp_scarico.createComponentSession("CNRINVENTARIO00_EJB_Inventario_beniComponentSession",Inventario_beniBulk.class);
-			Inventario_beniBulk model_for_search = (Inventario_beniBulk)inventario_component.inizializzaBulkPerInserimento(context.getUserContext(),new Inventario_beniBulk());
-			rlbp.setFreeSearchSet("freeSearchWithoutProgressivoSet");
-			rlbp.setPrototype(model_for_search);
-			//rlbp.setMultiSelection(true);
-			rlbp.setShowSearchResult(false);
-			context.addHookForward("searchResult",this,"doBringBackAddBeni");
-			context.addHookForward("filter",this,"doBringBackAddBeni");
-			return context.addBusinessProcess(rlbp);
+			it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
+			return apriRicercaBeni(context, bp_scarico);
 		}
 		
 		return context.findDefaultForward();	

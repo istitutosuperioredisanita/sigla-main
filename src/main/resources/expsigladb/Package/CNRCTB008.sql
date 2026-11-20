@@ -28,7 +28,7 @@
 -- Esercizio di partenza in produzione dell'applicazione
 -- Date: 12/12/2002
 -- Version: 1.4
--- Introduzione funzione estrazione esercizio di partenza da configurazione CNR
+-- Introduzione funzione estrazione esercizio di partenza da Configurazione Sigla
 --
 -- Date: 03/06/2003
 -- Version: 1.5

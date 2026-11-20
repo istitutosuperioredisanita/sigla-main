@@ -1036,7 +1036,7 @@ Exception
    aCodTerzoDivImpegni := CNRCTB015.GETIM01PERCHIAVE(CNRCTB016.TERZO_SPECIALE,CNRCTB016.CODICE_DIVERSI_IMPEGNI);
 
    if aCodTerzoDivImpegni is null then
-    IBMERR001.RAISE_ERR_GENERICO('Codice terzo ''Diversi'' da utilizzare come entità anagrafica per l''impegno, non specificato in Configurazione CNR');
+    IBMERR001.RAISE_ERR_GENERICO('Codice terzo ''Diversi'' da utilizzare come entità anagrafica per l''impegno, non specificato in Configurazione Sigla');
    end if;
 
    begin

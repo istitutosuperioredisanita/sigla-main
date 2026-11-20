@@ -289,7 +289,7 @@ STATO_COM_COFI_INI CONSTANT CHAR(1) := 'I'; -- Iniziale.
 STATO_COM_COFI_CONT CONSTANT CHAR(1) := 'C'; -- Contabilizzato. Documento associato ad obbligazione; l''intero documento deve sempre essere totalmente associato ad obbligazione o accertamento.
 STATO_COM_COFI_TOT_MR CONSTANT CHAR(1) := 'P'; -- Pagato; compenso liquidato
 
--- Costanti in configurazione CNR
+-- Costanti in Configurazione Sigla
 CCNR_DIVISA CONSTANT VARCHAR2(30):='CD_DIVISA';
 CCNR_EURO CONSTANT VARCHAR2(30):='EURO';
 

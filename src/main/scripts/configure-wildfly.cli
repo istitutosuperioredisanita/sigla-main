@@ -248,8 +248,11 @@ echo "Configurazione logging per debug..."
 /subsystem=mail/mail-session=SIGLA:add(jndi-name=java:jboss/mail/sigla, \
     from=${sigla.mail.from:sigla@cnr.it})
 
-/subsystem=mail/mail-session=SIGLA/server=smtp:add(outbound-socket-binding-ref=sigla-smtp)
-
+/subsystem=mail/mail-session=SIGLA/server=smtp:add( \
+    outbound-socket-binding-ref=sigla-smtp, \
+    username=${sigla.mail.username:}, \
+    password=${sigla.mail.password:} \
+)
 # Configurazione PEC Mail (opzionale)
 /socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=sigla-pec-smtp:add(host=${sigla.pec.smtp_host:smtps.pec.aruba.it}, port=${sigla.pec.port:465})
 

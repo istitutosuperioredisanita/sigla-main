@@ -3107,7 +3107,7 @@ public class DocumentoGenericoComponent
      * PreCondition:
      * Richiesta del terzo per l'utilizzo dei documenti per la spesa
      * PostCondition:
-     * Restituisce il terzo di default dalla configurazione CNR
+     * Restituisce il terzo di default dalla Configurazione Sigla
      */
 //^^@@
     public TerzoBulk getTerzoDefault(UserContext userContext) throws ComponentException {

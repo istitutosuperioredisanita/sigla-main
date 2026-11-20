@@ -302,7 +302,7 @@ TI_REVERSALE CONSTANT CHAR(1):='R';
 -- post: viene accumulato il totale dell.ammontare dei contributi. Per ogni contributo ritenuta, vedi pre-post .Gestione del singolo contributo ritenuta..
 --
 -- pre-post-name: Importo totale del compenso negativo - voce speciale di recupero crediti da terzi non trovata
--- pre: l'importo totale del compenso �egativo, non viene trovata la voce speciale di recupero crediti da terzi nella configurazione CNR.
+-- pre: l'importo totale del compenso �egativo, non viene trovata la voce speciale di recupero crediti da terzi nella Configurazione Sigla.
 -- post: viene sollevata un'eccezione
 --
 -- pre-post-name: Importo totale del compenso negativo - conto finanziario non trovato
@@ -315,7 +315,7 @@ TI_REVERSALE CONSTANT CHAR(1):='R';
 --
 -- pre-post-name: Importo totale del compenso negativo
 -- pre: ha gestito i contributi ritenuta, l'importo totale del compenso �egativo
--- post: individua il conto finanziario avendo preventivamente trovato il conto economico attraverso la configurazione CNR per la voce speciale di recupero crediti da terzi. Genera un accertamento per importo pari al valore assoluto del compenso totale, avendo individuato l.unit�rganizzativa valida in esercizio. Genera un documento generico di tipo recupero crediti da terzi per l.importo dell.accertamento associato. Aggiorna per chiave primaria i compensi.
+-- post: individua il conto finanziario avendo preventivamente trovato il conto economico attraverso la Configurazione Sigla per la voce speciale di recupero crediti da terzi. Genera un accertamento per importo pari al valore assoluto del compenso totale, avendo individuato l.unit�rganizzativa valida in esercizio. Genera un documento generico di tipo recupero crediti da terzi per l.importo dell.accertamento associato. Aggiorna per chiave primaria i compensi.
 --
 -- pre-post-name: Importo totale del compenso = 0 senza anticipi esistenti su missioni collegate al compenso
 -- pre: ha gestito i contributi ritenuta, l'importo totale del compenso � 0

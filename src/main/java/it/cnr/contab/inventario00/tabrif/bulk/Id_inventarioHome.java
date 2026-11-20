@@ -17,6 +17,7 @@
 
 package it.cnr.contab.inventario00.tabrif.bulk;
 
+import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkHome;
 import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OutdatedResourceException;
@@ -121,10 +122,10 @@ public class Id_inventarioHome extends BulkHome {
      * @return boolean
      * @throws ApplicationException
      */
-    public boolean isAperto(Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
+    public boolean isAperto(UserContext userContext, Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
 
         Inventario_ap_chHome invApChHome = (Inventario_ap_chHome) getHomeCache().getHome(Inventario_ap_chBulk.class);
-        return invApChHome.isAperto(inv, esercizio);
+        return invApChHome.isAperto(userContext, inv, esercizio);
     }
 
     /**
@@ -134,9 +135,8 @@ public class Id_inventarioHome extends BulkHome {
      * @return boolean
      * @throws ApplicationException
      */
-    public boolean isChiuso(Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
-
+    public boolean isChiuso(UserContext userContext, Id_inventarioBulk inv, Integer esercizio) throws PersistencyException, IntrospectionException, ApplicationException {
         Inventario_ap_chHome invApChHome = (Inventario_ap_chHome) getHomeCache().getHome(Inventario_ap_chBulk.class);
-        return invApChHome.isChiuso(inv, esercizio);
+        return invApChHome.isChiuso(userContext, inv, esercizio);
     }
 }

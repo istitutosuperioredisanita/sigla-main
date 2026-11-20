@@ -324,7 +324,7 @@ public java.util.Collection findTipi_doc_for_search(UserContext aUC, Documento_g
   *		PreCondition:
   * 		Richiesta del terzo per l'utilizzo dei documenti per la spesa
   *   	PostCondition:
-  *  		Restituisce il terzo di default dalla configurazione CNR
+  *  		Restituisce il terzo di default dalla Configurazione Sigla
  */
 
 public abstract it.cnr.contab.anagraf00.core.bulk.TerzoBulk getTerzoDefault(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException;

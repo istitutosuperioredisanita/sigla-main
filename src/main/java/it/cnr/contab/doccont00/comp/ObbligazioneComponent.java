@@ -6264,7 +6264,7 @@ public void verificaTestataObbligazione (UserContext aUC,ObbligazioneBulk obblig
 		verificaCoperturaIncaricoRepertorio (aUC,obbligazione, MODIFICA);
 	}
 	 /**
-	 * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione CNR
+	 * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione Sigla
 	 *
 	 * @return Configurazione_cnrComponentSession l'istanza di <code>Configurazione_cnrComponentSession</code> che serve per leggere i parametri di configurazione del CNR
 	 */

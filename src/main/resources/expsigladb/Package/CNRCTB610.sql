@@ -46,7 +46,7 @@
 -- STM 3172 - Corretto l'aggiornamento del campo STATO_ASS_COMPENSO della rata)
 -- STM 3175 - Corretto la gestione della minicarriera a tassazione separata)
 -- STM 3180 - Corretto gestione numerazione compenso
--- lettura da Tabella Configurazione CNR non del campo TRATTAMENTO_IVA ma del
+-- lettura da Tabella Configurazione Sigla non del campo TRATTAMENTO_IVA ma del
 -- campo VOCE_IVA
 --
 -- Date: 20/01/2003
@@ -205,8 +205,8 @@
 -- compenso a seconda del codice trattamento
 --
 -- Parametri :
--- cd_trattamento_inail -> codice trattamento INAIL di default letto da configurazione CNR
--- cd_voce_iva -> codice voce IVA di default letto da configurazione CNR
+-- cd_trattamento_inail -> codice trattamento INAIL di default letto da Configurazione Sigla
+-- cd_voce_iva -> codice voce IVA di default letto da Configurazione Sigla
 -- aRecCompenso -> compenso da inizializzare
 
    FUNCTION inizializzaDatiLiquidazione

@@ -2298,7 +2298,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
      * E' stata generata la richiesta di creazione di un Mandato_terzoBulk per
      * un Mandato di accreditamento Il Cds beneficiario del mandato è un cds con
      * tipo uguale a SAC PostCondition: Viene creata una istanza di
-     * Mandato_terzoBulk coi dati dell'uo specificata in Configurazione CNR per
+     * Mandato_terzoBulk coi dati dell'uo specificata in Configurazione Sigla per
      * il CDS SAC e viene impostato il tipo bollo di default.
      *
      *
@@ -2351,7 +2351,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
                         .getCd_unita_organizzativa();
             } else {
                 cd_uo = Optional.ofNullable(((Configurazione_cnrHome) getHome(userContext, Configurazione_cnrBulk.class)).getUoAccreditamentoSac(CNRUserContext.getEsercizio(userContext)))
-                        .orElseThrow(() -> new ApplicationException("Configurazione CNR: manca la definizione dell'UO_SPECIALE per ACCREDITAMENTO SAC per l'esercizio " + CNRUserContext.getEsercizio(userContext) + "."));
+                        .orElseThrow(() -> new ApplicationException("Configurazione Sigla: manca la definizione dell'UO_SPECIALE per ACCREDITAMENTO SAC per l'esercizio " + CNRUserContext.getEsercizio(userContext) + "."));
             }
 
             // imposto il terzo
@@ -2493,7 +2493,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
 
     /**
      * Crea la ComponentSession da usare per effettuare le operazioni di lettura
-     * della Configurazione CNR
+     * della Configurazione Sigla
      *
      * @return Configurazione_cnrComponentSession l'istanza di
      * <code>Configurazione_cnrComponentSession</code> che serve per
@@ -2821,7 +2821,7 @@ public class MandatoComponent extends ScritturaPartitaDoppiaFromDocumentoCompone
 
     /**
      * Crea la ComponentSession da usare per effettuare le operazioni relative
-     * alla Configurazione CNR
+     * alla Configurazione Sigla
      *
      * @return Configurazione_cnrComponentSession l'istanza di
      * <code>Configurazione_cnrComponentSession</code> che serve per

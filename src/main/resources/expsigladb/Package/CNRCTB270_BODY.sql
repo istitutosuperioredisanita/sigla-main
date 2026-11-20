@@ -44,7 +44,7 @@
    aUOVERSIVA:=CNRCTB020.getUOVersIVA(aEs);
 
    If aUOVERSIVA.cd_unita_organizzativa Is Null Then
-     IBMERR001.RAISE_ERR_GENERICO('Uo Versamento Iva non presente nella tabella di configurazione CNR.');
+     IBMERR001.RAISE_ERR_GENERICO('Uo Versamento Iva non presente nella tabella di Configurazione Sigla.');
    End If;
 
    Select * Into aCDRUOVERSIVA
@@ -69,7 +69,7 @@
    codLASpecVersIva := CNRCTB015.GETVAL01PERCHIAVE(LINEA_ATTIVITA_SPECIALE,LA_VER_IVA);
 
    If codLASpecVersIva Is Null Then
-     IBMERR001.RAISE_ERR_GENERICO('Codice Gae Versamento Iva non presente nella tabella di configurazione CNR.');
+     IBMERR001.RAISE_ERR_GENERICO('Codice Gae Versamento Iva non presente nella tabella di Configurazione Sigla.');
    End If;
 
    Select a.* Into aLASpecVersIva
@@ -99,7 +99,7 @@ aCDRUO.cd_centro_responsabilita||'/'||codLASpecVersIva||') per l''esercizio '||t
    codLASpecVersIvaSAC := CNRCTB015.GETVAL01PERCHIAVE(aEs,LINEA_ATTIVITA_SPECIALE,LA_VER_IVA_SAC);
 
    If codLASpecVersIvaSAC Is Null Then
-     IBMERR001.RAISE_ERR_GENERICO('Codice Gae Versamento Iva per SAC non presente nella tabella di configurazione CNR.');
+     IBMERR001.RAISE_ERR_GENERICO('Codice Gae Versamento Iva per SAC non presente nella tabella di Configurazione Sigla.');
    End If;
 
    Select a.* into aLASpecVersIvaSac
@@ -2335,7 +2335,7 @@ aCDRUO.cd_centro_responsabilita||'/'||CNRCTB015.GETVAL01PERCHIAVE(LINEA_ATTIVITA
           aManP.IM_MANDATO := aTotMandato;
 
           /* STANI 08.07.2007 L'UPDATE PRIMA ERA DOPO LA GENERAZIONE DEL DOCUMENTO, HO DOVUTO SPOSTARLO PERCHE' IL CODICE
-                      SIOPE SPECIALE (DA CONFIGURAZIONE CNR) LO DERIVA DALLA ASSOCIAZIONE DEL DOCUMENTO A
+                      SIOPE SPECIALE (DA Configurazione Sigla) LO DERIVA DALLA ASSOCIAZIONE DEL DOCUMENTO A
                       LIQUIDAZIONE_IVA (CHE OVVIAMENTE NON TROVAVA) */
 
           Update liquidazione_iva

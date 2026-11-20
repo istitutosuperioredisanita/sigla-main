@@ -451,8 +451,12 @@ public class CRUDFatturaPassivaElettronicaAction extends CRUDAction {
                 if (bulk.isAttivoSplitPayment()) {
                     if (!bulk.isDocumentoSplitPayment() && !Fattura_passivaBulk.TIPO_NOTA_DI_CREDITO.equals(bulk.getTipoDocumentoSIGLA()) &&
                             !bulk.getDocumentoEleTrasmissione().getRegimefiscale().equals(RegimeFiscaleType.RF_12.name()) &&
-                            !bulk.getDocumentoEleTrasmissione().getRegimefiscale().equals(RegimeFiscaleType.RF_04.name())
-                            && !isBPAmministra
+                            !bulk.getDocumentoEleTrasmissione().getRegimefiscale().equals(RegimeFiscaleType.RF_04.name()) &&
+                            !Optional.ofNullable(bulk.getDocumentoEleTrasmissione())
+                                .flatMap(el->Optional.ofNullable(el.getPrestatoreAnag()))
+                                .map(AnagraficoBulk::isPersonaFisica)
+                                .orElse(Boolean.FALSE) &&
+                            !isBPAmministra
                     ) {
                         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
                         fatturaPassivaElettronicaBP.setMessage("La tipologia di esigibilità IVA deve essere di tipo 'Split Payment'"

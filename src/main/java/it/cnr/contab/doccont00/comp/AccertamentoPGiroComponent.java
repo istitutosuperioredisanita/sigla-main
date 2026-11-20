@@ -554,22 +554,22 @@ public void callRiportaIndietro (UserContext userContext,IDocumentoContabileBulk
   *      Un Impegno su partita di giro e' stato creato ed e' necessario creare il corrispondente Accertamento
   *    PostCondition:
   *      L'accertamento (AccertamentoPGiroBulk) viene creato con importo pari a quello dell'impegno, codice terzo
-  *      recuperato dalla Configurazione CNR come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
+  *      recuperato dalla Configurazione Sigla come codice DIVERSI per PARTITA di GIRO, capitolo di entrata ricavato
   *      (metodo findVoce_f) dall'associazione fra Capitoli di Entrata e di Spesa per Partita di Giro, data di
   *		 scadenza uguale a quella della scadenza dell'obbligazione su partita di giro.
   *      Viene inoltre creata una scadenza (metodo creaAccertamento_scadenzario) e
   *      un dettaglio di scadenza (metodo creaAccertamento_scad_voce). I saldi relativi alla voce del piano
   *      dell'accertamento vengono aggiornati (metodo aggiornaCapitoloSaldoAccertamento).
   *		 Viene infine validato l'Accertamento prima della sua creazione (metodo verificaAccertamento)
-  *  errore - Configurazione CNR per codice DIVERSI su PGIRO
+  *  errore - Configurazione Sigla per codice DIVERSI su PGIRO
   *    PreCondition:
-  *      non e' presente in Configurazione CNR la definizione del CODICE DIVERSI per PGIRO
+  *      non e' presente in Configurazione Sigla la definizione del CODICE DIVERSI per PGIRO
   *    PostCondition:
-  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione CNR del CODICE DIVERSI 
+  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione Sigla del CODICE DIVERSI 
   *		 per PGIRO
   *  errore - Anagrafica per codice DIVERSI su PGIRO
   *    PreCondition:
-  *      non e' presente in Anagrafica il codice terzo presente in Configurazione CNR come CODICE DIVERSI per PGIRO
+  *      non e' presente in Anagrafica il codice terzo presente in Configurazione Sigla come CODICE DIVERSI per PGIRO
   *    PostCondition:
   *      Un messaggio di errore segnala all'utente la mancata definizione in Anagrafica
   *  errore - Associazione capitoli entrata/spese
@@ -627,10 +627,10 @@ public AccertamentoPGiroBulk creaAccertamento(UserContext uc,ImpegnoPGiroBulk im
 		// ...e in particolare il campo cd_terzo
 		it.cnr.contab.config00.bulk.Configurazione_cnrBulk config = createConfigurazioneCnrComponentSession().getConfigurazione( uc, null, null, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.PK_TERZO_SPECIALE, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.SK_CODICE_DIVERSI_PGIRO );
 		if ( config == null  )
-			throw new ApplicationException("Configurazione CNR: manca la definizione del CODICE DIVERSI per partite di giro");
+			throw new ApplicationException("Configurazione Sigla: manca la definizione del CODICE DIVERSI per partite di giro");
 
 		if ( config.getIm01() == null )
-			throw new ApplicationException("Configurazione CNR: manca il CODICE TERZI nella definizione del codice diversi per partite di giro");
+			throw new ApplicationException("Configurazione Sigla: manca il CODICE TERZI nella definizione del codice diversi per partite di giro");
 
 		SQLBuilder sql = getHomeCache(uc).getHome( it.cnr.contab.anagraf00.core.bulk.TerzoBulk.class ).createSQLBuilder();
 		sql.addClause("AND","cd_terzo", sql.EQUALS, Integer.valueOf(config.getIm01().intValue()));
@@ -718,14 +718,14 @@ public AccertamentoPGiroBulk creaAccertamento(UserContext uc,ImpegnoPGiroBulk im
   *      una scadenza di un accertamento pgiro e' stata creata ed e' necessario creare il suo dettaglio
   *    PostCondition:
   *      Il dettaglio di scadenza (Accertamento_scad_voceBulk) viene creato
-  *      con linea attività uguale alla linea di attività definita nella Configurazione CNR come Linea attività Entrata ENTE
+  *      con linea attività uguale alla linea di attività definita nella Configurazione Sigla come Linea attività Entrata ENTE
   *      e importo uguale all'importo della scadenza dell'accertamento
-  *  errore - Configurazione CNR
+  *  errore - Configurazione Sigla
   *    PreCondition:
   *      una richiesta di creazione di un dettaglio di scadenza di un accertamento pgiro e' stata generata
-  *      ma non e' stata definita in Configurazione CNR la Linea attività Entrata ENTE
+  *      ma non e' stata definita in Configurazione Sigla la Linea attività Entrata ENTE
   *    PostCondition:
-  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione CNR della linea di attivita' Entrata ENTE
+  *      Un messaggio di errore segnala all'utente la mancata definizione in Configurazione Sigla della linea di attivita' Entrata ENTE
   *
   * @param uc lo <code>UserContext</code> che ha generato la richiesta
   * @param accert_scad <code>Accertamento_scadenzarioBulk</code> la scadenza dell'accertamento pgiro creata
@@ -756,7 +756,7 @@ private Accertamento_scad_voceBulk creaAccertamento_scad_voce (UserContext uc,Ac
 			accert_scad_voce.setLinea_attivita(wp);		
 		}
 		else
-			throw new ApplicationException("Configurazione CNR: manca la definizione del GAE ENTRATA ENTE");
+			throw new ApplicationException("Configurazione Sigla: manca la definizione del GAE ENTRATA ENTE");
 
 		// altri campi
 		accert_scad_voce.setIm_voce( accert_scad.getAccertamento().getIm_accertamento() );
@@ -848,7 +848,7 @@ public AccertamentoPGiroBulk creaAccertamentoDiIncassoIVA( UserContext userConte
 		
 		Configurazione_cnrBulk config = createConfigurazioneCnrComponentSession().getConfigurazione( userContext, reversale.getEsercizio(), null, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.PK_ELEMENTO_VOCE_SPECIALE, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.SK_VOCE_IVA_FATTURA_ESTERA );
 		if ( config == null  || config.getVal01() == null ||(split && config.getVal02() == null))
-			throw new ApplicationException("Configurazione CNR: manca la definizione del CAPITOLO FINANZIARIO per l'annotazione di entrata su partita di giro");
+			throw new ApplicationException("Configurazione Sigla: manca la definizione del CAPITOLO FINANZIARIO per l'annotazione di entrata su partita di giro");
 
 		String tiVoce = null;
 		Parametri_cnrBulk parametriCnr = (Parametri_cnrBulk)getHome(userContext,Parametri_cnrBulk.class).findByPrimaryKey(new Parametri_cnrBulk(reversale.getEsercizio()));
@@ -988,7 +988,7 @@ public OggettoBulk creaConBulk (UserContext uc,OggettoBulk bulk) throws Componen
 
 }
 /**
- * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione CNR
+ * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione Sigla
  *
  * @return Configurazione_cnrComponentSession l'istanza di <code>Configurazione_cnrComponentSession</code> che serve per leggere i parametri di configurazione del CNR
  */

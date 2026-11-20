@@ -49,7 +49,11 @@ public class CRUDInventarioBeniBP extends SimpleCRUDBP {
 			validate_Percentuali_LA(context,model);
 		}
 	};
-			
+
+	public void basicEdit(it.cnr.jada.action.ActionContext context,it.cnr.jada.bulk.OggettoBulk bulk, boolean doInitializeForEdit) throws it.cnr.jada.action.BusinessProcessException {
+		super.basicEdit(context, bulk, doInitializeForEdit);
+	}
+
 	protected it.cnr.jada.util.jsp.Button[] createToolbar() {
 		final List<Button> buttons = Arrays.stream(super.createToolbar()).collect(Collectors.toList());
 		buttons.add(new Button(it.cnr.jada.util.Config.getHandler().getProperties(getClass()),"CRUDToolbar.Dettagli"));

@@ -55,7 +55,7 @@
 --
 -- Date: 11/03/2002
 -- Version: 1.9
--- Lettura della linea di attività di spesa ENTE da configurazione CNR per creazione impegno automatico CNR
+-- Lettura della linea di attività di spesa ENTE da Configurazione Sigla per creazione impegno automatico CNR
 --
 -- Date: 25/03/2002
 -- Version: 2.0

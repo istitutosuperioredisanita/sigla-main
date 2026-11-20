@@ -870,7 +870,7 @@ public class CRUDMissioneBP extends AllegatiCRUDBP<AllegatoMissioneBulk, Mission
                     Configurazione_cnrComponentSession sess = (Configurazione_cnrComponentSession) it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession");
                     if (sess.getDt01(context, Integer.valueOf(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA") == null ||
                             sess.getDt02(context, Integer.valueOf(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA") == null)
-                        throw new ApplicationException("Configurazione CNR: non è stato impostato il periodo di validità per i rimborsi esteri (RIMBORSO_MISS_ESTERO - PERIODO_VALIDITA)");
+                        throw new ApplicationException("Configurazione Sigla: non è stato impostato il periodo di validità per i rimborsi esteri (RIMBORSO_MISS_ESTERO - PERIODO_VALIDITA)");
                     data_inizio_rimborso_miss_estero = sess.getDt01(context, Integer.valueOf(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA");
                     data_fine_rimborso_miss_estero = sess.getDt02(context, Integer.valueOf(0), "*", "RIMBORSO_MISS_ESTERO", "PERIODO_VALIDITA");
 

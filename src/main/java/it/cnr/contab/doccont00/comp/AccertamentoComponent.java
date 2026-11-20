@@ -805,7 +805,7 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
      * PostCondition:
      * Un dettaglio per la scadenza di un accertamento di sistema e' stato creata con
      * importo uguale all'importo della scadenza e linea di attività uguale alla linea di attività definita
-     * in Configurazione CNR come LINEA ATTIVITA' ENTE di ENTRATA
+     * in Configurazione Sigla come LINEA ATTIVITA' ENTE di ENTRATA
      *
      * @param uc          lo <code>UserContext</code> che ha generato la richiesta
      * @param accert_scad <code>Accertamento_scadenzarioBulk</code> la scadenza dell'accertamento di sistema per la quale e' necessario creare un
@@ -824,9 +824,9 @@ public class AccertamentoComponent extends CRUDComponent implements IDocumentoCo
 
             it.cnr.contab.config00.bulk.Configurazione_cnrBulk config = createConfigurazioneCnrComponentSession().getConfigurazione(uc, null, null, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.PK_LINEA_ATTIVITA_SPECIALE, it.cnr.contab.config00.bulk.Configurazione_cnrBulk.SK_LINEA_ATTIVITA_ENTRATA_ENTE);
             if (config == null)
-                throw new ApplicationException("Configurazione CNR: manca la definizione del GAE ENTRATA ENTE");
+                throw new ApplicationException("Configurazione Sigla: manca la definizione del GAE ENTRATA ENTE");
             if (config.getVal01() == null || config.getVal02() == null)
-                throw new ApplicationException("Configurazione CNR: non sono stati impostati i valori per GAE SPECIALE - GAE ENTRATA ENTE");
+                throw new ApplicationException("Configurazione Sigla: non sono stati impostati i valori per GAE SPECIALE - GAE ENTRATA ENTE");
             WorkpackageHome wphome = (WorkpackageHome) getHome(uc, WorkpackageBulk.class);
             WorkpackageBulk wp = (WorkpackageBulk) wphome.findByPrimaryKey(new WorkpackageBulk(config.getVal01(), config.getVal02()));
             //accert_scad_voce.setCd_linea_attivita( config.getVal02() );
@@ -1150,7 +1150,7 @@ private void creaDettagliScadenza(UserContext aUC,AccertamentoBulk accertamento,
     }
 
     /**
-     * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione CNR
+     * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione Sigla
      *
      * @return Configurazione_cnrComponentSession l'istanza di <code>Configurazione_cnrComponentSession</code> che serve per leggere i parametri di configurazione del CNR
      */

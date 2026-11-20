@@ -562,7 +562,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
      * L'utente ha selezionato la linea di attività per cui creare l'accertamento su cui contabilizzare il rimborso
      * Post: Viene chiamata la stored procedure che
      * - crea un accertamento nel bilancio del CNR con voce del piano uguale
-     * a quella specificata in Configurazione CNR e linea di attività uguale a quella specificata dall'utente
+     * a quella specificata in Configurazione Sigla e linea di attività uguale a quella specificata dall'utente
      * - crea un rimborso contabilizzato sull'accertamento precedente
      * <p>
      * Nome: Crea rimborso - errore
@@ -612,7 +612,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
     }
 
     /**
-     * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione CNR
+     * Crea la ComponentSession da usare per effettuare le operazioni di lettura della Configurazione Sigla
      *
      * @return Configurazione_cnrComponentSession l'istanza di <code>Configurazione_cnrComponentSession</code>
      * che serve per leggere i parametri di configurazione del CNR
@@ -1664,10 +1664,10 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
     public SQLBuilder selectLattPerRimborsoByClause(UserContext aUC, AnticipoBulk anticipo, it.cnr.contab.config00.latt.bulk.WorkpackageBulk latt, CompoundFindClause clauses) throws ComponentException, RemoteException {
         Configurazione_cnrBulk config = createConfigurazioneCnrComponentSession().getConfigurazione(aUC, ((CNRUserContext) aUC).getEsercizio(), null, "ELEMENTO_VOCE_SPECIALE", "RIMBORSO_ANTICIPO");
         if (config == null)
-            throw new ApplicationException("Configurazione CNR: manca la definizione dell'ELEMENTO VOCE per RIMBORSO ANTICIPO");
+            throw new ApplicationException("Configurazione Sigla: manca la definizione dell'ELEMENTO VOCE per RIMBORSO ANTICIPO");
 
         if (config.getVal01() == null)
-            throw new ApplicationException("Configurazione CNR: manca il CODICE  dell'ELEMENTO VOCE per RIMBORSO ANTICIPO");
+            throw new ApplicationException("Configurazione Sigla: manca il CODICE  dell'ELEMENTO VOCE per RIMBORSO ANTICIPO");
 
 
         SQLBuilder sql = getHome(aUC, latt.getClass(), "V_LINEA_ATTIVITA_VALIDA").createSQLBuilder();

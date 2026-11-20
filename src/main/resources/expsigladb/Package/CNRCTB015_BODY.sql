@@ -10,7 +10,7 @@
     and cd_chiave_primaria = aChiavePrimaria
     and cd_chiave_secondaria = aChiaveSecondaria;
   exception when NO_DATA_FOUND then
-   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: '||aChiavePrimaria||'-'||aChiaveSecondaria);
+   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: '||aChiavePrimaria||'-'||aChiaveSecondaria);
   end;
   return aIm01;
  end;
@@ -30,7 +30,7 @@
     and cd_chiave_primaria = aChiavePrimaria
     and cd_chiave_secondaria = aChiaveSecondaria;
   exception when NO_DATA_FOUND then
-   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: '||aChiavePrimaria||'-'||aChiaveSecondaria);
+   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: '||aChiavePrimaria||'-'||aChiaveSecondaria);
   end;
   return aIm02;
  end;
@@ -50,7 +50,7 @@
     and cd_chiave_primaria = aChiavePrimaria
     and cd_chiave_secondaria = aChiaveSecondaria;
   exception when NO_DATA_FOUND then
-   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: '||aChiavePrimaria||'-'||aChiaveSecondaria);
+   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: '||aChiavePrimaria||'-'||aChiaveSecondaria);
   end;
   return aVal;
  end;
@@ -70,7 +70,7 @@
     and cd_chiave_primaria = aChiavePrimaria
     and cd_chiave_secondaria = aChiaveSecondaria;
   exception when NO_DATA_FOUND then
-   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: '||aChiavePrimaria||'-'||aChiaveSecondaria);
+   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: '||aChiavePrimaria||'-'||aChiaveSecondaria);
   end;
   return aVal;
  end;
@@ -90,7 +90,7 @@
     and cd_chiave_primaria = aChiavePrimaria
     and cd_chiave_secondaria = aChiaveSecondaria;
   exception when NO_DATA_FOUND then
-   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: '||aChiavePrimaria||'-'||aChiaveSecondaria);
+   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: '||aChiavePrimaria||'-'||aChiaveSecondaria);
   end;
   return aVal;
  end;
@@ -110,7 +110,7 @@
     and cd_chiave_primaria = aChiavePrimaria
     and cd_chiave_secondaria = aChiaveSecondaria;
   exception when NO_DATA_FOUND then
-   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: '||aChiavePrimaria||'-'||aChiaveSecondaria);
+   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: '||aChiavePrimaria||'-'||aChiaveSecondaria);
   end;
   return aDt;
  end;
@@ -130,7 +130,7 @@
     and cd_chiave_primaria = aChiavePrimaria
     and cd_chiave_secondaria = aChiaveSecondaria;
   exception when NO_DATA_FOUND then
-   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di configurazione cnr: '||aChiavePrimaria||'-'||aChiaveSecondaria);
+   IBMERR001.RAISE_ERR_GENERICO('Chiave non trovata in tabella di Configurazione Sigla: '||aChiavePrimaria||'-'||aChiaveSecondaria);
   end;
   return aDt;
  end;
