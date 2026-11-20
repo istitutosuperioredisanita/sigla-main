@@ -22,7 +22,7 @@
 
 <% SelezionatoreListaBP bp = (SelezionatoreListaBP)BusinessProcess.getBusinessProcess(request);
 	 bp.openFormWindow(pageContext); %>
-<h3 class="card-header h2 text-danger"><i class="fa fa-exclamation-circle fa-fw fa-2x text-danger" aria-hidden="true"></i> Attenzione, completare il file Excel estratto con la colonna NUOVO CODICE PROGETTO</h3>
+<h4 class="card-header h4 text-danger"><i class="fa fa-exclamation-circle fa-fw fa-2x text-danger" aria-hidden="true"></i> Attenzione, completare il file Excel estratto con la colonna NUOVO CODICE PROGETTO</h4>
 
 <%	if (bp.getParentRoot().isBootstrap()) { %>
 	<% bp.writeHTMLTable(pageContext,"100%","100%"); %>
