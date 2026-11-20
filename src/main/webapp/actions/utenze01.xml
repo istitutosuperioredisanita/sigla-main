@@ -16,6 +16,10 @@
   -->
 
 <action-mappings>
+  <action
+      path="/AbilitazioniMassiveUtentiAction" actionClass="it.cnr.jada.util.action.CRUDAction">
+  </action>
+
 	<action 
       path="/CRUDUtenzaAction" actionClass="it.cnr.contab.utenze00.action.CRUDUtenzaAction">
   	</action>
@@ -97,4 +101,25 @@
 		<init-param name="defaultAction" value="CRUDAction" />		
   	</businessProcess>	
   	
+	<businessProcess name="ConfigMassAccBP" className="it.cnr.contab.utenze00.bp.AbilitazioniMassiveUtentiBP">
+		<forward name="default" path="/utenze00/abilitazioni_massive_utenti.jsp"/>
+		<init-param name="bulkClassName" value="it.cnr.contab.utenze00.bulk.OpMassiveInputDTO"/>
+		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+		<init-param name="defaultAction" value="AbilitazioniMassiveUtentiAction"/>
+		<init-param name="GESTIONE_MASSIVA" value="ACCESSI"/>
+	</businessProcess>
+	<businessProcess name="ConfigMassRuoBP" className="it.cnr.contab.utenze00.bp.AbilitazioniMassiveUtentiBP">
+		<forward name="default" path="/utenze00/abilitazioni_massive_utenti.jsp"/>
+		<init-param name="bulkClassName" value="it.cnr.contab.utenze00.bulk.OpMassiveInputDTO"/>
+		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+		<init-param name="defaultAction" value="AbilitazioniMassiveUtentiAction"/>
+		<init-param name="GESTIONE_MASSIVA" value="RUOLI"/>
+	</businessProcess>
+	<businessProcess name="ConfigMassOrMaBP" className="it.cnr.contab.utenze00.bp.AbilitazioniMassiveUtentiBP">
+		<forward name="default" path="/utenze00/abilitazioni_massive_utenti.jsp"/>
+		<init-param name="bulkClassName" value="it.cnr.contab.utenze00.bulk.OpMassiveInputDTO"/>
+		<init-param name="componentSessionName" value="JADAEJB_CRUDComponentSession" />
+		<init-param name="defaultAction" value="AbilitazioniMassiveUtentiAction"/>
+		<init-param name="GESTIONE_MASSIVA" value="ORDINI_MAGAZZINO"/>
+	</businessProcess>
 </action-mappings>
