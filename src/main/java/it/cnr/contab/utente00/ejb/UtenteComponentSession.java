@@ -38,4 +38,6 @@ it.cnr.contab.config00.sto.bulk.CdrBulk findCdrEnte(it.cnr.jada.UserContext para
 void validaSelezionaCds(it.cnr.jada.UserContext param0,it.cnr.contab.utenze00.bulk.SelezionaCdsBulk param1, Integer param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 UtenteFirmaDettaglioBulk isUtenteAbilitatoFirma(UserContext param0, AbilitatoFirma codice) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 boolean isSupervisore(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+String applicaOperazioneMassiva(it.cnr.jada.UserContext param0, java.util.List<it.cnr.jada.bulk.OggettoBulk> param1, String param2) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
+java.util.List<it.cnr.jada.bulk.OggettoBulk> cercaPerChiave(it.cnr.jada.UserContext param0, java.util.Map<String,it.cnr.jada.bulk.OggettoBulk> param1) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 }

@@ -252,4 +252,42 @@ public class UtenteComponentSessionBean extends it.cnr.jada.ejb.CRUDComponentSes
 			throw uncaughtError(param0,componentObj,e);
 		}
 	}
+
+	public String applicaOperazioneMassiva(UserContext param0, java.util.List<it.cnr.jada.bulk.OggettoBulk> param1, String param2) throws ComponentException, jakarta.ejb.EJBException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			String result = ((UtenteComponent)componentObj).applicaOperazioneMassiva(param0,param1,param2);
+			component_invocation_succes(param0,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
+
+	public java.util.List<it.cnr.jada.bulk.OggettoBulk> cercaPerChiave(UserContext param0, java.util.Map<String,it.cnr.jada.bulk.OggettoBulk> param1) throws ComponentException, jakarta.ejb.EJBException {
+		pre_component_invocation(param0,componentObj);
+		try {
+			java.util.List<it.cnr.jada.bulk.OggettoBulk> result = ((UtenteComponent)componentObj).cercaPerChiave(param0,param1);
+			component_invocation_succes(param0,componentObj);
+			return result;
+		} catch(it.cnr.jada.comp.NoRollbackException e) {
+			component_invocation_succes(param0,componentObj);
+			throw e;
+		} catch(it.cnr.jada.comp.ComponentException e) {
+			component_invocation_failure(param0,componentObj);
+			throw e;
+		} catch(RuntimeException e) {
+			throw uncaughtRuntimeException(param0,componentObj,e);
+		} catch(Error e) {
+			throw uncaughtError(param0,componentObj,e);
+		}
+	}
 }

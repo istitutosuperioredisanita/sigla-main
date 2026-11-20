@@ -457,5 +457,37 @@ public class TransactionalUtenteComponentSession extends it.cnr.jada.ejb.Transac
 			}
 		}
 	}
-	
+
+	public String applicaOperazioneMassiva(UserContext param0, java.util.List<it.cnr.jada.bulk.OggettoBulk> param1, String param2) throws ComponentException, RemoteException {
+		try {
+			return (String) invoke("applicaOperazioneMassiva", new Object[] {param0, param1, param2});
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public java.util.List<it.cnr.jada.bulk.OggettoBulk> cercaPerChiave(UserContext param0, java.util.Map<String,it.cnr.jada.bulk.OggettoBulk> param1) throws ComponentException, RemoteException {
+		try {
+			return (java.util.List<it.cnr.jada.bulk.OggettoBulk>) invoke("cercaPerChiave", new Object[] {param0, param1});
+		} catch(java.rmi.RemoteException e) {
+			throw e;
+		} catch(java.lang.reflect.InvocationTargetException e) {
+			try {
+				throw e.getTargetException();
+			} catch(it.cnr.jada.comp.ComponentException ex) {
+				throw ex;
+			} catch(Throwable ex) {
+				throw new java.rmi.RemoteException("Uncaugth exception",ex);
+			}
+		}
+	}
 }

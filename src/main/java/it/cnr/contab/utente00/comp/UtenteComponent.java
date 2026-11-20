@@ -20,6 +20,9 @@ package it.cnr.contab.utente00.comp;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioBulk;
 import it.cnr.contab.config00.esercizio.bulk.EsercizioHome;
 import it.cnr.contab.config00.sto.bulk.*;
+import it.cnr.contab.ordmag.anag00.AbilUtenteUopOperBulk;
+import it.cnr.contab.ordmag.anag00.TipoOperazioneOrdBulk;
+import it.cnr.contab.ordmag.anag00.UnitaOperativaOrdBulk;
 import it.cnr.contab.utente00.nav.ejb.GestioneLoginComponentSession;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.utenze00.bulk.*;
@@ -38,10 +41,9 @@ import it.cnr.jada.persistency.sql.SQLBuilder;
 import it.cnr.jada.util.ejb.EJBCommonServices;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.function.Function;
 
 
 /**
@@ -1062,5 +1064,55 @@ public class UtenteComponent extends it.cnr.jada.comp.CRUDComponent implements I
 			throw new ComponentException(e);
 		}
 		return false;
+	}
+
+
+	/**
+	 * Cerca per chiave primaria ogni bulk indicato e restituisce quelli trovati, nello stesso ordine.
+	 * Se uno non esiste lancia ApplicationException con il messaggio associato alla sua chiave.
+	 */
+	public List<OggettoBulk> cercaPerChiave(UserContext userContext, Map<String, OggettoBulk> chiavi)
+			throws ComponentException {
+		try {
+			List<OggettoBulk> trovati = new ArrayList<>();
+			for (Map.Entry<String, OggettoBulk> e : chiavi.entrySet()) {
+				OggettoBulk trovato = (OggettoBulk) getHome(userContext, e.getValue()).findByPrimaryKey(e.getValue());
+				if (trovato == null)
+					throw new ApplicationException(e.getKey());
+				trovati.add(trovato);
+			}
+			return trovati;
+		} catch (PersistencyException ex) {
+			throw handleException(ex);
+		}
+	}
+
+	/**
+	 * Esegue l'inserimento ("I") o la cancellazione ("C") massiva dei record in un'unica transazione.
+	 * I record già presenti (inserimento) o assenti (cancellazione) vengono ignorati.
+	 */
+	public String applicaOperazioneMassiva(UserContext userContext, List<OggettoBulk> bulks, String tipoOperazione)
+			throws ComponentException {
+		try {
+			boolean inserimento = OpMassiveInputDTO.INSERIMENTO.equals(tipoOperazione);
+			if (!inserimento && !OpMassiveInputDTO.CANCELLAZIONE.equals(tipoOperazione))
+				throw new ApplicationException("Tipo operazione non valido: " + tipoOperazione);
+			int modificati = 0;
+			for (OggettoBulk bulk : bulks) {
+				OggettoBulk esistente = (OggettoBulk) getHome(userContext, bulk).findByPrimaryKey(bulk);
+				if (inserimento && esistente == null) {
+					bulk.setToBeCreated();
+					super.creaConBulk(userContext, bulk);
+					modificati++;
+				} else if (!inserimento && esistente != null) {
+					esistente.setToBeDeleted();
+					super.eliminaConBulk(userContext, esistente);
+					modificati++;
+				}
+			}
+			return (inserimento ? "Record inseriti: " : "Record cancellati: ") + modificati + " su " + bulks.size() + ".";
+		} catch (PersistencyException e) {
+			throw handleException(e);
+		}
 	}
 }
