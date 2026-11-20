@@ -18,17 +18,17 @@
   bp.openFormWindow(pageContext); // AllegatiCRUDBP imposta enctype multipart
 %>
 
+<div class="alert alert-info w-100 mt-3 text-center">Il file Excel deve essere composto dalle seguenti colonne : ESERCIZIO_ESTRAZIONE, CD_PROGETTO, PG_PROGETTO,NUOVO CODICE PROGETTO</div>
 <!-- Form dettaglio: campo file + metadati allegato -->
+
 <div class="Group card mt-3">
   <table>
-    <tr>
-        <td colspan=2><CENTER><h3>Riporta Progetti nell'' Anno di Scrivania</h3></CENTER></td>
-    </tr>
-
     <% bp.getCrudArchivioAllegati().writeForm(out, bp.getAllegatiFormName()); %>
   </table>
 </div>
 
 <% bp.closeFormWindow(pageContext); %>
+
+
 </body>
 </html>
