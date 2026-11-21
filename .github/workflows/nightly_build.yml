@@ -7,9 +7,12 @@ on:
 jobs:
   integration-test:
     runs-on: ubuntu-latest
+    # evita che un test bloccato tenga occupato il runner fino a 6 ore
+    timeout-minutes: 45
     permissions:
       contents: read
       packages: write
+      checks: write
     steps:
       - uses: actions/checkout@v5
         with:
@@ -21,8 +24,26 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
       - name: Integration Test
+        # "verify" (e non "integration-test") fa fallire la build se i test falliscono
         run: |
-          mvn clean integration-test -s .m2/settings.xml -PPROD --batch-mode --errors --fail-at-end --show-version
+          mvn verify -s .m2/settings.xml -PPROD --batch-mode --errors --fail-at-end --show-version -Djacoco.skip=true
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report test
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: 'target/failsafe-reports/TEST-*.xml'
+          detailed_summary: true
+
+      - name: Upload report e screenshot
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failsafe-reports-and-screenshots
+          path: |
+            target/failsafe-reports/
+            target/screenshots/
+          if-no-files-found: ignore

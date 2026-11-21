@@ -144,6 +144,8 @@
                 <configuration>
                     <includes>
                         <include>*Test.java</include>
+                        <!-- catena ordini: eseguita nello stesso container, ordinata con @Order -->
+                        <include>**/CRUDOrdineAcqBP0*.java</include>
                     </includes>
                     <excludes>${test.exclude.package}</excludes>
                     <skipITs>false</skipITs>

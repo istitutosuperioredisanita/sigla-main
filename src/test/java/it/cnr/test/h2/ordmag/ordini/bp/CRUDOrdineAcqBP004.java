@@ -17,6 +17,9 @@
 
 package it.cnr.test.h2.ordmag.ordini.bp;
 
+import it.cnr.test.util.StopOnFirstFailure;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.util.AlertMessage;
 import it.cnr.test.util.SharedResource;
@@ -41,8 +44,9 @@ import java.util.UUID;
  * 6) registrazione fattura con riscontro valore su riga consegna nr.1 evasa in anni precedenti
  * 7) registrazione fattura con riscontro valore su riga consegna nr.2 evasa in anno corrente
  */
+@ExtendWith(StopOnFirstFailure.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Order(4)
+@Order(Order.DEFAULT + 4) // dopo le classi senza @Order, come con la vecchia suite
 public class CRUDOrdineAcqBP004 extends ActionDeployments {
     private static final SharedResource sharedResource = new SharedResource();
 

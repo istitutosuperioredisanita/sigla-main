@@ -17,6 +17,9 @@
 
 package it.cnr.test.h2.ordmag.ordini.bp;
 
+import it.cnr.test.util.StopOnFirstFailure;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.util.AlertMessage;
 import org.jboss.arquillian.graphene.GrapheneElement;
@@ -43,8 +46,9 @@ import java.util.UUID;
  * 6) verifica scrittura economica/analitica e movimento magazzino su consegne dei 2 ordini
  * 7) registrazione fattura con riscontro valore su riga consegna scollegata in fase di annullamento riscontro a valore di cui al punto 5
  */
+@ExtendWith(StopOnFirstFailure.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Order(1)
+@Order(Order.DEFAULT + 1) // dopo le classi senza @Order, come con la vecchia suite
 public class CRUDOrdineAcqBP001 extends ActionDeployments {
     public static final String USERNAME = "ENTETEST";
     public static final String PASSWORD = "PASSTEST";

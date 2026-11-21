@@ -17,6 +17,9 @@
 
 package it.cnr.test.h2.ordmag.ordini.bp;
 
+import it.cnr.test.util.StopOnFirstFailure;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.util.AlertMessage;
 import it.cnr.test.util.SharedResource;
@@ -43,8 +46,9 @@ import java.util.UUID;
  * 7) modifica fattura con annullamento riscontro valore
  * 8) registrazione nota credito di annullamento totale fattura creata
  */
+@ExtendWith(StopOnFirstFailure.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Order(2)
+@Order(Order.DEFAULT + 2) // dopo le classi senza @Order, come con la vecchia suite
 public class CRUDOrdineAcqBP002 extends ActionDeployments {
     private static final SharedResource sharedResource = new SharedResource();
 
