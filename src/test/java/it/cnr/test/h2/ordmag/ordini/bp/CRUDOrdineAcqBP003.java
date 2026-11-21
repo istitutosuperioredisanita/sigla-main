@@ -17,6 +17,9 @@
 
 package it.cnr.test.h2.ordmag.ordini.bp;
 
+import it.cnr.test.util.StopOnFirstFailure;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import it.cnr.test.h2.utenze.action.ActionDeployments;
 import it.cnr.test.util.AlertMessage;
 import it.cnr.test.util.SharedResource;
@@ -49,8 +52,9 @@ import java.util.UUID;
  * 9) inventariazione bene in transito
  * 10) annullamento evasione riga consegna non consentita per bene inventariato
  */
+@ExtendWith(StopOnFirstFailure.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Order(3)
+@Order(Order.DEFAULT + 3) // dopo le classi senza @Order, come con la vecchia suite
 public class CRUDOrdineAcqBP003 extends ActionDeployments {
     private static final SharedResource sharedResource = new SharedResource();
 

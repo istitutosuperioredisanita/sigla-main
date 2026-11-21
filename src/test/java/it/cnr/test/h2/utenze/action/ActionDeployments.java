@@ -39,7 +39,10 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -62,6 +65,12 @@ public class ActionDeployments extends DeploymentsH2 {
 
     /** Intervallo di polling del FluentWait (millisecondi) */
     private static final long POLLING_MILLIS = 200;
+
+    /** Dopo quanti ms senza esito si rientra nel frame corrente (vedi waitInCurrentFrame) */
+    private static final long FRAME_REENTRY_MILLIS = 3000;
+
+    /** Ultimo frame applicativo in cui si e' entrati (menu_tree o workspace), null se nessuno */
+    private String currentFrame;
 
     @Drone
     protected WebDriver browser;
@@ -107,12 +116,47 @@ public class ActionDeployments extends DeploymentsH2 {
      * ed lo restituisce. Un solo wait invece del doppio waitGui precedente.
      */
     protected WebElement getWebElement(By elementLocator) {
-        return new FluentWait<>(browser)
-                .withTimeout(Duration.ofSeconds(ELEMENT_TIMEOUT_SECONDS))
-                .pollingEvery(Duration.ofMillis(POLLING_MILLIS))
-                .ignoring(StaleElementReferenceException.class)
-                .ignoring(NoSuchElementException.class)
-                .until(ExpectedConditions.presenceOfElementLocated(elementLocator));
+        return waitInCurrentFrame(ExpectedConditions.presenceOfElementLocated(elementLocator));
+    }
+
+    /**
+     * Attende la condizione fino a ELEMENT_TIMEOUT_SECONDS, ma a finestre brevi:
+     * se allo scadere di una finestra la condizione non e' soddisfatta, rientra nel
+     * frame corrente (default -> desktop -> menu/workspace) e riprova.
+     * Serve quando un submit ricarica il frame "desktop" (es. doSelezionaCds):
+     * il driver resta agganciato al frame vecchio, ormai staccato dal DOM, e
+     * non troverebbe mai l'elemento anche se nella pagina e' visibile.
+     */
+    private <T> T waitInCurrentFrame(Function<? super WebDriver, T> condition) {
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(ELEMENT_TIMEOUT_SECONDS);
+        while (true) {
+            long remainingMillis = TimeUnit.NANOSECONDS.toMillis(deadline - System.nanoTime());
+            long sliceMillis = Math.max(POLLING_MILLIS, Math.min(FRAME_REENTRY_MILLIS, remainingMillis));
+            try {
+                return new FluentWait<WebDriver>(browser)
+                        .withTimeout(Duration.ofMillis(sliceMillis))
+                        .pollingEvery(Duration.ofMillis(POLLING_MILLIS))
+                        .ignoring(StaleElementReferenceException.class)
+                        .ignoring(NoSuchElementException.class)
+                        .until(condition);
+            } catch (TimeoutException | NoSuchFrameException e) {
+                if (System.nanoTime() >= deadline) {
+                    throw e;
+                }
+                reenterCurrentFrame();
+            }
+        }
+    }
+
+    private void reenterCurrentFrame() {
+        if (currentFrame == null) {
+            return;
+        }
+        try {
+            enterFrame(currentFrame);
+        } catch (WebDriverException ignored) {
+            // il frame potrebbe essere ancora in caricamento: si riprova alla prossima finestra
+        }
     }
 
     protected GrapheneElement getGrapheneElement(By elementLocator) {
@@ -158,15 +202,19 @@ public class ActionDeployments extends DeploymentsH2 {
     }
 
     protected void switchToFrameMenu() {
-        switchToDefaultContent();
-        switchToFrameDesktop();
-        switchToFrame(FRAME_MENU);
+        enterFrame(FRAME_MENU);
     }
 
     protected void switchToFrameWorkspace() {
+        enterFrame(FRAME_WORKSPACE);
+    }
+
+    /** Entra in menu_tree o workspace partendo dalla radice e lo ricorda per il rientro. */
+    private void enterFrame(String frame) {
         switchToDefaultContent();
         switchToFrameDesktop();
-        switchToFrame(FRAME_WORKSPACE);
+        switchToFrame(frame);
+        currentFrame = frame;
     }
 
     private void switchToFrameDesktop() {
@@ -178,6 +226,8 @@ public class ActionDeployments extends DeploymentsH2 {
     }
 
     public void switchToFrame(String frameNameOrId, int timeoutSeconds) {
+        // un cambio di frame "manuale" invalida il frame da ripristinare in caso di reload
+        currentFrame = null;
         // logPageSource() rimosso: serializzava l'intero DOM ad ogni switch
         WebDriverWait wait = new WebDriverWait(browser, Duration.ofSeconds(timeoutSeconds));
         wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameNameOrId));
@@ -213,10 +263,7 @@ public class ActionDeployments extends DeploymentsH2 {
         int attempts = 0;
         while (true) {
             try {
-                WebElement button = new FluentWait<>(browser)
-                        .withTimeout(Duration.ofSeconds(ELEMENT_TIMEOUT_SECONDS))
-                        .pollingEvery(Duration.ofMillis(POLLING_MILLIS))
-                        .until(ExpectedConditions.elementToBeClickable(buttonLocator));
+                WebElement button = waitInCurrentFrame(ExpectedConditions.elementToBeClickable(buttonLocator));
                 button.click();
                 return;
             } catch (TimeoutException e) {
@@ -266,11 +313,21 @@ public class ActionDeployments extends DeploymentsH2 {
         String onclick = "javascript:select('" + tableName + "'," + numberRow + ")";
         By locator = By.xpath("//tr[contains(@onclick, \"" + onclick + "\")]");
         WebElement el;
-        try {
-            el = getWebElementFast(locator);
-        } catch (TimeoutException e) {
-            throw new RuntimeException("Cannot find Element <tr> with tableName " + tableName +
-                    " and numberRow: " + numberRow);
+        if (isTableRendered(tableName)) {
+            // La tabella e' gia' nel DOM: la riga c'e' o non c'e', non serve aspettare.
+            List<WebElement> rows = browser.findElements(locator);
+            if (rows.isEmpty()) {
+                throw new RuntimeException("Cannot find Element <tr> with tableName " + tableName +
+                        " and numberRow: " + numberRow);
+            }
+            el = rows.get(0);
+        } else {
+            try {
+                el = getWebElementFast(locator);
+            } catch (TimeoutException e) {
+                throw new RuntimeException("Cannot find Element <tr> with tableName " + tableName +
+                        " and numberRow: " + numberRow);
+            }
         }
         return Optional.ofNullable(el)
                 .filter(GrapheneElement.class::isInstance)
@@ -303,6 +360,16 @@ public class ActionDeployments extends DeploymentsH2 {
     }
 
     /**
+     * true se nel DOM corrente c'e' almeno una riga della tabella indicata.
+     * Il match su "select('nome'," evita falsi positivi con tabelle dal nome
+     * piu' lungo (es. 'main.Righe' vs 'main.Righe.Consegne').
+     */
+    private boolean isTableRendered(String tableName) {
+        String prefix = "javascript:select('" + tableName + "',";
+        return !browser.findElements(By.xpath("//tr[contains(@onclick, \"" + prefix + "\")]")).isEmpty();
+    }
+
+    /**
      * Verifica che una riga di tabella NON esista.
      * Sostituisce il pattern: Assertions.assertThrows(RuntimeException.class,
      *   () -> getTableRowElement(tableName, row), "...").
@@ -312,11 +379,17 @@ public class ActionDeployments extends DeploymentsH2 {
         String onclick = "javascript:select('" + tableName + "'," + numberRow + ")";
         By locator = By.xpath("//tr[contains(@onclick, \"" + onclick + "\")]");
         boolean found;
-        try {
-            getWebElementFast(locator);
-            found = true;
-        } catch (TimeoutException e) {
-            found = false;
+        if (isTableRendered(tableName)) {
+            // La tabella e' gia' nel DOM (di solito si sono appena lette le righe precedenti):
+            // l'assenza si verifica subito, senza consumare l'intero timeout.
+            found = !browser.findElements(locator).isEmpty();
+        } else {
+            try {
+                getWebElementFast(locator);
+                found = true;
+            } catch (TimeoutException e) {
+                found = false;
+            }
         }
         Assertions.assertFalse(found,
                 "Expected row " + numberRow + " of table '" + tableName + "' to be absent, but it was found");

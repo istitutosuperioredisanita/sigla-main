@@ -50,9 +50,11 @@
             <!-- Path al bootable JAR -->
             <property name="jarFile">target/sigla-bootable.jar</property>
             <property name="startupTimeoutInSeconds">180</property>
-            <!-- JVM arguments -->
+            <!-- JVM arguments
+                 Per il debug remoto in locale:
+                 -Darquillian.debug.args="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787" -->
             <property name="javaVmArguments">
-                -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787
+                ${arquillian.debug.args:}
                 -Xms512m -Xmx3g -XX:+UseG1GC -XX:MaxGCPauseMillis=200
                 -Djava.security.egd=file:/dev/./urandom
                 -Duser.language=it
