@@ -515,9 +515,9 @@ public class AnagraficoComponentSessionBean extends it.cnr.jada.ejb.CRUDComponen
 		}
 	}
 
-	public SQLBuilder findAnagraficoDipendenteByClause(UserContext param0, AnagraficoBulk param1, CompoundFindClause param2)throws ComponentException, it.cnr.jada.persistency.PersistencyException,RemoteException {
+	public SQLBuilder findAnagraficoDipendenteByClause(UserContext param0, AnagraficoBulk param1, CompoundFindClause param2,boolean param3)throws ComponentException, it.cnr.jada.persistency.PersistencyException,RemoteException {
 		try {
-			SQLBuilder result = ((AnagraficoComponent) componentObj).findAnagraficoDipendenteByClause(param0, param1, param2);
+			SQLBuilder result = ((AnagraficoComponent) componentObj).findAnagraficoDipendenteByClause(param0, param1, param2,param3);
 			component_invocation_succes(param0,componentObj);
 			return result;
 

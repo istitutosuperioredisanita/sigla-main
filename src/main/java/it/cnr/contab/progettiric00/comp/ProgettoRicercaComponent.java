@@ -72,6 +72,7 @@ import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -2661,7 +2662,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 		validaRigheDettaglioAnagraficaProgetto(uc,bulk);
 
 	}
-	private void validaRigheDettaglioAnagraficaProgetto(UserContext uc, ProgettoBulk bulk) throws ComponentException {
+	private void validaRigheDettaglioAnagraficaProgetto(UserContext uc, ProgettoBulk bulk) throws ComponentException, IntrospectionException, PersistencyException {
 
 		if(isProgettoAnagraficaDuplicato(bulk)){
 			if(isAnagraficaDoppiaSenzaDataFine(bulk)) {
@@ -2691,9 +2692,37 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			if(!progetto_anagraficoBulk.isFl_tempo_ind() && progetto_anagraficoBulk.getImporto()==null){
 				throw new ApplicationException("Impostare l'importo se anagrafica non è a tempo indeterminato");
 			}
+			controllaSedipendenteConRapportoValidoPerProgetto( uc,progetto_anagraficoBulk,bulk.getOtherField());
+
+
 		}
 	}
+	private void controllaSedipendenteConRapportoValidoPerProgetto(UserContext uc,Progetto_anagraficoBulk progetto_anagraficoBulk,Progetto_other_fieldBulk progetto) throws ComponentException, IntrospectionException, PersistencyException {
 
+		boolean dipendenteValido = false;
+		boolean anagProgValida = false;
+
+		AnagraficoHome anagraficoHome = (AnagraficoHome)getHome(uc,AnagraficoBulk.class);
+		for (Iterator di = new BulkList(anagraficoHome.findRapporti(progetto_anagraficoBulk.getAnagrafico())).iterator(); di.hasNext(); ) {
+			RapportoBulk rap_dip = (RapportoBulk) di.next();
+			// se dipendente ha, tra i rapporti, almeno uno valido all'inizio del progetto
+			if (rap_dip.getDt_ini_validita().compareTo(progetto.getDtInizio()) <= 0) {
+				dipendenteValido = true;
+			}
+			// se dipendente ha, tra i rapporti, almeno uno valido nella durata impostata sull'anagrafica del progetto
+			if (rap_dip.getDt_ini_validita().compareTo(progetto_anagraficoBulk.getDataInizio()) <= 0 && rap_dip.getDt_fin_validita().compareTo(progetto_anagraficoBulk.getDataFine()) >= 0) {
+				anagProgValida = true;
+			}
+		}
+
+		if(!dipendenteValido){
+			throw new ApplicationException("Attenzione, l'anagrafica: "+progetto_anagraficoBulk.getAnagrafico().getNome()+" "+progetto_anagraficoBulk.getAnagrafico().getCognome()+" non ha rapporti validi per la durata del progetto");
+		}
+		if(!anagProgValida){
+			throw new ApplicationException("Attenzione, l'anagrafica: "+progetto_anagraficoBulk.getAnagrafico().getNome()+" "+progetto_anagraficoBulk.getAnagrafico().getCognome()+" non ha rapporti validi nelle date selezionate");
+		}
+
+	}
 	private boolean isAnagraficaDoppiaSenzaDataFine(ProgettoBulk bulk){
 		if (bulk.getAnagraficheProgetto().stream()
 				.filter(e -> e.getDataFine() == null)
@@ -2767,6 +2796,7 @@ public SQLBuilder selectModuloForPrintByClause (UserContext userContext,Stampa_e
 			throws ComponentException, it.cnr.jada.persistency.PersistencyException, RemoteException {
 
 		AnagraficoComponentSession sess = (AnagraficoComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRANAGRAF00_EJB_AnagraficoComponentSession", AnagraficoComponentSession.class);
-		return sess.findAnagraficoDipendenteByClause(userContext,anag_find,clause);
+		boolean controlloValidita=false;
+		return sess.findAnagraficoDipendenteByClause(userContext,anag_find,clause,false);
 	}
 }

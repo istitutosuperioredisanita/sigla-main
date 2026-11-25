@@ -481,12 +481,13 @@ public boolean isGestitoCreditoIrpef(UserContext param0)throws ComponentExceptio
 	}
 
 	@Override
-	public SQLBuilder findAnagraficoDipendenteByClause(UserContext param0, AnagraficoBulk param1, CompoundFindClause param2) throws ComponentException, PersistencyException, RemoteException {
+	public SQLBuilder findAnagraficoDipendenteByClause(UserContext param0, AnagraficoBulk param1, CompoundFindClause param2,boolean param3) throws ComponentException, PersistencyException, RemoteException {
 		try {
 			return ((SQLBuilder) invoke("findAnagraficoDipendenteByClause",new Object[] {
 					param0,
 					param1,
-					param2}));
+					param2,
+					param3}));
 		}catch (RemoteException e){
 			throw e;
 		}catch(java.lang.reflect.InvocationTargetException e) {

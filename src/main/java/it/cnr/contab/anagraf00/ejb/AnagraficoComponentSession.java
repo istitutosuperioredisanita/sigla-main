@@ -58,5 +58,5 @@ void checkCaricoAlreadyExistFor(UserContext userContext,
 void controllaUnicitaCaricoInAnnoImposta(it.cnr.jada.UserContext param0, it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1, it.cnr.contab.anagraf00.core.bulk.Carico_familiare_anagBulk param2)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 boolean isGestitoCreditoIrpef(it.cnr.jada.UserContext param0) throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
 void aggiornaDatiAce(it.cnr.jada.UserContext param0, it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk param1)throws it.cnr.jada.comp.ComponentException,java.rmi.RemoteException;
-SQLBuilder findAnagraficoDipendenteByClause(UserContext param0,AnagraficoBulk param1,CompoundFindClause param2)	throws ComponentException, it.cnr.jada.persistency.PersistencyException, RemoteException;
+SQLBuilder findAnagraficoDipendenteByClause(UserContext param0,AnagraficoBulk param1,CompoundFindClause param2,boolean controllaValidita)	throws ComponentException, it.cnr.jada.persistency.PersistencyException, RemoteException;
 }

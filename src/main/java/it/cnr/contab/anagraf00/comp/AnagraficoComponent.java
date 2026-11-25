@@ -2742,7 +2742,7 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
         return sql;
     }
 
-    public SQLBuilder selectAnagrafico_esercizio_contoDebitoByClause(UserContext userContext, AnagraficoBulk anagrafico, ContoBulk conto, CompoundFindClause clause) throws ComponentException {
+    public SQLBuilder selectAnagrafico_esercizio_contoDebitoByClause(UserContext userContext, AnagraficoBulk anagrafico, ContoBulk conto, CompoundFindClause clause,boolean controlloValidita) throws ComponentException {
         SQLBuilder sql = getHome(userContext, conto).createSQLBuilder();
         sql.addClause(clause);
         sql.addSQLClause(FindClause.AND, "esercizio", SQLBuilder.EQUALS, CNRUserContext.getEsercizio(userContext));
@@ -2751,11 +2751,12 @@ public class AnagraficoComponent extends UtilitaAnagraficaComponent implements I
 
     public SQLBuilder findAnagraficoDipendenteByClause(UserContext userContext,
                                                AnagraficoBulk anag,
-                                               CompoundFindClause clause)
+                                               CompoundFindClause clause,
+                                               boolean controlloValidita)
             throws ComponentException, it.cnr.jada.persistency.PersistencyException {
 
             AnagraficoHome anagraficoHome = (AnagraficoHome) getHome(userContext, AnagraficoBulk.class);
-            return anagraficoHome.findAnagraficoDipendenteByClause(userContext, clause);
+            return anagraficoHome.findAnagraficoDipendenteByClause(userContext, clause,controlloValidita);
 
         }
 }

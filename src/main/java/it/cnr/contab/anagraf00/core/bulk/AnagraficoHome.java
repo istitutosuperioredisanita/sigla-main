@@ -833,7 +833,7 @@ public boolean findRapportoDipendenteFor(AnagraficoBulk anagrafico) throws Intro
 	 *
 	 * @return SQLBuilder oggetto che rappresenta la subquery EXISTS.
 	 */
-	private SQLBuilder buildExistsDipendente(String cdAnagRef)
+	private SQLBuilder buildExistsDipendente(String cdAnagRef,boolean controlloValidita)
 			throws ComponentException, PersistencyException {
 
 		final java.sql.Timestamp dataOdierna = this.getServerDate();
@@ -856,8 +856,10 @@ public boolean findRapportoDipendenteFor(AnagraficoBulk anagrafico) throws Intro
 
 		sqlExists.setFromClause(null);
 
-		sqlExists.addSQLClause("AND", "R.DT_INI_VALIDITA", SQLBuilder.LESS_EQUALS,    dataOdierna);
-		sqlExists.addSQLClause("AND", "R.DT_FIN_VALIDITA", SQLBuilder.GREATER_EQUALS, dataOdierna);
+		if(controlloValidita){
+			sqlExists.addSQLClause("AND", "R.DT_INI_VALIDITA", SQLBuilder.LESS_EQUALS,    dataOdierna);
+			sqlExists.addSQLClause("AND", "R.DT_FIN_VALIDITA", SQLBuilder.GREATER_EQUALS, dataOdierna);
+		}
 		sqlExists.addSQLClause("AND", "A.CD_ANAG = " + cdAnagRef);
 		sqlExists.addSQLClause("AND", subQueryTipoRapporto);
 
@@ -876,12 +878,13 @@ public boolean findRapportoDipendenteFor(AnagraficoBulk anagrafico) throws Intro
 	 */
 	public SQLBuilder findAnagraficoDipendenteByClause(
 			UserContext userContext,
-			CompoundFindClause clause)
+			CompoundFindClause clause,
+			boolean controlloValidita)
 			throws ComponentException, PersistencyException {
 
 		SQLBuilder sql = this.selectByClause(userContext, clause);
 
-		sql.addSQLExistsClause("AND", buildExistsDipendente("ANAGRAFICO.CD_ANAG"));
+		sql.addSQLExistsClause("AND", buildExistsDipendente("ANAGRAFICO.CD_ANAG",controlloValidita));
 		sql.addOrderBy("COGNOME");
 
 		return sql;
@@ -910,7 +913,7 @@ public boolean findRapportoDipendenteFor(AnagraficoBulk anagrafico) throws Intro
 
 		SQLBuilder sql = terzoHome.selectByClause(userContext, clause);
 
-		sql.addSQLExistsClause("AND", buildExistsDipendente("V_TERZO_CF_PI.CD_ANAG"));
+		sql.addSQLExistsClause("AND", buildExistsDipendente("V_TERZO_CF_PI.CD_ANAG",true));
 
 		sql.openParenthesis("AND");
 		sql.addSQLClause("AND", "V_TERZO_CF_PI.DT_CANC IS NULL");
