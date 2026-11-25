@@ -3212,7 +3212,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                         }
                     }
                 }
-                aggiornaOrdiniMagazzino(userContext, fattura);
+//                aggiornaOrdiniMagazzino(userContext, fattura);
                 /**
                  * In caso di rettifiche del prezzo unitario o di uno sconto
                  * devo ricaricare le obbligazioni modificate oppure
@@ -3379,6 +3379,9 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             }
         }
 
+        List<FatturaOrdineBulk> listFatturaOrdinOld = new ArrayList<>();
+        aggiornaOrdiniMagazzino(userContext, listFatturaOrdinOld, fattura_passiva.getFattura_passiva_ordini());
+
         fattura_passiva = (Fattura_passivaBulk) super.creaConBulk(userContext, fattura_passiva);
 
         aggiornaCarichiInventario(userContext, fattura_passiva);
@@ -3451,13 +3454,19 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         return fattura_passiva;
     }
 
-    private void aggiornaOrdiniMagazzino(UserContext userContext, Fattura_passivaBulk fattura_passiva) throws ComponentException {
+    private void aggiornaOrdiniMagazzino(UserContext userContext, List<FatturaOrdineBulk> listOld, List<FatturaOrdineBulk> listNew) throws ComponentException {
         try {
+            //Inizio cercando le consegne modificate che sono solo quelle che hanno imponibile e/o iva diversi
+            List<FatturaOrdineBulk> righeFatturaOrdineModificate = listNew.stream().filter(elNew->
+                            listOld.stream().noneMatch(elOld->elOld.getOrdineAcqConsegna().equalsByPrimaryKey(elNew.getOrdineAcqConsegna()) &&
+                                    Utility.nvl(elOld.getImImponibileRettificato()).compareTo(Utility.nvl(elNew.getImImponibileRettificato()))==0 &&
+                                     Utility.nvl(elOld.getImIvaRettificata()).compareTo(Utility.nvl(elNew.getImIvaRettificata()))==0))
+                                    .toList();
+
+            FatturaOrdineHome homeFatturaOrdine = (FatturaOrdineHome) getHome(userContext, FatturaOrdineBulk.class);
             OrdineAcqComponentSession ordineComponent = Utility.createOrdineAcqComponentSession();
             MovimentiMagComponentSession movimentiMagComponent = Utility.createMovimentiMagComponentSession();
-            final BulkList<FatturaOrdineBulk> bulkList = Optional.ofNullable(fattura_passiva.getFattura_passiva_ordini())
-                    .orElse(new BulkList());
-            final List<OrdineAcqConsegnaBulk> listaConsegne = bulkList.stream().map(FatturaOrdineBulk::getOrdineAcqConsegna).collect(Collectors.toList());
+            final List<OrdineAcqConsegnaBulk> listaConsegne = righeFatturaOrdineModificate.stream().map(FatturaOrdineBulk::getOrdineAcqConsegna).collect(Collectors.toList());
 
             Supplier<Stream<OrdineAcqConsegnaBulk>> consegne = () ->
                     Optional.ofNullable(listaConsegne)
@@ -3473,7 +3482,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                 try {
                     OrdineAcqBulk ordineComp = (OrdineAcqBulk) ordineComponent.inizializzaBulkPerModifica(userContext, ordine);
                     //ciclo sulle righe di ordine
-                    mapOrdine.get(ordine).keySet().stream().forEach(ordineRiga -> {
+                    mapOrdine.get(ordine).keySet().forEach(ordineRiga -> {
                         //recupero la riga di ordine dall'oggetto proveniente dal Component
                         OrdineAcqRigaBulk ordineRigaComp =
                                 Optional.ofNullable(ordineComp.getRigheOrdineColl())
@@ -3482,7 +3491,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                                         .orElseThrow(() -> new DetailedRuntimeException("Errore nell'individuazione della riga " + ordineRiga.getRigaOrdineString() + "."));
 
                         //ciclo sulle righe di consegna
-                        mapOrdine.get(ordine).get(ordineRiga).stream().forEach(ordineConsegna -> {
+                        mapOrdine.get(ordine).get(ordineRiga).forEach(ordineConsegna -> {
                             //recupero la riga di consegna dall'oggetto proveniente dal Component
                             OrdineAcqConsegnaBulk ordineConsegnaComp =
                                     Optional.ofNullable(ordineRigaComp.getRigheConsegnaColl())
@@ -3490,9 +3499,13 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                                             .map(list -> list.get(list.indexOfByPrimaryKey(ordineConsegna)))
                                             .orElseThrow(() -> new DetailedRuntimeException("Errore nell'individuazione della consegna " + ordineConsegna.getConsegnaOrdineString() + "."));
 
-                            FatturaOrdineBulk fatturaOrdineBulk = ordineConsegna.getFatturaOrdineBulk();
-                            if ((Optional.ofNullable(fatturaOrdineBulk.getVoceIva())
-                                         .flatMap(el->Optional.ofNullable(el.getCd_voce_iva())).isPresent() &&
+                            try {
+                                if (ordineConsegna.getFatturaOrdineBulk()==null)
+                                    ordineConsegna.setFatturaOrdineBulk(homeFatturaOrdine.findFatturaByRigaConsegna(ordineConsegna));
+                                FatturaOrdineBulk fatturaOrdineBulk = ordineConsegna.getFatturaOrdineBulk();
+
+                                if ((Optional.ofNullable(fatturaOrdineBulk.getVoceIva())
+                                             .flatMap(el->Optional.ofNullable(el.getCd_voce_iva())).isPresent() &&
                                     !fatturaOrdineBulk.getVoceIva().getCd_voce_iva().equals(ordineRigaComp.getVoce_iva().getCd_voce_iva())) ||
                                     (Optional.ofNullable(fatturaOrdineBulk.getPrezzoUnitarioRett()).isPresent() && fatturaOrdineBulk.getPrezzoUnitarioRett().compareTo(ordineRigaComp.getPrezzoUnitario()) != 0) ||
                                     (Optional.ofNullable(fatturaOrdineBulk.getSconto1Rett()).isPresent() && Optional.ofNullable(ordineRigaComp.getSconto1()).isPresent() && fatturaOrdineBulk.getSconto1Rett().compareTo(ordineRigaComp.getSconto1()) != 0) ||
@@ -3501,7 +3514,6 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                                     (Optional.ofNullable(fatturaOrdineBulk.getSconto2Rett()).isPresent() && !Optional.ofNullable(ordineRigaComp.getSconto2()).isPresent()) ||
                                     (Optional.ofNullable(fatturaOrdineBulk.getSconto3Rett()).isPresent() && Optional.ofNullable(ordineRigaComp.getSconto3()).isPresent() && fatturaOrdineBulk.getSconto3Rett().compareTo(ordineRigaComp.getSconto3()) != 0) ||
                                     (Optional.ofNullable(fatturaOrdineBulk.getSconto3Rett()).isPresent() && !Optional.ofNullable(ordineRigaComp.getSconto3()).isPresent())) {
-                                try {
                                     ordineConsegnaComp.setImImponibile(fatturaOrdineBulk.getImImponibile());
                                     ordineConsegnaComp.setImImponibileDivisa(fatturaOrdineBulk.getImImponibileDivisa());
                                     ordineConsegnaComp.setImIva(fatturaOrdineBulk.getImIva());
@@ -3509,40 +3521,37 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                                     ordineConsegnaComp.setImIvaD(fatturaOrdineBulk.getImIvaD());
                                     ordineConsegnaComp.setImIvaNd(fatturaOrdineBulk.getImIvaNd());
                                     movimentiMagComponent.creaMovimentoRettificaValoreOrdine(userContext, fatturaOrdineBulk);
-                                } catch (ComponentException | RemoteException e) {
-                                    handleException(e);
                                 }
-                            }
-
-
-                            Optional.ofNullable(fatturaOrdineBulk.getImImponibileRettificato())
-                                    .ifPresent(imp -> {
-                                        ordineConsegnaComp.setImImponibile(imp);
-                                        ordineConsegnaComp.setImImponibileDivisa(imp);
-                                        ordineConsegnaComp.setImTotaleConsegna(ordineConsegnaComp.getImImponibile().add(ordineConsegnaComp.getImIva()));
-                                    });
-                            Optional.ofNullable(fatturaOrdineBulk.getImIvaRettificata())
-                                    .ifPresent(imp -> {
-                                        ordineConsegnaComp.setImIva(imp);
-                                        Optional.ofNullable(ordineConsegnaComp.getImIvaNd())
-                                            .filter(bigDecimal -> bigDecimal.compareTo(BigDecimal.ZERO) > 0)
-                                            .ifPresent(bigDecimal -> {
-                                                ordineConsegnaComp.setImIvaNd(imp);
-                                            });
-                                        Optional.ofNullable(ordineConsegnaComp.getImIvaD())
+                                Optional.ofNullable(fatturaOrdineBulk.getImImponibileRettificato())
+                                        .ifPresent(imp -> {
+                                            ordineConsegnaComp.setImImponibile(imp);
+                                            ordineConsegnaComp.setImImponibileDivisa(imp);
+                                            ordineConsegnaComp.setImTotaleConsegna(ordineConsegnaComp.getImImponibile().add(ordineConsegnaComp.getImIva()));
+                                        });
+                                Optional.ofNullable(fatturaOrdineBulk.getImIvaRettificata())
+                                        .ifPresent(imp -> {
+                                            ordineConsegnaComp.setImIva(imp);
+                                            Optional.ofNullable(ordineConsegnaComp.getImIvaNd())
                                                 .filter(bigDecimal -> bigDecimal.compareTo(BigDecimal.ZERO) > 0)
                                                 .ifPresent(bigDecimal -> {
-                                                    ordineConsegnaComp.setImIvaD(imp);
+                                                    ordineConsegnaComp.setImIvaNd(imp);
                                                 });
-                                        ordineConsegnaComp.setImIvaDivisa(imp);
-                                        ordineConsegnaComp.setImTotaleConsegna(ordineConsegnaComp.getImImponibile().add(ordineConsegnaComp.getImIva()));
-                                    });
+                                            Optional.ofNullable(ordineConsegnaComp.getImIvaD())
+                                                    .filter(bigDecimal -> bigDecimal.compareTo(BigDecimal.ZERO) > 0)
+                                                    .ifPresent(bigDecimal -> {
+                                                        ordineConsegnaComp.setImIvaD(imp);
+                                                    });
+                                            ordineConsegnaComp.setImIvaDivisa(imp);
+                                            ordineConsegnaComp.setImTotaleConsegna(ordineConsegnaComp.getImImponibile().add(ordineConsegnaComp.getImIva()));
+                                        });
 
-                            ordineConsegnaComp.setStatoFatt(OrdineAcqConsegnaBulk.STATO_FATT_ASSOCIATA_TOTALMENTE);
-                            ordineConsegnaComp.setFatturaOrdineBulk(fatturaOrdineBulk);
-                            ordineConsegnaComp.setToBeUpdated();
-                            ordineComp.setAggiornaImpegniInAutomatico(true);
-
+                                ordineConsegnaComp.setStatoFatt(OrdineAcqConsegnaBulk.STATO_FATT_ASSOCIATA_TOTALMENTE);
+                                ordineConsegnaComp.setFatturaOrdineBulk(fatturaOrdineBulk);
+                                ordineConsegnaComp.setToBeUpdated();
+                                ordineComp.setAggiornaImpegniInAutomatico(true);
+                            } catch (ComponentException | RemoteException | PersistencyException e) {
+                                handleException(e);
+                            }
                         });
                     });
                     //rendo permanenti le modifiche agli ordini
@@ -3581,11 +3590,12 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         List<V_fatt_ordine_detBulk> l =Optional.ofNullable(vFattOrdineDetHome.getFattOrdineDetInv(fattura_passivaBulk)).orElse(Collections.EMPTY_LIST);
         final Map<FatturaOrdineKey, List<V_fatt_ordine_detBulk>> mapFatOrdine = l.stream().collect(Collectors.groupingBy(o->o.getFatturaOrdineKey()));
         for (FatturaOrdineKey fattOrdineDetKey : mapFatOrdine.keySet()) {
-              FatturaOrdineBulk fatturaOrdine= Optional.ofNullable(fattura_passivaBulk.getFattura_passiva_ordini().
+              FatturaOrdineBulk fatturaOrdineBulk= Optional.ofNullable(fattura_passivaBulk.getFattura_passiva_ordini().
                             indexOf(fattOrdineDetKey)).filter(i->i!=-1).map(i-> fattura_passivaBulk.getFattura_passiva_ordini().get(i)).orElseGet(() -> {
                 return null;
             });
-            Optional.ofNullable(fatturaOrdine).ifPresent(fatturaOrdineBulk->{
+
+            if (Optional.ofNullable(fatturaOrdineBulk).isPresent()) {
                 BigDecimal importoUnitario = calcoloImportoUnitario(userContext, fatturaOrdineBulk).setScale(2, RoundingMode.HALF_UP);
                 mapFatOrdine.get(fattOrdineDetKey).stream().forEach(v_fatt_ordine_detBulk -> {
                     if (Optional.ofNullable(v_fatt_ordine_detBulk.getNrInventario()).isPresent()) {
@@ -3609,8 +3619,15 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                                     inventario = (Inventario_beniBulk)bulk;
                                 }
                                 inventario.setValore_unitario(importoUnitario);
-                                //da verificare con la gestione dei beni annullati nel transito
-                                //inventario.setImponibile_ammortamento(importoUnitario);
+
+                                // da verificare con la gestione dei beni annullati nel transito
+                                // Il valore unitario viene utilizzato per valorizzare il valore_iniziale del bene
+                                // Quindi calcolo la differenza aggiorno il valore Imponibile_ammortamento con la differenza
+                                BigDecimal diff = inventario.getValore_iniziale().subtract(importoUnitario);
+                                // e la aggiungo/sottraggo al vaolore da ammortizzare
+                                inventario.setImponibile_ammortamento(inventario.getImponibile_ammortamento()
+                                        .subtract(diff));
+
                                 inventario.setToBeUpdated();
                                 inventario = (Inventario_beniBulk) inventario_beniComponent.modificaConBulk(userContext, inventario);
                             } catch (ComponentException | RemoteException e) {
@@ -3657,14 +3674,12 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                         }
                     }
                 });
-             });
+            }
         }
 
     }
 
-
-
-    private BigDecimal calcoloImportoUnitario(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) {
+    public BigDecimal calcoloImportoUnitario(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException {
         OrdineAcqComponentSession ordineComponent = Utility.createOrdineAcqComponentSession();
         FatturaOrdineBulk fatturaOrdineBulk1 = null;
         try {
@@ -3672,15 +3687,22 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         } catch (PersistencyException | RemoteException | ComponentException e) {
             handleException(e);
         }
+
         ImportoOrdine importo = new ImportoOrdine();
         importo.setImponibile(fatturaOrdineBulk1.getImImponibile());
         importo.setImportoIvaInd(fatturaOrdineBulk1.getImIvaNd());
-        return getPrezzoUnitarioFattura(importo,fatturaOrdineBulk.getFatturaPassivaRiga().getFattura_passiva());
+        return getPrezzoUnitarioFattura(userContext, importo, fatturaOrdineBulk.getFatturaPassivaRiga());
     }
 
-    public BigDecimal getPrezzoUnitarioFattura(ImportoOrdine importo, Fattura_passivaBulk fatturaPassiva) {
+    private BigDecimal getPrezzoUnitarioFattura(UserContext userContext, ImportoOrdine importo, Fattura_passiva_rigaBulk fatturaPassivaRiga) throws ComponentException {
+        Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache(userContext).getHome(Fattura_passivaBulk.class);
+        fatturaPassivaRiga = (Fattura_passiva_rigaBulk)fatpasHome.loadIfNeededObject(fatturaPassivaRiga);
+        fatturaPassivaRiga.setFattura_passiva((Fattura_passivaBulk)fatpasHome.loadIfNeededObject(fatturaPassivaRiga.getFattura_passiva()));
+        fatturaPassivaRiga.setVoce_iva((Voce_ivaBulk)fatpasHome.loadIfNeededObject(fatturaPassivaRiga.getVoce_iva()));
+
         BigDecimal imponibile = importo.getImponibile();
-        if (fatturaPassiva.isIstituzionale()) {
+
+        if (fatturaPassivaRiga.getFattura_passiva().isIstituzionale() || !fatturaPassivaRiga.getVoce_iva().isDetraibile()) {
             imponibile = imponibile.add(
                     Utility.nvl(importo.getImportoIvaInd())
                             .add(Utility.nvl(importo.getArrAliIva()))
@@ -5705,6 +5727,8 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
         } catch (PersistencyException e) {
             throw handleException(e);
         }
+
+        aggiornaOrdiniMagazzino(aUC, listFatturaOrdiniOld, fatturaPassiva.getFattura_passiva_ordini());
 
         fatturaPassiva = (Fattura_passivaBulk) super.modificaConBulk(aUC, fatturaPassiva);
 
@@ -9667,7 +9691,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
             //Inizio cercando le consegne eliminate
             List<FatturaOrdineBulk> righeFatturaOrdineToBeDeleted = listOld.stream().filter(elOld->
                             listNew.stream().noneMatch(elNew->elNew.getOrdineAcqConsegna().equalsByPrimaryKey(elOld.getOrdineAcqConsegna())))
-                    .collect(Collectors.toList());
+                    .toList();
 
             //Per le consegne da eliminare annullo le scritture prime note effettuate
             for (FatturaOrdineBulk fatturaOrdineToBeDeleted : righeFatturaOrdineToBeDeleted) {

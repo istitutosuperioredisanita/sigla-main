@@ -32,6 +32,7 @@ import it.cnr.jada.bulk.ValidationException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Dictionary;
+import java.util.Optional;
 
 public class Transito_beni_ordiniBulk extends Transito_beni_ordiniBase {
 
@@ -102,66 +103,35 @@ public class Transito_beni_ordiniBulk extends Transito_beni_ordiniBase {
 
 
 	public Timestamp getDtOrdine() {
-		if(getMovimentiMag() != null){
-			if(getMovimentiMag().getLottoMag() !=null){
-				LottoMagBulk lotto = getMovimentiMag().getLottoMag();
-				if(lotto.getOrdineAcqConsegna() != null){
-					OrdineAcqConsegnaBulk ordineAcqCons = lotto.getOrdineAcqConsegna();
-					if(ordineAcqCons != null){
-						OrdineAcqRigaBulk riga = ordineAcqCons.getOrdineAcqRiga();
-						if(riga!=null){
-							OrdineAcqBulk ordine = riga.getOrdineAcq();
-							return ordine.getDataOrdine();
-						}
-					}
-				}
+		OrdineAcqConsegnaBulk ordineAcqCons = this.getOrdineAcqConsegna();
+		if(ordineAcqCons != null) {
+			OrdineAcqRigaBulk riga = ordineAcqCons.getOrdineAcqRiga();
+			if (riga != null) {
+				OrdineAcqBulk ordine = riga.getOrdineAcq();
+				return ordine.getDataOrdine();
 			}
 		}
 		return null;
 	}
 
 	public Boolean isFlOnereConsegnaOrd(){
-		if(getMovimentiMag() != null){
-			if(getMovimentiMag().getLottoMag() !=null){
-				LottoMagBulk lotto = getMovimentiMag().getLottoMag();
-				if(lotto.getOrdineAcqConsegna() != null){
-					if(lotto.getOrdineAcqConsegna()!=null){
-						OrdineAcqConsegnaBulk ordineAcq = lotto.getOrdineAcqConsegna();
-						if(ordineAcq!=null)
-							return ordineAcq.getFlOnere();
-					}
-				}
-			}
-		}
-		return null;
+		return Optional.ofNullable(this.getOrdineAcqConsegna()).map(OrdineAcqConsegnaBulk::getFlOnere).orElse(null);
 	}
+
 	public Boolean getFlOnereConsegnaOrd(){
-		if(getMovimentiMag() != null){
-			if(getMovimentiMag().getLottoMag() !=null){
-				LottoMagBulk lotto = getMovimentiMag().getLottoMag();
-				if(lotto.getOrdineAcqConsegna() != null){
-					if(lotto.getOrdineAcqConsegna()!=null){
-						OrdineAcqConsegnaBulk ordineAcq = lotto.getOrdineAcqConsegna();
-						if(ordineAcq!=null)
-							return ordineAcq.getFlOnere();
-					}
-				}
-			}
-		}
-		return null;
+		return Optional.ofNullable(this.getOrdineAcqConsegna()).map(OrdineAcqConsegnaBulk::getFlOnere).orElse(null);
 	}
 
 	public String getNumeratoreOrdine() {
-		if(getMovimentiMag() != null){
-			if(getMovimentiMag().getLottoMag() !=null){
+		return Optional.ofNullable(this.getOrdineAcqConsegna()).map(OrdineAcqConsegnaBulk::getCdNumeratore).orElse(null);
+	}
+
+	private OrdineAcqConsegnaBulk getOrdineAcqConsegna() {
+		if (getMovimentiMag() != null){
+			if (getMovimentiMag().getLottoMag() !=null){
 				LottoMagBulk lotto = getMovimentiMag().getLottoMag();
-				if(lotto.getOrdineAcqConsegna() != null){
-					if(lotto.getOrdineAcqConsegna()!=null){
-						OrdineAcqConsegnaBulk ordineAcq = lotto.getOrdineAcqConsegna();
-						if(ordineAcq!=null)
-							return ordineAcq.getCdNumeratore();
-					}
-				}
+				if (lotto.getOrdineAcqConsegna() != null)
+					return lotto.getOrdineAcqConsegna();
 			}
 		}
 		return null;
@@ -181,10 +151,7 @@ public class Transito_beni_ordiniBulk extends Transito_beni_ordiniBase {
 		return null;
 	}
 
-
-
 	static {
-
 		ISTITUZIONALE_COMMERCIALE = new it.cnr.jada.util.OrderedHashtable();
 		ISTITUZIONALE_COMMERCIALE.put(ISTITUZIONALE,"Istituzionale");
 		ISTITUZIONALE_COMMERCIALE.put(COMMERCIALE,"Commerciale");
@@ -522,5 +489,9 @@ public void setValore_unitario(java.math.BigDecimal newValore_unitario) {
 
 	public void setFl_search_ann(Boolean fl_search_ann) {
 		this.fl_search_ann = fl_search_ann;
+	}
+
+	public boolean isNotAbledToModifyTipoIstCom() {
+		return Optional.ofNullable(this.getOrdineAcqConsegna()).isPresent();
 	}
 }

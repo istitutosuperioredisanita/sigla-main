@@ -1040,9 +1040,6 @@
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO_BENI">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO_BENI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
-    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO_BENI_H2">
-        <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO_BENI_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
-    </changeSet>
     <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
@@ -1402,6 +1399,9 @@
     </changeSet>
     <changeSet author="sigla" runOnChange="true" id="create-view-V_INTRASTAT_INVIATO">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_INTRASTAT_INVIATO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_INVENTARIO_BENI">
+        <sqlFile dbms="oracle" path="../expsigladb/View/V_INVENTARIO_BENI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
     <changeSet author="sigla" runOnChange="true" id="create-view-V_INVENTARIO_BENI_APG">
         <sqlFile dbms="oracle" path="../expsigladb/View/V_INVENTARIO_BENI_APG.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
@@ -3173,6 +3173,12 @@
     </changeSet>
     <changeSet author="sigla" runOnChange="true" id="create-view-V_BUONO_CARICO_SCARICO_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_BUONO_CARICO_SCARICO.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_CONS_REGISTRO_INVENTARIO_BENI_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_CONS_REGISTRO_INVENTARIO_BENI_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
+    <changeSet author="sigla" runOnChange="true" id="create-view-V_INVENTARIO_BENI_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_INVENTARIO_BENI.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
     <changeSet author="sigla" runOnChange="true" id="create-view-V_INVENTARIO_BENI_APG_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_INVENTARIO_BENI_APG.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>

@@ -1529,13 +1529,10 @@ public class FatturaPassivaComponentSessionBean extends it.cnr.jada.ejb.CRUDComp
         }
     }
 
-
-
-    @Override
-    public BigDecimal getPrezzoUnitarioFattura(UserContext param0,ImportoOrdine param1, Fattura_passivaBulk fatturaPassiva) throws RemoteException, ComponentException, PersistencyException, IntrospectionException   {
+    public BigDecimal calcoloImportoUnitario(UserContext param0, FatturaOrdineBulk param1) throws RemoteException, ComponentException, PersistencyException, IntrospectionException   {
         pre_component_invocation(param0, componentObj);
         try {
-            BigDecimal result = ((FatturaPassivaComponent) componentObj).getPrezzoUnitarioFattura( param1,fatturaPassiva);
+            BigDecimal result = ((FatturaPassivaComponent) componentObj).calcoloImportoUnitario(param0,param1);
             component_invocation_succes(param0, componentObj);
             return result;
 

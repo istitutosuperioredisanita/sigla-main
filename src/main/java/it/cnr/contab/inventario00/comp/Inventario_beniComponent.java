@@ -913,30 +913,16 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 			.filter(Inventario_beniHome.class::isInstance)
 			.map(Inventario_beniHome.class::cast)
 			.orElseThrow(() -> new ComponentException("Cannot find Inventario_beniHome"));
-	
+
 	SQLBuilder sql = home.createSQLBuilder();
 	sql.addClause(clauses);
-
-	sql.addTableToHeader("TERZO");
-	sql.addTableToHeader("UBICAZIONE_BENE");
-	sql.addTableToHeader("ANAGRAFICO");
-	sql.addTableToHeader("UNITA_ORGANIZZATIVA","UNITA_ORGANIZZATIVA_ASS");
-
-	sql.addSQLJoin("INVENTARIO_BENI.CD_ASSEGNATARIO", "TERZO.CD_TERZO");
-	sql.addSQLJoin("INVENTARIO_BENI.CD_UBICAZIONE", "UBICAZIONE_BENE.CD_UBICAZIONE");
-	sql.addSQLJoin("INVENTARIO_BENI.CD_CDS", "UBICAZIONE_BENE.CD_CDS");
-	sql.addSQLJoin("INVENTARIO_BENI.CD_UNITA_ORGANIZZATIVA", "UBICAZIONE_BENE.CD_UNITA_ORGANIZZATIVA");
-
-	sql.addSQLJoin("TERZO.CD_ANAG", "ANAGRAFICO.CD_ANAG");
-	sql.addSQLJoin("ANAGRAFICO.CD_UNITA_ORGANIZZATIVA", "UNITA_ORGANIZZATIVA_ASS.CD_UNITA_ORGANIZZATIVA ");
 
 	Optional.ofNullable(inventario)
 			.ifPresent(idInventarioBulk -> sql.addSQLClause("AND", "PG_INVENTARIO", SQLBuilder.EQUALS, idInventarioBulk.getPg_inventario()));
 	// Aggiunta clausola che visualizzi solo i beni che abbiano
 	//	ESERCIZIO_CARICO_BENE <= Esercizio di scrivania.
-	sql.addClause("AND", "esercizio_carico_bene", sql.LESS_EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
+	sql.addClause(FindClause.AND, "esercizio_carico_bene", SQLBuilder.LESS_EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(userContext));
 
-	
 	return sql;
 	
 }

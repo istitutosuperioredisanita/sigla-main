@@ -8,6 +8,8 @@ public class SharedResource {
 
     private String val03;
 
+    private String val04;
+
     public String getVal01() {
         return val01;
     }
@@ -30,5 +32,13 @@ public class SharedResource {
 
     public void setVal03(String val03) {
         this.val03 = val03;
+    }
+
+    public String getVal04() {
+        return val04;
+    }
+
+    public void setVal04(String val04) {
+        this.val04 = val04;
     }
 }

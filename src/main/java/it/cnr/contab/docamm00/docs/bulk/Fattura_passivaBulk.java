@@ -3571,7 +3571,8 @@ public abstract class Fattura_passivaBulk
                 existARowInventoried() ||
                 isEstera() || isSanMarinoSenzaIVA() || isSanMarinoSenzaIVA()
                 || (isGenerataDaCompenso() && getPg_fattura_passiva() != null)
-                || isStampataSuRegistroIVA());
+                || isStampataSuRegistroIVA()
+                || !this.getFattura_passiva_ordini().isEmpty());
     }
 
     public boolean isROStatoTrasmissioneLettera() {

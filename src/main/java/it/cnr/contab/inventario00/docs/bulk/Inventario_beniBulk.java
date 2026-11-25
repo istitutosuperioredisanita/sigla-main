@@ -1094,6 +1094,39 @@ public class Inventario_beniBulk extends Inventario_beniBase {
 			return false;
 		return transito.getFlOnereConsegnaOrd();
 	}
+
+	// denominazione_sede: è il valore di valore denominazione_sede preso dalla vista V_INVENTARIO_BENI
+	private String denominazione_sede;
+
+	// ds_ubicazione_bene: è il valore di valore ds_ubicazione_bene preso dalla vista V_INVENTARIO_BENI
+	private String ds_ubicazione_bene;
+
+	// cd_uo_assegnatario: è il valore di valore cd_uo_assegnatario preso dalla vista V_INVENTARIO_BENI
+	private String cd_uo_assegnatario;
+
+	public String getDenominazione_sede() {
+		return denominazione_sede;
+	}
+
+	public void setDenominazione_sede(String denominazione_sede) {
+		this.denominazione_sede = denominazione_sede;
+	}
+
+	public String getDs_ubicazione_bene() {
+		return ds_ubicazione_bene;
+	}
+
+	public void setDs_ubicazione_bene(String ds_ubicazione_bene) {
+		this.ds_ubicazione_bene = ds_ubicazione_bene;
+	}
+
+	public String getCd_uo_assegnatario() {
+		return cd_uo_assegnatario;
+	}
+
+	public void setCd_uo_assegnatario(String cd_uo_assegnatario) {
+		this.cd_uo_assegnatario = cd_uo_assegnatario;
+	}
 }
 
 

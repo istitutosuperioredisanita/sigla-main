@@ -46,6 +46,7 @@ public class FatturaOrdineBulk extends FatturaOrdineBase {
 	public final static Dictionary OPERAZIONE_IMPEGNO_NOTA_CREDITO;
 	public final static String OPERAZIONE_IMPEGNO_NC_USA_ORDINE = "O";
 	public final static String OPERAZIONE_IMPEGNO_NC_USA_DIVERSO = "D";
+	public final static BigDecimal SCOSTAMENTO = new BigDecimal("0.03");
 	private String operazioneImpegnoNotaCredito;
 	static{
 		OPERAZIONE_IMPEGNO_NOTA_CREDITO = new it.cnr.jada.util.OrderedHashtable();

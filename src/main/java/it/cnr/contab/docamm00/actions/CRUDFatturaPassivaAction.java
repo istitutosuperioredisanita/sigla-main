@@ -81,6 +81,7 @@ import org.springframework.data.util.Pair;
 
 import jakarta.ejb.EJBException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -4508,14 +4509,17 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             //Controllo importi
             CRUDFatturaPassivaBP bp = (CRUDFatturaPassivaBP) context.getBusinessProcess();
             Fattura_passivaBulk fatturaPassivaBulk = (Fattura_passivaBulk) bp.getModel();
-       if (bp.isAttivoChekcImpIntrastat() && fatturaPassivaBulk.validaImportoDettagliIntrastat())
-           return openConfirm(context, "Attenzione! La somma dell'ammontare dei dettagli Intrastat supera l'importo massimo  "+ fatturaPassivaBulk.getImportoIntrastatTotDaRighe().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
-       return doConfirmImportoIntrastat(context, OptionBP.YES_BUTTON);
+            if (bp.getFatturaOrdiniController().isDirty()) {
+                bp.setMessage(FormBP.WARNING_MESSAGE, "Attenzione! Bisogna finalizzare l'operazione di riscontro a valore prima di procedere al salvataggio.");
+                return context.findDefaultForward();
+            }
+
+            if (bp.isAttivoChekcImpIntrastat() && fatturaPassivaBulk.validaImportoDettagliIntrastat())
+                return openConfirm(context, "Attenzione! La somma dell'ammontare dei dettagli Intrastat supera l'importo massimo  "+ fatturaPassivaBulk.getImportoIntrastatTotDaRighe().toString()+". Vuoi continuare?", OptionBP.CONFIRM_YES_NO, "doConfirmImportoIntrastat");
+            return doConfirmImportoIntrastat(context, OptionBP.YES_BUTTON);
         } catch (Throwable e) {
             return super.handleException(context, e);
         }
-
-
     }
 
     public Forward doConfermaRiscontroAValore(ActionContext context) throws BusinessProcessException {
@@ -5756,9 +5760,16 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                     .filter(CRUDFatturaPassivaBP.class::isInstance)
                     .map(CRUDFatturaPassivaBP.class::cast)
                     .orElseThrow(() -> new DetailedRuntimeException("Business Process non valido"));
-            Fattura_passivaBulk fattura_passivaBulk = (Fattura_passivaBulk) bp.getModel();
             FatturaOrdineBulk fatturaOrdineBulk = (FatturaOrdineBulk) bp.getFatturaOrdiniController().getModel();
+            BigDecimal imImponibileRettificatoOld = fatturaOrdineBulk.getImImponibileRettificato();
             bp.calcolaRettificaOrdine(context, fatturaOrdineBulk);
+            if (imImponibileRettificatoOld!=null) {
+                BigDecimal imImponibileRettificatoNew = fatturaOrdineBulk.getImImponibileRettificato();
+                BigDecimal diff = imImponibileRettificatoOld.subtract(imImponibileRettificatoNew);
+                if (diff.abs().compareTo(FatturaOrdineBulk.SCOSTAMENTO) <= 0) {
+                    fatturaOrdineBulk.setImImponibileRettificato(imImponibileRettificatoOld);
+                }
+            }
             return context.findDefaultForward();
         } catch (Throwable t) {
             return handleException(context, t);
@@ -5796,19 +5807,41 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                     .filter(CRUDFatturaPassivaBP.class::isInstance)
                     .map(CRUDFatturaPassivaBP.class::cast)
                     .orElseThrow(() -> new DetailedRuntimeException("Business Process non valido"));
-            Fattura_passivaBulk fattura_passivaBulk = (Fattura_passivaBulk) bp.getModel();
             FatturaOrdineBulk fatturaOrdineBulk = (FatturaOrdineBulk) bp.getFatturaOrdiniController().getModel();
             BigDecimal imImponibileRettificatoOld = fatturaOrdineBulk.getImImponibileRettificato();
             fillModel(context);
-           if (
-                    Optional.ofNullable(fatturaOrdineBulk.getImImponibileRettificato())
-                            .map(im -> im.compareTo(fatturaOrdineBulk.getImImponibile()) > 0)
-                            .orElse(Boolean.FALSE)
-            ) {
+            if (Optional.ofNullable(fatturaOrdineBulk.getImImponibileRettificato())
+                    .map(im -> im.compareTo(fatturaOrdineBulk.getImImponibile()) > 0)
+                    .orElse(Boolean.FALSE)) {
                 fatturaOrdineBulk.setImImponibileRettificato(imImponibileRettificatoOld);
                 throw new ValidationException("Non è possibile aumentare l'importo dell'imponibile, rispetto a quello originario "
                         + new java.text.DecimalFormat("#,##0.00").format(fatturaOrdineBulk.getImImponibile()));
             }
+
+            // fattore = prodotto di (1 - sconto/100); gli sconti null valgono 0%
+            BigDecimal fattore = BigDecimal.ONE;
+            for (BigDecimal s : new BigDecimal[] { Utility.nvl(fatturaOrdineBulk.getSconto1Rett(), fatturaOrdineBulk.getOrdineAcqConsegna().getOrdineAcqRiga().getSconto1()),
+                    Utility.nvl(fatturaOrdineBulk.getSconto2Rett(), fatturaOrdineBulk.getOrdineAcqConsegna().getOrdineAcqRiga().getSconto2()),
+                    Utility.nvl(fatturaOrdineBulk.getSconto3Rett(), fatturaOrdineBulk.getOrdineAcqConsegna().getOrdineAcqRiga().getSconto3()) }) {
+                if (s == null) continue;
+                if (s.signum() < 0 || s.compareTo(BigDecimal.valueOf(100)) >= 0) {
+                    throw new IllegalArgumentException("Sconto non valido: " + s);
+                }
+                fattore = fattore.multiply(BigDecimal.ONE.subtract(s.movePointLeft(2)));
+            }
+
+            BigDecimal moltiplicatore = fatturaOrdineBulk.getOrdineAcqConsegna().getQuantita().multiply(fattore);
+            BigDecimal prezzo = fatturaOrdineBulk.getImImponibileRettificato().divide(moltiplicatore, 6, RoundingMode.HALF_UP);
+
+            // controllo di coerenza: ricalcolando in avanti l'imponibile deve tornare identico nell'ambito di uno scostamento di 0.03
+            BigDecimal verifica = prezzo.multiply(moltiplicatore).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal diff = verifica.subtract(fatturaOrdineBulk.getImImponibileRettificato().setScale(2, RoundingMode.HALF_UP));
+            if (diff.abs().compareTo(FatturaOrdineBulk.SCOSTAMENTO) > 0) {
+                throw new IllegalStateException("Prezzo " + prezzo
+                        + " non coerente con l'imponibile " + fatturaOrdineBulk.getImImponibileRettificato());
+            }
+            fatturaOrdineBulk.setPrezzoUnitarioRett(prezzo);
+            bp.calcolaRettificaOrdine(context, fatturaOrdineBulk);
             return context.findDefaultForward();
         } catch (Throwable t) {
             return handleException(context, t);
@@ -5824,6 +5857,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
                     .orElseThrow(() -> new DetailedRuntimeException("Business Process non valido"));
             if (voceIva != null){
                 fatturaOrdineBulk.setVoceIva(voceIva);
+                bp.getFatturaOrdiniController().setDirty(true);
                 bp.setDirty(true);
             }
             bp.calcolaRettificaOrdine(context, fatturaOrdineBulk);
@@ -5843,6 +5877,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             fatturaOrdineBulk.setVoceIva(new Voce_ivaBulk());
             bp.calcolaRettificaOrdine(context, fatturaOrdineBulk);
             bp.setDirty(true);
+            bp.getFatturaOrdiniController().setDirty(true);
             return context.findDefaultForward();
         } catch (Throwable t) {
             return handleException(context, t);

@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -269,6 +270,15 @@ public class ActionDeployments extends DeploymentsH2 {
             } catch (TimeoutException e) {
                 LOGGER.error("Cannot find button {} dopo {} tentativi timeout", buttonLocator, attempts, e);
                 salvaScreenshot("findAndClickButton_" + buttonLocator);
+                try {
+                    Files.writeString(Path.of("target/page.html"), browser.getPageSource());
+                    Files.writeString(Path.of("target/desktop.html"), browser.getPageSource());
+                    Files.writeString(Path.of("target/menu_tree.html"), browser.getPageSource());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                ((TakesScreenshot) browser).getScreenshotAs(OutputType.FILE)
+                        .renameTo(new File("target/fail.png"));
                 throw e;
             } catch (StaleElementReferenceException e) {
                 LOGGER.warn("Cannot find button {} dopo {} tentativi", buttonLocator, attempts, e);

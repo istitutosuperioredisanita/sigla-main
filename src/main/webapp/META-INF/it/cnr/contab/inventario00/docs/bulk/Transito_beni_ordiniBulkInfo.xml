@@ -436,7 +436,8 @@
 		name="ti_istituzionale_commerciale"
 		property="ti_commerciale_istituzionale"
 		keysProperty="ti_istituzionale_commercialeKeys"
-		label="Tipo Bene" 
+		readonlyProperty="notAbledToModifyTipoIstCom"
+		label="Tipo Bene"
 		inputType="RADIOGROUP"/>
 
 	<fieldProperty

@@ -796,35 +796,35 @@ protected Query select(UserContext userContext,CompoundFindClause clauses,Oggett
 						if (listaInventario != null){
 							getHomeCache(userContext).fetchAll(userContext);
 							for(Inventario_beniBulk bene:listaInventario){
-									ImportoOrdine importo = new ImportoOrdine();
-									importo.setImponibile(fatturaOrd.getImImponibile());
-									importo.setImportoIvaInd(fatturaOrd.getImIvaNd());
-
-									BigDecimal importoUnitarioFattura = fatturaPassivaComponent.getPrezzoUnitarioFattura(userContext,importo,fatturaOrd.getFatturaPassivaRiga().getFattura_passiva());
-									/*da verificare */
-									if (bene.getValore_iniziale().compareTo(importoUnitarioFattura) != 0) {
-										bene.setValore_iniziale(importoUnitarioFattura);
-										bene.setToBeUpdated();
-									}
-									try {
-										Ass_inv_bene_fatturaBulk ass = new Ass_inv_bene_fatturaBulk();
-										ass.setRiga_fatt_pass((Fattura_passiva_rigaIBulk) fatturaOrd.getFatturaPassivaRiga());
-										ass.setInventario(bene.getInventario());
-										ass.setTest_buono(dettaglio.getBuono_cs());
-										ass.setNr_inventario(bene.getNr_inventario());
-										ass.setPerAumentoValore(Boolean.FALSE);
-										ass.setProgressivo(bene.getProgressivo());
-										BuonoCaricoScaricoComponentSession h = EJBCommonServices.createEJB(
-												"CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",
-												BuonoCaricoScaricoComponentSession.class);
-										ass.setPg_riga(h.findMaxAssociazione(userContext, ass));
-										ass.setToBeCreated();
-										super.creaConBulk(userContext, ass);
-									} catch (ComponentException | RemoteException e) {
-										handleException(e);
-									}
-									super.modificaConBulk(userContext, bene);
-
+								bene = (Inventario_beniBulk)inventario_beniComponent.inizializzaBulkPerModifica(userContext, bene);
+								BigDecimal importoUnitarioFattura = fatturaPassivaComponent.calcoloImportoUnitario(userContext, fatturaOrd).setScale(2, RoundingMode.HALF_UP);
+								/*da verificare */
+								if (bene.getValore_iniziale().compareTo(importoUnitarioFattura) != 0) {
+									bene.setValore_unitario(importoUnitarioFattura);
+									BigDecimal diff = bene.getValore_iniziale().subtract(importoUnitarioFattura);
+									// e la aggiungo/sottraggo al valore da ammortizzare
+									bene.setImponibile_ammortamento(bene.getImponibile_ammortamento()
+											.subtract(diff));
+									bene.setToBeUpdated();
+									inventario_beniComponent.modificaConBulk(userContext, bene);
+								}
+								try {
+									Ass_inv_bene_fatturaBulk ass = new Ass_inv_bene_fatturaBulk();
+									ass.setRiga_fatt_pass((Fattura_passiva_rigaIBulk) fatturaOrd.getFatturaPassivaRiga());
+									ass.setInventario(bene.getInventario());
+									ass.setTest_buono(dettaglio.getBuono_cs());
+									ass.setNr_inventario(bene.getNr_inventario());
+									ass.setPerAumentoValore(Boolean.FALSE);
+									ass.setProgressivo(bene.getProgressivo());
+									BuonoCaricoScaricoComponentSession h = EJBCommonServices.createEJB(
+											"CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",
+											BuonoCaricoScaricoComponentSession.class);
+									ass.setPg_riga(h.findMaxAssociazione(userContext, ass));
+									ass.setToBeCreated();
+									super.creaConBulk(userContext, ass);
+								} catch (ComponentException | RemoteException e) {
+									handleException(e);
+								}
 							}
 						}else{
 							throw new ComponentException();

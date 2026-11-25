@@ -19,6 +19,9 @@ package it.cnr.contab.ordmag.magazzino.comp;
 
 import it.cnr.contab.coepcoan00.core.bulk.*;
 import it.cnr.contab.config00.sto.bulk.EnteBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaBulk;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passivaHome;
+import it.cnr.contab.docamm00.docs.bulk.Fattura_passiva_rigaBulk;
 import it.cnr.contab.docamm00.docs.bulk.TipoDocumentoEnum;
 import it.cnr.contab.docamm00.tabrif.bulk.*;
 import it.cnr.contab.inventario00.docs.bulk.Transito_beni_ordiniBulk;
@@ -388,7 +391,9 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 
     public MovimentiMagBulk creaMovimentoRettificaValoreOrdine(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws ComponentException {
         try {
-            return  creaMovimentoRettificaValoreOrdine(userContext, fatturaOrdineBulk.getOrdineAcqConsegna(),
+			Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHome(userContext, Fattura_passivaBulk.class);
+			fatturaOrdineBulk.setOrdineAcqConsegna((OrdineAcqConsegnaBulk) fatpasHome.loadIfNeededObject(fatturaOrdineBulk.getOrdineAcqConsegna()));
+            return creaMovimentoRettificaValoreOrdine(userContext, fatturaOrdineBulk.getOrdineAcqConsegna(),
                             recuperoPrezzoUnitario(userContext, fatturaOrdineBulk.getOrdineAcqConsegna()),
                             recuperoPrezzoUnitarioRettificato(userContext, fatturaOrdineBulk));
         } catch (RemoteException | PersistencyException e) {
@@ -1042,8 +1047,14 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 	private ImportoOrdine recuperoPrezzoUnitarioRettificato(UserContext userContext, FatturaOrdineBulk fatturaOrdineBulk) throws RemoteException, ComponentException, PersistencyException{
 		OrdineAcqComponentSession ordineComponent = Utility.createOrdineAcqComponentSession();
 
+		//Carico oggetti necessari se mancano
+		Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache(userContext).getHome(Fattura_passivaBulk.class);
+		fatturaOrdineBulk.setFatturaPassivaRiga((Fattura_passiva_rigaBulk)fatpasHome.loadIfNeededObject(fatturaOrdineBulk.getFatturaPassivaRiga()));
+		fatturaOrdineBulk.getFatturaPassivaRiga().setFattura_passiva((Fattura_passivaBulk)fatpasHome.loadIfNeededObject(fatturaOrdineBulk.getFatturaPassivaRiga().getFattura_passiva()));
+
 		FatturaOrdineBulk fatturaOrdineBulk1 =  ordineComponent.calcolaImportoOrdine(userContext, fatturaOrdineBulk, true);
 		ImportoOrdine importo = new ImportoOrdine();
+		importo.setIvaCommerciale(fatturaOrdineBulk.getFatturaPassivaRiga().getFattura_passiva().isCommerciale());
 		importo.setImponibile(fatturaOrdineBulk1.getImImponibile());
 		importo.setImportoIvaInd(fatturaOrdineBulk1.getImIvaNd());
 		return importo;
@@ -1054,10 +1065,15 @@ public class MovimentiMagComponent extends CalcolaImportiMagComponent implements
 	}*/
 
 	private ImportoOrdine recuperoPrezzoUnitario(UserContext userContext, OrdineAcqConsegnaBulk cons) throws RemoteException, ComponentException{
+		Fattura_passivaHome fatpasHome = (Fattura_passivaHome)getHomeCache(userContext).getHome(Fattura_passivaBulk.class);
     	OrdineAcqComponentSession ordineComponent = Utility.createOrdineAcqComponentSession();
         ParametriCalcoloImportoOrdine parametri = new ParametriCalcoloImportoOrdine();
-    	OrdineAcqRigaBulk riga = cons.getOrdineAcqRiga();
+
+		cons.setOrdineAcqRiga((OrdineAcqRigaBulk) fatpasHome.loadIfNeededObject(cons.getOrdineAcqRiga()));
+		OrdineAcqRigaBulk riga = cons.getOrdineAcqRiga();
+		riga.setOrdineAcq((OrdineAcqBulk) fatpasHome.loadIfNeededObject(riga.getOrdineAcq()));
         OrdineAcqBulk ordine = riga.getOrdineAcq();
+
 		try {
 			getHomeCache(userContext).fetchAll(userContext);
 		} catch (PersistencyException e) {

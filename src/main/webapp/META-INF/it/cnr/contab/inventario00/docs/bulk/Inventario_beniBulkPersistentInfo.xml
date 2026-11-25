@@ -43,8 +43,8 @@
 			columnName="CD_CONDIZIONE_BENE"
 			propertyName="condizioneBene.cd_condizione_bene"/>
 		<columnMapping
-				columnName="ID_TRANSITO_BENI_ORDINI"
-				propertyName="transito_beni_ordini.id"/>
+			columnName="ID_TRANSITO_BENI_ORDINI"
+			propertyName="transito_beni_ordini.id"/>
 
 		<addColumnMapping
 			propertyName="nuovo_bene_padre.inventario.pg_inventario" />
@@ -130,23 +130,23 @@
 	</columnMap>
 	<columnMap
 			name="INVENTARIO_BENI_DETT"
-			tableName="INVENTARIO_BENI"
+			tableName="V_INVENTARIO_BENI"
 			extends="default">
 		<columnMapping
-				columnName="TERZO.DENOMINAZIONE_SEDE"
-				propertyName="assegnatario.denominazione_sede"
-				sqlTypeName="VARCHAR"
-				columnSize="200"/>
+			columnName="DENOMINAZIONE_SEDE"
+			propertyName="denominazione_sede"
+			sqlTypeName="VARCHAR"
+			columnSize="200"/>
 		<columnMapping
-				columnName="UBICAZIONE_BENE.DS_UBICAZIONE_BENE"
-				propertyName="ubicazione.ds_ubicazione_bene"
-				sqlTypeName="VARCHAR"
-				columnSize="200"/>
+			columnName="DS_UBICAZIONE_BENE"
+			propertyName="ds_ubicazione_bene"
+			sqlTypeName="VARCHAR"
+			columnSize="200"/>
 		<columnMapping
-				columnName="UNITA_ORGANIZZATIVA_ASS.CD_UNITA_ORGANIZZATIVA"
-				propertyName="assegnatario.anagrafico.unitaOrganizzativa.cd_unita_organizzativa"
-				sqlTypeName="VARCHAR"
-				columnSize="200"
+			columnName="CD_UO_ASSEGNATARIO"
+			propertyName="cd_uo_assegnatario"
+			sqlTypeName="VARCHAR"
+			columnSize="200"
 		/>
 	</columnMap>
 	
@@ -177,6 +177,12 @@
 		name="nuovo_bene_padre" />
 	<persistentProperty
 		name="nuova_categoria" />
+	<persistentProperty
+		name="denominazione_sede" />
+	<persistentProperty
+		name="ds_ubicazione_bene" />
+	<persistentProperty
+		name="cd_uo_assegnatario" />
     <fetchPolicy
 		name="it.cnr.contab.inventario00.comp.Aggiornamento_inventarioComponent.findAssegnatarioCondizione">
 		<exclude pattern="*"/>

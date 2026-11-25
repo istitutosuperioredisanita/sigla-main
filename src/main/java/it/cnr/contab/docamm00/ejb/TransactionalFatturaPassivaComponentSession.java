@@ -1491,12 +1491,11 @@ public class TransactionalFatturaPassivaComponentSession extends it.cnr.jada.ejb
         }
     }
 
-
     @Override
-    public BigDecimal getPrezzoUnitarioFattura(UserContext param0, ImportoOrdine param1, Fattura_passivaBulk fatturaPassiva ) throws RemoteException, ComponentException, PersistencyException, IntrospectionException {
+    public BigDecimal calcoloImportoUnitario(UserContext param0, FatturaOrdineBulk param1) throws RemoteException, ComponentException, PersistencyException, IntrospectionException {
         try {
-            return (BigDecimal) invoke("getPrezzoUnitarioFattura", new Object[]{
-                     param1,fatturaPassiva});
+            return (BigDecimal) invoke("calcoloImportoUnitario", new Object[]{
+                    param0,param1});
         } catch (java.rmi.RemoteException e) {
             throw e;
         } catch (java.lang.reflect.InvocationTargetException e) {

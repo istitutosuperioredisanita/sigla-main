@@ -30,9 +30,12 @@ import it.cnr.contab.docamm00.tabrif.bulk.SezionaleBulk;
 import it.cnr.contab.docamm00.tabrif.bulk.SezionaleHome;
 import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileBulk;
 import it.cnr.contab.doccont00.core.bulk.IScadenzaDocumentoContabileHome;
+import it.cnr.contab.gestiva00.core.bulk.Report_statoBulk;
+import it.cnr.contab.gestiva00.core.bulk.Report_statoHome;
 import it.cnr.contab.util.Utility;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.bulk.BulkList;
+import it.cnr.jada.bulk.BusyResourceException;
 import it.cnr.jada.bulk.OggettoBulk;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.CRUDComponent;
@@ -41,12 +44,12 @@ import it.cnr.jada.comp.ICRUDMgr;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.FindClause;
-import it.cnr.jada.persistency.sql.LoggableStatement;
 import it.cnr.jada.persistency.sql.SQLBuilder;
-
+import it.cnr.jada.util.DateUtils;
 import jakarta.ejb.EJBException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
@@ -131,34 +134,26 @@ public IDocumentoAmministrativoBulk calcoloConsuntivi (UserContext aUC, IDocumen
 
 	return documentoAmministrativo;
 }
-private void callVerifyDataRegistrazione(
-	UserContext userContext, 
-	AutofatturaBulk autofattura)
-	throws  ComponentException {
+private void callVerifyDataRegistrazione(UserContext userContext, AutofatturaBulk autofattura) throws  ComponentException {
+	Report_statoHome reportStatoHome = (Report_statoHome)getHome(userContext, Report_statoBulk.class);
+	Report_statoBulk lastRegistroStampato = null;
+	try {
+		lastRegistroStampato = reportStatoHome.getLastRegitroIvaStampato(autofattura.getCd_cds_origine(),
+				autofattura.getCd_uo_origine(),
+				autofattura.getEsercizio(),
+				autofattura.getCd_tipo_sezionale());
+	} catch (PersistencyException | BusyResourceException e) {
+		throw new RuntimeException(e);
+	}
 
-	LoggableStatement cs = null;
-	try	{
-		cs = new LoggableStatement(getConnection(userContext), 
-			"{ call " +
-			it.cnr.jada.util.ejb.EJBCommonServices.getDefaultSchema() +
-			"CNRCTB100.chkDtRegistrazPerIva(?, ?, ?, ?, ?) }",false,this.getClass());
-		cs.setString(1, autofattura.getCd_cds_origine());
-		cs.setString(2, autofattura.getCd_uo_origine());
-		cs.setInt(3, autofattura.getEsercizio().intValue());
-		cs.setString(4, autofattura.getCd_tipo_sezionale());
-		cs.setTimestamp(5, autofattura.getDt_registrazione());
-		
-		cs.executeQuery();
-		
-	} catch (Throwable e) {
-		throw handleException(autofattura, e);
-	} finally {
-		try {
-			if (cs != null) cs.close();
-		} catch (java.sql.SQLException e) {
-			throw handleException(autofattura, e);
+	if (lastRegistroStampato!=null && lastRegistroStampato.getDt_fine()!=null) {
+		Date dtFineRegistroStampato = lastRegistroStampato.getDt_fine();
+
+		if (!DateUtils.truncate(autofattura.getDt_registrazione()).after(DateUtils.truncate(dtFineRegistroStampato))) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			throw new ComponentException("Data registrazione inferiore/uguale a ultimo periodo definitivo di stampa registri IVA " + dateFormat.format(dtFineRegistroStampato));
 		}
- 	}
+	}
 }
 //^^@@
 /** 
