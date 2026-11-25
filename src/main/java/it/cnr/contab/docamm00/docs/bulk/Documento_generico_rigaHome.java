@@ -188,7 +188,13 @@ public class Documento_generico_rigaHome extends BulkHome {
         sql.addClause(FindClause.AND, "cd_tipo_documento_amm", SQLBuilder.EQUALS, docRiga.getCd_tipo_documento_amm());
         sql.addClause(FindClause.AND, "pg_documento_generico", SQLBuilder.EQUALS, docRiga.getPg_documento_generico());
         sql.addClause(FindClause.AND, "progressivo_riga", SQLBuilder.EQUALS, docRiga.getProgressivo_riga());
-        return home.fetchAll(sql);
+        List<Documento_generico_riga_ecoBulk> riga_ecoBulkList = home.fetchAll(sql);
+        // FIX NPE in validate: ripristina il riferimento alla riga padre,
+        // non valorizzato automaticamente dal caricamento DB.
+        Optional.ofNullable(riga_ecoBulkList).ifPresent(list -> list.stream()
+                .filter(Objects::nonNull)
+                .forEach(el -> el.setDocumento_generico_rigaBulk(docRiga)));
+        return new BulkList<>(Optional.ofNullable(riga_ecoBulkList).orElse(new ArrayList<>()));
     }
 
     private ContoBulk getContoEconomicoDefault(UserContext userContext, Documento_generico_rigaBulk docRiga) throws ComponentException {

@@ -1187,6 +1187,24 @@ public class Documento_generico_rigaBulk extends Documento_generico_rigaBase imp
         this.righeEconomica = righeEconomica;
     }
 
+	/**
+	 * Aggiunge una riga analitica (COGE/COAN) al documento,
+	 * impostando il riferimento alla riga padre.
+	 * Stessa logica di Fattura_passiva_rigaBulk.addToRigheEconomica.
+	 */
+    public int addToRigheEconomica(Documento_generico_riga_ecoBulk nuovoRigo) {
+        nuovoRigo.setDocumento_generico_rigaBulk(this);
+        nuovoRigo.setImporto(BigDecimal.ZERO);
+        if (this.getRigheEconomica() == null)
+            this.setRigheEconomica(new BulkList<>());
+        this.getRigheEconomica().add(nuovoRigo);
+        return this.getRigheEconomica().size() - 1;
+    }
+
+    public Documento_generico_riga_ecoBulk removeFromRigheEconomica(int index) {
+        return this.getRigheEconomica().remove(index);
+    }
+
     @Override
     public ContoBulk getVoce_ep() {
         return voce_ep;

@@ -82,9 +82,26 @@ public class DetailEcoCogeCRUDController extends CollapsableDetailCRUDController
     @Override
     protected void validate(ActionContext actioncontext, OggettoBulk oggettobulk) throws ValidationException {
         super.validate(actioncontext, oggettobulk);
-        IDocumentoDetailAnaCogeBulk model = (IDocumentoDetailAnaCogeBulk)oggettobulk;
-        if (model.getFather().getVoce_ep().isAnaliticaEnabled())
-            if (model.getVoce_analitica()==null || model.getVoce_analitica().getCd_voce_ana()==null)
+
+        // Evita NPE se getFather() è null nelle righe caricate da DB.
+        // Recupera il dettaglio dal controller padre, come in writeTfoot,
+        // oppure segnala un errore di validazione.
+        if (!(oggettobulk instanceof IDocumentoDetailAnaCogeBulk))
+            return;
+        IDocumentoDetailAnaCogeBulk bulk = (IDocumentoDetailAnaCogeBulk)oggettobulk;
+        //Se il riferimento al padre non è valorizzato si utilizza il dettaglio economico selezionato nel controller padre
+        final Optional<IDocumentoDetailEcoCogeBulk> father = Optional.<IDocumentoDetailEcoCogeBulk>ofNullable(bulk.getFather())
+                .or(() -> Optional.ofNullable(this.getParentModel())
+                        .filter(IDocumentoDetailEcoCogeBulk.class::isInstance)
+                        .map(IDocumentoDetailEcoCogeBulk.class::cast));
+        if (father.isEmpty())
+            throw new ValidationException("Impossibile individuare il dettaglio del documento associato alla riga analitica!");
+        final boolean isAnaliticaEnabled = father
+                .map(IDocumentoDetailEcoCogeBulk::getVoce_ep)
+                .map(ContoBulk::isAnaliticaEnabled)
+                .orElse(Boolean.FALSE);
+        if (isAnaliticaEnabled)
+            if (bulk.getVoce_analitica()==null || bulk.getVoce_analitica().getCd_voce_ana()==null)
                 throw new ValidationException("E' obbligatorio indicare la voce analitica!");
     }
 
