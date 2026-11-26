@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import it.cnr.contab.config00.bulk.Configurazione_cnrBulk;
 import it.cnr.contab.inventario00.docs.bulk.*;
 import it.cnr.contab.inventario01.ejb.BuonoCaricoScaricoComponentSession;
+import it.cnr.contab.util.Utility;
 import it.cnr.jada.action.*;
 import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ComponentException;
@@ -41,8 +42,10 @@ import it.cnr.jada.util.jsp.Button;
  
 public class CRUDInventarioBeniBP extends SimpleCRUDBP {
 	private boolean isVisualizzazione=false;
-	
 	private boolean isPubblicazione = false;
+	private boolean isGestioneBeneDismessoInventarioAttivo = false;
+    public boolean searchButtonHidden=Boolean.FALSE;
+    public boolean freeSearchButtonHidden=Boolean.FALSE;
 
 	private final SimpleDetailCRUDController vUtilizzatori = new SimpleDetailCRUDController("VUtilizzatori",Utilizzatore_CdrVBulk.class,"v_utilizzatoriColl",this){
 		public void validate(ActionContext context,OggettoBulk model) throws ValidationException {
@@ -65,286 +68,309 @@ public class CRUDInventarioBeniBP extends SimpleCRUDBP {
 
 	private final SimpleDetailCRUDController utilizzatori = new SimpleDetailCRUDController("Utilizzatori",Inventario_utilizzatori_laBulk.class,"buono_cs_utilizzatoriColl",vUtilizzatori);	
 	
+    public CRUDInventarioBeniBP() {
+        super();
+        setTab("tab","tabInventarioBeni");
+        setTab("tabInventarioBeniUtilizzatori","tabInventarioBeniUtilizzatori");
+        setTab("tabInventarioBeniProprieta","tabInventarioBeniProprieta");
+        setTab("tabInventarioBeniAmmortamento","tabInventarioBeniAmmortamento");
+    }
 
-public CRUDInventarioBeniBP() {
-	super();
-	setTab("tab","tabInventarioBeni");
-	setTab("tabInventarioBeniUtilizzatori","tabInventarioBeniUtilizzatori");
-	setTab("tabInventarioBeniProprieta","tabInventarioBeniProprieta");
-	setTab("tabInventarioBeniAmmortamento","tabInventarioBeniAmmortamento");
-}
+    public CRUDInventarioBeniBP(String function) {
+        super(function);
+    }
+    /**
+     * Restituisce il valore della proprietà 'utilizzatori'
+     *
+     * @return utilizzatori <code>SimpleDetailCRUDController</code> il valore
+     */
+    public final SimpleDetailCRUDController getUtilizzatori() {
+        return utilizzatori;
+    }
+    /**
+     * Restituisce il valore della proprietà 'vutilizzatori'
+     *
+     * @return Il valore della proprietà 'vutilizzatori'
+     */
+    public final SimpleDetailCRUDController getVutilizzatori() {
+        return vUtilizzatori;
+    }
+    /**
+     * Imposta come attivi i tab di default.
+     *
+     * @param context <code>ActionContext</code>
+     */
 
-public CRUDInventarioBeniBP(String function) {
-	super(function);
-}
-/**
- * Restituisce il valore della proprietà 'utilizzatori'
- *
- * @return utilizzatori <code>SimpleDetailCRUDController</code> il valore
- */
-public final SimpleDetailCRUDController getUtilizzatori() {
-	return utilizzatori;
-}
-/**
- * Restituisce il valore della proprietà 'vutilizzatori'
- *
- * @return Il valore della proprietà 'vutilizzatori'
- */
-public final SimpleDetailCRUDController getVutilizzatori() {
-	return vUtilizzatori;
-}
-/**
- * Imposta come attivi i tab di default.
- *
- * @param context <code>ActionContext</code>
- */
+    protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
 
-protected void init(it.cnr.jada.action.Config config,it.cnr.jada.action.ActionContext context) throws it.cnr.jada.action.BusinessProcessException {
+        super.init(config,context);
+        resetTabs();
+        Configurazione_cnrBulk.stepFineAnno(context.getUserContext(), Configurazione_cnrBulk.StepFineAnno.FINE_INVENTARIAZIONE);
+        try {
+            BuonoCaricoScaricoComponentSession session = (BuonoCaricoScaricoComponentSession)createComponentSession("CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",BuonoCaricoScaricoComponentSession.class);
+            setVisualizzazione(session.isEsercizioCOEPChiuso(context.getUserContext()));
+            isGestioneBeneDismessoInventarioAttivo = Utility.createConfigurazioneCnrComponentSession().isGestioneBeneDismessoInventarioAttivo(context.getUserContext());
+        } catch (ComponentException | RemoteException e) {
+            throw handleException(e);
+        }
+    }
 
-	super.init(config,context);
-	resetTabs();
-	Configurazione_cnrBulk.stepFineAnno(context.getUserContext(), Configurazione_cnrBulk.StepFineAnno.FINE_INVENTARIAZIONE);
-	try {	
-		BuonoCaricoScaricoComponentSession session = (BuonoCaricoScaricoComponentSession)createComponentSession("CNRINVENTARIO01_EJB_BuonoCaricoScaricoComponentSession",BuonoCaricoScaricoComponentSession.class);
-		setVisualizzazione(session.isEsercizioCOEPChiuso(context.getUserContext()));			
-	} catch (ComponentException | RemoteException e) {
-		throw handleException(e);
+    /**
+     * Reimplementato per consentire di abilitare o disabilitare il campo <I>Collocazione</I>,
+     *	in base alla Categoria Gruppo Inventario alla quale appartiene il Bene che si sta modificando.
+     *
+     * @param context il <code>ActionContext</code> che contiene le informazioni relative alla richiesta
+     * @param bulk il <code>OggettoBulk</code> Bene che si sta modificando
+     *
+     * @return bene il <code>OggettoBulk</code> inizializzato per la modifica
+    **/
+    public OggettoBulk initializeModelForEdit(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
+        String cd_pubblicazioni;
+        try {
+            Inventario_beniBulk bene;
+            bulk = super.initializeModelForEdit(context, bulk);
+            if (bulk instanceof ROWrapper){
+                bene = (Inventario_beniBulk)((ROWrapper)bulk).getBulk();
+            } else {
+                bene = (Inventario_beniBulk)bulk;
+            }
+
+            //Inventario_beniBulk bene = (Inventario_beniBulk)
+
+            it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk categoria_gruppo = bene.getCategoria_Bene();
+            cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), Integer.valueOf(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
+            if(cd_pubblicazioni != null && categoria_gruppo.getCd_categoria_padre()!=null){
+                //setIsPubblicazione(categoria_gruppo.getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni));
+                bene.setPubblicazione(categoria_gruppo.getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni));
+            }
+            else bene.setPubblicazione(false);
+
+            return bulk;
+        } catch(Throwable e) {
+            throw new it.cnr.jada.action.BusinessProcessException(e);
+        }
+    }
+
+    /**
+      * Nascondo il pulsante di "Elimina", nel form di Gestione del Bene
+      *	Non è possibile cancellare un Bene presente sul DB, se non <I>scaricandolo totalmente</I>,
+      *	con un Buono di Scarico.
+      *
+      * @return <code>boolean</code> TRUE
+    **/
+    public boolean isDeleteButtonHidden() {
+        return true;
+    }
+
+    /**
+      * Nascondo il pulsante di "Nuovo", nel form di Gestione del Bene
+      *	Non è possibile creare un Bene, se non con un Buono di Carico
+      *
+      * @return <code>boolean</code> TRUE
+    **/
+    public boolean isNewButtonHidden() {
+        return true;
+    }
+
+    /**
+     * Restituisce TRUE se il bene NON è soggetto ad Ammortamento. E' l'utente a decidere, nel
+     *	tab "Ammortamento", se un bene è soggetto ad ammortamento oppure no, selezionando
+     *	il flag <I>Soggetto ad Ammortamento</I>.
+     *
+     * @return <code>boolean</code>
+     */
+    public boolean isNonAmmortizzato() {
+
+        Inventario_beniBulk bene = (Inventario_beniBulk)getModel();
+        if (bene!=null && bene.getFl_ammortamento() != null){
+            return !bene.getFl_ammortamento();
+        }
+
+        return false;
+    }
+
+    /**
+     * Restituisce true se la Categoria Gruppo alla quale appartiene il Bene, NON è soggetta
+     *	ad ammortamento (CATEGORIA_GRUPPPO_INVENT.FL_AMMORTAMENTO==FALSE)
+     *
+     * @return <code>boolean</code>
+     */
+    public boolean isNotAmmortizzabile() {
+
+        Inventario_beniBulk bene = (Inventario_beniBulk)getModel();
+        if (bene!=null && bene.getCategoria_Bene() != null && bene.getCategoria_Bene().getFl_ammortamento() != null){
+            return !bene.getCategoria_Bene().getFl_ammortamento();
+        }
+
+        return true;
+    }
+
+    /**
+     * Restituisce TRUE se la Categoria Gruppo Inventario alla quale appartiene il bene è una
+     *	Pubblicazione.
+     *
+     * @return <code>boolean</code>
+     */
+    public boolean isPubblicazione() {
+        return isPubblicazione;
+    }
+
+    /**
+     * Determina se il campo relativo al <code>Valore Iniziale</code> è READONLY.
+     * Oltre alle normali condizioni, restituisce <code>true</code>, se il bene proviene da migrazione, (FL_MIGRATO='Y').
+     *
+     * @return boolean
+     */
+    public boolean isROvaloreIniziale() {
+
+        OggettoBulk bulk = getModel();
+
+        if (bulk == null)
+            return true;
+
+        boolean readonly= isSearching()
+                        || isInputReadonly()
+                        || (bulk instanceof ROWrapper);
+
+        if (bulk instanceof Inventario_beniBulk)
+            return this.isEditing();
+
+        return readonly;
+
+    }
+    public boolean isSaveButtonEnabled() {
+
+        Inventario_beniBulk bene = (Inventario_beniBulk)getModel();
+
+        if (!isViewing() && bene != null){
+            return (bene.getCrudStatus() != OggettoBulk.UNDEFINED
+                && bene.getCrudStatus() != OggettoBulk.TO_BE_CREATED);
+        }
+
+        return false;
+    }
+    /**
+      * Abilito il pulsante di "Visualizza accessori", nel form di Gestione del Bene.
+      *	Restituisce TRUE se il bene NON è a sua volta un bene accessorio.
+      *
+      * @return <code>boolean</code> TRUE
+    **/
+    public boolean isViewAccessoriButtonEnabled() {
+
+        Inventario_beniBulk bene = (Inventario_beniBulk) getModel();
+
+        if (bene != null && bene.getNr_inventario() != null)
+            return !bene.isBeneAccessorio();
+
+        return false;
+    }
+    public boolean isDettagliButtonEnabled() {
+
+        Inventario_beniBulk bene = (Inventario_beniBulk) getModel();
+
+        if (bene != null && bene.getNr_inventario() != null && bene.getHa_dettagli() !=null)
+            return bene.getHa_dettagli();
+        return false;
+    }
+    public boolean isFattura_collButtonEnabled() {
+
+        Inventario_beniBulk bene = (Inventario_beniBulk) getModel();
+
+        if (bene != null && bene.getNr_inventario() != null && bene.getDa_fattura()!=null )
+            return bene.getDa_fattura();
+        return false;
+    }
+
+    public void resetTabs() {
+        setTab("tab","tabInventarioBeniTestata");
+    }
+    /**
+     * Imposta il valore della proprietà 'isPubblicazione'
+     *
+     * @param newIsPubblicazione <code>boolean</code> il nuovo valore
+     */
+    public void setIsPubblicazione(boolean newIsPubblicazione) {
+
+         isPubblicazione = newIsPubblicazione;
+    }
+    /**
+     * Metodo invocato dal SimpleDetailCRUDController vUtilizzatori quando si passa
+     * da un CdR utilizzatore all'altro.
+     * Controlla se la percentuale di utilizzo delle linee di attività, per
+     * CdR, è valida.
+     *
+     * @param context il <code>ActionContext</code> che contiene le informazioni relative alla richiesta
+     * @param model il <code>OggettoBulk</code> Bene che si sta modificando
+    **/
+    public void validate_Percentuali_LA(ActionContext context,OggettoBulk model) throws ValidationException {
+
+        Utilizzatore_CdrVBulk cdrUtilizzatore = (Utilizzatore_CdrVBulk)model;
+
+        SimpleBulkList utilizzatori_LA = cdrUtilizzatore.getBuono_cs_utilizzatoriColl();
+        java.math.BigDecimal percentuale_utilizzo_LA = new java.math.BigDecimal("0");
+        Vector cdr = new Vector();
+        java.math.BigDecimal cento = new java.math.BigDecimal(100);
+        if (utilizzatori_LA.size()>0){
+            for (Object o : utilizzatori_LA) {
+                Inventario_utilizzatori_laBulk utilizzatore_LA = (Inventario_utilizzatori_laBulk) o;
+
+                // Controlla che sia stata specificata la line di Attività
+                if (utilizzatore_LA.getLinea_attivita() == null || utilizzatore_LA.getLinea_attivita().getCd_linea_attivita() == null) {
+                    throw new ValidationException("GAE non valido. Indicare sia il codice del GAE, sia la sua percentuale di utilizzo");
+                }
+
+                // Controlla che non vi siano Linee di Attività DUPLICATE
+                if (BulkCollections.containsByPrimaryKey(cdr, utilizzatore_LA.getLinea_attivita())) {
+                    throw new ValidationException("GAE duplicato. Non è possibile indicare più volte uno stesso GAE");
+                } else {
+                    cdr.add(utilizzatore_LA.getLinea_attivita());
+                }
+
+                // Controlla che sia stata indicata una PERCENTUALE DI UTILIZZO VALIDA per Linea di Attività
+                if (utilizzatore_LA.getPercentuale_utilizzo_la() != null) {
+                    percentuale_utilizzo_LA = percentuale_utilizzo_LA.add(utilizzatore_LA.getPercentuale_utilizzo_la());
+                } else {
+                    throw new ValidationException("La percentuale di utilizzo per i GAE non può essere nulla");
+                }
+            }
+
+            // Controlla che il totale delle percentuali di utilizzo delle Linee di Attività sia 100
+            if (percentuale_utilizzo_LA.compareTo(cento)!=0)
+                throw new ValidationException ("La percentuale di utilizzo per i GAE non è valida");
+        }
+    }
+
+    public boolean isVisualizzazione() {
+        return isVisualizzazione;
+    }
+
+    public void setVisualizzazione(boolean b) {
+        isVisualizzazione = b;
+    }
+
+    public boolean isEditable() {
+            return !isVisualizzazione()&&super.isEditable();
+    }
+
+	public boolean isGestioneBeneDismessoInventarioAttivo() {
+		return isGestioneBeneDismessoInventarioAttivo;
 	}
-}
-/**
- * Reimplementato per consentire di abilitare o disabilitare il campo <I>Collocazione</I>,
- *	in base alla Categoria Gruppo Inventario alla quale appartiene il Bene che si sta modificando.
- *
- * @param context il <code>ActionContext</code> che contiene le informazioni relative alla richiesta
- * @param bulk il <code>OggettoBulk</code> Bene che si sta modificando
- *
- * @return bene il <code>OggettoBulk</code> inizializzato per la modifica
-**/
-public OggettoBulk initializeModelForEdit(ActionContext context,OggettoBulk bulk) throws BusinessProcessException {
-	
-	String cd_pubblicazioni;
-	try {
-		Inventario_beniBulk bene;
-		bulk = super.initializeModelForEdit(context, bulk);
-		if (bulk instanceof ROWrapper){
-			bene = (Inventario_beniBulk)((ROWrapper)bulk).getBulk();
-		} else {
-			bene = (Inventario_beniBulk)bulk;
-		}
-			
-		//Inventario_beniBulk bene = (Inventario_beniBulk)
-		
-		it.cnr.contab.docamm00.tabrif.bulk.Categoria_gruppo_inventBulk categoria_gruppo = bene.getCategoria_Bene();
-		cd_pubblicazioni = ((it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession)it.cnr.jada.util.ejb.EJBCommonServices.createEJB("CNRCONFIG00_EJB_Configurazione_cnrComponentSession", it.cnr.contab.config00.ejb.Configurazione_cnrComponentSession.class)).getVal01(context.getUserContext(), Integer.valueOf(0), "*", "CD_CATEGORIA_GRUPPO_SPECIALE", "PUBBLICAZIONI");
-		if(cd_pubblicazioni != null && categoria_gruppo.getCd_categoria_padre()!=null){
-			//setIsPubblicazione(categoria_gruppo.getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni));
-			bene.setPubblicazione(categoria_gruppo.getCd_categoria_padre().equalsIgnoreCase(cd_pubblicazioni));
-		}
-		else bene.setPubblicazione(false);
-		
-		return bulk;
-	} catch(Throwable e) {
-		throw new it.cnr.jada.action.BusinessProcessException(e);
-	}
-}
-/**
-  * Nascondo il pulsante di "Elimina", nel form di Gestione del Bene
-  *	Non è possibile cancellare un Bene presente sul DB, se non <I>scaricandolo totalmente</I>,
-  *	con un Buono di Scarico.
-  *
-  * @return <code>boolean</code> TRUE
-**/
-public boolean isDeleteButtonHidden() {
 
-	return true;
-}
-/**
-  * Nascondo il pulsante di "Nuovo", nel form di Gestione del Bene
-  *	Non è possibile creare un Bene, se non con un Buono di Carico
-  *
-  * @return <code>boolean</code> TRUE
-**/
-public boolean isNewButtonHidden() {
-	
-	return true;
-}
-/**
- * Restituisce TRUE se il bene NON è soggetto ad Ammortamento. E' l'utente a decidere, nel
- *	tab "Ammortamento", se un bene è soggetto ad ammortamento oppure no, selezionando
- *	il flag <I>Soggetto ad Ammortamento</I>.
- *
- * @return <code>boolean</code>
- */
-public boolean isNonAmmortizzato() {
+    public void setSearchButtonHidden(boolean searchButtonHidden) {
+        this.searchButtonHidden = searchButtonHidden;
+    }
 
-	Inventario_beniBulk bene = (Inventario_beniBulk)getModel();
-	if (bene!=null && bene.getFl_ammortamento() != null){
-		return !bene.getFl_ammortamento();
-	}
-	
-	return false;
-}
-/**
- * Restituisce true se la Categoria Gruppo alla quale appartiene il Bene, NON è soggetta
- *	ad ammortamento (CATEGORIA_GRUPPPO_INVENT.FL_AMMORTAMENTO==FALSE)
- *
- * @return <code>boolean</code>
- */
-public boolean isNotAmmortizzabile() {
+    public void setFreeSearchButtonHidden(boolean freeSearchButtonHidden) {
+        this.freeSearchButtonHidden = freeSearchButtonHidden;
+    }
 
-	Inventario_beniBulk bene = (Inventario_beniBulk)getModel();
-	if (bene!=null && bene.getCategoria_Bene() != null && bene.getCategoria_Bene().getFl_ammortamento() != null){
-		return !bene.getCategoria_Bene().getFl_ammortamento();
-	}
-	
-	return true;
-}
-/**
- * Restituisce TRUE se la Categoria Gruppo Inventario alla quale appartiene il bene è una
- *	Pubblicazione.
- *
- * @return <code>boolean</code>
- */
-public boolean isPubblicazione() {
-	
-	return isPubblicazione;
-}
-/**
- * Determina se il campo relativo al <code>Valore Iniziale</code> è READONLY.
- * Oltre alle normali condizioni, restituisce <code>true</code>, se il bene proviene da migrazione, (FL_MIGRATO='Y').
- *
- * @return boolean
- */
-public boolean isROvaloreIniziale() {
+    @Override
+    public boolean isSearchButtonHidden() {
+        return searchButtonHidden || super.isSearchButtonHidden();
+    }
 
-	OggettoBulk bulk = getModel();
-	
-	if (bulk == null)
-		return true;
-		
-	boolean readonly= isSearching()
-					|| isInputReadonly()
-					|| (bulk instanceof ROWrapper);
-	
-	if (bulk instanceof Inventario_beniBulk){
-		Inventario_beniBulk beneBulk = (Inventario_beniBulk)bulk;
-
-		return this.isEditing();
-	}
-
-	return readonly;
-		
-}
-public boolean isSaveButtonEnabled() {
-
-	Inventario_beniBulk bene = (Inventario_beniBulk)getModel();
-
-	if (!isViewing() && bene != null){
-		return (bene.getCrudStatus() != OggettoBulk.UNDEFINED
-			&& bene.getCrudStatus() != OggettoBulk.TO_BE_CREATED);
-	}
-
-	return false;
-}
-/**
-  * Abilito il pulsante di "Visualizza accessori", nel form di Gestione del Bene.
-  *	Restituisce TRUE se il bene NON è a sua volta un bene accessorio.
-  *
-  * @return <code>boolean</code> TRUE
-**/
-public boolean isViewAccessoriButtonEnabled() {
-
-    Inventario_beniBulk bene = (Inventario_beniBulk) getModel();
-
-    if (bene != null && bene.getNr_inventario() != null)
-        return !bene.isBeneAccessorio();
-
-    return false;
-}
-public boolean isDettagliButtonEnabled() {
-
-	Inventario_beniBulk bene = (Inventario_beniBulk) getModel();
-
-	if (bene != null && bene.getNr_inventario() != null && bene.getHa_dettagli() !=null)
-		return bene.getHa_dettagli();
-	return false;
-}
-public boolean isFattura_collButtonEnabled() {
-
-	Inventario_beniBulk bene = (Inventario_beniBulk) getModel();
-	
-	if (bene != null && bene.getNr_inventario() != null && bene.getDa_fattura()!=null )
-		return bene.getDa_fattura();
-	return false;
-}
-
-public void resetTabs() {
-	setTab("tab","tabInventarioBeniTestata");
-}
-/**
- * Imposta il valore della proprietà 'isPubblicazione'
- *
- * @param newIsPubblicazione <code>boolean</code> il nuovo valore
- */
-public void setIsPubblicazione(boolean newIsPubblicazione) {
-	
-	 isPubblicazione = newIsPubblicazione;	 
-}
-/**
- * Metodo invocato dal SimpleDetailCRUDController vUtilizzatori quando si passa
- * da un CdR utilizzatore all'altro.
- * Controlla se la percentuale di utilizzo delle linee di attività, per 
- * CdR, è valida.
- *
- * @param context il <code>ActionContext</code> che contiene le informazioni relative alla richiesta
- * @param model il <code>OggettoBulk</code> Bene che si sta modificando
-**/ 
-public void validate_Percentuali_LA(ActionContext context,OggettoBulk model) throws ValidationException {
-
-	Utilizzatore_CdrVBulk cdrUtilizzatore = (Utilizzatore_CdrVBulk)model;
-
-	SimpleBulkList utilizzatori_LA = cdrUtilizzatore.getBuono_cs_utilizzatoriColl();
-	java.math.BigDecimal percentuale_utilizzo_LA = new java.math.BigDecimal("0");
-	Vector cdr = new Vector();
-	java.math.BigDecimal cento = new java.math.BigDecimal(100);
-	if (utilizzatori_LA.size()>0){
-		for (Object o : utilizzatori_LA) {
-			Inventario_utilizzatori_laBulk utilizzatore_LA = (Inventario_utilizzatori_laBulk) o;
-
-			// Controlla che sia stata specificata la line di Attività
-			if (utilizzatore_LA.getLinea_attivita() == null || utilizzatore_LA.getLinea_attivita().getCd_linea_attivita() == null) {
-				throw new ValidationException("GAE non valido. Indicare sia il codice del GAE, sia la sua percentuale di utilizzo");
-			}
-
-			// Controlla che non vi siano Linee di Attività DUPLICATE
-			if (BulkCollections.containsByPrimaryKey(cdr, utilizzatore_LA.getLinea_attivita())) {
-				throw new ValidationException("GAE duplicato. Non è possibile indicare più volte uno stesso GAE");
-			} else {
-				cdr.add(utilizzatore_LA.getLinea_attivita());
-			}
-
-			// Controlla che sia stata indicata una PERCENTUALE DI UTILIZZO VALIDA per Linea di Attività
-			if (utilizzatore_LA.getPercentuale_utilizzo_la() != null) {
-				percentuale_utilizzo_LA = percentuale_utilizzo_LA.add(utilizzatore_LA.getPercentuale_utilizzo_la());
-			} else {
-				throw new ValidationException("La percentuale di utilizzo per i GAE non può essere nulla");
-			}
-		}
-
-		// Controlla che il totale delle percentuali di utilizzo delle Linee di Attività sia 100
-		if (percentuale_utilizzo_LA.compareTo(cento)!=0)
-			throw new ValidationException ("La percentuale di utilizzo per i GAE non è valida");
-	}
-}
-
-public boolean isVisualizzazione() {
-	return isVisualizzazione;
-}
-
-public void setVisualizzazione(boolean b) {
-	isVisualizzazione = b;
-}
-public boolean isEditable() {
-		return !isVisualizzazione()&&super.isEditable();
-}
+    @Override
+    public boolean isFreeSearchButtonHidden() {
+        return freeSearchButtonHidden || super.isFreeSearchButtonHidden();
+    }
 }

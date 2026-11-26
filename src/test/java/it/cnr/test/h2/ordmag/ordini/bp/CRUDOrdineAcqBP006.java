@@ -35,16 +35,16 @@ import java.util.UUID;
 
 /**
  * Test di:
- * 1) creazione ordine commerciale con 1 riga consegna con 2 beni inventariali
- * 2) evasione riga consegna
- * 3) verifica scrittura economica/analitica su consegna
- * 4) verifica inserimento bene in transito
- * 5) annullamento evasione riga consegna
- * 6) verifica annullamento bene in transito
- * 7) nuova evasione riga consegna
- * 8) verifica inserimento bene in transito e completamento per successiva inventariazione
- * 9) inventariazione bene in transito
- * 10) annullamento evasione riga consegna non consentita per bene inventariato
+ * 1) creazione ordine commerciale con 1 riga consegna con 3 beni inventariali
+ * 2) evasione riga consegna di tutti e 3 beni inventariali
+ * 3) verifica inserimento beni in transito e completamento per successiva inventariazione del primo bene
+ * 4) Inventariazione primo bene
+ * 5) registrazione fattura con riscontro valore su riga consegna dei 3 beni di cui uno inventariato e 2 in transito. Cambio prezzo a 140.
+ * 6) Verifica che il valore del bene inventariato si sia aggiornato dopo il riscontro a valore.
+ * 7) Completamento per successiva inventariazione del secondo bene di cui risulta già pervenuta fattura. Verifica che il valore del bene in transito si sia aggiornato dopo il riscontro a valore.
+ * 8) Inventariazione secondo bene di cui risulta già pervenuta fattura.
+ * 9) Verifica che il valore del secondo bene inventariato sia corretto con quello rideterminato con il riscontro a valore..
+ * 10) verifica scritture economica/analitica su consegna e movimenti di magazzino
  */
 @ExtendWith(StopOnFirstFailure.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -316,116 +316,10 @@ public class CRUDOrdineAcqBP006 extends ActionDeployments {
     }
 
     /**
-     * 3) verifica scrittura economica/analitica su consegna
+     * 3) verifica inserimento beni in transito e completamento per successiva inventariazione del primo bene
      */
     @Test
     @Order(4)
-    public void testVerificaScritturaOrdine001() {
-        //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
-        switchToFrameMenu();
-        doSelezionaMenu(ORD_ORDACQ_M);
-
-        switchToFrameWorkspace();
-
-        //Ricerco l’ordine
-        doClickButton("doNuovaRicerca()");
-
-        doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
-        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
-        doClickButton("doSearch(main.findUnitaOperativaOrd)");
-
-        doClickButton("doBlankSearch(main.findNumerazioneOrd)");
-        doWriteIntoElement("main.findNumerazioneOrd.cdNumeratore", CD_NUMERATORE);
-        doClickButton("doSearch(main.findNumerazioneOrd)");
-
-        String pgOrdineCreated = sharedResource.getVal01();
-        doWriteIntoElement("main.numero", pgOrdineCreated);
-
-        doClickButton("doCerca()");
-
-        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
-
-        //Vado sul dettaglio analitico a livello di Ordine
-        doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
-        doSelectTableRow("main.Dati Analitici",0);
-
-        Assertions.assertEquals("A22012", getTableColumnElement("main.Dati Analitici",0,1).getText());
-        Assertions.assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,2).getText());
-        Assertions.assertEquals("000.000.000", getTableColumnElement("main.Dati Analitici",0,3).getText());
-        Assertions.assertEquals("PTEST001", getTableColumnElement("main.Dati Analitici",0,4).getText());
-        Assertions.assertEquals("450,00", getTableColumnElement("main.Dati Analitici",0,5).getText());
-        assertTableRowAbsent("main.Dati Analitici",1);
-
-        //Vado sul dettaglio a livello riga Ordine
-        doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
-        doSelectTableRow("main.Righe",0);
-
-        doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineRigaResultDetailEcoCoge')");
-
-        Assertions.assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
-        Assertions.assertEquals("450,00", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
-        Assertions.assertEquals("450,00", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
-        Assertions.assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
-
-        doSelectTableRow("main.Righe.Dati Coge/Coan",0);
-
-        Assertions.assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,1).getText());
-        Assertions.assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
-        Assertions.assertEquals("450,00", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
-        assertTableRowAbsent("main.Righe.Dati Coge/Coan",1);
-
-        //Vado sulla tab ‘consegne’
-        doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");
-
-        //Vado sulla tab ‘consegne’ e verifico che la riga consegna n. 1 sia in stato ‘EVASA’ e la consegna
-        GrapheneElement rowElement1 = null;
-        if (getTableColumnElement("main.Righe.Consegne",0, 1).getText().equals("1"))
-            rowElement1 = getTableRowElement("main.Righe.Consegne",0);
-        else if (getTableColumnElement("main.Righe.Consegne",1, 1).getText().equals("1"))
-            rowElement1 = getTableRowElement("main.Righe.Consegne",1);
-        else
-            Assertions.fail("Riga consegna 1 non individuata");
-
-        //Verifico che la riga consegna n. 1 sia in stato ‘EVASA’ e la consegna n. 2 ancora in stato INSERITA. Entrambe ‘Non Associate’.
-        Assertions.assertEquals("Evasa", getTableColumnElement(rowElement1,5).getText());
-        Assertions.assertEquals("Non Associata", getTableColumnElement(rowElement1,6).getText());
-
-        //Mi posiziono sulla prima consegna
-        rowElement1.click();
-
-        //Entro su ‘scrittura economica’.
-        doClickButton("submitForm('doVisualizzaEconomica');");
-
-        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
-        Assertions.assertEquals("450,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
-        Assertions.assertEquals("450,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
-
-        //Nella sezione ‘Dare’ è presente correttamente il conto di costo: C13003
-        doClickButton("doTab('tab','tabDare')");
-        Assertions.assertEquals("A22012", getTableColumnElement("main.MovimentiDare",0,1).getText());
-        Assertions.assertEquals("450,00", getTableColumnElement("main.MovimentiDare",0,5).getText());
-        assertTableRowAbsent("main.MovimentiDare",1);
-
-        //Nella sezione ‘Avere’ è presente correttamente il conto fatture da ricevere: P00047.
-        doClickButton("doTab('tab','tabAvere')");
-        Assertions.assertEquals("P00047", getTableColumnElement("main.MovimentiAvere",0,1).getText());
-        Assertions.assertEquals("450,00", getTableColumnElement("main.MovimentiAvere",0,5).getText());
-        assertTableRowAbsent("main.MovimentiAvere",1);
-
-        doClickButton("doChiudiForm()");
-        doClickButton("submitForm('doVisualizzaAnalitica');");
-
-        //Restituisce messaggio di "Scrittura Analitica non presente!"
-        Assertions.assertEquals("Scrittura Analitica non presente!", handleTextAlert(browser));
-
-        doClickButton("doChiudiForm()");
-    }
-
-    /**
-     * 4) verifica inserimento beni in transito e completamento per successiva inventariazione del primo bene
-     */
-    @Test
-    @Order(5)
     public void testVerificaBeneInTransito001() {
         //Verifico che il bene sia in transito
         switchToFrameMenu();
@@ -484,10 +378,10 @@ public class CRUDOrdineAcqBP006 extends ActionDeployments {
     }
 
     /**
-     * 5) Inventariazione primo bene
+     * 4) Inventariazione primo bene
      */
     @Test
-    @Order(6)
+    @Order(5)
     public void testInventariazioneBeneInTransito001() {
         //Verifico che il bene sia in transito
         switchToFrameMenu();
@@ -538,10 +432,10 @@ public class CRUDOrdineAcqBP006 extends ActionDeployments {
     }
 
     /*
-     * 6) registrazione fattura con riscontro valore su riga consegna dei 3 beni di cui uno inventariato e 2 in transito. Cambio prezzo a 140.
+     * 5) registrazione fattura con riscontro valore su riga consegna dei 3 beni di cui uno inventariato e 2 in transito. Cambio prezzo a 140.
      */
     @Test
-    @Order(12)
+    @Order(6)
     public void testRiscontroValore001() {
         switchToFrameMenu();
         doApriMenu(AMM_FATTUR);
@@ -651,10 +545,10 @@ public class CRUDOrdineAcqBP006 extends ActionDeployments {
     }
 
     /*
-     * 7) Verifica che il valore del bene inventariato si sia aggiornato dopo il riscontro a valore.
+     * 6) Verifica che il valore del bene inventariato si sia aggiornato dopo il riscontro a valore.
      */
     @Test
-    @Order(13)
+    @Order(7)
     public void testVerificoValoreInizialeBene001() {
         switchToFrameMenu();
         doApriMenu(AMM_INVENT_GESTBE);
@@ -679,11 +573,11 @@ public class CRUDOrdineAcqBP006 extends ActionDeployments {
     }
 
     /**
-     * 8) Completamento per successiva inventariazione del secondo bene di cui risulta già pervenuta fattura.
+     * 7) Completamento per successiva inventariazione del secondo bene di cui risulta già pervenuta fattura.
      *    Verifica che il valore del bene in transito si sia aggiornato dopo il riscontro a valore.
      */
     @Test
-    @Order(14)
+    @Order(8)
     public void testVerificaBeneInTransito002() {
         //Verifico che il bene sia in transito
         switchToFrameMenu();
@@ -742,10 +636,10 @@ public class CRUDOrdineAcqBP006 extends ActionDeployments {
     }
 
     /**
-     * 9) Inventariazione secondo bene di cui risulta già pervenuta fattura.
+     * 8) Inventariazione secondo bene di cui risulta già pervenuta fattura.
      */
     @Test
-    @Order(15)
+    @Order(9)
     public void testInventariazioneBeneInTransito002() {
         //Verifico che il bene sia in transito
         switchToFrameMenu();
@@ -796,10 +690,10 @@ public class CRUDOrdineAcqBP006 extends ActionDeployments {
     }
 
     /**
-     * 10) Verifica che il valore del secondo bene inventariato sia corretto con quello rideterminato con il riscontro a valore..
+     * 9) Verifica che il valore del secondo bene inventariato sia corretto con quello rideterminato con il riscontro a valore..
      */
     @Test
-    @Order(16)
+    @Order(10)
     public void testVerificoValoreInizialeBene002() {
         switchToFrameMenu();
         doSelezionaMenu(AMM_INVENT_GESTBE_M);
@@ -821,4 +715,154 @@ public class CRUDOrdineAcqBP006 extends ActionDeployments {
 
         doClickButton("doChiudiForm()");
     }
+
+    /**
+     * 10) verifica scritture economica/analitica su consegna e movimenti di magazzino
+     */
+    @Test
+    @Order(11)
+    public void testVerificaScritturaOrdine001() {
+        //Verifico che la scrittura sull'ordine sia stata eseguita correttamente
+        switchToFrameMenu();
+        doSelezionaMenu(ORD_ORDACQ_M);
+
+        switchToFrameWorkspace();
+
+        //Ricerco l’ordine
+        doClickButton("doNuovaRicerca()");
+
+        doClickButton("doBlankSearch(main.findUnitaOperativaOrd)");
+        doWriteIntoElement("main.findUnitaOperativaOrd.cdUnitaOperativa", CD_UNITA_OPERATIVA);
+        doClickButton("doSearch(main.findUnitaOperativaOrd)");
+
+        doClickButton("doBlankSearch(main.findNumerazioneOrd)");
+        doWriteIntoElement("main.findNumerazioneOrd.cdNumeratore", CD_NUMERATORE);
+        doClickButton("doSearch(main.findNumerazioneOrd)");
+
+        String pgOrdineCreated = sharedResource.getVal01();
+        doWriteIntoElement("main.numero", pgOrdineCreated);
+
+        doClickButton("doCerca()");
+
+        Assertions.assertEquals(AlertMessage.MESSAGE_RICERCA_MONO_RECORD.value(), handleTextAlert(browser));
+
+        //Vado sul dettaglio analitico a livello di Ordine
+        doClickButton("doTab('tab','tabOrdineResultDetailEcoCoge')");
+        doSelectTableRow("main.Dati Analitici",0);
+
+        Assertions.assertEquals("A22012", getTableColumnElement("main.Dati Analitici",0,1).getText());
+        Assertions.assertEquals(" ", getTableColumnElement("main.Dati Analitici",0,2).getText());
+        Assertions.assertEquals("000.000.000", getTableColumnElement("main.Dati Analitici",0,3).getText());
+        Assertions.assertEquals("PTEST001", getTableColumnElement("main.Dati Analitici",0,4).getText());
+        Assertions.assertEquals("420,00", getTableColumnElement("main.Dati Analitici",0,5).getText());
+        assertTableRowAbsent("main.Dati Analitici",1);
+
+        //Vado sul dettaglio a livello riga Ordine
+        doClickButton("doTab('tab','tabOrdineAcqDettaglio')");
+        doSelectTableRow("main.Righe",0);
+
+        doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineRigaResultDetailEcoCoge')");
+
+        Assertions.assertEquals("A22012", getGrapheneElement("main.Righe.find_voce_ep.cd_voce_ep").getAttribute("value"));
+        Assertions.assertEquals("420,00", getGrapheneElement("imCostoEcoConsegne").getAttribute("value"));
+        Assertions.assertEquals("420,00", getGrapheneElement("imCostoEcoRipartitoConsegne").getAttribute("value"));
+        Assertions.assertEquals("0,00", getGrapheneElement("imCostoEcoDaRipartireConsegne").getAttribute("value"));
+
+        doSelectTableRow("main.Righe.Dati Coge/Coan",0);
+
+        Assertions.assertEquals("PTEST001", getTableColumnElement("main.Righe.Dati Coge/Coan",0,1).getText());
+        Assertions.assertEquals("000.000.000", getTableColumnElement("main.Righe.Dati Coge/Coan",0,2).getText());
+        Assertions.assertEquals("420,00", getTableColumnElement("main.Righe.Dati Coge/Coan",0,3).getText());
+        assertTableRowAbsent("main.Righe.Dati Coge/Coan",1);
+
+        //Vado sulla tab ‘consegne’
+        doClickButton("doTab('tabOrdineAcqDettagli','tabOrdineConsegna')");
+
+        //Vado sulla tab ‘consegne’ e verifico che la riga consegna n. 1 sia in stato ‘EVASA’ e la consegna
+        GrapheneElement rowElement1 = null;
+        if (getTableColumnElement("main.Righe.Consegne",0, 1).getText().equals("1"))
+            rowElement1 = getTableRowElement("main.Righe.Consegne",0);
+        else if (getTableColumnElement("main.Righe.Consegne",1, 1).getText().equals("1"))
+            rowElement1 = getTableRowElement("main.Righe.Consegne",1);
+        else
+            Assertions.fail("Riga consegna 1 non individuata");
+
+        //Verifico che la riga consegna n. 1 sia in stato ‘EVASA’ e la consegna n. 2 ancora in stato INSERITA. Entrambe ‘Non Associate’.
+        Assertions.assertEquals("Evasa", getTableColumnElement(rowElement1,5).getText());
+        Assertions.assertEquals("Associata Totalmente", getTableColumnElement(rowElement1,6).getText());
+
+        //Mi posiziono sulla prima consegna
+        rowElement1.click();
+
+        //Entro su ‘scrittura economica’.
+        doClickButton("submitForm('doVisualizzaEconomica');");
+
+        //Seleziono la prima scrittura nata con l'evasione dell'ordine
+        getTableRowElement("mainTable",0).click();
+
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
+        Assertions.assertEquals("450,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
+        Assertions.assertEquals("450,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
+
+        //Nella sezione ‘Dare’ è presente correttamente il conto: A22012
+        doClickButton("doTab('tab','tabDare')");
+        Assertions.assertEquals("A22012", getTableColumnElement("main.MovimentiDare",0,1).getText());
+        Assertions.assertEquals("450,00", getTableColumnElement("main.MovimentiDare",0,5).getText());
+        assertTableRowAbsent("main.MovimentiDare",1);
+
+        //Nella sezione ‘Avere’ è presente correttamente il conto fatture da ricevere: P00047.
+        doClickButton("doTab('tab','tabAvere')");
+        Assertions.assertEquals("P00047", getTableColumnElement("main.MovimentiAvere",0,1).getText());
+        Assertions.assertEquals("450,00", getTableColumnElement("main.MovimentiAvere",0,5).getText());
+        assertTableRowAbsent("main.MovimentiAvere",1);
+
+        doClickButton("doChiudiForm()");
+
+        //Entro nuovamente su ‘scrittura economica’.
+        doClickButton("submitForm('doVisualizzaEconomica');");
+
+        //Seleziono la seconda scrittura nata con il riscontro a valore
+        getTableRowElement("mainTable",1).click();
+
+        Assertions.assertEquals("Y", getGrapheneElement("main.attiva").getAttribute("value"));
+        Assertions.assertEquals("30,00", getGrapheneElement("main.imTotaleDare").getAttribute("value"));
+        Assertions.assertEquals("30,00", getGrapheneElement("main.imTotaleAvere").getAttribute("value"));
+
+        //Nella sezione ‘Dare’ è presente correttamente il conto fatture da ricevere: P00047
+        doClickButton("doTab('tab','tabDare')");
+        Assertions.assertEquals("P00047", getTableColumnElement("main.MovimentiDare",0,1).getText());
+        Assertions.assertEquals("30,00", getTableColumnElement("main.MovimentiDare",0,5).getText());
+        assertTableRowAbsent("main.MovimentiDare",1);
+
+        //Nella sezione ‘Avere’ è presente correttamente il conto: A22012.
+        doClickButton("doTab('tab','tabAvere')");
+        Assertions.assertEquals("A22012", getTableColumnElement("main.MovimentiAvere",0,1).getText());
+        Assertions.assertEquals("30,00", getTableColumnElement("main.MovimentiAvere",0,5).getText());
+        assertTableRowAbsent("main.MovimentiAvere",1);
+
+        doClickButton("doChiudiForm()");
+
+        //Entro su ‘Scrittura analitica’.
+        doClickButton("submitForm('doVisualizzaAnalitica');");
+
+        //Restituisce messaggio di "Scrittura Analitica non presente!"
+        Assertions.assertEquals("Scrittura Analitica non presente!", handleTextAlert(browser));
+
+        //Entro su ‘Visualizza movimenti magazzino’.
+        doClickButton("submitForm('doVisualizzaMovimento');");
+
+        Assertions.assertEquals("C01", getTableColumnElement("mainTable",0,3).getText());
+        Assertions.assertEquals("3", getTableColumnElement("mainTable",0,8).getText());
+        Assertions.assertEquals("150", getTableColumnElement("mainTable",0,9).getText());
+
+        Assertions.assertEquals("C20", getTableColumnElement("mainTable",1,3).getText());
+        Assertions.assertEquals("1", getTableColumnElement("mainTable",1,8).getText());
+        Assertions.assertEquals("10", getTableColumnElement("mainTable",1,9).getText());
+
+        assertTableRowAbsent("mainTable",2);
+
+        doClickButton("doChiudiForm()");
+    }
+
+
 }

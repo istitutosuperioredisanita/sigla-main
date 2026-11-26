@@ -79,6 +79,7 @@ import it.cnr.jada.bulk.*;
 import it.cnr.jada.comp.ApplicationException;
 import it.cnr.jada.comp.ComponentException;
 import it.cnr.jada.comp.FatturaNonTrovataException;
+import it.cnr.jada.comp.NoRollbackException;
 import it.cnr.jada.persistency.IntrospectionException;
 import it.cnr.jada.persistency.PersistencyException;
 import it.cnr.jada.persistency.sql.*;
@@ -346,7 +347,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             } catch (java.rmi.RemoteException e) {
                 throw handleException(fattura_passiva, e);
             }
-            if (fattura_passiva.getFl_autofattura().booleanValue())
+            if (fattura_passiva.getFl_autofattura())
                 creaAutofattura(userContext, fattura_passiva);
         }
     }
@@ -2852,7 +2853,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         }
     }
 
-    private void creaAutofattura(UserContext userContext, Fattura_passivaBulk fattura_passiva) throws ComponentException {
+    private Fattura_passivaBulk creaAutofattura(UserContext userContext, Fattura_passivaBulk fattura_passiva) throws ComponentException {
         if (fattura_passiva != null) {
             boolean autoObb = false,
                     fatturaSplit = fattura_passiva.isCommerciale() &&
@@ -2865,7 +2866,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
             if (fattura_passiva.getFl_autofattura() == null)
                 fattura_passiva.setFl_autofattura(Boolean.FALSE);
 
-            if (fattura_passiva.getFl_autofattura().booleanValue() || fatturaSplit) {
+            if (fattura_passiva.getFl_autofattura() || fatturaSplit) {
                 it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk uoEnte = findUOEnte(userContext, fattura_passiva.getEsercizio());
                 AutofatturaBulk autofattura = new AutofatturaBulk();
                 autofattura.setCd_cds(uoEnte.getCd_unita_padre());
@@ -2884,13 +2885,18 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
                     AutofatturaBulk autof = (AutofatturaBulk) h.creaConBulk(userContext, autofattura);
                     fattura_passiva.setAutofattura(autof);
                     updateBulk(userContext, fattura_passiva);
-                } catch (java.rmi.RemoteException e) {
-                    throw handleException(autofattura, e);
-                } catch (PersistencyException e) {
+                    //Se trattasi di autofattura rigenero la scrittura
+                    if (fattura_passiva.getFl_autofattura()) {
+                        ResultScrittureContabili resultScrittureContabili = this.createScrittura(userContext, fattura_passiva);
+                        if ( Optional.ofNullable(resultScrittureContabili).isPresent())
+                            fattura_passiva = (Fattura_passivaBulk) resultScrittureContabili.getDocumentoCoge();
+                    }
+                } catch (RemoteException | PersistencyException e) {
                     throw handleException(autofattura, e);
                 }
             }
         }
+        return fattura_passiva;
     }
 //^^@@
 
@@ -3390,7 +3396,7 @@ public class FatturaPassivaComponent extends ScritturaPartitaDoppiaFromDocumento
         //	potrebbero rimandare un messaggio all'utente.
         String messaggio = aggiornaAssociazioniInventario(userContext, fattura_passiva);
 
-        creaAutofattura(userContext, fattura_passiva);
+        fattura_passiva = creaAutofattura(userContext, fattura_passiva);
 
         // Restore dell'hash map dei saldi
         if (fattura_passiva.getDefferredSaldi() != null)
@@ -7457,7 +7463,7 @@ public java.util.Collection findModalita(UserContext aUC,Fattura_passiva_rigaBul
     private void validazioneComune(UserContext aUC, Fattura_passivaBulk fatturaPassiva) throws ComponentException {
         if (!verificaEsistenzaSezionalePer(aUC, fatturaPassiva)) {
             throw new ApplicationMessageFormatException(
-                    "Attenzione: non è stato definito un sezionale per le {0} e il tipo sezionale '{1}'!",
+                    "Attenzione: non è stato definito un sezionale per le {0} e il tipo sezionale {1}!",
                     fatturaPassiva.getDescrizioneEntitaPlurale(),
                     Optional.ofNullable(fatturaPassiva)
                             .flatMap(fattura_passivaBulk -> Optional.ofNullable(fattura_passivaBulk.getTipo_sezionale()))

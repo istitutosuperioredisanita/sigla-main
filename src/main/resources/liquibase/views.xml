@@ -3268,5 +3268,8 @@
     <changeSet author="marco.spasiano" runOnChange="true" id="create-view-V_CLASSIFICAZIONE_VOCI_ALL_H2">
         <sqlFile dbms="h2" path="../expsigladb/View/V_CLASSIFICAZIONE_VOCI_ALL_H2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
     </changeSet>
+    <changeSet author="raffaele.pagano" runOnChange="true" id="create-view-V_CONTROLLO_ORDINE_ACQ_CONSEGNA_H2">
+        <sqlFile dbms="h2" path="../expsigladb/View/V_CONTROLLO_ORDINE_ACQ_CONSEGNA.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="false"/>
+    </changeSet>
 
 </databaseChangeLog>

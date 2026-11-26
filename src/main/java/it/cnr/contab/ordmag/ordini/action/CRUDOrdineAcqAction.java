@@ -20,6 +20,7 @@ package it.cnr.contab.ordmag.ordini.action;
 import it.cnr.contab.anagraf00.core.bulk.AnagraficoBulk;
 import it.cnr.contab.anagraf00.core.bulk.TerzoBulk;
 import it.cnr.contab.coepcoan00.action.CRUDScritturaAnaliticaAction;
+import it.cnr.contab.coepcoan00.action.CRUDScritturaPDoppiaAction;
 import it.cnr.contab.coepcoan00.bp.CRUDScritturaAnaliticaBP;
 import it.cnr.contab.coepcoan00.bp.CRUDScritturaPDoppiaBP;
 import it.cnr.contab.coepcoan00.core.bulk.Scrittura_analiticaBulk;
@@ -2368,19 +2369,19 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                     return actioncontext.findDefaultForward();
                 }
                 nbp = (CRUDScritturaPDoppiaBP) actioncontext.addBusinessProcess(nbp);
+                CRUDScritturaPDoppiaAction pDoppiaAction = new CRUDScritturaPDoppiaAction();
                 if (remoteiterator.countElements() == 1) {
                     OggettoBulk oggettobulk1 = (OggettoBulk) remoteiterator.nextElement();
                     EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
                     nbp.setStatus(FormController.VIEW);
-                    CRUDScritturaAnaliticaAction analiticaAction = new CRUDScritturaAnaliticaAction();
-                    analiticaAction.doRiportaSelezione(actioncontext, oggettobulk1);
+                    pDoppiaAction.doRiportaSelezione(actioncontext, oggettobulk1);
                     return nbp;
                 } else {
                     SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) actioncontext.createBusinessProcess("Selezionatore");
                     selezionatorelistabp.setIterator(actioncontext, remoteiterator);
                     selezionatorelistabp.setBulkInfo(nbp.getSearchBulkInfo());
                     selezionatorelistabp.setColumns(getBusinessProcess(actioncontext).getSearchResultColumns());
-                    actioncontext.addHookForward("seleziona", this, "doRiportaSelezione");
+                    actioncontext.addHookForward("seleziona", pDoppiaAction, "doRiportaSelezione");
                     actioncontext.addHookForward("annulla_seleziona", this, "doAnnullaRiportaSelezione");
                     return actioncontext.addBusinessProcess(selezionatorelistabp);
                 }
@@ -2421,11 +2422,11 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                     return actioncontext.findDefaultForward();
                 }
                 nbp = (CRUDScritturaAnaliticaBP) actioncontext.addBusinessProcess(nbp);
+                CRUDScritturaAnaliticaAction analiticaAction = new CRUDScritturaAnaliticaAction();
                 if (remoteiterator.countElements() == 1) {
                     OggettoBulk oggettobulk1 = (OggettoBulk) remoteiterator.nextElement();
                     EJBCommonServices.closeRemoteIterator(actioncontext, remoteiterator);
                     nbp.setStatus(FormController.VIEW);
-                    CRUDScritturaAnaliticaAction analiticaAction = new CRUDScritturaAnaliticaAction();
                     analiticaAction.doRiportaSelezione(actioncontext, oggettobulk1);
                     return nbp;
                 } else {
@@ -2433,7 +2434,7 @@ public class CRUDOrdineAcqAction extends it.cnr.jada.util.action.CRUDAction {
                     selezionatorelistabp.setIterator(actioncontext, remoteiterator);
                     selezionatorelistabp.setBulkInfo(nbp.getSearchBulkInfo());
                     selezionatorelistabp.setColumns(getBusinessProcess(actioncontext).getSearchResultColumns());
-                    actioncontext.addHookForward("seleziona", this, "doRiportaSelezione");
+                    actioncontext.addHookForward("seleziona", analiticaAction, "doRiportaSelezione");
                     actioncontext.addHookForward("annulla_seleziona", this, "doAnnullaRiportaSelezione");
                     return actioncontext.addBusinessProcess(selezionatorelistabp);
                 }

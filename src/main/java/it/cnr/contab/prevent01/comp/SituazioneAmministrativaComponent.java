@@ -135,11 +135,11 @@ public class SituazioneAmministrativaComponent extends CRUDComponent implements 
 				if (Optional.ofNullable(percLimite).isPresent()) {
 					BigDecimal respasPerc = residuiPassivi.multiply(percLimite).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 					if (respasPerc.compareTo(cassa)>0) {
-						logger.info("Situazione Amministrativa Service: sendAlertMail to {} - esercizio: {} respasPerc: {}, cassa: {}", mailTo, esercizio, respasPerc, cassa);
+						logger.info("Situazione Amministrativa Service: sendAlertMail to {} - esercizio: {} residuiPassivi: {} respasPerc: {}, cassa: {}", mailTo, esercizio, residuiPassivi, respasPerc, cassa);
 						String subject = "Attenzione! Esercizio " + esercizio + " - cassa inferiore a percentuale residui passivi.";
-						String msg = "Esercizio " + esercizio + ": la consistenza di cassa alla fine dell’esercizio (" +
-							new EuroFormat().format(cassa) + ") è inferiore al " + percLimite + "% del valore dei residui passivi (" +
-									new EuroFormat().format(respasPerc) + ").";
+						String msg = "Esercizio " + esercizio + ": la consistenza di cassa di fine esercizio (" +
+							new EuroFormat().format(cassa) + ") risulta inferiore al " + percLimite + "% del valore dei residui passivi (" +
+									new EuroFormat().format(residuiPassivi) + ").";
 						SendMail.sendMail(subject, msg, InternetAddress.parse(mailTo));
 					}
 				}
@@ -148,8 +148,8 @@ public class SituazioneAmministrativaComponent extends CRUDComponent implements 
 					if (cassa.compareTo(impLimite)<0) {
 						logger.info("Situazione Amministrativa Service: sendAlertMail to {} - esercizio: {} impLimite: {}, cassa: {}", mailTo, esercizio, impLimite, cassa);
 						String subject = "Attenzione! Esercizio " + esercizio + " - cassa inferiore a limite.";
-						String msg = "Esercizio " + esercizio + ": la consistenza di cassa alla fine dell’esercizio (" +
-								new EuroFormat().format(cassa) + ") è inferiore al limite prestabilito (" +
+						String msg = "Esercizio " + esercizio + ": la consistenza di cassa di fine esercizio (" +
+								new EuroFormat().format(cassa) + ") risulta inferiore al limite prestabilito (" +
 								new EuroFormat().format(impLimite) + ").";
 						SendMail.sendMail(subject, msg, InternetAddress.parse(mailTo));
 					}

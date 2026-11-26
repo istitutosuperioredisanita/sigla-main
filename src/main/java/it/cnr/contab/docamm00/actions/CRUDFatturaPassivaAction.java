@@ -41,7 +41,9 @@ import it.cnr.contab.doccont00.comp.DateServices;
 import it.cnr.contab.doccont00.core.bulk.*;
 import it.cnr.contab.doccont00.ejb.ObbligazioneAbstractComponentSession;
 import it.cnr.contab.inventario00.bp.AssBeneFatturaBP;
+import it.cnr.contab.inventario00.bp.CRUDInventarioBeniBP;
 import it.cnr.contab.inventario00.docs.bulk.Ass_inv_bene_fatturaBulk;
+import it.cnr.contab.inventario00.docs.bulk.Inventario_beniBulk;
 import it.cnr.contab.inventario00.docs.bulk.V_ass_inv_bene_fatturaBulk;
 import it.cnr.contab.inventario01.bp.CRUDCaricoInventarioBP;
 import it.cnr.contab.inventario01.bulk.Buono_carico_scaricoBulk;
@@ -2811,20 +2813,56 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         Fattura_passivaBulk fattura = (Fattura_passivaBulk) bp.getModel();
 
         try {
+            CRUDInventarioBeniBP nbp = (CRUDInventarioBeniBP) context.createBusinessProcess("CRUDInventarioBeniBP", new Object[]{"V"});
+            nbp.setStatus(FormController.VIEW);
+            nbp.setSearchButtonHidden(Boolean.TRUE);
+            nbp.setFreeSearchButtonHidden(Boolean.TRUE);
+            nbp.resetForSearch(context);
+            nbp.setSearchResultColumnSet("includeFieldAttiva");
+
             it.cnr.jada.util.RemoteIterator ri = ((FatturaPassivaComponentSession) bp.createComponentSession()).selectBeniFor(context.getUserContext(), fattura);
             ri = it.cnr.jada.util.ejb.EJBCommonServices.openRemoteIterator(context, ri);
             if (ri.countElements() == 0) {
                 it.cnr.jada.util.ejb.EJBCommonServices.closeRemoteIterator(context, ri);
                 throw new it.cnr.jada.comp.ApplicationException("Attenzione: Nessun dato disponibile.");
             }
-            SelezionatoreListaBP nbp = (SelezionatoreListaBP) context.createBusinessProcess("Selezionatore");
-            nbp.setIterator(context, ri);
-            nbp.disableSelection();
-            nbp.setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(V_ass_inv_bene_fatturaBulk.class));
-            HookForward hook = (HookForward) context.findForward("seleziona");
-            return context.addBusinessProcess(nbp);
+            nbp = (CRUDInventarioBeniBP) context.addBusinessProcess(nbp);
+            if (ri.countElements() == 1) {
+                V_ass_inv_bene_fatturaBulk oggettobulk1 = (V_ass_inv_bene_fatturaBulk) ri.nextElement();
+                EJBCommonServices.closeRemoteIterator(context, ri);
+                nbp.setStatus(FormController.VIEW);
+                this.doRiportaSelezione(context, oggettobulk1);
+                return nbp;
+            } else {
+                SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) context.createBusinessProcess("Selezionatore");
+                selezionatorelistabp.setIterator(context, ri);
+                selezionatorelistabp.setBulkInfo(it.cnr.jada.bulk.BulkInfo.getBulkInfo(V_ass_inv_bene_fatturaBulk.class));
+                context.addHookForward("seleziona", this, "doRiportaSelezioneBeneColl");
+                context.addHookForward("annulla_seleziona", this, "doAnnullaRiportaSelezione");
+                return context.addBusinessProcess(selezionatorelistabp);
+            }
         } catch (Throwable e) {
             return handleException(context, e);
+        }
+    }
+
+    public Forward doRiportaSelezioneBeneColl(ActionContext context) throws RemoteException {
+        HookForward caller = (HookForward)context.getCaller();
+        V_ass_inv_bene_fatturaBulk assInvBeneFatturaBulk = (V_ass_inv_bene_fatturaBulk)caller.getParameter("focusedElement");
+        try {
+            getBusinessProcess(context).edit(context, new Inventario_beniBulk(assInvBeneFatturaBulk.getNr_inventario(),
+                        assInvBeneFatturaBulk.getPg_inventario(), assInvBeneFatturaBulk.getProgressivo()));
+            return context.findDefaultForward();
+        } catch (Exception exception) {
+            return handleException(context, exception);
+        }
+    }
+
+    public Forward doAnnullaRiportaSelezione(ActionContext context)  throws RemoteException {
+        try {
+            return super.doCloseForm(context);
+        } catch (BusinessProcessException e) {
+            throw new RuntimeException(e);
         }
     }
 

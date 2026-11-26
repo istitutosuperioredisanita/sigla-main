@@ -68,6 +68,7 @@ import java.math.RoundingMode;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -5769,7 +5770,9 @@ private void validaBuonoCarico_Testata (UserContext aUC,Buono_carico_scaricoBulk
 			throw new it.cnr.jada.comp.ApplicationException("Attenzione: bisogna valorizzare la data di Carico");
 		
 		// CONTROLLA LA DATA DI CARICO - DATA DI CARICO > DATA ODIERNA
-		if (buonoCarico.getData_registrazione().after(dataOdierna))
+		LocalDate dataRegistrazione = buonoCarico.getData_registrazione().toLocalDateTime().toLocalDate();
+		LocalDate oggi = dataOdierna.toLocalDateTime().toLocalDate();
+		if (dataRegistrazione.isAfter(oggi))
 			throw new it.cnr.jada.comp.ApplicationException("Attenzione: data di Carico non valida. La Data di Carico non può essere superiore alla data odierna");
 
 		// CONTROLLA CHE SIA STATO SPECIFICATO UN TIPO DI MOVIMENTO DI CARICO
