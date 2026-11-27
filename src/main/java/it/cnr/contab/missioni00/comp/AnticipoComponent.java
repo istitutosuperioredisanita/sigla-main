@@ -393,7 +393,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
         sql.addSQLJoin("OBBLIGAZIONE_SCADENZARIO.PG_OBBLIGAZIONE", "OBBLIGAZIONE.PG_OBBLIGAZIONE");
 
         sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO", SQLBuilder.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context));
-        sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_OBBLIGAZIONE", SQLBuilder.EQUALS, ObbligazioneBulk.STATO_OBB_DEFINITIVO);
+        sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_OBBLIGAZIONE", SQLBuilder.NOT_EQUALS, ObbligazioneBulk.STATO_OBB_STORNATO); // anche provvisori
         sql.addSQLClause("AND", "OBBLIGAZIONE.DT_CANCELLAZIONE", SQLBuilder.ISNULL, null);
         sql.addSQLClause("AND", "OBBLIGAZIONE.FL_PGIRO", SQLBuilder.NOT_EQUALS, "Y");
         sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.IM_SCADENZA", SQLBuilder.NOT_EQUALS, new java.math.BigDecimal(0));
@@ -1727,7 +1727,7 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
         sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO", SQLBuilder.EQUALS, anticipo.getEsercizio());
         sql.addSQLClause("AND", "OBBLIGAZIONE.CD_CDS", SQLBuilder.EQUALS, anticipo.getCd_cds());
-        sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_OBBLIGAZIONE", SQLBuilder.EQUALS, ObbligazioneBulk.STATO_OBB_DEFINITIVO);
+        sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_OBBLIGAZIONE", SQLBuilder.NOT_EQUALS, ObbligazioneBulk.STATO_OBB_STORNATO); // anche provvisori
         sql.addSQLClause("AND", "OBBLIGAZIONE.DT_CANCELLAZIONE", SQLBuilder.ISNULL, null);
         sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TERZO", SQLBuilder.EQUALS, anticipo.getCd_terzo());
         sql.addSQLClause("AND", "OBBLIGAZIONE.FL_PGIRO", SQLBuilder.NOT_EQUALS, "Y");
@@ -1921,6 +1921,9 @@ public class AnticipoComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
         if (gcRegistrazione.getTime().compareTo(scadenza.getDt_scadenza()) >= 0)
             throw new it.cnr.jada.comp.ApplicationException("La data della scadenza dell'impegno deve essere successiva alla data di registrazione dell' anticipo!");
 
+        // impegno provvisorio: va reso definitivo prima di salvare
+        if (!obbligazione.isTemporaneo() && ObbligazioneBulk.STATO_OBB_PROVVISORIO.equals(obbligazione.getStato_obbligazione()))
+            throw new it.cnr.jada.comp.ApplicationException("L'impegno " + obbligazione.getEsercizio_originale() + "/" + obbligazione.getPg_obbligazione() + " è ancora provvisorio: renderlo definitivo prima di salvare.");
         validaTerzoObbligazione(userContext, anticipo, obbligazione);
     }
 

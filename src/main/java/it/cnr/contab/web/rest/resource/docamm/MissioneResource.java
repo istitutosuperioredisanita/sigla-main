@@ -19,7 +19,11 @@ package it.cnr.contab.web.rest.resource.docamm;
 
 import it.cnr.contab.anagraf00.tabter.bulk.NazioneBulk;
 import it.cnr.contab.config00.ejb.Unita_organizzativaComponentSession;
+import it.cnr.contab.config00.contratto.bulk.ContrattoBulk;
 import it.cnr.contab.config00.sto.bulk.Unita_organizzativa_enteBulk;
+import it.cnr.contab.doccont00.core.bulk.ObbligazioneBulk;
+import it.cnr.contab.doccont00.ejb.ObbligazioneComponentSession;
+import it.cnr.contab.doccont00.ejb.TipoObbligazione;
 import it.cnr.contab.missioni00.docs.bulk.MissioneBulk;
 import it.cnr.contab.missioni00.docs.bulk.Missione_dettaglioBulk;
 import it.cnr.contab.missioni00.ejb.MissioneComponentSession;
@@ -28,6 +32,7 @@ import it.cnr.contab.missioni00.tabrif.bulk.Missione_tipo_spesaBulk;
 import it.cnr.contab.utenze00.bp.CNRUserContext;
 import it.cnr.contab.web.rest.exception.RestException;
 import it.cnr.contab.web.rest.local.docamm.MissioneLocal;
+import it.cnr.contab.web.rest.model.EnumStatoObbligazione;
 import it.cnr.contab.web.rest.model.MassimaleSpesaBulk;
 import it.cnr.jada.UserContext;
 import it.cnr.jada.comp.ComponentException;
@@ -53,6 +58,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Stateless
@@ -63,6 +70,9 @@ public class MissioneResource implements MissioneLocal {
     CRUDComponentSession crudComponentSession;
     @EJB MissioneComponentSession missioneComponentSession;
     @EJB Unita_organizzativaComponentSession unita_organizzativaComponentSession;
+    @EJB
+    @TipoObbligazione(TipoObbligazione.Tipo.BASE)
+    ObbligazioneComponentSession obbligazioneComponentSession;
 	
     public Response validaMassimaleSpesa(@Context HttpServletRequest request, MassimaleSpesaBulk massimaleSpesaBulk) throws Exception {
 		Response.ResponseBuilder rb;
@@ -211,5 +221,25 @@ public class MissioneResource implements MissioneLocal {
 		}
 
 
+    }
+
+    // stato dell'impegno (PROVVISORIO, DEFINITIVO, STORNATO) letto dalla tabella OBBLIGAZIONE
+    @Override
+    public Response statoImpegno(String cd_cds, Integer esercizio, Long pg_obbligazione, Integer esercizio_originale) throws Exception {
+        ObbligazioneBulk impegno = (ObbligazioneBulk) obbligazioneComponentSession.findObbligazione((CNRUserContext) securityContext.getUserPrincipal(),
+                new ObbligazioneBulk(cd_cds, esercizio, esercizio_originale, pg_obbligazione));
+        if (impegno == null)
+            throw new RestException(Response.Status.NOT_FOUND, "Impegno non presente!");
+        return Response.ok(Collections.singletonMap("elements", Collections.singletonList(Collections.singletonMap("statoObbligazione", EnumStatoObbligazione.getValueFrom(impegno.getStato_obbligazione()).name())))).build();
+    }
+
+    // CUP distinti dei contratti collegati al progetto della GAE
+    @Override
+    public Response cupGae(String cd_centro_responsabilita, String cd_linea_attivita) throws Exception {
+        CNRUserContext userContext = (CNRUserContext) securityContext.getUserPrincipal();
+        List<ContrattoBulk> contratti = crudComponentSession.find(userContext, ContrattoBulk.class,
+                "findContrattiConCupByGae", userContext, cd_centro_responsabilita, cd_linea_attivita);
+        return Response.ok(Collections.singletonMap("cup", contratti.stream().filter(c -> c.getCup() != null)
+                .map(c -> c.getCup().getCdCup()).collect(Collectors.toCollection(TreeSet::new)))).build();
     }
 }

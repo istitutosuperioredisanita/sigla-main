@@ -107,4 +107,50 @@ public interface MissioneLocal {
             )
     )
     Response delete(@Context HttpServletRequest request, @PathParam("id") long idRimborsoMissione) throws Exception;
+
+    /**
+     * GET  /restapi/missioni/impegno/{cd_cds}/{esercizio}/{pg_obbligazione}/{esercizio_originale}/stato -> return statoObbligazione
+     */
+    @GET
+    @Path("/impegno/{cd_cds}/{esercizio}/{pg_obbligazione}/{esercizio_originale}/stato")
+    @Operation(summary = "Restituisce lo stato dell'impegno (PROVVISORIO, DEFINITIVO, STORNATO).",
+            description = "Accesso consentito solo alle utenze abilitate al ruolo MISSIONI"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = String.class)
+            )
+    )
+    Response statoImpegno(@PathParam("cd_cds") String cd_cds, @PathParam("esercizio") Integer esercizio,
+                          @PathParam("pg_obbligazione") Long pg_obbligazione, @PathParam("esercizio_originale") Integer esercizio_originale) throws Exception;
+
+    /**
+     * GET  /restapi/missioni/gae/{cd_centro_responsabilita}/{cd_linea_attivita}/cup -> return cup
+     */
+    @GET
+    @Path("/gae/{cd_centro_responsabilita}/{cd_linea_attivita}/cup")
+    @Operation(summary = "Restituisce i CUP dei contratti collegati al progetto della GAE.",
+            description = "Accesso consentito solo alle utenze abilitate al ruolo MISSIONI"
+    )
+    @SecurityRequirement(name = "BASIC")
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_ESERCIZIO)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDS)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_UNITA_ORGANIZZATIVA)
+    @SecurityRequirement(name = SIGLASecurityContext.X_SIGLA_CD_CDR)
+    @APIResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = String.class)
+            )
+    )
+    Response cupGae(@PathParam("cd_centro_responsabilita") String cd_centro_responsabilita,
+                    @PathParam("cd_linea_attivita") String cd_linea_attivita) throws Exception;
 }

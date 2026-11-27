@@ -530,4 +530,14 @@ public class ContrattoHome extends BulkHome {
         return dettHome.fetchAll(sql);
     }
 
+    // contratti con CUP del progetto della GAE (GAE -> progetto -> contratto)
+    public List<ContrattoBulk> findContrattiConCupByGae(UserContext userContext, String cdCentroResponsabilita, String cdLineaAttivita) throws PersistencyException {
+        SQLBuilder sql = createSQLBuilder();
+        sql.addTableToHeader("LINEA_ATTIVITA");
+        sql.addSQLJoin("CONTRATTO.PG_PROGETTO", "LINEA_ATTIVITA.PG_PROGETTO");
+        sql.addSQLClause("AND", "LINEA_ATTIVITA.CD_CENTRO_RESPONSABILITA", SQLBuilder.EQUALS, cdCentroResponsabilita);
+        sql.addSQLClause("AND", "LINEA_ATTIVITA.CD_LINEA_ATTIVITA", SQLBuilder.EQUALS, cdLineaAttivita);
+        sql.addSQLClause("AND", "CONTRATTO.CD_CUP", SQLBuilder.ISNOTNULL, null);
+        return fetchAll(sql);
+    }
 }

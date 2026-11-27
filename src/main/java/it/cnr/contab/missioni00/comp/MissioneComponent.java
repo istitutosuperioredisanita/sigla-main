@@ -820,7 +820,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
         sql.addSQLJoin("OBBLIGAZIONE_SCADENZARIO.PG_OBBLIGAZIONE", "OBBLIGAZIONE.PG_OBBLIGAZIONE");
 
         sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO", sql.EQUALS, it.cnr.contab.utenze00.bp.CNRUserContext.getEsercizio(context));
-        sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_OBBLIGAZIONE", sql.EQUALS, ObbligazioneBulk.STATO_OBB_DEFINITIVO);
+        sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_OBBLIGAZIONE", SQLBuilder.NOT_EQUALS, ObbligazioneBulk.STATO_OBB_STORNATO); // anche provvisori
         sql.addSQLClause("AND", "OBBLIGAZIONE.DT_CANCELLAZIONE", sql.ISNULL, null);
         sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.IM_SCADENZA", sql.NOT_EQUALS, new java.math.BigDecimal(0));
         sql.addSQLClause("AND", "OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_AMM = ? OR OBBLIGAZIONE_SCADENZARIO.IM_ASSOCIATO_DOC_AMM IS NULL");
@@ -3170,7 +3170,7 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
 
         sql.addSQLClause("AND", "OBBLIGAZIONE.ESERCIZIO", sql.EQUALS, missione.getEsercizio());
         sql.addSQLClause("AND", "OBBLIGAZIONE.CD_CDS", sql.EQUALS, missione.getCd_cds());
-        sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_OBBLIGAZIONE", sql.EQUALS, ObbligazioneBulk.STATO_OBB_DEFINITIVO);
+        sql.addSQLClause("AND", "OBBLIGAZIONE.STATO_OBBLIGAZIONE", SQLBuilder.NOT_EQUALS, ObbligazioneBulk.STATO_OBB_STORNATO); // anche provvisori
         sql.addSQLClause("AND", "OBBLIGAZIONE.DT_CANCELLAZIONE", sql.ISNULL, null);
         sql.addSQLClause("AND", "OBBLIGAZIONE.CD_TERZO", sql.EQUALS, missione.getCd_terzo());
         sql.addSQLClause("AND", "OBBLIGAZIONE.RIPORTATO", sql.EQUALS, "N");
@@ -3982,6 +3982,9 @@ public class MissioneComponent extends ScritturaPartitaDoppiaFromDocumentoCompon
         if (gcRegistrazione.getTime().compareTo(scadenza.getDt_scadenza()) >= 0)
             throw new it.cnr.jada.comp.ApplicationException("La data della scadenza dell'impegno deve essere successiva alla data di registrazione della missione!");
 
+        // impegno provvisorio: va reso definitivo prima di salvare
+        if (!obbligazione.isTemporaneo() && ObbligazioneBulk.STATO_OBB_PROVVISORIO.equals(obbligazione.getStato_obbligazione()))
+            throw new it.cnr.jada.comp.ApplicationException("L'impegno " + obbligazione.getEsercizio_originale() + "/" + obbligazione.getPg_obbligazione() + " è ancora provvisorio: renderlo definitivo prima di salvare.");
         validaTerzoObbligazione(userContext, missione, obbligazione);
         controlloTrovato(userContext, scadenza);
     }
