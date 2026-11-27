@@ -2830,8 +2830,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
             if (ri.countElements() == 1) {
                 V_ass_inv_bene_fatturaBulk oggettobulk1 = (V_ass_inv_bene_fatturaBulk) ri.nextElement();
                 EJBCommonServices.closeRemoteIterator(context, ri);
-                nbp.setStatus(FormController.VIEW);
-                this.doRiportaSelezione(context, oggettobulk1);
+                this.doRiportaSelezioneBeneColl(context, oggettobulk1);
                 return nbp;
             } else {
                 SelezionatoreListaBP selezionatorelistabp = (SelezionatoreListaBP) context.createBusinessProcess("Selezionatore");
@@ -2846,9 +2845,7 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         }
     }
 
-    public Forward doRiportaSelezioneBeneColl(ActionContext context) throws RemoteException {
-        HookForward caller = (HookForward)context.getCaller();
-        V_ass_inv_bene_fatturaBulk assInvBeneFatturaBulk = (V_ass_inv_bene_fatturaBulk)caller.getParameter("focusedElement");
+    public Forward doRiportaSelezioneBeneColl(ActionContext context, V_ass_inv_bene_fatturaBulk assInvBeneFatturaBulk) throws RemoteException {
         try {
             getBusinessProcess(context).edit(context, new Inventario_beniBulk(assInvBeneFatturaBulk.getNr_inventario(),
                         assInvBeneFatturaBulk.getPg_inventario(), assInvBeneFatturaBulk.getProgressivo()));
@@ -2856,6 +2853,12 @@ public class CRUDFatturaPassivaAction extends EconomicaAction {
         } catch (Exception exception) {
             return handleException(context, exception);
         }
+    }
+
+    public Forward doRiportaSelezioneBeneColl(ActionContext context) throws RemoteException {
+        HookForward caller = (HookForward)context.getCaller();
+        V_ass_inv_bene_fatturaBulk assInvBeneFatturaBulk = (V_ass_inv_bene_fatturaBulk)caller.getParameter("focusedElement");
+        return doRiportaSelezioneBeneColl(context, assInvBeneFatturaBulk);
     }
 
     public Forward doAnnullaRiportaSelezione(ActionContext context)  throws RemoteException {

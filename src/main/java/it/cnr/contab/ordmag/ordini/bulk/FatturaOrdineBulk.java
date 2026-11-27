@@ -456,6 +456,14 @@ public class FatturaOrdineBulk extends FatturaOrdineBase {
 		return getImImponibile();
 	}
 	public BigDecimal getIvaPerRigaFattura() {
+		if (Optional.ofNullable(this.getVoceIva()).map(Voce_ivaBulk::getCd_voce_iva).isPresent()) {
+			if (this.getVoceIva().getFl_autofattura())
+				return BigDecimal.ZERO;
+		} else if (Optional.ofNullable(this.getFatturaPassivaRiga().getVoce_iva()).map(Voce_ivaBulk::getCd_voce_iva).isPresent()) {
+			if (this.getFatturaPassivaRiga().getVoce_iva().getFl_autofattura())
+				return BigDecimal.ZERO;
+		}
+
 		if (getImIvaRettificata() != null){
 			return getImIvaRettificata();
 		}
